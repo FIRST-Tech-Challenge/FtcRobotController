@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team6220_2021;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -20,7 +21,7 @@ public class RedAutonomousCompetition extends MasterAutonomous {
 
     @SuppressLint("DefaultLocale")
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         Initialize();
         initVuforia();
         initTfod();
@@ -74,6 +75,10 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         }
 
         waitForStart();
+
+        if (tfod != null) {
+            tfod.shutdown();
+        }
 
         telemetry.addData("barcode: ", barcode);
         telemetry.update();
@@ -144,9 +149,17 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         pauseMillis(125);
         driveInches(6, Constants.MIN_DRIVE_PWR, false);
 
-        if (tfod != null) {
-            tfod.shutdown();
-        }
+        servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
+        servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
+
+        motorBelt.setPower(0.5);
+        motorBelt.setTargetPosition(Constants.BELT_RESET);
+
+        motorArm.setPower(1.0);
+        motorArm.setTargetPosition(0);
+        motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorArm.setTargetPosition(0);
+        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void initVuforia() {

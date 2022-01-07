@@ -17,11 +17,11 @@ public abstract class MasterTeleOp extends MasterOpMode {
     }
 
     public void driveSlow() {
-        if (driver1.getLeftTriggerValue() > 0.5) {
-            motorFL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) / 4);
-            motorBL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) / 4);
-            motorFR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) / 4);
-            motorBR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) / 4);
+        if (driver1.getLeftTriggerValue() > 0.25) {
+            motorFL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * 0.25);
+            motorBL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * 0.25);
+            motorFR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * 0.25);
+            motorBR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * 0.25);
         }
     }
 
@@ -29,6 +29,9 @@ public abstract class MasterTeleOp extends MasterOpMode {
         if (driver1.isButtonPressed(Button.LEFT_BUMPER)) {
             motorLeftDuck.setPower(-0.75);
             motorRightDuck.setPower(-0.75);
+        } else {
+            motorLeftDuck.setPower(0.0);
+            motorRightDuck.setPower(0.0);
         }
     }
 
@@ -36,15 +39,18 @@ public abstract class MasterTeleOp extends MasterOpMode {
         if (driver1.isButtonPressed(Button.RIGHT_BUMPER)) {
             motorLeftDuck.setPower(0.75);
             motorRightDuck.setPower(0.75);
+        } else {
+            motorLeftDuck.setPower(0.0);
+            motorRightDuck.setPower(0.0);
         }
     }
 
     // todo - make arm move backwards only when grabber closes
     // todo - and forwards when grabber opens
     public void driveGrabber() {
-        if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() < 0.15) {
+        if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() < 0.2) {
             servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
-        } else if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() > 0.15) {
+        } else if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() > 0.2) {
             servoGrabber.setPosition(Constants.CLOSED_GRABBER_POSITION);
         }
     }
@@ -161,10 +167,8 @@ public abstract class MasterTeleOp extends MasterOpMode {
     // todo - change
     public void driveArmManual() {
         if (Math.abs(driver2.getRightStickY()) > 0.1) {
-            motorArm.setPower(driver2.getRightStickY() / 5);
+            motorArm.setTargetPosition(motorArm.getTargetPosition() + (int) (driver2.getRightStickY() * 10));
             // todo - servo parallel to ground
-        } else {
-            motorArm.setPower(0.0);
         }
     }
 
@@ -177,13 +181,20 @@ public abstract class MasterTeleOp extends MasterOpMode {
     }
 
     // todo - make sure this resets properly
-    public void resetArmAndServo() {
+    // todo - make sure this resets motor belt
+    // todo - servo ratio
+    public void resetArmAndServos() {
         if (driver2.getLeftTriggerValue() > 0.5 && driver2.getRightTriggerValue() > 0.5) {
-            motorArm.setPower(0.75);
-            servoArm.setPosition(0.0);
-            servoGrabber.setPosition(0.81);
-            motorArm.setTargetPosition(-10);
+            servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
+            servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
+
+            motorBelt.setPower(0.5);
+            motorBelt.setTargetPosition(Constants.BELT_RESET);
+
+            motorArm.setPower(1.0);
+            motorArm.setTargetPosition(0);
             motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motorArm.setTargetPosition(0);
             motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }

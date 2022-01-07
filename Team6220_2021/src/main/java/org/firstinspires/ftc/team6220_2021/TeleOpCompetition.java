@@ -3,12 +3,11 @@ package org.firstinspires.ftc.team6220_2021;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "TeleOp Competition", group = "Competition")
-public abstract class TeleOpCompetition extends MasterTeleOp {
+public class TeleOpCompetition extends MasterTeleOp {
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         Initialize();
-        resetArmAndServo();
         waitForStart();
 
         while (opModeIsActive()) {
@@ -23,7 +22,7 @@ public abstract class TeleOpCompetition extends MasterTeleOp {
             driveArm();
             driveArmManual();
             driveBelt();
-            resetArmAndServo();
+            resetArmAndServos();
         }
     }
 }

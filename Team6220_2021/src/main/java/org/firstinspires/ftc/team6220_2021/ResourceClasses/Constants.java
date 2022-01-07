@@ -38,6 +38,7 @@ public class Constants {
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
 
     // Motor Constants
+    public static final int BELT_RESET = 1000;
     public static final int ARM_COLLECTING_LEVEL = 0;
     public static final int ARM_ALLIANCE_HUB_1ST_LEVEL = 300;
     public static final int ARM_SHARED_HUB_LEVEL = 600;
@@ -48,8 +49,9 @@ public class Constants {
 
     // Servo Values
     public static final double CLOSED_GRABBER_POSITION = 0.1;
-    public static final double OPEN_GRABBER_POSITION = 0.1;
+    public static final double OPEN_GRABBER_POSITION = 0.4;
     public static final double SERVO_ARM_SHARED_HUB_POSITION = 0.1;
+    public static final double SERVO_ARM_RESET_POSITION = 0.8;
 
     // TensorFlow Autonomous
     public static final String VUFORIA_KEY = "AXDNhID/////AAABmTzx9+zSP0cgsSvEBLeS2Y9I1y9lY1nEbJ0" +
