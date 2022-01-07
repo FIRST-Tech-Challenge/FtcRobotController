@@ -11,26 +11,26 @@ public class TestCVHubAlignmentRed extends LinearOpMode {
 
         robot = new RobotClass(hardwareMap,telemetry,this);
         robot.openCVInnitShenanigans("red");
-        FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
-        FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition hubLocation = null;
+        FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition hubLocation = null;
         freightLocation = robot.analyze();
-        hubLocation = robot.analyze_hub_blue();
+        hubLocation = robot.analyze_hub_red();
 
         waitForStart();
 
-        while (hubLocation != FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition.CENTER && opModeIsActive()) {
-            if (hubLocation == FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition.LEFT) {
+        while (hubLocation != FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition.CENTER && opModeIsActive()) {
+            if (hubLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition.LEFT) {
 //                robot.frontRight.setPower(.15);
 //                robot.frontLeft.setPower(-.15);
 //                robot.backLeft.setPower(.15);
 //                robot.backRight.setPower(-.15);
-            } else if (hubLocation == FreightFrenzyComputerVisionBlueHub.SkystoneDeterminationPipeline.HubPosition.RIGHT) {
+            } else if (hubLocation == FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition.RIGHT) {
 //                robot.frontRight.setPower(-.15);
 //                robot.frontLeft.setPower(.15);
 //                robot.backLeft.setPower(-.15);
 //                robot.backRight.setPower(.15);
             }
-            hubLocation = robot.analyze_hub_blue();
+            hubLocation = robot.analyze_hub_red();
         }
 
         robot.stopMotors();
