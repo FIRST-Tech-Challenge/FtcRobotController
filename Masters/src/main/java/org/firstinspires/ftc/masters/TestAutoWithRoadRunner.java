@@ -58,7 +58,7 @@ public class TestAutoWithRoadRunner extends LinearOpMode {
                 .build();
         drive.followTrajectorySequence(trajSeq4);
 
-        drive.distanceSensorStuff(); 
+        drive.distanceSensorStuff();
       //  robot.distanceSensorStuff();
 
         Pose2d position4= drive.getLocalizer().getPoseEstimate();
