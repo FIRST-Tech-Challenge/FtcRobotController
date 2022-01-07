@@ -171,6 +171,12 @@ public class AutonomousBwarehouse extends AutonomousBase {
             driveToWarehouse( blockLevel );
         }
 
+        // Drive into freight pile to collect
+        if( opModeIsActive() ) {
+            telemetry.addData("Skill", "collectFreight1");
+            telemetry.update();
+            collectFreight1( blockLevel );
+        }
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
@@ -236,7 +242,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         switch( level ) {
             case 3 : angleToHub = 40.0;    // top
                      distanceToHub = -8.2;
-                     finalDistanceToHub = -3.0;
+                     finalDistanceToHub = 0.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
@@ -265,6 +271,8 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         if( armSleep > 0 ) {
             sleep( armSleep );
+        }
+        if( Math.abs(finalDistanceToHub) > 0 ) {
             gyroDrive(DRIVE_SPEED_30, DRIVE_Y, finalDistanceToHub, angleToHub, DRIVE_TO );
         }
 
@@ -318,6 +326,38 @@ public class AutonomousBwarehouse extends AutonomousBase {
         gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward the freight warehouse
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, warehouseDistance, 999.9, DRIVE_TO );
     } // driveToWarehouse
+
+
+    /*--------------------------------------------------------------------------------------------*/
+    private void collectFreight1(int level) {
+        double slowlyCollectMyPrecious = 0.12;
+        int freightDetections = 0;
+        ElapsedTime freightTimeout = new ElapsedTime();
+
+        robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
+        robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.50 );
+        robot.sweepServo.setPower(1.0);
+        gyroTurn(TURN_SPEED_20, 45.0 );   // Turn toward the freight
+        robot.driveTrainMotors( slowlyCollectMyPrecious, slowlyCollectMyPrecious,
+                                slowlyCollectMyPrecious, slowlyCollectMyPrecious );
+
+        freightTimeout.reset();
+        while((opModeIsActive()) && (freightTimeout.milliseconds() < 2500) && (freightDetections < 15)) {
+            if(robot.freightPresent()) {
+                freightDetections++;
+            } else {
+                freightDetections = 0;
+            }
+        }
+        robot.stopMotion();
+        if(freightDetections >= 1) {
+            robot.freightArmPosition(robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50);
+            robot.boxServo.setPosition(robot.BOX_SERVO_TRANSPORT);
+            sleep(750);
+        }
+        robot.sweepServo.setPower(0.0);
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -5.0, 999.9, DRIVE_TO );
+    } // collectFreight1
 
     /* Skystone image procesing pipeline to be run upon receipt of each frame from the camera.
      * Note that the processFrame() method is called serially from the frame worker thread -

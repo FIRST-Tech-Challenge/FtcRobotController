@@ -97,7 +97,7 @@ public class HardwareBothHubs
 
     // CAPPING ARM WRIST SERVO
     public Servo   wristServo = null;
-    public static double wristPositionAuto = 0.0;
+    public static double wristPositionAuto = 0.259;
     public double  WRIST_SERVO_INIT    = 0.950;
     public double  WRIST_SERVO_GRAB    = 0.455;
     public double  WRIST_SERVO_LIBERTY = 0.500;  // status of liberty pose (end duck-autonomous here)

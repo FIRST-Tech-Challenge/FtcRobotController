@@ -171,7 +171,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
             driveToWarehouse( blockLevel );
         }
 
-        // Drive to warehouse to park
+        // Drive into freight pile to collect
         if( opModeIsActive() ) {
             telemetry.addData("Skill", "collectFreight1");
             telemetry.update();
@@ -332,7 +332,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.sweepServo.setPower(1.0);
         gyroTurn(TURN_SPEED_20, -45.0 );   // Turn toward the freight
         robot.driveTrainMotors( slowlyCollectMyPrecious, slowlyCollectMyPrecious,
-                slowlyCollectMyPrecious, slowlyCollectMyPrecious );
+                                slowlyCollectMyPrecious, slowlyCollectMyPrecious );
 
         freightTimeout.reset();
         while((opModeIsActive()) && (freightTimeout.milliseconds() < 2500) && (freightDetections < 15)) {
@@ -350,7 +350,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         }
         robot.sweepServo.setPower(0.0);
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -5.0, 999.9, DRIVE_TO );
-    }
+    } // collectFreight1
 
     /* Skystone image procesing pipeline to be run upon receipt of each frame from the camera.
      * Note that the processFrame() method is called serially from the frame worker thread -
