@@ -192,15 +192,30 @@ public class SampleMecanumDrive extends MecanumDrive {
         backRight.setPower(0);
     }
 
+    public void getCube () {
+        frontLeft.setPower(.3);
+        frontRight.setPower(.3);
+        backLeft.setPower(.3);
+        backRight.setPower(.3);
+        intakeMotor.setPower(-.8);
+        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+
+        while (intakeDistance>7) {
+            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+        }
+        stopMotors();
+        intakeMotor.setPower(0);
+    }
+
     public void distanceSensorStrafeLeft (double speed) {
 
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(speed);
+        frontLeft.setPower(-speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
 
         while (rightDistance-leftDistance>1) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
@@ -213,10 +228,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
+        frontLeft.setPower(speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(speed);
 
         while (leftDistance-rightDistance>1) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
@@ -229,10 +244,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
+        frontLeft.setPower(-speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(-speed);
 
         while (leftDistance > 15) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
@@ -247,13 +262,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
         if (leftDistance-rightDistance>1) {
-            distanceSensorStrafeRight(.2);
+            distanceSensorStrafeRight(.3);
         } else if (rightDistance-leftDistance>1) {
-            distanceSensorStrafeLeft(.2);
+            distanceSensorStrafeLeft(.3);
         }
 
         if (leftDistance > 15) {
-            distanceSensorForward(.2);
+            distanceSensorForward(.3);
         }
     }
 

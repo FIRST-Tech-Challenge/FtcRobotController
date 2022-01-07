@@ -123,26 +123,31 @@ public class FreightFrenzyComputerVisionRedHub {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
+        static final int FREIGHT_REGION_DISTANCES_FROM_TOP = 210;
+        static final int HUB_REGION_DISTANCE_FROM_TOP = 73;
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(10, 200);
-        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(312, 210);
-        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, 210);
+        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(300, FREIGHT_REGION_DISTANCES_FROM_TOP);
+        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(480, FREIGHT_REGION_DISTANCES_FROM_TOP);
+        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, FREIGHT_REGION_DISTANCES_FROM_TOP);
 
-        static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1, 73);
-        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295, 73);
-        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(345, 73);
+        static final Point REGION1_HUB_TOP_LEFT_ANCHOR_POINT = new Point(0, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point REGION2_HUB_TOP_LEFT_ANCHOR_POINT = new Point(128, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point REGION3_HUB_TOP_LEFT_ANCHOR_POINT = new Point(256, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point REGION4_HUB_TOP_LEFT_ANCHOR_POINT = new Point(384, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point REGION5_HUB_TOP_LEFT_ANCHOR_POINT = new Point(512, HUB_REGION_DISTANCE_FROM_TOP);
 
 
         static final int REGION_WIDTH = 30;
         static final int REGION_HEIGHT = 42;
 
         static final int HUB_REGION_HEIGHT = 50;
+        static final int HUB_REGION_WIDTH = 127;
 
         final int FREIGHT_PRESENT_THRESHOLD = 110;
 
-        final int HUB_PRESENT_THRESHOLD_RED = 129;
+        final int HUB_PRESENT_THRESHOLD_RED = 140;
         final int HUB_PRESENT_THRESHOLD_BLUE = 129;
 
         Point region1_pointA = new Point(
@@ -151,6 +156,7 @@ public class FreightFrenzyComputerVisionRedHub {
         Point region1_pointB = new Point(
                 REGION1_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION1_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
         Point region2_pointA = new Point(
                 REGION2_TOP_LEFT_ANCHOR_POINT.x,
                 REGION2_TOP_LEFT_ANCHOR_POINT.y);
@@ -167,26 +173,35 @@ public class FreightFrenzyComputerVisionRedHub {
 
 
         //        Hub regions
-        Point region_hub_left_pointA = new Point(
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x,
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y);
-        Point region_hub_left_pointB = new Point(
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x + 294,
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+        Point region1_hub_pointA = new Point(
+                REGION1_HUB_TOP_LEFT_ANCHOR_POINT.x,
+                REGION1_HUB_TOP_LEFT_ANCHOR_POINT.y);
+        Point region1_hub_pointB = new Point(
+                REGION1_HUB_TOP_LEFT_ANCHOR_POINT.x + HUB_REGION_WIDTH,
+                REGION1_HUB_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
 
-        Point region_hub_center_pointA = new Point(
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x,
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y);
-        Point region_hub_center_pointB = new Point(
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x + 50,
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+        Point region2_hub_pointA = new Point(
+                REGION2_HUB_TOP_LEFT_ANCHOR_POINT.x,
+                REGION2_HUB_TOP_LEFT_ANCHOR_POINT.y);
+        Point region2_hub_pointB = new Point(
+                REGION2_HUB_TOP_LEFT_ANCHOR_POINT.x + HUB_REGION_WIDTH,
+                REGION2_HUB_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
 
-        Point region_hub_right_pointA = new Point(
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x,
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y);
-        Point region_hub_right_pointB = new Point(
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x + 294,
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+        Point region3_hub_pointA = new Point(
+                REGION3_HUB_TOP_LEFT_ANCHOR_POINT.x,
+                REGION3_HUB_TOP_LEFT_ANCHOR_POINT.y);
+        Point region3_hub_pointB = new Point(
+                REGION3_HUB_TOP_LEFT_ANCHOR_POINT.x + HUB_REGION_WIDTH,
+                REGION3_HUB_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+
+
+/*        Dear future Oliver
+  * Please not that this is where you left off when adding 2 additional regions
+  * to the hub detection cv.
+  * There is much left to be done but it was not prioritized.
+  * Naming conventions were changed from left, center, right to 1, 2, 3, 4, 5
+  *
+  */
 
         /*
          * Working variables
@@ -244,13 +259,13 @@ public class FreightFrenzyComputerVisionRedHub {
             region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
             region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
 
-            hub_region_left_A = A.submat(new Rect(region_hub_left_pointA, region_hub_left_pointB));
-            hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
-            hub_region_right_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+            hub_region_left_A = A.submat(new Rect(region1_hub_pointA, region1_hub_pointB));
+            hub_region_center_A = A.submat(new Rect(region2_hub_pointA, region2_hub_pointB));
+            hub_region_right_A = A.submat(new Rect(region3_hub_pointA, region3_hub_pointB));
 
-            hub_region_left_B = B.submat(new Rect(region_hub_left_pointA, region_hub_left_pointB));
-            hub_region_center_B = B.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
-            hub_region_right_B = B.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+            hub_region_left_B = B.submat(new Rect(region1_hub_pointA, region1_hub_pointB));
+            hub_region_center_B = B.submat(new Rect(region2_hub_pointA, region2_hub_pointB));
+            hub_region_right_B = B.submat(new Rect(region3_hub_pointA, region3_hub_pointB));
 
         }
 
@@ -267,17 +282,17 @@ public class FreightFrenzyComputerVisionRedHub {
             avg2 = (int) Core.mean(region2_A).val[0];
             avg3 = (int) Core.mean(region3_A).val[0];
 
-            hub_region_left_A = A.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
-            hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
-            hub_region_right_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+            hub_region_left_A = A.submat(new Rect(region1_hub_pointA, region3_hub_pointB));
+            hub_region_center_A = A.submat(new Rect(region2_hub_pointA, region2_hub_pointB));
+            hub_region_right_A = A.submat(new Rect(region3_hub_pointA, region3_hub_pointB));
 
             hub_avg_left_A = (int) Core.mean(hub_region_left_A).val[0];
             hub_avg_center_A = (int) Core.mean(hub_region_center_A).val[0];
             hub_avg_right_A = (int) Core.mean(hub_region_right_A).val[0];
 
-            hub_region_left_B = B.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
-            hub_region_center_B = B.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
-            hub_region_right_B = B.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+            hub_region_left_B = B.submat(new Rect(region1_hub_pointA, region3_hub_pointB));
+            hub_region_center_B = B.submat(new Rect(region2_hub_pointA, region2_hub_pointB));
+            hub_region_right_B = B.submat(new Rect(region3_hub_pointA, region3_hub_pointB));
 
             hub_avg_left_B = (int) Core.mean(hub_region_left_B).val[0];
             hub_avg_center_B = (int) Core.mean(hub_region_center_B).val[0];
@@ -308,23 +323,23 @@ public class FreightFrenzyComputerVisionRedHub {
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region_hub_left_pointA, // First point which defines the rectangle
-                    region_hub_left_pointB, // Second point which defines the rectangle
+                    region1_hub_pointA, // First point which defines the rectangle
+                    region1_hub_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     4); // Thickness of the rectangle lines
 
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region_hub_center_pointA, // First point which defines the rectangle
-                    region_hub_center_pointB, // Second point which defines the rectangle
+                    region2_hub_pointA, // First point which defines the rectangle
+                    region2_hub_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     4); // Thickness of the rectangle lines
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region_hub_right_pointA, // First point which defines the rectangle
-                    region_hub_right_pointB, // Second point which defines the rectangle
+                    region3_hub_pointA, // First point which defines the rectangle
+                    region3_hub_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     4); // Thickness of the rectangle lines
 
