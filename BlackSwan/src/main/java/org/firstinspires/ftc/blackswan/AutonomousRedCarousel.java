@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class AutonomousRedCarousel extends LinearOpMode {
     Robot robot;
-    int cubethingwithlevels=0;
+    int cubethingwithlevels = 0;
 
     @Override
     public void runOpMode() {
@@ -30,19 +30,23 @@ public class AutonomousRedCarousel extends LinearOpMode {
         robot.forward(.35,.5);
         robot.pause(10);
         robot.turnLeft(.15,.5);
-        //robot.pause(100); //replace with color sensor check
+        robot.pause(5000); //DELETE AFTER TESTING
         if (robot.colorSensorRight.green() > 100) {
             cubethingwithlevels = 1;
 
         }
         robot.right(.75,.5);
+        robot.pause(5000); //DELETE AFTER TESTING
         if (robot.colorSensorRight.green() > 100) {
             cubethingwithlevels = 2;
         }
         if (cubethingwithlevels == 0 ){
             cubethingwithlevels = 3;
         }
-        //robot.pause(100); //replace with color sensor check
+        telemetry.addData("position: ", cubethingwithlevels); //testing
+        telemetry.update(); //testing
+
+        robot.pause(5000); //DELETE AFTER TESTING
         robot.right(2,.5);
         robot.forward(.75,.5);
         robot.armThing(cubethingwithlevels);
