@@ -221,24 +221,29 @@ public class AutonomousRwarehouse extends AutonomousBase {
     private void moveToHub( int level ) {
         double angleToHub = 0.0;
         double distanceToHub = 0.0;
+        double finalDistanceToHub = 0.0;
+
         int    freightArmPos = 0;
         long   armSleep = 0;
 
         switch( level ) {
             case 3 : angleToHub = -40.0;    // top
                      distanceToHub = -8.2;
+                     finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
             case 2 : angleToHub = -38.0;
                      distanceToHub = -4.2;  // middle
+                     finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
-            case 1 : angleToHub = -35.0;
-                     distanceToHub = -5.4;  // bottom
+            case 1 : angleToHub = -27.0;
+                     distanceToHub = -1.0;  // bottom
+                     finalDistanceToHub = -2.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
-                     armSleep = 1250;   // 1.25 sec
+                     armSleep = 2000;   // 2.0 sec
                      break;
         } // switch()
 
@@ -253,7 +258,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
         if( armSleep > 0 ) {
             sleep( armSleep );
-            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -3.0, angleToHub, DRIVE_TO );
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, finalDistanceToHub, angleToHub, DRIVE_TO );
         }
 
   } // moveToHub
@@ -280,24 +285,30 @@ public class AutonomousRwarehouse extends AutonomousBase {
         sleep( 1500 );                    // let cube drop out
         robot.sweepServo.setPower( 0.0 );           // stop sweeper
         // back away and store arm
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
+        if( level == 1 ){
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 2.0, 999.9, DRIVE_TO );
+        }
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
 
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.40 );
         robot.wristServo.setPosition( robot.WRIST_SERVO_STORE );  // store position (handles unpowered!)
+        if(level == 1) {
+            gyroTurn(DRIVE_SPEED_30, -135.0);
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 6.0, 999.9, DRIVE_TO );
+        }
     } // dumpBlock
 
     /*--------------------------------------------------------------------------------------------*/
     private void driveToWarehouse( int level  ) {
         double warehouseDistance = 0.0;
         switch( level ) {
-            case 3 : warehouseDistance = 20.0;  break;
-            case 2 : warehouseDistance = 20.0;  break;
-            case 1 : warehouseDistance = 20.0;  break;
+            case 3 : warehouseDistance = 50.0;  break;
+            case 2 : warehouseDistance = 54.0;  break;
+            case 1 : warehouseDistance = 52.0;  break;
         } // switch()
 
-        gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward the freight warehouse
+        gyroTurn(TURN_SPEED_20, -90.0 );   // Turn toward the freight warehouse
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, warehouseDistance, 999.9, DRIVE_TO );
     } // driveToWarehouse
 
