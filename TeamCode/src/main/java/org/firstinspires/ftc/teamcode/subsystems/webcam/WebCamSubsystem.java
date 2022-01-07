@@ -58,6 +58,7 @@ public class WebCamSubsystem extends SubsystemBase {
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier(ID_NAME, ID_DEF_TYPE, hwMap.appContext.getPackageName());
         webCam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, deviceName), cameraMonitorViewId);
 
+        //webCam.getFocusControl();
         setMSPermTO(msPermTo);
         setWidth(width);
         setHeight(height);

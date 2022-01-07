@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -22,7 +23,9 @@ import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.globals.Timers;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
@@ -43,10 +46,13 @@ public class DuckSideBluePath2 {
 
     private SequentialCommandGroup carouselGroupBlue1;
     private SequentialCommandGroup intakeGroup;
+    InstantCommand warehouseParkingTimer;
 
     private final Pose2d startPose;
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
+
+    private StopDetectTSEPosition stopDetectTSEPosition;
 
     public DuckSideBluePath2(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -82,6 +88,7 @@ public class DuckSideBluePath2 {
         //mockDetectTSEPosition.schedule();
 
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
+        stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
         detectTSEPosition.schedule();
 
         createCarousel.createAuto();
@@ -138,11 +145,17 @@ public class DuckSideBluePath2 {
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
         sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+
+        warehouseParkingTimer = new InstantCommand(()->{
+            Timers.getInstance().startWarehouseParkingTimer();
+        });
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                sample1Follower1.andThen(carouselGroupBlue1,sample1Follower2,sample1Follower3, sample1Follower4,intakeGroup, sample1Follower5)
+                warehouseParkingTimer.andThen(stopDetectTSEPosition, sample1Follower1, carouselGroupBlue1,
+                        sample1Follower2,sample1Follower3, sample1Follower4,intakeGroup,
+                        new WaitUntilCommand(Timers.getInstance()::warehouseTimerIsDone).andThen(sample1Follower5))
         ));
     }
 }

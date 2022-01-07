@@ -53,6 +53,7 @@ public class DuckSideBluePath3 {
 
     private InstantCommand stopDetect;
 
+
     public DuckSideBluePath3(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
         startPose = sp;
