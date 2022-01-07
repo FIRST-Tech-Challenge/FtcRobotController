@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Configs.utils;
 
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+
 /**
  * This class has all constant definitions.
  * @author aryansinha
@@ -21,7 +24,7 @@ public class FTCConstants {
     /**
      * For figuring circumference
      */
-    public static final double WHEEL_DIAMETER_INCHES = 2.8346457;
+    public static final double WHEEL_DIAMETER_INCHES = 4.72441;
 
     /**
      * Counts per inch.
@@ -72,4 +75,26 @@ public class FTCConstants {
      * The identifier of the carousel servo.
      */
     public static final String CAROUSEL_SERVO = "carouselServo";
+
+    //TODO: add the javadoc.
+    public static final Rect LEFT_ROI = new Rect(
+            new Point(0, 0),
+            new Point(80, 320));
+
+    public static final Rect MIDDLE_ROI = new Rect(
+            new Point(81, 0),
+            new Point(160, 320));
+
+    public static final Rect RIGHT_ROI = new Rect(
+            new Point(161, 0),
+            new Point(240, 320));
+
+    /**
+     * Percent of the screen pixels need to take up to be valid.
+     */
+    public static final double PERCENT_COLOR_THRESHOLD = 0.1;
+
+    public static final int FRAME_HEIGHT = 240;
+
+    public static final int FRAME_WIDTH = 320;
 }

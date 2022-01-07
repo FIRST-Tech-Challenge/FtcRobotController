@@ -11,8 +11,10 @@ import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.BRIGHT_M
 import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.LEFT_MOTOR_NAME;
 import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.RIGHT_MOTOR_NAME;
 
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -38,6 +40,7 @@ public final class HardwareNew
     private Servo leftClaw;
     private Servo rightClaw;
     private DcMotor arm;
+    //private ColorSensor colorSensor;
 
 
     private BNO055IMU imu;
@@ -45,7 +48,7 @@ public final class HardwareNew
     /* local OpMode members. */
     private HardwareMap hwMap;
 
-    /***
+    /**
      * Creates an instance of this class that runs without encoders.
      */
     public HardwareNew() {
@@ -60,12 +63,12 @@ public final class HardwareNew
         this.runWithEncoders = runWithEncoders;
     }
 
-    /** Initialize the drive system variables. The init() method of the hardware class does all the work here
-     * REMEMBER that hardwareMap is a reference variable that refers to an object that contains all of the hardware mappings.  It is
-     * defined in the OpMode class.
-     * @param ahwMap The hardware map.
+    /** Initialize the drive system variables.
+     * @author aryansinha
+     * @param ahwMap The hardware map *hardwareMap*.
      */
     public void init(HardwareMap ahwMap) {
+
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -78,6 +81,7 @@ public final class HardwareNew
         arm = hwMap.get(DcMotor.class, "arm");
         leftClaw = hwMap.get(Servo.class, "leftClaw");
         rightClaw = hwMap.get(Servo.class, "rightClaw");
+        //colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -121,7 +125,12 @@ public final class HardwareNew
         }
     }
 
-
+    /**
+     * Turn right
+     * @author aryansinha
+     * @param degrees rotational degrees
+     * @param power Motor power
+     */
     public void turnRight(double degrees, double power){
         degrees*=-1;
         //Angle before you turn
@@ -133,14 +142,20 @@ public final class HardwareNew
         backRightDrive.setPower(-power);
         //Waiting until the change in degrees is greater than desired change in degrees
 
-        while ((getHeading()-startingAngle)>=degrees){
-        }
+        while ((getHeading()-startingAngle)>=degrees);
         //stop all motors
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         backLeftDrive.setPower(0);
         backRightDrive.setPower(0);
     }
+
+    /**
+     * Turn left
+     * @author aryansinha
+     * @param degrees degrees
+     * @param power Motor power
+     */
     public void turnLeft(double degrees, double power){
 
         //Angle before you turn
@@ -166,6 +181,26 @@ public final class HardwareNew
     }
 
     /**
+     * Set the power of all the motors
+     * @author aryansinha
+     * @param base
+     * @param power
+     * @param time
+     */
+    public void setAllPower(BaseNewOpMode base, double power, long time)
+    {
+        backLeftDrive.setPower(power);
+        backRightDrive.setPower(power);
+        frontRightDrive.setPower(power);
+        frontLeftDrive.setPower(power);
+        base.sleep(time);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        frontLeftDrive.setPower(0);
+    }
+
+    /**
      * Returns the left drive motor.
      * @return The left drive motor.
      */
@@ -180,6 +215,11 @@ public final class HardwareNew
     public DcMotor getRightDrive() {
         return frontRightDrive;
     }
+
+    /**
+     * Retruns back right motor
+     * @return The back right motor
+     */
     public DcMotor getBackRightDrive() {
         return backRightDrive;
     }
@@ -202,4 +242,5 @@ public final class HardwareNew
     }
 
     public DcMotor getCarousel() { return Carousel; }
+    //public ColorSensor getColorSensor() { return colorSensor; }
 }

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Configs.newConfig;
 
+import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.FRAME_HEIGHT;
+import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.FRAME_WIDTH;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -8,14 +11,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name="OP MODE for Pipeline")
-public class OpenOpMode extends LinearOpMode {
-    // Handle hardware stuff...
-
-    int width = 320;
-    int height = 240;
+@Autonomous(name="Base")
+public class BaseCVOp extends LinearOpMode {
     // store as variable here so we can access the location
-    Pipeline detector = new Pipeline(width);
+    BasePipe detector = new BasePipe(telemetry);
     OpenCvCamera Camera;
     HardwareNew robot = new HardwareNew();
 
@@ -35,7 +34,7 @@ public class OpenOpMode extends LinearOpMode {
         // processFrame() will be called to process the frame
         Camera.setPipeline(detector);
         // Remember to change the camera rotation
-        Camera.startStreaming(width, height, OpenCvCameraRotation.UPSIDE_DOWN);
+        Camera.startStreaming(FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
 
         //...
 
@@ -43,28 +42,7 @@ public class OpenOpMode extends LinearOpMode {
 
         while(opModeIsActive())
         {
-            Pipeline.ShippingElemLocation location = detector.getLocation();
-            if (location == null) {
-                // It has not been set by the opencv library as yet.
-                continue;
-            }
-            if (location != Pipeline.ShippingElemLocation.NONE) {
-                if (location == Pipeline.ShippingElemLocation.LEFT)
-                {
 
-                    telemetry.addLine("Going In");
-
-                } else if (location == Pipeline.ShippingElemLocation.RIGHT) {
-                    telemetry.addLine("Going Out");
-
-                }
-            } else if (location == Pipeline.ShippingElemLocation.NONE && opModeIsActive()){
-                robot.turnLeft(5, 0.5);
-                telemetry.addLine("Haven't found Green");
-
-            }
-
-            telemetry.update();
         }
 
         // more robot logic...

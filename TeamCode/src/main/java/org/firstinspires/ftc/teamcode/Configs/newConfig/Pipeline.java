@@ -53,8 +53,8 @@ public class Pipeline extends OpenCvPipeline {
         // We create a HSV range for yellow to detect regular stones
         // NOTE: In OpenCV's implementation,
         // Hue values are half the real value
-        Scalar lowHSV = new Scalar(0, 102, 204); // lower bound HSV for yellow
-        Scalar highHSV = new Scalar(76, 152, 0); // higher bound HSV for yellow
+        Scalar lowHSV = new Scalar(35, 100, 100); // 22, 100, 100
+        Scalar highHSV = new Scalar(36, 100, 100); // higher bound HSV for yellow
         Mat thresh = new Mat();
 
         // We'll get a black and white image. The white regions represent the regular stones.
@@ -71,11 +71,10 @@ public class Pipeline extends OpenCvPipeline {
         Mat hierarchy = new Mat();
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
+        MatOfPoint[] contoursPoly  = new MatOfPoint[contours.size()];
         Rect[] boundRect = new Rect[contours.size()];
         for (int i = 0; i < contours.size(); i++) {
-            contoursPoly[i] = new MatOfPoint2f();
-            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
+            contoursPoly[i] = new MatOfPoint();
             boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
         }
 
