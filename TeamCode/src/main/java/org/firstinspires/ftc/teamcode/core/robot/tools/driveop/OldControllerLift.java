@@ -1,26 +1,24 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.driveop;
 
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import androidx.annotation.NonNull;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.annotation.NonNull;
-
 /**
  * lift and arm
  */
-public class ControllerLift {
+public class OldControllerLift {
     private final Telemetry telemetry;
     private final DcMotor liftMotor;
     private final Servo armServo;
@@ -43,7 +41,7 @@ public class ControllerLift {
      * @param telemetry local telemetry instance
      * @param toolGamepad instance of FtcLib GamepadEx
      */
-    public ControllerLift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
+    public OldControllerLift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, Telemetry telemetry) {
         liftMotor = map.get(DcMotor.class,"liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
