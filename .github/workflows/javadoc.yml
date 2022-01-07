@@ -24,8 +24,8 @@ jobs:
       - name: Debug Workspace
         run: |
           ./gradlew --version
-          printf "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
-          prihtf "Tree:\n"
+          echo -e "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
+          echo -e "Tree:\n"
           find .
       
       - name: Setup Gradle
