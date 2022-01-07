@@ -129,7 +129,7 @@ public class Carousel implements Mechanism {
 // create the controller
         PIDFController controller = new PIDFController(coeffs);
         MotionState state = profile.get(timer.time());
-        if (!state.equals(new MotionState(0, 0)) && timer.time() > 0.1) {
+        if (!state.equals(new MotionState(0, 0)) || timer.time() < 0.1) {
             controller.setTargetPosition(state.getX());
             controller.setTargetVelocity(state.getV());
             controller.setTargetAcceleration(state.getA());
