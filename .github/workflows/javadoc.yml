@@ -33,7 +33,7 @@ jobs:
       - name: Install Android Studio
         run: |
           cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          curl https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2020.3.1.26/android-studio-2020.3.1.26-linux.tar.gz
+          curl https://r4---sn-a5mekn6s.gvt1.com/edgedl/android/studio/ide-zips/2020.3.1.26/android-studio-2020.3.1.26-linux.tar.gz?cms_redirect=yes&amp;mh=zH&amp;mip=20.106.79.99&amp;mm=28&amp;mn=sn-a5mekn6s&amp;ms=nvh&amp;mt=1641532576&amp;mv=m&amp;mvi=4&amp;pl=18&amp;shardbypass=yes&amp;smhost=r4---sn-a5meknl6.gvt1.com
           cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
           tar -xf android-studio-2020.3.1.26-linux.tar.gz
           cd android-studio/jre/bin
