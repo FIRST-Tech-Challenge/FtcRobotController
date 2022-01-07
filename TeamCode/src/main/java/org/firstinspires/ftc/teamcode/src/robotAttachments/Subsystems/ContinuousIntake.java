@@ -62,6 +62,10 @@ public class ContinuousIntake {
 
     }
 
+    public gameObject identifyContents() {
+        return ContinuousIntake.gameObject.identify(this.getRGB());
+    }
+
     /**
      * Initializes from hardware map and names
      * Initializes the Color Sensor
