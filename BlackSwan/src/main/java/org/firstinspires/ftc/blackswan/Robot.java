@@ -50,6 +50,7 @@ public class Robot {
         backRight.setDirection(DcMotor.Direction.FORWARD);
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class, "colorSensorRight");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -87,6 +88,7 @@ public class Robot {
         int backRightTarget = backRightPosition + (int) distanceInTicks;
 
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
+
         frontLeft.setTargetPosition((int) frontLeftTarget);
         frontRight.setTargetPosition((int) frontRightTarget);
         backLeft.setTargetPosition((int) backLeftTarget);
@@ -249,7 +251,6 @@ public class Robot {
             arm.setPower(.5);
             while (arm.isBusy() && this.opMode.opModeIsActive()) {
             }
-
         }
         if(level ==2){
 
