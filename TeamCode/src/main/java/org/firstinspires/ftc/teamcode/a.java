@@ -11,17 +11,19 @@ public class a extends LinearOpMode {
     CompBotW1Attachments r = new CompBotW1Attachments();
     @Override
     public void runOpMode() throws InterruptedException {
+        r.init(hardwareMap);
+
         waitForStart();
 
         ElapsedTime e = new ElapsedTime();
 
-        while(e.milliseconds() < 1000) {
+        while(e.milliseconds() < 5000) {
             r.setLiftPower(1);
         }
 
         e.reset();
 
-        while(e.milliseconds() < 1000) {
+        while(e.milliseconds() < 5000) {
             r.poweredHoldCycle();
         }
 
@@ -29,7 +31,7 @@ public class a extends LinearOpMode {
 
         e.reset();
 
-        while(e.milliseconds() < 1000) {
+        while(e.milliseconds() < 5000) {
             r.setLiftPower(-1);
         }
 
