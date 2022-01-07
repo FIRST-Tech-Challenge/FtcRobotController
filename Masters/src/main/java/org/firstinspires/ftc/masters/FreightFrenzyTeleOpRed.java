@@ -30,9 +30,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     double RF; double LF; double RR; double LR;
     // declare joystick position variables
     double X1; double Y1; double X2; double Y2;
-    final int TOP_ENCODER_VALUE = 1700;
-    final int MIDDLE_ENCODER_VALUE = 1300;
-    final int BOTTOM_ENCODE_VALUE = 800;
+
     // operational constants
     double joyScale = 1;
     double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
@@ -164,7 +162,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 linearSlideTarget = linearSlideTargets.TOP;
                 intakeMotor.setPower(0);
                 intakeOn = false;
-                linearSlideMotor.setTargetPosition(TOP_ENCODER_VALUE);
+                linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.9);
             }
@@ -175,7 +173,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 linearSlideTarget = linearSlideTargets.MIDDLE;
                 intakeMotor.setPower(0);
                 intakeOn = false;
-                linearSlideMotor.setTargetPosition(MIDDLE_ENCODER_VALUE);
+                linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.9);
             }
@@ -186,7 +184,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 linearSlideTarget = linearSlideTargets.BOTTOM;
                 intakeMotor.setPower(0);
                 intakeOn = false;
-                linearSlideMotor.setTargetPosition(BOTTOM_ENCODE_VALUE);
+                linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.8);//.4
             }
