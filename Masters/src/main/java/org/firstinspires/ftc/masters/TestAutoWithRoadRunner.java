@@ -18,7 +18,7 @@ public class TestAutoWithRoadRunner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
       //  robot = new RobotClass(hardwareMap,telemetry,this);
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         Pose2d startPose = new Pose2d(new Vector2d(-36, -63),Math.toRadians(90));
 

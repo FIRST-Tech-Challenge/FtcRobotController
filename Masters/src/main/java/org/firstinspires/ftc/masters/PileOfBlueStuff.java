@@ -12,7 +12,7 @@ public class PileOfBlueStuff extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot = new RobotClass(hardwareMap,telemetry,this);
-        robot.openCVInnitShenanigans();
+        robot.openCVInnitShenanigans("blue");
         FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = robot.analyze();
         waitForStart();

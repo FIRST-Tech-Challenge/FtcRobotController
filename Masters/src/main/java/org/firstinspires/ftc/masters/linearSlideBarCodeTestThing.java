@@ -19,7 +19,7 @@ public class linearSlideBarCodeTestThing extends LinearOpMode {
         //This stuff is the open CV, used when we get the placing the freight done
 
         robot = new RobotClass(hardwareMap, telemetry, this);
-        robot.openCVInnitShenanigans();
+        robot.openCVInnitShenanigans("red");
         FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
 
         waitForStart();

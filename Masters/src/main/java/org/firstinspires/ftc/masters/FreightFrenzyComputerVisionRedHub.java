@@ -40,7 +40,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class FreightFrenzyComputerVisionRedHub {
     OpenCvWebcam webcam;
-    SkystoneDeterminationPipeline pipeline;
+    public SkystoneDeterminationPipeline pipeline;
     String color;
 
     public FreightFrenzyComputerVisionRedHub(HardwareMap hardwareMap, Telemetry telemetry, String color) {
