@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedOnceEvent;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,7 +48,8 @@ public class AutoLift {
 
     private enum MovementStates { // switch this to a bool if you have time
         NO_MOVEMENT,
-        MOTOR_MOVEMENT
+        MOVING,
+        SERVO_MOVEMENT
     }
 
     private final DcMotor liftMotor;
@@ -80,24 +82,29 @@ public class AutoLift {
         this.position = Positions.INTAKING;
     }
 
+    private boolean eval() {
+        return (liftMotor.getCurrentPosition() >= position.motorPos - 10 && liftMotor.getCurrentPosition() <= position.motorPos + 10);
+    }
+
     public void update() {
         if (position != lastPosition) state = MovementStates.NO_MOVEMENT;
         switch (state) {
             case NO_MOVEMENT:
-                if (position != lastPosition) {
-                    armServo.setPosition(position.armPos);
-                    Positions ogposition = position;
-                    eventThread.addEvent(new TimedEvent(() -> {
-                        if (ogposition == position) {
-                            state = MovementStates.MOTOR_MOVEMENT;
-                        }
-                    }, 800));
-                } else if (position == Positions.INTAKING) {
-                    armServo.setPosition(0.76D);
-                }
-                break;
-            case MOTOR_MOVEMENT:
+                armServo.setPosition(0.7D);
                 liftMotor.setTargetPosition(position.motorPos);
+                state = MovementStates.MOVING;
+                eventThread.addEvent(new RunWhenOutputChangedOnceEvent(() -> {
+                    state = MovementStates.SERVO_MOVEMENT
+                },this::eval));
+                break;
+            case SERVO_MOVEMENT:
+                armServo.setPosition(position.armPos);
+                Positions ogposition = position;
+                eventThread.addEvent(new TimedEvent(() -> {
+                    if (ogposition == position) {
+                        state = MovementStates.MOTOR_MOVEMENT;
+                    }
+                }, 800));
         }
         lastPosition = position;
     }
