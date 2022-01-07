@@ -30,14 +30,14 @@ public class AutoLift {
 
     @SuppressWarnings("unused")
     public enum Positions {
-        INTAKING(0, 0.7D),
+        INTAKING(0, 0.76D),
         SAFE(1375, 0.7D),
         TOP(2880, 0.3D),
         MIDDLE(1850, 0.3D),
         BOTTOM(1375, 0.25D);
 
-        public final int motorPos;
         public final double armPos;
+        public final int motorPos;
 
         Positions(int motorPos, double armPos) {
             this.motorPos = motorPos;
