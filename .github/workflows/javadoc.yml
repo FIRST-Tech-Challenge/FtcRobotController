@@ -27,10 +27,10 @@ jobs:
           export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
           sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/cjdk/jvm/jdk-17/bin/java" 0
           sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/cjdk/jvm/jdk-17/bin/javac" 0
-          sudo update-alternatives --install "/usr/bin/javadoc" "javadoc" "/usr/lib/jvm/jdk-17/bin/javadoc" 0
+          sudo update-alternatives --install "/usr/bin/javadoc" "javadoc" "/usr/lib/cjdk/jvm/jdk-17/bin/javadoc" 0
           sudo update-alternatives --set java /usr/lib/cjdk/jvm/jdk-17/bin/java
           sudo update-alternatives --set javac /usr/lib/cjdk/jvm/jdk-17/bin/javac
-          sudo update-alternatives --set javadoc /usr/lib/jvm/jdk-17/bin/javadoc
+          sudo update-alternatives --set javadoc /usr/lib/cjdk/jvm/jdk-17/bin/javadoc
 
       - name: Debug Workspace
         run: |
