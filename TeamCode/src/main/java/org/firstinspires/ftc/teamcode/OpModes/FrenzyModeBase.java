@@ -94,7 +94,7 @@ public class FrenzyModeBase extends LinearOpMode {
         telemetry.addData("Y", "%.3f", odometry.getCurrentY());
         telemetry.addData("Heading", "%.3f", odometry.getOrientation());
         telemetry.addData("Heading Adjusted", "%.3f", odometry.getAdjustedCurrentHeading());
-        telemetry.addData("List position", "%d", robot.getLiftPosition());
+        telemetry.addData("Lift position", "%d", robot.getLiftPosition());
         telemetry.update();
     }
 
@@ -124,8 +124,8 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleSpecialActions() {
-        handleLift();
-//        handleLiftManual();
+//        handleLift();
+        handleLiftManual();
         handleDropper();
         handleIntake();
         handleOuttake();

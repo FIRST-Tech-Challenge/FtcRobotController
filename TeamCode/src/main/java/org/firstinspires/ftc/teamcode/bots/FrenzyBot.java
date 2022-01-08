@@ -26,6 +26,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx rotatorRight = null;
     private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
+    private Servo intakeDropperServo = null;
     private static final String TAG = "FrenzyBot";
     public static int LIFT_LEVEL_THREE = -2000;
     public static int LIFT_LEVEL_TWO = -1720;
@@ -113,6 +114,13 @@ public class FrenzyBot extends FrenzyBaseBot {
             colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize colorSensor", ex);
+        }
+
+        try {
+            intakeDropperServo =  hwMap.get(Servo.class, "intakeDropper");
+            intakeDropperUp();
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize Intake Dropper", ex);
         }
 
     }
@@ -244,6 +252,20 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void prepDropperToMove(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_START);
+        }
+    }
+
+    @BotAction(displayName = "Intake Dropper Up", defaultReturn = "")
+    public void intakeDropperUp(){
+        if (intakeDropperServo != null) {
+            intakeDropperServo.setPosition(0);
+        }
+    }
+
+    @BotAction(displayName = "Intake Dropper Down", defaultReturn = "")
+    public void intakeDropperDown(){
+        if (intakeDropperServo != null) {
+            intakeDropperServo.setPosition(1);
         }
     }
 

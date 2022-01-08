@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -42,6 +43,7 @@ public class FrenzyBaseBot implements IOdoBot {
     private int encoderDirection = 1;
 
     //    MaxVelocityTest: maxLF: 2440.00, maxRF: 2640.00, maxLB: 2520.00, maxRB: 2600.00
+//    maxLF: 2620.00, maxRF: 2540.00, maxLB: 2580.00, maxRB: 2560.00
     protected static double MAX_VELOCITY_BACK_LEFT = 2520.00;
     protected static double MAX_VELOCITY_BACK_RIGHT = 2600.00;
     protected static double MAX_VELOCITY_FRONT_LEFT = 2440.00;
@@ -104,14 +106,14 @@ public class FrenzyBaseBot implements IOdoBot {
 
 
             if (backLeft != null) {
-                backLeft.setDirection(DcMotor.Direction.FORWARD);
+                backLeft.setDirection(DcMotor.Direction.REVERSE);
                 backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                 setPIDF(backLeft, MAX_VELOCITY_BACK_LEFT, positionPIDF);
             }
 
             if (backRight != null) {
-                backRight.setDirection(DcMotor.Direction.REVERSE);
+                backRight.setDirection(DcMotor.Direction.FORWARD);
                 backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                 setPIDF(backRight, MAX_VELOCITY_BACK_RIGHT, positionPIDF);
