@@ -31,6 +31,8 @@ public class FrenzyModeBase extends LinearOpMode {
     boolean changedRotator1 = false;
     boolean changedRotator2 = false;
 
+    boolean towerDefault = false;
+
     private static String TAG = "FrenzyModeBase";
 
     @Override
@@ -77,7 +79,6 @@ public class FrenzyModeBase extends LinearOpMode {
         }
         finally {
             robot.activateIntake(0);
-            robot.activateRotatorRight(0);
             robot.activateLift(0);
             if (odometry != null) {
                 odometry.stop();
@@ -131,6 +132,7 @@ public class FrenzyModeBase extends LinearOpMode {
         handleOuttake();
         handleTurntable();
         handleTurntable2();
+        handleTower();
     }
 
     protected void handleIntake() {
@@ -188,6 +190,21 @@ public class FrenzyModeBase extends LinearOpMode {
                     robot.startTurntableRedGradual();
                 } else {
                     robot.startTurntableRedGradual();
+                }
+            }
+        }
+    }
+
+    protected void handleTower() {
+        if (isButtonPressable()) {
+            if (gamepad2.x) {
+                startGamepadLockout();
+                towerDefault = !towerDefault;
+
+                if (towerDefault) {
+                    robot.initTower();
+                } else {
+                    robot.towerToTeamHub();
                 }
             }
         }

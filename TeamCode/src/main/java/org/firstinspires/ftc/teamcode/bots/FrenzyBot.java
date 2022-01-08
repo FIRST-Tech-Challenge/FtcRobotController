@@ -23,12 +23,12 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
     private DcMotorEx lift = null;
-    private DcMotorEx rotatorRight = null;
     private DcMotorEx rotatorLeft = null;
     private Servo dropperServo = null;
     private Servo intakeDropperServo = null;
+    private Servo tower = null;
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = -2000;
+    public static int LIFT_LEVEL_THREE = -2000;  //2279
     public static int LIFT_LEVEL_TWO = -1720;
     public static int LIFT_LEVEL_ONE = -860; // Make sure to be further away for level one
     public static int LIFT_NO_EXTENSION = 0;
@@ -88,14 +88,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize lift", ex);
         }
-        try {
-            rotatorRight = hwMap.get(DcMotorEx.class, "rotatorRight");
-            rotatorRight.setDirection(DcMotor.Direction.FORWARD);
-            rotatorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rotatorRight.setVelocity(0);
-        } catch (Exception ex) {
-            Log.e(TAG, "Cannot initialize rotator", ex);
-        }
+
         try {
             rotatorLeft = hwMap.get(DcMotorEx.class, "rotatorLeft");
             rotatorLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -121,6 +114,13 @@ public class FrenzyBot extends FrenzyBaseBot {
             intakeDropperUp();
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize Intake Dropper", ex);
+        }
+
+        try {
+            tower =  hwMap.get(Servo.class, "tower");
+            initTower();
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize tower servo", ex);
         }
 
     }
@@ -164,11 +164,7 @@ public class FrenzyBot extends FrenzyBaseBot {
             lift.setVelocity(MAX_VELOCITY_REV*velocity);
         }
     }
-    public void activateRotatorRight(double velocity) {
-        if (rotatorRight != null) {
-            rotatorRight.setVelocity(MAX_VELOCITY_REV*velocity);
-        }
-    }
+
     public void activateRotatorLeft(double velocity) {
         if (rotatorLeft != null) {
             rotatorLeft.setVelocity(MAX_VELOCITY_REV*velocity);
@@ -269,6 +265,19 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
+    @BotAction(displayName = "Init tower", defaultReturn = "")
+    public void initTower(){
+        if (tower != null) {
+            tower.setPosition(0.5);
+        }
+    }
+
+    public void towerToTeamHub(){
+        if (tower != null) {
+            tower.setPosition(0.75);
+        }
+    }
+
     public void dropperPickupPosition(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_PICKUP);
@@ -279,7 +288,8 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void startIntake() {
         activateIntake(INTAKE_SPEED);
         intakeRunning = true;
-        dropperPickupPosition();
+        intakeDropperDown();
+//        dropperPickupPosition();
     }
 
     @BotAction(displayName = "Reverse intake", defaultReturn = "")
@@ -291,17 +301,16 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void stopIntake() {
         activateIntake(0);
         intakeRunning = false;
-        prepDropperToMove();
+//        prepDropperToMove();
+        intakeDropperUp();
     }
 
     @BotAction(displayName = "Start turntable blue", defaultReturn = "")
     public void startTurntableBlue() {
-        activateRotatorRight(0.35);
         activateRotatorLeft(0.35);
     }
     @BotAction(displayName = "Start turntable red", defaultReturn = "")
     public void startTurntableRed() {
-        activateRotatorRight(-0.35);
         activateRotatorLeft(-0.35);
     }
 
@@ -333,7 +342,6 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Stop turntable", defaultReturn = "")
     public void stopTurntable() {
-        activateRotatorRight(0.0);
         activateRotatorLeft(0.0);
     }
     public void toggleLight(boolean on){
@@ -417,12 +425,12 @@ public class FrenzyBot extends FrenzyBaseBot {
             if (currSpeed < maxSpeed) {
                 currSpeed = maxSpeed;
             }
-            activateRotatorRight(currSpeed);
+
             activateRotatorLeft(currSpeed);
 
             this.delayWait(loopDelayMs);
         }
-        activateRotatorRight(0.0);
+
         activateRotatorLeft(0.0);
     }
 
