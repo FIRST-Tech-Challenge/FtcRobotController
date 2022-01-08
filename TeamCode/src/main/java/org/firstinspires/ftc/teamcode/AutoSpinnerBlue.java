@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
-@Autonomous(name="AutoSpinner", group="Autonomous")
+@Autonomous(name="AutoSpinnerBlue", group="Autonomous")
 //@Disabled
 public class AutoSpinnerBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();

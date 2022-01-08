@@ -22,7 +22,8 @@ public class forward extends LinearOpMode {
     private DcMotor tower1 = null; //arm motor 1
     private DcMotor tower2 = null; //arm motor 2
     private Servo clawservo = null; //clawservo
-    private CRServo duckspinner = null; // the duck spinny thingy
+    private CRServo duckspinner1 = null; // the duck spinny thingy
+    private CRServo duckspinner2 = null; // the other duck spinny thingy
 
     @Override
 
@@ -38,7 +39,8 @@ public class forward extends LinearOpMode {
         tower1 = hardwareMap.get(DcMotor.class, "tower1");
         tower2 = hardwareMap.get(DcMotor.class, "tower2");
         clawservo = hardwareMap.get(Servo.class, "clawservo");
-        duckspinner = hardwareMap.get(CRServo.class, "duckspinner");
+        duckspinner1 = hardwareMap.get(CRServo.class, "duckspinner1");
+        duckspinner2 = hardwareMap.get(CRServo.class, "duckspinner2");
 
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -54,7 +56,8 @@ public class forward extends LinearOpMode {
         tower1.setDirection(DcMotor.Direction.FORWARD);
         tower2.setDirection(DcMotor.Direction.FORWARD);
 
-        duckspinner.setDirection(CRServo.Direction.FORWARD);
+        duckspinner1.setDirection(CRServo.Direction.FORWARD);
+        duckspinner2.setDirection(CRServo.Direction.FORWARD);
 
         waitForStart();
         gamepad1.rumble(1000);
@@ -83,19 +86,19 @@ public class forward extends LinearOpMode {
 
             if (gamepad2.left_bumper){
                 duckspinnerPower1 = 1.0;
-                duckspinner.setDirection(CRServo.Direction.FORWARD);
+                duckspinner1.setDirection(CRServo.Direction.FORWARD);
             }
 
             if (gamepad2.right_bumper){
                 duckspinnerPower1 = 1.0;
-                duckspinner.setDirection(CRServo.Direction.REVERSE);
+                duckspinner1.setDirection(CRServo.Direction.REVERSE);
             }
 
             if (gamepad2.a) {
                 clawservo.setPosition(0.0);
             }
             if (gamepad2.b) {
-                clawservo.setPosition(.75);
+                clawservo.setPosition(1.00);
             }
 
             if (towerPower <= deadzone) {
@@ -104,13 +107,13 @@ public class forward extends LinearOpMode {
                 towerPower2 = 0.0f;
             }
 
-            lf.setPower(lPower); //(lPower * 0.5);
-            rf.setPower(rPower); //(rPower * 0.5);
-            lb.setPower(lPower); //(lPower * 0.5);
-            rb.setPower(rPower); //(rPower * 0.5);
+            lf.setPower(lPower * 0.75);
+            rf.setPower(rPower * 0.75);
+            lb.setPower(lPower * 0.75);
+            rb.setPower(rPower * 0.75);
             tower1.setPower((towerPower - towerPower2) * 0.5);
             tower2.setPower((towerPower - towerPower2) * 0.5);
-            duckspinner.setPower(duckspinnerPower1);
+            duckspinner1.setPower(duckspinnerPower1);
 
         }
     }

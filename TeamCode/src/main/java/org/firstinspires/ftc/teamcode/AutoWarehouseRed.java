@@ -77,10 +77,10 @@ public class AutoWarehouseRed extends LinearOpMode {
             rf.setPower(0.5);
             lb.setPower(0.5);
             rb.setPower(0.5);
-            clawservo.setPosition(0.75);
+            clawservo.setPosition(0.0);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(500); //Go forwards to side of goal
+            sleep(400); //Go forwards to side of goal
 
 
             tower1.setPower(0);
@@ -89,21 +89,21 @@ public class AutoWarehouseRed extends LinearOpMode {
             rf.setPower(0.5 * sidemult);
             lb.setPower(-0.5 * sidemult);
             rb.setPower(0.5 * sidemult);
-            clawservo.setPosition(0.75);
+            clawservo.setPosition(0.0);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(250); //Turn left 90 to face goal
+            sleep(1000); //Turn left 90 to face goal
 
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(0.5);
-            rf.setPower(0.5);
-            lb.setPower(0.5);
-            rb.setPower(0.5);
-            clawservo.setPosition(0.75);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(250); //Go forwards to goal
+            //tower1.setPower(0);
+            //tower2.setPower(0);
+            //lf.setPower(0.5);
+            //rf.setPower(0.5);
+            //lb.setPower(0.5);
+            //rb.setPower(0.5);
+            //clawservo.setPosition(0.75);
+            //duckspinner1.setPower(0);
+            //duckspinner2.setPower(0);
+            //sleep(250); //Go forwards to goal
 
             tower1.setPower(0.5);
             tower2.setPower(0.5);
@@ -111,10 +111,10 @@ public class AutoWarehouseRed extends LinearOpMode {
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
-            clawservo.setPosition(0.75);
+            clawservo.setPosition(0.0);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(250); //Lower arm
+            sleep(1000); //Lower arm
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -122,10 +122,10 @@ public class AutoWarehouseRed extends LinearOpMode {
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
-            clawservo.setPosition(0);
+            clawservo.setPosition(0.75);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(250); //Open claw
+            sleep(500); //Open claw
 
             tower1.setPower(-0.5);
             tower2.setPower(-0.5);
@@ -133,10 +133,10 @@ public class AutoWarehouseRed extends LinearOpMode {
             rf.setPower(0);
             lb.setPower(0);
             rb.setPower(0);
-            clawservo.setPosition(0.75);
+            clawservo.setPosition(0.0);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(250); //Raise arm and close claw
+            sleep(1000); //Raise arm and close claw
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -147,7 +147,7 @@ public class AutoWarehouseRed extends LinearOpMode {
             clawservo.setPosition(0.75);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(750); //Go backwards
+            sleep(500); //Go backwards
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -158,40 +158,40 @@ public class AutoWarehouseRed extends LinearOpMode {
             clawservo.setPosition(0.75);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(250); //Turn left 90
+            sleep(400); //Turn left 90
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(0.5);
-            rf.setPower(0.5);
-            lb.setPower(0.5);
-            rb.setPower(0.5);
+            lf.setPower(-0.5);
+            rf.setPower(-0.5);
+            lb.setPower(-0.5);
+            rb.setPower(-0.5);
             clawservo.setPosition(0.75);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(250); //Go forwards
+            sleep(1000); //Go forwards
 
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(-0.5 * sidemult);
-            rf.setPower(0.5 * sidemult);
-            lb.setPower(-0.5 * sidemult);
-            rb.setPower(0.5 * sidemult);
-            clawservo.setPosition(0.75);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(250); //Turn left
+            //tower1.setPower(0);
+            //tower2.setPower(0);
+            //lf.setPower(-0.5 * sidemult);
+            //rf.setPower(0.5 * sidemult);
+            //lb.setPower(-0.5 * sidemult);
+            //rb.setPower(0.5 * sidemult);
+            //clawservo.setPosition(0.75);
+            //duckspinner1.setPower(0);
+            //duckspinner2.setPower(0);
+            //sleep(250); //Turn left
 
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(0.5);
-            rf.setPower(0.5);
-            lb.setPower(0.5);
-            rb.setPower(0.5);
-            clawservo.setPosition(0.75);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(250); //Go forwards
+            //tower1.setPower(0);
+            //tower2.setPower(0);
+            //lf.setPower(0.5);
+            //rf.setPower(0.5);
+            //lb.setPower(0.5);
+            //rb.setPower(0.5);
+            //clawservo.setPosition(0.75);
+            //duckspinner1.setPower(0);
+            //duckspinner2.setPower(0);
+            //sleep(250); //Go forwards
 
             tower1.setPower(0);
             tower2.setPower(0);

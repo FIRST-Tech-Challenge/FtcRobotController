@@ -78,7 +78,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(500); // Go forward towards goal
+        sleep(1000); // Go forward towards goal
 
 
         tower1.setPower(0);
@@ -90,7 +90,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(250); // Turn right 45 towards goal, and away from spinner
+        sleep(500); // Turn right 45 towards goal, and away from spinner
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -101,7 +101,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(250); // Forward towards goal
+        sleep(500); // Forward towards goal
 
         tower1.setPower(0.5);
         tower2.setPower(0.5);
@@ -112,7 +112,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(250); // Lower arm onto goal
+        sleep(500); // Lower arm onto goal
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -123,7 +123,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(250); // Open claw and drop block onto goal
+        sleep(500); // Open claw and drop block onto goal
 
         tower1.setPower(-0.5);
         tower2.setPower(-0.5);
@@ -134,7 +134,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(250); // Raise arm and close claw
+        sleep(500); // Raise arm and close claw
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -145,7 +145,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(750); // Go backwards towards Carousel
+        sleep(1500); // Go backwards towards Carousel
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -156,7 +156,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(1);
         duckspinner2.setPower(0);
-        sleep(7000); // Spin duck spinner
+        sleep(7500); // Spin duck spinner
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -167,7 +167,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(250); // Turn left 90
+        sleep(500); // Turn left 90
 
         tower1.setPower(0);
         tower2.setPower(0);
@@ -178,7 +178,7 @@ public class AutoSpinnerRed extends LinearOpMode {
         clawservo.setPosition(0.75);
         duckspinner1.setPower(0);
         duckspinner2.setPower(0);
-        sleep(250); // Go forward
+        sleep(500); // Go forward
 
         tower1.setPower(0);
         tower2.setPower(0);

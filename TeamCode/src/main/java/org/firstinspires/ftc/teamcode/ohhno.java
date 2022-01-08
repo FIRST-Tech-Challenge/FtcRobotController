@@ -19,10 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
-@Autonomous(name="AutoWarehouseBlue", group="Autonomous")
+@Autonomous(name="ohhno", group="Autonomous")
 //@Disabled
 
-public class AutoWarehouseBlue extends LinearOpMode {
+public class ohhno extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf = null;  //left front wheel
     private DcMotor rf = null;  //right front wheel
@@ -33,7 +33,6 @@ public class AutoWarehouseBlue extends LinearOpMode {
     private Servo clawservo = null; //clawservo
     private CRServo duckspinner1 = null; // the duck spinny thingy
     private CRServo duckspinner2 = null; // the other duck spinny thingy
-
 
 
     @Override
@@ -47,7 +46,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
         rb = hardwareMap.get(DcMotor.class, "rb");
         tower1 = hardwareMap.get(DcMotor.class, "tower1");
         tower2 = hardwareMap.get(DcMotor.class, "tower2");
-        clawservo = hardwareMap.get(Servo.class,"clawservo");
+        clawservo = hardwareMap.get(Servo.class, "clawservo");
         duckspinner1 = hardwareMap.get(CRServo.class, "duckspinner1");
         duckspinner2 = hardwareMap.get(CRServo.class, "duckspinner2");
         double sidemult = -1.0; // Red = 1.0 Blue = -1.0
@@ -64,10 +63,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
         runtime.reset();
 
 
-
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
-
-
             tower1.setPower(0);
             tower2.setPower(0);
             lf.setPower(0.5);
@@ -77,74 +73,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinner1.setPower(0);
             duckspinner2.setPower(0);
-            sleep(400); //Go forwards to side of goal
-
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(-0.5 * sidemult);
-            rf.setPower(0.5 * sidemult);
-            lb.setPower(-0.5 * sidemult);
-            rb.setPower(0.5 * sidemult);
-            clawservo.setPosition(0);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(1000); //Turn left 90 to face goal
-
-            //tower1.setPower(0);
-            //tower2.setPower(0);
-            //lf.setPower(0.5);
-            //rf.setPower(0.5);
-            //lb.setPower(0.5);
-            //rb.setPower(0.5);
-            //clawservo.setPosition(0.75);
-            //duckspinner1.setPower(0);
-            //duckspinner2.setPower(0);
-            //sleep(700); //Go forwards to goal
-
-            tower1.setPower(0.5);
-            tower2.setPower(0.5);
-            lf.setPower(0);
-            rf.setPower(0);
-            lb.setPower(0);
-            rb.setPower(0);
-            clawservo.setPosition(0);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(1000); //Lower arm
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(0);
-            rf.setPower(0);
-            lb.setPower(0);
-            rb.setPower(0);
-            clawservo.setPosition(0.75);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(500); //Open claw
-
-            tower1.setPower(-0.5);
-            tower2.setPower(-0.5);
-            lf.setPower(0);
-            rf.setPower(0);
-            lb.setPower(0);
-            rb.setPower(0);
-            clawservo.setPosition(0.75);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(1000); //Raise arm and close claw
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(-0.5);
-            rf.setPower(-0.5);
-            lb.setPower(-0.5);
-            rb.setPower(-0.5);
-            clawservo.setPosition(0.75);
-            duckspinner1.setPower(0);
-            duckspinner2.setPower(0);
-            sleep(1500); //Go backwards
+            sleep(400);
 
             tower1.setPower(0);
             tower2.setPower(0);
