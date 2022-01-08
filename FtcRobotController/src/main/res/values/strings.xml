@@ -65,6 +65,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <item>@style/AppThemeTealRC</item>
   </integer-array>
 
+  <string name="pref_ftc_season_year_of_current_rc">pref_ftc_season_year_of_current_rc</string>
+
   <string name="packageName">@string/packageNameRobotController</string>
 
 </resources>
