@@ -26,6 +26,8 @@ jobs:
           echo -e "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
           echo -e "Tree:\n"
           find .
+          echo -e "\n\n"
+          java --version
           echo -e "\n\n\nDEBUG LOGS END"
       
       - name: Setup Gradle
