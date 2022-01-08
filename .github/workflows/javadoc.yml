@@ -22,6 +22,7 @@ jobs:
           sudo mkdir -p /usr/lib/cjdk/jvm
           cd /usr/lib/cjdk/jvm
           sudo tar -xvzf ~/java.tar.gz
+          mv ./jdk-17.0.1 ./jdk-17
           export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
           export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
           sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/cjdk/jvm/jdk-17/bin/java" 0
