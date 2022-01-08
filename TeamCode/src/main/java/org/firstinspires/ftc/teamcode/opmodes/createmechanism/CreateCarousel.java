@@ -98,7 +98,7 @@ public class CreateCarousel {
         int maxEncoderCount = CAROUSEL_MAX_ENCODER_COUNT;
         if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED)
         {
-            maxEncoderCount = -CAROUSEL_MAX_ENCODER_COUNT;
+            maxEncoderCount = CAROUSEL_MAX_ENCODER_COUNT;
             //telemetry.addLine("redCarousel");
             //telemetry.update();
         }
