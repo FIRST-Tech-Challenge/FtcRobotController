@@ -66,8 +66,9 @@ public class blueRightCarousel extends LinearOpMode {
             crane.setPower(-0.5);
             sleep(500);
 
+
             //moving to warehouse
-            move(0.5, 1300);
+            move(0.5, 1500);
 
             //turning to shipping hub
             gyroTurning(0);
@@ -89,6 +90,9 @@ public class blueRightCarousel extends LinearOpMode {
 
             //move to warehouse
             move(0.70, 2000);
+
+            //small reverse to stop.
+            move (-0.5, 200);
         }
     }
 
