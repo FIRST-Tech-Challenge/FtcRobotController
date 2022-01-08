@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup Java
+      - name: Setup Environment
         run: |
           cd ~/
           sudo apt --purge remove -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot
@@ -31,11 +31,7 @@ jobs:
           sudo update-alternatives --set java /usr/lib/cjdk/jvm/jdk-17/bin/java
           sudo update-alternatives --set javac /usr/lib/cjdk/jvm/jdk-17/bin/javac
           sudo update-alternatives --set javadoc /usr/lib/cjdk/jvm/jdk-17/bin/javadoc
-
-      - name: Debug Workspace
-        run: |
-          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
-          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
+          cd ~/
           echo -e "DEBUG LOGS START\n\n\n"
           ./gradlew --version
           echo -e "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
@@ -47,16 +43,7 @@ jobs:
           update-alternatives --list javadoc
           java --version
           echo -e "\n\n\nDEBUG LOGS END"
-      
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
-
-      - name: Setup Javadoc Source
-        run: |
-          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
-          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
+          ./gradlew build
           rm -rf javadoc-output
           rm -rf javadoc-workspace
           rm -rf javadoc-temp-workspace
@@ -72,6 +59,7 @@ jobs:
           echo -e "DEBUG LOGS START\n\n\n"
           find ./javadoc-workspace/
           echo -e "\n\n\nDEBUG LOGS END"
+          
 #      - name: Install Android Studio
 #        run: |
 #          cp -r -p jdtar/android-studio.tar.gz ./
