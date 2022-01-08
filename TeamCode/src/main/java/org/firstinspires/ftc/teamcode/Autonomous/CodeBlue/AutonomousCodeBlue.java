@@ -15,8 +15,6 @@ public class AutonomousCodeBlue extends LinearOpMode {
         Outtake AutonomousOuttake = new Outtake(hardwareMap);
         Carousel AutonomousCarousel = new Carousel(hardwareMap);
 
-
-
         waitForStart();
 
         // TODO, step 1
