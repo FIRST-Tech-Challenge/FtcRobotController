@@ -54,11 +54,13 @@ import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.masters.drive.DriveConstants.TICKS_PER_REV;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToInches;
+import static java.lang.Math.abs;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -95,7 +97,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap){
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
         this(hardwareMap, null, null);
     }
 
@@ -124,7 +126,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
 
-         BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
+        BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
 
 
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
@@ -174,25 +176,46 @@ public class SampleMecanumDrive extends MecanumDrive {
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time<seconds*1000 && this.opmode.opModeIsActive() ) {
+        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
         }
     }
 
-    public void jevilTurnCarousel (double speed, double seconds) {
+    public void jevilTurnCarousel(double speed, double seconds) {
         carousel.setPower(speed);
         pauseButInSecondsForThePlebeians(seconds);
         carousel.setPower(0);
     }
 
-    public void stopMotors () {
+    public void stopMotors() {
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
     }
 
-    public void getCube () {
+    public void aquireDuckRed(double speed, double secondaryStopConditionSeconds) {
+        long startTime = new Date().getTime();
+        long time = 0;
+        double distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
+        boolean foundFreight = false;
+
+        intakeMotor.setPower(.8);
+        setMotorPowers(-speed, -speed, -speed, -speed);
+
+        while (distanceSensorValue > 3 && time < secondaryStopConditionSeconds * 1000) {
+            pause(50);
+            time = new Date().getTime() - startTime;
+            distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
+            if (distanceSensorValue > 7) {
+                foundFreight = true;
+            }
+        }
+        stopMotors();
+        intakeMotor.setPower(0);
+    }
+
+    public void getCube() {
         frontLeft.setPower(.3);
         frontRight.setPower(.3);
         backLeft.setPower(.3);
@@ -200,14 +223,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         intakeMotor.setPower(-.8);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
 
-        while (intakeDistance>7) {
+        while (intakeDistance > 7) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         }
         stopMotors();
         intakeMotor.setPower(0);
     }
 
-    public void distanceSensorStrafeLeft (double speed) {
+    public void distanceSensorStrafeLeft(double speed) {
 
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
@@ -217,14 +240,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         backLeft.setPower(speed);
         backRight.setPower(-speed);
 
-        while (rightDistance-leftDistance>1) {
+        while (rightDistance - leftDistance > 1) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
             rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
         }
         stopMotors();
     }
 
-    public void distanceSensorStrafeRight (double speed) {
+    public void distanceSensorStrafeRight(double speed) {
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
@@ -233,14 +256,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         backLeft.setPower(-speed);
         backRight.setPower(speed);
 
-        while (leftDistance-rightDistance>1) {
+        while (leftDistance - rightDistance > 1) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
             rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
         }
         stopMotors();
     }
 
-    public void distanceSensorForward (double speed) {
+    public void distanceSensorForward(double speed) {
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
@@ -255,15 +278,15 @@ public class SampleMecanumDrive extends MecanumDrive {
         stopMotors();
     }
 
-    public void distanceSensorStuff () {
+    public void distanceSensorStuff() {
 
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
 
-        if (leftDistance-rightDistance>1) {
+        if (leftDistance - rightDistance > 1) {
             distanceSensorStrafeRight(.3);
-        } else if (rightDistance-leftDistance>1) {
+        } else if (rightDistance - leftDistance > 1) {
             distanceSensorStrafeLeft(.3);
         }
 
@@ -272,32 +295,34 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
     }
 
-    public void dumpFreightBottom () {
+    public void dumpFreightBottom() {
         linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.8);
-        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
 
         }
+        pause(150);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         pause(1500);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(-.4);
-        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
 
         }
         linearSlideMotor.setPower(0);
     }
 
-    public void dumpFreightMiddle () {
+    public void dumpFreightMiddle() {
         linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.9);
-        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
-
+        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
+            pause(50);
         }
+        pause(150);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);//1.5
         pause(1500);
         //forward(0.3, -0.4);
@@ -305,19 +330,21 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(-.4);
-        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
 
         }
         linearSlideMotor.setPower(0);
     }
 
-    public void dumpFreightTop () {
+    public void dumpFreightTop() {
         linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.9);
-        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
 
         }
+        pause(150);
+
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         pause(1500);
         //forward(0.3, -0.2);
@@ -325,10 +352,118 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(-.4);
-        while(linearSlideMotor.isBusy() && this.opmode.opModeIsActive()){
+        while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
 
         }
         linearSlideMotor.setPower(0);
+    }
+
+    protected void motorSetMode(DcMotor.RunMode runMode) {
+        frontLeft.setMode(runMode);
+        frontRight.setMode(runMode);
+        backLeft.setMode(runMode);
+        backRight.setMode(runMode);
+    }
+
+    public void forward(double speed, double rotations) {
+        int leftCurrent = frontLeft.getCurrentPosition();
+        int rightCurrent = frontRight.getCurrentPosition();
+        int backLeftCurrent = backLeft.getCurrentPosition();
+        int backRightCurrent = backRight.getCurrentPosition();
+
+        double toPositionLeft = leftCurrent + rotations * TICKS_PER_REV;
+        double toPositionRight = rightCurrent + rotations * TICKS_PER_REV;
+        double toPositionbackLeft = backLeftCurrent + rotations * TICKS_PER_REV;
+        double toPositionbackRight = backRightCurrent + rotations * TICKS_PER_REV;
+
+        frontLeft.setTargetPosition((int) toPositionLeft);
+        frontRight.setTargetPosition((int) toPositionRight);
+        backLeft.setTargetPosition((int) toPositionbackLeft);
+        backRight.setTargetPosition((int) toPositionbackRight);
+
+        motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(abs(speed));
+        frontRight.setPower(abs(speed));
+        backLeft.setPower(abs(speed));
+        backRight.setPower(abs(speed));
+
+        while (this.opmode.opModeIsActive() &&
+                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+
+        }
+        stopMotors();
+
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void strafeLeft(double speed, double rotations) {
+
+        int leftCurrent = frontLeft.getCurrentPosition();
+        int rightCurrent = frontRight.getCurrentPosition();
+        int backLeftCurrent = backLeft.getCurrentPosition();
+        int backRightCurrent = backRight.getCurrentPosition();
+
+        double toPositionLeft = leftCurrent - rotations * TICKS_PER_REV;
+        double toPositionRight = rightCurrent + rotations * TICKS_PER_REV;
+        double toPositionbackLeft = backLeftCurrent + rotations * TICKS_PER_REV;
+        double toPositionbackRight = backRightCurrent - rotations * TICKS_PER_REV;
+
+        frontLeft.setTargetPosition((int) toPositionLeft);
+        frontRight.setTargetPosition((int) toPositionRight);
+        backLeft.setTargetPosition((int) toPositionbackLeft);
+        backRight.setTargetPosition((int) toPositionbackRight);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(abs(-speed));
+        frontRight.setPower(abs(speed));
+        backLeft.setPower(abs(speed));
+        backRight.setPower(abs(-speed));
+        while (this.opmode.opModeIsActive() &&
+                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+
+        }
+        stopMotors();
+
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void strafeRight(double speed, double rotations) {
+
+        int leftCurrent = frontLeft.getCurrentPosition();
+        int rightCurrent = frontRight.getCurrentPosition();
+        int backLeftCurrent = backLeft.getCurrentPosition();
+        int backRightCurrent = backRight.getCurrentPosition();
+
+        double toPositionLeft = leftCurrent + rotations * TICKS_PER_REV;
+        double toPositionRight = rightCurrent - rotations * TICKS_PER_REV;
+        double toPositionbackLeft = backLeftCurrent - rotations * TICKS_PER_REV;
+        double toPositionbackRight = backRightCurrent + rotations * TICKS_PER_REV;
+
+        frontLeft.setTargetPosition((int) toPositionLeft);
+        frontRight.setTargetPosition((int) toPositionRight);
+        backLeft.setTargetPosition((int) toPositionbackLeft);
+        backRight.setTargetPosition((int) toPositionbackRight);
+
+        motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(abs(speed));
+        frontRight.setPower(abs(-speed));
+        backLeft.setPower(abs(-speed));
+        backRight.setPower(abs(speed));
+        while (this.opmode.opModeIsActive() &&
+                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+
+        }
+        stopMotors();
+
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void openCVInnitShenanigans(String color) {
@@ -341,7 +476,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
 
-
     public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
         return CV.pipeline.hub_position;
     }
@@ -351,11 +485,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
 
-    public void pause(int millis){
+    public void pause(int millis) {
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time<millis && opmode.opModeIsActive()) {
+        while (time < millis && opmode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
         }
     }
