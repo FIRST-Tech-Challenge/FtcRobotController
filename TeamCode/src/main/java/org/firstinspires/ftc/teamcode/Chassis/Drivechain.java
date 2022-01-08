@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Chassis;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Autonomous
 
-public class DriveChain extends LinearOpMode {
+public class Drivechain extends LinearOpMode {
 
 
     /*
@@ -267,6 +267,10 @@ public class DriveChain extends LinearOpMode {
 
         while (opModeIsActive()){
             moveRobot(telemetry, 1000, -1000, 1000, -1000, 0.25, -0.25, 0.25, -0.25);
+
+            moveRobot(telemetry, 1000, -1000, 1000, -1000, -0.25, 0.25, -0.25, 0.25);
+
+
             resetTicks();
 
 
