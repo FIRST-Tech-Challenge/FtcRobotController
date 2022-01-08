@@ -28,6 +28,7 @@ jobs:
           find .
           echo -e "\n\n"
           java --version
+          update-java-alternatives --list
           echo -e "\n\n\nDEBUG LOGS END"
       
       - name: Setup Gradle
