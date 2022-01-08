@@ -1,10 +1,6 @@
-package org.firstinspires.ftc.teamcode.cv;
+package org.firstinspires.ftc.teamcode.cv.sims;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.globals.Alliance;
-import org.firstinspires.ftc.teamcode.globals.Side;
-import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.DNNObject;
-import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.OPCVFFObjectDetector3;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -20,9 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-public class OpenCvShippingElementDetector extends OpenCvPipeline {
+public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
 
 
@@ -47,15 +42,24 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     Map<TSELocation, Integer> levelSamples = new HashMap<>();
 
 
-    private int width; // width of the image
-    private int height = 224;
-    private double inScaleFactor = 0.007843;
-    private double thresholdDnn =  0.2;
-    private double meanVal = 127.5;
+    public int width = 224; // width of the image
+    public int height = 240;
+
+    public double inScaleFactor = 0.0278;
+    public double thresholdDnn =  0.6;
+    public double redMeanVal = 5;
+    public double greenMeanVal = 113;
+    public double blueMeanVal = 119;
+
+    public Point left_top = new Point(9,0);
+    public Point right_bottom = new Point(40,40);
+
     private Dnn cvDNN = null;
     private Net net = null;
     private Telemetry telemetry = null;
     private Mat imageRGB = new Mat();
+
+    private Scalar GREEN = new Scalar(0, 0, 255);
 
     //used to store maximum confidence amoung samples taken.  Only overwrite the level if we get a higher confidence
     private float maxConfidence = 0.0f;
@@ -79,7 +83,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     private String[] classNames = classNamesDuckSideBlue;
 
-    private final String modelPathDuckSideBlue = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideBlue = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
     private final String modelPathDuckSideRed = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_red_graph.pb";
     private final String modelPathWarehouseSideBlue = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_blue_graph.pb";
     private final String modelPathWarehouseSideRed = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_red_graph.pb";
@@ -95,11 +99,81 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     //private static List<Scalar> colors=new ArrayList<>();
 
-    /**
-     *
-     * @param width The width of the image (check your camera)
-     */
-    public OpenCvShippingElementDetector(int width, int height, Telemetry telemetry) {
+
+    public OpenCvShippingElementDetectorSim(Telemetry telemetry) {
+
+        this.telemetry = telemetry;
+
+        levels.put(TSELocation.NONE,0);
+
+        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_1,1);
+        levels.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_1,1);
+        levels.put(TSELocation.DUCKSIDE_RED_LEVEL_1,1);
+        levels.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_1,1);
+
+        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_2,2);
+        levels.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_2,2);
+        levels.put(TSELocation.DUCKSIDE_RED_LEVEL_2,2);
+        levels.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_2,2);
+
+        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_3,3);
+        levels.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_3,3);
+        levels.put(TSELocation.DUCKSIDE_RED_LEVEL_3,3);
+        levels.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_3,3);
+
+        levelSamples.put(TSELocation.NONE,0);
+
+        levelSamples.put(TSELocation.DUCKSIDE_BLUE_LEVEL_1,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_1,0);
+        levelSamples.put(TSELocation.DUCKSIDE_RED_LEVEL_1,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_1,0);
+
+        levelSamples.put(TSELocation.DUCKSIDE_BLUE_LEVEL_2,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_2,0);
+        levelSamples.put(TSELocation.DUCKSIDE_RED_LEVEL_2,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_2,0);
+
+        levelSamples.put(TSELocation.DUCKSIDE_BLUE_LEVEL_3,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_BLUE_LEVEL_3,0);
+        levelSamples.put(TSELocation.DUCKSIDE_RED_LEVEL_3,0);
+        levelSamples.put(TSELocation.WAREHOUSESIDE_RED_LEVEL_3,0);
+
+        location = TSELocation.NONE;
+
+        classNames = classNamesDuckSideBlue;
+        modelPath = modelPathDuckSideBlue;
+
+        /*if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE){
+            classNames = classNamesDuckSideBlue;
+            modelPath = modelPathDuckSideBlue;
+        }
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.WAREHOUSESIDE)
+        {
+            classNames = classNamesWarehouseSideBlue;
+            modelPath = modelPathWarehouseSideBlue;
+        }
+
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE)
+        {
+            classNames = classNamesDuckSideRed;
+            modelPath = modelPathDuckSideRed;
+        }
+        else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED &&
+                Side.getInstance().getPositionSide() == Side.PositionSide.WAREHOUSESIDE)
+        {
+            classNames = classNamesWarehouseSideRed;
+            modelPath = modelPathWarehouseSideRed;
+        }*/
+
+        cvDNN = new Dnn();
+        net = cvDNN.readNetFromTensorflow(modelPath);
+
+
+    }
+    public OpenCvShippingElementDetectorSim(int width, int height, Telemetry telemetry) {
         this.width = width;
         this.height = height;
         this.telemetry = telemetry;
@@ -140,8 +214,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         location = TSELocation.NONE;
 
+        classNames = classNamesDuckSideBlue;
+        modelPath = modelPathDuckSideRed;
 
-        if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
+        /*if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
                 Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE){
             classNames = classNamesDuckSideBlue;
             modelPath = modelPathDuckSideBlue;
@@ -164,7 +240,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         {
             classNames = classNamesWarehouseSideRed;
             modelPath = modelPathWarehouseSideRed;
-        }
+        }*/
 
         cvDNN = new Dnn();
         net = cvDNN.readNetFromTensorflow(modelPath);
@@ -181,9 +257,9 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_RGBA2RGB);
 
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
-                new Size(224, 224),
-                new Scalar(meanVal, meanVal, meanVal),
-                false, true);
+                new Size(width, height),
+                new Scalar(redMeanVal, greenMeanVal, blueMeanVal),
+                true, true);
 
         net.setInput(blob);
         detections = net.forward();
@@ -194,9 +270,9 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         for (int i = 0; i < detections.rows(); ++i) {
             row = detections.row(i);
-            //Mat scores = row.colRange(5, detections.cols());
+
             Core.MinMaxLocResult mm = Core.minMaxLoc(row);
-            //Core.MinMaxLocResult mm = Core.minMaxLoc(scores);
+
             float confidence = (float) mm.maxVal;
             Point classIdPoint = mm.maxLoc;
 
@@ -210,15 +286,17 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 int width = (int) (row.get(0, 2)[0] * row.cols());
                 int height = (int) (row.get(0, 3)[0] * row.rows());
 
-                //row.release();
+                telemetry.addLine(String.format("%d %d %d %d,",centerX,centerY,width,height));
 
                 int left = (int) (centerX - width * 0.5);
                 int top = (int) (centerY - height * 0.5);
                 int right = (int) (centerX + width * 0.5);
                 int bottom = (int) (centerY + height * 0.5);
 
-                Point left_top = new Point(left, top);
-                Point right_bottom = new Point(right, bottom);
+                telemetry.addLine(String.format("%d %d %d %d,",left,top,right,bottom));
+
+                left_top = new Point(left, top + 30);
+                right_bottom = new Point(right, bottom);
                 Point label_left_top = new Point(left, top + 30);
                 DecimalFormat df = new DecimalFormat("#.##");
 
@@ -292,7 +370,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 telemetry.addData("This is a real location", getLocation());
                 telemetry.update();
 
-                //Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
+                Imgproc.rectangle(imageRGB, left_top, right_bottom, GREEN, 3, 2);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(0, 0, 0), 4);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(255, 255, 255), 2);
             }

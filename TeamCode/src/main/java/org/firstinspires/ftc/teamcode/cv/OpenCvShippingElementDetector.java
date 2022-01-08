@@ -47,11 +47,13 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     Map<TSELocation, Integer> levelSamples = new HashMap<>();
 
 
-    private int width; // width of the image
-    private int height = 224;
-    private double inScaleFactor = 0.007843;
-    private double thresholdDnn =  0.2;
-    private double meanVal = 127.5;
+    private int width = 224; // width of the image
+    private int height = 240;
+    private double inScaleFactor = 0.0278;
+    private double thresholdDnn =  0.6;
+    public double redMeanVal = 5;
+    public double greenMeanVal = 113;
+    public double blueMeanVal = 119;
     private Dnn cvDNN = null;
     private Net net = null;
     private Telemetry telemetry = null;
@@ -141,7 +143,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         location = TSELocation.NONE;
 
 
-        if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
+        /*if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE &&
                 Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE){
             classNames = classNamesDuckSideBlue;
             modelPath = modelPathDuckSideBlue;
@@ -164,7 +166,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         {
             classNames = classNamesWarehouseSideRed;
             modelPath = modelPathWarehouseSideRed;
-        }
+        }*/
+
+        classNames = classNamesDuckSideBlue;
+        modelPath = modelPathDuckSideBlue;
 
         cvDNN = new Dnn();
         net = cvDNN.readNetFromTensorflow(modelPath);
@@ -182,7 +187,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
                 new Size(224, 224),
-                new Scalar(meanVal, meanVal, meanVal),
+                new Scalar(redMeanVal, greenMeanVal, blueMeanVal),
                 false, true);
 
         net.setInput(blob);

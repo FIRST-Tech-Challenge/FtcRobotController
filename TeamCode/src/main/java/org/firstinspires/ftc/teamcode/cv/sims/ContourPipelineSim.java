@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.external.libs;
+package org.firstinspires.ftc.teamcode.cv.sims;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -16,27 +17,29 @@ import java.util.List;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
 
-public class ContourPipeline extends OpenCvPipeline {
+public class ContourPipelineSim extends OpenCvPipeline {
     Scalar GREEN = new Scalar(0, 0, 255);
 
     // Green                        Y      Cr     Cb    (Do not change Y)
     public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
     public static Scalar scalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
 
+    Telemetry telemetry;
+
     // Green                                             Y      Cr     Cb
-    // public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
-    // public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
+    //public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
+    //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
     // use this picture for you own color https://raw.githubusercontent.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/main/7e8azlgi.bmp
     // Note that the Cr and Cb values range between 0-255. this means that the origin of the coordinate system is (128,128)
 
     //Volatile bc accessed by opmode without sync
-    public volatile boolean error = false;
-    public volatile Exception debug;
+    public boolean error = false;
+    //public Exception debug;
 
-    private double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
-    private double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
-    private double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
-    private double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
+    public double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
+    public double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
+    public double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
+    public double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
 
     private int CAMERA_WIDTH;
     private int CAMERA_HEIGHT;
@@ -65,12 +68,22 @@ public class ContourPipeline extends OpenCvPipeline {
 
     private final Object sync = new Object();
 
-    public ContourPipeline(double borderLeftX, double borderRightX, double borderTopY, double borderBottomY) {
-        this.borderLeftX = borderLeftX;
-        this.borderRightX = borderRightX;
-        this.borderTopY = borderTopY;
-        this.borderBottomY = borderBottomY;
+    public ContourPipelineSim(Telemetry t) {
+
+        telemetry = t;
+
+        this.borderLeftX = 0.2;
+        this.borderRightX = 0.2;
+        this.borderTopY = 0.2;
+        this.borderBottomY = 0.2;
+
+        // Green Range                                      Y      Cr     Cb
+        Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
+        Scalar initScalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
+        configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
+        configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
     }
+
 
     public void configureScalarLower(double y, double cr, double cb) {
         scalarLowerYCrCb = new Scalar(y, cr, cb);
@@ -106,6 +119,9 @@ public class ContourPipeline extends OpenCvPipeline {
             // Find Contours
             List<MatOfPoint> contours = new ArrayList<>();
             Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            telemetry.addLine("Drawing countours");
+            telemetry.update();
 
             // Draw Contours, red lines that show color areas that match
             Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
@@ -158,7 +174,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
             loopCounter++;
         } catch (Exception e) {
-            debug = e;
+            //debug = e;
             error = true;
         }
         return input;

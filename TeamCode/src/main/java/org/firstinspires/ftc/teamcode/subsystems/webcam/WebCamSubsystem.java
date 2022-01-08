@@ -21,7 +21,7 @@ public class WebCamSubsystem extends SubsystemBase {
 
     private int msPermTo = 2500;
 
-    private int width = 320;
+    private int width = 224;
     private int height = 240;
 
     private static final int MAX_FRAMES_PER_SECOND = 10;
@@ -90,6 +90,7 @@ public class WebCamSubsystem extends SubsystemBase {
     }
 
     public void openCameraDeviceAsync(){
+        webCam.setMillisecondsPermissionTimeout(5000);
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
