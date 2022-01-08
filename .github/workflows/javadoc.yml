@@ -31,7 +31,12 @@ jobs:
           sudo update-alternatives --set java /usr/lib/cjdk/jvm/jdk-17/bin/java
           sudo update-alternatives --set javac /usr/lib/cjdk/jvm/jdk-17/bin/javac
           sudo update-alternatives --set javadoc /usr/lib/cjdk/jvm/jdk-17/bin/javadoc
-          cd ~/
+          
+      - name: Debug Workspace
+        run: |
+          pwd
+          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
+          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
           echo -e "DEBUG LOGS START\n\n\n"
           ./gradlew --version
           echo -e "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
@@ -44,6 +49,11 @@ jobs:
           java --version
           echo -e "\n\n\nDEBUG LOGS END"
           ./gradlew build
+
+      - name: Setup Javadoc Source
+        run: |
+          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
+          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
           rm -rf javadoc-output
           rm -rf javadoc-workspace
           rm -rf javadoc-temp-workspace
