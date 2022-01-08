@@ -107,7 +107,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             sonarRangeR = robot.updateSonarRangeR();
             telemetry.addData("ALLIANCE", "%s", "BLUE (warehouse)");
             telemetry.addData("Block Level", "%d", blockLevel );
-            telemetry.addData("Sonar Range", "%.1f inches (51.6)", sonarRangeR/2.54 );
+            telemetry.addData("Sonar Range", "%.1f inches (52.8)", sonarRangeR/2.54 );
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -192,11 +192,11 @@ public class AutonomousBwarehouse extends AutonomousBase {
                      break;
             case 2 : strafeDist = -8.0;     // middle/middle
                      turnAngle = -42.0;
-                     distanceToGrab = -2.6;
+                     distanceToGrab = -2.2;
                      break;
             case 1 : strafeDist = -8.0;
                      turnAngle = -55.0;
-                     distanceToGrab = -8.0; // left/bottom
+                     distanceToGrab = -7.0; // left/bottom
                      break;
         } // switch()
 
@@ -221,7 +221,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         }
 
         // Drive forward to collect the element
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
 
@@ -240,21 +240,21 @@ public class AutonomousBwarehouse extends AutonomousBase {
         long   armSleep = 0;
 
         switch( level ) {
-            case 3 : angleToHub = 40.0;    // top
+            case 3 : angleToHub = 38.0;    // top
                      distanceToHub = -8.2;
                      finalDistanceToHub = 0.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
-            case 2 : angleToHub = 38.0;
+            case 2 : angleToHub = 35.0;
                      distanceToHub = -3.0;  // middle
-                     finalDistanceToHub = -4.0;
+                     finalDistanceToHub = -2.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
-            case 1 : angleToHub = 27.0;
+            case 1 : angleToHub = 30.0;
                      distanceToHub = -1.0;  // bottom
-                     finalDistanceToHub = -2.5;
+                     finalDistanceToHub = -4.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      armSleep = 2000;   // 2.0 sec
                      break;
@@ -308,19 +308,19 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.40 );
         robot.setWristPositionAuto( robot.WRIST_SERVO_STORE );  // store position (handles unpowered!)
-        if(level == 1) {
+        /*if(level == 1) {
             gyroTurn(DRIVE_SPEED_30, 135.0);
-            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 6.0, 999.9, DRIVE_TO );
-        }
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 3.0, 999.9, DRIVE_TO );
+        }*/
     } // dumpBlock
 
     /*--------------------------------------------------------------------------------------------*/
     private void driveToWarehouse( int level  ) {
         double warehouseDistance = 0.0;
         switch( level ) {
-            case 3 : warehouseDistance = 50.0;  break;
-            case 2 : warehouseDistance = 54.0;  break;
-            case 1 : warehouseDistance = 52.0;  break;
+            case 3 : warehouseDistance = 50.0;  break; // top
+            case 2 : warehouseDistance = 52.0;  break; // middle
+            case 1 : warehouseDistance = 50.0;  break; // bottom
         } // switch()
 
         gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward the freight warehouse
@@ -330,7 +330,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void collectFreight1(int level) {
-        double slowlyCollectMyPrecious = 0.12;
+        double slowlyCollectMyPrecious = 0.10;
         int freightDetections = 0;
         ElapsedTime freightTimeout = new ElapsedTime();
 

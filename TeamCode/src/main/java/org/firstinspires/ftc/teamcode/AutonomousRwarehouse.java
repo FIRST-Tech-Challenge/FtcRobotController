@@ -214,7 +214,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         }
 
         // Drive forward to collect the element
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
 

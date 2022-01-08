@@ -320,7 +320,7 @@ public class AutonomousBducks extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void driveToSquare( int level ) {
         gyroTurn(TURN_SPEED_20, 180.0 );   // Turn square to side wall
-        double squareDistance = backRangeSensor()/2.54 + 12.8;
+        double squareDistance = backRangeSensor()/2.54 + 11.0;
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );
         // Don't lower arm to floor until we get into the square, in case the freight box has rotated
         // (the front edge will catch on the floor tile when we try to drive forward)

@@ -132,7 +132,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1898;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2002;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15;
-    public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 30;
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 24;
     public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 75;
 
     public Servo        boxServo                   = null;
