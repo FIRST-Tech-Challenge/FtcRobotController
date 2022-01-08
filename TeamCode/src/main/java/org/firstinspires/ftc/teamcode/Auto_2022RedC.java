@@ -75,6 +75,7 @@ public class Auto_2022RedC extends LinearOpMode {
         });
 
         telemetry.addData("angle", robot.getAngle());
+        telemetry.update();
         waitForStart();//if there is a camera error... and it crashes the program... then we need to find a way to "pause stream"
 
         int code = mainPipeline.getCode();//get the code before we move
@@ -114,7 +115,9 @@ public class Auto_2022RedC extends LinearOpMode {
                 //error, put on bottom, do case1
                 break;
         }
-        Thread.sleep(500);
+        telemetry.addData("dropping","a block yayyy");
+        telemetry.update();
+        Thread.sleep(3000);
         //go to warehouse
         robot.gyroTurn(90,0.5);
         robot.driveToWall(0.5);
@@ -142,13 +145,7 @@ public class Auto_2022RedC extends LinearOpMode {
 
     }
     /*
-     * ways to score in auto:
-     * BLUE CAROSEUL SIDE
-     * step 1: scan
-     * step 2: caroseul
-     * step 3: drop off element
-     * step 4: get more elemnts (against wall? over bump?)
-     * step 5: put in team hub
-     * step 6: park in box since alliance partner in the hub
+     * todo: make function for everything auto
+     *  also make park in the box for this side as default
      * */
 }

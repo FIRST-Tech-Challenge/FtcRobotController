@@ -86,15 +86,9 @@ public class Auto_2022RedW extends LinearOpMode {
         }
         telemetry.update();
 
-        //caroseul
-        robot.duck(-1);//turn on duck
-        robot.gyroStrafeEncoder(0.5,-90,80);//2 feet+a bit more(error) to right. todo change the cm, direction
-        Thread.sleep(3000);
-        robot.duck(0);
-
         //to hub
         //2 sides of rectangle instead of hypotenuse
-        robot.gyroStrafeEncoder(0.5,90,130);
+        robot.gyroStrafeEncoder(0.5,90,130);//CHANGE!!!!!!!!!!
         robot.gyroStrafeEncoder(0.5,0,85);
 
         switch (code) {//shell for later, do not delete!!!
@@ -140,14 +134,5 @@ public class Auto_2022RedW extends LinearOpMode {
 
 
     }
-    /*
-     * ways to score in auto:
-     * BLUE CAROSEUL SIDE
-     * step 1: scan
-     * step 2: caroseul
-     * step 3: drop off element
-     * step 4: get more elemnts (against wall? over bump?)
-     * step 5: put in team hub
-     * step 6: park in box since alliance partner in the hub
-     * */
+/*Todo: Make a function for "everything auto" hwere we go to caroseul as well*/
 }
