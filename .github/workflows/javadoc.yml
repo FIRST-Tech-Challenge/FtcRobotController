@@ -22,9 +22,11 @@ jobs:
           sudo mkdir -p /usr/lib/cjdk/jvm
           cd /usr/lib/cjdk/jvm
           sudo tar -xvzf ~/java.tar.gz
+          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
+          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
+          sudo su
           sudo echo -e "export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin\nexport JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17" >> /etc/profile.d/mkcjdkpv.sh
           sudo bash /etc/profile.d/mkcjdkpv.sh
-          
           sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/cjdk/jvm/jdk-17/bin/java" 0
           sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/cjdk/jvm/jdk-17/bin/javac" 0
           sudo update-alternatives --set java /usr/lib/cjdk/jvm/jdk-17/bin/java
@@ -37,7 +39,8 @@ jobs:
 
       - name: Debug Workspace
         run: |
-          exec bash
+          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
+          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
           echo -e "DEBUG LOGS START\n\n\n"
           ./gradlew --version
           echo -e "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
@@ -57,6 +60,8 @@ jobs:
 
       - name: Setup Javadoc Source
         run: |
+          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
+          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
           rm -rf javadoc-output
           rm -rf javadoc-workspace
           rm -rf javadoc-temp-workspace
@@ -78,6 +83,8 @@ jobs:
 #          tar -xf android-studio.tar.gz
       - name: Generate Javadoc
         run: |
+          export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin
+          export JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17
           sudo snap install android-studio --classic
           /snap/android-studio/current/android-studio/jre/bin/javadoc -Xdoclint:none -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar -d ./javadoc-output -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/package-list $(find ./javadoc-workspace/ -name "*.java" -not -type d) --ignore-source-errors
 #      - name: Generate Javadoc
