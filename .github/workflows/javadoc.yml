@@ -17,6 +17,7 @@ jobs:
       - name: Setup Java
         run: |
           cd ~/
+          sudo apt --purge remove -y openjdk-11-jre openjdk-8-jre openjdk-11-jre-headless openjdk-8-jre-headless
           wget -O java.tar.gz --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
           sudo mkdir /usr/lib/jvm
           cd /usr/lib/jvm
