@@ -128,8 +128,8 @@ public class FreightFrenzyComputerVisionRedHub {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(300, FREIGHT_REGION_DISTANCES_FROM_TOP);
-        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(480, FREIGHT_REGION_DISTANCES_FROM_TOP);
+        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(177, FREIGHT_REGION_DISTANCES_FROM_TOP);
+        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(440, FREIGHT_REGION_DISTANCES_FROM_TOP);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, FREIGHT_REGION_DISTANCES_FROM_TOP);
 
         static final Point REGION1_HUB_TOP_LEFT_ANCHOR_POINT = new Point(0, HUB_REGION_DISTANCE_FROM_TOP);
