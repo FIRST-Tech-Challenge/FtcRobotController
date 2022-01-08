@@ -102,8 +102,8 @@ public class VSlamOdometry implements IBaseOdometry {
 
         // This is the transformation between the center of the camera and the center of the robot
         // Set these three values to match the location/orientation of the camera with respect to the robot
-        double offsetXInches = -6;
-        double offsetYInches = 3;
+        double offsetXInches = -5.5;
+        double offsetYInches = 4;
         double offsetHDegrees = 0;
 
         Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
