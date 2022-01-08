@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
+@Autonomous(name="AutoWarehouseRed", group="Autonomous")
 //@Disabled
 
 public class AutoWarehouseRed extends LinearOpMode {
@@ -30,7 +31,8 @@ public class AutoWarehouseRed extends LinearOpMode {
     private DcMotor tower1 = null; //arm motor 1
     private DcMotor tower2 = null; //arm motor 2
     private Servo clawservo = null; //clawservo
-    private CRServo duckspinner = null; // the duck spinny thingy
+    private CRServo duckspinner1 = null; // the duck spinny thingy
+    private CRServo duckspinner2 = null; // the other duck spinny thingy
 
 
 
@@ -47,7 +49,8 @@ public class AutoWarehouseRed extends LinearOpMode {
         tower1 = hardwareMap.get(DcMotor.class, "tower1");
         tower2 = hardwareMap.get(DcMotor.class, "tower2");
         clawservo = hardwareMap.get(Servo.class,"clawservo");
-        duckspinner = hardwareMap.get(CRServo.class, "duckspinner");
+        duckspinner1 = hardwareMap.get(CRServo.class, "duckspinner1");
+        duckspinner2 = hardwareMap.get(CRServo.class, "duckspinner2");
 
         double sidemult = 1.0; // Red = 1.0 Blue = -1.0
 
@@ -57,7 +60,9 @@ public class AutoWarehouseRed extends LinearOpMode {
         rb.setDirection(DcMotor.Direction.REVERSE);
         tower1.setDirection(DcMotor.Direction.FORWARD);
         tower2.setDirection(DcMotor.Direction.FORWARD);
-        duckspinner.setDirection(CRServo.Direction.FORWARD);
+        duckspinner1.setDirection(CRServo.Direction.FORWARD);
+        duckspinner2.setDirection(CRServo.Direction.FORWARD);
+
         waitForStart();
         runtime.reset();
 
@@ -73,7 +78,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0.5);
             rb.setPower(0.5);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(500); //Go forwards to side of goal
 
 
@@ -84,7 +90,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(-0.5 * sidemult);
             rb.setPower(0.5 * sidemult);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Turn left 90 to face goal
 
             tower1.setPower(0);
@@ -94,7 +101,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0.5);
             rb.setPower(0.5);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Go forwards to goal
 
             tower1.setPower(0.5);
@@ -104,7 +112,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0);
             rb.setPower(0);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Lower arm
 
             tower1.setPower(0);
@@ -114,7 +123,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0);
             rb.setPower(0);
             clawservo.setPosition(0);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Open claw
 
             tower1.setPower(-0.5);
@@ -124,7 +134,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0);
             rb.setPower(0);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Raise arm and close claw
 
             tower1.setPower(0);
@@ -134,7 +145,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(-0.5);
             rb.setPower(-0.5);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(750); //Go backwards
 
             tower1.setPower(0);
@@ -144,7 +156,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(-0.5 * sidemult);
             rb.setPower(0.5 * sidemult);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Turn left 90
 
             tower1.setPower(0);
@@ -154,7 +167,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0.5);
             rb.setPower(0.5);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Go forwards
 
             tower1.setPower(0);
@@ -164,7 +178,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(-0.5 * sidemult);
             rb.setPower(0.5 * sidemult);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Turn left
 
             tower1.setPower(0);
@@ -174,7 +189,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0.5);
             rb.setPower(0.5);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(250); //Go forwards
 
             tower1.setPower(0);
@@ -184,7 +200,8 @@ public class AutoWarehouseRed extends LinearOpMode {
             lb.setPower(0);
             rb.setPower(0);
             clawservo.setPosition(0.75);
-            duckspinner.setPower(0);
+            duckspinner1.setPower(0);
+            duckspinner2.setPower(0);
             sleep(25000); //Do nothing
         }
     }
