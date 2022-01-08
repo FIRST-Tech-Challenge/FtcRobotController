@@ -22,7 +22,7 @@ jobs:
           sudo mkdir -p /usr/lib/cjdk/jvm
           cd /usr/lib/cjdk/jvm
           sudo tar -xvzf ~/java.tar.gz
-          sudo echo -e "export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin\nexport JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17\" >> /etc/profile.d/mkcjdkpv.sh
+          sudo echo -e "export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin\nexport JAVA_HOME=/usr/lib/cjdk/jvm/jdk-17" >> /etc/profile.d/mkcjdkpv.sh
           sudo bash /etc/profile.d/mkcjdkpv.sh
           
           sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/cjdk/jvm/jdk-17/bin/java" 0
