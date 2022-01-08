@@ -46,17 +46,15 @@ jobs:
           cp -r -p ./TeamCode/ ./javadoc-workspace/
           cp -r -p ./FtcRobotController/ ./javadoc-workspace/
           cp -r -p ~/.gradle/caches/modules-2/files-2.1/ ./javadoc-temp-workspace/
-          mv ./javadoc-temp-workspace/files-2.1/ ./javadoc-temp-workspace/files-final/ 
-          find ./javadoc-temp-workspace/files-final/
-#          cp -r -p ./javadoc-temp-workspace/files-2.1/ ./javadoc-workspace
-#          find ./javadoc-workspace/
-      - name: Install Android Studio
+          mv ./javadoc-temp-workspace/files-2.1/ ./javadoc-workspace/files-final/ 
+          find ./javadoc-workspace/
+#      - name: Install Android Studio
+#        run: |
+#          cp -r -p jdtar/android-studio.tar.gz ./
+#          tar -xf android-studio.tar.gz
+      - name: Generate Javadoc
         run: |
-          cp -r -p jdtar/android-studio.tar.gz ./
-          tar -xf android-studio.tar.gz
-#       - name: Generate Javadoc
-#         run: |
-#           ./javadoc -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -d ../../../javadoc-output
+          javadoc $(find ./javadoc-workspace/ -name "*.java") -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/ -d ./javadoc-output
 #      - name: Generate Javadoc
 #        run: |
 #          cd android-studio/jre/bin
