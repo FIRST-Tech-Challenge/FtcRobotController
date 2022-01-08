@@ -19,7 +19,9 @@ public class MecanumControlV2 extends OpMode {
 //    Intake  intake        = new Intake();
     Servos spinny = new Servos(); // Output servo - Reece's box
     MotorControl Motor = new MotorControl(); // Initializes all motors, attachment intake
-
+    int servopos = 0;
+    double intakePower = 1;
+    boolean isPrimed = false;
     double driveSpeed;
     double turnSpeed;
     double direction;
@@ -73,6 +75,8 @@ public class MecanumControlV2 extends OpMode {
         //telemetry.addData("RB",robot.getRBencoder());
         //telemetry.addData("LF",robot.getLFencoder());
         //telemetry.addData("RF",robot.getRFencoder());
+        telemetry.addData("isPrimed",isPrimed);
+        telemetry.addData("Position",servopos);
         telemetry.update();
 
         //Speed control (turbo/slow mode) and direction of stick calculation
@@ -124,17 +128,17 @@ public class MecanumControlV2 extends OpMode {
 
 
 
-        if (gamepad1.a && !isIntakeOn) {
-            isIntakeOn = true;
-        }else if (!gamepad1.a && isIntakeOn) {
-            isIntakeOf = false;
-        }
-        //Turn Output off
-        if (gamepad1.a && !isIntakeOf) {
-            isIntakeOn = false;
-        }else if (!gamepad1.a && !isIntakeOn) {
-            isIntakeOf = true;
-        }
+//        if (gamepad1.right_trigger>0.1 && !isIntakeOn) {
+//            isIntakeOn = true;
+//        }else if (!(gamepad1.right_trigger>0.1) && isIntakeOn) {
+//            isIntakeOf = false;
+//        }
+//        //Turn Output off
+//        if (gamepad1.right_trigger>0.1 && !isIntakeOf) {
+//            isIntakeOn = false;
+//        }else if (!(gamepad1.right_trigger>0.1) && !isIntakeOn) {
+//            isIntakeOf = true;
+//        }
 
 
         // TOGGLE FOR INTAKE ^^^^^^
@@ -143,20 +147,30 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Set power of the intake
-        double intakePower = .75;
-        if(isIntakeOn){
-            if(gamepad1.b){
-                Motor.intakeOnePower(intakePower);
-            }
-            else {
+//        if(isIntakeOn){
+//            if(gamepad1.left_trigger>0.1){
+//                Motor.intakeOnePower(-intakePower);
+//            }
+//            else {
+//                Motor.intakeOnePower(intakePower);
+//            }
+//        }
+//        else{
+//            Motor.intakeOnePower(0);
+//        }
+        //CHANGE DIRECTION OF INTAKE - hold b reverses intake, toggling a turns on/off the intake
+
+
+        if(gamepad1.left_trigger>0.1){
                 Motor.intakeOnePower(-intakePower);
             }
-        }
+        else if(gamepad1.right_trigger>0.1) {
+                Motor.intakeOnePower(intakePower);
+            }
         else{
             Motor.intakeOnePower(0);
         }
-
-        //CHANGE DIRECTION OF INTAKE - hold b reverses intake, toggling a turns on/off the intake
+        // HOLD FOR INTAKE - RT one direction, LT reverse direction
 
 //        if (isSpinnerOn) {
 //            if (isSpinnerOn) {
@@ -215,19 +229,19 @@ public class MecanumControlV2 extends OpMode {
 
         //Vertical Lift Movement
         if(gamepad1.dpad_up){
-            Motor.VertLift.setPower(.4);
+            Motor.VertLift.setPower(-.6);
         }
         else if(gamepad1.dpad_down){
-            Motor.VertLift.setPower(-.4);
+            Motor.VertLift.setPower(.6);
         }
-        else{
+       else {
             Motor.VertLift.setPower(0);
         }
         //Horizontal Slide Movement
-        if(gamepad1.dpad_up){
+        if(gamepad1.dpad_right){
             Motor.HorzLift.setPower(.4);
         }
-        else if(gamepad1.dpad_down){
+        else if(gamepad1.dpad_left){
             Motor.HorzLift.setPower(-.4);
         }
         else{
@@ -246,40 +260,51 @@ public class MecanumControlV2 extends OpMode {
 //            shooter.shooterSwitch.setPosition(1);
 //        }
 
+
         //Control Output Servos, initial middle and final positions
-        int servopos = 0;
-        if(gamepad1.y&&servopos<2){
-            servopos++;
+
+        if(gamepad1.y){
+
+            isPrimed = true;
         }
+        else if(isPrimed && !gamepad1.y){
+            if(servopos<2){
+                servopos++;
+            }
+            else {
+                servopos=0;
+            }
+            isPrimed = false;
+        }
+        isPrimed = false;
 
         switch (servopos){
             case 0:
-                spinny.changePos(.1);
+                spinny.changePos(0.3);
                 break;
             case 1:
-                spinny.changePos(.55);
+                spinny.changePos(.5);
+                break;
             case 2:
-                spinny.changePos(.85);
-                if(gamepad1.y){
-                    servopos=0;
-                }
+                spinny.changePos(.92);
+                break;
         }
-//        if (gamepad2.x) {
-//            spinny.changePos(0);
+        // SERVO FOR OUTPUT BOX ^^^^^^
+//        if(gamepad1.y&&servopos<2){
+//            servopos++;
 //        }
-//        else if(gamepad2.y){
-//            spinny.changePos(.55);
-//        }
-//        else if (gamepad2.b) {
-//            spinny.changePos(.85);
-//        }
-
-        //Control grabber servo
-//        if (gamepad1.b) {
-//            spinny.gripperPosition(.77);
-
-//        }else if (gamepad1.dpad_up) {
-//            spinny.gripperPosition(0);
+//
+//        switch (servopos){
+//            case 0:
+//                spinny.changePos(.1);
+//                break;
+//            case 1:
+//                spinny.changePos(.55);
+//            case 2:
+//                spinny.changePos(.85);
+//                if(gamepad1.y){
+//                    servopos=0;
+//                }
 //        }
 
         //CHANGES SERVO POSITION, uncommented code cycles through positions using the y button, the commented code uses 3 buttons to change the position

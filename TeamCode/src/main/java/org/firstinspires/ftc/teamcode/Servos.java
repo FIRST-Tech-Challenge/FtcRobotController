@@ -24,7 +24,7 @@ public class Servos {
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
-        Output = hwMap.servo.get("Intake");
+        Output = hwMap.servo.get("Output");
 
         // Define and Initialize Motors
 //        gripWrist = hwMap.get(Servo.class, "grip_wrist");
@@ -33,7 +33,7 @@ public class Servos {
         //Set initial positions of servos
 //        gripWrist.setPosition(.23);
 //        gripServo.setPosition(.77);
-        Output.setPosition(0);
+        Output.setPosition(0.3);
 
 
     }
