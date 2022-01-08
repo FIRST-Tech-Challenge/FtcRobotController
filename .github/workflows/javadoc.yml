@@ -14,21 +14,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup ENV
+      - name: Setup Java
         run: |
-          wget -O jdk.deb https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
-          sudo apt install ./jdk.deb
+          cd ~/
+          wget -O java.tar.gz --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
+          sudo mkdir /usr/lib/jvm
+          cd /usr/lib/jvm
+          sudo tar -xvzf ~/java.tar.gz
+          sudo nano /etc/environment
+          sed -i '$ s/.$/:/usr/lib/jvm/jdk-17/bin"/' /etc/environment
+          echo -e "JAVA_HOME="/usr/lib/jvm/jdk-17"" >> /etc/environment
+          sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-17/bin/java" 0
+          sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk-17/bin/javac" 0
+          sudo update-alternatives --install "/usr/bin/javadoc" "javadoc" "/usr/lib/jvm/jdk-17/bin/javadoc" 0
+          sudo update-alternatives --set java /usr/lib/jvm/jdk-17/bin/java
+          sudo update-alternatives --set javac /usr/lib/jvm/jdk-17/bin/javac
+          sudo update-alternatives --set javadoc /usr/lib/jvm/jdk-17/bin/javadoc
+          update-alternatives --list java
+          update-alternatives --list javac
+          update-alternatives --list javadoc
 
       - name: Debug Workspace
         run: |
+          exec bash
           echo -e "DEBUG LOGS START\n\n\n"
           ./gradlew --version
           echo -e "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
           echo -e "Tree:\n"
           find .
           echo -e "\n\n"
+          update-alternatives --list java
+          update-alternatives --list javac
+          update-alternatives --list javadoc
           java --version
-          update-java-alternatives --list
           echo -e "\n\n\nDEBUG LOGS END"
       
       - name: Setup Gradle
