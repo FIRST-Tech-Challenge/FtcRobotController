@@ -26,7 +26,7 @@ public class JonDC extends LinearOpMode{
         br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        double[] power = new double[4];
+        float[] power = new float[4];
         boolean lsDeadzone = false;
         boolean rsDeadzone = false;
 
@@ -34,47 +34,14 @@ public class JonDC extends LinearOpMode{
 
         while (opModeIsActive()) {
 
-            /*
-            Deadzones | true = stick is near neutral position
-            Protects from drift
-            */
-            lsDeadzone = (Math.abs(this.gamepad1.left_stick_x) < 0.1) &&
-                         (Math.abs(this.gamepad1.left_stick_y) < 0.1);
-            rsDeadzone = (Math.abs(this.gamepad1.right_stick_x) < 0.1) &&
-                         (Math.abs(this.gamepad1.right_stick_y) < 0.1);
+            Chassis ch = new Chassis(hardwareMap);
 
-            //reset
-            power[0]=0;
-            power[1]=0;
-            power[2]=0;
-            power[3]=0;
-
-            //translation
-            if(!lsDeadzone){
-                power[0]+=this.gamepad1.left_stick_y;
-                power[1]+=this.gamepad1.left_stick_y;
-                power[2]+=this.gamepad1.left_stick_y;
-                power[3]+=this.gamepad1.left_stick_y;
-
-                power[0]-=this.gamepad1.left_stick_x;
-                power[1]+=this.gamepad1.left_stick_x;
-                power[2]+=this.gamepad1.left_stick_x;
-                power[3]-=this.gamepad1.left_stick_x;
-            }
-
-            //rotation
-            if(!rsDeadzone){
-                power[0]+=this.gamepad1.right_stick_x;
-                power[1]-=this.gamepad1.right_stick_x;
-                power[2]+=this.gamepad1.right_stick_x;
-                power[3]-=this.gamepad1.right_stick_x;
-            }
-
+            power = ch.mecanumDr(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y,this.gamepad1.right_stick_x,this.gamepad1.right_stick_y);
             //assigning speeds
-            fl.setPower(power[0]); //(+) for 2020-21 Mayhem bot
-            fr.setPower(power[1]); //(-) for 2020-21 Mayhem bot
-            bl.setPower(power[2]); //(+) for 2020-21 Mayhem bot
-            br.setPower(power[3]); //(-) for 2020-21 Mayhem bot
+            fl.setPower(-power[0]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            fr.setPower(power[1]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
+            bl.setPower(-power[2]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            br.setPower(power[3]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
 
             /* --------------------------------------
             Telemetry Stuff
