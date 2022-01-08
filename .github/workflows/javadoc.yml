@@ -21,9 +21,8 @@ jobs:
           sudo mkdir /usr/lib/jvm
           cd /usr/lib/jvm
           sudo tar -xvzf ~/java.tar.gz
-          sudo nano /etc/environment
-          sed -i '$ s/.$/:/usr/lib/jvm/jdk-17/bin"/' /etc/environment
-          echo -e "JAVA_HOME="/usr/lib/jvm/jdk-17"" >> /etc/environment
+          sudo sed -i '$ s/.$/:/usr/lib/jvm/jdk-17/bin"/' /etc/environment
+          sudo echo -e "JAVA_HOME="/usr/lib/jvm/jdk-17"" >> /etc/environment
           sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-17/bin/java" 0
           sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk-17/bin/javac" 0
           sudo update-alternatives --install "/usr/bin/javadoc" "javadoc" "/usr/lib/jvm/jdk-17/bin/javadoc" 0
