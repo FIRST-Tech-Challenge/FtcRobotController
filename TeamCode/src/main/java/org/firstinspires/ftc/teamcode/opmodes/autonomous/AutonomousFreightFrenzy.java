@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath2
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath3;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath2;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath1;
+import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideRedPath3;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBluePath1;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideRedPath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
@@ -42,7 +43,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
     public void initialize() {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
 
 
@@ -230,7 +231,9 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.RED && selectedSide[0] == DUCK_SIDE){
-
+                DuckSideRedPath3 duckSideRedPath3 = new DuckSideRedPath3(hardwareMap,selectedStartPos[0], dashboard,telemetry);
+                duckSideRedPath3.createPath();
+                duckSideRedPath3.execute(this);
             }
             else if(Alliance.getInstance().getAllianceTeam() == Alliance.AllianceTeam.BLUE && selectedSide[0] == WAREHOUSE_SIDE){
 

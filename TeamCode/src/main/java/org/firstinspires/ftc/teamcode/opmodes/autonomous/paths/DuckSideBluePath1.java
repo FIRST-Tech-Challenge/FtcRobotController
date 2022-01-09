@@ -47,7 +47,6 @@ public class DuckSideBluePath1 {
 
     private CreateIntake createIntake;
     private StopDetectTSEPosition stopDetectTSEPosition;
-    private InstantCommand stopDetect;
 
     public DuckSideBluePath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -67,7 +66,7 @@ public class DuckSideBluePath1 {
     }
 
     public void createPath(){
-        //startPose = new Pose2d(-36, 60, Math.toRadians(270));
+
         drive.setPoseEstimate(startPose);
 
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
@@ -79,15 +78,11 @@ public class DuckSideBluePath1 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
-        //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
-        //mockDetectTSEPosition.schedule();
+
         telemetry.addLine("Detecting Position");
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
         stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
         detectTSEPosition.schedule();
-
-        //webCamGroup = new SequentialCommandGroup(detectTSEPosition,stopDetectTSEPosition);
-        //webCamGroup.schedule();
 
 
         createCarousel.createAuto();
@@ -104,7 +99,6 @@ public class DuckSideBluePath1 {
         );
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                //.strafeTo(new Vector2d(-60, 60))
                 .splineToLinearHeading(new Pose2d(-63, 60.4, Math.toRadians(245)),Math.toRadians(180))
                 .addDisplacementMarker(()-> {
 
@@ -141,15 +135,13 @@ public class DuckSideBluePath1 {
         sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
-        stopDetect = new InstantCommand(()->{
-            stopDetectTSEPosition.schedule();
-        });
+
 
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                stopDetect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4
+                stopDetectTSEPosition.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4
         )));
     }
 }
