@@ -24,11 +24,6 @@ jobs:
     - name: Check Gradle version
       run: ./gradlew --version
 
-    - name: Prepare Javadoc Output
-      run: |
-        rm -rf ./javadoc-output
-        mkdir ./javadoc-output
-
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
       with:
