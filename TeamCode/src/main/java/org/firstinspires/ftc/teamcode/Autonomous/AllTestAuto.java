@@ -31,16 +31,24 @@ public class AllTestAuto extends LinearOpMode {
     
     
     //object detection variables
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    
+    
+    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/team10820markerfinal.tflite";
     private static final String[] LABELS = {
-      "Ball",
-      "Cube",
-      "Duck",
-      "Marker"
+      "marker10820"
     };
     
+   /* 
+    private static final String TFOD_MODEL_ASSET = "10820marker.tflite";
+    private static final String[] LABELS = {
+      "neutral",
+      "10820marker"
+    };
+    */
+    
+    
     private static final String VUFORIA_KEY =
-            "ARAjd5v/////AAABmQ6iQJD2QkgYuX/cCgoLeJtQwAvDgu+2L6atBnCINrvbLCKGuyow1XyTKBZ+OSztPsb0+FJJOwkhD2KL4WI1bjz6+FevU72cCzf9WGwGDvXprFwvbnJV0Il0z2J8y2UNYlukyTIhFKD08b2Rt+0Zv5HWRnvSI6pf5Sbg3WIeQ9v9O4dkki0W0LKz1gYEPpTTOosJO4otCxWvdANs6ZZ21Efr0tFvpR8T0CgbB8EdzRCnnknTglsOsfp03zVSfS7TBLR26QM/kNVF6RBeWMKB1v5juqmohB2tNtdqxL1uQlakmyiY8YmeuPozSyEHYv94cvn6aonUvFw7HLIP4rLe14gsg01I5aHBOizXQtVzShWj";
+            "Af2A/t3/////AAABmSsJTGsI6Ebgr6cIo4YGqmCBxd+lRenqxeIeJ3TQXcQgRlvrzKhb44K7xnbfJnHjD6eLQaFnpZZEa1Vz1PRYMNj3xCEhYZU7hAYQwyu1KBga3Lo0vEPXPSZW1o8DrM2C6IhYYGifzayZFNwZw5HtnPbyZvJfG4w6TX4EO8F0VSnZt87QtBW27nh5vSgRLN1XdzrVzm8h1ScZrPsIpSKJWVmNCWqOOeibloKfoZbhZ5A8vFz0I3nvMdi/v54DwcmS7GS/hryCgjhy4n9EhD1SnJ5325jnoyi4Fa5a/pibxPmAi8kU7ioHucmQRgv3yQHh17emqait9QNS4jTu6xyM6eeoVADsXTG4f7KK6nlZZjat";
 
 
     private VuforiaLocalizer vuforia;
@@ -50,7 +58,14 @@ public class AllTestAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         
-        initializeRobot();
+        
+        if (initializeRobot() == 1) {
+            telemetry.addData("Status", "Initialization failed..") ;
+            return ;
+        }
+        
+        
+        
         
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -76,12 +91,14 @@ public class AllTestAuto extends LinearOpMode {
             
             objectDetection();
             
+            //strafeRobotLeftEncoders(0.75, 500);
+            
             sleep(20000) ;
         }
     }
     
     
-    private void initializeRobot() {
+    private int initializeRobot() {
         
         frontLeft = hardwareMap.get(DcMotor.class,"FrontLeft");
         frontRight = hardwareMap.get(DcMotor.class,"FrontRight");
@@ -130,7 +147,9 @@ public class AllTestAuto extends LinearOpMode {
        
         // object detection initialization
         
-        initVuforia();
+        if (initVuforia() == 1) 
+            return 1 ;
+            
         initTfod();
 
         /**
@@ -146,8 +165,10 @@ public class AllTestAuto extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.5, 2.0/2.0);
+            tfod.setZoom(1, 8.0/4.0);
         }
+        
+        return 0 ;
     }
     
     private void testEachWheel(double pval) {
@@ -278,31 +299,46 @@ public class AllTestAuto extends LinearOpMode {
     
     private void linearSlideEncoder(double pval, int enCount) {
         
-        carouselTurner.setTargetPosition(enCount);
+        linearSlide.setTargetPosition(enCount);
         
-        carouselTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
         telemetry.addData("Motor Status: ", "Running" );
         telemetry.update();
         
-        carouselTurner.setPower(pval);
+        linearSlide.setPower(pval);
         
         
         
         
     }
     
-    private void initVuforia() {
+    private int initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
+        int vu_err = 0 ; 
+        
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        
+        try {
+            parameters.cameraName = hardwareMap.get(WebcamName.class, "Camera");
+        }
+        
+        catch (Exception e) {
+            telemetry.addData("System Error", "Error during hardware get Camera") ;
+            vu_err = 1 ;
+        }
 
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        if (vu_err == 0) {
+            //  Instantiate the Vuforia engine
+            vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        } 
+        
+        return vu_err ;
+        
 
         // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }
@@ -318,7 +354,7 @@ public class AllTestAuto extends LinearOpMode {
        tfodParameters.isModelTensorFlow2 = true;
        tfodParameters.inputSize = 320;
        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-       tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+       tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
     }
     
     private void objectDetection() {
@@ -353,4 +389,165 @@ public class AllTestAuto extends LinearOpMode {
         
     }
     
+    
+    private void strafeToCarousel() {
+        
+        
+        
+        
+        
+        
+    }
+    
+    private void moveRobotForwardEncoders(double pval, int enCount) {
+        
+        
+        
+        frontRight.setTargetPosition(enCount);
+        backRight.setTargetPosition(enCount);
+        frontLeft.setTargetPosition(enCount);
+        backLeft.setTargetPosition(enCount);
+        
+        
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        
+        telemetry.addData("Motor Status: ", "Running" );
+        telemetry.update();
+        
+        frontRight.setPower(pval);
+        backRight.setPower(pval);
+        frontLeft.setPower(pval);
+        backLeft.setPower(pval);
+        
+        while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+    }
+    
+    private void moveRobotBackwardEncoders(double pval, int enCount) {
+        
+       
+        
+        frontRight.setTargetPosition(enCount * -1);
+        backRight.setTargetPosition(enCount * -1);
+        frontLeft.setTargetPosition(enCount * -1);
+        backLeft.setTargetPosition(enCount * -1);
+        
+        
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        
+        telemetry.addData("Motor Status: ", "Running" );
+        telemetry.update();
+        
+        frontRight.setPower(pval * -1.0);
+        backRight.setPower(pval * -1.0);
+        frontLeft.setPower(pval * -1.0);
+        backLeft.setPower(pval * -1.0);
+        
+        while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+    }
+    
+    private void strafeRobotRightEncoders(double pval, int enCount) {
+        
+       
+        
+        frontRight.setTargetPosition(enCount * -1);
+        backRight.setTargetPosition(enCount);
+        frontLeft.setTargetPosition(enCount);
+        backLeft.setTargetPosition(enCount * -1);
+        
+        
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        
+        telemetry.addData("Motor Status: ", "Running" );
+        telemetry.update();
+        
+        frontRight.setPower(pval * -1.0);
+        backRight.setPower(pval);
+        frontLeft.setPower(pval);
+        backLeft.setPower(pval * -1.0);
+        
+        while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+    }
+    
+    private void strafeRobotLeftEncoders(double pval, int enCount) {
+        
+       
+        
+        frontRight.setTargetPosition(enCount);
+        backRight.setTargetPosition(enCount * -1);
+        frontLeft.setTargetPosition(enCount * -1);
+        backLeft.setTargetPosition(enCount);
+        
+        
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        
+        telemetry.addData("Motor Status: ", "Running" );
+        telemetry.update();
+        
+        frontRight.setPower(pval);
+        backRight.setPower(pval * 1.0);
+        frontLeft.setPower(pval * 1.0);
+        backLeft.setPower(pval);
+        
+        while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+    }
 }
