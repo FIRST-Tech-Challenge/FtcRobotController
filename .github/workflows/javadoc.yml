@@ -17,22 +17,23 @@ jobs:
       - name: Setup Java
         run: |
           cd ~/
+          sudo apt list --installed
           sudo apt --purge remove -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot
           wget -O java.tar.gz --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
-          sudo mkdir /usr/lib/cjdk/jvm
-          cd /usr/lib/cjdk/jvm
+          sudo mkdir /usr/lib/jvm
+          cd /usr/lib/jvm
           sudo tar -xvzf ~/java.tar.gz
-          sudo echo -e "export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin\nexport JAVA_HOME="/usr/lib/cjdk/jvm/jdk-17" >> /etc/profile.d/mkcjdkpv.sh
-          sudo bash /etc/profile.d/mkcjdkpv.sh
-          sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/cjdk/jvm/jdk-17/bin/java" 0
-          sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/cjdk/jvm/jdk-17/bin/javac" 0
-          sudo update-alternatives --set java /usr/lib/cjdk/jvm/jdk-17/bin/java
-          sudo update-alternatives --set javac /usr/lib/cjdk/jvm/jdk-17/bin/javac
+          sudo sed -i '$ s/.$/:/usr/lib/jvm/jdk-17/bin"/' /etc/environment
+          sudo echo -e "JAVA_HOME="/usr/lib/jvm/jdk-17"" >> /etc/environment
+          sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-17/bin/java" 0
+          sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk-17/bin/javac" 0
+          sudo update-alternatives --install "/usr/bin/javadoc" "javadoc" "/usr/lib/jvm/jdk-17/bin/javadoc" 0
+          sudo update-alternatives --set java /usr/lib/jvm/jdk-17/bin/java
+          sudo update-alternatives --set javac /usr/lib/jvm/jdk-17/bin/javac
+          sudo update-alternatives --set javadoc /usr/lib/jvm/jdk-17/bin/javadoc
           update-alternatives --list java
           update-alternatives --list javac
-#         update-alternatives --list javadoc
-#         sudo update-alternatives --install "/usr/bin/javadoc" "javadoc" "/usr/lib/jvm/jdk-17/bin/javadoc" 0
-#         sudo update-alternatives --set javadoc /usr/lib/jvm/jdk-17/bin/javadoc
+          update-alternatives --list javadoc
 
       - name: Debug Workspace
         run: |
