@@ -59,6 +59,8 @@ public class DriveTrain implements Subsystem {
     private double swivelAngle;
     private double chassisDistance, targetChassisDistance;
 
+    private boolean middleReversed;
+
     // PID
     private PIDController turnPID, drivePID, distPID, swivelPID, chassisDistancePID;
     private double maintainSwivelAngleCorrection, maintainChassisDistanceCorrection;
@@ -74,9 +76,9 @@ public class DriveTrain implements Subsystem {
 
     public static PIDCoefficients DRIVE_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.005, 0, .13);
-    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.05, 0, 0);
+    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
-    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(8, 0, 5);
+    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(8, 0,  5);
     public static double SWIVEL_PID_TOLERANCE = 10;
 
     public static double FRONT_LEFT_SMOOTHING_FACTOR = 0.1;
@@ -296,22 +298,18 @@ public class DriveTrain implements Subsystem {
 
         targetTurnRadius = (angularVelocity == 0 ? 0 : linearVelocity / angularVelocity);
 
-        targetFrontLeftVelocity = linearVelocity - angularVelocity * (targetTurnRadius - Constants.TRACK_WIDTH / 2);
-        targetFrontRightVelocity = linearVelocity - angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
+        targetFrontLeftVelocity = linearVelocity + angularVelocity * (targetTurnRadius - Constants.TRACK_WIDTH / 2);
+        targetFrontRightVelocity = linearVelocity + angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
         targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(targetTurnRadius, chassisDistance);
 
-        /*
+
         targetSwivelAngle = (angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0))
                 ? 90
                     : linearVelocity == 0
                     ? 0
                 : 90 - Math.atan2(chassisDistance, targetTurnRadius);
-         */
 
-            targetSwivelAngle = 90 - Math.toDegrees(Math.atan2(chassisDistance*angularVelocity, linearVelocity));
-
-
-        //angularVelocity and linear
+        // angularVelocity and linear
         if(smoothingEnabled)
             handleSmoothing();
     }
@@ -323,26 +321,27 @@ public class DriveTrain implements Subsystem {
         targetTurnRadius = angularVelocity == 0 ? 0 : linearVelocity / angularVelocity;
 
         SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
-        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
+        SimpleMatrix rightWheel = new SimpleMatrix(new double[';'][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix middleWheel = new SimpleMatrix(new double[][] {{ 0, -getChassisDistance() }});
 
         SimpleMatrix translation = new SimpleMatrix(new double[][] {{ 0, linearVelocity * dt }});
 
-        double heading = pose.get(2);
+        SimpleMatrix leftWheelPrime = translation.plus(UtilMethods.rotateVector(leftWheel, angularVelocity * dt).transpose());
+        SimpleMatrix rightWheelPrime = translation.plus(UtilMethods.rotateVector(rightWheel, angularVelocity * dt).transpose());
+        SimpleMatrix middleWheelPrime = translation.plus(UtilMethods.rotateVector(middleWheel, -angularVelocity * dt).transpose());
 
-        SimpleMatrix leftWheelPrime = translation.plus(UtilMethods.rotateVector(leftWheel, Math.toRadians(heading)).transpose());
-        SimpleMatrix rightWheelPrime = translation.plus(UtilMethods.rotateVector(rightWheel, Math.toRadians(heading)).transpose());
-        SimpleMatrix middleWheelPrime = translation.plus(UtilMethods.rotateVector(middleWheel, Math.toRadians(heading)).transpose());
+        targetFrontLeftVelocity = Math.signum(leftWheelPrime.get(1)) * leftWheelPrime.minus(leftWheel).normF() / dt;
+        targetFrontRightVelocity = Math.signum(rightWheelPrime.get(1)) * rightWheelPrime.minus(rightWheel).normF() / dt;
+        targetMiddleVelocity = Math.signum(middleWheelPrime.get(1) - middleWheel.get(1)) * middleWheelPrime.minus(middleWheel).normF() / dt;
 
-        targetFrontLeftVelocity = leftWheelPrime.minus(leftWheel).normF() / dt;
-        targetFrontRightVelocity = rightWheelPrime.minus(rightWheel).normF() / dt;
-        targetMiddleVelocity = middleWheelPrime.minus(middleWheel).normF() / dt;
+        targetSwivelAngle = UtilMethods.wrapAngle(Math.toDegrees(Math.atan2(middleWheelPrime.get(1) - middleWheel.get(1), middleWheelPrime.get(0) - middleWheel.get(0))));
 
-        targetSwivelAngle = angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0)
-                ? 90
-                : linearVelocity == 0
-                ? 0
-                : 90 - Math.atan2(chassisDistance, targetTurnRadius);
+        if(UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle) > 90) {
+            middleReversed = true;
+            targetMiddleVelocity = -1 * targetMiddleVelocity;
+            targetSwivelAngle = UtilMethods.wrapAngle(180 - targetSwivelAngle);
+        } else
+            middleReversed = false;
 
         if(smoothingEnabled)
             handleSmoothing();
@@ -447,11 +446,16 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("fr velocity", ticksToMeters(motorFrontRight.getVelocity()));
             telemetryMap.put("middle velocity", ticksToMeters(motorMiddle.getVelocity()));
 
+            telemetryMap.put("target turn radius", targetTurnRadius);
+            telemetryMap.put("target linear velocity", targetLinearVelocity);
+            telemetryMap.put("target angular velocity", targetAngularVelocity);
+
             telemetryMap.put("fl target velocity", targetFrontLeftVelocity);
             telemetryMap.put("fr target velocity", targetFrontRightVelocity);
             telemetryMap.put("middle target velocity", targetMiddleVelocity);
             telemetryMap.put("swivel target power", maintainSwivelAngleCorrection);
             telemetryMap.put("duck power", duckSpinner.getPower());
+            telemetryMap.put("duck position", duckSpinner.getCurrentPosition());
 
             telemetryMap.put("fl amps", motorFrontLeft.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("fr amps", motorFrontRight.getCurrent(CurrentUnit.AMPS));
@@ -474,6 +478,8 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("pose (x)", pose.get(0));
             telemetryMap.put("pose (y)", pose.get(1));
             telemetryMap.put("pose (heading)", Math.toDegrees(pose.get(2)));
+
+            telemetryMap.put("middle wheel reversed", middleReversed);
         }
 
         return telemetryMap;

@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Crane;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -57,6 +58,7 @@ import java.util.function.IntSupplier;
  * right stick x - rotate
  * guide - emergency stop
  */
+@Config
 @TeleOp(name = "refactored FF_6832")
 public class FF_6832 extends OpMode {
     private Robot robot;
@@ -140,6 +142,7 @@ public class FF_6832 extends OpMode {
         initializing = true;
         debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
         gameState = GameState.TELE_OP;
+        usingDesmosDrive = true;
 
         // timing
         lastLoopClockTime = System.nanoTime();
@@ -239,14 +242,14 @@ public class FF_6832 extends OpMode {
     public void start() {
         lastLoopClockTime = System.nanoTime();
         initializing = false;
-        //if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
-            //robot.articulate(Robot.Articulation.START);
-//        auto.visionProvider.shutdownVision();
+//        if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
+//            robot.articulate(Robot.Articulation.START);
+        auto.visionProvider.shutdownVision();
     }
 
     private void handleTeleOpDriveArcade() {
-        double forward = Math.pow(-gamepad2.left_stick_y, 3) * FORWARD_SCALING_FACTOR;
-        double rotate = Math.pow(gamepad2.right_stick_x, 3) * ROTATE_SCALING_FACTOR;
+        double forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
+        double rotate = -gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
 
         if(usingDesmosDrive)
             robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9, smoothingEnabled);

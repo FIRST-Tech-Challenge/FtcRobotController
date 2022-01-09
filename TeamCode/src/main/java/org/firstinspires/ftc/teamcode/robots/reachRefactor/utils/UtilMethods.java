@@ -15,7 +15,7 @@ public class UtilMethods {
         return (pulse - 750.0) / 1500.0; // convert mr servo controller pulse width to double on 0 - 1 scale
     }
     public static double wrapAngle(double angle){
-        return (angle) % 360;
+        return Math.abs((angle) % 360);
     }
     public static double wrapAngle(double angle1, double angle2){
         return (angle1 + angle2) % 360;
