@@ -46,8 +46,7 @@ jobs:
           cp -r -p ./TeamCode/ ./javadoc-workspace/
           cp -r -p ./FtcRobotController/ ./javadoc-workspace/
           cp -r -p ~/.gradle/caches/modules-2/files-2.1/ ./javadoc-temp-workspace/
-          mv ./javadoc-temp-workspace/files-2.1/ ./javadoc-temp-workspace/files-final/ 
-          find ./javadoc-temp-workspace/files-final/
+          find ./javadoc-temp-workspace/
 #          cp -r -p ./javadoc-temp-workspace/files-2.1/ ./javadoc-workspace
 #          find ./javadoc-workspace/
       - name: Install Android Studio
