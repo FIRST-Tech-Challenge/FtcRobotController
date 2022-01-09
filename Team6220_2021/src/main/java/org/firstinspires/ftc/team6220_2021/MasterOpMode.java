@@ -59,8 +59,8 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        motorBelt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBelt.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

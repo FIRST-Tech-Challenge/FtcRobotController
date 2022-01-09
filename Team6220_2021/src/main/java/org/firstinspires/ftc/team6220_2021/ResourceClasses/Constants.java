@@ -38,20 +38,20 @@ public class Constants {
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
 
     // Motor Constants
-    public static final int BELT_RESET = 1000;
-    public static final int ARM_COLLECTING_LEVEL = 0;
+    public static final int BELT_RESET = 1250;
+    public static final int ARM_COLLECTING_LEVEL = 100;
+    // todo - find values
     public static final int ARM_ALLIANCE_HUB_1ST_LEVEL = 300;
-    public static final int ARM_SHARED_HUB_LEVEL = 600;
-    public static final int ARM_ALLIANCE_HUB_3RD_LEVEL = 900;
-    public static final int ARM_BACKWARDS_ALLIANCE_HUB_3RD_LEVEL = 2000;
-    public static final int ARM_CAPPING_LEVEL = 1050;
-    public static final int ARM_BACKWARDS_CAPPING_LEVEL = 1850;
+    public static final int ARM_SHARED_HUB_LEVEL = 500;
+    public static final int ARM_ALLIANCE_HUB_3RD_LEVEL = 650;
+    public static final int ARM_BACKWARDS_ALLIANCE_HUB_3RD_LEVEL = 1800;
+    public static final int ARM_CAPPING_LEVEL = 800;
 
     // Servo Values
-    public static final double CLOSED_GRABBER_POSITION = 0.1;
-    public static final double OPEN_GRABBER_POSITION = 0.4;
-    public static final double SERVO_ARM_SHARED_HUB_POSITION = 0.1;
-    public static final double SERVO_ARM_RESET_POSITION = 0.8;
+    public static final double CLOSED_GRABBER_POSITION = 0.3;
+    public static final double OPEN_GRABBER_POSITION = 0.5;
+    public static final double SERVO_ARM_SHARED_HUB_POSITION = 0.0;
+    public static final double SERVO_ARM_RESET_POSITION = 0.45;
 
     // TensorFlow Autonomous
     public static final String VUFORIA_KEY = "AXDNhID/////AAABmTzx9+zSP0cgsSvEBLeS2Y9I1y9lY1nEbJ0" +
@@ -59,6 +59,6 @@ public class Constants {
             "0PN1gwSloq8A+nrV6W1LU10WzZ/Pez2F0to+5aV0bOBB+VhZIdN5ABnoSMPa6JxtR6QaCI3dg++wpGw+/X3R" +
             "wDJhllOoGVmsLE9DTEuBBAI+MtRIpFNrSR7mcv3TEHMf8YIc+qxED8YE7Az3PGK1xy/NzLqNtFdnNVFhp023" +
             "8Kaaqnu3DABLRXRjSJ1QRSHmE8mIur5Dk3OcqMv3fwTNt5CnhC2J/D5biVGixUQ+dveylNEVNmp0k";
-    public static final String[] TENSORFLOW_LABELS = {"TSE"};
-    public static final String TENSORFLOW_MODEL_ASSET = "model_20211128_184150.tflite";
+    public static final String[] TENSORFLOW_LABELS = {"TSE, Cube, Sphere, Duck"};
+    public static final String TENSORFLOW_MODEL_ASSET = "model_20220108_181014.tflite";
 }

@@ -7,195 +7,131 @@ import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 public abstract class MasterTeleOp extends MasterOpMode {
     int position = 0;
-    int x;
 
     public void driveRobot() {
-        motorFL.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
-        motorBL.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
-        motorFR.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
-        motorBR.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
-    }
-
-    public void driveSlow() {
         if (driver1.getLeftTriggerValue() > 0.25) {
             motorFL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * 0.25);
             motorBL.setPower((gamepad1.left_stick_y - gamepad1.right_stick_x) * 0.25);
             motorFR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * 0.25);
             motorBR.setPower((gamepad1.left_stick_y + gamepad1.right_stick_x) * 0.25);
+        } else {
+            motorFL.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
+            motorBL.setPower(gamepad1.left_stick_y - gamepad1.right_stick_x);
+            motorFR.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
+            motorBR.setPower(gamepad1.left_stick_y + gamepad1.right_stick_x);
         }
     }
 
+    // todo - fix to be manual
     public void driveLeftCarousel() {
-        if (driver1.isButtonPressed(Button.LEFT_BUMPER)) {
+        if (driver1.isButtonJustPressed(Button.LEFT_BUMPER)) {
             motorLeftDuck.setPower(-0.75);
             motorRightDuck.setPower(-0.75);
+            pauseMillis(1000);
         } else {
             motorLeftDuck.setPower(0.0);
             motorRightDuck.setPower(0.0);
         }
     }
 
+    // todo - fix to be manual
     public void driveRightCarousel() {
-        if (driver1.isButtonPressed(Button.RIGHT_BUMPER)) {
+        if (driver1.isButtonJustPressed(Button.RIGHT_BUMPER)) {
             motorLeftDuck.setPower(0.75);
             motorRightDuck.setPower(0.75);
+            pauseMillis(1000);
         } else {
             motorLeftDuck.setPower(0.0);
             motorRightDuck.setPower(0.0);
         }
     }
 
-    // todo - make arm move backwards only when grabber closes
-    // todo - and forwards when grabber opens
+    // todo - move arm backwards only when grabber closes
+    // todo - and move arm forwards only when grabber opens
+    // todo - only if necessary
     public void driveGrabber() {
-        if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() < 0.2) {
+        if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() < 0.4) {
             servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
-        } else if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() > 0.2) {
+        } else if (driver2.isButtonJustPressed(Button.X) && servoGrabber.getPosition() > 0.4) {
             servoGrabber.setPosition(Constants.CLOSED_GRABBER_POSITION);
         }
     }
 
-    // todo - fix servo and arm positions in constants class
-    // todo - calculate servo ratio 1/x relationship scientifically
     public void driveArm() {
         if (driver2.isButtonJustPressed(Button.DPAD_LEFT) && position == 0) {
-            // todo - motor at shared hub
             motorArm.setTargetPosition(Constants.ARM_SHARED_HUB_LEVEL);
+            motorBelt.setTargetPosition(Constants.BELT_RESET);
 
-            for (int i = 1; i <= 10; i++) {
-                double startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - startTime < 40) {
-                    motorArm.setPower(0.1 * i);
-                }
+            pauseMillis(750);
 
-                if (Math.abs(motorArm.getCurrentPosition() - Constants.ARM_SHARED_HUB_LEVEL) < 100) {
-                    break;
-                }
-            }
-
-            //todo - servo shared hub
             servoArm.setPosition(Constants.SERVO_ARM_SHARED_HUB_POSITION);
             position = 1;
 
         } else if (driver2.isButtonJustPressed(Button.DPAD_RIGHT) && position == 0) {
-            // todo - motor at 3rd level
             motorArm.setTargetPosition(Constants.ARM_ALLIANCE_HUB_3RD_LEVEL);
+            motorBelt.setTargetPosition(Constants.BELT_RESET);
 
-            for (int i = 1; i <= 10; i++) {
-                double startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - startTime < 40) {
-                    motorArm.setPower(0.1 * i);
-                }
+            pauseMillis(750);
 
-                if (Math.abs(motorArm.getCurrentPosition() - Constants.ARM_ALLIANCE_HUB_3RD_LEVEL) < 100) {
-                    break;
-                }
-            }
-
-            //todo - servo ratio
-            servoArm.setPosition(0.0);
+            servoArm.setPosition(0.45 - 3 * motorArm.getCurrentPosition() / 8000.0);
             position = 2;
 
         } else if (driver2.isButtonJustPressed(Button.A) && position == 0) {
-            // todo - motor at capping
             motorArm.setTargetPosition(Constants.ARM_CAPPING_LEVEL);
+            motorBelt.setTargetPosition(Constants.BELT_RESET);
 
-            for (int i = 1; i <= 10; i++) {
-                double startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - startTime < 40) {
-                    motorArm.setPower(0.1 * i);
-                }
+            pauseMillis(750);
 
-                if (Math.abs(motorArm.getCurrentPosition() - Constants.ARM_CAPPING_LEVEL) < 100) {
-                    break;
-                }
-            }
-
-            //todo - servo ratio
-            servoArm.setPosition(0.0);
+            servoArm.setPosition(0.45 - 3 * motorArm.getCurrentPosition() / 8000.0);
             position = 3;
 
-        } else if (driver2.isButtonJustPressed(Button.B) && position == 3) {
-            // todo - motor at capping backwards
-            motorArm.setTargetPosition(Constants.ARM_BACKWARDS_CAPPING_LEVEL);
+        } else if (driver2.isButtonJustPressed(Button.DPAD_UP) && position == 0) {
+            motorArm.setTargetPosition(Constants.ARM_BACKWARDS_ALLIANCE_HUB_3RD_LEVEL);
+            motorBelt.setTargetPosition(Constants.BELT_RESET);
 
-            for (int i = 1; i <= 5; i++) {
-                double startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - startTime < 40) {
-                    motorArm.setPower(0.1 * i);
-                }
+            pauseMillis(1500);
 
-                if (Math.abs(motorArm.getCurrentPosition() - Constants.ARM_BACKWARDS_CAPPING_LEVEL) < 100) {
-                    break;
-                }
-            }
-
-            //todo - servo ratio backwards
-            servoArm.setPosition(0.0);
+            servoArm.setPosition(0.6 - 3 * (motorArm.getCurrentPosition() - 1200) / 8000.0);
             position = 4;
 
-        } else if (driver2.isButtonJustPressed(Button.DPAD_UP) && position == 2) {
-            // todo - motor at 3rd level backwards
-            motorArm.setTargetPosition(Constants.ARM_BACKWARDS_ALLIANCE_HUB_3RD_LEVEL);
-
-            for (int i = 1; i <= 5; i++) {
-                double startTime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - startTime < 40) {
-                    motorArm.setPower(0.1 * i);
-                }
-
-                if (Math.abs(motorArm.getCurrentPosition() - Constants.ARM_BACKWARDS_ALLIANCE_HUB_3RD_LEVEL) < 100) {
-                    break;
-                }
-            }
-
-            //todo - servo ratio backwards
-            servoArm.setPosition(0.0);
-            position = 5;
-
         } else if (driver2.isButtonJustPressed(Button.DPAD_DOWN)) {
-            // todo - motor at collecting
+            servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
+            motorBelt.setTargetPosition(Constants.BELT_RESET);
             motorArm.setTargetPosition(Constants.ARM_COLLECTING_LEVEL);
-            motorArm.setPower(1.0);
 
-            //todo - servo ratio
-            servoArm.setPosition(0.0);
             position = 0;
         }
     }
 
-    // todo - change
     public void driveArmManual() {
-        if (Math.abs(driver2.getRightStickY()) > 0.1) {
-            motorArm.setTargetPosition(motorArm.getTargetPosition() + (int) (driver2.getRightStickY() * 10));
-            // todo - servo parallel to ground
-        }
-    }
-
-    public void driveBelt() {
         if (Math.abs(driver2.getLeftStickY()) > 0.1) {
-            motorBelt.setPower(driver2.getLeftStickY());
-        } else {
-            motorBelt.setPower(0.0);
+            motorArm.setTargetPosition(motorArm.getCurrentPosition() + (int) driver2.getLeftStickY());
+            motorBelt.setTargetPosition(motorBelt.getCurrentPosition() - (int) driver2.getLeftStickY() * 4);
         }
+
+        if (Math.abs(driver2.getRightStickY()) > 0.1) {
+            motorArm.setTargetPosition(motorArm.getCurrentPosition() + (int) driver2.getLeftStickY());
+            motorBelt.setTargetPosition(motorBelt.getCurrentPosition() - (int) driver2.getLeftStickY() * 4);
+        }
+
+        // 2k belt 100 arm at 45 deg
+        // just belt at 0 deg
     }
 
-    // todo - make sure this resets properly
-    // todo - make sure this resets motor belt
-    // todo - servo ratio
-    public void resetArmAndServos() {
+    public void reset() {
         if (driver2.getLeftTriggerValue() > 0.5 && driver2.getRightTriggerValue() > 0.5) {
             servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
             servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
-
-            motorBelt.setPower(0.5);
             motorBelt.setTargetPosition(Constants.BELT_RESET);
 
-            motorArm.setPower(1.0);
-            motorArm.setTargetPosition(0);
+            motorArm.setTargetPosition(-50);
+            pauseMillis(500);
             motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorArm.setTargetPosition(0);
+            motorArm.setPower(0.5);
+            motorArm.setTargetPosition(Constants.ARM_COLLECTING_LEVEL);
             motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            servoArm.setPosition(0.45 - 3 * motorArm.getCurrentPosition() / 8000.0);
         }
     }
 }
