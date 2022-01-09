@@ -33,8 +33,7 @@ public class AutoSpinnerBlue extends LinearOpMode {
     private CRServo duckspinner1 = null; // the duck spinny thingy
     private CRServo duckspinner2 = null; // the other duck spinner thingy
 
-
-
+    
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Ready to run");
