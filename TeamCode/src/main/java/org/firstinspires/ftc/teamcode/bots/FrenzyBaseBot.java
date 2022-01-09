@@ -108,7 +108,7 @@ public class FrenzyBaseBot implements IOdoBot {
             backRight = hwMap.get(DcMotorEx.class, RIGHT_BACK);
 
             resetEncoders();
-            this.encoderDirection = -1;
+            this.encoderDirection = 1;
 
 
             if (backLeft != null) {
