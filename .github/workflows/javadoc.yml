@@ -59,7 +59,7 @@ jobs:
 #           ./javadoc -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -d ../../../javadoc-output
       - name: Generate Javadoc
         run: |
-          javadoc -d ./javadoc-output $(find . -name "*.java") -public -splitindex -use -author -version -Xdoclint:none --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/
+          javadoc -d ./javadoc-output ${find . -name "*.java"} -public -splitindex -use -author -version -Xdoclint:none --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/
       - name: Find
         run: find .
       - name: Upload the Javadoc output
