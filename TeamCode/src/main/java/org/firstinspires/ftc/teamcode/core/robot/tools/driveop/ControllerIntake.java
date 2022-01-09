@@ -24,7 +24,7 @@ public class ControllerIntake extends AutoIntake {
 
     public void update() {
         reader.readValue();
-        if (!containsObject()) {
+        if (noObject()) {
             if (reader.getState()) {
                 if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
                     this.forward();

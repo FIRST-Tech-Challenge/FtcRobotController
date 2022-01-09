@@ -31,7 +31,7 @@ public class AutoIntake {
         this.motor.setPower(-1);
     }
 
-    public boolean containsObject() {
-        return distanceSensor.getDistance(DistanceUnit.MM) <= 210;
+    public boolean noObject() {
+        return !(distanceSensor.getDistance(DistanceUnit.MM) <= 210);
     }
 }

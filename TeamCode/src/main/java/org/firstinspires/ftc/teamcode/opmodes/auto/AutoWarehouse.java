@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
@@ -89,7 +88,7 @@ public class AutoWarehouse extends LinearOpMode {
             for (int i = 0; i < 3; i++) {
                 // intake code
                 intake.forward();
-                while (!intake.containsObject()) {
+                while (intake.noObject()) {
                     drive.setMotorPowers(0.1, 0.1, 0.1,0.1);
                 }
                 intake.stop();

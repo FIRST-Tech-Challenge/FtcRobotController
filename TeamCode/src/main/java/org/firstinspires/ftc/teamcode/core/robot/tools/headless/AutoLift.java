@@ -1,20 +1,11 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.headless;
 
-import com.arcrobotics.ftclib.gamepad.ButtonReader;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedOnceEvent;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
 
@@ -47,21 +38,18 @@ public class AutoLift {
     }
 
     protected enum MovementStates { // switch this to a bool if you have time
-        NO_MOVEMENT,
-        MOVING,
+        START,
+        LIFT_MOVEMENT,
         SERVO_MOVEMENT
     }
 
     protected final DcMotor liftMotor;
     protected final Servo armServo;
-    // protected final DigitalChannel bottomSensor;
-    protected final AtomicBoolean dumping = new AtomicBoolean(false);
-    protected final AtomicBoolean dumpingEventRunning = new AtomicBoolean(false);
     protected final EventThread eventThread;
     protected TimedEvent event;
     protected Positions position = Positions.INTAKING;
-    protected Positions lastPosition = Positions.INTAKING;
-    protected MovementStates state = MovementStates.NO_MOVEMENT;
+    protected Positions lastPosition = position;
+    protected MovementStates state = null;
     // fix this later
     /**
      * @param eventThread local eventThread instance
@@ -93,34 +81,46 @@ public class AutoLift {
 
 
     /*
+
     set to 0.7
     go to motor position
+
     set servo to servo position
     if not dumper BREAK
-    wait 800 ms
+    else wait 800 ms
+
     go to motor 1375 and servo 0.7
-    BREAK
+
      */
 
+    private boolean dumpWaiting = true;
+
     public void update() {
-        if (position != lastPosition) state = MovementStates.NO_MOVEMENT;
+        if (position != lastPosition) state = MovementStates.START;
         switch (state) {
-            case NO_MOVEMENT:
+            case START:
                 armServo.setPosition(0.7D);
                 liftMotor.setTargetPosition(position.motorPos);
-                state = MovementStates.MOVING;
-                eventThread.addEvent(new RunWhenOutputChangedOnceEvent(() -> {
-                    state = MovementStates.SERVO_MOVEMENT
-                },this::eval));
+                state = MovementStates.LIFT_MOVEMENT;
+                break;
+            case LIFT_MOVEMENT:
+                final double motorPos = liftMotor.getCurrentPosition();
+                if (motorPos >= position.motorPos - 3 && motorPos <= position.motorPos + 3) {
+                    armServo.setPosition(position.armPos);
+                    if (!position.dumper) state = null;
+                    else {
+                        dumpWaiting = true;
+                        eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, 760));
+                        state = MovementStates.SERVO_MOVEMENT;
+                    }
+                }
                 break;
             case SERVO_MOVEMENT:
-                armServo.setPosition(position.armPos);
-                Positions ogposition = position;
-                eventThread.addEvent(new TimedEvent(() -> {
-                    if (ogposition == position) {
-                        state = MovementStates.MOTOR_MOVEMENT;
-                    }
-                }, 800));
+                if (!dumpWaiting) {
+                    position = Positions.INTAKING;
+                    return;
+                }
+                break;
         }
         lastPosition = position;
     }
