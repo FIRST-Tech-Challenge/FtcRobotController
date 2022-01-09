@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.mentor.samples.FaceDetector;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps.InternalCameraHardwareMap;
@@ -14,6 +15,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
+@Disabled
 @Autonomous(name="Mentor - Auto: Face Detector", group="Mentor")
 public class FaceDetectorAutoMode extends LinearOpMode {
     // Handle hardware stuff...

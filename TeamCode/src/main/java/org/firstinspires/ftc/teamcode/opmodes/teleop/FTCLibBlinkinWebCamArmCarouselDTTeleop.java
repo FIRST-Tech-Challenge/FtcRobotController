@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateMagneticLimi
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
 import org.firstinspires.ftc.teamcode.opmodes.triggers.CreateMagneticLimitSwitchTrigger;
 
-
+@Disabled
 @TeleOp(name="Telop: FTCLib BlinkinWebCamArmCarouselDT Example", group="FTCLib")
 public class FTCLibBlinkinWebCamArmCarouselDTTeleop extends CommandOpMode {
 

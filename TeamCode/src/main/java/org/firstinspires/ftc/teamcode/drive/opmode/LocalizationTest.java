@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.MecanumDriveCommand;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSu
  *
  * NOTE: this has been refactored to use FTCLib's command-based
  */
+@Disabled
 @TeleOp(group = "drive")
 public class LocalizationTest extends CommandOpMode {
 

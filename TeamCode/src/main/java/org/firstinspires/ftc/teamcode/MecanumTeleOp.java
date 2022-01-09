@@ -139,7 +139,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 intakePower = -0.75;
             }
             else if (gamepad2.left_trigger > 0.5){
-                intakePower = 0.6;
+                intakePower = 0.35;
             }
             else if (gamepad2.left_trigger <= 0.5 && gamepad2.right_trigger <= 0.5){
                 intakePower = 0;

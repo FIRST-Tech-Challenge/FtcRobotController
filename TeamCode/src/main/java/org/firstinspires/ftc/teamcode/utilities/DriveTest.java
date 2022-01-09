@@ -12,12 +12,14 @@ positionP = 5.0
  */
 package org.firstinspires.ftc.teamcode.utilities;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
 
+@Disabled
 @TeleOp(name="Drive Test", group="Utilities")
 public class DriveTest extends LinearOpMode {
     FrenzyHardwareMap robot = new FrenzyHardwareMap();

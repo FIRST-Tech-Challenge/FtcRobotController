@@ -31,7 +31,7 @@ public class CreateIntake {
     private StopIntake stopIntake;
 
     private static final double RIGHT_TRIGGER_POWER = -0.75;
-    private static final double LEFT_TRIGGER_POWER = 0.6;
+    private static final double LEFT_TRIGGER_POWER = 0.35;
 
     public CreateIntake(final HardwareMap hwMap, final String deviceName, final GamepadEx op, Telemetry telemetry){
         this.deviceName = deviceName;

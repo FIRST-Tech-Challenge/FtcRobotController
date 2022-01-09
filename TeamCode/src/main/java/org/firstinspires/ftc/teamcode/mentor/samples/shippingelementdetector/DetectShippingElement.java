@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode.mentor.samples.shippingelementdetector;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -41,6 +42,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * This version of the internal camera example uses EasyOpenCV's interface to the
  * Android Camera2 API
  */
+@Disabled
 @Autonomous(name="Mentor - Auto: FF Shipping Element Detector", group="Mentor")
 public class DetectShippingElement extends LinearOpMode
 

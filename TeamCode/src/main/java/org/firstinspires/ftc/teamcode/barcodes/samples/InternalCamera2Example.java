@@ -22,6 +22,7 @@
 
 package org.firstinspires.ftc.teamcode.barcodes.samples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -41,6 +42,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
  * This version of the internal camera example uses EasyOpenCV's interface to the
  * Android Camera2 API
  */
+@Disabled
 @TeleOp
 public class InternalCamera2Example extends LinearOpMode
 {

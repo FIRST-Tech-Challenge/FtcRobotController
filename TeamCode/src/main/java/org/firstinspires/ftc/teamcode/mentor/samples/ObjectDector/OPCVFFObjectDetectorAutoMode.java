@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.mentor.samples.HardwareMaps.InternalCameraHardwareMap;
@@ -15,6 +16,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+@Disabled
 @Autonomous(name="Mentor - Auto: FF Object Detector", group="Mentor")
 public class OPCVFFObjectDetectorAutoMode extends LinearOpMode {
     // Handle hardware stuff...

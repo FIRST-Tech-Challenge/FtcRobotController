@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.DuckSideBluePath1;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideBlue
 import org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.WarehouseSideRedPath1;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
+@Disabled
 @Autonomous(name="Auto Freight Frenzy Gamepad", group="FreightFrenzy")
 public class AutonomousFreightFrenzyGamepad extends CommandOpMode {
 

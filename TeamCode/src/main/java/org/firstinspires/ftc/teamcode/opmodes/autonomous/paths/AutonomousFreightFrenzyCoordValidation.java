@@ -11,11 +11,12 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateLEDs;
 
-
+@Disabled
 @Autonomous(name="Auto Freight Frenzy Coords", group="FreightFrenzy")
 public class AutonomousFreightFrenzyCoordValidation extends CommandOpMode {
 

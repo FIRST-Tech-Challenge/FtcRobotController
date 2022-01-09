@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.RunCommand;
@@ -32,7 +33,7 @@ import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 
 
-
+@Disabled
 @Autonomous(name="Auto: FTCLib RR  Sample1", group="FTCLib")
 public class FTCLibRRDriveSample1 extends CommandOpMode {
 
