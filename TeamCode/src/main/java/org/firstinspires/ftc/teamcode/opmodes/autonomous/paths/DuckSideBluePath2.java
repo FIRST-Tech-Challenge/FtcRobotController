@@ -46,7 +46,7 @@ public class DuckSideBluePath2 {
 
     private SequentialCommandGroup carouselGroupBlue1;
     private SequentialCommandGroup intakeGroup;
-    InstantCommand warehouseParkingTimer;
+    InstantCommand startWarehouseParkingTimerCommand;
 
     private final Pose2d startPose;
     private final HardwareMap hwMap;
@@ -72,7 +72,7 @@ public class DuckSideBluePath2 {
     }
 
     public void createPath(){
-        //startPose = new Pose2d(-36, 60, Math.toRadians(270));
+
         drive.setPoseEstimate(startPose);
 
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
@@ -83,9 +83,6 @@ public class DuckSideBluePath2 {
 
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
-
-        //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
-        //mockDetectTSEPosition.schedule();
 
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
         stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
@@ -106,7 +103,6 @@ public class DuckSideBluePath2 {
 
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                //.strafeTo(new Vector2d(-60, 60))
                 .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
                 .addDisplacementMarker(()-> {
                     telemetry.addData("Path 1", "performing path 1 action");
@@ -146,14 +142,14 @@ public class DuckSideBluePath2 {
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
         sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
 
-        warehouseParkingTimer = new InstantCommand(()->{
+        startWarehouseParkingTimerCommand = new InstantCommand(()->{
             Timers.getInstance().startWarehouseParkingTimer();
         });
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                warehouseParkingTimer.andThen(stopDetectTSEPosition, sample1Follower1, carouselGroupBlue1,
+                startWarehouseParkingTimerCommand.andThen(stopDetectTSEPosition, sample1Follower1, carouselGroupBlue1,
                         sample1Follower2,sample1Follower3, sample1Follower4,intakeGroup,
                         new WaitUntilCommand(Timers.getInstance()::warehouseTimerIsDone).andThen(sample1Follower5))
         ));
