@@ -81,15 +81,15 @@ public class Auto_2022FF extends LinearOpMode {
         }
         telemetry.update();
         //caroseul
-        robot.pidGyroStrafeCm(90, 62);//2 feet+a bit more(error) to right. todo change the cm
+        robot.pidGyroStrafeIn(90, 62);//2 feet+a bit more(error) to right. todo change the cm
         robot.duck(1);//turn on duck
         Thread.sleep(3000);
         robot.duck(0);
 
         //to hub
         //todo: adjust these values to make it work! You only need to change cm really, and maybe flip the angle for the second strafe if it's going in the wrong direction
-        robot.pidGyroStrafeCm(Math.atan2(4.0, 3.0), 152);
-        robot.pidGyroStrafeCm(-90, 20);
+        robot.pidGyroStrafeIn(Math.atan2(4.0, 3.0), 152);
+        robot.pidGyroStrafeIn(-90, 20);
 
         switch (code) {//shell for later, do not delete!!!
             case 2:
@@ -132,7 +132,7 @@ public class Auto_2022FF extends LinearOpMode {
         robot.pidGyroTurn(90);
         robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
         //box
-        robot.pidGyroStrafeCm(90, 60);//todo change cm
+        robot.pidGyroStrafeIn(90, 60);//todo change cm
 
 
     }

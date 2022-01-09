@@ -90,14 +90,14 @@ public class AAMainTeleop extends LinearOpMode {
             //trying to keep the arm in position and not swinging around
 
             //top, middle, bottom scoring
-            if (gamepad2.x) {
-                robot.dropBottom(powerMod);
-            }
-            if (gamepad2.a) {
-                robot.dropMiddle(powerMod);
+            if (gamepad2.y) {
+                robot.moveSlides(3,0.5);
             }
             if (gamepad2.b) {
-                robot.dropTop(powerMod);
+                robot.moveSlides(2,0.5);
+            }
+            if (gamepad2.a) {
+                robot.moveSlides(1,0.5);
             }
 
 

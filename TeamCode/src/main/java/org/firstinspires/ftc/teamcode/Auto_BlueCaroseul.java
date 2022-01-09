@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,7 +13,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-public class Auto_2022RedC extends LinearOpMode {
+@Autonomous(name = "Blue Caroseul")
+public class Auto_BlueCaroseul extends LinearOpMode {
     //robot parts
     private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake, motorIntake;
     private CRServo duck;
@@ -86,66 +88,38 @@ public class Auto_2022RedC extends LinearOpMode {
         telemetry.update();
 
         //caroseul
+        robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
+        robot.gyroTurn(-90,0.5);//direction
+//        robot.gyroStrafeEncoder(0.5,90,10);
+        robot.gyroStrafeEncoder(0.5,90,28);//2 feet+a bit more(error) to right. todo change the cm, direction
         robot.duck(-1);//turn on duck
-        robot.gyroStrafeEncoder(0.5,90,80);//2 feet+a bit more(error) to right. todo change the cm, direction
-        Thread.sleep(3000);
+        Thread.sleep(5000);
         robot.duck(0);
 
         //to hub
-        //2 sides of rectangle instead of hypotenuse
-        robot.gyroStrafeEncoder(0.5,-90,130);
-        robot.gyroStrafeEncoder(0.5,0,85);
+        robot.gyroStrafeEncoder(0.5,-90,42);//49?
+        robot.gyroTurn(-90,0.5);
 
         switch (code) {//shell for later, do not delete!!!
             case 2:
-                robot.gyroStrafeEncoder(0.5,0,30);
-//                robot.dropMiddle(0.25);
+                robot.dropMiddle(0.25,21);
                 //center, middle
                 break;
             case 3:
-               robot.gyroStrafeEncoder(0.5,0,10);
                 //right, top
-//                robot.dropTop(0.25);
+                robot.dropTop(0.25,21);
                 break;
             case 1:
             default:
-                robot.gyroStrafeEncoder(0.5,0,50);
                 //left, bottom
-//                robot.dropBottom(0.25);
+                robot.dropBottom(0.25,21);//19??
                 //error, put on bottom, do case1
                 break;
         }
-        telemetry.addData("dropping","a block yayyy");
-        telemetry.update();
-        Thread.sleep(3000);
-        //go to warehouse
-        robot.gyroTurn(90,0.5);
-        robot.driveToWall(0.5);
+        Thread.sleep(500);
 
-        //pick up element
-        //todo make this a method later, NOT NOW finish testing first
-//        robot.intake(1);
-//        robot.gyroDriveSec(0.2, 1);
-//        robot.gyroDriveSec(-0.2, 1);
-//        robot.intake(0);
-//
-//        drive back to hub
-//        robot.gyroDriveSec(-1, 3);//todo change the seconds
-//
-//        drop in bottom of hub
-//        robot.pidGyroTurn(-90);
-//
-//        park in warehouse, else park in box
-//        warehouse
-//        robot.pidGyroTurn(90);
-//        robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
-//        box
-//        robot.pidGyroStrafeCm(90, 60);//todo change cm
-
+        robot.goToDepot_Blue();//default
 
     }
-    /*
-     * todo: make function for everything auto
-     *  also make park in the box for this side as default
-     * */
+
 }

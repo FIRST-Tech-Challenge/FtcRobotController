@@ -49,7 +49,7 @@ public class Robot_2022FF {
     private final double MOTOR_RPM = 312;
     private final double MOTOR_SPR = 60/MOTOR_RPM;//CHANGE
     private final double SECONDS_PER_CM = MOTOR_SPR/DRIVE_WHEEL_CIRCUMFERENCE;
-    private final double TICKS_PER_CM =34.225;//CHANGE!!!!!!
+    private final double TICKS_PER_IN =34.225;//don't change..... actually is ticks_per_in....
 
     private static double lastCm = 0;
     //also ^^ isn't used except once...
@@ -509,10 +509,10 @@ public class Robot_2022FF {
 
     /**
      * Gyro drive using distance and power
-     * @param cm distance in centimeters
+     * @param in distance in centimeters
      */
-    public void gyroDriveCm(double power, double cm) throws InterruptedException{
-        gyroDriveSec(power, (cm*SECONDS_PER_CM)/Math.abs(power));
+    public void gyroDriveIn(double power, double in) throws InterruptedException{
+        gyroDriveSec(power, (in*SECONDS_PER_CM)/Math.abs(power));
     }
 
     /**
@@ -520,14 +520,14 @@ public class Robot_2022FF {
      * Straight drive, no angles
      * forwards (+) and backwards (-) only
      * Power is calculated in the function
-     * @param cm distance to travel
+     * @param in distance to travel
      */
-    public void pidGyroDriveCm(double cm) throws InterruptedException{
+    public void pidGyroDriveIn(double in) throws InterruptedException{
         resetAngle();
         resetEncoders();
 
         double dist = getDistanceTraveled();
-        double error = cm-dist;
+        double error = in-dist;
         double lastError = 0;
         double derivative;
         double correction;
@@ -541,7 +541,7 @@ public class Robot_2022FF {
             telemetry.update();
 
             dist = getDistanceTraveled();
-            error = cm-dist;
+            error = in-dist;
 
             derivative = (error-lastError) / timer.seconds();
             correction = getCorrection();
@@ -559,12 +559,12 @@ public class Robot_2022FF {
     /**
      * Drives forward using encoders and gyro (uses gyroStrafe)
      * @param power
-     * @param cm centimeters
+     * @param in inches
      * @throws InterruptedException if robot is stopped
      */
-    public void gyroDriveEncoder(double power, double cm) throws InterruptedException{
+    public void gyroDriveEncoder(double power, double in) throws InterruptedException{
         setNewGain(0.05);
-        gyroStrafeEncoder(power, 0, cm);
+        gyroStrafeEncoder(power, 0, in);
     }
 
     /**
@@ -647,18 +647,18 @@ public class Robot_2022FF {
     /**
      * Strafe in any direction using gyro to keep robot facing forward. Strafes a certain distance
      * */
-    public void gyroStrafeCm(double power, double angle, double cm) throws InterruptedException{
-        gyroStrafeSec(power, angle, (cm*SECONDS_PER_CM)/power);
+    public void gyroStrafeIn(double power, double angle, double in) throws InterruptedException{
+        gyroStrafeSec(power, angle, (in*SECONDS_PER_CM)/power);
     }
 
     /**
      * PID controlled strafe in any direction using gyro to keep robot facing straight forward
      * Power is calculated in the function
      * @param angle direction to strafe, in degrees (0 = forward, 180 = backward)
-     * @param cm distance to go
+     * @param in distance to go
      * @throws InterruptedException if the robot is stopped
      */
-    public void pidGyroStrafeCm(double angle, double cm) throws InterruptedException{
+    public void pidGyroStrafeIn(double angle, double in) throws InterruptedException{
         resetAngle();
         resetEncoders();
         //set gain???
@@ -670,7 +670,7 @@ public class Robot_2022FF {
         double rightPower;
 
         double dist = getDistanceTraveled();
-        double error = cm-dist;
+        double error = in-dist;
         double lastError = 0;
         double derivative = 0;
         double correction = getCorrection();
@@ -682,7 +682,7 @@ public class Robot_2022FF {
             telemetry.addData("current position",dist);
             telemetry.update();
             dist = getDistanceTraveled();
-            error = cm-dist;
+            error = in-dist;
 
             derivative = (error-lastError) / timer.seconds();
             correction = getCorrection();
@@ -706,14 +706,14 @@ public class Robot_2022FF {
      * PID Tuner Method
      * Copy the values after using tuner!!!
      * @param angle direction to strafe, in degrees (0 = forward, 180 = backward)
-     * @param cm distance to go
+     * @param in distance to go
      * @throws InterruptedException if the robot is stopped
      */
-    public void pidTunerStrafe(double angle, double cm) throws InterruptedException{
-        if(cm != lastCm) {
+    public void pidTunerStrafe(double angle, double in) throws InterruptedException{
+        if(in != lastCm) {
             resetAngle();
             resetEncoders();
-            lastCm = cm;
+            lastCm = in;
         }
         //set gain???
 
@@ -722,7 +722,7 @@ public class Robot_2022FF {
         //calculate powers needed using direction
         double leftPower;
         double rightPower;
-        int targetticks = distanceToTicks(cm);
+        int targetticks = distanceToTicks(in);
         motorBackLeft.setTargetPosition(targetticks);
         motorFrontLeft.setTargetPosition(targetticks);
         motorBackRight.setTargetPosition(targetticks);
@@ -778,11 +778,11 @@ public class Robot_2022FF {
      * sorta closed loop...
      * @param power
      * @param angle Direction to strafe (0 = forward, 180 = backward)
-     * @param cm
+     * @param in
      * @throws InterruptedException if robot is stopped
      */
-    public void gyroStrafeEncoder(double power, double angle, double cm) throws InterruptedException{
-        double ticks = cm * TICKS_PER_CM;
+    public void gyroStrafeEncoder(double power, double angle, double in) throws InterruptedException{
+        double ticks = in * TICKS_PER_IN;
 
         //convert direction (degrees) into radians
         double newDirection = angle * Math.PI/180 + Math.PI/4;
@@ -822,10 +822,51 @@ public class Robot_2022FF {
         return (motorFrontLeft.getCurrentPosition() / ticksperrev) * DRIVE_WHEEL_CIRCUMFERENCE * 6;
     }
 
-    public int distanceToTicks(double cm){//CHANGE!!!!
-        return (int)((cm/DRIVE_WHEEL_CIRCUMFERENCE)*ticksperrev);
+    public int distanceToTicks(double in){//CHANGE!!!!
+        return (int)((in/DRIVE_WHEEL_CIRCUMFERENCE)*ticksperrev);
     }
 
+    public void goToWarehouse_Red(boolean goOverBarrier) throws InterruptedException{
+        if(!goOverBarrier) {
+            //go to warehouse
+            gyroTurn(90, 0.5);
+            gyroStrafeEncoder(0.5, 180, 28);//change distance
+            driveToWall(0.5);
+            //option 2: there's a robot in the way, and we need to instead go over the bumps...
+        }
+        else{
+            gyroTurn(90, 0.5);
+            driveToWall(0.5);
+        }
+    }
+
+    public void goToWarehouse_Blue(boolean goOverBarrier) throws InterruptedException{
+        if(!goOverBarrier) {
+            //go to warehouse
+            gyroTurn(-90, 0.5);
+            gyroStrafeEncoder(0.5, 0, 28);//change distance
+            driveToWall(0.5);
+            //option 2: there's a robot in the way, and we need to instead go over the bumps...
+        }
+        else{
+            gyroTurn(-90, 0.5);
+            driveToWall(0.5);
+        }
+    }
+
+    public void goToDepot_Red() throws InterruptedException{
+        gyroTurn(-90,0.5);
+        gyroStrafeEncoder(0.5,90,54);//54
+//        robot.driveToWall(0.5);//other option
+        gyroStrafeEncoder(0.5,180,4);
+    }
+
+    public void goToDepot_Blue() throws InterruptedException{
+        gyroTurn(90,0.5);
+        gyroStrafeEncoder(0.5,90,54);//54
+//        robot.driveToWall(0.5);//other option
+        gyroStrafeEncoder(0.5,0,4);
+    }
     //robot components
     /**
      * Set intake power
@@ -853,20 +894,46 @@ public class Robot_2022FF {
      * Move arm to position...?
      *
      */
-    public void moveArm(double degrees, double power) throws InterruptedException{
-        //do later!!!todo
-        resetEncoders();
-        while(outtake.getCurrentPosition() < degrees && opMode.opModeIsActive()){//change the degrees!!! Might not work
-            outtake.setPower(power);
+    public void moveSlides(int level, double power) throws InterruptedException{
+        int targetTicks;
+        switch (level){
+            case 1:
+                //bottom
+                targetTicks = 150;
+                break;
+            case 2:
+                //middle
+                targetTicks = 750;
+                break;
+            case 3:
+                //top
+                targetTicks = 1350;
+                break;
+            default:
+                targetTicks = 100;
+        }
+        if(outtake.getCurrentPosition() < targetTicks) {
+            while (outtake.getCurrentPosition() < targetTicks && opMode.opModeIsActive()) {
+                outtake.setPower(power);
+            }
+            outtake.setPower(0);
+        }
+        else{
+            while(outtake.getCurrentPosition() > targetTicks && opMode.opModeIsActive()){
+                outtake.setPower(-power);
+            }
+            outtake.setPower(0);
         }
     }
 
-    public void dropTop(double power) throws InterruptedException{
+    public void dropTop(double power, double dist) throws InterruptedException{
         while(outtake.getCurrentPosition() < 1350 && opMode.opModeIsActive()){
             outtake.setPower(power);
         }
         outtake.setPower(0);
+        gyroStrafeEncoder(0.5,-90,dist);
         dobucket();
+        gyroStrafeEncoder(0.5,90,3);
         //turn bucket
         //wait a second
         //turn back
@@ -878,12 +945,14 @@ public class Robot_2022FF {
         outtake.setPower(0);
     }
 
-    public void dropMiddle(double power) throws InterruptedException{
+    public void dropMiddle(double power, double dist) throws InterruptedException{
         while(outtake.getCurrentPosition() < 750 && opMode.opModeIsActive()){
             outtake.setPower(power);
         }
         outtake.setPower(0);
+        gyroStrafeEncoder(0.5,-90,dist);
         dobucket();
+        gyroStrafeEncoder(0.5,90,3);
         //turn bucket
         //wait a second
         //turn back
@@ -895,21 +964,24 @@ public class Robot_2022FF {
         outtake.setPower(0);
     }
 
-    public void dropBottom (double power) throws InterruptedException{
+    public void dropBottom (double power, double dist) throws InterruptedException{
         while(outtake.getCurrentPosition() < 150 && opMode.opModeIsActive()){
             outtake.setPower(power);
             telemetry.addData("ticks", outtake.getCurrentPosition());
             telemetry.update();
         }
         outtake.setPower(0);
+        gyroStrafeEncoder(0.5,-90,dist);
         //turn bucket
         //wait a second
         dobucket();
         //wait a second
-
+        gyroStrafeEncoder(0.5,90,3);
         while(outtake.getCurrentPosition() > 100 && opMode.opModeIsActive()){
             outtake.setPower(-power);
         }
         outtake.setPower(0);
     }
+
+
 }

@@ -9,14 +9,12 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Blue Caroseul Warehouse Side, no PID")
-public class Auto_2022_BlueW extends LinearOpMode {
-
+@Autonomous(name = "Blue Warehouse")
+public class Auto_BlueWarehouse extends LinearOpMode {
     //robot parts
     private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake, motorIntake;
     private CRServo duck;
@@ -88,71 +86,32 @@ public class Auto_2022_BlueW extends LinearOpMode {
         }
         telemetry.update();
 
-        //caroseul
-        /*robot.duck(-1);//turn on duck
-        robot.gyroStrafeEncoder(0.5,-90, 180);//2 feet+a bit more(error) to right. todo change the cm, direction
-        Thread.sleep(3000);
-        robot.duck(0);*/
-
         //to hub
         //2 sides of rectangle instead of hypotenuse
-        robot.gyroStrafeEncoder(0.5,90,60);
-        
-        switch (code) {//shell for later, do not delete!!!
+        robot.gyroStrafeEncoder(0.5,-90,6);
+        robot.gyroStrafeEncoder(0.5,0,34);
+
+        switch (code) {
             case 2:
-                robot.gyroStrafeEncoder(0.5,0, 82.5);
-                robot.dropMiddle(0.25);
+                robot.dropMiddle(0.25,18);
                 //center, middle
                 break;
             case 3:
                 //right, top
-                robot.gyroStrafeEncoder(0.5,0, 85);
-                robot.dropTop(0.25);
+                robot.dropTop(0.25,18);
                 break;
             case 1:
             default:
                 //left, bottom
-                robot.gyroStrafeEncoder(0.5,0, 80);
-                robot.dropBottom(0.25);
+                robot.dropBottom(0.25,18);
                 //error, put on bottom, do case1
                 break;
         }
         Thread.sleep(500);
+
         //go to warehouse
-        robot.gyroTurn(90,0.5);
-        robot.driveToWall(0.5);
-
-        //pick up element
-        //todo make this a method later, NOT NOW finish testing first
-//        robot.intake(1);
-//        robot.gyroDriveSec(0.2, 1);
-//        robot.gyroDriveSec(-0.2, 1);
-//        robot.intake(0);
-//
-//        drive back to hub
-//        robot.gyroDriveSec(-1, 3);//todo change the seconds
-//
-//        drop in bottom of hub
-//        robot.pidGyroTurn(-90);
-//
-//        park in warehouse, else park in box
-//        warehouse
-//        robot.pidGyroTurn(90);
-//        robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
-//        box
-//        robot.pidGyroStrafeCm(90, 60);//todo change cm
-
+        robot.goToWarehouse_Blue(false);//default
 
     }
-    /*
-     * ways to score in auto:
-     * BLUE CAROSEUL SIDE
-     * step 1: scan
-     * step 2: caroseul
-     * step 3: drop off element
-     * step 4: get more elemnts (against wall? over bump?)
-     * step 5: put in team hub
-     * step 6: park in box since alliance partner in the hub
-     * */
-}
 
+}
