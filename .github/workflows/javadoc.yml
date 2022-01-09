@@ -55,7 +55,7 @@ jobs:
       - name: Generate Javadoc
         run: |
           sudo snap install android-studio --classic
-          /snap/android-studio/current/android-studio/jre/bin/javadoc $(find ./javadoc-workspace/ -name "*.java" -not -type d) -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar -d ./javadoc-output -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/
+          /snap/android-studio/current/android-studio/jre/bin/javadoc $(find ./javadoc-workspace/ -name "*.java" -not -type d) -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -d ./javadoc-output
 #      - name: Generate Javadoc
 #        run: |
 #          cd android-studio/jre/bin
