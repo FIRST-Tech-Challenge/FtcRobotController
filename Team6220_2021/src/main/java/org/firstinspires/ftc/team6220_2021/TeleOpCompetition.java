@@ -15,8 +15,8 @@ public class TeleOpCompetition extends MasterTeleOp {
         servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
         servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
 
-        // motorBelt.setPower(0.4);
-        // motorBelt.setTargetPosition(Constants.BELT_RESET);
+//        motorBelt.setPower(0.4);
+//        motorBelt.setTargetPosition(Constants.BELT_RESET);
 
         motorArm.setPower(0.5);
         motorArm.setTargetPosition(-50);
