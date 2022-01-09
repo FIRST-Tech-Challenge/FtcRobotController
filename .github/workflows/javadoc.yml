@@ -28,7 +28,7 @@ jobs:
         run: |
           rm -rf javadoc-output
           mkdir javadoc-output
-          cp -r -p ~/.gradle/caches/modules-2/files-2.1 .
+          cp -r -p $GRADLE_USER_HOME/caches/modules-2/files-2.1 .
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
