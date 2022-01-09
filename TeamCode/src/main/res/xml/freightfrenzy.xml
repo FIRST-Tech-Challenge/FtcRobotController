@@ -14,7 +14,7 @@
             <RevRoboticsCoreHexMotor name="intake" port="0" />
             <RevRobotics40HDHexMotor name="arm" port="1" />
             <RevRoboticsCoreHexMotor name="carousel" port="2" />
-            <RevTouchSensor name="limitSwitch" port="2"/>
+            <RevTouchSensor name="limitSwitch" port="3"/>
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
