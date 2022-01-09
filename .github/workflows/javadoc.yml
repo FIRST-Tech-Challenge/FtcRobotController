@@ -36,7 +36,7 @@ jobs:
         arguments: build
 
     - name: Build Javadoc
-      run: -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors -classpath
+      run: find . -name "*.java"
 
     - name: Upload the Javadoc output
       uses: actions/upload-artifact@v2
