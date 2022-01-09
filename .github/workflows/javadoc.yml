@@ -14,26 +14,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup ENV
-        run: |
-          wget -O jdk.deb https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
-          sudo apt install ./jdk.deb
+      - name: Set up the JDK environment
+        uses: actions/setup-java@v2
+        with:
+          java-version: 16
+          distribution: "adopt"
+          cache: gradle
 
       - name: Debug Workspace
         run: |
-          echo -e "DEBUG LOGS START\n\n\n"
           ./gradlew --version
           echo -e "\n\n\n\n\n------------------------------------------------------------------------------------------\n\n\n\n\n"
           echo -e "Tree:\n"
           find .
-          echo -e "\n\n\nDEBUG LOGS END"
       
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
 
-      - name: Setup Javadoc Source
+      - name: Setup Javadoc
         run: |
           rm -rf javadoc-output
           rm -rf javadoc-workspace
@@ -47,9 +47,7 @@ jobs:
           cp -r -p ./FtcRobotController/ ./javadoc-workspace/
           cp -r -p ~/.gradle/caches/modules-2/files-2.1/ ./javadoc-temp-workspace/
           mv ./javadoc-temp-workspace/files-2.1/ ./javadoc-workspace/files-final/ 
-          echo -e "DEBUG LOGS START\n\n\n"
           find ./javadoc-workspace/
-          echo -e "\n\n\nDEBUG LOGS END"
 #      - name: Install Android Studio
 #        run: |
 #          cp -r -p jdtar/android-studio.tar.gz ./
