@@ -45,10 +45,15 @@ public class FrenzyBaseBot implements IOdoBot {
     //    MaxVelocityTest: maxLF: 2440.00, maxRF: 2640.00, maxLB: 2520.00, maxRB: 2600.00
 //    maxLF: 2760.00, maxRF: 2700.00, maxLB: 2680.00, maxRB: 2680.00
 
+//    protected static double MAX_VELOCITY_BACK_LEFT = 2680.00;
+//    protected static double MAX_VELOCITY_BACK_RIGHT = 2680.00;
+//    protected static double MAX_VELOCITY_FRONT_LEFT = 2760.00;
+//    protected static double MAX_VELOCITY_FRONT_RIGHT = 2700.00;
+
     protected static double MAX_VELOCITY_BACK_LEFT = 2680.00;
     protected static double MAX_VELOCITY_BACK_RIGHT = 2680.00;
-    protected static double MAX_VELOCITY_FRONT_LEFT = 2760.00;
-    protected static double MAX_VELOCITY_FRONT_RIGHT = 2700.00;
+    protected static double MAX_VELOCITY_FRONT_LEFT = 2680.00;
+    protected static double MAX_VELOCITY_FRONT_RIGHT = 2680.00;
 
     protected LinearOpMode owner = null;
 
