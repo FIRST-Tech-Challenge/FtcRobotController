@@ -90,7 +90,7 @@ public class AutoWarehouse extends LinearOpMode {
                 // intake code
                 intake.forward();
                 while (intake.noObject()) {
-                    drive.setMotorPowers(0.1, 0.1, 0.1,0.1);
+                    drive.setMotorPowers(0.2, 0.2, 0.2, 0.2);
                 }
                 intake.stop();
                 // You'll want to correct for the distance that made it travel
