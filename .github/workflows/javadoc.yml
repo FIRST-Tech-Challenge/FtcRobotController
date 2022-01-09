@@ -29,10 +29,12 @@ jobs:
       with:
         arguments: build
 
+
     - name: Build Javadoc
       uses: gradle/gradle-build-action@v2
       with:
         arguments: docs
+        build-root-directory: javadoc-output
 
     - name: Upload the Javadoc output
       uses: actions/upload-artifact@v2
