@@ -19,7 +19,7 @@ jobs:
           cd ~/
           sudo apt --purge remove -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot
           wget -O java.tar.gz --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
-          sudo mkdir -p /usr/lib/cjdk/jvm
+          sudo mkdir /usr/lib/cjdk/jvm
           cd /usr/lib/cjdk/jvm
           sudo tar -xvzf ~/java.tar.gz
           sudo echo -e "export PATH=$PATH:/usr/lib/cjdk/jvm/jdk-17/bin\nexport JAVA_HOME="/usr/lib/cjdk/jvm/jdk-17" >> /etc/profile.d/mkcjdkpv.sh
@@ -59,9 +59,9 @@ jobs:
           rm -rf javadoc-output
           rm -rf javadoc-workspace
           rm -rf javadoc-temp-workspace
-          mkdir -p javadoc-output
-          mkdir -p javadoc-workspace
-          mkdir -p javadoc-temp-workspace
+          mkdir javadoc-output
+          mkdir javadoc-workspace
+          mkdir javadoc-temp-workspace
           rm -rf ./TeamCode/build/
           rm -rf ./FtcRobotController/build/
           cp -r -p ./TeamCode/ ./javadoc-workspace/
@@ -101,9 +101,9 @@ jobs:
 
           # Move Javadoc output and build reports
           mv javadoc-output/ ..
-          mkdir -p ../team-reports/
+          mkdir ../team-reports/
           mv ./TeamCode/build/reports/*  ../team-reports/
-          mkdir -p ../sdk-reports/
+          mkdir ../sdk-reports/
           mv ./FtcRobotController/build/reports/* ../sdk-reports/
 
           # Checkout gh-pages branch
