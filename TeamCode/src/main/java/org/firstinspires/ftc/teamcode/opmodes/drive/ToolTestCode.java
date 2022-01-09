@@ -30,8 +30,8 @@ public class ToolTestCode extends LinearOpMode {
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
         new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
         HardwareMapListGenerator.gen(hardwareMap, telemetry);
-        Thread thread = new Thread(() -> {
-            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, telemetry);
+        @SuppressWarnings("DuplicatedCode") Thread thread = new Thread(() -> {
+            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad);
             final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
             final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
             while (opModeIsActive()) {

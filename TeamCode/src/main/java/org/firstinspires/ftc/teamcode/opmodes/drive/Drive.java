@@ -27,8 +27,9 @@ public class Drive extends LinearOpMode {
         new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
         final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
 
-        Thread thread = new Thread(() -> {
-            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, telemetry);
+        @SuppressWarnings("DuplicatedCode") Thread thread = new Thread(() -> {
+            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad);
+            lift.init();
             final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
             final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
             while (opModeIsActive()) {

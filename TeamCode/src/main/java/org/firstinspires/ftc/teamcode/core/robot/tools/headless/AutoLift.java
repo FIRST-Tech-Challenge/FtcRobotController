@@ -11,12 +11,7 @@ import androidx.annotation.NonNull;
 
 public class AutoLift {
 
-    // INTAKING motor 0 , arm 0.76
-    // GOING OUT OF DANGER 0.7
-    // OUT OF DANGER motor 1375
-    // TOP motor 2800 arm 0.3 - 5 1/4
-    // MIDDLE motor 1850 arm 0.3 - 5 1/4 from back to rim
-    // BOTTOM motor 1375 arm 0.25 - 5 1/4 from back to rim
+    // 5 1/4 inch from back of robot to rim
 
     @SuppressWarnings("unused")
     public enum Positions {
@@ -46,7 +41,6 @@ public class AutoLift {
     protected final DcMotor liftMotor;
     protected final Servo armServo;
     protected final EventThread eventThread;
-    protected TimedEvent event;
     protected Positions position = Positions.INTAKING;
     protected Positions lastPosition = position;
     protected MovementStates state = null;
@@ -74,24 +68,6 @@ public class AutoLift {
         setPosition(position);
         //insert some funny code that blocks until it has moved to position, will be very useful for finian burkard auto
     }
-
-    protected boolean eval() {
-        return (liftMotor.getCurrentPosition() >= position.motorPos - 10 && liftMotor.getCurrentPosition() <= position.motorPos + 10);
-    }
-
-
-    /*
-
-    set to 0.7
-    go to motor position
-
-    set servo to servo position
-    if not dumper BREAK
-    else wait 800 ms
-
-    go to motor 1375 and servo 0.7
-
-     */
 
     private boolean dumpWaiting = true;
 
