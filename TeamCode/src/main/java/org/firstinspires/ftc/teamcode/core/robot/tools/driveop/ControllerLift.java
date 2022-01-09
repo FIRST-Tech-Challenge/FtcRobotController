@@ -17,12 +17,14 @@ import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChange
 public class ControllerLift extends AutoLift {
     private final TriggerReader leftReader;
     private final TriggerReader rightReader;
+    private final GamepadEx toolGamepad;
     /**
      * @param eventThread local eventThread instance
      * @param map         local hardwareMap instance
      */
     public ControllerLift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad) {
         super(eventThread, map);
+        this.toolGamepad = toolGamepad;
         leftReader = new TriggerReader(toolGamepad, GamepadKeys.Trigger.LEFT_TRIGGER);
         rightReader = new TriggerReader(toolGamepad, GamepadKeys.Trigger.RIGHT_TRIGGER);
     }
@@ -36,5 +38,17 @@ public class ControllerLift extends AutoLift {
             rightReader.readValue();
             return rightReader.wasJustReleased();
         }));
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (position == Positions.SAFE && state == null) {
+            if (liftMotor.getCurrentPosition() >= 1375) { // PUT LIMTI SWITHC STUFF HERE
+                liftMotor.setPower(toolGamepad.getLeftY());
+            } else {
+                liftMotor.setPower(0);
+            }
+        }
     }
 }
