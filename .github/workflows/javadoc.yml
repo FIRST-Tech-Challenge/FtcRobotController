@@ -2,8 +2,8 @@ name: Javadoc Generation
 on:
   push:
     branches:
-      - "master"
-      - "testing-*"
+      - 'master'
+      - 'testing-*'
   workflow_dispatch:
 
 jobs:
@@ -11,86 +11,92 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout branch
+      uses: actions/checkout@v2
 
-      - name: Set up the JDK environment
-        uses: actions/setup-java@v2
-        with:
-          java-version: 16
-          distribution: "adopt"
-          cache: gradle
+    - name: Set up the JDK environment
+      uses: actions/setup-java@v2
+      with:
+        java-version: 16
+        distribution: 'adopt'
+        cache: gradle
 
-      - name: Gradle version
-        run: ./gradlew --version
+    - name: Check Gradle version
+      run: ./gradlew --version
 
-      - name: Setup CWD
-        run: |
-          rm -rf 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          mkdir 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          mkdir javadoc-output
-      - name: Install Android Studio
-        run: |
-          cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          curl https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2020.3.1.26/android-studio-2020.3.1.26-linux.tar.gz
-          cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
-          tar -xf android-studio-2020.3.1.26-linux.tar.gz
-          cd android-studio/jre/bin
-      - name: Generate Javadoc
-        run: |
-          ./javadoc -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -d ../../../javadoc-output
-      - name: Find
-        run: find .
-      - name: Upload the Javadoc output
-        uses: actions/upload-artifact@v2
-        with:
-          name: Javadoc-output
-          path: ./javadoc-output/
+    - name: Prepare Javadoc Output
+      run: |
+        rm -rf ./javadoc-output
+        mkdir ./javadoc-output
+        find . -name "*.java"
 
-      - name: Commit and push the new Javadoc folder
-        run: |
-          # Set up Git and environment variables
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-          shopt -s dotglob
-          export BRANCH_NAME=$(echo $GITHUB_REF | sed -e "s/refs\/heads\///")
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: build
 
-          # Move Javadoc output and build reports
-          mv javadoc-output/ ..
-          mkdir ../team-reports/
-          mv ./TeamCode/build/reports/*  ../team-reports/
-          mkdir ../sdk-reports/
-          mv ./FtcRobotController/build/reports/* ../sdk-reports/
+    - name: Extract Javadoc
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: extractJavadoc
 
-          # Checkout gh-pages branch
-          git reset --hard HEAD
-          git clean -f -d -x
-          git remote set-branches origin --add 'gh-pages'
-          git fetch -a -v
-          git checkout gh-pages
+    # - name: Build Javadocs
+    #   uses: gradle/gradle-build-action@v2
+    #   with:
+    #     arguments: docs
 
-          # Copy Javadoc docs to gh-pages
-          rm -rf ./javadocs/${BRANCH_NAME}/ || true
-          mkdir -p ./javadocs/${BRANCH_NAME}/
-          mv ../javadoc-output/* ./javadocs/${BRANCH_NAME}/
+    - name: Find
+      run: find .
 
-          # Copy build reports to gh-pages
-          rm -rf ./reports/${BRANCH_NAME}/ || true
-          mkdir -p ./reports/${BRANCH_NAME}/team-reports/
-          mkdir -p ./reports/${BRANCH_NAME}/sdk-reports/
-          mv ../team-reports/* ./reports/${BRANCH_NAME}/team-reports/
-          mv ../sdk-reports/* ./reports/${BRANCH_NAME}/sdk-reports/
-          mv ./reports/${BRANCH_NAME}/team-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/team-reports/index.html || true
-          mv ./reports/${BRANCH_NAME}/sdk-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/sdk-reports/index.html || true
+    # - name: Build Javadoc
+    #   run: -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors -classpath
 
-          # Commit and push changes
-          git add -A
-          git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
+    - name: Upload the Javadoc output
+      uses: actions/upload-artifact@v2
+      with:
+        name: Javadoc-output
+        path: ./javadoc-output/
 
-          Information:
+    - name: Commit and push new Javadoc folder
+      run: |
+        # Set up Git and environment variables
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+        shopt -s dotglob
+        export BRANCH_NAME=$(echo $GITHUB_REF | sed -e "s/refs\/heads\///")
+
+        # Move Javadocs and build reports
+        mv javadoc-output/ ..
+        mkdir ../team-reports/
+        mv ./TeamCode/build/reports/*  ../team-reports/
+        mkdir ../sdk-reports/
+        mv ./FtcRobotController/build/reports/* ../sdk-reports/
+
+        # Checkout gh-pages branch
+        git remote set-branches origin '*'
+        git fetch -v
+        git checkout gh-pages
+
+        # Copy Javadocs to gh-pages
+        rm -rf ./javadocs/${BRANCH_NAME}/ || true
+        mkdir -p ./javadocs/${BRANCH_NAME}/
+        mv ../javadoc-output/* ./javadocs/${BRANCH_NAME}/
+
+        # Copy build reports to gh-pages
+        rm -rf ./reports/${BRANCH_NAME}/ || true
+        mkdir -p ./reports/${BRANCH_NAME}/team-reports/
+        mkdir -p ./reports/${BRANCH_NAME}/sdk-reports/
+        mv ../team-reports/* ./reports/${BRANCH_NAME}/team-reports/
+        mv ../sdk-reports/* ./reports/${BRANCH_NAME}/sdk-reports/
+        mv ./reports/${BRANCH_NAME}/team-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/team-reports/index.html || true
+        mv ./reports/${BRANCH_NAME}/sdk-reports/lint-results-debug.html ./reports/${BRANCH_NAME}/sdk-reports/index.html || true
+
+        # Commit and push changes
+        git add .
+        git commit -a -m "Javadoc documentation update ($GITHUB_RUN_NUMBER)
+        Information:
             Repository: $GITHUB_REPOSITORY
             Branch: $GITHUB_REF
             Commit: $GITHUB_SHA
             Who triggered action: $GITHUB_ACTOR"
-          git push
+        git push
