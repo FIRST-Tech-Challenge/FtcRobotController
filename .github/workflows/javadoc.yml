@@ -35,13 +35,10 @@ jobs:
       with:
         arguments: build
 
-    - name: Build Javadocs
+    - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
       with:
         arguments: docs
-
-    - name: Find
-      run: find .
 
     # - name: Build Javadoc
     #   run: -d javadoc-output $(find . -name "*.java") -Xdoclint:none --ignore-source-errors -classpath
