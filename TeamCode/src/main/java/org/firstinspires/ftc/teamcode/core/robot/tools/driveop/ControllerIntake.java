@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 
 /**
  * intake, not an extension of ControllerToggleableTool
@@ -22,9 +23,9 @@ public class ControllerIntake extends AutoIntake {
         this.toolGamepad = toolGamepad;
     }
 
-    public void update() {
+    public void update(AutoLift.Positions liftPosition) {
         reader.readValue();
-        if (noObject()) {
+        if (noObject() && liftPosition != AutoLift.Positions.INTAKING) {
             if (reader.getState()) {
                 if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
                     this.forward();

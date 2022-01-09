@@ -64,6 +64,10 @@ public class AutoLift {
         this.position = position;
     }
 
+    public Positions getPosition() {
+        return position;
+    }
+
     public void blockingSetPosition(@NonNull Positions position) {
         setPosition(position);
         //insert some funny code that blocks until it has moved to position, will be very useful for finian burkard auto

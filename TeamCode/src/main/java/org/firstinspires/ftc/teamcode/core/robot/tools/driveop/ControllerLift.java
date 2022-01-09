@@ -53,7 +53,7 @@ public class ControllerLift extends AutoLift {
             if (liftMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
                 liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-            if (liftMotor.getCurrentPosition() >= 1375 && !topSensor.getState()) { // PUT LIMTI SWITHC STUFF HERE
+            if (liftMotor.getCurrentPosition() >= 1375 && !topSensor.getState()) {
                 liftMotor.setPower(toolGamepad.getLeftY());
             } else {
                 liftMotor.setPower(0);
