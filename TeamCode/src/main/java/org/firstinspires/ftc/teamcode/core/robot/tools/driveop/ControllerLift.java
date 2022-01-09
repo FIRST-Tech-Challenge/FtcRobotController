@@ -49,7 +49,7 @@ public class ControllerLift extends AutoLift {
     @Override
     public void update() {
         super.update();
-        if (position == Positions.SAFE && state == null) {
+        if (position == Positions.SAFE && state == MovementStates.NONE) {
             if (liftMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
                 liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }

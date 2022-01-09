@@ -33,6 +33,7 @@ public class AutoLift {
     }
 
     protected enum MovementStates { // switch this to a bool if you have time
+        NONE,
         START,
         LIFT_MOVEMENT,
         SERVO_MOVEMENT
@@ -43,7 +44,7 @@ public class AutoLift {
     protected final EventThread eventThread;
     protected Positions position = Positions.INTAKING;
     protected Positions lastPosition = position;
-    protected MovementStates state = null;
+    protected MovementStates state = MovementStates.NONE;
     // fix this later
     /**
      * @param eventThread local eventThread instance
@@ -87,7 +88,7 @@ public class AutoLift {
                 final double motorPos = liftMotor.getCurrentPosition();
                 if (motorPos >= position.motorPos - 3 && motorPos <= position.motorPos + 3) {
                     armServo.setPosition(position.armPos);
-                    if (!position.dumper) state = null;
+                    if (!position.dumper) state = MovementStates.NONE;
                     else {
                         dumpWaiting = true;
                         eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, 760));
