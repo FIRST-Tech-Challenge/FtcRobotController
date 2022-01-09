@@ -232,6 +232,39 @@ public class Robot_2022FF {
 
     }
 
+    public void runToPosSetupRobot() throws InterruptedException{
+        //reverse the needed motors?
+        //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        //motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        outtake.setTargetPosition(0);
+        outtake.setPower(0);
+        outtake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        setIMUParameters();
+        resetEncoders();
+        resetAngle();
+
+
+        while (!imu.isGyroCalibrated()) {
+            telemetry.addData("IMU", "calibrating...");
+            telemetry.update();
+            Thread.sleep(50);
+        }
+
+        telemetry.addData("IMU", "ready");
+        telemetry.update();
+
+    }
+    
     /**
      * Reset motor encoders
      */
@@ -309,8 +342,8 @@ public class Robot_2022FF {
      * */
     public void turnClockwise(double power){
         motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(-power);
+        motorBackLeft.setPower(-power);
+        motorFrontRight.setPower(power);
         motorBackRight.setPower(-power);
     }
 
@@ -320,8 +353,8 @@ public class Robot_2022FF {
      */
     public void turnCounterClockwise(double power){
         motorFrontLeft.setPower(-power);
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(-power);
         motorBackRight.setPower(power);
     }
 
@@ -344,9 +377,9 @@ public class Robot_2022FF {
         //restart angle tracking
         resetAngle();
 
-        if(degrees < 0){
+        if(degrees > 0){
             turnClockwise(power);
-        }else if(degrees > 0){
+        }else if(degrees < 0){
             turnCounterClockwise(power);
         }else{
             return;
@@ -635,7 +668,8 @@ public class Robot_2022FF {
     public void driveToWall(double power) throws InterruptedException{
         resetAngle();
         while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
-            double correction = getCorrection();
+            // double correction = getCorrection();
+            double correction = 0;
             tankDrive(power + correction,power - correction);
             telemetry.addData("distance reading:", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
@@ -794,15 +828,15 @@ public class Robot_2022FF {
         resetAngle();
         setNewGain(0.02);
         while(Math.abs(motorFrontLeft.getCurrentPosition()) < ticks && opMode.opModeIsActive()){
-            telemetry.addData("Target ticks", ticks);
-            telemetry.addData("Current ticks", Math.abs(motorFrontLeft.getCurrentPosition()));
-            telemetry.update();
+            // telemetry.addData("Target ticks", ticks);
+            // telemetry.addData("Current ticks", Math.abs(motorFrontLeft.getCurrentPosition()));
+            // telemetry.update();
 
             double correction = getCorrection();
             correctedTankStrafe(leftPower, rightPower, correction);
         }
         completeStop();
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
         resetEncoders();
     }
@@ -829,14 +863,16 @@ public class Robot_2022FF {
     public void goToWarehouse_Red(boolean goOverBarrier) throws InterruptedException{
         if(!goOverBarrier) {
             //go to warehouse
-            gyroTurn(90, 0.5);
+            gyroTurn(-90, 0.5);
             gyroStrafeEncoder(0.5, 180, 28);//change distance
-            driveToWall(0.5);
+            gyroStrafeEncoder(0.5, -90, 56);
+            // driveToWall(0.5);//chnage
             //option 2: there's a robot in the way, and we need to instead go over the bumps...
         }
         else{
             gyroTurn(90, 0.5);
-            driveToWall(0.5);
+            gyroStrafeEncoder(0.5, -90, 56);//???
+            // driveToWall(0.5);
         }
     }
 
@@ -855,17 +891,17 @@ public class Robot_2022FF {
     }
 
     public void goToDepot_Red() throws InterruptedException{
-        gyroTurn(-90,0.5);
+        gyroTurn(90,0.5);
         gyroStrafeEncoder(0.5,90,54);//54
-//        robot.driveToWall(0.5);//other option
-        gyroStrafeEncoder(0.5,180,4);
+        // driveToWall(0.5);//other option
+        gyroStrafeEncoder(0.5,180,12.7);
     }
 
     public void goToDepot_Blue() throws InterruptedException{
         gyroTurn(90,0.5);
         gyroStrafeEncoder(0.5,90,54);//54
 //        robot.driveToWall(0.5);//other option
-        gyroStrafeEncoder(0.5,0,4);
+        gyroStrafeEncoder(0.5,0,12);
     }
     //robot components
     /**
@@ -927,61 +963,68 @@ public class Robot_2022FF {
     }
 
     public void dropTop(double power, double dist) throws InterruptedException{
-        while(outtake.getCurrentPosition() < 1350 && opMode.opModeIsActive()){
-            outtake.setPower(power);
-        }
-        outtake.setPower(0);
-        gyroStrafeEncoder(0.5,-90,dist);
+        moveSlides(3,power);
+        gyroStrafeEncoder(0.5,90,dist);
         dobucket();
-        gyroStrafeEncoder(0.5,90,3);
-        //turn bucket
-        //wait a second
-        //turn back
-        //wait a second
-
-        while(outtake.getCurrentPosition() > 100 && opMode.opModeIsActive()){
-            outtake.setPower(-power);
-        }
-        outtake.setPower(0);
+        gyroStrafeEncoder(0.5,-90,6);
+        moveSlides(0,power);
     }
 
     public void dropMiddle(double power, double dist) throws InterruptedException{
-        while(outtake.getCurrentPosition() < 750 && opMode.opModeIsActive()){
-            outtake.setPower(power);
-        }
-        outtake.setPower(0);
-        gyroStrafeEncoder(0.5,-90,dist);
+        moveSlides(2,power);
+        gyroStrafeEncoder(0.5,90,dist);
         dobucket();
-        gyroStrafeEncoder(0.5,90,3);
-        //turn bucket
-        //wait a second
-        //turn back
-        //wait a second
-
-        while(outtake.getCurrentPosition() > 100 && opMode.opModeIsActive()){
-            outtake.setPower(-power);
-        }
-        outtake.setPower(0);
+        gyroStrafeEncoder(0.5,-90,6);
+        moveSlides(0,power);
     }
 
     public void dropBottom (double power, double dist) throws InterruptedException{
-        while(outtake.getCurrentPosition() < 150 && opMode.opModeIsActive()){
-            outtake.setPower(power);
-            telemetry.addData("ticks", outtake.getCurrentPosition());
-            telemetry.update();
-        }
-        outtake.setPower(0);
-        gyroStrafeEncoder(0.5,-90,dist);
-        //turn bucket
-        //wait a second
+        moveSlides(1, power);
+        gyroStrafeEncoder(0.5,90,dist);
         dobucket();
-        //wait a second
-        gyroStrafeEncoder(0.5,90,3);
-        while(outtake.getCurrentPosition() > 100 && opMode.opModeIsActive()){
-            outtake.setPower(-power);
+        gyroStrafeEncoder(0.5,-90,6);
+        moveSlides(0,power);
+    }
+
+    public void motorRunToPos (double power, double dist) {
+        outtake.setPower(power);
+        outtake.setTargetPosition((int)dist);
+                
+        if(outtake.getCurrentPosition()<dist){
+            while(outtake.getCurrentPosition()<dist);
+        } 
+        else{
+            while(outtake.getCurrentPosition()>dist);   
         }
+
         outtake.setPower(0);
     }
 
+    public void runToPosDrop (double power, double dist, int level) throws InterruptedException {
+        bucket.setPosition(0.7);
+        int targetTicks;
+        switch (level) {
+            case 1:
+                //bottom
+                targetTicks = 150;
+                break;
+            case 2:
+                //middle
+                targetTicks = 750;
+                break;
+            case 3:
+                //top
+                targetTicks = 1350;
+                break;
+            default:
+                targetTicks = 100;
+        }
+        motorRunToPos(power, targetTicks);
+        gyroStrafeEncoder(0.5, 90, dist);
+        dobucket();
+        gyroStrafeEncoder(0.5, -90, 6);
+        motorRunToPos(power, 100);
+        
+    }
 
 }

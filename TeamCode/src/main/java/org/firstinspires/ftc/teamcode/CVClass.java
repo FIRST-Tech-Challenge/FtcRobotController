@@ -69,7 +69,7 @@ public class CVClass extends OpenCvPipeline{
                 barcode=3;
                 //telemetry.addData("Box", "1");
             }
-            else if (largestRect.x>200) {
+            else if (largestRect.x>175) {
                 barcode=2;
                 //telemetry.addData("Box", "2");
             }

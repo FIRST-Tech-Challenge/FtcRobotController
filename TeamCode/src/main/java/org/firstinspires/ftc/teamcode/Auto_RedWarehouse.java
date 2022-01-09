@@ -93,10 +93,11 @@ public class Auto_RedWarehouse extends LinearOpMode {
         //2 sides of rectangle instead of hypotenuse
         robot.gyroStrafeEncoder(0.5,-90,6);
         robot.gyroStrafeEncoder(0.5,180,34);
+        robot.gyroTurn(180, 0.5);
 
         switch (code) {
             case 2:
-                robot.dropMiddle(0.25,18);
+                robot.dropMiddle(0.25,18);//chaneg???
                 //center, middle
                 break;
             case 3:

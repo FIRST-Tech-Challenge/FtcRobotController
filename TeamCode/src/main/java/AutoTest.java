@@ -1,5 +1,3 @@
-package org.firstinspires.ftc.teamcode;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,14 +7,14 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.CVClass;
+import org.firstinspires.ftc.teamcode.Robot_2022FF;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Red Caroseul")
-public class Auto_RedCaroseul extends LinearOpMode {
-
+@Autonomous(name = "Auto Test")
+public class AutoTest extends LinearOpMode {
     //robot parts
     private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake, motorIntake;
     private CRServo duck;
@@ -57,7 +55,7 @@ public class Auto_RedCaroseul extends LinearOpMode {
         robot = new Robot_2022FF(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorIntake, motorOuttake, bucket, duck, distsense, imu,this);
 
         //setup robot
-        robot.runToPosSetupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
+        robot.setupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
 
         //setup camera, turn it on
         int camViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -88,58 +86,22 @@ public class Auto_RedCaroseul extends LinearOpMode {
             telemetry.addData("assuming", "1");
         }
         telemetry.update();
+        Thread.sleep(5*1000);
 
         //dist 26 cm == 10 cm here 2.6cm=1cm
         //actually in INCHES!!!! will change in a bit
         //caroseul
         robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
-        robot.gyroTurn(90,0.5);//direction
-
-        //-90 is forwards, intake is forwards
-        //0 is right
-        //90 is back
-        //180 is left
-//        robot.gyroStrafeEncoder(0.5,90,10);
-        robot.gyroStrafeEncoder(0.5,-90,27.5);//2 feet+a bit more(error) to right. todo change the cm, direction
-        robot.duck(-0.55);//turn on duck
-        Thread.sleep(4000);//less time
-        robot.duck(0);
-
-        //to hub
-        robot.gyroStrafeEncoder(0.5,90,52.5);
+        Thread.sleep(1000);
+        robot.gyroStrafeEncoder(0.5,0,3);//to allow turning
+        Thread.sleep(1000);
+        robot.gyroStrafeEncoder(0.5,90,3);//to allow turning
+        Thread.sleep(1000);
+        robot.gyroStrafeEncoder(0.5,180,3);//to allow turning
+        Thread.sleep(1000);
         robot.gyroTurn(90,0.5);
-
-        //all around 21 in to hub
-        switch (code) {//shell for later, do not delete!!!
-            case 2:
-                robot.runToPosDrop(0.25, 21.5, 2);
-                //center, middle
-                break;
-            case 3:
-                //right, top
-                robot.runToPosDrop(0.25, 21.5, 3);
-                break;
-            case 1:
-            default:
-                //left, bottom
-                robot.runToPosDrop(0.25, 21.5, 1);//19??
-                //error, put on bottom, do case1
-                break;
-        }
-        Thread.sleep(500);
-
-        robot.goToDepot_Red();//default
+        Thread.sleep(1000);
+        robot.gyroTurn(-90,0.5);
+        Thread.sleep(1000);
     }
-
-
-    /*
-     * ways to score in auto:
-     * BLUE CAROSEUL SIDE
-     * step 1: scan
-     * step 2: caroseul
-     * step 3: drop off element
-     * step 4: get more elemnts (against wall? over bump?)
-     * step 5: put in team hub
-     * step 6: park in box since alliance partner in the hub
-     * */
 }
