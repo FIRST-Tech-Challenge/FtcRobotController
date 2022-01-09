@@ -37,17 +37,14 @@ jobs:
         run: |
           rm -rf javadoc-output
           rm -rf javadoc-workspace
-          rm -rf javadoc-temp-workspace
           mkdir javadoc-output
-#          mkdir javadoc-workspace
-#          mkdir javadoc-temp-workspace
-#          rm -rf ./TeamCode/build/
-#          rm -rf ./FtcRobotController/build/
-#          cp -r -p ./TeamCode/ ./javadoc-workspace/
-#          cp -r -p ./FtcRobotController/ ./javadoc-workspace/
-#          cp -r -p ~/.gradle/caches/modules-2/files-2.1/./javadoc-temp-workspace/
-#         cp -r -p ./javadoc-temp-workspace/files-2.1/ ./javadoc-workspace
-#          find ./javadoc-workspace/
+          mkdir javadoc-workspace
+          rm -rf ./TeamCode/build/
+          rm -rf ./FtcRobotController/build/
+          cp -r -p ./TeamCode/ ./javadoc-workspace/
+          cp -r -p ./FtcRobotController/ ./javadoc-workspace/
+          cp -r -p ~/.gradle/caches/modules-2/files-2.1/ ./javadoc-workspace/
+          find ./javadoc-workspace/
 #       - name: Install Android Studio
 #         run: |
 #           cd 659188d07f81a660d5a0f8679f43d00299f855e370caa2911da738f2601badce
@@ -59,7 +56,8 @@ jobs:
 #           ./javadoc -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -d ../../../javadoc-output
       - name: Generate Javadoc
         run: |
-          javadoc -d ./javadoc-output ${find . -name "*.java"} -public -splitindex -use -author -version -Xdoclint:none --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/
+          cd ./javadoc-workspace/TeamCode/src/main/java/
+          javadoc -d ../javadoc-output org.firstinspires.ftc.teamcode -Xdoclint:none --ignore-source-errors -link https://docs.oracle.com/en/java/javase/11/docs/api/
       - name: Find
         run: find .
       - name: Upload the Javadoc output
