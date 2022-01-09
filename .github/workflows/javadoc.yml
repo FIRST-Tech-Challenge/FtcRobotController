@@ -45,7 +45,7 @@ jobs:
           rm -rf ./FtcRobotController/build/
           cp -r -p ./TeamCode/ ./javadoc-workspace/
           cp -r -p ./FtcRobotController/ ./javadoc-workspace/
-          cp -r -p ~/.gradle/caches/modules-2/files-2.1/ ./javadoc-temp-workspace/
+          cp -r -p ~/.gradle/caches/modules-2/files-2.1/./javadoc-temp-workspace/
           find ./javadoc-temp-workspace/
 #          cp -r -p ./javadoc-temp-workspace/files-2.1/ ./javadoc-workspace
 #          find ./javadoc-workspace/
