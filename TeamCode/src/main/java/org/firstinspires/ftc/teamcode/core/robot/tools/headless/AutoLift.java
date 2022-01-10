@@ -53,11 +53,12 @@ public class AutoLift {
     public AutoLift(EventThread eventThread, @NonNull HardwareMap map) {
         liftMotor = map.get(DcMotor.class,"liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         try { Thread.sleep(100); } catch (InterruptedException ignored) {}
         liftMotor.setTargetPosition(liftMotor.getCurrentPosition());
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(1);
         armServo = map.get(Servo.class,"armServo");
         this.eventThread = eventThread;
     }
@@ -87,12 +88,12 @@ public class AutoLift {
                 break;
             case LIFT_MOVEMENT:
                 final double motorPos = liftMotor.getCurrentPosition();
-                if (motorPos >= position.motorPos - 3 && motorPos <= position.motorPos + 3) {
+                if (motorPos >= position.motorPos - 10 && motorPos <= position.motorPos + 10) {
                     armServo.setPosition(position.armPos);
                     if (!position.dumper) state = MovementStates.NONE;
                     else {
                         dumpWaiting = true;
-                        eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, 760));
+                        eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, 1400));
                         state = MovementStates.SERVO_MOVEMENT;
                     }
                 }

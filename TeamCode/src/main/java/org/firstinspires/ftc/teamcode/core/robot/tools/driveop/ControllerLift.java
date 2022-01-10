@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.core.robot.tools.driveop;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,13 +11,14 @@ import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 
 import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedIndefinitelyEvent;
+import org.firstinspires.ftc.teamcode.opmodes.util.GoodTriggerReader;
 
 /**
  * lift and arm
  */
 public class ControllerLift extends AutoLift {
-    private final TriggerReader leftReader;
-    private final TriggerReader rightReader;
+    private final GoodTriggerReader leftReader;
+    private final GoodTriggerReader rightReader;
     private final GamepadEx toolGamepad;
     private final DigitalChannel topSensor;
 
@@ -29,8 +29,8 @@ public class ControllerLift extends AutoLift {
     public ControllerLift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad) {
         super(eventThread, map);
         this.toolGamepad = toolGamepad;
-        leftReader = new TriggerReader(toolGamepad, GamepadKeys.Trigger.LEFT_TRIGGER);
-        rightReader = new TriggerReader(toolGamepad, GamepadKeys.Trigger.RIGHT_TRIGGER);
+        leftReader = new GoodTriggerReader(toolGamepad, GamepadKeys.Trigger.LEFT_TRIGGER);
+        rightReader = new GoodTriggerReader(toolGamepad, GamepadKeys.Trigger.RIGHT_TRIGGER);
         topSensor = map.get(DigitalChannel.class,"topSensor");
         topSensor.setMode(DigitalChannel.Mode.INPUT);
     }
@@ -53,6 +53,7 @@ public class ControllerLift extends AutoLift {
         super.update();
         if (position == Positions.SAFE && state == MovementStates.NONE) {
             if (liftMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
+                liftMotor.setPower(0);
                 liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             if (liftMotor.getCurrentPosition() >= 1375 && !topSensor.getState()) {
@@ -64,6 +65,7 @@ public class ControllerLift extends AutoLift {
             if (liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
                 liftMotor.setTargetPosition(liftMotor.getCurrentPosition());
                 liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                liftMotor.setPower(1);
             }
         }
     }
