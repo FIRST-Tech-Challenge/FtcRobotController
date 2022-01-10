@@ -52,29 +52,4 @@ public class ControllerLift extends AutoLift {
         thread.setPriority(5);
         thread.start();
     }
-
-    @Override
-    public void update() {
-        super.update();
-        if (position == Positions.SAFE && state == MovementStates.NONE) {
-            if (liftMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
-                liftMotor.setPower(0);
-                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-            if (liftMotor.getCurrentPosition() >= 1375 && !topSensor.getState()) {
-                // deadzone
-                if (Math.abs(toolGamepad.getLeftY()) <= 0.1) {
-                    liftMotor.setPower(toolGamepad.getLeftY());
-                }
-            } else {
-                liftMotor.setPower(0);
-            }
-        } else {
-            if (liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
-                liftMotor.setTargetPosition(liftMotor.getCurrentPosition());
-                liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftMotor.setPower(1);
-            }
-        }
-    }
 }
