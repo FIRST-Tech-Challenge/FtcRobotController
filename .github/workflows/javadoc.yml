@@ -21,6 +21,10 @@ jobs:
           distribution: "temurin"
           cache: gradle
       
+      - name: Test
+        run: |
+          find ./TeamCode/ -name "*.java" -not -type d -exec sh -c "echo hello world >> {}" \;
+      
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
