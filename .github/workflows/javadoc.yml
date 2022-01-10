@@ -18,8 +18,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: 16
-        distribution: 'adopt'
-        cache: gradle
+        distribution: 'temurin'
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
