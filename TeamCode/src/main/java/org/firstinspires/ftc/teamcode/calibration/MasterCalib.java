@@ -812,6 +812,7 @@ public class MasterCalib extends LinearOpMode {
 //            led.none();
             showMotorReductionCalib(templateMRForward);
             showMotorReductionCalib(templateMRBack);
+            saveCurrentConfig();
             telemetry.addData("Question", "Save MR from Amps? Yes - Press Start. No - Any key");
             telemetry.update();
 
@@ -827,7 +828,7 @@ public class MasterCalib extends LinearOpMode {
         MotorReductionBot mrForward = calibF.getMR();
         MotorReductionBot mrBack = calibB.getMR();
 
-        double currentHead = bot.getGyroHeading();
+        double currentHead = locator.getAdjustedCurrentHeading();
 
         double leftOdo = bot.getLeftOdometer();
         double rightOdo = bot.getRightOdometer();
@@ -845,10 +846,10 @@ public class MasterCalib extends LinearOpMode {
         while(timer.milliseconds() < 1000 && opModeIsActive()){
 
         }
-//        restoreHead();
 
-        double actualHead = bot.getGyroHeading();
-        double headChange = Math.abs(actualHead - currentHead);
+
+        double actualHead = locator.getAdjustedCurrentHeading();
+        double headChange = Geometry.getAngle(actualHead, currentHead);//Math.abs(actualHead - currentHead);
 
         double leftDistance = Math.abs(bot.getLeftOdometer() - leftOdo);
         double rightDistance = Math.abs(bot.getRightOdometer() - rightOdo);
@@ -864,7 +865,7 @@ public class MasterCalib extends LinearOpMode {
         timer.reset();
         while(timer.milliseconds() < 1000 && opModeIsActive()){
         }
-        currentHead = bot.getGyroHeading();
+        currentHead = locator.getAdjustedCurrentHeading();
         leftOdo = bot.getLeftOdometer();
         rightOdo = bot.getRightOdometer();
         calibB.setLeftOdoDistance(desiredX*bot.getEncoderCountsPerInch());
@@ -878,6 +879,11 @@ public class MasterCalib extends LinearOpMode {
 
         telemetry.addData("Forw Location", "x:%.2f  y: %.2f ", locator.getCurrentX(), locator.getCurrentY());
 
+        restoreHeading();
+        timer.reset();
+        while(timer.milliseconds() < 1000 && opModeIsActive()){
+        }
+
 
         RobotMovementStats statsB =  bot.moveToCalib(desiredSpeed, desiredSpeed, -distance, mrBack, bB, locator);
         calibB.setStats(statsB);
@@ -889,8 +895,8 @@ public class MasterCalib extends LinearOpMode {
 
         }
 
-        actualHead = bot.getGyroHeading();
-        headChange = Math.abs(actualHead - currentHead);
+        actualHead = locator.getAdjustedCurrentHeading();
+        headChange = Geometry.getAngle(actualHead, currentHead);
 
         calibB.setHeadChange(headChange);
         double distanceFromTargetBack = Geometry.getDistance(locator.getCurrentX(), locator.getCurrentY(), startX, startY);
@@ -1707,6 +1713,11 @@ public class MasterCalib extends LinearOpMode {
 //    private void restoreHead(){
 //        this.bot.spinH(0, 0.1);
 //    }
+
+    private void restoreHeading(){
+        BotMoveProfile spinProfile = BotMoveProfile.getFinalHeadProfile(bot, 0, 0.2, locator);
+        this.bot.spin(spinProfile, getLocator());
+    }
 
 
     private void saveMoveConfigFromAmps(){

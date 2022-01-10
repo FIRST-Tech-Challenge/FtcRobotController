@@ -45,22 +45,24 @@ public class FrenzyBaseBot implements IOdoBot {
     //    MaxVelocityTest: maxLF: 2440.00, maxRF: 2640.00, maxLB: 2520.00, maxRB: 2600.00
 //    maxLF: 2760.00, maxRF: 2700.00, maxLB: 2680.00, maxRB: 2680.00
 
+    protected static double MAX_VELOCITY_BACK_LEFT = 2680.00; //0.971
+    protected static double MAX_VELOCITY_BACK_RIGHT = 2680.00; //0.971
+    protected static double MAX_VELOCITY_FRONT_LEFT = 2760.00; //1
+    protected static double MAX_VELOCITY_FRONT_RIGHT = 2700.00; //0.978
+
+//    protected static double MAX_VELOCITY_VALUE = MAX_VELOCITY_FRONT_LEFT; //1
+
 //    protected static double MAX_VELOCITY_BACK_LEFT = 2680.00;
 //    protected static double MAX_VELOCITY_BACK_RIGHT = 2680.00;
-//    protected static double MAX_VELOCITY_FRONT_LEFT = 2760.00;
-//    protected static double MAX_VELOCITY_FRONT_RIGHT = 2700.00;
-
-    protected static double MAX_VELOCITY_BACK_LEFT = 2680.00;
-    protected static double MAX_VELOCITY_BACK_RIGHT = 2680.00;
-    protected static double MAX_VELOCITY_FRONT_LEFT = 2680.00;
-    protected static double MAX_VELOCITY_FRONT_RIGHT = 2680.00;
+//    protected static double MAX_VELOCITY_FRONT_LEFT = 2680.00;
+//    protected static double MAX_VELOCITY_FRONT_RIGHT = 2680.00;
 
     protected LinearOpMode owner = null;
 
     static final double COUNTS_PER_MOTOR_GB = 537.7;
     static final double MOTOR_RPM_GB = 312;
     static final double MOTOR_RPS_GB = MOTOR_RPM_GB/60;
-    public static final double MAX_VELOCITY_GB = MAX_VELOCITY_FRONT_LEFT; //Lowest of max velocities
+    public static final double MAX_VELOCITY_GB = MAX_VELOCITY_BACK_LEFT; //Lowest of max velocities
     public static final double MAX_VELOCITY_REV = 2140;
 
 
@@ -153,6 +155,7 @@ public class FrenzyBaseBot implements IOdoBot {
         double D = 0;
 
         motor.setVelocityPIDFCoefficients(P, I, D, F);
+//        double coeff = maxVelocity/MAX_VELOCITY_VALUE;
         motor.setPositionPIDFCoefficients(positionPIDF);
         motor.setTargetPositionTolerance(positionToleration);
 
@@ -595,6 +598,7 @@ public class FrenzyBaseBot implements IOdoBot {
             }
             BotMoveProfile profile =
                     BotMoveProfile.buildMoveProfile(this, Math.abs(inches), leftspeed, 0, 0, false, direction, null, -1, -1, locator );
+            Log.d(TAG, String.format("Built profile to calib. Distance: %.2f, Direction %s", inches, direction));
             curveTo(profile, locator);
         }
         return stats;
