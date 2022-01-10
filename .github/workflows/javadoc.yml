@@ -22,7 +22,7 @@ jobs:
         cache: gradle
 
     - name: Check Gradle version
-      run: sudo ./gradlew --version
+      run: ./gradlew --version
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
