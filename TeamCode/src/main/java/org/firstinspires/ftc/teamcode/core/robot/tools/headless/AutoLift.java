@@ -39,7 +39,7 @@ public class AutoLift {
         SERVO_MOVEMENT
     }
 
-    protected final DcMotor liftMotor;
+    public final DcMotor liftMotor;
     protected final Servo armServo;
     protected final EventThread eventThread;
     protected Positions position = Positions.INTAKING;
@@ -56,7 +56,8 @@ public class AutoLift {
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setTargetPosition(liftMotor.getCurrentPosition());
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armServo = map.get(Servo.class,"armServo");
         this.eventThread = eventThread;
     }

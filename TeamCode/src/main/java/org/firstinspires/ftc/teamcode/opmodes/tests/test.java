@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 @TeleOp
-@Disabled
 public class test extends LinearOpMode {
     @Override
     public void runOpMode() {
+        hardwareMap.get(DcMotor.class,"liftMotor").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         final AutoCarousel carousel =  new AutoCarousel(hardwareMap);
         final DistanceSensor sensor = hardwareMap.get(DistanceSensor.class, "intakeSensor");
         final Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));

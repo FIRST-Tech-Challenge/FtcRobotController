@@ -36,14 +36,16 @@ public class ControllerLift extends AutoLift {
     }
 
     public void init() {
-        eventThread.addEvent(new RunWhenOutputChangedIndefinitelyEvent(() -> setPosition(Positions.TOP), () -> {
-            leftReader.readValue();
-            return leftReader.wasJustReleased();
-        }));
-        eventThread.addEvent(new RunWhenOutputChangedIndefinitelyEvent(() -> setPosition(Positions.SAFE), () -> {
-            rightReader.readValue();
-            return rightReader.wasJustReleased();
-        }));
+        Thread thread = new Thread(() -> {
+            while (!eventThread.isInterrupted()) {
+                leftReader.readValue();
+                rightReader.readValue();
+                if (leftReader.wasJustReleased()) setPosition(Positions.TOP);
+                if (rightReader.wasJustReleased()) setPosition(Positions.SAFE);
+            }
+        });
+        thread.setPriority(5);
+        thread.start();
     }
 
     @Override
@@ -60,6 +62,7 @@ public class ControllerLift extends AutoLift {
             }
         } else {
             if (liftMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
+                liftMotor.setTargetPosition(liftMotor.getCurrentPosition());
                 liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
         }

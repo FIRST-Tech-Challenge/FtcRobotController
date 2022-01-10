@@ -25,7 +25,7 @@ public class ControllerIntake extends AutoIntake {
 
     public void update(AutoLift.Positions liftPosition) {
         reader.readValue();
-        if (noObject() && liftPosition != AutoLift.Positions.INTAKING) {
+        if (noObject() && liftPosition == AutoLift.Positions.INTAKING) {
             if (reader.getState()) {
                 if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
                     this.forward();

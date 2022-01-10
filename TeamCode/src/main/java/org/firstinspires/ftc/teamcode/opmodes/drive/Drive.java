@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.drive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerCarousel;
@@ -37,6 +39,7 @@ public class Drive extends LinearOpMode {
                 intake.update(lift.getPosition());
                 lift.update();
             }
+            lift.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         });
         thread.setPriority(4);
         waitForStart();
