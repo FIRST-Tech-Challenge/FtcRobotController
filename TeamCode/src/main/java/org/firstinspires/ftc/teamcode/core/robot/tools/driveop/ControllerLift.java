@@ -21,8 +21,6 @@ public class ControllerLift extends AutoLift {
     private final GoodTriggerReader leftTrigger;
     private final GoodTriggerReader rightTrigger;
     private final ButtonReader leftBumper;
-    private final GamepadEx toolGamepad;
-    private final DigitalChannel topSensor;
 
     /**
      * @param eventThread local eventThread instance
@@ -30,11 +28,10 @@ public class ControllerLift extends AutoLift {
      */
     public ControllerLift(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, AutoGrabber grabber) {
         super(eventThread, map, grabber);
-        this.toolGamepad = toolGamepad;
         leftTrigger = new GoodTriggerReader(toolGamepad, GamepadKeys.Trigger.LEFT_TRIGGER);
         rightTrigger = new GoodTriggerReader(toolGamepad, GamepadKeys.Trigger.RIGHT_TRIGGER);
         leftBumper = new ButtonReader(toolGamepad, GamepadKeys.Button.LEFT_BUMPER);
-        topSensor = map.get(DigitalChannel.class,"topSensor");
+        DigitalChannel topSensor = map.get(DigitalChannel.class, "topSensor");
         topSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 

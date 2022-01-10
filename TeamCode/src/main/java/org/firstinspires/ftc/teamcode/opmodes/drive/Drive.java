@@ -17,7 +17,13 @@ import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChange
 
 @TeleOp
 public class Drive extends LinearOpMode {
+    private void waitTilDone() {
+        //noinspection StatementWithEmptyBody
+        while (opModeIsActive() && eventThread.isAlive()) {}
+    }
+
     private final EventThread eventThread = new EventThread(this::opModeIsActive);
+
     @Override
     public void runOpMode() {
         hardwareMap.get(Blinker.class, "Control Hub");
@@ -46,7 +52,7 @@ public class Drive extends LinearOpMode {
         thread.start();
         grabber.init();
         eventThread.start();
-        while (opModeIsActive() && eventThread.isAlive()) {}
+        waitTilDone();
         eventThread.interrupt();
         requestOpModeStop();
     }
