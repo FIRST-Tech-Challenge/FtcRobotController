@@ -36,7 +36,7 @@ jobs:
         run: |
           echo '-classpath "' >> temp_javadoc_args.txt
           # find ./javadoc-workspace/ -name "*.java" -not -type d -exec sh -c "echo : >> {} temp_javadoc_args.txt"
-          STR=$(find ~/.gradle/caches/ -name "*.java" -name "*.jar" -not -type d -exec -c "echo : >> {}")
+          STR=$(find ~/.gradle/caches/ -name "*.java" -name "*.jar" -not -type d -exec echo ":" >> {}" \;)
           echo $STR >> temp_javadoc_args.txt
           sed -i '$ s/.$//' temp_javadoc_args.txt
           echo '"' >> temp_javadoc_args.txt
