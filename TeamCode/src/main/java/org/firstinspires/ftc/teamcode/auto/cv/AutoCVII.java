@@ -13,6 +13,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
+import android.util.Log;
+
 
 /**
  * this is the auto for PipelineII, that drives towards out shipping element
@@ -20,12 +22,13 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
  */
 @Autonomous(name="Auto", group="Auto")
 public class AutoCVII extends BaseNewOpMode {
+    private HardwareNew robot = new HardwareNew();
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void runOpMode() throws InterruptedException {
-        HardwareNew robot = new HardwareNew();
         CvPipeline detector = new CvPipeline(telemetry);
         Direction direction = detector.getLocation();
         robot.init(hardwareMap);
@@ -62,13 +65,33 @@ public class AutoCVII extends BaseNewOpMode {
     private OpenCvCamera initCamera(CvPipeline detector) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        // Connect to the camera
-        camera.openCameraDevice();
+
+        // Connect to the camera in the async mode.
+        camera.openCameraDeviceAsync( new OpenCvCamera.AsyncCameraOpenListener( ) {
+            @Override
+            public void onOpened( ) {
+                // Remember to change the camera rotation
+                camera.startStreaming( FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN );
+            }
+
+            @Override
+            public void onError( int errorCode ) {
+                //This will be called if the camera could not be opened
+                Log.e( "CAMERA_DEVICE", "Camera could not be opened. Error code: " + errorCode );
+            }
+        } );
+
         // Use the SkystoneDetector pipeline
         // processFrame() will be called to process the frame
         camera.setPipeline(detector);
-        // Remember to change the camera rotation
-        camera.startStreaming(FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
         return camera;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HardwareNew getRobot() {
+        return robot;
     }
 }

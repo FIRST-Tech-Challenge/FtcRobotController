@@ -20,7 +20,6 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -38,6 +37,8 @@ public class CvPipeline extends OpenCvPipeline {
     private volatile double distance;
     //Init Location
     private volatile Direction direction;
+    //Whether using duck as shipping element.
+    private boolean useDuck = true;
     //THIS IS A CHANGE
 
     private boolean left = false; // true if regular stone found on the left side
@@ -61,21 +62,14 @@ public class CvPipeline extends OpenCvPipeline {
      */
     @Override
     public Mat processFrame(Mat input) {
-        Mat blurredImage = new Mat();
-
-        // Remove some noise before any processing. The size vector is arbitrary from an example.
-        Imgproc.blur(input, blurredImage, new Size(7, 7));
         Mat mat = new Mat();
         //convert camera feed to HSV for easy implementations
-        Imgproc.cvtColor(blurredImage, mat, Imgproc.COLOR_BGR2HSV);
-
-        // release the blurred image mat.
-        blurredImage.release();
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2HSV);
 
         // Low and High HSV ranges for Orange color (23-32).
         // Caution: Don't change the following values without consulting the coach.
-        Scalar lowHSV = new Scalar(5, 50, 50);
-        Scalar highHSV = new Scalar(40, 255, 255);
+        Scalar lowHSV = useDuck ? new Scalar( 25, 25, 35 ) : new Scalar(5, 50, 50);
+        Scalar highHSV = useDuck ? new Scalar( 40, 255, 255 ) : new Scalar(40, 255, 255);
 
         //Threshold the incoming image to the selected HSV ranges.
         Mat thresh = new Mat();
@@ -95,32 +89,23 @@ public class CvPipeline extends OpenCvPipeline {
         left.release();
         right.release();
         middle.release();
+        mat.release();
 
-        //Stats for nerds
-        telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
-        telemetry.addData("Middle raw value", (int) Core.sumElems(middle).val[0]);
-        telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
-        telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
-        telemetry.addData("Middle percentage", Math.round(middleValue * 100) + "%");
-        telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
-        telemetry.addData("Distance", distance);
-        telemetry.update();
+        //Doing additional debug logging.
+        logDebugData(leftValue, middleValue, rightValue, left, right, middle);
 
         //Set the direction to move to.
-        setDirection(leftValue, middleValue, rightValue, thresh);
-
-        // Following causes image to flicker.
+        setDirection(leftValue, middleValue, rightValue);
 
         Imgproc.cvtColor(thresh, thresh, Imgproc.COLOR_GRAY2RGB);
-//        //Color stuff
-//        Scalar colorStone = new Scalar(255, 255, 255);
-//        Scalar colorSkystone = new Scalar(0, 255, 0);
-//        //Draw rectangle around dude
-//        Imgproc.rectangle(thresh, LEFT_ROI, direction == RIGHT ? colorSkystone:colorStone);
-//        Imgproc.rectangle(thresh, RIGHT_ROI, direction == LEFT ? colorSkystone:colorStone);
-//        Imgproc.rectangle(thresh, MIDDLE_ROI, direction == IN_FRONT ? colorSkystone:colorStone);
 
-        return mat;
+        Scalar colorStone = new Scalar(255, 0, 0);
+        Scalar colorSkystone = new Scalar(0, 255, 0);
+        Imgproc.rectangle(thresh, LEFT_ROI, direction == LEFT ? colorSkystone:colorStone);
+        Imgproc.rectangle(thresh, RIGHT_ROI, direction == RIGHT ? colorSkystone:colorStone);
+        Imgproc.rectangle(thresh, MIDDLE_ROI, direction == IN_FRONT ? colorSkystone:colorStone);
+
+        return thresh;
     }
 
     /**
@@ -156,7 +141,27 @@ public class CvPipeline extends OpenCvPipeline {
         return distance;
     }
 
-    private synchronized void setDirection(double leftValue, double middleValue, double rightValue, Mat mat) {
+    private synchronized void setDirection(double leftValue, double middleValue, double rightValue) {
+        boolean leftBool = leftValue > PERCENT_COLOR_THRESHOLD;
+        boolean middleBool = middleValue > PERCENT_COLOR_THRESHOLD;
+        boolean rightBool = rightValue > PERCENT_COLOR_THRESHOLD;
+
+        if( rightBool ) {
+            direction = Direction.RIGHT;
+            telemetry.addData( "Location",  "right" );
+        } else if( leftBool ) {
+            direction = Direction.LEFT;
+            telemetry.addData( "Location", "left" );
+        } else if( middleBool ) {
+            direction = Direction.IN_FRONT;
+            telemetry.addData( "Location", "middle" );
+        } else {
+            direction = Direction.NOT_FOUND;
+            telemetry.addData( "Location", "not found" );
+        }
+    }
+
+    private synchronized void setDirectionAndDistance(double leftValue, double middleValue, double rightValue, Mat mat) {
         Mat edges = new Mat();
         Mat hierarchy = new Mat();
         List<MatOfPoint> contours = new ArrayList<>();
@@ -231,5 +236,17 @@ public class CvPipeline extends OpenCvPipeline {
         Rect rectangle = Imgproc.boundingRect(currentContour);
         double width = rectangle.width;
         return (width);
+    }
+
+    private void logDebugData(double leftValue, double middleValue, double rightValue, Mat left, Mat right, Mat middle) {
+        //Stats for nerds
+        telemetry.addData("Left raw value", (int) Core.sumElems(left).val[0]);
+        telemetry.addData("Middle raw value", (int) Core.sumElems(middle).val[0]);
+        telemetry.addData("Right raw value", (int) Core.sumElems(right).val[0]);
+        telemetry.addData("Left percentage", Math.round(leftValue * 100) + "%");
+        telemetry.addData("Middle percentage", Math.round(middleValue * 100) + "%");
+        telemetry.addData("Right percentage", Math.round(rightValue * 100) + "%");
+        telemetry.addData("Distance", distance);
+        telemetry.update();
     }
 }
