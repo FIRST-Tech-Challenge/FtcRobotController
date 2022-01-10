@@ -18,7 +18,8 @@ public class AutoLift {
         SAFE(1375, 0.7D, false),
         TOP(2880, 0.3D, true),
         MIDDLE(1850, 0.3D, true),
-        BOTTOM(1375, 0.25D, true);
+        BOTTOM(1375, 0.25D, true),
+        TSE(4500, 0.7D, true);
 
         public final double armPos;
         public final int motorPos;
@@ -44,12 +45,13 @@ public class AutoLift {
     protected Positions position = Positions.INTAKING;
     protected Positions lastPosition = position;
     protected MovementStates state = MovementStates.NONE;
+    protected AutoGrabber grabber;
     // fix this later
     /**
      * @param eventThread local eventThread instance
      * @param map         local hardwareMap instance
      */
-    public AutoLift(EventThread eventThread, @NonNull HardwareMap map) {
+    public AutoLift(EventThread eventThread, @NonNull HardwareMap map, AutoGrabber grabber) {
         liftMotor = map.get(DcMotor.class,"liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -60,6 +62,7 @@ public class AutoLift {
         liftMotor.setPower(1);
         armServo = map.get(Servo.class,"armServo");
         this.eventThread = eventThread;
+        this.grabber = grabber;
     }
 
     public void setPosition(@NonNull Positions position) {
@@ -92,7 +95,8 @@ public class AutoLift {
                     if (!position.dumper) state = MovementStates.NONE;
                     else {
                         dumpWaiting = true;
-                        eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, 1400));
+                        if (position == Positions.TSE) grabber.open();
+                        eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, position == Positions.TSE ? 800 : 1400));
                         state = MovementStates.SERVO_MOVEMENT;
                     }
                 }

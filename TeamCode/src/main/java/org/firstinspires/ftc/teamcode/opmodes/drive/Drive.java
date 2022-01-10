@@ -30,7 +30,7 @@ public class Drive extends LinearOpMode {
         final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
 
         Thread thread = new Thread(() -> {
-            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad);
+            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, grabber);
             lift.init();
             final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
             final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
