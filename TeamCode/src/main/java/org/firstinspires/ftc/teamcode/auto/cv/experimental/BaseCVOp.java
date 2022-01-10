@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.auto.cv.experimental;
 
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.FRAME_HEIGHT;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.FRAME_WIDTH;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.FRAME_HEIGHT;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.FRAME_WIDTH;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.config.HardwareNew;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;

@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive;
+package org.firstinspires.ftc.teamcode.obsoleted.gen1.selfDrive;
 
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.COUNTS_PER_INCH;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.COUNTS_PER_INCH;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Configs.oldConfig.BaseOpMode;
-import org.firstinspires.ftc.teamcode.Configs.oldConfig.Hardware2;
+import org.firstinspires.ftc.teamcode.obsoleted.gen1.BaseOpMode;
+import org.firstinspires.ftc.teamcode.obsoleted.gen1.Hardware2;
 
 /**
  * This class implements necessary utility methods for autonomous driving.

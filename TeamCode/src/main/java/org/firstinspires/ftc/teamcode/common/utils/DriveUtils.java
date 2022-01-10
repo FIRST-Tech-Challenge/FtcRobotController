@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.common.utils;
 
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.COUNTS_PER_INCH;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.COUNTS_PER_INCH;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Configs.oldConfig.BaseOpMode;
-import org.firstinspires.ftc.teamcode.Configs.oldConfig.Hardware2;
+import org.firstinspires.ftc.teamcode.common.BaseNewOpMode;
+import org.firstinspires.ftc.teamcode.config.HardwareNew;
 
 /**
  * This class implements necessary utility methods for autonomous driving.
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Configs.oldConfig.Hardware2;
  * `IN SUCH AN INSIGNIFICANT WAY THAT ONLY 1 AIR MOLOCULE WAS DISPLACED BY THEM`
  * @soon-to-be-author karthikperi
  */
-public final class NewAutoDriveUtils {
+public final class DriveUtils {
     /**
      * Logs data.
      * @param baseNewOpMode The base op mode.

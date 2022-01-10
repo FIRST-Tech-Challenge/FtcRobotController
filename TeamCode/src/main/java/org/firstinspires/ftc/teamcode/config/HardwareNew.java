@@ -4,17 +4,15 @@ FTC Team 20020
 
  */
 
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.config;
 //----------------------------------------------------------------------------
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.BLEFT_MOTOR_NAME;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.BRIGHT_MOTOR_NAME;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.LEFT_MOTOR_NAME;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.RIGHT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.BLEFT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.BRIGHT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.LEFT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.RIGHT_MOTOR_NAME;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.common.BaseNewOpMode;
 
 /**
  * This class defines the hardware components.
