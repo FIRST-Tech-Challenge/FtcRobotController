@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 16
-          distribution: "temirun"
+          distribution: "temurin"
           cache: gradle
       
       - name: Make gradlew executable
