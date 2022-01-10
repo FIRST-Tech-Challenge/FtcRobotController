@@ -91,31 +91,16 @@ public class Auto_BlueCaroseul extends LinearOpMode {
         robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
         robot.gyroTurn(-90,0.5);//direction
 //        robot.gyroStrafeEncoder(0.5,90,10);
-        robot.gyroStrafeEncoder(0.5,90,28);//2 feet+a bit more(error) to right. todo change the cm, direction
-        robot.duck(-1);//turn on duck
-        Thread.sleep(5000);
+
+        robot.gyroStrafeEncoder(0.5,-90,27.5);//2 feet+a bit more(error) to right. todo change the cm, direction
+        robot.duck(-0.55);//turn on duck
+        Thread.sleep(4000);
         robot.duck(0);
 
         //to hub
-        robot.gyroStrafeEncoder(0.5,-90,42);//49?
-        robot.gyroTurn(-90,0.5);
-
-        switch (code) {//shell for later, do not delete!!!
-            case 2:
-                robot.dropMiddle(0.25,21);
-                //center, middle
-                break;
-            case 3:
-                //right, top
-                robot.dropTop(0.25,21);
-                break;
-            case 1:
-            default:
-                //left, bottom
-                robot.dropBottom(0.25,21);//19??
-                //error, put on bottom, do case1
-                break;
-        }
+        robot.gyroStrafeEncoder(0.5,90,52.5);//49?
+        robot.gyroTurn(90,0.5);
+        robot.runToPosDrop(0.5, 21.5,code);
         Thread.sleep(500);
 
         robot.goToDepot_Blue();//default

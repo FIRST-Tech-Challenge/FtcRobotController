@@ -90,23 +90,9 @@ public class Auto_BlueWarehouse extends LinearOpMode {
         //2 sides of rectangle instead of hypotenuse
         robot.gyroStrafeEncoder(0.5,-90,6);
         robot.gyroStrafeEncoder(0.5,0,34);
+        robot.gyroTurn(180, 0.5);
 
-        switch (code) {
-            case 2:
-                robot.dropMiddle(0.25,18);
-                //center, middle
-                break;
-            case 3:
-                //right, top
-                robot.dropTop(0.25,18);
-                break;
-            case 1:
-            default:
-                //left, bottom
-                robot.dropBottom(0.25,18);
-                //error, put on bottom, do case1
-                break;
-        }
+        robot.runToPosDrop(0.5, 18, code);
         Thread.sleep(500);
 
         //go to warehouse

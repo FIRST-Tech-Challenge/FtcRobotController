@@ -95,22 +95,7 @@ public class Auto_RedWarehouse extends LinearOpMode {
         robot.gyroStrafeEncoder(0.5,180,34);
         robot.gyroTurn(180, 0.5);
 
-        switch (code) {
-            case 2:
-                robot.dropMiddle(0.25,18);//chaneg???
-                //center, middle
-                break;
-            case 3:
-                //right, top
-                robot.dropTop(0.25,18);
-                break;
-            case 1:
-            default:
-                //left, bottom
-                robot.dropBottom(0.25,18);
-                //error, put on bottom, do case1
-                break;
-        }
+        robot.runToPosDrop(0.25, 18, code);
         Thread.sleep(500);
 
         //go to warehouse

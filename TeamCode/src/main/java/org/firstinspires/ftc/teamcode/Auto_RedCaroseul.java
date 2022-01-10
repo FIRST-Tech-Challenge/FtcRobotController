@@ -108,24 +108,7 @@ public class Auto_RedCaroseul extends LinearOpMode {
         //to hub
         robot.gyroStrafeEncoder(0.5,90,52.5);
         robot.gyroTurn(90,0.5);
-
-        //all around 21 in to hub
-        switch (code) {//shell for later, do not delete!!!
-            case 2:
-                robot.runToPosDrop(0.25, 21.5, 2);
-                //center, middle
-                break;
-            case 3:
-                //right, top
-                robot.runToPosDrop(0.25, 21.5, 3);
-                break;
-            case 1:
-            default:
-                //left, bottom
-                robot.runToPosDrop(0.25, 21.5, 1);//19??
-                //error, put on bottom, do case1
-                break;
-        }
+        robot.runToPosDrop(0.5, 21.5, code);
         Thread.sleep(500);
 
         robot.goToDepot_Red();//default

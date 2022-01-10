@@ -669,8 +669,7 @@ public class Robot_2022FF {
         resetAngle();
         while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
             // double correction = getCorrection();
-            double correction = 0;
-            tankDrive(power + correction,power - correction);
+            tankDrive(power ,power);
             telemetry.addData("distance reading:", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
@@ -881,12 +880,14 @@ public class Robot_2022FF {
             //go to warehouse
             gyroTurn(-90, 0.5);
             gyroStrafeEncoder(0.5, 0, 28);//change distance
-            driveToWall(0.5);
+            gyroStrafeEncoder(0.5, -90, 56);
+//            driveToWall(0.5);
             //option 2: there's a robot in the way, and we need to instead go over the bumps...
         }
         else{
             gyroTurn(-90, 0.5);
-            driveToWall(0.5);
+            gyroStrafeEncoder(0.5, -90, 56);//???
+//            driveToWall(0.5);
         }
     }
 
@@ -901,7 +902,7 @@ public class Robot_2022FF {
         gyroTurn(90,0.5);
         gyroStrafeEncoder(0.5,90,54);//54
 //        robot.driveToWall(0.5);//other option
-        gyroStrafeEncoder(0.5,0,12);
+        gyroStrafeEncoder(0.5,0,12.7);
     }
     //robot components
     /**
@@ -919,6 +920,7 @@ public class Robot_2022FF {
     public void duck(double power){
         duck.setPower(power);
     }
+
     public void dobucket() throws InterruptedException{
         bucket.setPosition(1);
         Thread.sleep(1000);
@@ -949,37 +951,20 @@ public class Robot_2022FF {
                 targetTicks = 100;
         }
         if(outtake.getCurrentPosition() < targetTicks) {
-            while (outtake.getCurrentPosition() < targetTicks && opMode.opModeIsActive()) {
-                outtake.setPower(power);
-            }
+            outtake.setPower(power);
+            while (outtake.getCurrentPosition() < targetTicks && opMode.opModeIsActive());
             outtake.setPower(0);
         }
         else{
-            while(outtake.getCurrentPosition() > targetTicks && opMode.opModeIsActive()){
-                outtake.setPower(-power);
-            }
+            outtake.setPower(-power);
+            while(outtake.getCurrentPosition() > targetTicks && opMode.opModeIsActive());
             outtake.setPower(0);
         }
     }
 
-    public void dropTop(double power, double dist) throws InterruptedException{
-        moveSlides(3,power);
-        gyroStrafeEncoder(0.5,90,dist);
-        dobucket();
-        gyroStrafeEncoder(0.5,-90,6);
-        moveSlides(0,power);
-    }
-
-    public void dropMiddle(double power, double dist) throws InterruptedException{
-        moveSlides(2,power);
-        gyroStrafeEncoder(0.5,90,dist);
-        dobucket();
-        gyroStrafeEncoder(0.5,-90,6);
-        moveSlides(0,power);
-    }
-
-    public void dropBottom (double power, double dist) throws InterruptedException{
-        moveSlides(1, power);
+    public void autoDrop(int level, double power, double dist) throws InterruptedException{
+        bucket.setPosition(0.7);
+        moveSlides(level, power);
         gyroStrafeEncoder(0.5,90,dist);
         dobucket();
         gyroStrafeEncoder(0.5,-90,6);
@@ -990,13 +975,12 @@ public class Robot_2022FF {
         outtake.setPower(power);
         outtake.setTargetPosition((int)dist);
                 
-        if(outtake.getCurrentPosition()<dist){
-            while(outtake.getCurrentPosition()<dist);
+        if(outtake.getCurrentPosition() < dist){
+            while(outtake.getCurrentPosition() < dist);
         } 
         else{
-            while(outtake.getCurrentPosition()>dist);   
+            while(outtake.getCurrentPosition() > dist);
         }
-
         outtake.setPower(0);
     }
 
@@ -1024,7 +1008,6 @@ public class Robot_2022FF {
         dobucket();
         gyroStrafeEncoder(0.5, -90, 6);
         motorRunToPos(power, 100);
-        
     }
 
 }
