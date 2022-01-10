@@ -321,7 +321,7 @@ public class DriveTrain implements Subsystem {
         targetTurnRadius = angularVelocity == 0 ? 0 : linearVelocity / angularVelocity;
 
         SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
-        SimpleMatrix rightWheel = new SimpleMatrix(new double[';'][] {{ Constants.TRACK_WIDTH / 2, 0 }});
+        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
         SimpleMatrix middleWheel = new SimpleMatrix(new double[][] {{ 0, -getChassisDistance() }});
 
         SimpleMatrix translation = new SimpleMatrix(new double[][] {{ 0, linearVelocity * dt }});
