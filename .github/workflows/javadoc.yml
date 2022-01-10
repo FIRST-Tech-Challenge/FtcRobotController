@@ -36,12 +36,13 @@ jobs:
         run: |
           echo '-classpath "' >> temp_javadoc_args.txt
           # find ./javadoc-workspace/ -name "*.java" -not -type d -exec sh -c "echo : >> {} temp_javadoc_args.txt"
+          find ~/.gradle/caches/ -name "*.java" -name "*.jar" -not -type d -exec echo ":" >> {}
           STR=$(find ~/.gradle/caches/ -name "*.java" -name "*.jar" -not -type d -exec echo ":" >> {} \;)
           echo $STR >> temp_javadoc_args.txt
           sed -i '$ s/.$//' temp_javadoc_args.txt
           echo '"' >> temp_javadoc_args.txt
           cat temp_javadoc_args.txt
-          javadoc -Xdoclint:none -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar -d ./javadoc-output -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/package-list @temp_javadoc_args.txt -tag "apiNote:a:API Note:" -tag "implSpec:a:Implementation Requirements:" -tag "implNote:a:Implementation Note:" $(find ./javadoc-workspace/TeamCode/ -name "*.java" -not -type d) --ignore-source-errors
+          javadoc -Xdoclint:none -public -splitindex -use -author -version -sourcepath $ANDROID_HOME/platforms/android-29/android.jar -d ./javadoc-output -link https://docs.oracle.com/en/java/javase/11/docs/api/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/ftccommon/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/hardware/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/inspection/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/onbotjava/ -link https://xaverianteamrobotics.github.io/FtcRobotController/javadocs/libs/robotcore/package-list @temp_javadoc_args.txt -tag "apiNote:a:API Note:" -tag "implSpec:a:Implementation Requirements:" -tag "implNote:a:Implementation Note:" $(find ./TeamCode/ -name "*.java" -not -type d) --ignore-source-errors
 
       - name: Upload the Javadoc output
         uses: actions/upload-artifact@v2
