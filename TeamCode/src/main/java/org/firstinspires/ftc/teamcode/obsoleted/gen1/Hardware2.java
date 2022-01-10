@@ -3,13 +3,13 @@ Made by Aryan Sinha,
 FTC Team 202101101
  */
 
-package org.firstinspires.ftc.teamcode.Configs.oldConfig;
+package org.firstinspires.ftc.teamcode.obsoleted.gen1;
 //----------------------------------------------------------------------------
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.CAROUSEL_SERVO;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.CLAW_NAME;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.CLAW_SERVO;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.LEFT_MOTOR_NAME;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.RIGHT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.CAROUSEL_SERVO;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.CLAW_NAME;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.CLAW_SERVO;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.LEFT_MOTOR_NAME;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.RIGHT_MOTOR_NAME;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;

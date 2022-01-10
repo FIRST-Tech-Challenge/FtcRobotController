@@ -3,17 +3,13 @@ Made by Aryan Sinha,
 FTC team 202101101
  */
 
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.teleop.tests;
 
-import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logData;
-import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logLine;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Configs.newConfig.HardwareNew;
+import org.firstinspires.ftc.teamcode.config.HardwareNew;
+import org.firstinspires.ftc.teamcode.common.BaseNewOpMode;
 
 
 /**

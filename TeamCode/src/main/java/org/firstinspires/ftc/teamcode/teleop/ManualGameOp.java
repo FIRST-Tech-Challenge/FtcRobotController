@@ -3,17 +3,16 @@ Made by Aryan Sinha,
 FTC team 202101101
  */
 
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.teleop;
 
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.logData;
-import static org.firstinspires.ftc.teamcode.Configs.oldConfig.selfDrive.AutoDriveUtils.logLine;
+import static org.firstinspires.ftc.teamcode.common.utils.DriveUtils.logData;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Configs.newConfig.HardwareNew;
+import org.firstinspires.ftc.teamcode.config.HardwareNew;
+import org.firstinspires.ftc.teamcode.common.BaseNewOpMode;
 
 
 /**
@@ -22,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Configs.newConfig.HardwareNew;
  * @author aryansinha
  */
 @TeleOp(name="Basic: Obese OpMode", group="Linear Opmode")
-public class New2ControllerDrive extends BaseNewOpMode {
+public class ManualGameOp extends BaseNewOpMode {
     private final HardwareNew robot = new HardwareNew(true);
 
     /**

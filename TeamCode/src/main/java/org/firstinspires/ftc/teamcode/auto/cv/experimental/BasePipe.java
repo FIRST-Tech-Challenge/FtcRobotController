@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.auto.cv.experimental;
 
 
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.Direction.NOT_INITIALIZED;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.internal.android.dx.rop.cst.CstArray;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -12,7 +10,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BasePipe extends OpenCvPipeline {

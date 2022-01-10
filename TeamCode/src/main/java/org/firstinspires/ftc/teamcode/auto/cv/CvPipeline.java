@@ -1,18 +1,19 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.auto.cv;
 
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.Direction.IN_FRONT;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.Direction.LEFT;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.Direction.NOT_FOUND;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.Direction.NOT_INITIALIZED;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.Direction.RIGHT;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.FRAME_WIDTH;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.LEFT_ROI;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.MIDDLE_ROI;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.PERCENT_COLOR_THRESHOLD;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.RIGHT_ROI;
+import static org.firstinspires.ftc.teamcode.common.Direction.IN_FRONT;
+import static org.firstinspires.ftc.teamcode.common.Direction.LEFT;
+import static org.firstinspires.ftc.teamcode.common.Direction.NOT_FOUND;
+import static org.firstinspires.ftc.teamcode.common.Direction.NOT_INITIALIZED;
+import static org.firstinspires.ftc.teamcode.common.Direction.RIGHT;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.FRAME_WIDTH;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.LEFT_ROI;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.MIDDLE_ROI;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.PERCENT_COLOR_THRESHOLD;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.RIGHT_ROI;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.Direction;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -30,7 +31,7 @@ import java.util.List;
  * This is the pipeline for the AutoCVII class, pipelines render the photo and send logic from opencv
  * @author aryansinha
  */
-public class PipelineII extends OpenCvPipeline {
+public class CvPipeline extends OpenCvPipeline {
     //Create a variable for telemetry we can use
     private final Telemetry telemetry;
     //The distance from camera to the object.
@@ -46,7 +47,7 @@ public class PipelineII extends OpenCvPipeline {
      * Creates an instance of this class.
      * @param telemetry The telemetry object.
      */
-    public PipelineII(Telemetry telemetry) {
+    public CvPipeline(Telemetry telemetry) {
         this.telemetry = telemetry;
         this.direction = NOT_INITIALIZED;
     }
