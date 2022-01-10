@@ -121,7 +121,7 @@ public class WarehouseSideBluePath1 {
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
                     setArmLevel.schedule();
                 })
-                .strafeTo(new Vector2d(42, 36))
+                .strafeTo(new Vector2d(42, 50))
                 .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
