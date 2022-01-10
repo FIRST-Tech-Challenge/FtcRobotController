@@ -29,6 +29,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionRedHub;
@@ -94,6 +95,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
     FreightFrenzyComputerVisionRedHub CV;
+
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
@@ -172,14 +174,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
-    public void pauseButInSecondsForThePlebeians(double seconds) {
-        long startTime = new Date().getTime();
-        long time = 0;
 
-        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
-            time = new Date().getTime() - startTime;
-        }
-    }
 
     public void jevilTurnCarousel(double speed, double seconds) {
         carousel.setPower(speed);
@@ -194,6 +189,32 @@ public class SampleMecanumDrive extends MecanumDrive {
         backRight.setPower(0);
     }
 
+    public boolean getDuck(){
+
+        int frontLeftInit= frontLeft.getCurrentPosition();
+        int backLeftInit = backLeft.getCurrentPosition();
+        int frontRightInit = frontRight.getCurrentPosition();
+        int backRightInit = backRight.getCurrentPosition();
+
+        while (distanceSensorIntake.getDistance(DistanceUnit.CM)<7 && DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit-frontLeft.getCurrentPosition()))<3
+                && DriveConstants.encoderTicksToInches(Math.abs(frontRightInit-frontRight.getCurrentPosition()))<3
+                && DriveConstants.encoderTicksToInches(Math.abs(backLeftInit-backLeft.getCurrentPosition()))<3
+                && DriveConstants.encoderTicksToInches(Math.abs(backRightInit-backRight.getCurrentPosition()))<3
+        ){
+            intakeMotor.setPower(0.8);
+            frontLeft.setPower(-0.2);
+            frontRight.setPower(-0.2);
+            backRight.setPower(-0.2);
+            backLeft.setPower(-0.2);
+        }
+
+        if (DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit-frontLeft.getCurrentPosition()))<3 || DriveConstants.encoderTicksToInches(Math.abs(frontRightInit-frontRight.getCurrentPosition()))<3
+                || DriveConstants.encoderTicksToInches(Math.abs(backLeftInit-backLeft.getCurrentPosition()))<3 || DriveConstants.encoderTicksToInches(Math.abs(backRightInit-backRight.getCurrentPosition()))<3){
+           return true;
+        }
+        return false;
+    }
+
     public void aquireDuckRed(double speed, double secondaryStopConditionSeconds) {
         long startTime = new Date().getTime();
         long time = 0;
@@ -203,8 +224,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         intakeMotor.setPower(.8);
         setMotorPowers(-speed, -speed, -speed, -speed);
 
+
         while (distanceSensorValue > 3 && time < secondaryStopConditionSeconds * 1000) {
-            pause(50);
+            //pause(50);
             time = new Date().getTime() - startTime;
             distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
             if (distanceSensorValue > 7) {
@@ -346,7 +368,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         pause(150);
 
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-        pause(1500);
+        pause(1200);
         //forward(0.3, -0.2);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
@@ -680,5 +702,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
+    }
+
+    public void pauseButInSecondsForThePlebeians(double seconds) {
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+        }
     }
 }

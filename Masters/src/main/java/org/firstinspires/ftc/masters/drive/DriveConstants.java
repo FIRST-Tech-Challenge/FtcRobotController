@@ -68,9 +68,9 @@ public class DriveConstants {
      * inches.
      */
    // public static double MAX_VEL = 100;
-    public static double MAX_VEL = 40;
+    public static double MAX_VEL = 45;
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = 19;
+    public static double MAX_ANG_VEL = 30;//19
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
 

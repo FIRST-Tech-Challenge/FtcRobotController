@@ -2,10 +2,9 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
@@ -13,12 +12,11 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "test auto with roadRunner")
-public class TestAutoWithRoadRunner extends LinearOpMode {
+@Autonomous(name = "Red carousel odometry")
+public class RedCarouselOdo extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //  robot = new RobotClass(hardwareMap,telemetry,this);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
@@ -78,27 +76,50 @@ public class TestAutoWithRoadRunner extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.jevilTurnCarousel(.3, 6); //can we go faster?
-        drive.intakeMotor.setPower(.8);
+        drive.intakeMotor.setPower(0.8);
+
+        TrajectorySequence getOffCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                .strafeRight(2, SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+        drive.followTrajectorySequence(getOffCarousel);
+        position = drive.getLocalizer().getPoseEstimate();
+        boolean hasDuck = drive.getDuck();
+        int tryDuck = 1;
+        while (!hasDuck && tryDuck<4){
+            TrajectorySequence backUp =drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                    .lineToLinearHeading(position, SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                    .build();
+            drive.followTrajectorySequence(backUp);
+            TrajectorySequence goRight = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                    .strafeRight(2, SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                    .build();
+            drive.followTrajectorySequence(goRight);
+            hasDuck = drive.getDuck();
+
+        }
+
+
+
 
 //
-        position = drive.getLocalizer().getPoseEstimate();
-        TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(position)
-                .lineToLinearHeading(new Pose2d(new Vector2d(-72 + 15, -72 + 7), Math.toRadians(110)), SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-        drive.followTrajectorySequence(trajSeq3);
-
-        position = drive.getLocalizer().getPoseEstimate();
-        TrajectorySequence trajSeq4 = drive.trajectorySequenceBuilder(position)
-                .lineToLinearHeading(new Pose2d(new Vector2d(-29, -72 + 7), Math.toRadians(110)))
-                .build();
-        drive.followTrajectorySequence(trajSeq4);
-
+//        position = drive.getLocalizer().getPoseEstimate();
+//        TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(position)
+//                .lineToLinearHeading(new Pose2d(new Vector2d(-72 + 15, -72 + 7), Math.toRadians(110)), SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+//                .build();
+//        drive.followTrajectorySequence(trajSeq3);
 //
-        position = drive.getLocalizer().getPoseEstimate();
-        TrajectorySequence trajSeq5 = drive.trajectorySequenceBuilder(position)
-                .lineToLinearHeading(new Pose2d(new Vector2d(-29, -65), Math.toRadians(110)))
-                .build();
-        drive.followTrajectorySequence(trajSeq5);
+//        position = drive.getLocalizer().getPoseEstimate();
+//        TrajectorySequence trajSeq4 = drive.trajectorySequenceBuilder(position)
+//                .lineToLinearHeading(new Pose2d(new Vector2d(-29, -72 + 7), Math.toRadians(110)))
+//                .build();
+//        drive.followTrajectorySequence(trajSeq4);
+//
+////
+//        position = drive.getLocalizer().getPoseEstimate();
+//        TrajectorySequence trajSeq5 = drive.trajectorySequenceBuilder(position)
+//                .lineToLinearHeading(new Pose2d(new Vector2d(-29, -65), Math.toRadians(110)))
+//                .build();
+//        drive.followTrajectorySequence(trajSeq5);
 
 
         position = drive.getLocalizer().getPoseEstimate();
