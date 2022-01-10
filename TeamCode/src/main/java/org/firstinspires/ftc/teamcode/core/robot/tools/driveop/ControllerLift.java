@@ -57,7 +57,10 @@ public class ControllerLift extends AutoLift {
                 liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             if (liftMotor.getCurrentPosition() >= 1375 && !topSensor.getState()) {
-                liftMotor.setPower(toolGamepad.getLeftY());
+                // deadzone
+                if (Math.abs(toolGamepad.getLeftY()) <= 0.1) {
+                    liftMotor.setPower(toolGamepad.getLeftY());
+                }
             } else {
                 liftMotor.setPower(0);
             }

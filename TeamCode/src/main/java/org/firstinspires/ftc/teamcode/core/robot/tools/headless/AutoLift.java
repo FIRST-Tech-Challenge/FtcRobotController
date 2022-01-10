@@ -13,7 +13,6 @@ public class AutoLift {
 
     // 5 1/4 inch from back of robot to rim
 
-    @SuppressWarnings("unused")
     public enum Positions {
         INTAKING(0, 0.76D, false),
         SAFE(1375, 0.7D, false),
