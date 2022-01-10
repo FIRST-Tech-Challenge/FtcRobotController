@@ -324,6 +324,9 @@ public class RobotClass {
         while (rightDistance-leftDistance>1) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
             rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+            telemetry.addData("Left sensor distance = ", distanceSensorLeft.getDistance(DistanceUnit.CM));
+            telemetry.addData("Right sensor distance = ", distanceSensorRight.getDistance(DistanceUnit.CM));
+            telemetry.update();
         }
         stopMotors();
     }
@@ -340,6 +343,10 @@ public class RobotClass {
         while (leftDistance-rightDistance>1) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
             rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+            telemetry.addData("Left sensor distance = ", distanceSensorLeft.getDistance(DistanceUnit.CM));
+            telemetry.addData("Right sensor distance = ", distanceSensorRight.getDistance(DistanceUnit.CM));
+            telemetry.update();
         }
         stopMotors();
     }
@@ -366,9 +373,9 @@ public class RobotClass {
 
 
         if (leftDistance-rightDistance>1) {
-            distanceSensorStrafeRight(.2);
+            distanceSensorStrafeRight(.3);
         } else if (rightDistance-leftDistance>1) {
-            distanceSensorStrafeLeft(.2);
+            distanceSensorStrafeLeft(.3);
         }
 
         if (leftDistance > 15) {

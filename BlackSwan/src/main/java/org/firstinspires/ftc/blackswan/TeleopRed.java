@@ -140,7 +140,7 @@ public class TeleopRed extends LinearOpMode {
             }
 
             if (gamepad2.dpad_down) {
-                arm.setTargetPosition(-20);
+                arm.setTargetPosition(125);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.3);
 //                while (arm.isBusy() && opModeIsActive()) {
@@ -159,15 +159,15 @@ public class TeleopRed extends LinearOpMode {
                 intake.setPower(0);
             }
 //this is to set the intake to cover the element inside
-            if (gamepad2.a) {
-                intake.setTargetPosition(-356);
-                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                intake.setPower(0.8);
-                while (intake.isBusy() && opModeIsActive()) {
-                }
-
-                telemetry.update();
-            }
+//            if (gamepad2.a) {
+//                intake.setTargetPosition(-356);
+//                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                intake.setPower(0.8);
+//                while (intake.isBusy() && opModeIsActive()) {
+//                }
+//
+//                telemetry.update();
+//            }
 
             turnDuck(carousel);
 

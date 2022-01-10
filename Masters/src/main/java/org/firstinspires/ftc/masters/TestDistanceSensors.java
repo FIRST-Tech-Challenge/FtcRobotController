@@ -15,7 +15,7 @@ public class TestDistanceSensors extends LinearOpMode {
 
         waitForStart();
 
-        robot.distanceSensorStuff();
+//        robot.distanceSensorStuff();
         while (true) {
             telemetry.addData("Left sensor distance = ", robot.distanceSensorLeft.getDistance(DistanceUnit.CM));
             telemetry.addData("Right sensor distance = ", robot.distanceSensorRight.getDistance(DistanceUnit.CM));
