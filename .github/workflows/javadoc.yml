@@ -23,7 +23,8 @@ jobs:
       
       - name: Test
         run: |
-          find ./TeamCode/ -name "*.java" -not -type d -exec sh -c "echo hello world >> {}" \;
+          find ./TeamCode/ -name "*.java" -not -type d -exec sh -c "echo hello world >> {}" \; >> test.txt
+          cat test.txt
       
       - name: Make gradlew executable
         run: chmod +x ./gradlew
