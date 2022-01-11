@@ -153,10 +153,10 @@ public class MecanumTeleOp extends LinearOpMode {
              * Left Bumper
              */
             if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
-                carouselPower = 0.99;
+                carouselPower = 0.825;
             }
             else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
-                carouselPower = -0.99;
+                carouselPower = -0.825 ;
             }
             else{
                 carouselPower = 0;

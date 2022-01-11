@@ -88,8 +88,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
      * @param width The width of the image (check your camera)
      */
     public OpenCvShippingElementDetector(int width, int height, Telemetry telemetry) {
-        this.width = width;
-        this.height = height;
+        //this.width = width;
+        //this.height = height;
         this.telemetry = telemetry;
 
         levels.put(TSELocation.NONE,0);
