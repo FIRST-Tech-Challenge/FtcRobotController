@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -83,7 +83,7 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
         }
 
         // Initialize custom cancelable SampleMecanumDrive class
-        SampleMecanumDriveCancelable drive = new SampleMecanumDriveCancelable(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
 
@@ -178,7 +178,7 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
                 case AUTOMATIC_CONTROL:
                     // If x is pressed, we break out of the automatic following
                     if (moveGamepad.getButton(GamepadKeys.Button.X)) {
-                        drive.cancelFollowing();
+                        drive.cancel();
                         currentMode = Mode.DRIVER_CONTROL;
                     }
 
