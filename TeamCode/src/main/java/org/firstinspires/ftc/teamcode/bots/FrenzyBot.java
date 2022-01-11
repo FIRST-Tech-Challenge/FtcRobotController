@@ -28,11 +28,13 @@ public class FrenzyBot extends FrenzyBaseBot {
     private Servo intakeDropperServo = null;
     private Servo tower = null;
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = -2000;  //2279
-    public static int LIFT_LEVEL_TWO = -1720;
-    public static int LIFT_LEVEL_ONE = -860; // Make sure to be further away for level one
+    public static int LIFT_LEVEL_THREE = 2220;
+    public static int LIFT_LEVEL_TWO = 1951;
+    public static int LIFT_LEVEL_ONE = 1782;
     public static int LIFT_NO_EXTENSION = 0;
     public static int LIFT_UNDER_EXTENTION = 5;
+
+    //New lift vals: TOP - 1755. MIDDLE -1482. LOW - 1282
 
     private int liftLocation = LIFT_NO_EXTENSION;
     private static double LIFT_SPEED = 0.95;
@@ -53,7 +55,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = -0.2;
-    private static double INTAKE_SPEED = 0.7;
+    private static double INTAKE_SPEED = 0.6;
     private static double INTAKE_SPEED_REVERSE = -0.65;
 
     private boolean intakeRunning = false;
@@ -272,9 +274,24 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
+    @BotAction(displayName = "Main Tower to team hub", defaultReturn = "")
     public void towerToTeamHub(){
         if (tower != null) {
             tower.setPosition(0.75);
+        }
+    }
+
+    @BotAction(displayName = "Reset tower", defaultReturn = "")
+    public void resetTower(){
+        if (tower != null) {
+            tower.setPosition(0.5);
+        }
+    }
+
+    @BotAction(displayName = "Tower to team hub from start", defaultReturn = "")
+    public void towerToTeamHubFromAuto(){
+        if (tower != null) {
+            tower.setPosition(0.35);
         }
     }
 

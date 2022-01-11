@@ -67,7 +67,7 @@ public class FrenzyBaseBot implements IOdoBot {
 
 
     protected static double positionPIDF = 20;
-    protected static int positionToleration = 10;
+    protected static int positionToleration = 110;
 
 
     static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample

@@ -204,7 +204,8 @@ public class FrenzyModeBase extends LinearOpMode {
                 if (towerDefault) {
                     robot.initTower();
                 } else {
-                    robot.towerToTeamHub();
+                    robot.towerToTeamHubFromAuto();
+//                    robot.towerToTeamHub();
                 }
             }
         }
