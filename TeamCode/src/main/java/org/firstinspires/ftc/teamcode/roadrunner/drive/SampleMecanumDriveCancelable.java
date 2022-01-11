@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
 
@@ -59,6 +60,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
  * This is a modified SampleMecanumDrive class that implements the ability to cancel a trajectory
  * following. Essentially, it just forces the mode to IDLE.
  */
+@Deprecated
 @Config
 public class SampleMecanumDriveCancelable extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5.5, 0, 0);

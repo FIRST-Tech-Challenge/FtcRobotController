@@ -3,12 +3,24 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.util.Angle;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
+import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerCarousel;
+import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerGrabber;
+import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerIntake;
+import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
+import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This opmode demonstrates how one can augment driver control by following Road Runner arbitrary
@@ -38,6 +50,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDriveCancela
  */
 @TeleOp(group = "advanced")
 public class TeleOpAugmentedDriving extends LinearOpMode {
+    private final EventThread eventThread = new EventThread(this::opModeIsActive);
     // Define 2 states, drive control or automatic control
     enum Mode {
         DRIVER_CONTROL,
@@ -59,9 +72,36 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize custom cancelable SampleMecanumDrive class
-        SampleMecanumDriveCancelable drive = new SampleMecanumDriveCancelable(hardwareMap);
+        final Blinker[] lights = {
+                hardwareMap.get(Blinker.class, "Control Hub"),
+                hardwareMap.get(Blinker.class, "Expansion Hub 2")
+        };
+        final ArrayList<Blinker.Step> lightPattern = new ArrayList<>();
+        lightPattern.add(new Blinker.Step(0xad2f, 150, TimeUnit.SECONDS));
+        for (Blinker light : lights) {
+            light.setPattern(lightPattern);
+        }
 
+        // Initialize custom cancelable SampleMecanumDrive class
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        final GamepadEx moveGamepad = new GamepadEx(gamepad1);
+        final GamepadEx toolGamepad = new GamepadEx(gamepad2);
+
+        // will automatically run update method
+        new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
+        final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
+
+        Thread thread = new Thread(() -> {
+            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, grabber);
+            lift.init();
+            final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
+            while (opModeIsActive()) {
+                lift.update();
+                intake.update(lift.getPosition());
+            }
+            lift.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        });
+        thread.setPriority(4);
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -71,7 +111,9 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
         drive.setPoseEstimate(PoseStorage.currentPose);
 
         waitForStart();
-
+        thread.start();
+        grabber.init();
+        eventThread.start();
         if (isStopRequested()) return;
 
         while (opModeIsActive() && !isStopRequested()) {
@@ -94,13 +136,13 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
                 case DRIVER_CONTROL:
                     drive.setWeightedDrivePower(
                             new Pose2d(
-                                    -gamepad1.left_stick_y,
-                                    -gamepad1.left_stick_x,
-                                    -gamepad1.right_stick_x
+                                    moveGamepad.getLeftY(),
+                                    moveGamepad.getLeftX(),
+                                    moveGamepad.getRightX()
                             )
                     );
 
-                    if (gamepad1.a) {
+                    if (moveGamepad.getButton(GamepadKeys.Button.A)) {
                         // If the A button is pressed on gamepad1, we generate a splineTo()
                         // trajectory on the fly and follow it
                         // We switch the state to AUTOMATIC_CONTROL
@@ -112,7 +154,7 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
                         drive.followTrajectoryAsync(traj1);
 
                         currentMode = Mode.AUTOMATIC_CONTROL;
-                    } else if (gamepad1.b) {
+                    } else if (moveGamepad.getButton(GamepadKeys.Button.B)) {
                         // If the B button is pressed on gamepad1, we generate a lineTo()
                         // trajectory on the fly and follow it
                         // We switch the state to AUTOMATIC_CONTROL
@@ -124,7 +166,7 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
                         drive.followTrajectoryAsync(traj1);
 
                         currentMode = Mode.AUTOMATIC_CONTROL;
-                    } else if (gamepad1.y) {
+                    } else if (moveGamepad.getButton(GamepadKeys.Button.Y)) {
                         // If Y is pressed, we turn the bot to the specified angle to reach
                         // targetAngle (by default, 45 degrees)
 
@@ -135,8 +177,8 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
                     break;
                 case AUTOMATIC_CONTROL:
                     // If x is pressed, we break out of the automatic following
-                    if (gamepad1.x) {
-                        drive.cancelFollowing();
+                    if (moveGamepad.getButton(GamepadKeys.Button.X)) {
+                        drive.cancel();
                         currentMode = Mode.DRIVER_CONTROL;
                     }
 
@@ -147,5 +189,7 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
                     break;
             }
         }
+        eventThread.interrupt();
+        requestOpModeStop();
     }
 }
