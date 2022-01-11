@@ -118,12 +118,7 @@ public class AllTestAuto extends LinearOpMode {
             
             objectDetection();
             
-            moveBucketTurnerBackwardEncoders(0.5, 100);
-            strafeRobotLeftEncoders(0.75, 1500);
             
-            moveRobotForwardEncoders(1, 600);
-
-            releaseItem();
             
             
             sleep(20000) ;
@@ -616,8 +611,8 @@ public class AllTestAuto extends LinearOpMode {
         telemetry.update();
         
         frontRight.setPower(pval);
-        backRight.setPower(pval * 1.0);
-        frontLeft.setPower(pval * 1.0);
+        backRight.setPower(pval * -1.0);
+        frontLeft.setPower(pval * -1.0);
         backLeft.setPower(pval);
         
         while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
@@ -799,7 +794,7 @@ public class AllTestAuto extends LinearOpMode {
         
     }
     
-    private void releaseItem() {
+    private void releaseItemLevel3() {
         
         linearSlide.setPower(1);
         sleep(500);
@@ -826,6 +821,57 @@ public class AllTestAuto extends LinearOpMode {
         sleep(1000);
         
         
+        
+        
+    }
+    
+    private strafeToShippingHub() {
+        
+        //run strafe and bring bucket down simultaneously
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        frontRight.setTargetPosition(1500);
+        backRight.setTargetPosition(-1500);
+        frontLeft.setTargetPosition(-1500);
+        backLeft.setTargetPosition(1500);
+        bucketTurner.setTargetPosition(-100);
+   
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+       
+        //set motor powers
+        frontRight.setPower(0.75);
+        backRight.setPower(-0.75);
+        frontLeft.setPower(-0.75);
+        backLeft.setPower(0.75);
+        bucketTurner.setPower(-0.5);
+
+        while (bucketTurner.isBusy() || frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        bucketTurner.setPower(0);
+        
+        //moveBucketTurnerBackwardEncoders(0.5, 100);
+        //strafeRobotLeftEncoders(0.75, 1500);
+            
+        moveRobotForwardEncoders(1, 600);
+
+        releaseItem();
         
         
     }
