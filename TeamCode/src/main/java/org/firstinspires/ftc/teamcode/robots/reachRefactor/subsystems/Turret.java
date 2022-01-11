@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
-//written by Cooper Clem, 2021
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.util.utilMethods.between360Clockwise;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.boundDouble;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.diffAngle2;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
 
@@ -23,36 +22,33 @@ public class Turret implements Subsystem {
     // Motors
     private DcMotorEx motor;
 
-    // PID
-    private double correction;
-    private PIDController turretPID;
-
     private double heading;
     private double targetHeading;
+    private double ticksPerDegree = 160/90;
 
     // Constants
     private static final String TELEMETRY_NAME = "Turret";
 
-    public static PIDCoefficients TURRET_PID_COEFFICIENTS = new PIDCoefficients(0.02, 0, 0);
     public static double TURRET_TOLERANCE = 2;
-
-    public static double TICKS_PER_REVOLUTION = 1740;
-
 
     public Turret(HardwareMap hardwareMap) {
         this.motor = hardwareMap.get(DcMotorEx.class, "turret");
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        turretPID = new PIDController(TURRET_PID_COEFFICIENTS);
+        motor.setTargetPosition(motor.getCurrentPosition());
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(1);
     }
 
     public void update(){
-        heading = (motor.getCurrentPosition() / TICKS_PER_REVOLUTION * 2 * Math.PI) % (2 * Math.PI);
+        if(targetHeading > 90)
+            targetHeading = 90;
+        else if(targetHeading < -90)
+            targetHeading = -90;
 
+        heading = motor.getCurrentPosition() / ticksPerDegree;
 
-        movePIDTurret(TURRET_PID_COEFFICIENTS, heading, targetHeading);
+        motor.setTargetPosition((int)(targetHeading * ticksPerDegree));
     }
 
     @Override
@@ -61,13 +57,15 @@ public class Turret implements Subsystem {
     }
 
     public boolean setTargetAngle(double angle){
-        targetHeading = Math.toDegrees(wrap360(angle));
+        targetHeading = angle;
         return isTurretNearTarget();
     }
 
     public double getTargetAngle() {
         return targetHeading;
     }
+
+    public double getHeading(){return heading;}
 
     public boolean isTurretNearTarget(){
         return between360Clockwise(heading, targetHeading - TURRET_TOLERANCE, heading + TURRET_TOLERANCE);
@@ -77,34 +75,16 @@ public class Turret implements Subsystem {
         motor.setPower(power);
     }
 
-    double turnError = 0;
-    public void movePIDTurret(PIDCoefficients pidCoefficients, double currentAngle, double targetAngle) {
-        //initialization of the PID calculator's output range, target value and multipliers
-        turretPID.setPID(pidCoefficients);
-        turretPID.setOutputRange(-.69, .69); //this is funny
-        turretPID.setSetpoint(targetAngle);
-        turretPID.enable();
-
-        //initialization of the PID calculator's input range and current value
-        turretPID.setInputRange(-90, 90);
-        turretPID.setInput(currentAngle);
-
-        turnError = diffAngle2(targetAngle, currentAngle);
-
-        correction = turretPID.performPID();
-
-        //performs the turn with the correction applied
-        setPower(correction);
-    }
-
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<>();
         if(debug) {
-            telemetryMap.put("motor position", motor.getCurrentPosition());
-            telemetryMap.put("motor power", correction);
+            telemetryMap.put("turretMotorPosition", motor.getCurrentPosition());
             telemetryMap.put("motor amps", motor.getCurrent(CurrentUnit.AMPS));
+            telemetryMap.put("turretTargetPos", getTargetAngle());
+            telemetryMap.put("turretCurrentAngle", getHeading());
         }
+
 
         return telemetryMap;
     }

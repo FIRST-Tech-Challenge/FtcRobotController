@@ -24,6 +24,7 @@ public class Crane implements Subsystem {
 
     // State
     private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
+    private double turretTargetPos;
 
     private Articulation articulation;
 
@@ -136,8 +137,7 @@ public class Crane implements Subsystem {
         shoulderServo.setPosition(ShoulderServoValue(shoulderTargetPos));
         elbowServo.setPosition(ElbowServoValue(elbowTargetPos));
         wristServo.setPosition(WristServoValue(wristTargetPos));
-
-        turret.update();
+        turret.setTargetAngle(turretTargetPos);
     }
 
     //take the supplied relative-to-home target value in degrees
@@ -198,6 +198,7 @@ public class Crane implements Subsystem {
         this.shoulderTargetPos = articulation.shoulderPos;
         this.elbowTargetPos = articulation.elbowPos;
         this.wristTargetPos = articulation.wristPos;
+        this.turretTargetPos = articulation.turretAngle;
 
         turret.setTargetAngle(articulation.turretAngle);
     }

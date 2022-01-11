@@ -313,13 +313,16 @@ public class FF_6832 extends OpMode {
             //todo "Home" is temporary - need to create a field-centric shared-shipping
             //hub targeting method where the turret goes to the correct side based on the combination
             //of alliance and which warehouse we are working
-            robot.crane.articulate(Crane.Articulation.HOME);
+            robot.crane.articulate(Crane.Articulation.VALIDATE_TURRET90L);
+//            robot.crane.articulate(Crane.Articulation.HOME);
 
         if(stickyGamepad2.dpad_up)  //High Tier
-            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
+            robot.crane.articulate(Crane.Articulation.HOME);
+        //robot.crane.articulate(Crane.Articulation.HIGH_TIER);
 
         if(stickyGamepad2.dpad_right)
-            robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+            robot.crane.articulate(Crane.Articulation.VALIDATE_TURRET90R);
+            //robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
 
         if(stickyGamepad2.dpad_down)
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
