@@ -28,12 +28,11 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         int barcode = 2;
 
         servoGrabber.setPosition(Constants.CLOSED_GRABBER_POSITION);
-        servoArm.setPosition(0.7);
-        pauseMillis(500);
+        pauseMillis(1500);
         motorArm.setPower(0.5);
-        motorArm.setTargetPosition(Constants.ARM_ALLIANCE_HUB_3RD_LEVEL);
+        motorArm.setTargetPosition(800);
         pauseMillis(750);
-        servoArm.setPosition(0.45 - 3 * motorArm.getCurrentPosition() / 8000.0);
+        servoArm.setPosition(0.667);
 
         if (tfod != null) {
             tfod.activate();
@@ -101,25 +100,25 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
 
         switch (barcode) {
             case 0:
-                motorArm.setTargetPosition(Constants.ARM_ALLIANCE_HUB_1ST_LEVEL);
+                motorArm.setTargetPosition(300);
                 pauseMillis(750);
-                servoArm.setPosition(0.45 - 3 * motorArm.getCurrentPosition() / 8000.0);
+                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
                 // todo - distance to the shipping hub
                 driveInches(10, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 1:
-                motorArm.setTargetPosition(Constants.ARM_SHARED_HUB_LEVEL);
+                motorArm.setTargetPosition(550);
                 pauseMillis(750);
-                servoArm.setPosition(0.45 - 3 * motorArm.getCurrentPosition() / 8000.0);
+                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
                 // todo - distance to the shipping hub
                 driveInches(12, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 2:
-                motorArm.setTargetPosition(Constants.ARM_ALLIANCE_HUB_3RD_LEVEL);
+                motorArm.setTargetPosition(800);
                 pauseMillis(750);
-                servoArm.setPosition(0.45 - 3 * motorArm.getCurrentPosition() / 8000.0);
+                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
                 // todo - distance to the shipping hub
                 driveInches(14, Constants.MIN_DRIVE_PWR, false);
                 break;
@@ -151,8 +150,11 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         pauseMillis(125);
         driveInches(6, Constants.MIN_DRIVE_PWR, false);
 
+        motorBelt.setPower(0.5);
+        motorBelt.setTargetPosition(1250);
+        pauseMillis(750);
+        servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
         motorArm.setTargetPosition(0);
-        servoArm.setPosition(0.45);
     }
 
     private void initVuforia() {
