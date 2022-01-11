@@ -144,6 +144,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
     private void mainAutonomous() {
 
         // Drive forward and collect the team element off the floor
+        sleep(4000);
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "collectTeamElement");
             telemetry.update();
@@ -246,7 +247,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
-            case 2 : angleToHub = 35.0;
+            case 2 : angleToHub = 33.0;
                      distanceToHub = -3.0;  // middle
                      finalDistanceToHub = -2.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
