@@ -65,14 +65,22 @@ public class AutoStorage extends LinearOpMode {
 //            height.set(detector.run());
 //        });
 
-        waitForStart();
+        Thread thread = new Thread(() -> {
+            while (true) {
+                drive.update();
+            }
+        });
 
+        waitForStart();
 //        detectorThread.start();
+        thread.start();
 
         if (!isStopRequested()) {
             carousel.on();
             drive.followTrajectorySequence(trajSeq);
         }
+        drive.followTrajectorySequenceAsync(null);
+        drive.update();
         PoseStorage.currentPose = drive.getPoseEstimate();
     }
 }

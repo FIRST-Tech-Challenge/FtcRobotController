@@ -119,7 +119,7 @@ public class Main {
                 new ProfileAccelerationConstraint(DriveConstants.MAX_ACCEL),
                 DriveConstants.MAX_ANG_VEL, DriveConstants.MAX_ANG_ACCEL);
 
-        builder.lineToLinearHeading(new Pose2d(-3, 40, Math.toRadians(70)));
+        builder.lineToLinearHeading(new Pose2d(0, 50, Math.toRadians(70)));
         builder.waitSeconds(2);
         builder.lineToLinearHeading(new Pose2d(-3, 60, Math.toRadians(0)));
         builder.lineTo(new Vector2d(20, 64));
