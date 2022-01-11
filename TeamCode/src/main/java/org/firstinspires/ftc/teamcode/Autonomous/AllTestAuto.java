@@ -116,12 +116,14 @@ public class AllTestAuto extends LinearOpMode {
             
             //getSensorValues();
             
-            objectDetection();
+            //objectDetection();
+            //strafeToShippingHub();
+            //placeFreightOnShippingHub();
             
+            strafeToCarousel(0.5);
             
+            //testEachWheel(0.5);
             
-            
-            sleep(20000) ;
         }
     }
     
@@ -429,7 +431,7 @@ public class AllTestAuto extends LinearOpMode {
                         if (leftVal <= xPosMarker && objectsRecognized == 1) {
                             
                             level = 3;
-                            telemetry.addData("Level", level );
+                            telemetry.addData("Level", level);
                             telemetry.update();
                             
                         } else if (leftVal >= xPosMarker && objectsRecognized == 1) {
@@ -456,10 +458,60 @@ public class AllTestAuto extends LinearOpMode {
     }
     
     
-    private void strafeToCarousel() {
+    private void strafeToCarousel(double pval) {
+        
+        frontRight.setPower(pval * -1.0);
+        backRight.setPower(pval);
+        frontLeft.setPower(pval);
+        backLeft.setPower(pval * -1.0);
+        
+        while (CarouselDistance.getDistance(DistanceUnit.INCH) >= 15) {
+            
+            idle();
+            
+            
+        }
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+        sleep(250);
         
         
         
+        frontLeft.setPower(-1);
+        backLeft.setPower(-1);
+        frontRight.setPower(1);
+        backRight.setPower(1);
+
+        sleep(750);
+        
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+    
+        
+        sleep(250);
+        
+        frontRight.setPower(pval * -1.0);
+        backRight.setPower(pval);
+        frontLeft.setPower(pval);
+        backLeft.setPower(pval * -1.0);
+        
+        sleep(250);
+        
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        
+        sleep(250);
+        
+        carouselTurner.setPower(1);
+        sleep(3000);
         
         
         
@@ -797,14 +849,14 @@ public class AllTestAuto extends LinearOpMode {
     private void releaseItemLevel3() {
         
         linearSlide.setPower(1);
-        sleep(500);
+        sleep(400);
         
         
         moveRobotForwardEncoders(1, 200);
         
         bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
-        bucketTurner.setTargetPosition(100);
+        bucketTurner.setTargetPosition(50);
         
         bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
@@ -825,7 +877,7 @@ public class AllTestAuto extends LinearOpMode {
         
     }
     
-    private strafeToShippingHub() {
+    private void strafeToShippingHub() {
         
         //run strafe and bring bucket down simultaneously
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -852,8 +904,14 @@ public class AllTestAuto extends LinearOpMode {
         frontLeft.setPower(-0.75);
         backLeft.setPower(0.75);
         bucketTurner.setPower(-0.5);
-
-        while (bucketTurner.isBusy() || frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+        
+        long curTime = System.currentTimeMillis();
+        int timeRunning = 2000;
+        
+        long desiredTime = curTime + timeRunning;
+        
+        
+        while (System.currentTimeMillis() <= desiredTime ) {
             
             idle();
             
@@ -869,9 +927,58 @@ public class AllTestAuto extends LinearOpMode {
         //moveBucketTurnerBackwardEncoders(0.5, 100);
         //strafeRobotLeftEncoders(0.75, 1500);
             
-        moveRobotForwardEncoders(1, 600);
+        moveRobotForwardEncoders(0.5, 600);
 
-        releaseItemLevel3();
+        
+        
+    }
+    
+    private void strafeLeft(double pval, int duration) {
+        
+        frontRight.setPower(pval);
+        backRight.setPower(pval * -1.0);
+        frontLeft.setPower(pval * -1.0);
+        backLeft.setPower(pval);
+        
+        sleep(duration);
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+        
+        
+        
+    }
+    
+    private void placeFreightOnShippingHub() {
+        
+        if (level == 3) {
+            
+            telemetry.addData("Placing Freight on Level 2: ", "In Progress" );
+            telemetry.update();
+            
+            releaseItemLevel3();
+            
+        } else if (level == 2) {
+            
+            telemetry.addData("Placing Freight on Level 2: ", "In Progress" );
+            telemetry.update();
+            
+            
+        } else if (level == 1) {
+            
+            telemetry.addData("Placing Freight on Level 1: ", "In Progress" );
+            telemetry.update();
+            
+        } else {
+            
+            telemetry.addData("No Objects Detected: ", "Error" );
+            telemetry.update();
+            
+        }
+        
         
         
     }
