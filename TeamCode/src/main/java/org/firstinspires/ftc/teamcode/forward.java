@@ -107,10 +107,10 @@ public class forward extends LinearOpMode {
                 towerPower2 = 0.0f;
             }
 
-            lf.setPower(lPower * 0.75);
-            rf.setPower(rPower * 0.75);
-            lb.setPower(lPower * 0.75);
-            rb.setPower(rPower * 0.75);
+            lf.setPower(lPower * 1);
+            rf.setPower(rPower * 1);
+            lb.setPower(lPower * 1);
+            rb.setPower(rPower * 1);
             tower1.setPower((towerPower - towerPower2) * 0.5);
             tower2.setPower((towerPower - towerPower2) * 0.5);
             duckspinner1.setPower(duckspinnerPower1);
