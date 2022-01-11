@@ -871,7 +871,7 @@ public class AllTestAuto extends LinearOpMode {
             
         moveRobotForwardEncoders(1, 600);
 
-        releaseItem();
+        releaseItemLevel3();
         
         
     }
