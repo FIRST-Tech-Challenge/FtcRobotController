@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AutoWarehouse extends LinearOpMode {
     protected int multiplier = 1;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
