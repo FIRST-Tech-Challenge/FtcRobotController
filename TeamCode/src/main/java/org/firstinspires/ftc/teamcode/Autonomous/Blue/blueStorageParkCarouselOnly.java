@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class blueStorageParkCarouselOnly extends LinearOpMode {
 
     /** This program goes and spins the carousel
-     * Parks in the storage unit */
+     * Parks in the storage unit */ 
 
 
     @Override
