@@ -47,8 +47,10 @@ public class Constants {
     }
 
     public enum Position {
-        START_RED(new SimpleMatrix(new double[][] {{0, 0, 0}})),
-        START_BLUE(new SimpleMatrix(new double[][] {{0, 0, 0}}));
+        START_RED_UP(new SimpleMatrix(new double[][] {{0, 0, 180}})),
+        START_RED_DOWN(new SimpleMatrix(new double[][] {{0, 0, 180}})),
+        START_BLUE_UP(new SimpleMatrix(new double[][] {{0, 0, 0}})),
+        START_BLUE_DOWN(new SimpleMatrix(new double[][] {{0, 0, 0}}));
 
         private final SimpleMatrix pose;
 

@@ -37,12 +37,9 @@ public class Robot implements Subsystem {
     // constants
     private static final String TELEMETRY_NAME = "Robot";
     public static String AXLE_STROKE_COLOR = "Black";
-    public static String TURN_RADIUS_STROKE_COLOR = "Crimson";
     public static String WHEEL_STROKE_COLOR = "SpringGreen";
-    public static double DOTTED_LINE_DASH_LENGTH = 1; // in inches
     public static double INCHES_PER_METER = 39.3701;
 
-    public static double DEFAULT_TARGET_DISTANCE =  Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3;
     private Map<Articulation, StateMachine> articulationMap;
 
     public Robot(HardwareMap hardwareMap) {
@@ -104,17 +101,6 @@ public class Robot implements Subsystem {
                 ).transpose(), Math.toRadians(driveTrain.getSwivelAngle())
             )
         ), WHEEL_STROKE_COLOR);
-
-
-
-        // calculating the instantaneous center of rotation
-        double turnRadius = driveTrain.getTurnRadius();
-        SimpleMatrix ICC = new SimpleMatrix(new double[][] {{ -turnRadius, 0 }});
-        ICC = UtilMethods.rotateVector(ICC, heading).scale(INCHES_PER_METER);
-
-        // drawing ICC and turn radius
-        CanvasUtils.drawDottedLine(fieldOverlay, ICC, position.scale(INCHES_PER_METER), TURN_RADIUS_STROKE_COLOR, DOTTED_LINE_DASH_LENGTH);
-        fieldOverlay.strokeCircle(ICC.get(0), ICC.get(1), Math.abs(turnRadius * INCHES_PER_METER));
     }
 
     @Override
@@ -182,10 +168,10 @@ public class Robot implements Subsystem {
     private StateMachine diagnostic = UtilMethods.getStateMachine(diagnosticStage)
             // testing drivetrain
             .addTimedState(3f, () -> {
-                driveTrain.drive(0.25, 0, false);
+                driveTrain.drive(0.25, 0);
             }, () -> {})
             .addTimedState(3f, () -> {
-                driveTrain.drive(0, Math.PI / 2, false);
+                driveTrain.drive(0, Math.PI / 2);
             }, () -> {})
 
             // testing crane

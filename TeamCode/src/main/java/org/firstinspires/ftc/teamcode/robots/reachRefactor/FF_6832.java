@@ -78,6 +78,7 @@ public class FF_6832 extends OpMode {
     // global state
     private boolean active, initializing, debugTelemetryEnabled;
     private Constants.Alliance alliance;
+    private Constants.Position startingPosition;
     private GameState gameState;
     private int gameStateIndex;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
@@ -223,10 +224,24 @@ public class FF_6832 extends OpMode {
                 robot.articulate(Robot.Articulation.LEGALSTARTPOS);
         }
 
-        if(stickyGamepad1.x)
+        if(stickyGamepad1.x) {
             alliance = Constants.Alliance.BLUE;
-        if(stickyGamepad1.b)
+            startingPosition = Constants.Position.START_RED_UP;
+        }
+        if(stickyGamepad1.b) {
             alliance = Constants.Alliance.RED;
+            startingPosition = Constants.Position.START_BLUE_UP;
+        }
+        if(stickyGamepad1.dpad_right)
+            startingPosition =
+                    alliance == Constants.Alliance.RED ?
+                            Constants.Position.START_RED_UP :
+                            Constants.Position.START_BLUE_UP;
+        if(stickyGamepad1.dpad_left)
+            startingPosition =
+                    alliance == Constants.Alliance.RED ?
+                            Constants.Position.START_RED_DOWN :
+                            Constants.Position.START_BLUE_DOWN;
 
         if(stickyGamepad1.y)
             robot.driveTrain.setSmoothingEnabled(!robot.driveTrain.isSmoothingEnabled());
@@ -234,7 +249,6 @@ public class FF_6832 extends OpMode {
             debugTelemetryEnabled = !debugTelemetryEnabled;
         if(stickyGamepad1.a)
             usingDesmosDrive = !usingDesmosDrive;
-
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -489,13 +503,16 @@ public class FF_6832 extends OpMode {
         Map<String, Object> opModeTelemetryMap = new HashMap<>();
 
         // handling op mode telemetry
+        if(initializing) {
+            opModeTelemetryMap.put("Starting Position", startingPosition);
+            opModeTelemetryMap.put("Debug Telemetry Enabled", debugTelemetryEnabled);
+            opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
+            opModeTelemetryMap.put("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
+        }
         opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
         opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
-        opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
         opModeTelemetryMap.put("Active", active);
-        opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState));
-        opModeTelemetryMap.put("Debug Telemetry Enabled", debugTelemetryEnabled);
-        opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
+        opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState.getName()));
         opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_DISTANCE_LEVELS.length));
 
         switch(gameState) {
@@ -534,8 +551,10 @@ public class FF_6832 extends OpMode {
     }
 
     private void update() {
-        if(initializing)
+        if(initializing) {
             auto.visionProvider.update();
+            robot.driveTrain.setPose(startingPosition);
+        }
 
         gamepad1JoysticksActive = joysticksActive(gamepad1);
         gamepad2JoysticksActive = joysticksActive(gamepad2);

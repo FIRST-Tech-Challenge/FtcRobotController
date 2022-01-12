@@ -197,47 +197,28 @@ public class DriveTrain implements Subsystem {
     }
 
     /**
-     * updates the robot's pose ((x,y) position and heading) using the encoder ticks travelled by each wheel motor
+     * updates the robot's pose ((x,y) position and heading) using the encoder ticks traveled by each wheel motor
      */
     private void updatePose() {
-        Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-        angles = new SimpleMatrix(new double[][] {
-                {UtilMethods.wrapAngle(360 - imuAngles.firstAngle, offsetAngles.get(0))},
-                {UtilMethods.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1))},
-                {UtilMethods.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))}
-        });
-
         // calculating wheel displacements
-//        SimpleMatrix wheelTicks = getWheelTicks().rows(0, 2);
-//        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks.rows(0, 2)).divide(TICKS_PER_METER);
-
-//        // rotating swivel wheel by swivel angle
-//        double swivelAngle = getSwivelAngle();
-//        SimpleMatrix swivelWheel = MathUtil.rotateVector(
-//                new SimpleMatrix(
-//                        new double[][] {{ wheelDisplacementMeters.get(2, 0), 0 }}
-//                ),
-//                Math.toRadians(swivelAngle)
-//        );
-//        wheelDisplacementMeters.setRow(2, 0, swivelWheel.get(0), swivelWheel.get(1));
+        SimpleMatrix wheelTicks = getWheelTicks().cols(0, 2);
+        SimpleMatrix wheelDisplacementMeters = wheelTicks.minus(previousWheelTicks.cols(0, 2)).divide(TICKS_PER_METER);
 
         // calculating average average wheel displacement
-//        SimpleMatrix ones = new SimpleMatrix(new double[][] {{1, 1}});
-//        SimpleMatrix averageDisplacementMeters = ones.mult(wheelDisplacementMeters).divide(2);
+        double averageDisplacementMeters = (
+                wheelDisplacementMeters.get(0, 0) + wheelDisplacementMeters.get(0, 1)
+        ) / 2;
 
-        // rotating displacement by heading
+        // rotating displacement by heading, updating pose [x, y, heading]
         double heading = angles.get(0);
-//        averageDisplacementMeters = UtilMethods.rotateVector(averageDisplacementMeters, Math.toRadians(heading));
+        pose = pose.plus(new SimpleMatrix(new double[][] {{
+            averageDisplacementMeters * Math.cos(Math.toRadians(heading)),
+            averageDisplacementMeters * Math.sin(Math.toRadians(heading)),
+            0
+        }}).transpose());
+        pose.set(0, 2, angles.get(0));
 
-        // updating pose [x, y, heading]
-//        pose = pose.plus(new SimpleMatrix(new double[][] {{
-//            averageDisplacementMeters.get(0, 0),
-//            averageDisplacementMeters.get(1, 0),
-//            0
-//        }}).transpose());
-        pose.set(2, 0, angles.get(0));
-
-//        previousWheelTicks = wheelTicks.copy();
+        previousWheelTicks = wheelTicks.copy();
     }
 
     @Override
@@ -258,28 +239,24 @@ public class DriveTrain implements Subsystem {
             targetFrontRightVelocity += maintainChassisDistanceCorrection;
         }
 
-        if(swivelAngle > 180 && swivelAngle < 360) {
-//            targetMiddleVelocity = -targetMiddleVelocity;
-        }
-
-
         // Motor controls
-//        if(swivelPID.onTarget()) {
-            motorFrontLeft.setVelocity(targetFrontLeftVelocity * TICKS_PER_METER / WHEEL_RADIUS);
-            motorFrontRight.setVelocity(targetFrontRightVelocity * TICKS_PER_METER / WHEEL_RADIUS);
-            motorMiddle.setVelocity(targetMiddleVelocity * TICKS_PER_METER / WHEEL_RADIUS);
-//        } else {
-//            motorFrontLeft.setVelocity(0);
-//            motorFrontRight.setVelocity(0);
-//            motorMiddle.setVelocity(0);
-//        }
+        motorFrontLeft.setVelocity(targetFrontLeftVelocity * TICKS_PER_METER / WHEEL_RADIUS);
+        motorFrontRight.setVelocity(targetFrontRightVelocity * TICKS_PER_METER / WHEEL_RADIUS);
+        motorMiddle.setVelocity(targetMiddleVelocity * TICKS_PER_METER / WHEEL_RADIUS);
 
-//        updatePose();
+        // sensors
+        Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        angles = new SimpleMatrix(new double[][] {{
+                360 - UtilMethods.wrapAngle(imuAngles.firstAngle, offsetAngles.get(0)),
+                UtilMethods.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1)),
+                UtilMethods.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))
+        }});
+        updatePose();
     }
 
     private void handleSmoothing() {
         targetLinearVelocity = linearSmoother.update(targetLinearVelocity);
-        targetAngularVelocity = linearSmoother.update(targetAngularVelocity);
+        targetAngularVelocity = angularSmoother.update(targetAngularVelocity);
     }
 
     /**
@@ -298,7 +275,7 @@ public class DriveTrain implements Subsystem {
 
         targetFrontLeftVelocity = linearVelocity - angularVelocity * (Constants.TRACK_WIDTH / 2);
         targetFrontRightVelocity = linearVelocity + angularVelocity * (Constants.TRACK_WIDTH / 2);
-        targetMiddleVelocity = (middleReversed ? -1 : 1) * Math.hypot(linearVelocity, chassisDistance * angularVelocity);
+        targetMiddleVelocity = Math.hypot(linearVelocity, chassisDistance * angularVelocity);
 
         targetSwivelAngle = UtilMethods.wrapAngle(90 + Math.toDegrees(
                 Math.atan2(chassisDistance * angularVelocity, linearVelocity)
@@ -308,8 +285,10 @@ public class DriveTrain implements Subsystem {
         double minDiff = diff > 180 ? 360 - diff : diff;
         if(minDiff > 90)
             middleReversed = !middleReversed;
-        if(middleReversed)
+        if(middleReversed) {
             targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + 180);
+            targetMiddleVelocity *= -1;
+        }
     }
 
     public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
@@ -511,11 +490,11 @@ public class DriveTrain implements Subsystem {
     }
 
     public SimpleMatrix getWheelTicks() {
-        return new SimpleMatrix(new double[][] {
-                { motorFrontLeft.getCurrentPosition(), 0 },
-                { motorFrontRight.getCurrentPosition(), 0 },
-                { motorMiddle.getCurrentPosition(), 0 }
-        });
+        return new SimpleMatrix(new double[][] {{
+                motorFrontLeft.getCurrentPosition(),
+                motorFrontRight.getCurrentPosition(),
+                motorMiddle.getCurrentPosition(),
+        }});
     }
 
     public void setMaintainChassisDistanceEnabled(boolean maintainChassisDistanceEnabled) {
@@ -569,5 +548,9 @@ public class DriveTrain implements Subsystem {
 
     public void setSmoothingEnabled(boolean smoothingEnabled) {
         this.smoothingEnabled = smoothingEnabled;
+    }
+
+    public void setPose(Constants.Position position) {
+        pose.setTo(position.getPose());
     }
 }
