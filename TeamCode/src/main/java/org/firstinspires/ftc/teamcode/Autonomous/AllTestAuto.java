@@ -119,10 +119,7 @@ public class AllTestAuto extends LinearOpMode {
             objectDetection();
             strafeToShippingHub();
             placeFreightOnShippingHub();
-            
-        
-            
-            //strafeToCarousel(0.5);
+            strafeToCarousel(1);
             
             //testEachWheel(0.5);
             
@@ -910,7 +907,15 @@ public class AllTestAuto extends LinearOpMode {
             
         } 
         
-        sleep(5000);
+        sleep(250);
+        
+        moveRobotForwardEncoders(1, 200);
+
+        bucket.setPower(-1);
+        sleep(1000);
+        bucket.setPower(0);
+
+        moveRobotBackwardEncoders(0.75, 600);
         
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
@@ -930,7 +935,7 @@ public class AllTestAuto extends LinearOpMode {
         
         bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
-        bucketTurner.setTargetPosition(-50);
+        bucketTurner.setTargetPosition(-30);
         
         bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
@@ -943,14 +948,21 @@ public class AllTestAuto extends LinearOpMode {
             
         }
         
-        /*
-        moveRobotForwardEncoders(1, 200);
-
-        bucket.setPower(-1);
-        sleep(1000);
+        bucketTurner.setPower(0);
+        linearSlide.setPower(0);
         
-        */
+        telemetry.addData("Status: ", "Freight Placed" );
+        telemetry.update();
         
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+        sleep(250);
+        
+        strafeRobotRightEncoders(0.75, 1000);
         
     }
     
@@ -987,7 +999,15 @@ public class AllTestAuto extends LinearOpMode {
             
         } 
         
-        sleep(5000);
+        sleep(250);
+        
+        moveRobotForwardEncoders(1, 200);
+
+        bucket.setPower(-1);
+        sleep(1000);
+        bucket.setPower(0);
+
+        moveRobotBackwardEncoders(0.75, 600);
         
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
@@ -1007,7 +1027,7 @@ public class AllTestAuto extends LinearOpMode {
         
         bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
-        bucketTurner.setTargetPosition(-50);
+        bucketTurner.setTargetPosition(-30);
         
         bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
@@ -1020,13 +1040,21 @@ public class AllTestAuto extends LinearOpMode {
             
         }
         
-        /*
-        moveRobotForwardEncoders(1, 200);
-
-        bucket.setPower(-1);
-        sleep(1000);
+        bucketTurner.setPower(0);
+        linearSlide.setPower(0);
         
-        */
+        telemetry.addData("Status: ", "Freight Placed" );
+        telemetry.update();
+        
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+        sleep(250);
+        
+        strafeRobotRightEncoders(0.75, 1000);
         
         
     }
@@ -1122,7 +1150,7 @@ public class AllTestAuto extends LinearOpMode {
         
         strafeRobotRightEncoders(0.75, 1000);
         
-        strafeToCarousel(1);
+   
         
     }
     
