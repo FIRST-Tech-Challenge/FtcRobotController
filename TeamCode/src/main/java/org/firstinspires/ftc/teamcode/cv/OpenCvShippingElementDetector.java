@@ -49,11 +49,11 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     private int width = 224; // width of the image
     private int height = 240;
-    private double inScaleFactor = 0.0278;
+    private double inScaleFactor = 0.0279;
     private double thresholdDnn =  0.6;
-    public double redMeanVal = 5;
-    public double greenMeanVal = 113;
-    public double blueMeanVal = 119;
+    private double redMeanVal = 5;
+    private double greenMeanVal = 168.6;
+    private double blueMeanVal = 62.3;
     private Dnn cvDNN = null;
     private Net net = null;
     private Telemetry telemetry = null;
@@ -63,7 +63,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     private float maxConfidence = 0.0f;
     private boolean absolutelySure = false;
 
-    static final private float CONF_THRESHOLD = 0.55f;
+    static final private float CONF_THRESHOLD = 0.65f;
 
     private final String[] classNamesDuckSideBlue = {"background",
             "duckside_blue_level_3", "duckside_blue_level_2", "duckside_blue_level_1" };
@@ -179,10 +179,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                         location = TSELocation.NONE;
                 }
 
-                //telemetry.addData("The location being set is", location);
-                //telemetry.addData("With confidence", confidence);
+                telemetry.addData("The location being set is", location);
+                telemetry.addData("With confidence", confidence);
 
-                telemetry.addData("This is a real location", getLocation());
+                //telemetry.addData("This is a real location", getLocation());
                 telemetry.update();
 
                 //Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);

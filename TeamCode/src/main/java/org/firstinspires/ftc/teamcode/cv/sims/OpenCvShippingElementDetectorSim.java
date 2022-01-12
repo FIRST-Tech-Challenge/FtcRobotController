@@ -44,11 +44,11 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
     public int width = 224; // width of the image
     public int height = 240;
 
-    public double inScaleFactor = 0.0278;
-    public double thresholdDnn =  0.6;
+    public double inScaleFactor = 0.0279;
+    private double thresholdDnn =  0.6;
     public double redMeanVal = 5;
-    public double greenMeanVal = 113;
-    public double blueMeanVal = 119;
+    public double greenMeanVal = 168.6;
+    public double blueMeanVal = 62.3;
 
 
     private Dnn cvDNN = null;
@@ -62,7 +62,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
     private float maxConfidence = 0.0f;
     private boolean absolutelySure = false;
 
-    static final private float CONF_THRESHOLD = 0.55f;
+    static final private float CONF_THRESHOLD = 0.65f;
 
 
 
@@ -72,7 +72,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
     private String[] classNames = classNamesDuckSideBlue;
 
-    private final String modelPathDuckSideBlue = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_blue\\converted_keras_duckside_blue\\optimized\\freight_frenzy_barcodes_duckside_blue_graph.pb";
 
     private String modelPath = modelPathDuckSideBlue;
 
@@ -147,7 +147,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
                 new Size(width, height),
                 new Scalar(redMeanVal, greenMeanVal, blueMeanVal),
-                true, true);
+                false, true);
 
         net.setInput(blob);
         detections = net.forward();
@@ -164,6 +164,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
             Point classIdPoint = mm.maxLoc;
 
             telemetry.addData("confidence is this: ", confidence);
+            telemetry.update();
             if (confidence >= CONF_THRESHOLD) {
 
                 int centerX = (int) (row.get(0, 0)[0] * row.cols());
