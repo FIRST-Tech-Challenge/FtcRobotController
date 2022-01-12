@@ -116,13 +116,17 @@ public class AllTestAuto extends LinearOpMode {
             
             //getSensorValues();
             
-            //objectDetection();
-            //strafeToShippingHub();
-            //placeFreightOnShippingHub();
+            objectDetection();
+            strafeToShippingHub();
+            placeFreightOnShippingHub();
             
-            strafeToCarousel(0.5);
+        
+            
+            //strafeToCarousel(0.5);
             
             //testEachWheel(0.5);
+            
+            //releaseItemLevel3();
             
         }
     }
@@ -214,7 +218,7 @@ public class AllTestAuto extends LinearOpMode {
     private void testEachWheel(double pval) {
         
         int start_enc_val, end_enc_val ; 
-        
+        /*
         start_enc_val = frontLeft.getCurrentPosition() ;
         frontLeft.setPower(pval) ;
         sleep(5000) ;
@@ -243,7 +247,7 @@ public class AllTestAuto extends LinearOpMode {
         telemetry.addData("Back Left", " " + (end_enc_val - start_enc_val) );
         //telemetry.update();
        
-       
+       */
         start_enc_val = backRight.getCurrentPosition() ;
         backRight.setPower(pval) ;
         sleep(5000) ;
@@ -479,14 +483,48 @@ public class AllTestAuto extends LinearOpMode {
         
         sleep(250);
         
+        //moveRobotForwardEncoders(0.75, 200);
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+        sleep(250);
+        
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        frontRight.setTargetPosition(750);
+        backRight.setTargetPosition(750);
+        frontLeft.setTargetPosition(-750);
+        backLeft.setTargetPosition(-750);
         
         
-        frontLeft.setPower(-1);
-        backLeft.setPower(-1);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        
+        telemetry.addData("Motor Status: ", "Running" );
+        telemetry.update();
+        
         frontRight.setPower(1);
-        backRight.setPower(1);
-
-        sleep(750);
+        backRight.setPower(1.0);
+        frontLeft.setPower(-1.0);
+        backLeft.setPower(-1);
+        
+        while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        
         
         frontLeft.setPower(0);
         backLeft.setPower(0);
@@ -496,22 +534,15 @@ public class AllTestAuto extends LinearOpMode {
         
         sleep(250);
         
-        frontRight.setPower(pval * -1.0);
-        backRight.setPower(pval);
-        frontLeft.setPower(pval);
-        backLeft.setPower(pval * -1.0);
+        strafeRobotRightEncoders(0.75, 200);
         
-        sleep(250);
-        
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        backRight.setPower(0);
         
         sleep(250);
         
         carouselTurner.setPower(1);
         sleep(3000);
+        
+        
         
         
         
@@ -846,13 +877,23 @@ public class AllTestAuto extends LinearOpMode {
         
     }
     
-    private void releaseItemLevel3() {
+    private void releaseItemLevel1() {
+
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
-        linearSlide.setPower(1);
-        sleep(400);
+        linearSlide.setTargetPosition(25);
         
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
-        moveRobotForwardEncoders(1, 200);
+        linearSlide.setPower(0.75);
+
+        while (linearSlide.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
         
         bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
@@ -860,7 +901,7 @@ public class AllTestAuto extends LinearOpMode {
         
         bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         
-        bucketTurner.setPower(0.5);
+        bucketTurner.setPower(0.75);
         
         while (bucketTurner.isBusy()) {
             
@@ -869,11 +910,219 @@ public class AllTestAuto extends LinearOpMode {
             
         } 
         
+        sleep(5000);
+        
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        linearSlide.setTargetPosition(-25);
+        
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        linearSlide.setPower(-0.75);
+
+        while (linearSlide.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        
+        bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        bucketTurner.setTargetPosition(-50);
+        
+        bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        bucketTurner.setPower(-0.75);
+        
+        while (bucketTurner.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        /*
+        moveRobotForwardEncoders(1, 200);
+
         bucket.setPower(-1);
         sleep(1000);
         
+        */
         
         
+    }
+    
+    private void releaseItemLevel2() {
+        
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        linearSlide.setTargetPosition(100);
+        
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        linearSlide.setPower(0.75);
+
+        while (linearSlide.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        
+        bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        bucketTurner.setTargetPosition(50);
+        
+        bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        bucketTurner.setPower(0.75);
+        
+        while (bucketTurner.isBusy()) {
+            
+            idle();
+            
+            
+        } 
+        
+        sleep(5000);
+        
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        linearSlide.setTargetPosition(-100);
+        
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        linearSlide.setPower(-0.75);
+
+        while (linearSlide.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        
+        bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        bucketTurner.setTargetPosition(-50);
+        
+        bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        bucketTurner.setPower(-0.75);
+        
+        while (bucketTurner.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        /*
+        moveRobotForwardEncoders(1, 200);
+
+        bucket.setPower(-1);
+        sleep(1000);
+        
+        */
+        
+        
+    }
+    
+    private void releaseItemLevel3() {
+        
+
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        linearSlide.setTargetPosition(200);
+        
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        linearSlide.setPower(0.75);
+
+        while (linearSlide.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        
+        bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        bucketTurner.setTargetPosition(50);
+        
+        bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        bucketTurner.setPower(0.75);
+        
+        while (bucketTurner.isBusy()) {
+            
+            idle();
+            
+            
+        } 
+        
+        sleep(250);
+        
+        moveRobotForwardEncoders(1, 200);
+
+        bucket.setPower(-1);
+        sleep(1000);
+        bucket.setPower(0);
+
+        moveRobotBackwardEncoders(0.75, 600);
+        
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        linearSlide.setTargetPosition(-200);
+        
+        linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        linearSlide.setPower(-0.75);
+
+        while (linearSlide.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        
+        bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        
+        bucketTurner.setTargetPosition(-30);
+        
+        bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        
+        bucketTurner.setPower(-0.75);
+        
+        while (bucketTurner.isBusy()) {
+            
+            idle();
+            
+            
+        }
+        
+        bucketTurner.setPower(0);
+        linearSlide.setPower(0);
+        
+        telemetry.addData("Status: ", "Freight Placed" );
+        telemetry.update();
+        
+        
+        frontRight.setPower(0);
+        backRight.setPower(0);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        
+        sleep(250);
+        
+        strafeRobotRightEncoders(0.75, 1000);
+        
+        strafeToCarousel(1);
         
     }
     
@@ -956,7 +1205,7 @@ public class AllTestAuto extends LinearOpMode {
         
         if (level == 3) {
             
-            telemetry.addData("Placing Freight on Level 2: ", "In Progress" );
+            telemetry.addData("Placing Freight on Level 3: ", "In Progress" );
             telemetry.update();
             
             releaseItemLevel3();
@@ -965,21 +1214,28 @@ public class AllTestAuto extends LinearOpMode {
             
             telemetry.addData("Placing Freight on Level 2: ", "In Progress" );
             telemetry.update();
+            releaseItemLevel2();
             
             
         } else if (level == 1) {
             
             telemetry.addData("Placing Freight on Level 1: ", "In Progress" );
             telemetry.update();
+            releaseItemLevel1();
             
         } else {
             
-            telemetry.addData("No Objects Detected: ", "Error" );
+            telemetry.addData("No Objects Detected: ", "Strafing to Carousel" );
             telemetry.update();
+            
+            strafeToCarousel(0.5);
             
         }
         
         
         
     }
+    
+    
+    
 }
