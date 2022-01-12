@@ -88,7 +88,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotor carousel, intakeMotor, linearSlideMotor;
     public DistanceSensor distanceSensorLeft, distanceSensorRight, distanceSensorIntake;
     public Servo linearSlideServo;
-    public DigitalChannel redLED, greenLED;
+    public DigitalChannel redLED, greenLED, redLED2, greenLED2;
 
     private List<DcMotorEx> motors;
 
@@ -149,6 +149,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         redLED = (DigitalChannel) hardwareMap.get("red");
         greenLED = (DigitalChannel) hardwareMap.get("green");
+        redLED2 = (DigitalChannel) hardwareMap.get("red2");
+        greenLED2 = (DigitalChannel) hardwareMap.get("green2");
 
         motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
 
@@ -244,6 +246,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void lightSet () {
         redLED.setMode(DigitalChannel.Mode.OUTPUT);
         greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+        redLED2.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED2.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
     public void getCube () {
@@ -260,11 +264,14 @@ public class SampleMecanumDrive extends MecanumDrive {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         }
         stopMotors();
+        pauseButInSecondsForThePlebeians(.3);
         intakeMotor.setPower(-.8);
         pauseButInSecondsForThePlebeians(.5);
         intakeMotor.setPower(0);
         redLED.setState(false);
+        redLED2.setState(false);
         greenLED.setState(true);
+        greenLED2.setState(true);
     }
 
 //    public void getCube() {
@@ -356,7 +363,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
         pause(150);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-        pause(1500);
+        pause(1200);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -372,11 +379,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.9);
         while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
-            pause(50);
         }
         pause(150);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);//1.5
-        pause(1500);
+        pause(1200);
         //forward(0.3, -0.4);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
