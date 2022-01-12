@@ -52,6 +52,7 @@ public class DuckSideBluePath3 {
     private final Telemetry telemetry;
 
     private StopDetectTSEPosition stopDetectTSEPosition;
+    private InstantCommand stopDetect;
 
 
     public DuckSideBluePath3(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
@@ -146,11 +147,15 @@ public class DuckSideBluePath3 {
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
         sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
 
+        stopDetect = new InstantCommand(()->{
+            stopDetectTSEPosition.schedule();
+        });
+
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                stopDetectTSEPosition.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4, sample1Follower5)
+                stopDetect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4, sample1Follower5)
         ));
     }
 }

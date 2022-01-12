@@ -49,11 +49,11 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     private int width = 224; // width of the image
     private int height = 240;
-    private double inScaleFactor = 0.0278;
+    private double inScaleFactor = 0.0279;
     private double thresholdDnn =  0.6;
-    public double redMeanVal = 5;
-    public double greenMeanVal = 113;
-    public double blueMeanVal = 119;
+    private double redMeanVal = 5;
+    private double greenMeanVal = 168.6;
+    private double blueMeanVal = 62.3;
     private Dnn cvDNN = null;
     private Net net = null;
     private Telemetry telemetry = null;
@@ -133,7 +133,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
             float confidence = (float) mm.maxVal;
             Point classIdPoint = mm.maxLoc;
 
-            telemetry.addData("confidence is this: ", confidence);
+            //telemetry.addData("confidence is this: ", confidence);
             if (confidence >= CONF_THRESHOLD) {
 
                 int centerX = (int) (row.get(0, 0)[0] * row.cols());
@@ -179,7 +179,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 telemetry.addData("The location being set is", location);
                 telemetry.addData("With confidence", confidence);
 
-                telemetry.addData("This is a real location", getLocation());
+                //telemetry.addData("This is a real location", getLocation());
                 telemetry.update();
 
                 //Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
@@ -194,7 +194,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     }
 
 
-    public TSELocation getLocation() {final Integer[] value = new Integer[1];
+    public TSELocation getLocation() {
 
         return location;
     }

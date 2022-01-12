@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -44,6 +45,7 @@ public class DuckSideRedPath1 {
 
     private CreateIntake createIntake;
     private StopDetectTSEPosition stopDetectTSEPosition;
+    private InstantCommand stopDetect;
 
     public DuckSideRedPath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -133,11 +135,15 @@ public class DuckSideRedPath1 {
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
 
+        stopDetect = new InstantCommand(()->{
+            stopDetectTSEPosition.schedule();
+        });
+
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                stopDetectTSEPosition.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4)
+                stopDetect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4)
         ));
     }
 }

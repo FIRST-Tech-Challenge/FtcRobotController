@@ -90,7 +90,7 @@ public class WebCamSubsystem extends SubsystemBase {
     }
 
     public void openCameraDeviceAsync(){
-        webCam.setMillisecondsPermissionTimeout(5000);
+        //webCam.setMillisecondsPermissionTimeout(5000);
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override

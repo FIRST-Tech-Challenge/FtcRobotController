@@ -36,12 +36,15 @@ public class DetectTSEPosition extends CommandBase {
 
     @Override
     public void initialize(){
+
         webCamSubsytem.openCameraDeviceAsync();
+        //telemetry.addData("We are initialize", "detectPosition");
     }
 
     @Override
     public void execute(){
 
+        //telemetry.addData("We are executingt", "detectPosition");
         location = detector.getLocation();
         level = detector.getTSELevel();
 
@@ -51,17 +54,19 @@ public class DetectTSEPosition extends CommandBase {
     }
 
     private void setLocation(){
-        //telemetry.addData("We have a 2", location);
+        //telemetry.addData("We have a detect", location);
         webCamSubsytem.setLocation(location);
     }
 
     private void setLevel(){
 
         //telemetry.update();
+        //telemetry.addData("We have a detect", level);
+        //telemetry.update();
         webCamSubsytem.setLevel(level);
         if(level > 0) {
             gotPosition = true;
-            telemetry.addData("We are setting level", level);
+            //telemetry.addData("We are setting level", level);
         }
 
     }

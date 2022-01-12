@@ -47,6 +47,7 @@ public class DuckSideBluePath1 {
 
     private CreateIntake createIntake;
     private StopDetectTSEPosition stopDetectTSEPosition;
+    private InstantCommand stopDetect;
 
     public DuckSideBluePath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -99,23 +100,22 @@ public class DuckSideBluePath1 {
         );
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
-                .splineToLinearHeading(new Pose2d(-63, 60.4, Math.toRadians(245)),Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-63, 63.4, Math.toRadians(245)),Math.toRadians(180))
                 .build();
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeTo(new Vector2d(-60, 22))
+                .strafeTo(new Vector2d(-60, 25))
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 2 Set Level", webCamSubsystem.getLevel());
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
                     setArmLevel.schedule();
                 })
-
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
 
-                .splineToLinearHeading(new Pose2d(-35, 24, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-37.5, 28, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
@@ -124,7 +124,7 @@ public class DuckSideBluePath1 {
                     setArmLevel.schedule();
                 })
                 .strafeTo(new Vector2d(-37,22))
-                .splineToLinearHeading(new Pose2d(-60, 37, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-60, 43.5, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
@@ -132,12 +132,16 @@ public class DuckSideBluePath1 {
         sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
 
+        stopDetect = new InstantCommand(()->{
+            stopDetectTSEPosition.schedule();
+        });
+
 
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                stopDetectTSEPosition.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4
+                stopDetect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4
         )));
     }
 }

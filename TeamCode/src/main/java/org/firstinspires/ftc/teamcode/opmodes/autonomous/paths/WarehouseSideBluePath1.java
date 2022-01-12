@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -47,6 +48,7 @@ public class WarehouseSideBluePath1 {
     private final Telemetry telemetry;
 
     private StopDetectTSEPosition stopDetectTSEPosition;
+    private InstantCommand stopDetect;
 
     public WarehouseSideBluePath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -130,11 +132,15 @@ public class WarehouseSideBluePath1 {
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
         sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
 
+        stopDetect = new InstantCommand(()->{
+            stopDetectTSEPosition.schedule();
+        });
+
     }
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                stopDetectTSEPosition.andThen(sample1Follower1,sample1Follower2, intakeGroup, sample1Follower4, sample1Follower5)
+                stopDetect.andThen(sample1Follower1,sample1Follower2, intakeGroup, sample1Follower4, sample1Follower5)
         ));
     }
 }
