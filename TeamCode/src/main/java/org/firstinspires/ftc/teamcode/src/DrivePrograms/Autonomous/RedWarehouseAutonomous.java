@@ -55,25 +55,6 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     Thread.sleep(500);
 
 
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(23, 84, 1);
-                    intake.setServoUp();
-                    Thread.sleep(1000);
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
-
-                    driveSystem.turnTo(170, .5);
-
-                    driveSystem.moveToPosition(10, 63, 1);
-                    driveSystem.strafeAtAngle(90, .5);
-                    Thread.sleep(300);
-
-                    driveSystem.moveToPosition(9, 24, 1);
-
-
                     break;
                 case Right:
                     telemetry.addData("position", " is center");
@@ -89,25 +70,6 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     //this position will vary for different heights on the goal
                     driveSystem.moveToPosition(25, 84, 1);
-
-
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(23, 84, 1);
-                    intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
-
-                    driveSystem.turnTo(170, .5);
-
-                    driveSystem.moveToPosition(10, 63, 1);
-                    driveSystem.strafeAtAngle(90, .5);
-                    Thread.sleep(300);
-
-                    // this is when it goes through the red warehouse pass
-                    driveSystem.moveToPosition(9, 24, 1);
 
 
                     break;
@@ -127,28 +89,28 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(25, 84, 1);
 
 
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(23, 84, 1);
-                    intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
-
-                    driveSystem.turnTo(170, .5);
-
-                    driveSystem.moveToPosition(10, 63, 1);
-                    driveSystem.strafeAtAngle(90, .5);
-                    Thread.sleep(300);
-
-                    driveSystem.moveToPosition(9, 24, 1);
-
-
                     break;
 
 
             }
+            //Shared Code
+            intake.intakeOn();
+            Thread.sleep(1000);
+            intake.intakeOff();
+            driveSystem.moveToPosition(23, 84, 1);
+            intake.setServoUp();
+            slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+            Thread.sleep(500);
+            //following this is unique to carousel and warehouse
+
+            driveSystem.turnTo(170, .5);
+
+            driveSystem.moveToPosition(10, 63, 1);
+            driveSystem.strafeAtAngle(90, .5);
+            Thread.sleep(300);
+
+            driveSystem.moveToPosition(9, 24, 1);
+
         }
         slide.end();
         odometry.end();

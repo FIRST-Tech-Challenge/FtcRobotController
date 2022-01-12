@@ -56,29 +56,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     Thread.sleep(500);
 
 
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(120, 84, 1);
-                    intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
 
-
-                    driveSystem.moveToPosition(126, 112, 1);
-                    driveSystem.turnTo(185, .5);
-                    driveSystem.moveToPosition(116, 130, 1);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(400);
-                    driveSystem.stopAll();
-                    driveSystem.strafeAtAngle(270, .55);
-                    Thread.sleep(700);
-                    driveSystem.stopAll();
-                    spinner.spinOffBlueDuck();
-                    driveSystem.moveToPosition(102, 130, 1);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(700);
-                    driveSystem.stopAll();
 
                 /*driveSystem.moveToPosition(126, 1, 1.5, true);
                 driveSystem.strafeAtAngle(180 + 35, .5);
@@ -112,32 +90,6 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(115, 84, 1);
 
 
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(117, 84, 1);
-                    intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
-
-
-                    driveSystem.moveToPosition(126, 112, 1);
-                    driveSystem.turnTo(185, .5);
-                    driveSystem.moveToPosition(116, 130, 1);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(400);
-                    driveSystem.stopAll();
-                    driveSystem.strafeAtAngle(270, .55);
-                    Thread.sleep(700);
-                    driveSystem.stopAll();
-                    spinner.spinOffBlueDuck();
-                    driveSystem.moveToPosition(102, 130, 1);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(700);
-                    driveSystem.stopAll();
-
-
                     break;
                 case Left:
                     telemetry.addData("position", "is left");
@@ -158,36 +110,56 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.moveToPosition(115, 84, 1);
 
 
-                    intake.intakeOn();
-                    Thread.sleep(1000);
-                    intake.intakeOff();
-                    driveSystem.moveToPosition(117, 84, 1);
-                    intake.setServoUp();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                    Thread.sleep(500);
-                    //following this is unique to carousel and warehouse
-
-
-                    driveSystem.moveToPosition(126, 112, 1);
-                    driveSystem.turnTo(185, .5);
-                    driveSystem.moveToPosition(116, 130, 1);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(400);
-                    driveSystem.stopAll();
-                    driveSystem.strafeAtAngle(270, .55);
-                    Thread.sleep(700);
-                    driveSystem.stopAll();
-                    spinner.spinOffBlueDuck();
-                    driveSystem.moveToPosition(102, 130, 1);
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(700);
-                    driveSystem.stopAll();
-
-
                     break;
 
 
             }
+            //Shared Code
+
+            intake.intakeOn();
+            Thread.sleep(1000);
+            intake.intakeOff();
+            driveSystem.moveToPosition(117, 84, 1);
+            intake.setServoUp();
+            slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+            Thread.sleep(500);
+
+
+            driveSystem.moveToPosition(126, 112, 1);
+            driveSystem.turnTo(185, .5);
+            driveSystem.moveToPosition(116, 130, 1);
+
+            driveSystem.strafeAtAngle(180, .5);
+            Thread.sleep(400);
+            driveSystem.stopAll();
+            driveSystem.strafeAtAngle(270, .55);
+            Thread.sleep(700);
+            driveSystem.stopAll();
+            spinner.spinOffBlueDuck();
+
+            boolean warehousePark = false;
+
+            if (warehousePark) {
+                //TODO: Make this work
+                driveSystem.strafeAtAngle(180, .5);
+                Thread.sleep(400);
+                odometry.setPosition(144 - 17, 144 - 7, 180);
+                driveSystem.moveToPosition(144 - 24, 64, 1, true);
+                driveSystem.turnTo(180, 0.5);
+                podServos.raise();
+                driveSystem.stopAll();
+                Thread.sleep(500);
+                driveSystem.strafeAtAngle(0, 1);
+                Thread.sleep(1750);
+
+            } else {
+                driveSystem.moveToPosition(102, 130, 1);
+                driveSystem.strafeAtAngle(180, .5);
+                Thread.sleep(700);
+                driveSystem.stopAll();
+            }
+
+
         }
         slide.end();
         odometry.end();
