@@ -134,7 +134,7 @@ public class CreateArm {
 
         armLevels.put(0,0);
         armLevels.put(1,375);
-        armLevels.put(2,800);
+        armLevels.put(2,650);
         armLevels.put(3,1100);
 
         CreateMagneticLimitSwitch createMagneticLimitSwitch = new CreateMagneticLimitSwitch(hwMap, "limitSwitch", telemetry,true);

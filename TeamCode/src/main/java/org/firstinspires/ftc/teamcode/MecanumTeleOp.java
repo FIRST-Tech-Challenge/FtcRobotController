@@ -52,6 +52,8 @@ public class MecanumTeleOp extends LinearOpMode {
 
         //booleans for slow mode
         boolean bpressed = false;
+        boolean rtriggerpressed = false;
+        boolean ltriggerpressed = false;
         boolean slowdownflag = false;
 
 
@@ -183,7 +185,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 controller1rstickx = 0.0;
 
             // set slowdown
-            if(gamepad1.b == true && bpressed == false){
+            if((gamepad1.b == true && bpressed == false) || (gamepad1.right_trigger > 0.5 && rtriggerpressed == false) || (gamepad1.left_trigger > 0.5 && ltriggerpressed == false)){
                 if(slowdownflag){
                     slowdown = 1;
                     slowdownflag = false;
@@ -194,6 +196,14 @@ public class MecanumTeleOp extends LinearOpMode {
                 }
             }
             bpressed = gamepad1.b;
+            if(gamepad1.right_trigger > 0.5)
+                rtriggerpressed = true;
+            if(gamepad1.right_trigger < 0.5)
+                rtriggerpressed = false;
+            if(gamepad1.left_trigger > 0.5)
+                ltriggerpressed = true;
+            if(gamepad1.left_trigger < 0.5)
+                ltriggerpressed = false;
 
             //Add slowdown
             controller1lstickx = controller1lstickx * slowdown;

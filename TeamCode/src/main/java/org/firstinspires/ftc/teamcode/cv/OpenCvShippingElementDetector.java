@@ -63,7 +63,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     private float maxConfidence = 0.0f;
     private boolean absolutelySure = false;
 
-    static final private float CONF_THRESHOLD = 0.65f;
+    static final private float CONF_THRESHOLD = 0.55f;
 
     private final String[] classNamesDuckSideBlue = {"background",
             "duckside_blue_level_3", "duckside_blue_level_2", "duckside_blue_level_1" };
@@ -136,7 +136,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
             float confidence = (float) mm.maxVal;
             Point classIdPoint = mm.maxLoc;
 
-            telemetry.addData("confidence is this: ", confidence);
+            //telemetry.addData("confidence is this: ", confidence);
             if (confidence >= CONF_THRESHOLD) {
 
                 int centerX = (int) (row.get(0, 0)[0] * row.cols());
@@ -179,8 +179,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                         location = TSELocation.NONE;
                 }
 
-                telemetry.addData("The location being set is", location);
-                telemetry.addData("With confidence", confidence);
+                //telemetry.addData("The location being set is", location);
+                //telemetry.addData("With confidence", confidence);
 
                 telemetry.addData("This is a real location", getLocation());
                 telemetry.update();

@@ -43,7 +43,7 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
     public void initialize() {
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
-        //telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
 
 
