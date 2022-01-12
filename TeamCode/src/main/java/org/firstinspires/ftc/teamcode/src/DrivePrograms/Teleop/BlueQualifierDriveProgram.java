@@ -4,6 +4,10 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.ContinuousIntake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 @TeleOp(name = "Blue Drive Program")
 public class BlueQualifierDriveProgram extends TeleopTemplate {
@@ -12,8 +16,24 @@ public class BlueQualifierDriveProgram extends TeleopTemplate {
 
     public void runOpMode() throws InterruptedException {
 
-        this.initAll();
-        leds.setPattern(defaultColor);
+        driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
+
+        // spinner = new CarouselSpinner(hardwareMap, "duck_spinner");
+
+        // pod = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
+        // pod.raise();
+
+        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
+        slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
+
+
+        intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo", "color_sensor", true);
+        //intake.setServoDown();
+
+
+        telemetry.addData("Initialization Status", "Initialized");
+        telemetry.update();
+        //leds.setPattern(defaultColor);
         waitForStart();
 
         RevBlinkinLedDriver.BlinkinPattern currentColor = defaultColor;
