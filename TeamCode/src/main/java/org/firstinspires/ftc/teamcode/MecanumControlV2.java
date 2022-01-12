@@ -25,7 +25,6 @@ public class MecanumControlV2 extends OpMode {
     double driveSpeed;
     double turnSpeed;
     double direction;
-    double shooterPower = -.5;//Normally -1 but with start and back buttons as boosts it needs to be decreased
 
     boolean isSpinnerOn  = false;
     boolean isSpinnerOf = true;
