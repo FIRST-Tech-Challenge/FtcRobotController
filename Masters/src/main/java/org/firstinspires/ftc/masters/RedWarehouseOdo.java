@@ -71,8 +71,7 @@ public class RedWarehouseOdo extends LinearOpMode {
         drive.followTrajectorySequence(fromHubToWarehouse);
 
         //pick up cube
-
-
+        drive.getCube();
 
         TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(15, -66))

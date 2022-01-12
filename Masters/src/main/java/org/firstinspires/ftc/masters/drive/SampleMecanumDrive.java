@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -87,6 +88,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotor carousel, intakeMotor, linearSlideMotor;
     public DistanceSensor distanceSensorLeft, distanceSensorRight, distanceSensorIntake;
     public Servo linearSlideServo;
+    public DigitalChannel redLED, greenLED;
 
     private List<DcMotorEx> motors;
 
@@ -144,6 +146,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
         distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+
+        redLED = (DigitalChannel) hardwareMap.get("red");
+        greenLED = (DigitalChannel) hardwareMap.get("green");
 
         motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
 
@@ -236,20 +241,46 @@ public class SampleMecanumDrive extends MecanumDrive {
         intakeMotor.setPower(0);
     }
 
-    public void getCube() {
-        frontLeft.setPower(.3);
-        frontRight.setPower(.3);
-        backLeft.setPower(.3);
-        backRight.setPower(.3);
-        intakeMotor.setPower(-.8);
-        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+    public void lightSet () {
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+    }
 
-        while (intakeDistance > 7) {
+    public void getCube () {
+        lightSet();
+        frontLeft.setPower(-.3);
+        frontRight.setPower(-.3);
+        backLeft.setPower(-.3);
+        backRight.setPower(-.3);
+        intakeMotor.setPower(.8);
+        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+        redLED.setState(true);
+
+        while (intakeDistance>7 && this.opmode.opModeIsActive()) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         }
         stopMotors();
+        intakeMotor.setPower(-.8);
+        pauseButInSecondsForThePlebeians(.5);
         intakeMotor.setPower(0);
+        redLED.setState(false);
+        greenLED.setState(true);
     }
+
+//    public void getCube() {
+//        frontLeft.setPower(.3);
+//        frontRight.setPower(.3);
+//        backLeft.setPower(.3);
+//        backRight.setPower(.3);
+//        intakeMotor.setPower(-.8);
+//        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//
+//        while (intakeDistance > 7) {
+//            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//        }
+//        stopMotors();
+//        intakeMotor.setPower(0);
+//    }
 
     public void distanceSensorStrafeLeft(double speed) {
 

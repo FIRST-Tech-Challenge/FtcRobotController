@@ -13,6 +13,7 @@ public class TestGetCube extends LinearOpMode {
 
         waitForStart();
 
+        robot.lightSet();
         robot.getCube();
     }
 }
