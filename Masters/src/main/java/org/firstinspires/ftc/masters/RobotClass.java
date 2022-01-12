@@ -7,7 +7,9 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -43,6 +45,9 @@ public class RobotClass {
     public DistanceSensor distanceSensorRight;
     public DistanceSensor distanceSensorIntake;
 
+    public DigitalChannel redLED;
+    public DigitalChannel greenLED;
+
     public DcMotor carousel;
     FreightFrenzyComputerVisionRedHub CV;
 
@@ -73,6 +78,9 @@ public class RobotClass {
         distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
         distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+        redLED = (DigitalChannel) hardwareMap.get("red");
+        greenLED = (DigitalChannel) hardwareMap.get("green");
+
 
         this.opmode= opmode;
 
@@ -195,6 +203,11 @@ public class RobotClass {
 //        telemetry.update();
     }
 
+    public void lightSet () {
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+    }
+
     public void jevilTurnCarousel (double speed, double seconds) {
         carousel.setPower(speed);
         pauseButInSecondsForThePlebeians(seconds);
@@ -263,6 +276,7 @@ public class RobotClass {
 
         }
         linearSlideMotor.setPower(0);
+        redLED.setState(true);
     }
 
     public void wayneStrafeBlue (double speed) {
@@ -298,18 +312,24 @@ public class RobotClass {
     }
 
     public void getCube () {
+        lightSet();
         frontLeft.setPower(.3);
         frontRight.setPower(.3);
         backLeft.setPower(.3);
         backRight.setPower(.3);
-        intakeMotor.setPower(-.8);
+        intakeMotor.setPower(.8);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+        redLED.setState(true);
 
-        while (intakeDistance>7) {
+        while (intakeDistance>7 && this.opmode.opModeIsActive()) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         }
         stopMotors();
+        intakeMotor.setPower(-.8);
+        pauseButInSecondsForThePlebeians(.5);
         intakeMotor.setPower(0);
+        redLED.setState(false);
+        greenLED.setState(true);
     }
     public void distanceSensorStrafeLeft (double speed) {
 

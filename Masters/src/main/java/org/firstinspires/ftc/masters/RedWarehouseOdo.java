@@ -24,7 +24,7 @@ public class RedWarehouseOdo extends LinearOpMode {
         FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = drive.analyze();
 
-        Pose2d startPose = new Pose2d(new Vector2d(8.5, -63),Math.toRadians(90));
+        Pose2d startPose = new Pose2d(new Vector2d(13.5, -63),Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
@@ -71,8 +71,7 @@ public class RedWarehouseOdo extends LinearOpMode {
         drive.followTrajectorySequence(fromHubToWarehouse);
 
         //pick up cube
-
-
+        drive.getCube();
 
         TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(15, -66))

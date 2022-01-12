@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -120,6 +121,9 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        robot.lightSet();
+        robot.redLED.setState(true);
+
         boolean intakeOn = false;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -213,6 +217,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     sleep(1200);
 
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+                    robot.greenLED.setState(false);
+                    robot.redLED.setState(true);
                     linearSlideTarget = linearSlideTargets.BASE;
                     linearSlideMotor.setTargetPosition(0);
                     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -232,12 +238,20 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             rotateCarousel();
 
-            double distance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            telemetry.addData("distance", distance);
-            telemetry.update();
-            if (distance < 7) {
+//            double distance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//            telemetry.addData("distance", distance);
+//            telemetry.update();
+//            if (distance < 7) {
+//                intakeMotor.setPower(0);
+//                intakeOn = false;
+//            }
+
+            double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+            if (intakeDistance<7) {
+                robot.pauseButInSecondsForThePlebeians(.1);
                 intakeMotor.setPower(0);
-                intakeOn = false;
+                robot.redLED.setState(false);
+                robot.greenLED.setState(true);
             }
 
 //            if (gamepad2.dpad_right) {
