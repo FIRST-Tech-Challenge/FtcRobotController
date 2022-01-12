@@ -6,6 +6,7 @@ FTC Team 20020
 
 package org.firstinspires.ftc.teamcode.Configs.newConfig;
 //----------------------------------------------------------------------------
+import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.logLine;
 import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.BLEFT_MOTOR_NAME;
 import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.BRIGHT_MOTOR_NAME;
 import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.LEFT_MOTOR_NAME;
@@ -26,8 +27,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * This class defines the hardware components.
+ * @author karthikperi
  * @author aryansinha
- * @soon-to-be-author karthikperi
  */
 public final class HardwareNew
 {
@@ -47,6 +48,7 @@ public final class HardwareNew
     private final boolean runWithEncoders;
     /* local OpMode members. */
     private HardwareMap hwMap;
+    private Object HardwareNew;
 
     /**
      * Creates an instance of this class that runs without encoders.
@@ -131,8 +133,31 @@ public final class HardwareNew
      * @param degrees rotational degrees
      * @param power Motor power
      */
+    public void turnLeft(BaseNewOpMode OpMode,double degrees, double power){ //this is cool
+        logLine(OpMode, Double.toString(getHeading()));
+        //Angle before you turn
+        double startingAngle = getHeading();
+        //Setting motors to turn right
+        frontLeftDrive.setPower(power);
+        frontRightDrive.setPower(-power);
+        backLeftDrive.setPower(power);
+        backRightDrive.setPower(-power);
+
+        //Waiting until the change in degrees is greater than desired change in degrees
+
+        while ((getHeading()-startingAngle)<=degrees){
+            logLine(OpMode, "Starting Angle"+ Double.toString(getHeading()));
+        }
+        //stop all motors
+        logLine(OpMode, Double.toString(getHeading()));
+        frontLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+    }
     public void turnRight(double degrees, double power){
-        degrees*=-1;
+        //logLine(OpMode, Double.toString(degrees));
+
         //Angle before you turn
         double startingAngle = getHeading();
         //Setting motors to turn right
@@ -156,8 +181,33 @@ public final class HardwareNew
      * @param degrees degrees
      * @param power Motor power
      */
-    public void turnLeft(double degrees, double power){
+    public void turnRight(BaseNewOpMode OpMode, double degrees, double power){ //this is cool
+        degrees*=-1;
+        logLine(OpMode, Double.toString(getHeading()));
+        //Angle before you turn
+        double startingAngle = getHeading();
+        logLine(OpMode, "Starting Angle"+ Double.toString(startingAngle));
+        //Setting motors to turn right
+        frontLeftDrive.setPower(-power);
+        frontRightDrive.setPower(power);
+        backLeftDrive.setPower(-power);
+        backRightDrive.setPower(power);
+        //Waiting until the change in degrees is greater than desired change in degrees
+        while ((getHeading()-startingAngle)>=degrees) {
 
+            logLine(OpMode, "Starting Angle"+ Double.toString(getHeading()));
+
+            //logLine(OpMode, "difference: " + Double.toString(getHeading()-startingAngle));
+        }
+            //stop all motors
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
+
+    }
+    public void turnLeft(double degrees, double power){
+        //logLine(OpMode, Double.toString(degrees));
         //Angle before you turn
         double startingAngle = getHeading();
         //Setting motors to turn right
