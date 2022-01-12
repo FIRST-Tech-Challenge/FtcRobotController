@@ -246,7 +246,7 @@ public class Robot {
 
     public void armThing(int level) {
         if (level == 1) {
-            arm.setTargetPosition(400);
+            arm.setTargetPosition(500);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(.5);
             while (arm.isBusy() && this.opMode.opModeIsActive()) {
@@ -254,21 +254,30 @@ public class Robot {
         }
         if(level ==2){
 
-        arm.setTargetPosition(700);
+        arm.setTargetPosition(800);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setPower(.5);
         while (arm.isBusy() && this.opMode.opModeIsActive()) {
         }
     }
         if(level ==3){
-            arm.setTargetPosition(1000);
+            arm.setTargetPosition(1200);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(.5);
             while (arm.isBusy() && this.opMode.opModeIsActive()) {
             }
     }
+
+    }
+
+    public void eject(){
         intake.setPower(-1);
         pause(1000);
         intake.setPower(0);
+    }
+    public void liftForMovement() {
+        arm.setTargetPosition(125);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
     }
 }
