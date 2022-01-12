@@ -103,6 +103,7 @@ public class FrenzyBaseBot implements IOdoBot {
         this.hwMap = hw;
         this.telemetry = t;
         try {
+            initCalibData();
             // Define and Initialize Motors
             frontLeft = hwMap.get(DcMotorEx.class, LEFT_FRONT);
             frontRight = hwMap.get(DcMotorEx.class, RIGHT_FRONT);
@@ -911,6 +912,9 @@ public class FrenzyBaseBot implements IOdoBot {
 
 
     public void initCalibData() throws Exception {
+        if (botConfig != null){
+            return;
+        }
         File calibFile = AppUtil.getInstance().getSettingsFile(BotCalibConfig.BOT_CALIB_CONFIG);
         if (calibFile.exists()) {
             String data = ReadWriteFile.readFile(calibFile);
@@ -918,6 +922,30 @@ public class FrenzyBaseBot implements IOdoBot {
             if (botConfig == null) {
                 throw new Exception("Calibration data does not exist. Run calibration first");
             }
+            if (botConfig.getPositionPIDF() > 0){
+                positionPIDF = botConfig.getPositionPIDF();
+            }
+
+            if (botConfig.getPositionToleration() > 0){
+                positionToleration = botConfig.getPositionToleration();
+            }
+
+            if (botConfig.getMaxVelocityLF() > 0){
+                MAX_VELOCITY_FRONT_LEFT = botConfig.getMaxVelocityLF();
+            }
+
+            if (botConfig.getMaxVelocityLB() > 0){
+                MAX_VELOCITY_BACK_LEFT = botConfig.getMaxVelocityLB();
+            }
+
+            if (botConfig.getMaxVelocityRF() > 0){
+                MAX_VELOCITY_FRONT_RIGHT = botConfig.getMaxVelocityRF();
+            }
+
+            if (botConfig.getMaxVelocityRB() > 0){
+                MAX_VELOCITY_BACK_RIGHT = botConfig.getMaxVelocityRB();
+            }
+
             telemetry.addData("Bot Config", "Initialized");
             telemetry.update();
         } else {

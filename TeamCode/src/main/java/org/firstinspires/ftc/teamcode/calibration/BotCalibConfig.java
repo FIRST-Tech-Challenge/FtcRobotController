@@ -14,6 +14,12 @@ public class BotCalibConfig implements Serializable {
     private double rightTicksPerDegree;
     private double minRadiusLeft;
     private double minRadiusRight;
+    private double positionPIDF;
+    private int positionToleration;
+    private double maxVelocityLF;
+    private double maxVelocityLB;
+    private double maxVelocityRF;
+    private double maxVelocityRB;
     private MotorReductionBot strafeLeftReduction  = new MotorReductionBot();
     private MotorReductionBot strafeRightReduction  = new MotorReductionBot();
     private MotorReductionBot diagMRLeft  = new MotorReductionBot();
@@ -162,5 +168,53 @@ public class BotCalibConfig implements Serializable {
 
     public void setRightTicksPerDegree(double rightTicksPerDegree) {
         this.rightTicksPerDegree = rightTicksPerDegree;
+    }
+
+    public double getPositionPIDF() {
+        return positionPIDF;
+    }
+
+    public void setPositionPIDF(double positionPIDF) {
+        this.positionPIDF = positionPIDF;
+    }
+
+    public int getPositionToleration() {
+        return positionToleration;
+    }
+
+    public void setPositionToleration(int positionToleration) {
+        this.positionToleration = positionToleration;
+    }
+
+    public double getMaxVelocityLF() {
+        return maxVelocityLF;
+    }
+
+    public void setMaxVelocityLF(double maxVelocityLF) {
+        this.maxVelocityLF = maxVelocityLF;
+    }
+
+    public double getMaxVelocityLB() {
+        return maxVelocityLB;
+    }
+
+    public void setMaxVelocityLB(double maxVelocityLB) {
+        this.maxVelocityLB = maxVelocityLB;
+    }
+
+    public double getMaxVelocityRF() {
+        return maxVelocityRF;
+    }
+
+    public void setMaxVelocityRF(double maxVelocityRF) {
+        this.maxVelocityRF = maxVelocityRF;
+    }
+
+    public double getMaxVelocityRB() {
+        return maxVelocityRB;
+    }
+
+    public void setMaxVelocityRB(double maxVelocityRB) {
+        this.maxVelocityRB = maxVelocityRB;
     }
 }
