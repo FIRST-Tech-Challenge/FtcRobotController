@@ -264,6 +264,8 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
 
         while(!isStarted()) {
 
+            //telemetry.addLine("not started");
+            //telemetry.update();
             CommandScheduler.getInstance().run();
         }
 

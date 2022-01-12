@@ -29,7 +29,7 @@ public class StopDetectTSEPosition extends CommandBase {
 
     @Override
     public void initialize(){
-        telemetry.addLine("stopping the stream at level: " + webCamSubsytem.getLevel());
+       telemetry.addLine("stopping the stream at level: " + webCamSubsytem.getLevel());
         webCamSubsytem.stopStreaming();
     }
 
