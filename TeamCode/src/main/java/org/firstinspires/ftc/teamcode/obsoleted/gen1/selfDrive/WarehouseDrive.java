@@ -1,43 +1,41 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.obsoleted.gen1.selfDrive;
 
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.encoderDrive;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.logData;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.logLine;
-
+import static org.firstinspires.ftc.teamcode.obsoleted.gen1.selfDrive.AutoDriveUtils.encoderDrive;
+import static org.firstinspires.ftc.teamcode.obsoleted.gen1.selfDrive.AutoDriveUtils.logData;
+import static org.firstinspires.ftc.teamcode.obsoleted.gen1.selfDrive.AutoDriveUtils.logLine;
 
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+import org.firstinspires.ftc.teamcode.obsoleted.gen1.BaseOpMode;
+import org.firstinspires.ftc.teamcode.obsoleted.gen1.Hardware2;
 
 /**
  * This class defines the warehouse driving.
  * @author aryansinha
- * kind-of in a less prominent way
- * @soon-to-be-author karthikperi
  */
-@Autonomous(name="Warehouse Drive Blue")
-public class WarehouseDriveBlue extends BaseNewOpMode {
-    private final HardwareNew robot;
+@Autonomous(name="Warehouse Driving")
+public class WarehouseDrive extends BaseOpMode {
+    private final Hardware2 robot;
     private final ElapsedTime runtime = new ElapsedTime();
 
-    public WarehouseDriveBlue() {
+    public WarehouseDrive() {
         // Start with the encoders.
-        robot = new HardwareNew(true);
+        robot = new Hardware2(true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public HardwareNew getRobot() {
+    public Hardware2 getRobot() {
         return robot;
     }
 
     /**
      * {@inheritDoc}
-     * */
+     */
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,28 +49,28 @@ public class WarehouseDriveBlue extends BaseNewOpMode {
         //reset Runtime
         runtime.reset();
 
-        encoderDrive(this,1,(double)26,(double)26, 5);
-        robot.getArm().setPower(0.5);
-        sleep(5000);
-        robot.getArm().setPower(0);
-        robot.getLeftClaw().setPosition(0.5);
-        robot.getRightClaw().setPosition(0.5);
-        encoderDrive(this, 1, (double)-20, (double)-20, 5);
+        encoderDrive(this,1,(double)49,(double)49, 5);
         robot.turnLeft(90, 0.2);
+        encoderDrive(this, 1, 2, 2, 1);
+        robot.getClawServo().setPosition(0.1);
         encoderDrive(this,-1,(double)49,(double)49, 5);
         robot.turnRight(90, 0.2);
         encoderDrive(this, -1, 2, 2, 1);
-
+        robot.getClawServo().setPosition(0.1);
         encoderDrive(this, 1.0, 25,25,5);
         logData(this, "Encoder Counts", String.format("Current Position is %7d :%7d",
                 robot.getLeftDrive().getCurrentPosition(),
                 robot.getRightDrive().getCurrentPosition()));
 
 
-
         robot.turnLeft(90, 0.1);
         encoderDrive(this, 1, 80, 80, 5);
+        robot.getClaw().setPower(1);
         sleep(500);
+        robot.getClaw().setPower(0);
+        robot.getClawServo().setPosition(1);
+        robot.getClawServo().setPosition(0);
+
 
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.auto.cv.experimental;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;

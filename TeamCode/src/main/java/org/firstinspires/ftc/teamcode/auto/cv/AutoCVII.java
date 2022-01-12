@@ -1,11 +1,14 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.auto.cv;
 
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.encoderDrive;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.FRAME_HEIGHT;
-import static org.firstinspires.ftc.teamcode.Configs.utils.FTCConstants.FRAME_WIDTH;
+import static org.firstinspires.ftc.teamcode.common.utils.DriveUtils.encoderDrive;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.FRAME_HEIGHT;
+import static org.firstinspires.ftc.teamcode.common.utils.FTCConstants.FRAME_WIDTH;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.common.BaseNewOpMode;
+import org.firstinspires.ftc.teamcode.common.Direction;
+import org.firstinspires.ftc.teamcode.config.HardwareNew;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -23,7 +26,7 @@ public class AutoCVII extends BaseNewOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         HardwareNew robot = new HardwareNew();
-        PipelineII detector = new PipelineII(telemetry);
+        CvPipeline detector = new CvPipeline(telemetry);
         Direction direction = detector.getLocation();
         robot.init(hardwareMap);
 
@@ -56,7 +59,7 @@ public class AutoCVII extends BaseNewOpMode {
         Camera.stopStreaming();
     }
 
-    private OpenCvCamera initCamera(PipelineII detector) {
+    private OpenCvCamera initCamera(CvPipeline detector) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         // Connect to the camera

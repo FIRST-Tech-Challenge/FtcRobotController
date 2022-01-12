@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.auto.paths;
 
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.encoderDrive;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.logData;
-import static org.firstinspires.ftc.teamcode.Configs.newConfig.NewAutoDriveUtils.logLine;
+
+
+import static org.firstinspires.ftc.teamcode.common.utils.DriveUtils.encoderDrive;
 
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Configs.newConfig.BaseNewOpMode;
-import org.firstinspires.ftc.teamcode.Configs.newConfig.HardwareNew;
+import org.firstinspires.ftc.teamcode.common.BaseNewOpMode;
+import org.firstinspires.ftc.teamcode.config.HardwareNew;
+
 
 @Autonomous(name= "Right Position Both Alliances")
 public class RightPositionBothAlliances extends BaseNewOpMode {

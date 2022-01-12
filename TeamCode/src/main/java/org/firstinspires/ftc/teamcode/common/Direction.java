@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Configs.newConfig;
+package org.firstinspires.ftc.teamcode.common;
 
 /**
  * Enum location helps with references to the location.
