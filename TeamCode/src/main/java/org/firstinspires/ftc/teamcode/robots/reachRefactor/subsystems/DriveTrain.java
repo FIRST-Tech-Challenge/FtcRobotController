@@ -265,9 +265,9 @@ public class DriveTrain implements Subsystem {
 
         // Motor controls
 //        if(swivelPID.onTarget()) {
-            motorFrontLeft.setVelocity(targetFrontLeftVelocity * TICKS_PER_METER);
-            motorFrontRight.setVelocity(targetFrontRightVelocity * TICKS_PER_METER);
-            motorMiddle.setVelocity(targetMiddleVelocity * TICKS_PER_METER);
+            motorFrontLeft.setVelocity(targetFrontLeftVelocity * TICKS_PER_METER / WHEEL_RADIUS);
+            motorFrontRight.setVelocity(targetFrontRightVelocity * TICKS_PER_METER / WHEEL_RADIUS);
+            motorMiddle.setVelocity(targetMiddleVelocity * TICKS_PER_METER / WHEEL_RADIUS);
 //        } else {
 //            motorFrontLeft.setVelocity(0);
 //            motorFrontRight.setVelocity(0);
