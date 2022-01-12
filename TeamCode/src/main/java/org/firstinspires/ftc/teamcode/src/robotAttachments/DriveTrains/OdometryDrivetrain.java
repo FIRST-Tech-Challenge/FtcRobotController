@@ -212,6 +212,12 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         this.stopAll();
     }
 
+    public void moveToPosition(FieldPoints position, double tolerance, boolean debug) throws InterruptedException {
+
+        moveToPosition(FieldPoints.positionsAndPoints.get(position)[0], FieldPoints.positionsAndPoints.get(position)[1], tolerance, debug);
+        this.stopAll();
+    }
+
     /**
      * Precisely moves the robot to the given position
      *
@@ -278,8 +284,8 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     private double calculateShortDistancePower(double totalDistance, double currentDistance) {
         final double distancePercentage = (totalDistance - currentDistance) / totalDistance;
-        return MiscUtills.boundNumber((-1.0 / 4) * Math.cos(distancePercentage) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
-
+        //return MiscUtills.boundNumber((-1.0 / 4) * Math.cos(distancePercentage) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
+        return 0.5 * (12 / voltageSensor.getVoltage());
     }
 
     public void move(double distance, double angle, double tolerance) throws InterruptedException {
