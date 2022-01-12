@@ -45,8 +45,8 @@ public class RobotClass {
     public DistanceSensor distanceSensorRight;
     public DistanceSensor distanceSensorIntake;
 
-    public DigitalChannel redLED;
-    public DigitalChannel greenLED;
+    public DigitalChannel redLED, redLED2;
+    public DigitalChannel greenLED, greenLED2;
 
     public DcMotor carousel;
     FreightFrenzyComputerVisionRedHub CV;
@@ -79,8 +79,9 @@ public class RobotClass {
         distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
         redLED = (DigitalChannel) hardwareMap.get("red");
+        redLED2 = (DigitalChannel) hardwareMap.get("red2");
         greenLED = (DigitalChannel) hardwareMap.get("green");
-
+        greenLED2 = (DigitalChannel) hardwareMap.get("green2");
 
         this.opmode= opmode;
 
@@ -206,6 +207,8 @@ public class RobotClass {
     public void lightSet () {
         redLED.setMode(DigitalChannel.Mode.OUTPUT);
         greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+        redLED2.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED2.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
     public void jevilTurnCarousel (double speed, double seconds) {
@@ -277,6 +280,7 @@ public class RobotClass {
         }
         linearSlideMotor.setPower(0);
         redLED.setState(true);
+        redLED2.setState(true);
     }
 
     public void wayneStrafeBlue (double speed) {
@@ -320,6 +324,7 @@ public class RobotClass {
         intakeMotor.setPower(.8);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         redLED.setState(true);
+        redLED2.setState(true);
 
         while (intakeDistance>7 && this.opmode.opModeIsActive()) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
@@ -330,6 +335,8 @@ public class RobotClass {
         intakeMotor.setPower(0);
         redLED.setState(false);
         greenLED.setState(true);
+        redLED2.setState(false);
+        greenLED2.setState(true);
     }
     public void distanceSensorStrafeLeft (double speed) {
 

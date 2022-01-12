@@ -4,6 +4,10 @@ package org.firstinspires.ftc.blackswan;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name="TeleopRed")
 
@@ -121,7 +125,7 @@ public class TeleopRed extends LinearOpMode {
                 detection = "None";
             }
             if (gamepad2.dpad_up) { //up
-                arm.setTargetPosition(1050);
+                arm.setTargetPosition(1250);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
 
@@ -140,7 +144,7 @@ public class TeleopRed extends LinearOpMode {
             }
 
             if (gamepad2.dpad_down) {
-                arm.setTargetPosition(125);
+                arm.setTargetPosition(50);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.3);
 //                while (arm.isBusy() && opModeIsActive()) {
@@ -158,6 +162,8 @@ public class TeleopRed extends LinearOpMode {
             } else {
                 intake.setPower(0);
             }
+
+
 //this is to set the intake to cover the element inside
 //            if (gamepad2.a) {
 //                intake.setTargetPosition(-356);
@@ -178,7 +184,9 @@ public class TeleopRed extends LinearOpMode {
     protected void turnDuck(DcMotor carousel){
         if(gamepad2.right_bumper){
             carousel.setPower(-0.5 );
-        } else {
+        } else  if (gamepad2.left_bumper){
+            carousel.setPower(0.5);
+        }else {
             carousel.setPower(0);
         }
     }
