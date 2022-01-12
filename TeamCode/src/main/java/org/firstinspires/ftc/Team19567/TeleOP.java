@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -23,16 +24,27 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private DcMotor armDC = null;
     private Servo releaseServo = null;
     private Servo balanceServo = null;
+    private TouchSensor limitSwitch = null;
     private double carouselLeftPower = 0.0;
     private double carouselRightPower = 0.0;
     private double armPos = 0;
-    private double armPower = 1.0;
+    private double armPower = 0.5;
     private double intakePower = 0.0;
     private double releaseServoPos = 0.0;
     private double balanceServoPos = 0.0;
     private boolean isSlowmode = false;
     private double acc = 1.0;
     private Mechanisms mechanisms = null;
+
+    public enum PRESETSTATE {
+        SHARED_HUB,
+        ALLIANCE_FIRST,
+        ALLIANCE_SECOND,
+        ALLIANCE_THIRD,
+        NO_PRESET
+    }
+
+    private PRESETSTATE presetState = PRESETSTATE.NO_PRESET;
 
     @Override
     public void init() {
@@ -48,6 +60,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC = hardwareMap.get(DcMotor.class, "armDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
+        limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
 
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
 
@@ -57,6 +70,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
         intakeDC.setDirection(DcMotor.Direction.REVERSE);
         armDC.setDirection(DcMotor.Direction.FORWARD);
+        balanceServo.setDirection(Servo.Direction.REVERSE);
 
         releaseServoPos = releaseServo.MAX_POSITION;
         balanceServoPos = balanceServo.MIN_POSITION;
@@ -106,9 +120,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         final double leftBackSpeed = (r * Math.sin(angleDC) - gamepad1.right_stick_x)*acc;
         final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x)*acc;
         //INTAKE
-        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.75*gamepad1.right_trigger);
-        else if(gamepad2.right_trigger > 0) mechanisms.moveIntake(0.75*gamepad2.right_trigger);
-        else mechanisms.moveIntake(0.0);
+        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.7*gamepad1.right_trigger);
+        else if(gamepad2.right_trigger > 0) mechanisms.moveIntake(0.7*gamepad2.right_trigger);
+        else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
+        else mechanisms.moveIntake(0.2);
 
         if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
@@ -122,14 +137,57 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             mechanisms.rotateCarousel(0.0);
         }
         //ARM
-        if(gamepad1.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*2,0,1000);
-        else if(gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*2,0,1000);
-        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-2,0,1000);
+        if(gamepad1.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*5,0,1000);
+        else if(gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*5,0,1000);
+        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-5,0,1000);
+        if(gamepad1.x || gamepad2.x) {
+            armPos = 600;
+        }
+        else if(gamepad2.y) {
+            armPos = 750;
+        }
+        else if(gamepad1.a || gamepad2.a) {
+            armPos = 870;
+        }
 
 //SERVOS
         if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
         else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        if(gamepad1.b || gamepad2.b) mechanisms.reset();
+        if(gamepad1.b || gamepad2.b) {
+            armPos = 0;
+            releaseServoPos = 1.0;
+        }
+        if(presetState != PRESETSTATE.NO_PRESET) {
+            releaseServoPos = 0.9;
+            balanceServoPos = Range.clip(armDC.getCurrentPosition()/1100.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
+            switch(presetState) {
+                case ALLIANCE_FIRST: {
+                    if(armDC.getCurrentPosition() >= 870) {
+                        presetState = PRESETSTATE.NO_PRESET;
+                    }
+                    break;
+                }
+                case ALLIANCE_SECOND: {
+                    if(armDC.getCurrentPosition() >= 750) {
+                        presetState = PRESETSTATE.NO_PRESET;
+                    }
+                    break;
+                }
+                case ALLIANCE_THIRD: {
+                    if(armDC.getCurrentPosition() >= 600) {
+                        presetState = PRESETSTATE.NO_PRESET;
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        else {
+            releaseServoPos = releaseServo.MAX_POSITION;
+            balanceServoPos = Range.clip(armPos/1100.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
+        }
 
 //MOTOR SET POWER
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
@@ -141,7 +199,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setTargetPosition((int) armPos);
         armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
-        mechanisms.maintainBalance(); //TODO: SEE IF THIS ACTUALLY WORKS
+        balanceServo.setPosition(balanceServoPos);
+        //mechanisms.maintainBalance(); //TODO: SEE IF THIS ACTUALLY WORKS
 //TELEMETRY
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime

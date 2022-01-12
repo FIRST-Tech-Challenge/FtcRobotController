@@ -95,21 +95,24 @@ public class RoadrunnerTest extends LinearOpMode {
 
         if(!opModeIsActive()) return;
 
-        switch(pipeline.getLocation()) {
+        switch(location) {
             case ALLIANCE_FIRST: {
                 location = LOCATION.ALLIANCE_FIRST;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
+                break;
             }
             case ALLIANCE_SECOND: {
                 location = LOCATION.ALLIANCE_SECOND;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
+                break;
             }
             case ALLIANCE_THIRD: {
                 location = LOCATION.ALLIANCE_THIRD;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
+                break;
             }
             default: {
                 location = LOCATION.ALLIANCE_THIRD;
