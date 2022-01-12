@@ -20,6 +20,13 @@ public class AcRobot {
     public DcMotorEx leftRear = null;
     public DcMotorEx rightRear = null;
 
+    // autonomous movement
+    final double encoderResolution = 537.7; // Ticks per revolution
+    final double wheelDiameter = 96; // mm
+    final double rotationDistance = 238; // cm
+    final double strafeModifier = 1.125;
+    final double mmPerTick = (Math.PI*wheelDiameter)/encoderResolution;
+
     // DcMotor
     public DcMotor carousel;
 
@@ -45,8 +52,8 @@ public class AcRobot {
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         //set two of the motors to be reversed
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Servos
         grabberLeft = hardwareMap.get(CRServo.class, "left");
@@ -104,7 +111,7 @@ public class AcRobot {
         final double v1 = r * Math.cos(robotAngle) + rightX;
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
-        final double v4 = r * Math.cos(robotAngle) - rightX;
+        final double v4     = r * Math.cos(robotAngle) - rightX;
 
         leftFront.setPower(v1);
         rightFront.setPower(v2);
@@ -113,5 +120,44 @@ public class AcRobot {
 
     }
 
+    // autonomous driving
+    // drive forward/backward
+    void drive(double cm, double power) {
+        double ticks = cmToTick(cm);
+        moveMotor(leftFront, (int)ticks, power);
+        moveMotor(rightFront, (int)ticks, power);
+        moveMotor(leftRear, (int)ticks, power);
+        moveMotor(rightRear, (int)ticks, power);
+        while(leftFront.isBusy() ||  rightFront.isBusy() || leftRear.isBusy() || rightRear.isBusy()) {}
+    }
 
+    void strafe(double cm, double power) {
+        double ticks = -cmToTick(cm)*strafeModifier;
+        moveMotor(leftFront, (int)-ticks, power);
+        moveMotor(rightFront, (int)ticks, power);
+        moveMotor(leftRear, (int)ticks, power);
+        moveMotor(rightRear, (int)-ticks, power);
+        while(leftFront.isBusy() ||  rightFront.isBusy() || leftRear.isBusy() || rightRear.isBusy()) {}
+    }
+
+    void rotate(double deg, double power) {
+        double ticks = -cmToTick(rotationDistance/360*deg);
+        moveMotor(leftFront, (int)-ticks, power);
+        moveMotor(rightFront, (int)ticks, power);
+        moveMotor(leftRear, (int)-ticks, power);
+        moveMotor(rightRear, (int)ticks, power);
+        while(leftFront.isBusy() ||  rightFront.isBusy() || leftRear.isBusy() || rightRear.isBusy()) {}
+    }
+
+    void moveMotor(DcMotor motor, int ticks, double power) {
+        int postion = motor.getCurrentPosition();
+        motor.setTargetPosition(postion + ticks);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(power);
+    }
+
+    // unit conversions
+    double inToCm(double in) { return in*2.54; }
+    double ftToCm(double ft) { return ft*12*2.54; }
+    double cmToTick(double cm) { return cm*10/mmPerTick; }
 }
