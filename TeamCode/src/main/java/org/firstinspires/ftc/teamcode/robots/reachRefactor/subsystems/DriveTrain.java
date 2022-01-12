@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -54,12 +53,12 @@ public class DriveTrain implements Subsystem {
 
     // state
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
-    private double targetLinearVelocity, targetAngularVelocity, targetTurnRadius;
+    private double targetLinearVelocity, targetAngularVelocity;
 
     private double swivelAngle;
     private double chassisDistance, targetChassisDistance;
 
-    private boolean middleReversed;
+    private boolean middleReversed, smoothingEnabled;
 
     // PID
     private PIDController turnPID, drivePID, distPID, swivelPID, chassisDistancePID;
@@ -67,9 +66,8 @@ public class DriveTrain implements Subsystem {
     private boolean maintainChassisDistanceEnabled, maintainSwivelAngleEnabled;
 
     // smoothers
-    private ExponentialSmoother frontLeftSmoother;
-    private ExponentialSmoother frontRightSmoother;
-    private ExponentialSmoother middleSmoother;
+    private ExponentialSmoother linearSmoother;
+    private ExponentialSmoother angularSmoother;
 
     // constants
     public static final String TELEMETRY_NAME = "Drive Train";
@@ -81,9 +79,8 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(8, 0,  5);
     public static double SWIVEL_PID_TOLERANCE = 10;
 
-    public static double FRONT_LEFT_SMOOTHING_FACTOR = 0.1;
-    public static double FRONT_RIGHT_SMOOTHING_FACTOR = 0.1;
-    public static double MIDDLE_SMOOTHING_FACTOR = 0.1;
+    public static double LINEAR_SMOOTHING_FACTOR = 0.1;
+    public static double ANGULAR_SMOOTHING_FACTOR = 0.1;
 
     public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.07;
     public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.18;
@@ -141,9 +138,8 @@ public class DriveTrain implements Subsystem {
         chassisDistancePID = new PIDController(CHASSIS_DISTANCE_PID_COEFFICIENTS);
 
         // Smoother
-        frontLeftSmoother = new ExponentialSmoother(FRONT_LEFT_SMOOTHING_FACTOR);
-        frontRightSmoother = new ExponentialSmoother(FRONT_RIGHT_SMOOTHING_FACTOR);
-        middleSmoother = new ExponentialSmoother(MIDDLE_SMOOTHING_FACTOR);
+        linearSmoother = new ExponentialSmoother(LINEAR_SMOOTHING_FACTOR);
+        angularSmoother = new ExponentialSmoother(ANGULAR_SMOOTHING_FACTOR);
 
         // Miscellaneous
         previousWheelTicks = getWheelTicks();
@@ -248,7 +244,7 @@ public class DriveTrain implements Subsystem {
     public void update() {
         // state
         chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
-        swivelAngle = (motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360) % 360;
+        swivelAngle = UtilMethods.wrapAngle(motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360);
 
         // PID corrections
         if(maintainSwivelAngleEnabled)
@@ -282,43 +278,43 @@ public class DriveTrain implements Subsystem {
     }
 
     private void handleSmoothing() {
-        targetFrontLeftVelocity = frontLeftSmoother.update(targetFrontLeftVelocity);
-        targetFrontRightVelocity = frontRightSmoother.update(targetFrontLeftVelocity);
-        targetMiddleVelocity = middleSmoother.update(targetMiddleVelocity);
+        targetLinearVelocity = linearSmoother.update(targetLinearVelocity);
+        targetAngularVelocity = linearSmoother.update(targetAngularVelocity);
     }
 
     /**
      * Drives the robot with the specified linear and angular velocities
      * @param linearVelocity the velocity, in m/s, to drive the robot
-     * @param angularVelocity the angular velocity, in rad/s, to drive the robot
+     * @param angularVelocity the angular velocity, in degrees/s, to drive the robot
      */
-    public void drive(double linearVelocity, double angularVelocity, boolean smoothingEnabled) {
+    public void drive(double linearVelocity, double angularVelocity) {
+        angularVelocity = Math.toRadians(angularVelocity);
+
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
-        targetTurnRadius = (angularVelocity == 0 ? 0 : linearVelocity / angularVelocity);
-
-        targetFrontLeftVelocity = linearVelocity + angularVelocity * (targetTurnRadius - Constants.TRACK_WIDTH / 2);
-        targetFrontRightVelocity = linearVelocity + angularVelocity * (targetTurnRadius + Constants.TRACK_WIDTH / 2);
-        targetMiddleVelocity = linearVelocity + angularVelocity * Math.hypot(targetTurnRadius, chassisDistance);
-
-
-        targetSwivelAngle = (angularVelocity == 0 || (angularVelocity == 0 && linearVelocity == 0))
-                ? 90
-                    : linearVelocity == 0
-                    ? 0
-                : 90 - Math.atan2(chassisDistance, targetTurnRadius);
-
-        // angularVelocity and linear
         if(smoothingEnabled)
             handleSmoothing();
+
+        targetFrontLeftVelocity = linearVelocity - angularVelocity * (Constants.TRACK_WIDTH / 2);
+        targetFrontRightVelocity = linearVelocity + angularVelocity * (Constants.TRACK_WIDTH / 2);
+        targetMiddleVelocity = (middleReversed ? -1 : 1) * Math.hypot(linearVelocity, chassisDistance * angularVelocity);
+
+        targetSwivelAngle = UtilMethods.wrapAngle(90 + Math.toDegrees(
+                Math.atan2(chassisDistance * angularVelocity, linearVelocity)
+        ));
+
+        double diff = UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle);
+        double minDiff = diff > 180 ? 360 - diff : diff;
+        if(minDiff > 90)
+            middleReversed = !middleReversed;
+        if(middleReversed)
+            targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + 180);
     }
 
-    public void driveDesmos(double linearVelocity, double angularVelocity, double dt, boolean smoothingEnabled) {
+    public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
-
-        targetTurnRadius = angularVelocity == 0 ? 0 : linearVelocity / angularVelocity;
 
         SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
         SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
@@ -326,9 +322,9 @@ public class DriveTrain implements Subsystem {
 
         SimpleMatrix translation = new SimpleMatrix(new double[][] {{ 0, linearVelocity * dt }});
 
-        SimpleMatrix leftWheelPrime = translation.plus(UtilMethods.rotateVector(leftWheel, angularVelocity * dt).transpose());
-        SimpleMatrix rightWheelPrime = translation.plus(UtilMethods.rotateVector(rightWheel, angularVelocity * dt).transpose());
-        SimpleMatrix middleWheelPrime = translation.plus(UtilMethods.rotateVector(middleWheel, -angularVelocity * dt).transpose());
+        SimpleMatrix leftWheelPrime = UtilMethods.rotateVector(leftWheel.plus(translation), angularVelocity * dt).transpose();
+        SimpleMatrix rightWheelPrime = UtilMethods.rotateVector(rightWheel.plus(translation), angularVelocity * dt).transpose();
+        SimpleMatrix middleWheelPrime = UtilMethods.rotateVector(middleWheel.plus(translation), angularVelocity * dt).transpose();
 
         targetFrontLeftVelocity = Math.signum(leftWheelPrime.get(1)) * leftWheelPrime.minus(leftWheel).normF() / dt;
         targetFrontRightVelocity = Math.signum(rightWheelPrime.get(1)) * rightWheelPrime.minus(rightWheel).normF() / dt;
@@ -372,7 +368,7 @@ public class DriveTrain implements Subsystem {
 
         // performs the drive with the correction applied
 
-        drive(basePwr, turnCorrection, false);
+        drive(basePwr, turnCorrection);
     }
 
     public boolean driveAbsoluteDistance(double pwr, double targetAngle, boolean forward, double targetMeters, double closeEnoughDist) {
@@ -446,7 +442,6 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("fr velocity", ticksToMeters(motorFrontRight.getVelocity()));
             telemetryMap.put("middle velocity", ticksToMeters(motorMiddle.getVelocity()));
 
-            telemetryMap.put("target turn radius", targetTurnRadius);
             telemetryMap.put("target linear velocity", targetLinearVelocity);
             telemetryMap.put("target angular velocity", targetAngularVelocity);
 
@@ -462,9 +457,6 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("middle amps", motorMiddle.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("swivel amps", motorMiddleSwivel.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("duck amps", duckSpinner.getCurrent(CurrentUnit.AMPS));
-            telemetryMap.put("atan2 ", Math.atan2(chassisDistance, targetTurnRadius));
-            telemetryMap.put("90 - atan2 to deg ", 90 - Math.toDegrees(Math.atan2(chassisDistance, targetTurnRadius)));
-            telemetryMap.put("turn radius", targetTurnRadius);
 
             telemetryMap.put("swivel angle", swivelAngle);
             telemetryMap.put("target swivel angle", targetSwivelAngle);
@@ -526,10 +518,6 @@ public class DriveTrain implements Subsystem {
         });
     }
 
-    public double getTurnRadius() {
-        return targetTurnRadius;
-    }
-
     public void setMaintainChassisDistanceEnabled(boolean maintainChassisDistanceEnabled) {
         this.maintainChassisDistanceEnabled = maintainChassisDistanceEnabled;
     }
@@ -573,5 +561,13 @@ public class DriveTrain implements Subsystem {
 
     public void setMaintainSwivelAngleCorrection(double maintainSwivelAngleCorrection) {
         this.maintainSwivelAngleCorrection = maintainSwivelAngleCorrection;
+    }
+
+    public boolean isSmoothingEnabled() {
+        return smoothingEnabled;
+    }
+
+    public void setSmoothingEnabled(boolean smoothingEnabled) {
+        this.smoothingEnabled = smoothingEnabled;
     }
 }

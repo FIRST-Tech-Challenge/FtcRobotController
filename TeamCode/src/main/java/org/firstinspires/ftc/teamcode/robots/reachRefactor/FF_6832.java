@@ -28,13 +28,12 @@ import java.util.function.IntSupplier;
  * Pregame
  * x - set alliance to blue
  * b - set alliance to red
- * a - toggle desmos drive
- * y - toggle drivetrain smoothing
+ * y - toggle desmos drive
+ * a - toggle drivetrain smoothing
  *
  * dpad up - initialize / shutdown vision provider
  * dpad left - increment vision provider index
  * dpad down - toggle debug telemetry
- * dpad right - toggle arcade drive for teleop
  * left bumper - decrement state
  * right bumper - increment state
  *
@@ -43,20 +42,31 @@ import java.util.function.IntSupplier;
  * gamepad 1: right bumper - lower gripper
  * gamepad 1: left trigger - open gripper
  * gamepad 1: right trigger - close gripper
+ * gamepad 1: x - set
+ * gamepad 1: b - lift
+ * gamepad 1: y - toggle duck spinner
+ * gamepad 1: a - toggle drivetrain smoothing
  * gamepad 1: tank drive
  *
- * gamepad 2: b - toggle gripper
+ * gamepad 2: x - articulate crane to home
+ * gamepad 2: b - dump crane bucket
  * gamepad 2: a - toggle duck spinner
- * gamepad 2: dpad left - articulate crane to home
- * gamepad 2: dpad up - articulate crane to high teir
- * gamepad 2: dpad right - articulate crane to transfer
- * gamepad 2: right bumper - increment chassis length stage
+ * gamepad 2: y - transfer
+ * gamepad 2: dpad left - rotate turret 90 degrees left
+ * gamepad 2: dpad up - articulate crane to home
+ * gamepad 2: dpad right - rotate turret 90 degrees right
+ * gamepad 2: dpad down - articulate crane to lowest tier
  * gamepad 2: left bumper - decrement chassis length stage
+ * gamepad 2: right bumper - increment chassis length stage
  * gamepad 2: arcade drive
  *
- * left stick y - forward
- * right stick x - rotate
  * guide - emergency stop
+ *
+ * Manual Diagnostic
+ * gamepad 1: left bumper - decrement diagnostic index
+ * gamepad 1: right bumper - increment diagnostic index
+ * gamepad 1: right stick y - fine adjustment
+ * gamepad 1: left stick y - coarse adjustment
  */
 @Config
 @TeleOp(name = "refactored FF_6832")
@@ -78,7 +88,7 @@ public class FF_6832 extends OpMode {
     private boolean visionProviderFinalized;
 
     // tele-op state
-    private boolean usingDesmosDrive, smoothingEnabled;
+    private boolean usingDesmosDrive;
     private int chassisDistanceLevelIndex;
 
     // diagnostic state
@@ -97,7 +107,7 @@ public class FF_6832 extends OpMode {
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
     public static double FORWARD_SCALING_FACTOR = 3; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = 5; // scales the target angular robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 3 * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {
             Constants.MIN_CHASSIS_LENGTH,
             Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
@@ -142,7 +152,7 @@ public class FF_6832 extends OpMode {
         initializing = true;
         debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
         gameState = GameState.TELE_OP;
-        usingDesmosDrive = true;
+        usingDesmosDrive = false;
 
         // timing
         lastLoopClockTime = System.nanoTime();
@@ -219,7 +229,7 @@ public class FF_6832 extends OpMode {
             alliance = Constants.Alliance.RED;
 
         if(stickyGamepad1.y)
-            smoothingEnabled = !smoothingEnabled;
+            robot.driveTrain.setSmoothingEnabled(!robot.driveTrain.isSmoothingEnabled());
         if(stickyGamepad1.dpad_down)
             debugTelemetryEnabled = !debugTelemetryEnabled;
         if(stickyGamepad1.a)
@@ -247,28 +257,27 @@ public class FF_6832 extends OpMode {
         auto.visionProvider.shutdownVision();
     }
 
-    private void handleTeleOpDriveArcade() {
+    private void handleArcadeDrive() {
         double forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
         double rotate = -gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
 
         if(usingDesmosDrive)
-            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9, smoothingEnabled);
+            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
         else
-            robot.driveTrain.drive(forward, rotate, smoothingEnabled);
+            robot.driveTrain.drive(forward, rotate);
     }
 
-    private void handleTeleOpDriveTank() {
+    private void handleTankDrive() {
         double left = -gamepad1.left_stick_y;
         double right = -gamepad1.right_stick_y;
 
-        double forward = (left + right) / 2 * FORWARD_SCALING_FACTOR;
+        double forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
         double rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
 
-
         if(usingDesmosDrive)
-            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9, smoothingEnabled);
+            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
         else
-            robot.driveTrain.drive(forward, rotate, smoothingEnabled);
+            robot.driveTrain.drive(forward, rotate);
     }
 
     private void handleTeleOp() { // apple
@@ -294,9 +303,6 @@ public class FF_6832 extends OpMode {
 
         if(stickyGamepad1.a)
             robot.driveTrain.handleDuckSpinnerToggle(alliance.getMod());
-
-        if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
-            handleTeleOpDriveTank();
 
         // gamepad 2
 
@@ -338,8 +344,12 @@ public class FF_6832 extends OpMode {
         chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_DISTANCE_LEVELS.length);
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
 
-        if(gamepad2JoysticksActive && !gamepad1JoysticksActive)
-            handleTeleOpDriveArcade();
+        if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
+            handleTankDrive();
+        else if (gamepad2JoysticksActive && !gamepad1JoysticksActive)
+            handleArcadeDrive();
+        else
+            robot.driveTrain.drive(0, 0);
 
         if(stickyGamepad1.guide || stickyGamepad2.guide)
             robot.stop();
@@ -490,7 +500,7 @@ public class FF_6832 extends OpMode {
 
         switch(gameState) {
             case TELE_OP:
-                opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
+                opModeTelemetryMap.put("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
                 break;
             case AUTONOMOUS:
                 break;
