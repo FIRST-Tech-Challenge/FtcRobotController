@@ -100,11 +100,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_3,3);
 
-
         location = TSELocation.NONE;
 
-        classNames = classNamesDuckSideBlue;
-        modelPath = modelPathDuckSideBlue;
 
         cvDNN = new Dnn();
         net = cvDNN.readNetFromTensorflow(modelPath);

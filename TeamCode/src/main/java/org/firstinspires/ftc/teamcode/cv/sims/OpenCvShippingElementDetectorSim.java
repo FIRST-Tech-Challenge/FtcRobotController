@@ -103,8 +103,6 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
         location = TSELocation.NONE;
 
-        classNames = classNamesDuckSideBlue;
-        modelPath = modelPathDuckSideBlue;
 
         cvDNN = new Dnn();
         net = cvDNN.readNetFromTensorflow(modelPath);
@@ -147,7 +145,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
                 new Size(width, height),
                 new Scalar(redMeanVal, greenMeanVal, blueMeanVal),
-                true, true);
+                false, true);
 
         net.setInput(blob);
         detections = net.forward();
