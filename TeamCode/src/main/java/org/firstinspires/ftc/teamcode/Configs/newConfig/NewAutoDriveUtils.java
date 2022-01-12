@@ -66,8 +66,8 @@ public final class NewAutoDriveUtils {
         if (baseNewOpMode.opModeIsActive()) {
             HardwareNew robot = baseNewOpMode.getRobot();
             // Determine new target position, and pass to motor controller
-            backLeftTarget = robot.getBackRightDrive().getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            backRightTarget = robot.getBackLeftDrive().getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            backLeftTarget = robot.getBackLeftDrive().getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            backRightTarget = robot.getBackRightDrive().getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             rightTarget = robot.getRightDrive().getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             leftTarget = robot.getLeftDrive().getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             // set the targetPosition for each motor
