@@ -25,9 +25,12 @@ public class MecanumControlV2 extends OpMode {
     double driveSpeed;
     double turnSpeed;
     double direction;
+    double shooterPower = -.7;//Normally -1 but with start and back buttons as boosts it needs to be decreased
 
     boolean isSpinnerOn  = false;
     boolean isSpinnerOf = true;
+    boolean spinpos = false;
+    boolean spinneg = true;
     boolean isIntakeOn  = false;
     boolean isIntakeOf = true;
     boolean wasPowerIncreased;
@@ -90,8 +93,29 @@ public class MecanumControlV2 extends OpMode {
         }else {
             driveSpeed = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y)*.7;
             direction = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
+
             turnSpeed = gamepad1.right_stick_x*.7;
         }
+
+
+//        if(gamepad1.left_stick_y!=0){
+//            robot.leftFront.setPower(gamepad1.left_stick_y*1.4);
+//            robot.rightFront.setPower(gamepad1.left_stick_y*1.4);
+//            robot.rightBack.setPower(gamepad1.left_stick_y*1.4);
+//            robot.leftBack.setPower(gamepad1.left_stick_y*1.4);
+//        }
+//        else if(gamepad1.right_stick_y!=0){
+//            robot.leftFront.setPower(gamepad1.left_stick_y*-1.4);
+//            robot.rightFront.setPower(gamepad1.left_stick_y*1.4);
+//            robot.rightBack.setPower(gamepad1.left_stick_y*-1.4);
+//            robot.leftBack.setPower(gamepad1.left_stick_y*1.4);
+//        }
+//        else{
+//            robot.leftFront.setPower(0);
+//            robot.rightFront.setPower(0);
+//            robot.rightBack.setPower(0);
+//            robot.leftBack.setPower(0);
+//        }
         //set power and direction of drive motors
         if (turnSpeed == 0) {
             robot.MecanumController(driveSpeed,direction,0);
@@ -99,10 +123,10 @@ public class MecanumControlV2 extends OpMode {
 
         //control of turning
         if (gamepad1.right_stick_x != 0 && driveSpeed == 0) {
-            robot.leftFront.setPower(-turnSpeed);
-            robot.leftBack.setPower(-turnSpeed);
-            robot.rightFront.setPower(turnSpeed);
-            robot.rightBack.setPower(turnSpeed);
+            robot.leftFront.setPower(turnSpeed);
+            robot.leftBack.setPower(turnSpeed);
+            robot.rightFront.setPower(-turnSpeed);
+            robot.rightBack.setPower(-turnSpeed);
         }
 
 
@@ -161,10 +185,10 @@ public class MecanumControlV2 extends OpMode {
 
 
         if(gamepad1.left_trigger>0.1){
-                Motor.intakeOnePower(-intakePower);
+                Motor.intakeOnePower(-2);
             }
         else if(gamepad1.right_trigger>0.1) {
-                Motor.intakeOnePower(intakePower);
+                Motor.intakeOnePower(2);
             }
         else{
             Motor.intakeOnePower(0);
@@ -185,20 +209,36 @@ public class MecanumControlV2 extends OpMode {
         //toggle for spinner, already exists above in different form^^^
 
 
+        if (gamepad1.guide && !spinpos) {
+            spinpos = true;
+        }else if (!gamepad1.guide && spinpos) {
+            spinneg = false;
+        }
+        //Turn Spinner off
+        if (gamepad1.guide && !spinneg) {
+            spinpos = false;
+        }else if (!gamepad1.guide && !spinpos) {
+            spinneg = true;
+        }
+
+
         //Change spinner power
-        if(gamepad1.guide){
+        if(gamepad1.guide&&spinpos){
             shooterPower*=-1;
         }
+
+
+
         if(gamepad1.start&&isSpinnerOn){
             Motor.rotaterPower(shooterPower*1.2);
         }
-        else if(gamepad1.back&&isSpinnerOn){
+        if(gamepad1.back&&isSpinnerOn){
             Motor.rotaterPower(shooterPower*8);
         }
-        else if(isSpinnerOn){
+        if(isSpinnerOn){
             Motor.rotaterPower(shooterPower);
         }
-        else{
+        if(!isSpinnerOn){
             Motor.rotaterPower(0);
         }
 //        if (gamepad2.dpad_up) {
@@ -275,7 +315,9 @@ public class MecanumControlV2 extends OpMode {
             }
             isPrimed = false;
         }
-        isPrimed = false;
+        else {
+            isPrimed = false;
+        }
 
         switch (servopos){
             case 0:
