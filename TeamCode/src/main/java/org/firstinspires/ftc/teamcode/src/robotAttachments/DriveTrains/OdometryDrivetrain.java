@@ -280,12 +280,17 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      *
      * @param totalDistance   the total distance in inches, that the robot is expected to go
      * @param currentDistance the total distance in inches, that the robot has traveled
+     *
      * @return The power to drive the motor at in a range between -1 and 1
      */
     private double calculateShortDistancePower(double totalDistance, double currentDistance) {
-        final double distancePercentage = (totalDistance - currentDistance) / totalDistance;
+        //final double distancePercentage = (totalDistance - currentDistance) / totalDistance;
         //return MiscUtills.boundNumber((-1.0 / 4) * Math.cos(distancePercentage) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
-        return 0.5 * (12 / voltageSensor.getVoltage());
+
+        double powerVariable = 0.5 * Math.sin((currentDistance * Math.PI) / totalDistance) + (0.5 * (normalVoltage / voltageSensor.getVoltage()));
+        return powerVariable;
+
+
     }
 
     public void move(double distance, double angle, double tolerance) throws InterruptedException {
