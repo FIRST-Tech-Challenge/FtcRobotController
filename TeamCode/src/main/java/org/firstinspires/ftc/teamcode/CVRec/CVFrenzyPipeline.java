@@ -20,7 +20,7 @@ public class CVFrenzyPipeline extends CVPipelineBase {
     static final int REGION_WIDTH = 120;
     static final int REGION_HEIGHT = 50;
 
-    static final Point REGION_ANCHOR_POINT_2 = new Point(160,0);
+    static final Point REGION_ANCHOR_POINT_2 = new Point(175,0);
     static final int REGION_WIDTH_2 = 120;
     static final int REGION_HEIGHT_2 = 50;
 

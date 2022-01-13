@@ -203,22 +203,23 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     @BotAction(displayName = "Lift to lower", defaultReturn = "")
-    public void liftToLower(){
-        //reset dropper before retracting the lift all the way
-        if (dropperServo.getPosition() < 0.5) {
-            resetDropper();
-            delayWait(999);
-        }else {
-            resetDropper();
-        }
-        liftLocation = LIFT_UNDER_EXTENTION;
-        this.lift.setTargetPosition(LIFT_UNDER_EXTENTION);
-        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (getLiftPosition() == LIFT_LEVEL_ONE){
-            this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED_LOW);
-        }
-        else {
-            this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED);
+    public void liftToLower() {
+        if (liftLocation != LIFT_UNDER_EXTENTION){
+            //reset dropper before retracting the lift all the way
+            if (dropperServo.getPosition() < 0.5) {
+                resetDropper();
+                delayWait(999);
+            } else {
+                resetDropper();
+            }
+            liftLocation = LIFT_UNDER_EXTENTION;
+            this.lift.setTargetPosition(LIFT_UNDER_EXTENTION);
+            this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (getLiftPosition() == LIFT_LEVEL_ONE) {
+                this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED_LOW);
+            } else {
+                this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED);
+            }
         }
     }
 
@@ -256,14 +257,14 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Intake Dropper Up", defaultReturn = "")
     public void intakeDropperUp(){
         if (intakeDropperServo != null) {
-            intakeDropperServo.setPosition(0);
+            intakeDropperServo.setPosition(1);
         }
     }
 
     @BotAction(displayName = "Intake Dropper Down", defaultReturn = "")
     public void intakeDropperDown(){
         if (intakeDropperServo != null) {
-            intakeDropperServo.setPosition(1);
+            intakeDropperServo.setPosition(0);
         }
     }
 
@@ -288,8 +289,29 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Tower to team hub from start", defaultReturn = "")
+    @BotAction(displayName = "Tower to hub from red warehouse", defaultReturn = "")
     public void towerToTeamHubFromAuto(){
+        if (tower != null) {
+            tower.setPosition(0.35);
+        }
+    }
+
+    @BotAction(displayName = "Tower to hub from blue warehouse", defaultReturn = "")
+    public void towerToTeamHubFromAutoWarehouseBlue(){
+        if (tower != null) {
+            tower.setPosition(0.65);
+        }
+    }
+
+    @BotAction(displayName = "Tower to hub from red ducks", defaultReturn = "")
+    public void towerToTeamHubFromAutoRedDucks(){
+        if (tower != null) {
+            tower.setPosition(0.35);
+        }
+    }
+
+    @BotAction(displayName = "Tower to hub from blue ducks", defaultReturn = "")
+    public void towerToTeamHubFromAutoBlueDucks(){
         if (tower != null) {
             tower.setPosition(0.35);
         }
@@ -316,6 +338,14 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Stop intake", defaultReturn = "")
     public void stopIntake() {
+        int delay = 500;
+        if(liftLocation != LIFT_UNDER_EXTENTION){
+            liftToLower();
+            delay = 1000;
+        }
+        initTower();
+
+        delayWait(delay);
         activateIntake(0);
         intakeRunning = false;
 //        prepDropperToMove();
@@ -404,12 +434,13 @@ public class FrenzyBot extends FrenzyBaseBot {
                 gotIt = true;
                 break;
             }
-            if (runtime.milliseconds() > 4000){
+            if (runtime.milliseconds() > 6000){
                 Log.d(TAG, "Ran out of time");
                 break;
             }
         }
 
+        delayWait(500);
         stopIntake();
         stop();
 
