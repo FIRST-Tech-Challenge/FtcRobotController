@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+//import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -84,9 +85,11 @@ public abstract class Teleop extends LinearOpMode {
     Gamepad.RumbleEffect ballRumbleEffect1;    // Use to build a custom rumble sequence.
     Gamepad.RumbleEffect ballRumbleEffect2;    // Use to build a custom rumble sequence.
 
-    // These are set in the alliance specific teleops
-    double    duckPower;
-    double    duckVelocity;
+    // These are set in the alliance-specific teleops
+    double      duckVelocityNow;
+    double      duckVelocityStep;
+    
+//  ElapsedTime duckRamp = new ElapsedTime();
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
@@ -213,7 +216,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Back ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
             telemetry.addData("Duck ", "%.2f (%.0f cts/sec)",
-                    duckPower,  robot.duckMotorVel );
+                    duckVelocityStep,  robot.duckMotorVel );
             telemetry.addData("Freight Arm", "%d cts %.2f mA", robot.freightMotorPos, robot.freightMotorAmps );
             telemetry.addData("Capping Arm", "%d cts %.2f mA", robot.cappingMotorPos, robot.cappingMotorAmps );
             telemetry.addData("Capping Wrist", "%.3f (commanded)", robot.wristServo.getPosition() );
@@ -333,19 +336,40 @@ public abstract class Teleop extends LinearOpMode {
     } // processSweeperControls
 
     /*---------------------------------------------------------------------------------*/
+    // NOTE: There are two limits that govern our maximum velocity:
+    // 1) Motor capability - We can't exceed the velocity associated with 100% power.
+    //    For a 435rpm motor, 100% power is 2360 counts/sec
+    // 2) Duck fly-off - Must remain below fly-off velocity until duck reaches the sweeper bar
+    // The 1st limit is easily found with setPower(1.0) but the 2nd requires testing.
     void processDuckMotorControls() {
         // Check for an OFF-to-ON toggle of the gamepad1 CIRCLE button
         if( gamepad1_circle_now && !gamepad1_circle_last)
-        {   // toggle motor ON/OFF
+        {   // If running/enabled, turn OFF and reset
             if( duckMotorEnable ) {
-//              robot.duckMotor.setPower( 0.0 );
                 robot.duckMotor.setVelocity( 0.0 );
+                duckVelocityNow = duckVelocityStep;  // back to starting velocity;
+                duckMotorEnable = false;
             }
+            // If stopped/disabled, turn ON at our initial velocity
             else {
-//              robot.duckMotor.setPower( duckPower );
-                robot.duckMotor.setVelocity( duckVelocity );
+//              robot.duckMotor.setPower( 1.0 );  // to determine max counts/sec
+                robot.duckMotor.setVelocity( duckVelocityNow );
+//              duckRamp.reset(); // reset the ramp timer
+                duckMotorEnable = true;
             }
-            duckMotorEnable = !duckMotorEnable;
+        }
+        // No operator change (either start/stop), but what about ramping?
+        else if( duckMotorEnable ) {
+            // Has sufficient time passed to step up to the next velocity?
+//          if( duckRamp.milliseconds() >= 25 ) {  // 25 msec
+                // Have we already ramped up to the maximum velocity?
+                if( Math.abs(duckVelocityNow) < 2200 ) {  // allows 2200 cps max
+                   duckVelocityNow += duckVelocityStep;
+                   robot.duckMotor.setVelocity( duckVelocityNow );
+                }
+                // Whether we ramp up or not, go ahead and reset the timer
+//              duckRamp.reset();
+//          }
         }
     } // processDuckMotorControls
 

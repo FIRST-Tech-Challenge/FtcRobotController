@@ -83,11 +83,6 @@ public class HardwareBothHubs
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
 
-/*    public int          CAPPING_ARM_POS_START   = 0;     // also used for STORE
-    public int          CAPPING_ARM_POS_STORE   = 349;
-    public int          CAPPING_ARM_POS_LIBERTY = 942;   // status of liberty pose (end duck-autonomous here)
-    public int          CAPPING_ARM_POS_CAP     = 1600;
-    public int          CAPPING_ARM_POS_GRAB    = 2490; */
     public int          CAPPING_ARM_POS_START   = 0;     // also used for STORE
     public int          CAPPING_ARM_POS_STORE   = 291;
     public int          CAPPING_ARM_POS_LIBERTY = 786;   // status of liberty pose (end duck-autonomous here)
@@ -97,7 +92,7 @@ public class HardwareBothHubs
 
     // CAPPING ARM WRIST SERVO
     public Servo   wristServo = null;
-    public static double wristPositionAuto = 0.259;
+    public static double wristServoAuto = 0.259;
     public double  WRIST_SERVO_INIT    = 0.950;
     public double  WRIST_SERVO_GRAB    = 0.455;
     public double  WRIST_SERVO_LIBERTY = 0.500;  // status of liberty pose (end duck-autonomous here)
@@ -277,7 +272,7 @@ public class HardwareBothHubs
         if (!transitionFromAutonomous) {
             wristServo.setPosition( WRIST_SERVO_INIT );
         } else {
-            wristServo.setPosition( wristPositionAuto );
+            wristServo.setPosition( wristServoAuto );
         }
 
         clawServo = hwMap.servo.get("ClawServo");      // servo port 1 (hub 2)
@@ -452,12 +447,12 @@ public class HardwareBothHubs
     } // cappingArmPosition
 
     /*--------------------------------------------------------------------------------------------*/
-    /* setWristPositionAuto()                                                                       */
-    /* - newPos     = desired new wrist position                                                    */
-    public void setWristPositionAuto( double newPos ) {
+    /* wristPositionAuto()                                                                        */
+    /* - newPos     = desired new wrist position                                                  */
+    public void wristPositionAuto( double newPos ) {
         wristServo.setPosition( newPos );
-        wristPositionAuto = newPos;
-    }
+        wristServoAuto = newPos;
+    } // wristPositionAuto
 
     /*--------------------------------------------------------------------------------------------*/
     /* freightArmPosition()                                                                       */

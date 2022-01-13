@@ -15,7 +15,7 @@ public class TeleopBlue extends Teleop {
 
     @Override
     public void setAllianceSpecificBehavior() {
-    duckPower = -0.690;      //blue (negative!)
-    duckVelocity = -1750;    //blue target counts per second (negative!)
+    duckVelocityNow  = -100;  //blue target counts per second (negative!)
+    duckVelocityStep = -100;  //blue ramp-up step size (negative!)
     }
 } // TeleopBlue

@@ -69,6 +69,10 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
     OpenCvCamera webcam;
     public static int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
+    public static double collisionDelay = 4.0;  // wait 4 seconds before moving (to avoid collision)
+
+    boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
+    boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -105,9 +109,11 @@ public class AutonomousRwarehouse extends AutonomousBase {
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
             sonarRangeL = robot.updateSonarRangeL();
+            checkForNewCollisionDelay();
             telemetry.addData("ALLIANCE", "%s", "RED (warehouse)");
             telemetry.addData("Block Level", "%d", blockLevel );
             telemetry.addData("Sonar Range", "%.1f inches (50.0)", sonarRangeL/2.54 );
+            telemetry.addData("Start delay", "%.1f seconds (dpad up/down)", collisionDelay );
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -134,6 +140,22 @@ public class AutonomousRwarehouse extends AutonomousBase {
     } /* runOpMode() */
 
     /*--------------------------------------------------------------------------------------------*/
+    private void checkForNewCollisionDelay() {
+        gamepad1_dpad_up_last   = gamepad1_dpad_up_now;
+        gamepad1_dpad_up_now    = gamepad1.dpad_up;
+        gamepad1_dpad_down_last = gamepad1_dpad_down_now;
+        gamepad1_dpad_down_now  = gamepad1.dpad_down;
+        if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last) {
+            if( collisionDelay < 5.0 )
+                collisionDelay += 1.0;
+        } // increment
+        if( gamepad1_dpad_down_now && !gamepad1_dpad_down_last) {
+            if( collisionDelay > 0.0 )
+                collisionDelay -= 1.0;
+        } // decrement
+    } // checkForNewCollisionDelay
+
+    /*--------------------------------------------------------------------------------------------*/
     private void testGyroDrive() {
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 24.0, 999.9, DRIVE_THRU ); // Drive FWD 24" along current heading
         gyroDrive(DRIVE_SPEED_30, DRIVE_X, 24.0, 999.9, DRIVE_THRU ); // Strafe RIGHT 24" along current heading
@@ -142,6 +164,10 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous() {
+
+        // Wait before moving to avoid collision with duck-side alliance partner
+        // trying to dump a block in the alliance shipping hub
+        sleep( (long)( collisionDelay * 1000 ) );
 
         // Drive forward and collect the team element off the floor
         if( opModeIsActive() ) {
@@ -204,7 +230,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
         sleep( 750);   // wait for capping arm to clear the field wall
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
-        robot.setWristPositionAuto( robot.WRIST_SERVO_GRAB );  // rotate wrist into the grab position
+        robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         sleep( 2000);   // wait for arm to reach final position
 
@@ -219,7 +245,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         sleep( 500 );   // wait for claw to close
 
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_LIBERTY, 0.40 );
-        robot.setWristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
+        robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.40 );
     } // collectTeamElement
 
@@ -300,7 +326,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
 
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.40 );
-        robot.setWristPositionAuto( robot.WRIST_SERVO_STORE );  // store position (handles unpowered!)
+        robot.wristPositionAuto( robot.WRIST_SERVO_STORE );  // store position (handles unpowered!)
         if(level == 1) {
             gyroTurn(DRIVE_SPEED_30, -135.0);
             gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 6.0, 999.9, DRIVE_TO );
