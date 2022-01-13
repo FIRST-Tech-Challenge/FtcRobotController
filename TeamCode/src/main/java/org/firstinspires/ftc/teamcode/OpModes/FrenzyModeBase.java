@@ -133,6 +133,7 @@ public class FrenzyModeBase extends LinearOpMode {
         handleTurntable();
         handleTurntable2();
         handleTower();
+        handleTowerDown();
     }
 
     protected void handleIntake() {
@@ -199,14 +200,16 @@ public class FrenzyModeBase extends LinearOpMode {
         if (isButtonPressable()) {
             if (gamepad2.x) {
                 startGamepadLockout();
-                towerDefault = !towerDefault;
+                robot.dropToTeamHubRed();
+            }
+        }
+    }
 
-                if (towerDefault) {
-                    robot.initTower();
-                } else {
-                    robot.towerToTeamHubFromAuto();
-//                    robot.towerToTeamHub();
-                }
+    protected void handleTowerDown() {
+        if (isButtonPressable()) {
+            if (gamepad2.y) {
+                startGamepadLockout();
+                robot.resetLift();
             }
         }
     }

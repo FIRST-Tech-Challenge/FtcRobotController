@@ -32,6 +32,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public static int LIFT_LEVEL_TWO = 1951;
     public static int LIFT_LEVEL_ONE = 1782;
     public static int LIFT_NO_EXTENSION = 0;
+    public static int LIFT_MIN_EXTENSION = 300;
     public static int LIFT_UNDER_EXTENTION = 5;
 
     //New lift vals: TOP - 1755. MIDDLE -1482. LOW - 1282
@@ -55,8 +56,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = -0.2;
-    private static double INTAKE_SPEED = 0.6;
-    private static double INTAKE_SPEED_REVERSE = -0.65;
+    private static double INTAKE_SPEED = -0.6;
+    private static double INTAKE_SPEED_REVERSE = 0.55;
 
     private boolean intakeRunning = false;
 
@@ -186,6 +187,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
+    public void liftToLevelMin(){
+        liftLocation = LIFT_LEVEL_THREE;
+        this.lift.setTargetPosition(LIFT_MIN_EXTENSION);
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+    }
+
     @BotAction(displayName = "Lift level 2", defaultReturn = "")
     public void liftToLevel2(){
         liftLocation = LIFT_LEVEL_TWO;
@@ -299,7 +307,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Tower to hub from blue warehouse", defaultReturn = "")
     public void towerToTeamHubFromAutoWarehouseBlue(){
         if (tower != null) {
-            tower.setPosition(0.65);
+            tower.setPosition(0.62);
         }
     }
 
@@ -338,18 +346,23 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Stop intake", defaultReturn = "")
     public void stopIntake() {
-        int delay = 500;
+        delayWait(200);
+        activateIntake(0);
+        initTower();
+
+        int delay = 300;
         if(liftLocation != LIFT_UNDER_EXTENTION){
             liftToLower();
             delay = 1000;
         }
-        initTower();
 
         delayWait(delay);
-        activateIntake(0);
         intakeRunning = false;
 //        prepDropperToMove();
         intakeDropperUp();
+        activateIntake(-0.15);
+        delayWait(2000);
+        activateIntake(0);
     }
 
     @BotAction(displayName = "Start turntable blue", defaultReturn = "")
@@ -395,6 +408,24 @@ public class FrenzyBot extends FrenzyBaseBot {
         if (colorSensor != null && colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) colorSensor).enableLight(on);
         }
+    }
+
+    public void dropToTeamHubRed() {
+        liftToLevelMin();
+        delayWait(400);
+        towerToTeamHub();
+        delayWait(500);
+        liftToLevel3();
+        delayWait(1800);
+    }
+
+    public void resetLift() {
+        liftToLevelMin();
+        delayWait(1000);
+        resetTower();
+        delayWait(500);
+        liftToLower();
+        delayWait(300);
     }
 
     public float detectColor(Telemetry telemetry, float timeout) {
