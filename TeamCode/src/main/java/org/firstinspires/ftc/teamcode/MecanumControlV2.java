@@ -83,16 +83,16 @@ public class MecanumControlV2 extends OpMode {
 
         //Speed control (turbo/slow mode) and direction of stick calculation
         if (gamepad1.left_bumper) {
-            driveSpeed = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            direction = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
+            driveSpeed = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            direction = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             turnSpeed = gamepad1.right_stick_x;
         }else if (gamepad1.right_bumper) {
-            driveSpeed = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y)*.4;
-            direction = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
+            driveSpeed = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y)*.4;
+            direction = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             turnSpeed = gamepad1.right_stick_x*.4;
         }else {
-            driveSpeed = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y)*.7;
-            direction = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
+            driveSpeed = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y)*.7;
+            direction = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
 
             turnSpeed = gamepad1.right_stick_x*.7;
         }
@@ -123,10 +123,10 @@ public class MecanumControlV2 extends OpMode {
 
         //control of turning
         if (gamepad1.right_stick_x != 0 && driveSpeed == 0) {
-            robot.leftFront.setPower(turnSpeed);
-            robot.leftBack.setPower(turnSpeed);
-            robot.rightFront.setPower(-turnSpeed);
-            robot.rightBack.setPower(-turnSpeed);
+            robot.leftFront.setPower(-turnSpeed);
+            robot.leftBack.setPower(-turnSpeed);
+            robot.rightFront.setPower(turnSpeed);
+            robot.rightBack.setPower(turnSpeed);
         }
 
 
