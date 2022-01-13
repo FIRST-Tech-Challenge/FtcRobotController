@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.gen1_Qualifying;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(preselectTeleOp = "Beta_TeleOp")
-public class Beta_RedDuck extends LinearOpMode {
+public class Final_RedDuckCarousel extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -18,8 +18,18 @@ public class Beta_RedDuck extends LinearOpMode {
         CRServo rightSpinner = hardwareMap.get(CRServo.class,"rightSpinner");
         CRServo leftSpinner = hardwareMap.get(CRServo.class,"leftSpinner");
 
-        waitForStart();
+        boolean delay = false;
+
+        //Asks for delay
+        while (!super.isStarted() && !super.isStopRequested()) {
+            if (gamepad1.x) delay = true;
+            else if (gamepad1.y) delay = false;
+            telemetry.addData("Delay (switch with x or y)", delay);
+            telemetry.update();
+        }
+
         if (opModeIsActive()) {
+            if (delay) sleep(3000);
 
             frontRightMotor.setPower(-0.45);
             frontLeftMotor.setPower(0.45);
@@ -30,8 +40,8 @@ public class Beta_RedDuck extends LinearOpMode {
 
             frontRightMotor.setPower(0.25);
             frontLeftMotor.setPower(0.30);
-            backRightMotor.setPower(-0.25);
-            backLeftMotor.setPower(0.30);
+            backRightMotor.setPower(0.25);
+            backLeftMotor.setPower(-0.30);
 
             sleep(1800);
 
@@ -42,12 +52,19 @@ public class Beta_RedDuck extends LinearOpMode {
 
             sleep(1000);
 
+            frontRightMotor.setPower(0.4);
+            frontLeftMotor.setPower(-0.4);
+            backRightMotor.setPower(0.43);
+            backLeftMotor.setPower(0.43);
+
+            sleep(500);
+
             frontRightMotor.setPower(0.2);
             frontLeftMotor.setPower(-0.2);
             backRightMotor.setPower(0.2);
             backLeftMotor.setPower(0.2);
-            rightSpinner.setPower(0.5);
-            leftSpinner.setPower(-0.5);
+            rightSpinner.setPower(0.4);
+            leftSpinner.setPower(-0.4);
 
             sleep(4000);
 
@@ -56,7 +73,7 @@ public class Beta_RedDuck extends LinearOpMode {
             backRightMotor.setPower(-0.4);
             backLeftMotor.setPower(-0.4);
 
-            sleep (800);
+            sleep (850 );
 
             frontRightMotor.setPower(0.0);
             frontLeftMotor.setPower(0.0);

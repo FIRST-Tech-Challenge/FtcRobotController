@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.gen1_Qualifying;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -28,16 +28,16 @@ public class Test_ElementIntake extends LinearOpMode {
                 armMotor.setPosition(0.87); //third level
             }
             if (gamepad1.right_trigger > 0) {
-                elementIntake.setPower(-1); // edit the speed if necessary
+                elementIntake.setPower(-1);
             }
             if (gamepad1.right_trigger == 0) {
-                elementIntake.setPower(0); // edit the speed if necessary
+                elementIntake.setPower(0);
             }
             if (gamepad1.left_trigger > 0) {
-                elementIntake.setPower(1); // edit the speed if necessary
+                elementIntake.setPower(1);
             }
             if (gamepad1.left_trigger == 0) {
-                elementIntake.setPower(0); // edit the speed if necessary
+                elementIntake.setPower(0);
             }
             if (gamepad1.left_bumper) {
                 trapdoor.setPosition(1);
