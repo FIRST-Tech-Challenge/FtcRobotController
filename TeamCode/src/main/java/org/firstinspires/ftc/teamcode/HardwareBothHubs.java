@@ -51,21 +51,25 @@ public class HardwareBothHubs
     public int          frontLeftMotorTgt  = 0;       // RUN_TO_POSITION target encoder count
     public int          frontLeftMotorPos  = 0;       // current encoder count
     public double       frontLeftMotorVel  = 0.0;     // encoder counts per second
+    public double       frontLeftMotorAmps  = 0.0;    // current power draw (Amps)
 
     protected DcMotorEx frontRightMotor    = null;
     public int          frontRightMotorTgt = 0;       // RUN_TO_POSITION target encoder count
     public int          frontRightMotorPos = 0;       // current encoder count
     public double       frontRightMotorVel = 0.0;     // encoder counts per second
+    public double       frontRightMotorAmps  = 0.0;   // current power draw (Amps)
 
     protected DcMotorEx rearLeftMotor      = null;
     public int          rearLeftMotorTgt   = 0;       // RUN_TO_POSITION target encoder count
     public int          rearLeftMotorPos   = 0;       // current encoder count
     public double       rearLeftMotorVel   = 0.0;     // encoder counts per second
+    public double       rearLeftMotorAmps  = 0.0;     // current power draw (Amps)
 
     protected DcMotorEx rearRightMotor     = null;
     public int          rearRightMotorTgt  = 0;       // RUN_TO_POSITION target encoder count
     public int          rearRightMotorPos  = 0;       // current encoder count
     public double       rearRightMotorVel  = 0.0;     // encoder counts per second
+    public double       rearRightMotorAmps  = 0.0;    // current power draw (Amps)
 
     protected double COUNTS_PER_MOTOR_REV  = 28.0;    // goBilda Yellow Jacket Planetary Gear Motor Encoders
     protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
@@ -334,9 +338,15 @@ public class HardwareBothHubs
     } // initIMU()
 
     /*--------------------------------------------------------------------------------------------*/
+    double imuZAngle;
+    double imuYAngle;
+    double imuXAngle;
     public double headingIMU()
     {
         Orientation angles = imu.getAngularOrientation( AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES );
+        imuZAngle = angles.firstAngle;
+        imuYAngle = angles.secondAngle;
+        imuXAngle = angles.thirdAngle;
         double heading = -(double)angles.firstAngle;
         return heading;  // degrees (+90 is CW; -90 is CCW)
     } // headingIMU
@@ -359,12 +369,16 @@ public class HardwareBothHubs
         //   getPower() / getVelocity() / getCurrent()
         frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
         frontLeftMotorVel  = frontLeftMotor.getVelocity();
+        frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
         frontRightMotorPos = frontRightMotor.getCurrentPosition();
         frontRightMotorVel = frontRightMotor.getVelocity();
+        frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
         rearRightMotorPos  = rearRightMotor.getCurrentPosition();
         rearRightMotorVel  = rearRightMotor.getVelocity();
+        rearRightMotorAmps = rearRightMotor.getCurrent(MILLIAMPS);
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
+        rearLeftMotorAmps = rearLeftMotor.getCurrent(MILLIAMPS);
         duckMotorVel       = duckMotor.getVelocity();
         cappingMotorPos    = cappingMotor.getCurrentPosition();
         cappingMotorAmps   = cappingMotor.getCurrent( MILLIAMPS );
