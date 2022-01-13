@@ -124,9 +124,9 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(50, 200);
-        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(312, 200);
-        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(607, 200);
+        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 200);
+        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(300, 200);
+        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(575, 200);
 
         static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,33);
         static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295,33);
