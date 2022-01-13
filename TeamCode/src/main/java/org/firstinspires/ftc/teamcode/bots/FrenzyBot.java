@@ -425,7 +425,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         resetTower();
         delayWait(500);
         liftToLower();
-        delayWait(300);
+        delayWait(500);
     }
 
     public float detectColor(Telemetry telemetry, float timeout) {
