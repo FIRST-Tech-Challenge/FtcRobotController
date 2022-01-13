@@ -107,15 +107,15 @@ public class WarehouseSideRedPath1 {
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeTo(new Vector2d(-16, -42))
+                .strafeTo(new Vector2d(-15, -41))
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .strafeTo(new Vector2d(-16, -67))
+                .strafeTo(new Vector2d(-15, -67))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .strafeTo(new Vector2d(42, -50))
+                .strafeTo(new Vector2d(43, -67))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
@@ -123,7 +123,7 @@ public class WarehouseSideRedPath1 {
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
                     setArmLevel.schedule();
                 })
-                .strafeTo(new Vector2d(42, -50))
+                .strafeTo(new Vector2d(43, -49))
                 .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
