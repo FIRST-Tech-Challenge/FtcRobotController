@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.vision.SimpleBlueVisionYCbCr;
 import org.firstinspires.ftc.teamcode.vision.SimpleExtraVisionYCbCr;
 import org.firstinspires.ftc.teamcode.vision.SimpleRedVisionYCbCr;
@@ -61,7 +62,7 @@ public class CompBotW1 {
     public void init(HardwareMap h, boolean cameraInit, Telemetry telemetry, String color) {
         if(cameraInit) {
             cameraMonitorViewId = h.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", h.appContext.getPackageName());
-            phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+            phoneCam = OpenCvCameraFactory.getInstance().createWebcam(h.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
             if(color.equals("blue")) {
                 p = new SimpleBlueVisionYCbCr(telemetry);
                 phoneCam.setPipeline(p);

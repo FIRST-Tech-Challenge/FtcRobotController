@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -16,6 +17,7 @@ public class CompBotW1Attachments extends CompBotW1 {
 
     public final static int liftSafeAdder = 0, liftMaxAdder = 1000;
     public int liftZero, liftSafe, liftMax;
+    public final static double spinPower = 0.2;
 
     private int liftHold;
     private boolean holding = false;
@@ -133,5 +135,25 @@ public class CompBotW1Attachments extends CompBotW1 {
         setBucket(.5);
         goLiftPosition(3300,1);
         setBucket(.3);
+    }
+
+    public void spin(long time) {
+        ElapsedTime e = new ElapsedTime();
+        while(e.milliseconds() < time) {
+            spin0.setPower(spinPower);
+            spin1.setPower(spinPower);
+        }
+        spin0.setPower(0);
+        spin1.setPower(0);
+    }
+
+    public void spinReverse(long time) {
+        ElapsedTime e = new ElapsedTime();
+        while(e.milliseconds() < time) {
+            spin0.setPower(-1*spinPower);
+            spin1.setPower(-1*spinPower);
+        }
+        spin0.setPower(0);
+        spin1.setPower(0);
     }
 }

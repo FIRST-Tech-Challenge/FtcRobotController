@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3Attachments;
+import org.firstinspires.ftc.teamcode.CompBotW1.CompBotW1Attachments;
 
 import java.util.Arrays;
 
@@ -18,7 +19,7 @@ import java.util.Arrays;
 public class RedNearAuton extends LinearOpMode {
     public static final double dPower = 0.35;
     ElapsedTime runtime = new ElapsedTime();
-    CompBotV3Attachments r = new CompBotV3Attachments();
+    CompBotW1Attachments r = new CompBotW1Attachments();
 
     @Override
     public void runOpMode() {
@@ -35,7 +36,7 @@ public class RedNearAuton extends LinearOpMode {
 
         runtime.reset();
 
-        r.bucket.setPower(1);
+        r.setBucket(1);
 
         // line up with drop
         r.AEncDrive(0,-20,0,-dPower);
