@@ -165,6 +165,7 @@ public class FF_6832 extends OpMode {
 
         robot = new Robot(hardwareMap);
         alliance = Constants.Alliance.BLUE;
+        startingPosition = Constants.Position.START_BLUE_UP;
         auto = new Autonomous(robot);
 
         // vision
