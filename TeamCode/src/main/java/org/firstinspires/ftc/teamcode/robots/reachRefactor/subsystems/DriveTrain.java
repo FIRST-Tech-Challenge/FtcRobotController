@@ -78,7 +78,8 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.75, 0,  50);
     public static double SWIVEL_PID_TOLERANCE = 10;
-    public static double MAX_CENTRIPETAL_ACCELERATION = 0.5 * (0.1 * 0.1 * (2 / Constants.TRACK_WIDTH));
+    public static double MAX_CENTRIPETAL_ACCELERATION_COEFF = 0.5;
+    public static double MAX_CENTRIPETAL_ACCELERATION = MAX_CENTRIPETAL_ACCELERATION_COEFF * (0.1 * 0.1 * (2 / Constants.TRACK_WIDTH));
 
     public static double LINEAR_SMOOTHING_FACTOR = 0.1;
     public static double ANGULAR_SMOOTHING_FACTOR = 0.1;
