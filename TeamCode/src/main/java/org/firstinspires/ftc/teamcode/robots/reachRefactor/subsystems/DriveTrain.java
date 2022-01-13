@@ -265,14 +265,6 @@ public class DriveTrain implements Subsystem {
     public void drive(double linearVelocity, double angularVelocity) {
         angularVelocity = Math.toRadians(angularVelocity);
 
-        // scaling linear and angular velocities to follow maximum centripetal acceleration constraint
-        double centripetalAcceleration = Math.abs(linearVelocity * angularVelocity);
-        double accelerationRatio = centripetalAcceleration / (MAX_CENTRIPETAL_ACCELERATION_COEFF * (0.1 * 0.1 * (2 / Constants.TRACK_WIDTH)));
-        if(accelerationRatio > 1) {
-            linearVelocity /= Math.sqrt(accelerationRatio);
-            angularVelocity /= Math.sqrt(accelerationRatio);
-        }
-
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
