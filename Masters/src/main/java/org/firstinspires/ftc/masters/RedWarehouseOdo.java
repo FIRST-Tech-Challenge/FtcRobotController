@@ -21,10 +21,10 @@ public class RedWarehouseOdo extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
-        FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = drive.analyze();
 
-        Pose2d startPose = new Pose2d(new Vector2d(8.5, -63),Math.toRadians(90));
+        Pose2d startPose = new Pose2d(new Vector2d(13.5, -63),Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
