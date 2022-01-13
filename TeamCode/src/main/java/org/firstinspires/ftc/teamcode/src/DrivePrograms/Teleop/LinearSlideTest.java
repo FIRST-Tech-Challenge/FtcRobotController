@@ -1,19 +1,27 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 /**
  * A Teleop to test the Linear Slide
  */
 @TeleOp(name = "LS Test")
-@Disabled
-public class LinearSlideTest extends TeleopTemplate {
+public class LinearSlideTest extends LinearOpMode {
+
+    TeleopDriveTrain driveTrain;
+    LinearSlide slide;
 
     public void runOpMode() throws InterruptedException {
-        this.initAll();
+        driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
+
+
+        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
+        slide = new LinearSlide(hardwareMap, "linear_slide", s, this::opModeIsActive, this::isStopRequested);
 
 
         telemetry.addData("Initialization Status", "Initialized");

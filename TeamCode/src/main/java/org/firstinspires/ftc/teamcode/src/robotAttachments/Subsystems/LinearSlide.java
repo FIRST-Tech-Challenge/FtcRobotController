@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.Utills.Executable;
@@ -33,6 +34,14 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
      */
     private volatile int targetHeight;
 
+
+    public void reverseMotor() {
+        if (this.linearSlide.getDirection() == DcMotorSimple.Direction.FORWARD) {
+            this.linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            this.linearSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+    }
 
     /**
      * Constructs the slide based on hardware map
@@ -161,10 +170,10 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
          * Key is the Height Level, Value is the position to go to in ticks
          */
         protected static final HashMap<HeightLevel, Integer> EncoderCount = new HashMap<HeightLevel, Integer>() {{
-            put(HeightLevel.BottomLevel, -876);
-            put(HeightLevel.MiddleLevel, -1763);
-            put(HeightLevel.TopLevel, -2800);
-            put(HeightLevel.GetOverObstacles, -675);
+            put(HeightLevel.BottomLevel, 0);
+            put(HeightLevel.MiddleLevel, 177);
+            put(HeightLevel.TopLevel, 418);
+            put(HeightLevel.GetOverObstacles, 0);
             put(HeightLevel.Down, 0);
         }};
     }

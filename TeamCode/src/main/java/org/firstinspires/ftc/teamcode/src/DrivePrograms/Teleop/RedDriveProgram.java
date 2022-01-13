@@ -26,6 +26,7 @@ public class RedDriveProgram extends TeleopTemplate {
 
             //Handles Linear Slide Control
             slide.setMotorPower(1 * gamepad2.left_stick_y);
+
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                 intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
                 RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();

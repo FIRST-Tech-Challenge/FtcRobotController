@@ -54,7 +54,7 @@ public abstract class TeleopTemplate extends LinearOpMode {
     public void initAll() {
         driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
 
-        spinner = new CarouselSpinner(hardwareMap, "duck_spinner");
+        spinner = new CarouselSpinner(hardwareMap, "cs");
 
         pod = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
         pod.raise();
