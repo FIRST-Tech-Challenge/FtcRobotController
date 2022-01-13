@@ -64,9 +64,9 @@ public class RedWarehouseOdo extends LinearOpMode {
         if (isStopRequested()) return;
 
         drive.followTrajectorySequence(fromStartToHub);
-        drive.linearSlideMotor.setPower(FreightFrenzyConstants.DUMP_SERVO_DROP);
-        drive.pauseButInSecondsForThePlebeians(1);
-        drive.linearSlideMotor.setPower(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+        drive.pause(1000);
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
 
 //        switch (freightLocation) {
 //            case LEFT:

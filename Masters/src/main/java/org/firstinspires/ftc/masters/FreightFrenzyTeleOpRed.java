@@ -62,6 +62,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     linearSlidePositions linearSlidePos = linearSlidePositions.BASE;
     boolean carouselOn = false; //Outside of loop()
 
+
+
     @Override
     public void runOpMode() {
         /*
@@ -193,6 +195,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 linearSlideTarget = linearSlideTargets.MIDDLE;
                 intakeMotor.setPower(0);
                 intakeOn = false;
+                robot.pause(400);
                 linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.9);
@@ -216,6 +219,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     sleep(1200);
 
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+                    robot.pause(400);//200 enough for middle
                     robot.greenLED.setState(false);
                     robot.greenLED.setState(false);
 
