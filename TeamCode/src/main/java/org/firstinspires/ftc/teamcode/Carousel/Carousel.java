@@ -25,4 +25,12 @@ public class Carousel {
             carouselTurningMotor.setPower(0);
         }
     }
+
+    public void CarouselAutonomous() throws InterruptedException {
+
+        wait(10000);
+        carouselTurningMotor.setPower(0.2);
+
+    }
+
 }

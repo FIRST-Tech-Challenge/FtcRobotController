@@ -100,12 +100,12 @@ public class ObiectDetection2021 extends LinearOpMode {
      */
     private TFObjectDetector tfod;
 
-    DcMotor motoryay;
-    DcMotor topLeftMotor;
-    DcMotor topRightMotor;
-    DcMotor bottomLeftMotor;
-    DcMotor bottomRightMotor;
-    DcMotor motor1;
+//    DcMotor motoryay;
+//    DcMotor topLeftMotor;
+//    DcMotor topRightMotor;
+//    DcMotor bottomLeftMotor;
+//    DcMotor bottomRightMotor;
+//    DcMotor motor1;
 
      @Override
 
@@ -116,12 +116,12 @@ public class ObiectDetection2021 extends LinearOpMode {
         // first.
         initVuforia();
         initTfod();
-        motoryay = hardwareMap.get(DcMotor.class, "motor1");
-        topLeftMotor = hardwareMap.get(DcMotor.class, "tLMotor");
-        topRightMotor = hardwareMap.get(DcMotor.class, "tRMotor");
-        bottomLeftMotor = hardwareMap.get(DcMotor.class, "bLMotor");
-        bottomRightMotor = hardwareMap.get(DcMotor.class, "bRMotor");
-        motor1 = hardwareMap.get(DcMotor.class, "motor1");
+//        motoryay = hardwareMap.get(DcMotor.class, "motor1");
+//        topLeftMotor = hardwareMap.get(DcMotor.class, "tLMotor");
+//        topRightMotor = hardwareMap.get(DcMotor.class, "tRMotor");
+//        bottomLeftMotor = hardwareMap.get(DcMotor.class, "bLMotor");
+//        bottomRightMotor = hardwareMap.get(DcMotor.class, "bRMotor");
+//        motor1 = hardwareMap.get(DcMotor.class, "motor1");
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -154,9 +154,9 @@ public class ObiectDetection2021 extends LinearOpMode {
                         telemetry.addData("# Object Detected", updatedRecognitions.size());
                         // step through the list of recognitions and display boundary info.
                         int i = 0;
-                        if (updatedRecognitions.size() == 0){
-                            motoryay.setPower(0.0);
-                        }
+//                        if (updatedRecognitions.size() == 0){
+//                            motoryay.setPower(0.0);
+//                        }
                         for (Recognition recognition : updatedRecognitions) {
                             telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                             telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
@@ -165,26 +165,26 @@ public class ObiectDetection2021 extends LinearOpMode {
                                     recognition.getRight(), recognition.getBottom());
                             i++;
 
-                            if (recognition.getLabel().equals("Ball")){
-                                motor1.setPower(1.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                            }
-                            else if  (recognition.getLabel().equals("Cube")){
-                                motor1.setPower(1.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                            }
-                            else if (recognition.getLabel().equals("Duck")){
-                                motor1.setPower(1.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                            }
-                            else{
-                                motor1.setPower(0.0);
-                                telemetry.addData("Motor power: ", motoryay.getPower());
-//                                telemetry.update();
-                            }
+//                            if (recognition.getLabel().equals("Ball")){
+//                                motor1.setPower(1.0);
+//                                telemetry.addData("Motor power: ", motoryay.getPower());
+////                                telemetry.update();
+//                            }
+//                            else if  (recognition.getLabel().equals("Cube")){
+//                                motor1.setPower(1.0);
+//                                telemetry.addData("Motor power: ", motoryay.getPower());
+////                                telemetry.update();
+//                            }
+//                            else if (recognition.getLabel().equals("Duck")){
+//                                motor1.setPower(1.0);
+//                                telemetry.addData("Motor power: ", motoryay.getPower());
+////                                telemetry.update();
+//                            }
+//                            else{
+//                                motor1.setPower(0.0);
+//                                telemetry.addData("Motor power: ", motoryay.getPower());
+////                                telemetry.update();
+//                            }
                         }
                         telemetry.update();
                     }
@@ -197,7 +197,7 @@ public class ObiectDetection2021 extends LinearOpMode {
      * If it recognizes block, start this function
      */
     public void autonomousBlock(){
-        topLeftMotor.setPower(10);
+//        topLeftMotor.setPower(10);
 
     }
 

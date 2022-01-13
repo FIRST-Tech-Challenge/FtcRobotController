@@ -12,11 +12,29 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@Autonomous
 
-public class Drivechain extends LinearOpMode {
+public class Drivechain {
+    public Drivechain(HardwareMap hardwareMap) {
+        fl = hardwareMap.get(DcMotor.class, "fl");
+        fl.resetDeviceConfigurationForOpMode();
+        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        fr.resetDeviceConfigurationForOpMode();
+        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        bl.resetDeviceConfigurationForOpMode();
+        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        br = hardwareMap.get(DcMotor.class, "br");
+        br.resetDeviceConfigurationForOpMode();
+        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
     /*
    public static int FRONT_LEFT = 0;
    public static int BACK_RIGHT = ;
@@ -47,25 +65,25 @@ public class Drivechain extends LinearOpMode {
 
     public void init(Telemetry telemetry, HardwareMap hardwareMap) {
 
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fl.resetDeviceConfigurationForOpMode();
-        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        fr.resetDeviceConfigurationForOpMode();
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        bl.resetDeviceConfigurationForOpMode();
-        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        br = hardwareMap.get(DcMotor.class, "br");
-        br.resetDeviceConfigurationForOpMode();
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        fl = hardwareMap.get(DcMotor.class, "fl");
+//        fl.resetDeviceConfigurationForOpMode();
+//        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        fr = hardwareMap.get(DcMotor.class, "fr");
+//        fr.resetDeviceConfigurationForOpMode();
+//        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        bl = hardwareMap.get(DcMotor.class, "bl");
+//        bl.resetDeviceConfigurationForOpMode();
+//        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        br = hardwareMap.get(DcMotor.class, "br");
+//        br.resetDeviceConfigurationForOpMode();
+//        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //
 //        leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
 //        leftMotor.resetDeviceConfigurationForOpMode();
@@ -137,8 +155,6 @@ public class Drivechain extends LinearOpMode {
 
 
     public void moveRobot(Telemetry telemetry, int flposition, int frposition, int blposition, int brposition, double flpower, double frpower, double blpower, double brpower){
-
-
 
         fl.setTargetPosition(flposition);
         fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -226,72 +242,72 @@ public class Drivechain extends LinearOpMode {
             }
         }*/
 
-    public void runOpMode() throws InterruptedException {
-
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        // fl.resetDeviceConfigurationForOpMode();
-        // fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        // fr.resetDeviceConfigurationForOpMode();
-        // fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        // bl.resetDeviceConfigurationForOpMode();
-        // bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        br = hardwareMap.get(DcMotor.class, "br");
-        // br.resetDeviceConfigurationForOpMode();
-        // br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
-        // leftMotor.resetDeviceConfigurationForOpMode();
-        // leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        // leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
-        // rightMotor.resetDeviceConfigurationForOpMode();
-        // rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        // rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-        // leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
-
-        // rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
-
-        waitForStart();
-
-        while (opModeIsActive()){
-            moveRobot(telemetry, 1000, -1000, 1000, -1000, 0.25, -0.25, 0.25, -0.25);
-
-            moveRobot(telemetry, 1000, -1000, 1000, -1000, -0.25, 0.25, -0.25, 0.25);
-
-
-            resetTicks();
-
-
-            // moveRobot(telemetry, 500, 500, 500, 500, 0.5, -0.5, 0.5, -0.5);
-            // resetTicks();
-
-
-            // moveRobot(telemetry, 500, 500, 500, 500, -0.25, -0.25, -0.25, -0.25);
-            // resetTicks();
-
-
-
-            // moveRobot(telemetry, -500, -500, -500, -500, -0.25, -0.25, -0.25, -0.25);
-            // resetTicks();
-
-
-            // moveRobot(telemetry, 2000, -2000, 2000, -2000, 0.5, -0.5, 0.5, -0.5);
-            // resetTicks();
-
-        }
-    }
+//    public void runOpMode() throws InterruptedException {
+//
+//        fl = hardwareMap.get(DcMotor.class, "fl");
+//        // fl.resetDeviceConfigurationForOpMode();
+//        // fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        // fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        fr = hardwareMap.get(DcMotor.class, "fr");
+//        // fr.resetDeviceConfigurationForOpMode();
+//        // fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        // fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        bl = hardwareMap.get(DcMotor.class, "bl");
+//        // bl.resetDeviceConfigurationForOpMode();
+//        // bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        // bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        br = hardwareMap.get(DcMotor.class, "br");
+//        // br.resetDeviceConfigurationForOpMode();
+//        // br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        // br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        // leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
+//        // leftMotor.resetDeviceConfigurationForOpMode();
+//        // leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        // leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//        // rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+//        // rightMotor.resetDeviceConfigurationForOpMode();
+//        // rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        // rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//
+//
+//        // leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
+//
+//        // rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+//
+//        waitForStart();
+//
+//        while (opModeIsActive()){
+//            moveRobot(telemetry, 1000, -1000, 1000, -1000, 0.25, -0.25, 0.25, -0.25);
+//
+//            moveRobot(telemetry, 1000, -1000, 1000, -1000, -0.25, 0.25, -0.25, 0.25);
+//
+//
+//            resetTicks();
+//
+//
+//            // moveRobot(telemetry, 500, 500, 500, 500, 0.5, -0.5, 0.5, -0.5);
+//            // resetTicks();
+//
+//
+//            // moveRobot(telemetry, 500, 500, 500, 500, -0.25, -0.25, -0.25, -0.25);
+//            // resetTicks();
+//
+//
+//
+//            // moveRobot(telemetry, -500, -500, -500, -500, -0.25, -0.25, -0.25, -0.25);
+//            // resetTicks();
+//
+//
+//            // moveRobot(telemetry, 2000, -2000, 2000, -2000, 0.5, -0.5, 0.5, -0.5);
+//            // resetTicks();
+//
+//        }
+//    }
     public void reset() {}
 
 
