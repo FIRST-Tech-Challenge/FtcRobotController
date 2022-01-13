@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@Disabled
-@TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
-public class MecanumTeleOp extends LinearOpMode {
+@TeleOp(name="MecanumTeleOp Triggers", group="FreightFrenzy")
+public class MecanumTeleOpTriggers extends LinearOpMode {
 
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
 
@@ -52,12 +50,8 @@ public class MecanumTeleOp extends LinearOpMode {
         boolean armLimitPressed;
         boolean armLimitSwitchFlag = true;
 
-        //booleans for slow mode
+        //booleans for slow mode to track the B button
         boolean bpressed = false;
-        boolean rtriggerpressed = false;
-        boolean ltriggerpressed = false;
-        boolean slowdownflag = false;
-
 
         //init loop
         while (! isStarted()) {
@@ -109,7 +103,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 armPower = armPowerLevels;
             } else if (gamepad2.right_stick_y >= 0.5 && (!armLimitPressed && !armLimitSwitchFlag)) {
                 armSetPos = armSetPos - 10;
-            } else if(gamepad2DPadDown == true){
+            } else if(gamepad2DPadDown){
                 armSetPos = armSetPos - 2;
                 armPower = armPowerLevels;
             }
@@ -156,10 +150,10 @@ public class MecanumTeleOp extends LinearOpMode {
              * Right bumper
              * Left Bumper
              */
-            if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
+            if (gamepad2.right_bumper && !gamepad2.left_bumper) {
                 carouselPower = 0.825;
             }
-            else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
+            else if (gamepad2.left_bumper && !gamepad2.right_bumper) {
                 carouselPower = -0.825 ;
             }
             else{
@@ -172,57 +166,40 @@ public class MecanumTeleOp extends LinearOpMode {
             /* Drivetrain Mecanum, Gamepad 1
              * Leftstick controls forward/back and strafing
              * Rightstick controls rotation
-             * B button press toggles slowdown, cuts speed in half
+             * Left trigger and Right trigger hold for slowdown, cuts speed in half and in half again
              * Custom deadzone created to account for joystick drift
              */
-            // Deadzone to correct drift
+            // Deadzone to correct drift, lowered to 0.2
             controller1lstickx = gamepad1.left_stick_x;
             controller1lsticky = gamepad1.left_stick_y;
             controller1rstickx = gamepad1.right_stick_x;
-            if(controller1lstickx < 0.3 && controller1lstickx > -0.3)
+            if(controller1lstickx < 0.2 && controller1lstickx > -0.2)
                 controller1lstickx = 0.0;
-            if(controller1lsticky < 0.3 && controller1lsticky > -0.3)
+            if(controller1lsticky < 0.2 && controller1lsticky > -0.2)
                 controller1lsticky = 0.0;
-            if(controller1rstickx < 0.3 && controller1rstickx > -0.3)
+            if(controller1rstickx < 0.2 && controller1rstickx > -0.2)
                 controller1rstickx = 0.0;
 
-            // set slowdown
-            if((gamepad1.b == true && bpressed == false) || (gamepad1.right_trigger > 0.5 && rtriggerpressed == false) || (gamepad1.left_trigger > 0.5 && ltriggerpressed == false)){
-                if(slowdownflag){
-                    slowdown = 1;
-                    slowdownflag = false;
-                }
-                else if(slowdownflag == false){
-                    slowdown = 0.5;
-                    slowdownflag = true;
-                }
+            // Set drivetrain slowdown, NEW WAY WORKS ON TRIGGER HOLD
+            // Checking triggers for > 0.5 treats them like a "button" but we do not need to check for a press like a button
+            if( gamepad1.right_trigger > 0.5 || gamepad1.left_trigger > 0.5 ){
+                slowdown = 0.25;
+            } else{
+                slowdown = 1.0;
             }
-            bpressed = gamepad1.b;
-            if(gamepad1.right_trigger > 0.5)
-                rtriggerpressed = true;
-            if(gamepad1.right_trigger < 0.5)
-                rtriggerpressed = false;
-            if(gamepad1.left_trigger > 0.5)
-                ltriggerpressed = true;
-            if(gamepad1.left_trigger < 0.5)
-                ltriggerpressed = false;
 
-            //Add slowdown
-            controller1lstickx = controller1lstickx * slowdown;
-            controller1lsticky = controller1lsticky * slowdown;
-            controller1rstickx = controller1rstickx * slowdown;
+            double y    = controller1lsticky * slowdown;
+            double x    = -controller1lstickx * slowdown * 1.1 ; // * 1.1 Counteract imperfect strafing
+            double rx   = -controller1rstickx * slowdown;
 
-            double y = controller1lsticky;
-            double x = -controller1lstickx * 1.1; // * 1.1 Counteract imperfect strafing
-            double rx = -controller1rstickx;
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = ((y + x + rx) / denominator)*slowdown;
-            double backLeftPower = ((y - x + rx) / denominator)*slowdown;
-            double frontRightPower = ((y - x - rx) / denominator)*slowdown;
-            double backRightPower = ((y + x - rx) / denominator)*slowdown;
+            double frontLeftPower = ((y + x + rx) / denominator);
+            double backLeftPower = ((y - x + rx) / denominator);
+            double frontRightPower = ((y - x - rx) / denominator);
+            double backRightPower = ((y + x - rx) / denominator);
 
             robot.motorFrontLeft.setPower(frontLeftPower);
             robot.motorBackLeft.setPower(backLeftPower);
@@ -233,14 +210,13 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Left Stick Y", controller1lsticky);
             telemetry.addData("Left Stick X input", gamepad1.left_stick_x);
             telemetry.addData("Left Stick Y input", gamepad1.left_stick_y);
-            telemetry.addData("Left Stick Y", controller1lsticky);
+            telemetry.addData("Right Stick X",controller1rstickx);
+            telemetry.addData("Right Stick X input",gamepad1.right_stick_x);
+            telemetry.addData("Slowdown:",slowdown);
             telemetry.addData("Arm Current pos", armCurrentPos);
             telemetry.addData("Arm Set pos", armSetPos);
             telemetry.addData("Arm LimitSwitch", robot.armLimitSwitch.isPressed());
             telemetry.addData("Arm LimitSwitchFlag", armLimitSwitchFlag);
-            telemetry.addData("Right Y Stick",gamepad1.right_stick_y);
-            telemetry.addData("Left Y Stick",gamepad1.left_stick_y);
-            telemetry.addData("Slowdown:",slowdownflag);
             telemetry.update();
         }
     }
