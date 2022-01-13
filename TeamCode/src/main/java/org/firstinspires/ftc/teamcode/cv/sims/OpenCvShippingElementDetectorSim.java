@@ -72,7 +72,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
     private String[] classNames = classNamesDuckSideBlue;
 
-    private final String modelPathDuckSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_blue\\converted_keras_duckside_blue\\optimized\\freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideBlue = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
 
     private String modelPath = modelPathDuckSideBlue;
 
