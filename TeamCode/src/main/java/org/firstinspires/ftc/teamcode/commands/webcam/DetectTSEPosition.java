@@ -51,7 +51,6 @@ public class DetectTSEPosition extends CommandBase {
         setLocation();
         setLevel();
 
-
     }
 
     private void setLocation(){

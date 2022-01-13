@@ -46,8 +46,6 @@ public class AutonomousFreightFrenzy extends CommandOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         telemetry.setAutoClear(false);
 
-
-
         final String[] selectedAlliance = new String[1];
         final String[] selectedSide = new String[1];
         final String[] selectedPath = new String[1];

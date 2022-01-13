@@ -79,8 +79,8 @@ public class DuckSideBluePath1 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
-
         telemetry.addLine("Detecting Position");
+
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
         stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
         detectTSEPosition.schedule();
@@ -101,10 +101,6 @@ public class DuckSideBluePath1 {
 
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .splineToLinearHeading(new Pose2d(-63, 63.4, Math.toRadians(245)),Math.toRadians(180))
-                .addDisplacementMarker(()-> {
-
-                    telemetry.addData("Path 1", "performing path 1 action");
-                })
                 .build();
 
 

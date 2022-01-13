@@ -48,6 +48,7 @@ import java.util.Random;
  * This version of the internal camera example uses EasyOpenCV's interface to the
  * Android Camera2 API
  */
+@Disabled
 @TeleOp(name="Teleop: FF Shipping Element Detector", group="Teleop")
 public class CopyShippingElementPosition extends LinearOpMode
 
