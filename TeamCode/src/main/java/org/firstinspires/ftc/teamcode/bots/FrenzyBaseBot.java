@@ -334,10 +334,10 @@ public class FrenzyBaseBot implements IOdoBot {
         }
 
 
-        this.frontLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getRF());
-        this.frontRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getLF());
-        this.backLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLF());
-        this.backRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRF());
+        this.frontLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLF());
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRF());
+        this.backLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLB());
+        this.backRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRB());
 
 
         while (motorsBusy()){
@@ -358,10 +358,10 @@ public class FrenzyBaseBot implements IOdoBot {
                 realSpeedRight = originalRight;
             }
 
-            this.frontLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getRF());
-            this.frontRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getLF());
-            this.backLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLF());
-            this.backRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRF());
+            this.frontLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLF());
+            this.frontRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRF());
+            this.backLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLB());
+            this.backRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRB());
 
         }
         stop();
