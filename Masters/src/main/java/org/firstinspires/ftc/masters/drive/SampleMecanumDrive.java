@@ -29,10 +29,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionRedHub;
+import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionShippingElementReversion;
 import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
@@ -94,7 +93,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
-    FreightFrenzyComputerVisionRedHub CV;
+    FreightFrenzyComputerVisionShippingElementReversion CV;
 
     HardwareMap hardwareMap;
     Telemetry telemetry;
@@ -489,20 +488,20 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void openCVInnitShenanigans(String color) {
-        CV = new FreightFrenzyComputerVisionRedHub(hardwareMap, telemetry, color);
+        CV = new FreightFrenzyComputerVisionShippingElementReversion(hardwareMap, telemetry);
 
     }
 
-    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.FreightPosition analyze() {
+    public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition analyze() {
         return CV.pipeline.position;
     }
 
 
-    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
+    public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
         return CV.pipeline.hub_position;
     }
 
-    public FreightFrenzyComputerVisionRedHub.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
+    public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
         return CV.pipeline.hub_position;
     }
 
