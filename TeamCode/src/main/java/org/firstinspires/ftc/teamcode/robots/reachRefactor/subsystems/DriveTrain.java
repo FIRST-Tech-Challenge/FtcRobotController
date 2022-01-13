@@ -80,8 +80,8 @@ public class DriveTrain implements Subsystem {
     public static double SWIVEL_PID_TOLERANCE = 10;
     public static double MAX_CENTRIPETAL_ACCELERATION_COEFF = 0.5;
 
-    public static double LINEAR_SMOOTHING_FACTOR = 0.1;
-    public static double ANGULAR_SMOOTHING_FACTOR = 0.1;
+    public static double LINEAR_SMOOTHING_FACTOR = 0.2;
+    public static double ANGULAR_SMOOTHING_FACTOR = 0.2;
 
     public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.07;
     public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.18;
@@ -224,15 +224,15 @@ public class DriveTrain implements Subsystem {
     public void update() {
         // state
         chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
-        swivelAngle = UtilMethods.wrapAngle(motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360);
+        swivelAngle = UtilMethods.wrapAnglePlus(motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360);
 
         // PID corrections
-        if(maintainSwivelAngleEnabled)
+        if (maintainSwivelAngleEnabled)
             maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
         motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
 
 //        updateTargetChassisDistance();
-        if(maintainChassisDistanceEnabled) {
+        if (maintainChassisDistanceEnabled) {
             maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
             targetFrontLeftVelocity += maintainChassisDistanceCorrection;
             targetFrontRightVelocity += maintainChassisDistanceCorrection;
@@ -245,21 +245,16 @@ public class DriveTrain implements Subsystem {
 
         // sensors
         Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-        angles = new SimpleMatrix(new double[][] {{
-                360 - UtilMethods.wrapAngle(imuAngles.firstAngle, offsetAngles.get(0)),
-                UtilMethods.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1)),
-                UtilMethods.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))
+        angles = new SimpleMatrix(new double[][]{{
+                360 - UtilMethods.wrapAngleMinus(imuAngles.firstAngle, offsetAngles.get(0)),
+                UtilMethods.wrapAngleMinus(imuAngles.thirdAngle, offsetAngles.get(1)),
+                UtilMethods.wrapAngleMinus(imuAngles.secondAngle, offsetAngles.get(2))
         }});
 
         linearSmoother.setSmoothingFactor(LINEAR_SMOOTHING_FACTOR);
         angularSmoother.setSmoothingFactor(ANGULAR_SMOOTHING_FACTOR);
 
         updatePose();
-    }
-
-    private void handleSmoothing() {
-        targetLinearVelocity = linearSmoother.update(targetLinearVelocity);
-        targetAngularVelocity = angularSmoother.update(targetAngularVelocity);
     }
 
     /**
@@ -281,27 +276,29 @@ public class DriveTrain implements Subsystem {
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
-        if(smoothingEnabled)
-            handleSmoothing();
+        if(smoothingEnabled) {
+            linearVelocity = linearSmoother.update(linearVelocity);
+            angularVelocity = angularSmoother.update(angularVelocity);
+        }
 
         // calculating target velocities and angles
         targetFrontLeftVelocity = linearVelocity - angularVelocity * (Constants.TRACK_WIDTH / 2);
         targetFrontRightVelocity = linearVelocity + angularVelocity * (Constants.TRACK_WIDTH / 2);
         targetMiddleVelocity = Math.hypot(linearVelocity, chassisDistance * angularVelocity);
 
-        targetSwivelAngle = UtilMethods.wrapAngle(90 + Math.toDegrees(
+        targetSwivelAngle = UtilMethods.wrapAnglePlus(90 + Math.toDegrees(
                 Math.atan2(chassisDistance * angularVelocity, linearVelocity)
         ));
 
         // reversing the middle wheel if needing to rotate >90 degrees to target angle
         if(middleReversed)
-            swivelAngle = UtilMethods.wrapAngle(swivelAngle + 180);
-        double diff = UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle);
+            swivelAngle = UtilMethods.wrapAnglePlus(swivelAngle + 180);
+        double diff = UtilMethods.wrapAnglePlus(targetSwivelAngle - swivelAngle);
         double minDiff = diff > 180 ? 360 - diff : diff;
         if(minDiff > 90)
             middleReversed = !middleReversed;
         if(middleReversed) {
-            targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + 180);
+            targetSwivelAngle = UtilMethods.wrapAnglePlus(targetSwivelAngle + 180);
             targetMiddleVelocity *= -1;
         }
     }
@@ -324,17 +321,14 @@ public class DriveTrain implements Subsystem {
         targetFrontRightVelocity = Math.signum(rightWheelPrime.get(1)) * rightWheelPrime.minus(rightWheel).normF() / dt;
         targetMiddleVelocity = Math.signum(middleWheelPrime.get(1) - middleWheel.get(1)) * middleWheelPrime.minus(middleWheel).normF() / dt;
 
-        targetSwivelAngle = UtilMethods.wrapAngle(Math.toDegrees(Math.atan2(middleWheelPrime.get(1) - middleWheel.get(1), middleWheelPrime.get(0) - middleWheel.get(0))));
+        targetSwivelAngle = UtilMethods.wrapAnglePlus(Math.toDegrees(Math.atan2(middleWheelPrime.get(1) - middleWheel.get(1), middleWheelPrime.get(0) - middleWheel.get(0))));
 
-        if(UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle) > 90) {
+        if(UtilMethods.wrapAnglePlus(targetSwivelAngle - swivelAngle) > 90) {
             middleReversed = true;
             targetMiddleVelocity = -1 * targetMiddleVelocity;
-            targetSwivelAngle = UtilMethods.wrapAngle(180 - targetSwivelAngle);
+            targetSwivelAngle = UtilMethods.wrapAnglePlus(180 - targetSwivelAngle);
         } else
             middleReversed = false;
-
-        if(smoothingEnabled)
-            handleSmoothing();
     }
 
     public void movePID(double maxPwrFwd, boolean forward, double dist, double currentAngle, double targetAngle) {

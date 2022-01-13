@@ -9,7 +9,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipelines.OpenCVPipeline;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -19,6 +24,7 @@ import java.util.Map;
 
 @Config
 public class OpenCVProvider extends VisionProvider {
+    private Bitmap noCameraBitmap;
     private OpenCvCamera camera;
     private OpenCVPipeline pipeline;
     private boolean cameraOpened;
@@ -33,6 +39,12 @@ public class OpenCVProvider extends VisionProvider {
         pipeline = new OpenCVPipeline();
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
+        noCameraBitmap = Bitmap.createBitmap(320, 240, Bitmap.Config.RGB_565);
+        Mat noCameraMat = new Mat(240, 320, CvType.CV_8UC3);
+        Imgproc.putText(noCameraMat, "No Webcam Found", new Point(10, 120), Imgproc.FONT_HERSHEY_SIMPLEX,
+                1, new Scalar(0, 0, 255), 3);
+        Utils.matToBitmap(noCameraMat, noCameraBitmap);
+
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -43,7 +55,6 @@ public class OpenCVProvider extends VisionProvider {
 
             @Override
             public void onError(int errorCode) {
-
             }
         });
     }
@@ -73,7 +84,7 @@ public class OpenCVProvider extends VisionProvider {
 
     @Override
     public Bitmap getDashboardImage() {
-        return cameraOpened ? pipeline.getDashboardImage() : Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
+        return cameraOpened ? pipeline.getDashboardImage() : noCameraBitmap;
     }
 
     @Override
