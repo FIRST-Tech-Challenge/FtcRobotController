@@ -78,6 +78,7 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.75, 0,  50);
     public static double SWIVEL_PID_TOLERANCE = 10;
+    public static double MAX_CENTRIPETAL_ACCELERATION = 0.5 * (0.1 * 0.1 * (2 / Constants.TRACK_WIDTH));
 
     public static double LINEAR_SMOOTHING_FACTOR = 0.1;
     public static double ANGULAR_SMOOTHING_FACTOR = 0.1;
@@ -122,11 +123,11 @@ public class DriveTrain implements Subsystem {
         sensorChassisDistance = hardwareMap.get(DistanceSensor.class, "distLength");
 
         // Kinematics
-        pose = new SimpleMatrix(3, 1);
-        velocity = new SimpleMatrix(3, 1);
-        angles = new SimpleMatrix(3, 1);
-        offsetAngles = new SimpleMatrix(3, 1);
-        previousWheelTicks = new SimpleMatrix(3, 2);
+        pose = new SimpleMatrix(1, 3);
+        velocity = new SimpleMatrix(1, 3);
+        angles = new SimpleMatrix(1, 3);
+        offsetAngles = new SimpleMatrix(1, 3);
+        previousWheelTicks = new SimpleMatrix(1, 3);
 
         // PID
         turnPID = new PIDController(ROTATE_PID_COEFFICIENTS);
@@ -253,7 +254,7 @@ public class DriveTrain implements Subsystem {
         linearSmoother.setSmoothingFactor(LINEAR_SMOOTHING_FACTOR);
         angularSmoother.setSmoothingFactor(ANGULAR_SMOOTHING_FACTOR);
 
-        //updatePose();
+        updatePose();
     }
 
     private void handleSmoothing() {
@@ -269,12 +270,21 @@ public class DriveTrain implements Subsystem {
     public void drive(double linearVelocity, double angularVelocity) {
         angularVelocity = Math.toRadians(angularVelocity);
 
+        // scaling linear and angular velocities to follow maximum centripetal acceleration constraint
+        double centripetalAcceleration = Math.abs(linearVelocity * angularVelocity);
+        double accelerationRatio = centripetalAcceleration / MAX_CENTRIPETAL_ACCELERATION;
+        if(accelerationRatio > 1) {
+            linearVelocity /= Math.sqrt(accelerationRatio);
+            angularVelocity /= Math.sqrt(accelerationRatio);
+        }
+
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
 
         if(smoothingEnabled)
             handleSmoothing();
 
+        // calculating target velocities and angles
         targetFrontLeftVelocity = linearVelocity - angularVelocity * (Constants.TRACK_WIDTH / 2);
         targetFrontRightVelocity = linearVelocity + angularVelocity * (Constants.TRACK_WIDTH / 2);
         targetMiddleVelocity = Math.hypot(linearVelocity, chassisDistance * angularVelocity);
@@ -283,6 +293,7 @@ public class DriveTrain implements Subsystem {
                 Math.atan2(chassisDistance * angularVelocity, linearVelocity)
         ));
 
+        // reversing the middle wheel if needing to rotate >90 degrees to target angle
         if(middleReversed)
             swivelAngle = UtilMethods.wrapAngle(swivelAngle + 180);
         double diff = UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle);
@@ -509,12 +520,6 @@ public class DriveTrain implements Subsystem {
         this.targetChassisDistance = Range.clip(targetChassisDistance, MIN_CHASSIS_LENGTH + CHASSIS_LENGTH_THRESHOLD, MAX_CHASSIS_LENGTH - CHASSIS_LENGTH_THRESHOLD);
     }
 
-    public static int metersToTicks(double meters) {
-        double circumference = 2 * Math.PI * WHEEL_RADIUS;
-        double revolutions = meters / circumference;
-        return (int) (revolutions * TICKS_PER_REVOLUTION);
-    }
-
     public static double ticksToMeters(double ticks) {
         double revolutions = ticks / TICKS_PER_REVOLUTION;
         double circumference = 2 * Math.PI * WHEEL_RADIUS;
@@ -529,13 +534,6 @@ public class DriveTrain implements Subsystem {
     }
     public void setMiddleTargetVelocity(double velocity) {
         targetMiddleVelocity = velocity;
-    }
-    public void setSwivelTargetAngle(double targetAngle) {
-        targetSwivelAngle = targetAngle;
-    }
-
-    public double getSwivelTargetAngle() {
-        return targetSwivelAngle;
     }
 
     public void setMaintainSwivelAngleEnabled(boolean maintainSwivelAngleEnabled) {
