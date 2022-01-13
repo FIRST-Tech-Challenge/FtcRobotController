@@ -73,7 +73,20 @@ public class Teleop extends OpMode {
             r.imu.reset();
         }
 
-        r.setBucket((gamepad1.left_bumper?0:1));
+        if(gamepad1.left_bumper){
+            r.setBucket(-1);
+        }
+        else if(gamepad1.right_bumper){
+            r.setBucket(1);
+        }
+
+        if(gamepad1.y){
+            r.setBucket(-.25);
+        }
+//        r.setBucket((gamepad1.left_bumper?0:1));
+        telemetry.addData("BucketPos: ", r.BucketPosition());
+        telemetry.addData("liftPos: ", r.getLiftPos());
+        telemetry.update();
     }
 
     @Override

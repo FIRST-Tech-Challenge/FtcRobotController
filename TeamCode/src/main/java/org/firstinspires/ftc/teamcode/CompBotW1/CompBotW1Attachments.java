@@ -53,6 +53,9 @@ public class CompBotW1Attachments extends CompBotW1 {
 
         lift.setDirection(DcMotor.Direction.REVERSE);
 
+        bucket0.setDirection(Servo.Direction.FORWARD);
+        bucket1.setDirection(Servo.Direction.FORWARD);
+
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intake.setPower(0);
@@ -113,6 +116,9 @@ public class CompBotW1Attachments extends CompBotW1 {
     public void setBucket(double position) {
         bucket0.setPosition(position);
         bucket1.setPosition(1-position);
+    }
+    public double BucketPosition(){
+        return bucket0.getPosition();
     }
 
 }
