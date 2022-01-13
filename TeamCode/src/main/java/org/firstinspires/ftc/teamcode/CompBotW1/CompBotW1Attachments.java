@@ -55,6 +55,7 @@ public class CompBotW1Attachments extends CompBotW1 {
 
         bucket0.setDirection(Servo.Direction.FORWARD);
         bucket1.setDirection(Servo.Direction.FORWARD);
+        setBucket(1);
 
         intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -120,5 +121,17 @@ public class CompBotW1Attachments extends CompBotW1 {
     public double BucketPosition(){
         return bucket0.getPosition();
     }
-
+    public void ShareGoal(){
+        if (getLiftPos() > 5000) {
+            int dif = -1 * (getLiftPos() - 5000);
+            goLiftPosition(dif, -1);
+        }
+        else if (getLiftPos() < 5000) {
+            int dif = getLiftPos() - 5000;
+            goLiftPosition(dif, 1);
+        }
+        setBucket(.5);
+        goLiftPosition(3300,1);
+        setBucket(.3);
+    }
 }
