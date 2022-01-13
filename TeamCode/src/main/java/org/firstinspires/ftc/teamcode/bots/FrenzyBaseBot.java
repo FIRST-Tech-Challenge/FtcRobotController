@@ -145,6 +145,7 @@ public class FrenzyBaseBot implements IOdoBot {
             stop();
         } catch (Exception ex) {
             //issues accessing drive resources
+            Log.e(TAG, "Init error", ex);
             throw new Exception("Issues accessing one of drive motors. Check the controller config", ex);
         }
     }
@@ -157,6 +158,8 @@ public class FrenzyBaseBot implements IOdoBot {
 
         motor.setVelocityPIDFCoefficients(P, I, D, F);
 //        double coeff = maxVelocity/MAX_VELOCITY_VALUE;
+        Log.d(TAG, String.format("positionPIDF: %.2f", positionPIDF));
+        Log.d(TAG, String.format("positionToleration: %d", positionToleration));
         motor.setPositionPIDFCoefficients(positionPIDF);
         motor.setTargetPositionTolerance(positionToleration);
 
@@ -314,10 +317,27 @@ public class FrenzyBaseBot implements IOdoBot {
 
         MotorReductionBot mr = profile.getMotorReduction();
 
-        this.frontLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getRF());
-        this.frontRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getLF());
-        this.backLeft.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedLeft()*mr.getLF());
-        this.backRight.setVelocity(MAX_VELOCITY_GB*profile.getRealSpeedRight()*mr.getRF());
+        double initSpeed = 0.01;
+        double realSpeedLeft = initSpeed;
+        double realSpeedRight = initSpeed;
+        double speedIncrementLeft = 0.05;
+        double speedIncrementRight = speedIncrementLeft;
+        double originalRight = profile.getRealSpeedRight();
+        double originalLeft = profile.getRealSpeedLeft();
+        if (originalLeft > originalRight) {
+            speedIncrementRight = speedIncrementLeft * profile.getSpeedRatio();
+            realSpeedRight = realSpeedLeft * profile.getSpeedRatio();
+
+        } else if (originalRight > originalLeft) {
+            speedIncrementLeft = speedIncrementRight * profile.getSpeedRatio();
+            realSpeedLeft = realSpeedRight * profile.getSpeedRatio();
+        }
+
+
+        this.frontLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getRF());
+        this.frontRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getLF());
+        this.backLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLF());
+        this.backRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRF());
 
 
         while (motorsBusy()){
@@ -329,6 +349,20 @@ public class FrenzyBaseBot implements IOdoBot {
             if (hitObstacle(locator)){
                 break;
             }
+            realSpeedLeft += speedIncrementLeft;
+            realSpeedRight += speedIncrementRight;
+            if (realSpeedLeft > originalLeft){
+                realSpeedLeft = originalLeft;
+            }
+            if (realSpeedRight > originalRight){
+                realSpeedRight = originalRight;
+            }
+
+            this.frontLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getRF());
+            this.frontRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getLF());
+            this.backLeft.setVelocity(MAX_VELOCITY_GB*realSpeedLeft*mr.getLF());
+            this.backRight.setVelocity(MAX_VELOCITY_GB*realSpeedRight*mr.getRF());
+
         }
         stop();
     }
@@ -924,10 +958,13 @@ public class FrenzyBaseBot implements IOdoBot {
             }
             if (botConfig.getPositionPIDF() > 0){
                 positionPIDF = botConfig.getPositionPIDF();
+                Log.d(TAG, String.format("Setting positionPIDF: %.2f", positionPIDF));
+
             }
 
             if (botConfig.getPositionToleration() > 0){
                 positionToleration = botConfig.getPositionToleration();
+                Log.d(TAG, String.format("Setting positionToleration: %d", positionToleration));
             }
 
             if (botConfig.getMaxVelocityLF() > 0){
