@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
 /**
  * A Teleop to test the Linear Slide
  */
+@Disabled
 @TeleOp(name = "LS Test")
 public class LinearSlideTest extends LinearOpMode {
 
@@ -22,12 +24,15 @@ public class LinearSlideTest extends LinearOpMode {
 
         RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
         slide = new LinearSlide(hardwareMap, "linear_slide", s, this::opModeIsActive, this::isStopRequested);
-
+        slide.setMotorPower(1);
+        Thread.sleep(250);
+        slide.setMotorPower(0);
 
         telemetry.addData("Initialization Status", "Initialized");
         telemetry.update();
 
         waitForStart();
+        slide.resetEncoder();
         while (opModeIsActive() && !isStopRequested()) {
             driveTrain.setPowerFromGamepad(gamepad1);
 

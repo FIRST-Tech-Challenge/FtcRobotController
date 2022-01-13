@@ -171,8 +171,8 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
          */
         protected static final HashMap<HeightLevel, Integer> EncoderCount = new HashMap<HeightLevel, Integer>() {{
             put(HeightLevel.BottomLevel, 0);
-            put(HeightLevel.MiddleLevel, 177);
-            put(HeightLevel.TopLevel, 418);
+            put(HeightLevel.MiddleLevel, 207);
+            put(HeightLevel.TopLevel, 438);
             put(HeightLevel.GetOverObstacles, 0);
             put(HeightLevel.Down, 0);
         }};

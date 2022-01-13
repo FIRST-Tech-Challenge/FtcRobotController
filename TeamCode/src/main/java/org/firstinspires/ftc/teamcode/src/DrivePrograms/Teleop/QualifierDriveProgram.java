@@ -39,9 +39,14 @@ public class QualifierDriveProgram extends LinearOpMode {
         drivetrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
 
         spinner = new CarouselSpinner(hardwareMap, "cs");
+        slide.setMotorPower(1);
+        Thread.sleep(250);
+        slide.setMotorPower(0);
 
-
+        telemetry.addData("Initialization", "finished");
+        telemetry.update();
         waitForStart();
+        //slide.resetEncoder();
 
         while (opModeIsActive() && !isStopRequested()) {
             if (drivetrain.getFacingDirection()) {
