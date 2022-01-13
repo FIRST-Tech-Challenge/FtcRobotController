@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.CompBotW1.CompBotW1Attachments;
 // Start blue storage side
 
 @Autonomous(name="Blue Warehouse Side No Camera")
+@Disabled
 public class BlueNearAutonNoCamera extends LinearOpMode {
     public static final double dPower = 0.35;
     ElapsedTime runtime = new ElapsedTime();

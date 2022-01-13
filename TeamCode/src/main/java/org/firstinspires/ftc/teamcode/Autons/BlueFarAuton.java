@@ -58,27 +58,27 @@ public class BlueFarAuton extends LinearOpMode {
         //lift and drop
         if (Arrays.equals(pos, new boolean[]{true, false, false})) {// left
             r.AEncDrive(20,0,dPower,0);
-            nEncDrive(r.lift,1300,1);
+            //nEncDrive(r.lift,1300,1);
             r.setBucket(0);
             sleep(2000);
             r.setBucket(1);
-            driveUntilMechStop(r.lift,-1, 1000);
+            //driveUntilMechStop(r.lift,-1, 1000);
             r.AEncDrive(-14,0,-dPower,0);
         } else if (Arrays.equals(pos, new boolean[]{false, true, false})) {// middle
             r.AEncDrive(16,0,dPower,0);
-            nEncDrive(r.lift,3000,1);
+            //nEncDrive(r.lift,3000,1);
             r.setBucket(0);
             sleep(2000);
             r.setBucket(1);
-            driveUntilMechStop(r.lift,-1, 1000);
+            //driveUntilMechStop(r.lift,-1, 1000);
             r.AEncDrive(-10,0,-dPower,0);
         } else {// right
             r.AEncDrive(10,0,dPower,0);
-            driveUntilMechStop(r.lift,1, 1000);
+            //driveUntilMechStop(r.lift,1, 1000);
             r.setBucket(0);
             sleep(2000);
             r.setBucket(1);
-            driveUntilMechStop(r.lift,-1, 1000);
+            //driveUntilMechStop(r.lift,-1, 1000);
             r.AEncDrive(-4,0,-dPower,0);
         }
         telemetry.addLine("finished with lift");

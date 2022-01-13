@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3.nEncDrive;
 import static org.firstinspires.ftc.teamcode.CompBotV3.CompBotV3.runMotorTime;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,6 +17,7 @@ import java.util.Arrays;
 // Start blue storage side
 
 @Autonomous(name="Red Warehouse Side")
+@Disabled
 public class RedNearAuton extends LinearOpMode {
     public static final double dPower = 0.35;
     ElapsedTime runtime = new ElapsedTime();
