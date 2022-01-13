@@ -42,6 +42,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
     int linearSlideTolerance = 5;
 
+    double maxPowerConstraint = 0.75;
+
 
 
     private enum linearSlideTargets {
@@ -159,10 +161,18 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 rightRearPower /= max;
             }
 
-            leftFrontMotor.setPower(leftFrontPower);
-            leftRearMotor.setPower(leftRearPower);
-            rightFrontMotor.setPower(rightFrontPower);
-            rightRearMotor.setPower(rightRearPower);
+            leftFrontMotor.setPower(leftFrontPower*maxPowerConstraint);
+            leftRearMotor.setPower(leftRearPower*maxPowerConstraint);
+            rightFrontMotor.setPower(rightFrontPower*maxPowerConstraint);
+            rightRearMotor.setPower(rightRearPower*maxPowerConstraint);
+
+            if(gamepad1.a) {
+                maxPowerConstraint = 1;
+            }
+
+            if(gamepad1.x){
+                maxPowerConstraint = 0.75;
+            }
 
             if(gamepad2.a) {
                 robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);

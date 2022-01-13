@@ -4,7 +4,7 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="Test Rick Roll")
+@TeleOp(name="Testing")
 public class TestRickRoll extends LinearOpMode {
 
     private boolean rickAstleyFound;
@@ -28,15 +28,18 @@ public class TestRickRoll extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+
+        SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, rickRollID);
+        telemetry.addData("Playing", "Resource");
+        telemetry.update();
+
         while (opModeIsActive()) {
 
             // say Silver each time gamepad X is pressed (This sound is a resource)
-            if (rickAstleyFound && (isX = gamepad1.x) && !wasX) {
-                SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, rickRollID);
-                telemetry.addData("Playing", "Resource");
-                telemetry.update();
-            }
-            wasX = isX;
+//            if (rickAstleyFound && (isX = gamepad1.x) && !wasX) {
+
+//            }
+//            wasX = isX;
 
         }
     }
