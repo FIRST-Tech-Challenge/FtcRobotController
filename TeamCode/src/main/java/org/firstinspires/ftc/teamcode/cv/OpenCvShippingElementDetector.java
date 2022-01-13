@@ -49,11 +49,11 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     private int width = 224; // width of the image
     private int height = 240;
-    private double inScaleFactor = 0.0279;
+    private double inScaleFactor = 0.007843;
     private double thresholdDnn =  0.6;
-    private double redMeanVal = 5;
-    private double greenMeanVal = 168.6;
-    private double blueMeanVal = 62.3;
+    public static final double redMeanVal = 127.5;
+    public static final double greenMeanVal = 127.5;
+    public static final double blueMeanVal = 127.5;
     private Dnn cvDNN = null;
     private Net net = null;
     private Telemetry telemetry = null;

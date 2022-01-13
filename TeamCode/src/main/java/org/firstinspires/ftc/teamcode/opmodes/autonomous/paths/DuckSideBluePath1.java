@@ -47,7 +47,7 @@ public class DuckSideBluePath1 {
 
     private CreateIntake createIntake;
     private StopDetectTSEPosition stopDetectTSEPosition;
-    private InstantCommand stopDetect;
+     private InstantCommand stopDetect;
 
     public DuckSideBluePath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -119,7 +119,7 @@ public class DuckSideBluePath1 {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
 
-                .splineToLinearHeading(new Pose2d(-37.5, 28, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-35, 28, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
@@ -127,7 +127,7 @@ public class DuckSideBluePath1 {
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
                     setArmLevel.schedule();
                 })
-                .strafeTo(new Vector2d(-37,22))
+                .strafeTo(new Vector2d(-35,22))
                 .splineToLinearHeading(new Pose2d(-60, 43.5, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 

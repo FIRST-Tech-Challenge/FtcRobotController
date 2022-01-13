@@ -34,7 +34,7 @@ public class MecanumTeleOp extends LinearOpMode {
         int armLevel0 = 0;   // (a)
         int armLevel1 = 250; // (x)
         int armLevel2 = 600; // (y)
-        int armLevel3 = 900; // (b)
+        int armLevel3 = 1000; // (b)
 
         double armPower = 0.7;
         double armPowerLevels = 0.7;
