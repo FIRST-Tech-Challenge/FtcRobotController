@@ -74,16 +74,20 @@ public class Teleop extends OpMode {
         }
 
         if(gamepad1.left_bumper){
-            r.setBucket(-1);
+            r.setBucket(.3);
+
         }
         else if(gamepad1.right_bumper){
             r.setBucket(1);
         }
 
-        if(gamepad1.y){
-            r.setBucket(-.25);
+        if(gamepad1.x){
+            r.setBucket(.3);
         }
-//        r.setBucket((gamepad1.left_bumper?0:1));
+
+        if(gamepad1.y){
+            r.ShareGoal();
+        }
         telemetry.addData("BucketPos: ", r.BucketPosition());
         telemetry.addData("liftPos: ", r.getLiftPos());
         telemetry.update();
