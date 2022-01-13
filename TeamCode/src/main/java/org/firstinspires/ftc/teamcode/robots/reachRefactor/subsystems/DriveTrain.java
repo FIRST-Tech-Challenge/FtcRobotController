@@ -76,7 +76,7 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.005, 0, .13);
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
-    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(8, 0,  5);
+    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.75, 0,  50);
     public static double SWIVEL_PID_TOLERANCE = 10;
 
     public static double LINEAR_SMOOTHING_FACTOR = 0.1;
@@ -94,7 +94,6 @@ public class DriveTrain implements Subsystem {
     public static double CHASSIS_LENGTH_THRESHOLD = 0.1;
 
     public DriveTrain(HardwareMap hardwareMap) {
-        String[] MOTOR_NAMES = {"motorFrontLeft", "motorFrontRight", "motorMiddle", "motorMiddleSwivel", "duckSpinner"};
         ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new ZeroPowerBehavior[]{ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE};
         boolean[] REVERSED = {true, false, true, false, false};
 
@@ -106,8 +105,7 @@ public class DriveTrain implements Subsystem {
         duckSpinner = hardwareMap.get(DcMotorEx.class,"duckSpinner");
         motors = new DcMotorEx[] {motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner};
 
-        for (int i = 0; i < MOTOR_NAMES.length; i++) {
-            motors[i] = hardwareMap.get(DcMotorEx.class, MOTOR_NAMES[i]);
+        for (int i = 0; i < ZERO_POWER_BEHAVIORS.length; i++) {
             motors[i].setMode(RunMode.STOP_AND_RESET_ENCODER);
             motors[i].setMode(RunMode.RUN_USING_ENCODER);
             motors[i].setZeroPowerBehavior(ZERO_POWER_BEHAVIORS[i]);
@@ -251,7 +249,11 @@ public class DriveTrain implements Subsystem {
                 UtilMethods.wrapAngle(imuAngles.thirdAngle, offsetAngles.get(1)),
                 UtilMethods.wrapAngle(imuAngles.secondAngle, offsetAngles.get(2))
         }});
-        updatePose();
+
+        linearSmoother.setSmoothingFactor(LINEAR_SMOOTHING_FACTOR);
+        angularSmoother.setSmoothingFactor(ANGULAR_SMOOTHING_FACTOR);
+
+        //updatePose();
     }
 
     private void handleSmoothing() {
@@ -281,6 +283,8 @@ public class DriveTrain implements Subsystem {
                 Math.atan2(chassisDistance * angularVelocity, linearVelocity)
         ));
 
+        if(middleReversed)
+            swivelAngle = UtilMethods.wrapAngle(swivelAngle + 180);
         double diff = UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle);
         double minDiff = diff > 180 ? 360 - diff : diff;
         if(minDiff > 90)

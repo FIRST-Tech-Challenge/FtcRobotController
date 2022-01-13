@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
@@ -27,7 +29,7 @@ public class Autonomous {
         try {
             visionProvider = VisionProviders.VISION_PROVIDERS[visionProviderIndex].newInstance();
         } catch(IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException("Error while instantiating vision provider");
+//            throw new RuntimeException("Error while instantiating vision provider");
         }
     }
 

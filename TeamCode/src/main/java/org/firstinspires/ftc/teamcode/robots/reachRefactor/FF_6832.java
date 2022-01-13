@@ -105,10 +105,11 @@ public class FF_6832 extends OpMode {
     // constants
     public static double TRIGGER_DEADZONE_THRESHOLD = 0.4;
     public static double JOYSTICK_DEADZONE_THRESHOLD = 0.05;
+    public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.3;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
-    public static double FORWARD_SCALING_FACTOR = 3; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = 3 * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
+    public static double FORWARD_SCALING_FACTOR = 0.1; // scales the target linear robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 0.1 * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {
             Constants.MIN_CHASSIS_LENGTH,
             Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
@@ -170,6 +171,7 @@ public class FF_6832 extends OpMode {
 
         // vision
         auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+
         auto.visionProvider.initializeVision(hardwareMap);
         visionProviderFinalized = true;
 
@@ -180,9 +182,9 @@ public class FF_6832 extends OpMode {
 
     private void handleStateSwitch() {
         if (!active) {
-            if (stickyGamepad1.left_bumper)
+            if (stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
                 gameStateIndex -= 1;
-            if (stickyGamepad1.right_bumper)
+            if (stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
                 gameStateIndex += 1;
 
             gameStateIndex %= GameState.getNumGameStates();
@@ -190,28 +192,27 @@ public class FF_6832 extends OpMode {
             gameState = GameState.getGameState(gameStateIndex);
         }
 
-        if (stickyGamepad1.start)
+        if (stickyGamepad1.start || stickyGamepad2.start)
             active = !active;
     }
 
     private void handleVisionProviderSwitch() {
         if(!active) {
             if(!visionProviderFinalized) {
-                if (stickyGamepad1.dpad_left) {
+                if (stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) {
                     visionProviderIndex = (visionProviderIndex + 1) % VisionProviders.VISION_PROVIDERS.length; // switch vision provider
                     auto.createVisionProvider(visionProviderIndex);
                 }
-                if (stickyGamepad1.dpad_up) {
+                if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
                     auto.visionProvider.initializeVision(hardwareMap); // this is blocking
                     visionProviderFinalized = true;
                 }
-            } else if (stickyGamepad1.dpad_up) {
+            } else if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
                 auto.visionProvider.shutdownVision(); // also blocking, but should be very quick
                 visionProviderFinalized = false;
             }
         }
-        else
-            if(stickyGamepad1.dpad_right && visionProviderFinalized)
+        else if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right) && visionProviderFinalized)
         {
             auto.visionProvider.saveDashboardImage();
         }
@@ -219,36 +220,36 @@ public class FF_6832 extends OpMode {
 
     private void handlePregameControls() {
         if (active) {
-            if (stickyGamepad1.left_bumper)
+            if (stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
                 robot.articulate(Robot.Articulation.SELFTEST);
-            if (stickyGamepad1.right_bumper)
+            if (stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
                 robot.articulate(Robot.Articulation.LEGALSTARTPOS);
         }
 
-        if(stickyGamepad1.x) {
+        if(stickyGamepad1.x || stickyGamepad2.x) {
             alliance = Constants.Alliance.BLUE;
             startingPosition = Constants.Position.START_RED_UP;
         }
-        if(stickyGamepad1.b) {
+        if(stickyGamepad1.b || stickyGamepad2.b) {
             alliance = Constants.Alliance.RED;
             startingPosition = Constants.Position.START_BLUE_UP;
         }
-        if(stickyGamepad1.dpad_right)
+        if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
             startingPosition =
                     alliance == Constants.Alliance.RED ?
                             Constants.Position.START_RED_UP :
                             Constants.Position.START_BLUE_UP;
-        if(stickyGamepad1.dpad_left)
+        if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
             startingPosition =
                     alliance == Constants.Alliance.RED ?
                             Constants.Position.START_RED_DOWN :
                             Constants.Position.START_BLUE_DOWN;
 
-        if(stickyGamepad1.y)
+        if(stickyGamepad1.y || stickyGamepad2.y)
             robot.driveTrain.setSmoothingEnabled(!robot.driveTrain.isSmoothingEnabled());
-        if(stickyGamepad1.dpad_down)
+        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             debugTelemetryEnabled = !debugTelemetryEnabled;
-        if(stickyGamepad1.a)
+        if(stickyGamepad1.a || stickyGamepad2.a)
             usingDesmosDrive = !usingDesmosDrive;
     }
 
@@ -269,8 +270,11 @@ public class FF_6832 extends OpMode {
         initializing = false;
 //        if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
 //            robot.articulate(Robot.Articulation.START);
+        robot.driveTrain.setMaintainChassisDistanceEnabled(true);
+        robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[0]);
         auto.visionProvider.shutdownVision();
     }
+
 
     private void handleArcadeDrive() {
         double forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
@@ -288,6 +292,9 @@ public class FF_6832 extends OpMode {
 
         double forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
         double rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
+
+        if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
+            rotate = 0;
 
         if(usingDesmosDrive)
             robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
@@ -538,7 +545,7 @@ public class FF_6832 extends OpMode {
         // handling vision telemetry
         handleTelemetry(auto.visionProvider.getTelemetry(debugTelemetryEnabled), auto.visionProvider.getTelemetryName(), packet);
 
-        robot.drawFieldOverlay(packet);
+        //robot.drawFieldOverlay(packet);
         dashboard.sendTelemetryPacket(packet);
 
         telemetry.update();

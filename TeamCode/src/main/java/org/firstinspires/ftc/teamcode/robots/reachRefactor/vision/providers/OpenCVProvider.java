@@ -21,6 +21,7 @@ import java.util.Map;
 public class OpenCVProvider extends VisionProvider {
     private OpenCvCamera camera;
     private OpenCVPipeline pipeline;
+    private boolean cameraOpened;
 
     // Constants
     private static final String TELEMETRY_NAME = "OpenCV Vision Provider";
@@ -37,6 +38,7 @@ public class OpenCVProvider extends VisionProvider {
             @Override
             public void onOpened() {
                 camera.startStreaming(WEBCAM_WIDTH, WEBCAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
+                cameraOpened = true;
             }
 
             @Override
@@ -48,13 +50,15 @@ public class OpenCVProvider extends VisionProvider {
 
     @Override
     public void shutdownVision() {
-        camera.stopStreaming();
-        camera.closeCameraDevice();
+        if(cameraOpened) {
+            camera.stopStreaming();
+            camera.closeCameraDevice();
+        }
     }
 
     @Override
     public Position getPosition() {
-        return pipeline.getLastPosition();
+        return cameraOpened ? pipeline.getLastPosition() : Position.HOLD;
     }
 
     @Override
@@ -69,14 +73,14 @@ public class OpenCVProvider extends VisionProvider {
 
     @Override
     public Bitmap getDashboardImage() {
-        return pipeline.getDashboardImage();
+        return cameraOpened ? pipeline.getDashboardImage() : Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565);
     }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = super.getTelemetry(debug);
 
-        if(debug) {
+        if(debug && cameraOpened) {
             telemetryMap.put("Frame Count", camera.getFrameCount());
             telemetryMap.put("FPS", String.format("%.2f", camera.getFps()));
             telemetryMap.put("Total frame time ms", camera.getTotalFrameTimeMs());
