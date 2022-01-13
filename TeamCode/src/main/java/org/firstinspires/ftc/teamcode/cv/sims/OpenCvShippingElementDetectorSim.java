@@ -62,7 +62,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
     private float maxConfidence = 0.0f;
     private boolean absolutelySure = false;
 
-    static final private float CONF_THRESHOLD = 0.65f;
+    static final private float CONF_THRESHOLD = 0.55f;
 
 
 
