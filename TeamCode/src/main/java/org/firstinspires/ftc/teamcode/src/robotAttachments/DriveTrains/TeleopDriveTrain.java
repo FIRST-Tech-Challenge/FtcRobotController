@@ -12,6 +12,8 @@ public class TeleopDriveTrain extends BasicDrivetrain {
      */
     private double DrivePowerMult;
 
+    private boolean frontDrive = true; //Starts facing forward
+
     /**
      * Constructs drive train from hardware map and motor names
      *
@@ -26,6 +28,11 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         this.DrivePowerMult = 1;
     }
 
+    //true is forward, false is backwards
+    public boolean getFacingDirection() {
+        return this.frontDrive;
+    }
+
     /**
      * Sets the power to the motors based on the right and left stick of the gamepad object
      *
@@ -36,11 +43,17 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         // The Y axis of a joystick ranges from -1 in its topmost position
         // to +1 in its bottom most position. We negate this value so that
         // the topmost position corresponds to maximum forward power.
-        this.back_left.setPower(DrivePowerMult * ((gamepad.left_stick_y + gamepad.left_stick_x) - gamepad.right_stick_x));
-        this.front_left.setPower(DrivePowerMult * ((gamepad.left_stick_y - gamepad.left_stick_x) - gamepad.right_stick_x));
-        this.back_right.setPower(DrivePowerMult * ((gamepad.left_stick_y - gamepad.left_stick_x) + gamepad.right_stick_x));
-        this.front_right.setPower(DrivePowerMult * ((gamepad.left_stick_y + gamepad.left_stick_x) + gamepad.right_stick_x));
-
+        if (frontDrive) {
+            this.back_left.setPower(DrivePowerMult * ((gamepad.left_stick_y + gamepad.left_stick_x) - gamepad.right_stick_x));
+            this.front_left.setPower(DrivePowerMult * ((gamepad.left_stick_y - gamepad.left_stick_x) - gamepad.right_stick_x));
+            this.back_right.setPower(DrivePowerMult * ((gamepad.left_stick_y - gamepad.left_stick_x) + gamepad.right_stick_x));
+            this.front_right.setPower(DrivePowerMult * ((gamepad.left_stick_y + gamepad.left_stick_x) + gamepad.right_stick_x));
+        } else {
+            this.back_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) - gamepad.right_stick_x));
+            this.front_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) - gamepad.right_stick_x));
+            this.back_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) + gamepad.right_stick_x));
+            this.front_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) + gamepad.right_stick_x));
+        }
 
     }
 
@@ -53,4 +66,8 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         this.DrivePowerMult = drivePowerMult;
     }
 
+
+    public void flipFrontAndBack() {
+        frontDrive = frontDrive != true;
+    }
 }

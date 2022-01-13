@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 /**
  * A Teleop for blue side
  */
+@Disabled
 @TeleOp(name = "Red Drive Program")
 public class RedDriveProgram extends TeleopTemplate {
     private static final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.RED;
