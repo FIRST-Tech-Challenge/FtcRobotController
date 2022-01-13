@@ -35,7 +35,7 @@ public class BaseCVOp extends LinearOpMode {
         // processFrame() will be called to process the frame
         Camera.setPipeline(detector);
         // Remember to change the camera rotation
-        Camera.startStreaming(FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
+        Camera.startStreaming(FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPRIGHT);
 
         //...
 

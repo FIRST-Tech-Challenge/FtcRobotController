@@ -79,15 +79,15 @@ public class FTCConstants {
     //TODO: add the javadoc.
     public static final Rect LEFT_ROI = new Rect(
             new Point(0, 0),
-            new Point(426, 720));
+            new Point(240, 1280));
 
     public static final Rect MIDDLE_ROI = new Rect(
-            new Point(426, 0),
-            new Point(852, 720));
+            new Point(240, 0),
+            new Point(480, 1280));
 
     public static final Rect RIGHT_ROI = new Rect(
-            new Point(852, 0),
-            new Point(1278, 720));
+            new Point(480, 0),
+            new Point(720, 1280));
 
     /**
      * Percent of the screen pixels need to take up to be valid.
@@ -102,5 +102,5 @@ public class FTCConstants {
     /**
      * Width of the frame.
      */
-    public static final int FRAME_WIDTH = 1278;
+    public static final int FRAME_WIDTH = 1280;
 }

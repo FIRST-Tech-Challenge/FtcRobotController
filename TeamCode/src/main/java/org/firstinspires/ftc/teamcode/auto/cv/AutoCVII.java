@@ -56,6 +56,7 @@ public class AutoCVII extends BaseNewOpMode {
                     break;
                 default:
                     // We want the looping to continue.
+                    break;
             }
         }
 
@@ -71,7 +72,7 @@ public class AutoCVII extends BaseNewOpMode {
             @Override
             public void onOpened( ) {
                 // Remember to change the camera rotation
-                camera.startStreaming( FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN );
+                camera.startStreaming( FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPRIGHT );
             }
 
             @Override

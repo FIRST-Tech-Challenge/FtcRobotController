@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.auto.cv.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -50,7 +50,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-@Disabled
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
   /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
    * the following 4 detectable objects
@@ -71,6 +70,11 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
       "Marker"
     };
 
+    private final int[] rectangleLeft = {
+            0,
+
+    };
+
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -84,7 +88,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "AdiwP4P/////AAABmQu7AHs7VU6RvvL1paz4jKJQNUjgh+DDD4c9C/tVmRuOqRAF+Y69eVtyI8NGEPEw3gaojzAgaz+Kl8ArVV5fj/m0e8kemLG2MgXZ6OqSfgrHqGUKPoYuh+EUkhC+6pjfBhUxMcuWm+BcqUGIMma5rqNzrIHgX9kZP4UUritotTJlWqJziCrsURaVEilJlD+wK2i/wKaNkzlftWGY9/j3hfEdu8CUTsn+1H7gTd5WZwtVsvBLNVW2tuIy4LfKqS3L+B+h2iCkeI05PVYtKLQAVFWKCRpmYEVY6lFf7evJDgZON98e/Vr4f9Do+zQqnuw1UUttcEr3sXg0I2cMzDpJzrNS1AB6D/1uCwtDKfXVvlsI";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -118,7 +122,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(2.5, 16.0/9.0);
+            tfod.setZoom(1, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
