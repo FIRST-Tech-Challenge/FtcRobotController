@@ -79,7 +79,6 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.75, 0,  50);
     public static double SWIVEL_PID_TOLERANCE = 10;
     public static double MAX_CENTRIPETAL_ACCELERATION_COEFF = 0.5;
-    public static double MAX_CENTRIPETAL_ACCELERATION = MAX_CENTRIPETAL_ACCELERATION_COEFF * (0.1 * 0.1 * (2 / Constants.TRACK_WIDTH));
 
     public static double LINEAR_SMOOTHING_FACTOR = 0.1;
     public static double ANGULAR_SMOOTHING_FACTOR = 0.1;
@@ -273,7 +272,7 @@ public class DriveTrain implements Subsystem {
 
         // scaling linear and angular velocities to follow maximum centripetal acceleration constraint
         double centripetalAcceleration = Math.abs(linearVelocity * angularVelocity);
-        double accelerationRatio = centripetalAcceleration / MAX_CENTRIPETAL_ACCELERATION;
+        double accelerationRatio = centripetalAcceleration / (MAX_CENTRIPETAL_ACCELERATION_COEFF * (0.1 * 0.1 * (2 / Constants.TRACK_WIDTH)));
         if(accelerationRatio > 1) {
             linearVelocity /= Math.sqrt(accelerationRatio);
             angularVelocity /= Math.sqrt(accelerationRatio);
