@@ -30,6 +30,7 @@ public abstract class Teleop extends LinearOpMode {
 //  boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 //  boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;  // gamepad1 bumpers used live/realtime
 //  boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;  //  (see processCappingArmControls() below)
+    boolean gamepad1_share_last,      gamepad1_share_now      = false;  // autodrive to shared hub
 
     boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  //
     boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport height)
@@ -74,6 +75,7 @@ public abstract class Teleop extends LinearOpMode {
     final int DRIVER_MODE_DRV_CENTRIC  = 3;
     int       driverMode               = DRIVER_MODE_STANDARD;
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
+    boolean   autoDrive                = false;
 
     boolean   duckMotorEnable = false;
 
@@ -184,6 +186,9 @@ public abstract class Teleop extends LinearOpMode {
                 }
             }
 */
+            // See if it's time to stop auto driving
+            processAutoDriveMode();
+
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
                 telemetry.addData("Joystick", "x=%.3f, y=%.3f spin=%.3f",
@@ -286,6 +291,7 @@ public abstract class Teleop extends LinearOpMode {
 //      gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
 //      gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
 //      gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
+        gamepad1_share_last      = gamepad1_share_now;       gamepad1_share_now      = gamepad1.share;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -625,10 +631,42 @@ public abstract class Teleop extends LinearOpMode {
     } // processCappingArmControls
 
     /*---------------------------------------------------------------------------------*/
+    void processAutoDriveMode() {
+        if( autoDrive ) {
+            // Update our tilt angle information
+            robot.headingIMU();
+
+            // Do we need to break from autoDrive due to user input?
+            if( breakFromAutoDrive() ) {
+                robot.stopMotion();
+                autoDrive = false;
+            }
+            // Do we need to break from autoDrive because we've reached the goal
+            else if(robot.tiltAngle < -2.0) {
+                robot.stopMotion();
+                autoDrive = false;
+            }
+        } // autoDrive
+    } // processAutoDriveMode
+
+    /*---------------------------------------------------------------------------------*/
+    boolean breakFromAutoDrive() {
+        boolean breakAutoDrive =
+                        gamepad1.dpad_down || gamepad1.dpad_up    ||
+                        gamepad1.dpad_left || gamepad1.dpad_right ||
+                        (Math.abs(gamepad1.left_stick_x)  > 0.02) ||
+                        (Math.abs(gamepad1.left_stick_y)  > 0.02) ||
+                        (Math.abs(gamepad1.right_stick_x) > 0.02) ||
+                        (Math.abs(gamepad1.right_stick_y) > 0.02);
+        return breakAutoDrive;
+    } // breakFromAutoDrive
+
+    /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
         double fineControlSpeed = 0.15;
+        double autoDriveSpeed   = 0.40;
         double fineTurnSpeed    = 0.05;
         boolean dPadMode = true;
         // Only process 1 Dpad button at a time
@@ -675,6 +713,14 @@ public abstract class Teleop extends LinearOpMode {
             frontRight = -fineTurnSpeed;
             rearLeft   =  fineTurnSpeed;
             rearRight  = -fineTurnSpeed;
+        }
+        else if( autoDrive || (gamepad1_share_now && !gamepad1_share_last) ) {
+            telemetry.addData("Share","FORWARD");
+            frontLeft  = autoDriveSpeed;
+            frontRight = autoDriveSpeed;
+            rearLeft   = autoDriveSpeed;
+            rearRight  = autoDriveSpeed;
+            autoDrive = true;
         }
         else {
             dPadMode = false;

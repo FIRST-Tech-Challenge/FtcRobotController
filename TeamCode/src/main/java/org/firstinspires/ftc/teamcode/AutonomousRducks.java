@@ -301,7 +301,7 @@ public class AutonomousRducks extends AutonomousBase {
         double wallDistance = backRangeSensor()/2.54 - 10.0;
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance, -90.0, DRIVE_TO );
         gyroTurn(TURN_SPEED_20, -135.0 );  // Turn toward corner
-        robot.duckMotor.setPower( 0.57 );                // Enable the carousel motor
+        robot.duckMotor.setPower( 0.55 );                // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
             double barelyPressSpeed = 0.06;
@@ -321,7 +321,7 @@ public class AutonomousRducks extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void driveToSquare( int level ) {
         gyroTurn(TURN_SPEED_20, -180.0 );   // Turn square to side wall
-        double squareDistance = backRangeSensor()/2.54 + 13.2;
+        double squareDistance = 30.0 - backRangeSensor()/2.54;
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );
         // Don't lower arm to floor until we get into the square, in case the freight box has rotated
         // (the front edge will catch on the floor tile when we try to drive forward)

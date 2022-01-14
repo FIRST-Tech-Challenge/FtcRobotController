@@ -44,22 +44,22 @@ public class HardwareBothHubs
 //  int               HUB_DIGPIN2 = 2; // Digital I/O input pin #2
 
     //====== INERTIAL MEASUREMENT UNIT (IMU) =====
-    protected BNO055IMU imu = null;
-    public double headingAngle;
-    public double tiltAngle;
+    protected BNO055IMU imu    = null;
+    public double headingAngle = 0.0;
+    public double tiltAngle    = 0.0;
 
     //====== MECANUM DRIVETRAIN MOTORS (RUN_USING_ENCODER) =====
     protected DcMotorEx frontLeftMotor     = null;
     public int          frontLeftMotorTgt  = 0;       // RUN_TO_POSITION target encoder count
     public int          frontLeftMotorPos  = 0;       // current encoder count
     public double       frontLeftMotorVel  = 0.0;     // encoder counts per second
-    public double       frontLeftMotorAmps  = 0.0;    // current power draw (Amps)
+    public double       frontLeftMotorAmps = 0.0;     // current power draw (Amps)
 
     protected DcMotorEx frontRightMotor    = null;
     public int          frontRightMotorTgt = 0;       // RUN_TO_POSITION target encoder count
     public int          frontRightMotorPos = 0;       // current encoder count
     public double       frontRightMotorVel = 0.0;     // encoder counts per second
-    public double       frontRightMotorAmps  = 0.0;   // current power draw (Amps)
+    public double       frontRightMotorAmps= 0.0;     // current power draw (Amps)
 
     protected DcMotorEx rearLeftMotor      = null;
     public int          rearLeftMotorTgt   = 0;       // RUN_TO_POSITION target encoder count
@@ -71,7 +71,7 @@ public class HardwareBothHubs
     public int          rearRightMotorTgt  = 0;       // RUN_TO_POSITION target encoder count
     public int          rearRightMotorPos  = 0;       // current encoder count
     public double       rearRightMotorVel  = 0.0;     // encoder counts per second
-    public double       rearRightMotorAmps  = 0.0;    // current power draw (Amps)
+    public double       rearRightMotorAmps = 0.0;     // current power draw (Amps)
 
     protected double COUNTS_PER_MOTOR_REV  = 28.0;    // goBilda Yellow Jacket Planetary Gear Motor Encoders
     protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
@@ -93,7 +93,7 @@ public class HardwareBothHubs
     public int          CAPPING_ARM_POS_STORE   = 291;
     public int          CAPPING_ARM_POS_LIBERTY = 786;   // status of liberty pose (end duck-autonomous here)
     public int          CAPPING_ARM_POS_CAP     = 1335;
-    public int          CAPPING_ARM_POS_GRAB    = 2060;
+    public int          CAPPING_ARM_POS_GRAB    = 2070;
     public int          cappingArmPos = CAPPING_ARM_POS_START;
 
     // CAPPING ARM WRIST SERVO
@@ -116,18 +116,10 @@ public class HardwareBothHubs
     public int          freightMotorPos  = 0;          // current encoder count
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
 
-/*    public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
-    public int          FREIGHT_ARM_POS_SPIN       = 150;   // Raised enough for box to spin clearly
-    public int          FREIGHT_ARM_POS_SHARED     = 350;   // Front scoring into shared shipping hub
-    public int          FREIGHT_ARM_POS_TRANSPORT1 = 400;   // Horizontal transport position
-    public int          FREIGHT_ARM_POS_VERTICAL   = 1350;  // Vertical ("up" vs "down" reverse at this point)
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 1950;  // For dumping into hub top level
-    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 2275;  // For dumping into hub middle level
-    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2400;  // For dumping into hub bottom level */
     public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
     public int          FREIGHT_ARM_POS_SPIN       = 125;   // Raised enough for box to spin clearly
-    public int          FREIGHT_ARM_POS_SHARED     = 232;   // Front scoring into shared shipping hub
-    public int          FREIGHT_ARM_POS_TRANSPORT1 = FREIGHT_ARM_POS_SHARED;   // Horizontal transport position
+    public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
+    public int          FREIGHT_ARM_POS_TRANSPORT1 = 232;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level last
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1898;  // For dumping into hub middle level
@@ -152,8 +144,8 @@ public class HardwareBothHubs
     private MaxSonarI2CXL sonarRangeR = null;
     private MaxSonarI2CXL sonarRangeF = null;
     private MaxSonarI2CXL sonarRangeB = null;
-//    public ColorSensor freightIdentifier = null;
-//    public DistanceSensor freightFinder = null;
+//  public ColorSensor freightIdentifier = null;
+//  public DistanceSensor freightFinder = null;
     private NormalizedColorSensor freightFinder = null;
     private DistanceSensor freightDetector = null;
     public final float[] hsvValues = new float[3];
@@ -369,13 +361,13 @@ public class HardwareBothHubs
         frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
         frontRightMotorPos = frontRightMotor.getCurrentPosition();
         frontRightMotorVel = frontRightMotor.getVelocity();
-        frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
+        frontRightMotorAmps= frontRightMotor.getCurrent(MILLIAMPS);
         rearRightMotorPos  = rearRightMotor.getCurrentPosition();
         rearRightMotorVel  = rearRightMotor.getVelocity();
         rearRightMotorAmps = rearRightMotor.getCurrent(MILLIAMPS);
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
-        rearLeftMotorAmps = rearLeftMotor.getCurrent(MILLIAMPS);
+        rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
         duckMotorVel       = duckMotor.getVelocity();
         cappingMotorPos    = cappingMotor.getCurrentPosition();
         cappingMotorAmps   = cappingMotor.getCurrent( MILLIAMPS );
