@@ -57,7 +57,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
-    private static double INTAKE_SPEED = -0.6;
+    private static double INTAKE_SPEED = -0.8;
     private static double INTAKE_SPEED_REVERSE = 0.55;
 
     private boolean intakeRunning = false;
@@ -389,8 +389,9 @@ public class FrenzyBot extends FrenzyBaseBot {
         intakeRunning = false;
 //        prepDropperToMove();
         intakeDropperUp();
+        delayWait(800);
         activateIntake(-0.15);
-        delayWait(2000);
+        delayWait(700);
         activateIntake(0);
     }
 
@@ -547,7 +548,7 @@ public class FrenzyBot extends FrenzyBaseBot {
             }
         }
 
-        delayWait(500);
+        delayWait(200);
         stopIntake();
         stop();
 
