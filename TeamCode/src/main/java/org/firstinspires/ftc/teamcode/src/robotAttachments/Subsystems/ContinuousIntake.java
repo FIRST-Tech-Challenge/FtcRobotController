@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -24,17 +25,21 @@ public class ContinuousIntake {
      */
     final static double forwardPower = 1;
     /**
-     * The Position servo must go to for it to be up
+     * The Position servo must be to release an item
      */
-    private static final double BucketUpPosition = .98;
+    private static final double open = .4; // this position needs to be adjusted!
     /**
-     * The Position servo must go to for it to be down
+     * The Position servo must be to keep and item in the intake compartment
      */
-    private static final double BucketDownPosition = .46;
+    private static final double closed = .7; // this position needs to be adjusted
     /**
-     * The intake sensor
+     * The item color sensor
      */
-    public ColorRangeSensor intakeSensor;
+    public ColorRangeSensor colorSensor;
+    /**
+     * the distance sensor on the inside of the intake system, it is used to identify when an object enters the
+     */
+    public DistanceSensor distanceSensor;
     /**
      * DcMotor Object
      */
@@ -42,7 +47,7 @@ public class ContinuousIntake {
     /**
      * The internal Servo Object
      */
-    Servo slantServo;
+    Servo itemRelease;
 
     /**
      * Initializes from hardware map and names
@@ -51,15 +56,20 @@ public class ContinuousIntake {
      * @param motorName   Name of intake motor
      * @param servoName   Name of lifting servo
      */
-    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName) {
+    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String distanceSensor, String colorSensor, boolean sensorDetectionLight) {
         intakeMotor = hardwareMap.dcMotor.get(motorName);
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        slantServo = hardwareMap.servo.get(servoName);
+        this.distanceSensor = hardwareMap.get(DistanceSensor.class, distanceSensor);
 
+        this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
+        this.colorSensor.enableLed(sensorDetectionLight);
+
+
+        itemRelease = hardwareMap.servo.get(servoName);
     }
 
     public gameObject identifyContents() {
@@ -83,10 +93,10 @@ public class ContinuousIntake {
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        intakeSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
-        intakeSensor.enableLed(sensorDetectionLight);
+        this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
+        this.colorSensor.enableLed(sensorDetectionLight);
 
-        slantServo = hardwareMap.servo.get(servoName);
+        itemRelease = hardwareMap.servo.get(servoName);
 
     }
 
@@ -140,14 +150,14 @@ public class ContinuousIntake {
      * uses the intake's servo hinge to put the intake in the up position
      */
     public void setServoUp() {
-        slantServo.setPosition(BucketUpPosition);
+        itemRelease.setPosition(open);
     }
 
     /**
      * uses the intake's servo hinge to put the intake in the down position
      */
     public void setServoDown() {
-        slantServo.setPosition(BucketDownPosition);
+        itemRelease.setPosition(closed);
     }
 
     /**
@@ -158,10 +168,10 @@ public class ContinuousIntake {
      */
     public double getColor(String color) {
         HashMap<String, Double> colorKey = new HashMap<String, Double>() {{
-            put("red", (double) (intakeSensor.red()));
-            put("green", (double) intakeSensor.green());
-            put("blue", (double) (intakeSensor.blue()));
-            put("alpha", (double) (intakeSensor.red()));
+            put("red", (double) (colorSensor.red()));
+            put("green", (double) colorSensor.green());
+            put("blue", (double) (colorSensor.blue()));
+            put("alpha", (double) (colorSensor.red()));
         }};
         return colorKey.get(color).doubleValue();
     }
@@ -172,7 +182,7 @@ public class ContinuousIntake {
      * @return Returns values from 0 to 255 in the form of R,G,B
      */
     public double[] getRGB() {
-        return new double[]{intakeSensor.red(), intakeSensor.green(), intakeSensor.blue()};
+        return new double[]{colorSensor.red(), colorSensor.green(), colorSensor.blue()};
     }
 
     /**
@@ -180,8 +190,8 @@ public class ContinuousIntake {
      *
      * @return The distance in Inches
      */
-    public double getCloseDistance() {
-        double distance = intakeSensor.getDistance(DistanceUnit.INCH);
+    public double getSensorDistance() {
+        double distance = distanceSensor.getDistance(DistanceUnit.CM);
         return distance;
     }
 

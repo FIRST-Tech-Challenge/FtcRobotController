@@ -30,7 +30,7 @@ public class ColorTest extends TeleopTemplate {
             telemetry.addData("red:", intake.getColor("red"));
             telemetry.addData("green:", intake.getColor("green"));
             telemetry.addData("blue:", intake.getColor("blue"));
-            telemetry.addData("distance:", intake.getCloseDistance());
+            telemetry.addData("distance:", intake.getSensorDistance());
 
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                 intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);

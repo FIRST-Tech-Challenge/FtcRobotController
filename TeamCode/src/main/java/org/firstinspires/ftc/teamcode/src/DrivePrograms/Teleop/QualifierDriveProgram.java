@@ -39,7 +39,7 @@ public class QualifierDriveProgram extends LinearOpMode {
         drivetrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
 
         spinner = new CarouselSpinner(hardwareMap, "cs");
-        slide.setMotorPower(1);
+        slide.setMotorPower(.5);
         Thread.sleep(250);
         slide.setMotorPower(0);
 
@@ -148,9 +148,11 @@ public class QualifierDriveProgram extends LinearOpMode {
                     if ((gamepad2.left_stick_y) != 0) {
                         slide.setMotorPower(-gamepad2.left_stick_y);
                         posOn = false;
-                        slide.setTargetHeight(slide.getEncoderCount());
+                        //slide.setTargetHeight(slide.getEncoderCount());
                     } else {
-                        slide.threadMain();
+                        //slide.threadMain();
+                        posOn = false;
+                        slide.setMotorPower(0);
                     }
                 }
 
