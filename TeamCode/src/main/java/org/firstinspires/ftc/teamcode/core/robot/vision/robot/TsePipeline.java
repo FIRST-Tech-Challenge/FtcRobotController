@@ -22,7 +22,7 @@ top width = 0.195
 blue
 bottom height = 0.41
 bottom width = 0.75
-middle high = 0.315
+middle height = 0.315
 middle width = 0.37
 top height 0.25
 top width = 0.08

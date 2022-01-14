@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous
-public class RedAutoWarehouse extends AutoWarehouse {
-    public RedAutoWarehouse() {
+public class RedAutoStorage extends AutoStorage {
+    public RedAutoStorage() {
         super();
         this.multiplier = -1;
 

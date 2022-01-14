@@ -25,12 +25,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AutoWarehouse extends LinearOpMode {
     protected int multiplier = 1;
 
-    public static double topRectWidthPercentage = 0.25;
-    public static double topRectHeightPercentage = 0.50;
-    public static double middleRectWidthPercentage = 0.50;
-    public static double middleRectHeightPercentage = 0.50;
-    public static double bottomRectWidthPercentage = 0.75;
-    public static double bottomRectHeightPercentage = 0.50;
+    public double bottomRectWidthPercentage = 0.75;
+    public double bottomRectHeightPercentage = 0.41;
+    public double middleRectWidthPercentage = 0.37;
+    public double middleRectHeightPercentage = 0.315;
+    public double topRectWidthPercentage = 0.08;
+    public double topRectHeightPercentage = 0.25;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,9 +42,7 @@ public class AutoWarehouse extends LinearOpMode {
         TsePipeline.bottomRectHeightPercentage = bottomRectHeightPercentage;
 
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
-        AtomicInteger height = new AtomicInteger(-1);
-        // first marker shall cache the height
-        final int[] cachedHeight = {-1};
+        final int[] height = {-1};
         double nextToWall = 70 - inchesToCoordinate(5.8D);
 
         EventThread eventThread = new EventThread();
@@ -64,10 +62,7 @@ public class AutoWarehouse extends LinearOpMode {
 
             builder.lineToLinearHeading(new Pose2d(-1, 41.5 * multiplier,
                     Math.toRadians(70 * multiplier)));
-            builder.addTemporalMarker(() -> {
-                cachedHeight[0] = height.get();
-                lift.setPosition(AutoLift.Positions.TOP);
-            });
+            builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
             builder.waitSeconds(4);
             builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.INTAKING));
             builder.lineToLinearHeading(new Pose2d(0, nextToWall * multiplier, Math.toRadians(3)));
@@ -84,10 +79,7 @@ public class AutoWarehouse extends LinearOpMode {
             builder.lineTo(new Vector2d(-3, nextToWall * multiplier));
             builder.lineToLinearHeading(new Pose2d(-1, 41.5 * multiplier,
                     Math.toRadians(70 * multiplier)));
-            builder.addTemporalMarker(() -> {
-                // TODO LIFT UP
-                lift.setPosition(AutoLift.Positions.TOP);
-            });
+            builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
             builder.waitSeconds(8);
             builder.lineToLinearHeading(new Pose2d(0, nextToWall * multiplier, Math.toRadians(3)));
             builder.lineTo(new Vector2d(40, nextToWall * multiplier));
@@ -95,7 +87,6 @@ public class AutoWarehouse extends LinearOpMode {
             secondSequence = builder.build();
         }
 
-        Thread detectorThread = new Thread(() -> height.set(detector.run()));
         Thread thread = new Thread(() -> {
             while (!isStopRequested()) {
                 lift.update();
@@ -105,8 +96,9 @@ public class AutoWarehouse extends LinearOpMode {
         waitForStart();
         isStopRequested();
 
-        detectorThread.start();
         thread.start();
+
+        height[0] = detector.run();
 
         if (!isStopRequested()) {
 
@@ -141,6 +133,5 @@ public class AutoWarehouse extends LinearOpMode {
     public AutoLift.Positions getPosition(int input) {
         return input == 1 ? AutoLift.Positions.BOTTOM :
                 input == 2 ? AutoLift.Positions.MIDDLE : AutoLift.Positions.TOP;
-
     }
 }

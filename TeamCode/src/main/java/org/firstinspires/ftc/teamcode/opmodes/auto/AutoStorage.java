@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
@@ -26,15 +29,17 @@ public class AutoStorage extends LinearOpMode {
     public int multiplier = 1;
     public int directionAdder = 0;
 
-    public static double topRectWidthPercentage = 0.25;
-    public static double topRectHeightPercentage = 0.50;
-    public static double middleRectWidthPercentage = 0.50;
-    public static double middleRectHeightPercentage = 0.50;
-    public static double bottomRectWidthPercentage = 0.75;
-    public static double bottomRectHeightPercentage = 0.50;
+    public double bottomRectWidthPercentage = 0.75;
+    public double bottomRectHeightPercentage = 0.41;
+    public double middleRectWidthPercentage = 0.37;
+    public double middleRectHeightPercentage = 0.315;
+    public double topRectWidthPercentage = 0.08;
+    public double topRectHeightPercentage = 0.25;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        MultipleTelemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+
         TsePipeline.topRectWidthPercentage = topRectWidthPercentage;
         TsePipeline.topRectHeightPercentage = topRectHeightPercentage;
         TsePipeline.middleRectWidthPercentage = middleRectWidthPercentage;
@@ -48,7 +53,7 @@ public class AutoStorage extends LinearOpMode {
         AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
-        AtomicInteger height = new AtomicInteger();
+        final int[] height = {-1};
 
         final Pose2d initial = new Pose2d(-40, multiplier * (70 - inchesToCoordinate(9)),
                 Math.toRadians(90 * multiplier));
@@ -62,7 +67,7 @@ public class AutoStorage extends LinearOpMode {
         builder.lineTo(new Vector2d(-40, 55 * multiplier));
         builder.splineToLinearHeading(new Pose2d(-20, 45 * multiplier, Math.toRadians(100)),
                 Math.toRadians(-110));
-        builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.TOP));
+        builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
         builder.waitSeconds(4);
         builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.INTAKING));
 //        builder.waitSeconds(1);
@@ -80,8 +85,6 @@ public class AutoStorage extends LinearOpMode {
 
         TrajectorySequence trajSeq = builder.build();
 
-        Thread detectorThread = new Thread(() -> height.set(detector.run()));
-
         Thread thread = new Thread(() -> {
             while (!isStopRequested()) {
                 lift.update();
@@ -89,14 +92,21 @@ public class AutoStorage extends LinearOpMode {
         });
 
         waitForStart();
-        detectorThread.start();
         thread.start();
 
+        height[0] = detector.run();
+        telemetry.addData("height", height[0]);
+        telemetry.update();
         if (!isStopRequested()) {
             drive.followTrajectorySequence(trajSeq);
         }
         drive.followTrajectorySequenceAsync(null);
         drive.update();
         PoseStorage.currentPose = drive.getPoseEstimate();
+    }
+
+    public AutoLift.Positions getPosition(int input) {
+        return input == 1 ? AutoLift.Positions.BOTTOM :
+                input == 2 ? AutoLift.Positions.MIDDLE : AutoLift.Positions.TOP;
     }
 }
