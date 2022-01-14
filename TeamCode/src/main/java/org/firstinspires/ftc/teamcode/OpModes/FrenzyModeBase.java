@@ -167,7 +167,7 @@ public class FrenzyModeBase extends LinearOpMode {
                 if (intakeReverse) {
                     robot.reverseIntake();
                 } else {
-                    robot.stopIntake();
+                    robot.stopOuttake();
                 }
             }
         }

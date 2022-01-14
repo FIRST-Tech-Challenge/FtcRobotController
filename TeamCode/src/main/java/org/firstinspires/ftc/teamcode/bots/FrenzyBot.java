@@ -36,6 +36,8 @@ public class FrenzyBot extends FrenzyBaseBot {
     public static int LIFT_MIN_EXTENSION = 300;
     public static int LIFT_UNDER_EXTENTION = 5;
 
+    private boolean liftEmergencyMode = false; //if the lift is broken, operate with the intake
+
     //New lift vals: TOP - 1755. MIDDLE -1482. LOW - 1282
 
     private int liftLocation = LIFT_NO_EXTENSION;
@@ -222,7 +224,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void liftToLower() {
         if (liftLocation != LIFT_UNDER_EXTENTION){
             //reset dropper before retracting the lift all the way
-            if (dropperServo.getPosition() < 0.5) {
+            if (dropperServo.getPosition() > 0.5) {
                 resetDropper();
                 delayWait(999);
             } else {
@@ -375,6 +377,10 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateIntake(INTAKE_SPEED_REVERSE);
     }
 
+    public void stopOuttake() {
+        activateIntake(0);
+    }
+
     @BotAction(displayName = "Stop intake", defaultReturn = "")
     public void stopIntake() {
         delayWait(200);
@@ -472,21 +478,15 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Drop to Shared Hub Red", defaultReturn = "")
     public void dropToSharedHubRed() {
-        //liftToLevelMin();
-        //delayWait(400);
-        //towerToSharedHubRed();
-        //delayWait(1000);
-        initTower();
-        liftSharedHub();
-        delayWait(700);
-        dropElement();
-        delayWait(800);
-        resetDropper();
-        resetLift();
+        dropToSharedHub();
     }
 
     @BotAction(displayName = "Drop to Shared Hub Blue", defaultReturn = "")
     public void dropToSharedHubBlue() {
+        dropToSharedHub();
+    }
+
+    public void dropToSharedHub() {
         //liftToLevelMin();
         //delayWait(400);
         //towerToSharedHubRed();
@@ -596,5 +596,13 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public boolean isIntakeRunning() {
         return intakeRunning;
+    }
+
+    public boolean isLiftEmergencyMode() {
+        return liftEmergencyMode;
+    }
+
+    public void setLiftEmergencyMode(boolean liftEmergencyMode) {
+        this.liftEmergencyMode = liftEmergencyMode;
     }
 }
