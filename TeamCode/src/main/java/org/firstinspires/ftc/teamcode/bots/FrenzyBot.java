@@ -393,22 +393,22 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void stopIntake() {
         delayWait(200);
         activateIntake(0);
-        initTower();
-
-        int delay = 300;
-        if(liftLocation != LIFT_UNDER_EXTENTION){
-            liftToLower();
-            delay = 1000;
-        }
-
-        delayWait(delay);
-        intakeRunning = false;
-//        prepDropperToMove();
-        intakeDropperUp();
-        delayWait(800);
-        activateIntake(-0.15);
-        delayWait(700);
-        activateIntake(0);
+//        initTower();
+//
+//        int delay = 300;
+//        if(liftLocation != LIFT_UNDER_EXTENTION){
+//            liftToLower();
+//            delay = 1000;
+//        }
+//
+//        delayWait(delay);
+//        intakeRunning = false;
+////        prepDropperToMove();
+//        intakeDropperUp();
+//        delayWait(800);
+//        activateIntake(-0.15);
+//        delayWait(700);
+//        activateIntake(0);
     }
 
     @BotAction(displayName = "Start turntable blue", defaultReturn = "")

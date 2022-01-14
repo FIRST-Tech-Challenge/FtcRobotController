@@ -134,6 +134,7 @@ public class FrenzyModeBase extends LinearOpMode {
         handleTower();
         depositToTeamHub();
         depositToSharedHub();
+        handleIntakeDropper();
     }
 
     protected void depositToTeamHub() {
@@ -219,11 +220,24 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleDropper() {
-        if ( gamepad2.dpad_up){
-            robot.dropElement();
+        if (isButtonPressable()) {
+            startGamepadLockout();
+            if (gamepad2.dpad_up) {
+                robot.dropElement();
+            } else if (gamepad2.dpad_down) {
+                robot.resetDropper();
+            }
         }
-        else if (gamepad2.dpad_down){
-            robot.resetDropper();
+    }
+
+    protected void handleIntakeDropper() {
+        if (isButtonPressable()) {
+            startGamepadLockout();
+            if (gamepad1.dpad_up) {
+                robot.intakeDropperUp();
+            } else if (gamepad1.dpad_down) {
+                robot.intakeDropperDown();
+            }
         }
     }
 
