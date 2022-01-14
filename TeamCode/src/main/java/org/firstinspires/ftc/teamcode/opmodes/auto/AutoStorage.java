@@ -8,7 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
+import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -23,8 +27,12 @@ public class AutoStorage extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        EventThread eventThread = new EventThread(() -> !isStopRequested());
+
         AutoCarousel carousel = new AutoCarousel(hardwareMap);
-//        TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
+        AutoLift lift = new AutoLift(eventThread, hardwareMap);
+
+        TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
         AtomicInteger height = new AtomicInteger();
 
         final Pose2d initial = new Pose2d(-40, multiplier * (70 - inchesToCoordinate(9)),
@@ -37,46 +45,39 @@ public class AutoStorage extends LinearOpMode {
         builder.waitSeconds(0.1);
         // 9.35 seconds long
         builder.lineTo(new Vector2d(-40, 55 * multiplier));
-        builder.splineToLinearHeading(new Pose2d(-20, 42 * multiplier, Math.toRadians(100)),
+        builder.splineToLinearHeading(new Pose2d(-20, 45 * multiplier, Math.toRadians(100)),
                 Math.toRadians(-110));
-        builder.addDisplacementMarker(() -> {
-            // TODO LIFT UP
-        });
-        builder.waitSeconds(2);
-        builder.addDisplacementMarker(() -> {
-            // TODO LIFT DOWN
-        });
-        builder.waitSeconds(2);
+        builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.TOP));
+        builder.waitSeconds(4);
+        builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.INTAKING));
+//        builder.waitSeconds(1);
         builder.lineTo(new Vector2d(-19, 45 * multiplier));
-        builder.lineToLinearHeading(new Pose2d(-58, 56.5, Math.toRadians(240)));
-        //builder.addDisplacementMarker(carousel::on);
-        builder.waitSeconds(3);
-        //builder.addDisplacementMarker(carousel::off);
+        builder.lineToLinearHeading(new Pose2d(-59, 57, Math.toRadians(240)));
+        builder.addTemporalMarker(carousel::on);
+        builder.waitSeconds(4);
+        builder.addTemporalMarker(carousel::off);
         builder.lineToLinearHeading(new Pose2d(-60, 35, Math.toRadians(90)));
-        builder.waitSeconds(10);
-        builder.addDisplacementMarker(() -> {
-            // TODO FIRE TAPE MEASURE
-        });
-        builder.waitSeconds(3);
+//        builder.waitSeconds(10);
+//        builder.addTemporalMarker(() -> {
+//            // TODO FIRE TAPE MEASURE
+//        });
+//        builder.waitSeconds(3);
 
         TrajectorySequence trajSeq = builder.build();
 
-//        Thread detectorThread = new Thread(() -> {
-//            height.set(detector.run());
-//        });
+        Thread detectorThread = new Thread(() -> height.set(detector.run()));
 
         Thread thread = new Thread(() -> {
-            while (true) {
-                drive.update();
+            while (!isStopRequested()) {
+                lift.update();
             }
         });
 
         waitForStart();
-//        detectorThread.start();
+        detectorThread.start();
         thread.start();
 
         if (!isStopRequested()) {
-            carousel.on();
             drive.followTrajectorySequence(trajSeq);
         }
         drive.followTrajectorySequenceAsync(null);

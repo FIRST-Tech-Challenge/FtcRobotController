@@ -15,7 +15,7 @@ public class TseDetector {
     private OpenCvCamera camera;
     private final String webcamName;
     private final HardwareMap hardwareMap;
-    private TsePipeline pipeline;
+    private final TsePipeline pipeline;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
     public TseDetector(HardwareMap hMap, String webcamName, boolean debug) {

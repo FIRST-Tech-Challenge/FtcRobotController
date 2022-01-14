@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.core.robot.vision.robot;
 
 import android.util.Pair;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -9,6 +11,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+@Config
 public class TsePipeline extends OpenCvPipeline {
     private final Scalar red = new Scalar(255,0,0);
     private final Scalar yellow = new Scalar(255,255,0);
@@ -29,12 +32,12 @@ public class TsePipeline extends OpenCvPipeline {
     private double bottomAverage = 0;
 
     //The position related to the screen
-    private double topRectWidthPercentage = 0.25;
-    private double topRectHeightPercentage = 0.50;
-    private double middleRectWidthPercentage = 0.50;
-    private double middleRectHeightPercentage = 0.50;
-    private double bottomRectWidthPercentage = 0.75;
-    private double bottomRectHeightPercentage = 0.50;
+    public static double topRectWidthPercentage = 0.25;
+    public static double topRectHeightPercentage = 0.50;
+    public static double middleRectWidthPercentage = 0.50;
+    public static double middleRectHeightPercentage = 0.50;
+    public static double bottomRectWidthPercentage = 0.75;
+    public static double bottomRectHeightPercentage = 0.50;
     private int different = 0;
     private int lastFrameValue = 0;
     private boolean isComplete = false;

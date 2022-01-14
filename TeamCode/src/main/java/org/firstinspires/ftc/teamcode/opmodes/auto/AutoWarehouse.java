@@ -36,8 +36,7 @@ public class AutoWarehouse extends LinearOpMode {
         EventThread eventThread = new EventThread();
 
         AutoIntake intake = new AutoIntake(hardwareMap);
-        AutoGrabber grabber = new AutoGrabber(hardwareMap);
-        AutoLift lift = new AutoLift(eventThread, hardwareMap, grabber);
+        AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
@@ -55,10 +54,8 @@ public class AutoWarehouse extends LinearOpMode {
                 cachedHeight[0] = height.get();
                 lift.setPosition(AutoLift.Positions.TOP);
             });
-            builder.waitSeconds(8);
-            builder.addTemporalMarker(() -> {
-                lift.setPosition(AutoLift.Positions.INTAKING);
-            });
+            builder.waitSeconds(4);
+            builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.INTAKING));
             builder.lineToLinearHeading(new Pose2d(0, nextToWall * multiplier, Math.toRadians(3)));
             builder.lineTo(new Vector2d(20, nextToWall * multiplier));
             builder.lineTo(new Vector2d(40, nextToWall * multiplier));
@@ -86,7 +83,7 @@ public class AutoWarehouse extends LinearOpMode {
 
         Thread detectorThread = new Thread(() -> height.set(detector.run()));
         Thread thread = new Thread(() -> {
-            while (true) {
+            while (!isStopRequested()) {
                 lift.update();
             }
         });
@@ -113,18 +110,17 @@ public class AutoWarehouse extends LinearOpMode {
                 intake.stop();
                 // You'll want to correct for the distance that made it travel
                 drive.setMotorPowers(0, 0, 0, 0);
-                drive.update();
                 drive.followTrajectory(
                         drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .lineToLinearHeading(new Pose2d(40, nextToWall + 2 * multiplier,
                                         Math.toRadians(0)))
                                 .build()
                 );
+
                 drive.followTrajectorySequence(secondSequence);
             }
         }
         drive.followTrajectorySequenceAsync(null);
-        drive.update();
         PoseStorage.currentPose = drive.getPoseEstimate();
     }
 

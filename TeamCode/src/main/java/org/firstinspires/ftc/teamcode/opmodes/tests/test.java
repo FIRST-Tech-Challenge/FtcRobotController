@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
+import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 @TeleOp
@@ -24,6 +25,7 @@ public class test extends LinearOpMode {
         final Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         final Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "tapeMeasure"));
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
         final Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
         final DcMotor one = hardwareMap.get(DcMotorEx.class, "front left wheel");
         final DcMotor two = hardwareMap.get(DcMotorEx.class, "front right wheel");

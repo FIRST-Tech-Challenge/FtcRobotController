@@ -8,6 +8,9 @@ import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Objects;
 
 public class AutoLift {
 
@@ -50,8 +53,9 @@ public class AutoLift {
     /**
      * @param eventThread local eventThread instance
      * @param map         local hardwareMap instance
+     * @param grabber     grabber instance
      */
-    public AutoLift(EventThread eventThread, @NonNull HardwareMap map, AutoGrabber grabber) {
+    public AutoLift(EventThread eventThread, @NonNull HardwareMap map, @Nullable AutoGrabber grabber) {
         liftMotor = map.get(DcMotor.class,"liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -63,6 +67,14 @@ public class AutoLift {
         armServo = map.get(Servo.class,"armServo");
         this.eventThread = eventThread;
         this.grabber = grabber;
+    }
+
+    /**
+     * @param eventThread local eventThread instance
+     * @param map         local hardwareMap instance
+     */
+    public AutoLift(EventThread eventThread, HardwareMap map) {
+        this(eventThread, map, null);
     }
 
     public void setPosition(@NonNull Positions position) {
@@ -95,7 +107,9 @@ public class AutoLift {
                     if (!position.dumper) state = MovementStates.NONE;
                     else {
                         dumpWaiting = true;
-                        if (position == Positions.TSE) grabber.open();
+                        if (position == Positions.TSE && Objects.nonNull(grabber)) {
+                            grabber.open();
+                        }
                         eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, position == Positions.TSE ? 800 : 1400));
                         state = MovementStates.SERVO_MOVEMENT;
                     }
