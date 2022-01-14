@@ -21,8 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
 		m_motor = hardwareMap.dcMotor.get("ArmMotor");
 		m_leftServo = hardwareMap.servo.get("LeftIntakeArmServo");
 		m_rightServo = hardwareMap.servo.get("RightIntakeArmServo");
-		// TODO: check direction (spin clockwise on positive)
-		m_motor.setDirection(DcMotorSimple.Direction.FORWARD);
+		m_motor.setDirection(DcMotorSimple.Direction.REVERSE);
 		m_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		m_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		m_motor.setPower(0);
@@ -31,17 +30,24 @@ public class ArmSubsystem extends SubsystemBase {
 		m_rightServo.setDirection(Servo.Direction.REVERSE);
 	}
 
+	public void setRunMode(DcMotor.RunMode mode) {
+		m_motor.setMode(mode);
+	}
+
 	public void setPower(double power) {
 		m_motor.setPower(power);
 	}
 
-	public void setTargetPosition(int position)
-	{
-		m_motor.setTargetPosition(position);
-	}
-
 	public double getPower() {
 		return m_motor.getPower();
+	}
+
+	public void stop() {
+		m_motor.setPower(0);
+	}
+
+	public void setTargetPosition(int position) {
+		m_motor.setTargetPosition(position);
 	}
 
 	public double getAngle() {
