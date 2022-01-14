@@ -31,7 +31,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public static int LIFT_LEVEL_THREE = 2220;
     public static int LIFT_LEVEL_TWO = 1951;
     public static int LIFT_LEVEL_ONE = 1782;
-    public static int LIFT_SHARED_HUB = 600;
+    public static int LIFT_SHARED_HUB = 260;
     public static int LIFT_NO_EXTENSION = 0;
     public static int LIFT_MIN_EXTENSION = 300;
     public static int LIFT_UNDER_EXTENTION = 5;
@@ -308,7 +308,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Main Tower to RED shared hub", defaultReturn = "")
     public void towerToSharedHubRed(){
         if (tower != null) {
-            tower.setPosition(0.3);
+            tower.setPosition(0.33);
+            delayWait(1000);
+            tower.setPosition(0.32);
         }
     }
 
@@ -470,10 +472,11 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Drop to Shared Hub Red", defaultReturn = "")
     public void dropToSharedHubRed() {
-        liftToLevelMin();
-        delayWait(400);
-        towerToSharedHubRed();
-        delayWait(500);
+        //liftToLevelMin();
+        //delayWait(400);
+        //towerToSharedHubRed();
+        //delayWait(1000);
+        initTower();
         liftSharedHub();
         delayWait(1800);
         dropElement();
@@ -484,10 +487,11 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Drop to Shared Hub Blue", defaultReturn = "")
     public void dropToSharedHubBlue() {
-        liftToLevelMin();
-        delayWait(400);
-        towerToSharedHubBlue();
-        delayWait(500);
+        //liftToLevelMin();
+        //delayWait(400);
+        //towerToSharedHubRed();
+        //delayWait(1000);
+        initTower();
         liftSharedHub();
         delayWait(1800);
         dropElement();

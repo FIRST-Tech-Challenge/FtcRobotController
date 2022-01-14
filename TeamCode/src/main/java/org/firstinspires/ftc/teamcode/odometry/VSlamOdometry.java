@@ -103,7 +103,7 @@ public class VSlamOdometry implements IBaseOdometry {
         // This is the transformation between the center of the camera and the center of the robot
         // Set these three values to match the location/orientation of the camera with respect to the robot
         double offsetXInches = -5;
-        double offsetYInches = -4;
+        double offsetYInches = -5.5;
         double offsetHDegrees = 0;
         // to change offsets, place robot at 0 degrees. Measure from the center of the camera from the center of the robot. That is the value.
         // place the robot and spin in place. The values should vary by a maximum on 2
