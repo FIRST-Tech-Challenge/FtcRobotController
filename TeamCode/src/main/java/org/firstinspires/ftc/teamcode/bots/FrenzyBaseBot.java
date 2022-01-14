@@ -70,6 +70,7 @@ public class FrenzyBaseBot implements IOdoBot {
     protected static int positionToleration = 110;
 
 
+
     static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     public static final double COUNTS_PER_INCH_GB = (COUNTS_PER_MOTOR_GB * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI); //42.8

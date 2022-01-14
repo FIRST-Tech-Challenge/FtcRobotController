@@ -43,11 +43,12 @@ public class FrenzyBot extends FrenzyBaseBot {
     private int liftLocation = LIFT_NO_EXTENSION;
     private static double LIFT_SPEED = 0.95;
     private static double LIFT_SPEED_LOW = 0.7;
+    protected static int positionToleranceLift = 10;
 
     NormalizedColorSensor colorSensor;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_PICKUP = 0.0; // this is only to pick-up elements
+    private static double DROPPER_SERVO_POS_TRANSPORT = 0.1; // this is only to pick-up elements
     private static double DROPPER_SERVO_POS_START = 0.0;  //default pos to start and transport
     private static double DROPPER_SERVO_POS_DROP = 0.85;
 
@@ -91,6 +92,7 @@ public class FrenzyBot extends FrenzyBaseBot {
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setVelocity(0);
             lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setTargetPositionTolerance(positionToleranceLift);
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize lift", ex);
         }
@@ -326,7 +328,13 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Reset tower", defaultReturn = "")
     public void resetTower(){
         if (tower != null) {
-            tower.setPosition(0.5);
+            double currentPos = tower.getPosition();
+            double diff = 0.5 - currentPos;
+            double targetPos = 0.51;
+            if (diff > 0){
+                targetPos = 0.49;
+            }
+            tower.setPosition(targetPos);
         }
     }
 
@@ -358,9 +366,9 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    public void dropperPickupPosition(){
+    public void dropperTransportPosition(){
         if (dropperServo != null) {
-            dropperServo.setPosition(DROPPER_SERVO_POS_PICKUP);
+            dropperServo.setPosition(DROPPER_SERVO_POS_TRANSPORT);
         }
     }
 
@@ -451,6 +459,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Drop to Team Hub Red", defaultReturn = "")
     public void dropToTeamHubRed() {
         liftToLevelMin();
+        dropperTransportPosition();
         delayWait(400);
         towerToTeamHubRed();
         delayWait(500);
@@ -465,6 +474,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Drop to Team Hub Blue", defaultReturn = "")
     public void dropToTeamHubBlue() {
         liftToLevelMin();
+        dropperTransportPosition();
         delayWait(400);
         towerToTeamHubBlue();
         delayWait(500);
@@ -504,7 +514,6 @@ public class FrenzyBot extends FrenzyBaseBot {
         liftToLevelMin();
         delayWait(1000);
         resetTower();
-        delayWait(500);
         liftToLower();
         delayWait(500);
     }

@@ -103,8 +103,8 @@ public class FrenzyModeBase extends LinearOpMode {
         // DRIVING
         double drive = -gamepad1.left_stick_y; //negative to invert positive to normal
         double turn = 0;
-        double ltrigger = gamepad1.left_trigger;
-        double rtrigger = gamepad1.right_trigger;
+        double ltrigger = gamepad1.right_trigger;
+        double rtrigger = gamepad1.left_trigger;
         if (ltrigger > 0) {
             turn = -ltrigger;
         } else if (rtrigger > 0) {
