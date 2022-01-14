@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.headless;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,7 +16,7 @@ import java.util.Objects;
 public class AutoLift {
 
     // 5 1/4 inch from back of robot to rim
-
+    MultipleTelemetry telemetry = new MultipleTelemetry();
     public enum Positions {
         INTAKING(0, 0.76D, false),
         SAFE(1375, 0.7D, false),
@@ -96,6 +97,9 @@ public class AutoLift {
         if (position != lastPosition) state = MovementStates.START;
         switch (state) {
             case START:
+                if (lastPosition == null) {
+
+                }
                 armServo.setPosition(0.7D);
                 liftMotor.setTargetPosition(position.motorPos);
                 state = MovementStates.LIFT_MOVEMENT;
@@ -118,6 +122,7 @@ public class AutoLift {
             case SERVO_MOVEMENT:
                 if (!dumpWaiting) {
                     position = Positions.INTAKING;
+                    lastPosition = null;
                     return;
                 }
                 break;
