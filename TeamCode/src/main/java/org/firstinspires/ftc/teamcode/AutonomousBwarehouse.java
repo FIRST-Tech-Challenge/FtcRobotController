@@ -69,6 +69,10 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
     OpenCvCamera webcam;
     public static int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
+    public static boolean alignedLeft = false;   // dynamic (gets updated every cycle during INIT)
+    public static boolean alignedRight = false;   // dynamic (gets updated every cycle during INIT)
+    public static double leftAverage = 0.0;
+    public static double rightAverage = 0.0;
     public static double collisionDelay = 4.0;  // wait 4 seconds before moving (to avoid collision)
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
@@ -114,6 +118,8 @@ public class AutonomousBwarehouse extends AutonomousBase {
             telemetry.addData("Block Level", "%d", blockLevel );
             telemetry.addData("Sonar Range", "%.1f inches (52.8)", sonarRangeR/2.54 );
             telemetry.addData("Start delay", "%.1f seconds (dpad up/down)", collisionDelay );
+            telemetry.addData("Left Alignment", "%.2f %b", leftAverage, alignedLeft);
+            telemetry.addData("Right Alignment", "%.2f %b", rightAverage, alignedRight);
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -415,12 +421,23 @@ public class AutonomousBwarehouse extends AutonomousBase {
         private int avg2;
         private int avg3;
         private Point skystone   = new Point();        // Team Element (populated once we find it!)
-        private Point sub1PointA = new Point( 45,190); // 15x15 pixels on LEFT  (limited by barrier!)
-        private Point sub1PointB = new Point( 60,205);
+        private Point sub1PointA = new Point( 50,190); // 15x15 pixels on LEFT  (limited by barrier!)
+        private Point sub1PointB = new Point( 65,205);
         private Point sub2PointA = new Point(155,190); // 15x15 pixels on CENTER
         private Point sub2PointB = new Point(170,205);
         private Point sub3PointA = new Point(272,190); // 15x15 pixels on RIGHT
         private Point sub3PointB = new Point(287,205);
+
+        // Points for alignment
+        private Mat alignMat1;
+        private Mat alignMat2;
+        private int alignAvg1;
+        private int alignAvg2;
+        private Point alignment1PointA = new Point(40,212);
+        private Point alignment1PointB = new Point(50,222);
+        private Point alignment2PointA = new Point(277,212);
+        private Point alignment2PointB = new Point(287,222);
+        private final static double colorThreshold = 140.0;
 
         @Override
         public Mat processFrame(Mat input)
@@ -433,10 +450,20 @@ public class AutonomousBwarehouse extends AutonomousBase {
             subMat1 = Cb.submat(new Rect(sub1PointA,sub1PointB) );
             subMat2 = Cb.submat(new Rect(sub2PointA,sub2PointB) );
             subMat3 = Cb.submat(new Rect(sub3PointA,sub3PointB) );
+            alignMat1 = Cb.submat(new Rect(alignment1PointA, alignment1PointB));
+            alignMat2 = Cb.submat(new Rect(alignment2PointA, alignment2PointB));
+
             // Average the three sample zones
             avg1 = (int)Core.mean(subMat1).val[0];
             avg2 = (int)Core.mean(subMat2).val[0];
             avg3 = (int)Core.mean(subMat3).val[0];
+            alignAvg1 = (int)Core.mean(alignMat1).val[0];
+            alignAvg2 = (int)Core.mean(alignMat2).val[0];
+
+            // Draw alignment rectangles
+            Imgproc.rectangle(input, alignment1PointA, alignment1PointB, new Scalar(0, 0, 255), 1);
+            Imgproc.rectangle(input, alignment2PointA, alignment2PointB, new Scalar(0, 0, 255), 1);
+
             // Draw rectangles around the sample zones
             Imgproc.rectangle(input, sub1PointA, sub1PointB, new Scalar(0, 0, 255), 1);
             Imgproc.rectangle(input, sub2PointA, sub2PointB, new Scalar(0, 0, 255), 1);
@@ -463,6 +490,11 @@ public class AutonomousBwarehouse extends AutonomousBase {
                 blockLevel = 3;
             }
 
+            leftAverage = alignAvg1;
+            alignedLeft = (alignAvg1 >= colorThreshold);
+            rightAverage= alignAvg2;
+            alignedRight = (alignAvg2 >= colorThreshold);
+
             // Free the allocated submat memory
             subMat1.release();
             subMat1 = null;
@@ -470,6 +502,10 @@ public class AutonomousBwarehouse extends AutonomousBase {
             subMat2 = null;
             subMat3.release();
             subMat3 = null;
+            alignMat1.release();
+            alignMat1 = null;
+            alignMat2.release();
+            alignMat2 = null;
 
             return input;
         }

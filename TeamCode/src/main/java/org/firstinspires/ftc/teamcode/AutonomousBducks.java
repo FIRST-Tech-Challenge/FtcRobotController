@@ -65,6 +65,10 @@ public class AutonomousBducks extends AutonomousBase {
 
     OpenCvCamera webcam;
     public static int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
+    public static boolean alignedLeft = false;   // dynamic (gets updated every cycle during INIT)
+    public static boolean alignedRight = false;   // dynamic (gets updated every cycle during INIT)
+    public static double leftAverage = 0.0;
+    public static double rightAverage = 0.0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -104,6 +108,8 @@ public class AutonomousBducks extends AutonomousBase {
             telemetry.addData("ALLIANCE", "%s", "BLUE (ducks)");
             telemetry.addData("Block Level", "%d", blockLevel );
             telemetry.addData("Sonar Range", "%.1f inches (26.4)", sonarRangeL/2.54 );
+            telemetry.addData("Left Alignment", "%.2f %b", leftAverage, alignedLeft);
+            telemetry.addData("Right Alignment", "%.2f %b", rightAverage, alignedRight);
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -373,6 +379,17 @@ public class AutonomousBducks extends AutonomousBase {
         private Point sub3PointA = new Point(272,190); // 15x15 pixels on RIGHT
         private Point sub3PointB = new Point(287,205);
 
+        // Points for alignment
+        private Mat alignMat1;
+        private Mat alignMat2;
+        private int alignAvg1;
+        private int alignAvg2;
+        private Point alignment1PointA = new Point(40,212);
+        private Point alignment1PointB = new Point(50,222);
+        private Point alignment2PointA = new Point(277,212);
+        private Point alignment2PointB = new Point(287,222);
+        private final static double colorThreshold = 140.0;
+
         @Override
         public Mat processFrame(Mat input)
         {
@@ -384,10 +401,20 @@ public class AutonomousBducks extends AutonomousBase {
             subMat1 = Cb.submat(new Rect(sub1PointA,sub1PointB) );
             subMat2 = Cb.submat(new Rect(sub2PointA,sub2PointB) );
             subMat3 = Cb.submat(new Rect(sub3PointA,sub3PointB) );
+            alignMat1 = Cb.submat(new Rect(alignment1PointA, alignment1PointB));
+            alignMat2 = Cb.submat(new Rect(alignment2PointA, alignment2PointB));
+
             // Average the three sample zones
             avg1 = (int)Core.mean(subMat1).val[0];
             avg2 = (int)Core.mean(subMat2).val[0];
             avg3 = (int)Core.mean(subMat3).val[0];
+            alignAvg1 = (int)Core.mean(alignMat1).val[0];
+            alignAvg2 = (int)Core.mean(alignMat2).val[0];
+
+            // Draw alignment rectangles
+            Imgproc.rectangle(input, alignment1PointA, alignment1PointB, new Scalar(0, 0, 255), 1);
+            Imgproc.rectangle(input, alignment2PointA, alignment2PointB, new Scalar(0, 0, 255), 1);
+
             // Draw rectangles around the sample zones
             Imgproc.rectangle(input, sub1PointA, sub1PointB, new Scalar(0, 0, 255), 1);
             Imgproc.rectangle(input, sub2PointA, sub2PointB, new Scalar(0, 0, 255), 1);
@@ -414,6 +441,11 @@ public class AutonomousBducks extends AutonomousBase {
                 blockLevel = 3;
             }
 
+            leftAverage = alignAvg1;
+            alignedLeft = (alignAvg1 >= colorThreshold);
+            rightAverage= alignAvg2;
+            alignedRight = (alignAvg2 >= colorThreshold);
+
             // Free the allocated submat memory
             subMat1.release();
             subMat1 = null;
@@ -421,6 +453,10 @@ public class AutonomousBducks extends AutonomousBase {
             subMat2 = null;
             subMat3.release();
             subMat3 = null;
+            alignMat1.release();
+            alignMat1 = null;
+            alignMat2.release();
+            alignMat2 = null;
 
             return input;
         }
