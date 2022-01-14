@@ -12,10 +12,10 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name="park city red warehouse ")
+@Autonomous(name="park city red warehouse", group = "competition")
 public class RedWarehouseOdo extends LinearOpMode {
 
-    int dropPause=900;
+    final int SERVO_DROP_PAUSE=900;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,12 +70,12 @@ public class RedWarehouseOdo extends LinearOpMode {
 
         drive.followTrajectorySequence(fromStartToHub);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-        drive.pause(dropPause);
+        drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         if (freightLocation== FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
-       retract(drive);
+       drive.retract();
 
         drive.followTrajectorySequence(fromHubToWarehouse);
 
@@ -102,9 +102,9 @@ public class RedWarehouseOdo extends LinearOpMode {
             drive.followTrajectorySequence(trajSeq3);
 
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-            drive.pause(dropPause);
+            drive.pause(SERVO_DROP_PAUSE);
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-            retract(drive);
+            drive.retract();
 
             drive.followTrajectorySequence(fromHubToWarehouse);
              if (drive.getCube()) {
@@ -122,9 +122,9 @@ public class RedWarehouseOdo extends LinearOpMode {
                  drive.followTrajectorySequence(trajSeq3);
 
                  drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-                 drive.pause(dropPause);
+                 drive.pause(SERVO_DROP_PAUSE);
                  drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-                 retract(drive);
+                 drive.retract();
 
                  drive.followTrajectorySequence(fromHubToWarehouse);
                  drive.getCube();
@@ -132,10 +132,6 @@ public class RedWarehouseOdo extends LinearOpMode {
         }
     }
 
-    protected void retract(SampleMecanumDrive drive){
-        drive.linearSlideMotor.setTargetPosition(0);
-        drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        drive.linearSlideMotor.setPower(.4);
-    }
+
 
 }

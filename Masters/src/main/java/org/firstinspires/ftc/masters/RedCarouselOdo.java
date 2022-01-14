@@ -12,7 +12,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Red carousel odometry")
+@Autonomous(name = "Red carousel odometry", group = "competition")
 public class RedCarouselOdo extends LinearOpMode {
 
     @Override
@@ -50,9 +50,6 @@ public class RedCarouselOdo extends LinearOpMode {
                 .build();
         drive.followTrajectorySequence(toHub);
 
-//        Hey, Wayne, I'd appreciate it if you could fix yo' stuff.
-//        drive.distanceSensorStuff();
-        // robot.distanceSensorStuff();
         switch (freightLocation) {
             case LEFT:
                 drive.dumpFreightTop();

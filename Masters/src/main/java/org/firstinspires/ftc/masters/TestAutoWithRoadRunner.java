@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
+@Disabled
 @Autonomous(name = "test auto with roadRunner")
 public class TestAutoWithRoadRunner extends LinearOpMode {
 

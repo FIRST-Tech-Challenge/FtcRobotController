@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous
+@Disabled
 public class TestMovement extends LinearOpMode {
     RobotClass robot;
     @Override

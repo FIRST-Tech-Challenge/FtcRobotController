@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+@Disabled
 @Autonomous(name = "Park in red Box")
 public class ParkInRedBox extends LinearOpMode {
     RobotClass robot;
