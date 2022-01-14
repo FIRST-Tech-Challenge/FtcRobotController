@@ -1,0 +1,3 @@
+0 duckside_blue_level_3
+1 duckside_blue_level_2
+2 duckside_blue_level_1
