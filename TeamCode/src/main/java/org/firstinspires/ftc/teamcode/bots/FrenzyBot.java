@@ -56,7 +56,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
 
     //Intake
-    private static double INTAKE_ELEMENT_MOVE_SPEED = -0.2;
+    private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
     private static double INTAKE_SPEED = -0.6;
     private static double INTAKE_SPEED_REVERSE = 0.55;
 
