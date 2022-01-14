@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.commandftc.opModes.CommandBasedTeleOp;
@@ -12,6 +14,7 @@ import org.firstinspires.ftc.teamcode.commands.drive.DriveRightCommand;
 import org.firstinspires.ftc.teamcode.commands.drive.TankDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.lift.RaiseLiftCommand;
+import org.firstinspires.ftc.teamcode.lib.DashboardUtil;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrainSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DucksSubsystem;
@@ -129,5 +132,9 @@ public class Drive extends CommandBasedTeleOp
         telemetry.addData("arm state[calc]", rotateArmCommand::calculateState);
         telemetry.addData("duck position", ducksSubsystem::getCurrentPosition);
         telemetry.update();
+
+        TelemetryPacket init_telemetry_packet = new TelemetryPacket();
+        DashboardUtil.drawRobot(init_telemetry_packet.fieldOverlay(), driveTrain.getPoseEstimate());
+        FtcDashboard.getInstance().sendTelemetryPacket(init_telemetry_packet);
     }
 }
