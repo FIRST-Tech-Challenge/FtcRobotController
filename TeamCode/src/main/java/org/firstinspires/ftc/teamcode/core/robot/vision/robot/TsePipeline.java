@@ -209,14 +209,14 @@ public class TsePipeline extends OpenCvPipeline {
      * percentages of all rectangles. it goes top width, top height, middle width, etc.
      */
     @SuppressWarnings("unused")
-    void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage,
+    public void setRectangles(double topRectWidthPercentage, double topRectHeightPercentage,
                        double middleRectWidthPercentage, double middleRectHeightPercentage,
                        double bottomRectWidthPercentage, double bottomRectHeightPercentage) {
-        this.topRectWidthPercentage = topRectWidthPercentage;
-        this.topRectHeightPercentage = topRectHeightPercentage;
-        this.middleRectWidthPercentage = middleRectWidthPercentage;
-        this.middleRectHeightPercentage = middleRectHeightPercentage;
-        this.bottomRectWidthPercentage = bottomRectWidthPercentage;
-        this.bottomRectHeightPercentage = bottomRectHeightPercentage;
+        TsePipeline.topRectWidthPercentage = topRectWidthPercentage;
+        TsePipeline.topRectHeightPercentage = topRectHeightPercentage;
+        TsePipeline.middleRectWidthPercentage = middleRectWidthPercentage;
+        TsePipeline.middleRectHeightPercentage = middleRectHeightPercentage;
+        TsePipeline.bottomRectWidthPercentage = bottomRectWidthPercentage;
+        TsePipeline.bottomRectHeightPercentage = bottomRectHeightPercentage;
     }
 }
