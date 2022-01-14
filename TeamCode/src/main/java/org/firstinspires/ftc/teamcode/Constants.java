@@ -1,10 +1,35 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.util.function.DoubleFunction;
+
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.MecanumDriveKinematics;
+
 public final class Constants {
     public static final class MotorConstants {
         public static final class RevHDHexMotor {
             public static final int ticks_per_revolution = 28;
         }
+    }
+
+    public static final class DriveTrainConstants {
+        public final static double ticks_per_revolution =
+                20 * MotorConstants.RevHDHexMotor.ticks_per_revolution;
+
+        public final static MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
+                new Translation2d(0.28, 0.34),
+                new Translation2d(0.28, -0.34),
+                new Translation2d(-0.28, 0.34),
+                new Translation2d(-0.28, -0.34)
+        );
+
+        public final static double WheelRadios = 50;
+
+        public final static DoubleFunction<Double> mm_to_ticks = (double mm) -> mm / WheelRadios / 2 / Math.PI * ticks_per_revolution;
+
+        public final static double kV = 0.55;
+        public final static double kStatic = 0.114;
+        public final static double kA = 0.056;
     }
 
     public static final class LiftConstants {
