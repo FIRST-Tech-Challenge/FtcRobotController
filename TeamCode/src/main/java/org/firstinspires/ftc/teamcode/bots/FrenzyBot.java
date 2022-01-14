@@ -29,7 +29,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private Servo tower = null;
     private static final String TAG = "FrenzyBot";
     public static int LIFT_LEVEL_THREE = 2220;
-    public static int LIFT_LEVEL_TWO = 1951;
+    public static int LIFT_LEVEL_TWO = 1965;
     public static int LIFT_LEVEL_ONE = 1782;
     public static int LIFT_SHARED_HUB = 260;
     public static int LIFT_NO_EXTENSION = 0;
@@ -45,9 +45,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     NormalizedColorSensor colorSensor;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_PICKUP = 0.97; // this is only to pick-up elements
-    private static double DROPPER_SERVO_POS_START = 0.97;  //default pos to start and transport
-    private static double DROPPER_SERVO_POS_DROP = 0.0;
+    private static double DROPPER_SERVO_POS_PICKUP = 0.0; // this is only to pick-up elements
+    private static double DROPPER_SERVO_POS_START = 0.0;  //default pos to start and transport
+    private static double DROPPER_SERVO_POS_DROP = 0.85;
 
     // Detection
     CVDetector detector;
@@ -301,7 +301,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Main Tower to BLUE team hub", defaultReturn = "")
     public void towerToTeamHubBlue(){
         if (tower != null) {
-            tower.setPosition(0.3);
+            tower.setPosition(0.25);
         }
     }
 
@@ -451,7 +451,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         liftToLevel3();
         delayWait(1800);
         dropElement();
-        delayWait(300);
+        delayWait(800);
         resetDropper();
         resetLift();
     }
@@ -465,7 +465,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         liftToLevel3();
         delayWait(1800);
         dropElement();
-        delayWait(300);
+        delayWait(800);
         resetDropper();
         resetLift();
     }
@@ -478,9 +478,9 @@ public class FrenzyBot extends FrenzyBaseBot {
         //delayWait(1000);
         initTower();
         liftSharedHub();
-        delayWait(1800);
+        delayWait(700);
         dropElement();
-        delayWait(300);
+        delayWait(800);
         resetDropper();
         resetLift();
     }
@@ -493,9 +493,9 @@ public class FrenzyBot extends FrenzyBaseBot {
         //delayWait(1000);
         initTower();
         liftSharedHub();
-        delayWait(1800);
+        delayWait(700);
         dropElement();
-        delayWait(300);
+        delayWait(800);
         resetDropper();
         resetLift();
     }
