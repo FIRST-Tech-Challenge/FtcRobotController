@@ -341,7 +341,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Tower to hub from red warehouse", defaultReturn = "")
     public void towerToTeamHubFromAuto(){
         if (tower != null) {
-            tower.setPosition(0.35);
+            tower.setPosition(0.39);
         }
     }
 
@@ -555,14 +555,22 @@ public class FrenzyBot extends FrenzyBaseBot {
                 gotIt = true;
                 break;
             }
-            if (runtime.milliseconds() > 6000){
+            if (runtime.milliseconds() > 3000){
                 Log.d(TAG, "Ran out of time");
                 break;
             }
         }
 
         delayWait(200);
-        stopIntake();
+        activateIntake(0);
+        initTower();
+        delayWait(200);
+        intakeRunning = false;
+        intakeDropperUp();
+        delayWait(800);
+        activateIntake(-0.15);
+        delayWait(700);
+        activateIntake(0);
         stop();
 
         return gotIt;
