@@ -10,7 +10,23 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+/*
+red
+bottom height = 0.2
+bottom width = 0.805
+middle height = 0.3
+middle width = 0.534
+top height = 0.45
+top width = 0.195
 
+blue
+bottom height = 0.41
+bottom width = 0.75
+middle high = 0.315
+middle width = 0.37
+top height 0.25
+top width = 0.08
+ */
 @Config
 public class TsePipeline extends OpenCvPipeline {
     private final Scalar red = new Scalar(255,0,0);
