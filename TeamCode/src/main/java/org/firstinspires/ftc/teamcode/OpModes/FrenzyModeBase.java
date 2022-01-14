@@ -131,6 +131,7 @@ public class FrenzyModeBase extends LinearOpMode {
         handleIntake();
         handleOuttake();
         handleTurntable();
+        handleTower();
         depositToTeamHub();
         depositToSharedHub();
     }
@@ -176,7 +177,14 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
 
-
+    protected void handleTower() {
+        if (isButtonPressable()) {
+            if (gamepad2.a) {
+                startGamepadLockout();
+                robot.initTower();
+            }
+        }
+    }
 
 
     protected void handleLiftManual() {
