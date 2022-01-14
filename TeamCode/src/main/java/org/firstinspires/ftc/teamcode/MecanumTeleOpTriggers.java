@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name="MecanumTeleOp Triggers", group="FreightFrenzy")
+@TeleOp(name="MecanumTeleOp Trigger Hold for Slow", group="FreightFrenzy")
 public class MecanumTeleOpTriggers extends LinearOpMode {
 
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
