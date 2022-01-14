@@ -21,7 +21,7 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
     // must stay this way
     //noinspection GradleDependency
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
     // wpilib dependencies
     implementation 'org.ejml:ejml-all:0.40'
