@@ -16,8 +16,8 @@ public class LiftSubsystem extends SubsystemBase {
         m_liftMotor = hardwareMap.dcMotor.get("LiftMotor");
         m_liftMotor.setPower(0);
         m_liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        m_liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         m_liftMotor.setTargetPosition(0);
-        m_liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         m_liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -28,12 +28,8 @@ public class LiftSubsystem extends SubsystemBase {
         return m_liftMotor.getTargetPosition();
     }
 
-    public void setHeight(double height) {
-        m_liftMotor.setTargetPosition((int)(height / LiftConstants.distance_per_tick));
-    }
-
     public double getHeight() {
-        return  LiftConstants.distance_per_revolution * m_liftMotor.getCurrentPosition();
+        return LiftConstants.distance_per_revolution * m_liftMotor.getCurrentPosition();
     }
 
     public void setPower(double power) {
