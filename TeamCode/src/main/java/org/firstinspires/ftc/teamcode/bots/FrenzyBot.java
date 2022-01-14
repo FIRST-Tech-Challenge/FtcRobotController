@@ -283,8 +283,29 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Main Tower to team hub", defaultReturn = "")
-    public void towerToTeamHub(){
+    @BotAction(displayName = "Main Tower to RED team hub", defaultReturn = "")
+    public void towerToTeamHubRed(){
+        if (tower != null) {
+            tower.setPosition(0.75);
+        }
+    }
+
+    @BotAction(displayName = "Main Tower to BLUE team hub", defaultReturn = "")
+    public void towerToTeamHubBlue(){
+        if (tower != null) {
+            tower.setPosition(0.3);
+        }
+    }
+
+    @BotAction(displayName = "Main Tower to RED shared hub", defaultReturn = "")
+    public void towerToSharedHubRed(){
+        if (tower != null) {
+            tower.setPosition(0.3);
+        }
+    }
+
+    @BotAction(displayName = "Main Tower to BLUE shared hub", defaultReturn = "")
+    public void towerToSharedHubBlue(){
         if (tower != null) {
             tower.setPosition(0.75);
         }
@@ -410,13 +431,60 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
+    @BotAction(displayName = "Drop to Team Hub Red", defaultReturn = "")
     public void dropToTeamHubRed() {
         liftToLevelMin();
         delayWait(400);
-        towerToTeamHub();
+        towerToTeamHubRed();
         delayWait(500);
         liftToLevel3();
         delayWait(1800);
+        dropElement();
+        delayWait(300);
+        resetDropper();
+        resetLift();
+    }
+
+    @BotAction(displayName = "Drop to Team Hub Blue", defaultReturn = "")
+    public void dropToTeamHubBlue() {
+        liftToLevelMin();
+        delayWait(400);
+        towerToTeamHubBlue();
+        delayWait(500);
+        liftToLevel3();
+        delayWait(1800);
+        dropElement();
+        delayWait(300);
+        resetDropper();
+        resetLift();
+    }
+
+    @BotAction(displayName = "Drop to Shared Hub Red", defaultReturn = "")
+    public void dropToSharedHubRed() {
+        liftToLevelMin();
+        delayWait(400);
+        towerToSharedHubRed();
+        delayWait(500);
+        liftToLevel1();
+        delayWait(1800);
+        dropElement();
+        delayWait(300);
+        resetDropper();
+        resetLift();
+    }
+
+    @BotAction(displayName = "Drop to Shared Hub Blue", defaultReturn = "")
+    public void dropToSharedHubBlue() {
+        liftToLevelMin();
+        delayWait(400);
+        towerToSharedHubBlue();
+        delayWait(500);
+        liftToLevel1();
+        delayWait(1800);
+        dropElement();
+        delayWait(300);
+        resetDropper();
+        resetLift();
     }
 
     public void resetLift() {

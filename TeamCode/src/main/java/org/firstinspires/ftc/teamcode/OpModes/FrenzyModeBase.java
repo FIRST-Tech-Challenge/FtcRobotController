@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Frenzy", group = "Robot15173")
+
 public class FrenzyModeBase extends LinearOpMode {
 
     // Declare OpMode Members
@@ -132,8 +132,14 @@ public class FrenzyModeBase extends LinearOpMode {
         handleOuttake();
         handleTurntable();
         handleTurntable2();
-        handleTower();
-        handleTowerDown();
+        depositToTeamHub();
+        depositToSharedHub();
+    }
+
+    protected void depositToTeamHub() {
+    }
+
+    protected void depositToSharedHub() {
     }
 
     protected void handleIntake() {
@@ -196,23 +202,7 @@ public class FrenzyModeBase extends LinearOpMode {
         }
     }
 
-    protected void handleTower() {
-        if (isButtonPressable()) {
-            if (gamepad2.x) {
-                startGamepadLockout();
-                robot.dropToTeamHubRed();
-            }
-        }
-    }
 
-    protected void handleTowerDown() {
-        if (isButtonPressable()) {
-            if (gamepad2.y) {
-                startGamepadLockout();
-                robot.resetLift();
-            }
-        }
-    }
 
 
     protected void handleLiftManual() {
@@ -255,10 +245,10 @@ public class FrenzyModeBase extends LinearOpMode {
         }
     }
 
-    private void startGamepadLockout() {
+    protected void startGamepadLockout() {
         gamepadRateLimit.reset();
     }
-    private boolean isButtonPressable() {
+    protected boolean isButtonPressable() {
         return gamepadRateLimit.hasExpired();
     }
 }
