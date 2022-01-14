@@ -30,6 +30,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionShippingElementReversion;
@@ -250,7 +251,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         greenLED2.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
-    public void getCube () {
+    public boolean getCube () {
+        ElapsedTime elapsedTime = new ElapsedTime();
         lightSet();
         frontLeft.setPower(-.3);
         frontRight.setPower(-.3);
@@ -260,34 +262,27 @@ public class SampleMecanumDrive extends MecanumDrive {
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while (intakeDistance>7 && this.opmode.opModeIsActive()) {
+        while (intakeDistance>7 && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<1500) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+            telemetry.addData("time", elapsedTime);
+            telemetry.update();
         }
-        stopMotors();
-        pauseButInSecondsForThePlebeians(.3);
-        intakeMotor.setPower(-.8);
-        pauseButInSecondsForThePlebeians(.5);
-        intakeMotor.setPower(0);
-        redLED.setState(false);
-        redLED2.setState(false);
-        greenLED.setState(true);
-        greenLED2.setState(true);
+        if (intakeDistance<7){
+            stopMotors();
+            pauseButInSecondsForThePlebeians(.3);
+            intakeMotor.setPower(-.8);
+            pauseButInSecondsForThePlebeians(.3);
+            intakeMotor.setPower(0);
+            redLED.setState(false);
+            redLED2.setState(false);
+            greenLED.setState(true);
+            greenLED2.setState(true);
+            linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+            return true;
+        } else
+            return false;
     }
 
-//    public void getCube() {
-//        frontLeft.setPower(.3);
-//        frontRight.setPower(.3);
-//        backLeft.setPower(.3);
-//        backRight.setPower(.3);
-//        intakeMotor.setPower(-.8);
-//        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-//
-//        while (intakeDistance > 7) {
-//            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-//        }
-//        stopMotors();
-//        intakeMotor.setPower(0);
-//    }
 
     public void distanceSensorStrafeLeft(double speed) {
 
@@ -404,7 +399,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         pause(150);
 
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-        pause(1200);
+        pause(800);
         //forward(0.3, -0.2);
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         linearSlideMotor.setTargetPosition(0);
