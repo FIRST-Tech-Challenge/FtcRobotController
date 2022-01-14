@@ -743,4 +743,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             time = new Date().getTime() - startTime;
         }
     }
+
+    public void retract(){
+        linearSlideMotor.setTargetPosition(0);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(.4);
+    }
 }

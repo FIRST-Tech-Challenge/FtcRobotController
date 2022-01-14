@@ -22,8 +22,9 @@ public class MeepMeepTesting {
                                 .lineTo(new Vector2d(-55, 63))
                                 .lineTo(new Vector2d(-50, 55))
                                 .splineToLinearHeading(new Pose2d(-12.5, 42, Math.toRadians(270)), Math.toRadians(270))
-                                .lineTo(new Vector2d(-22, 44))
-                                .lineTo(new Vector2d(-62, 35))
+                                .strafeRight(20)
+                                //.lineTo(new Vector2d(-22, 44))
+                                .splineToLinearHeading (new Pose2d(new Vector2d(-62, 35),Math.toRadians(270)), Math.toRadians(180))
                                 .build()
                 );
 

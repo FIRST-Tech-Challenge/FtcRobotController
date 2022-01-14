@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Blue carousel odometry")
+@Autonomous(name = "Blue carousel odometry", group = "competition")
 public class BlueCarouselOdo extends LinearOpMode {
 
     @Override
