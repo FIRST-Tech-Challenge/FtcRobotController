@@ -131,7 +131,6 @@ public class FrenzyModeBase extends LinearOpMode {
         handleIntake();
         handleOuttake();
         handleTurntable();
-        handleTurntable2();
         depositToTeamHub();
         depositToSharedHub();
     }
@@ -174,40 +173,15 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleTurntable() {
-        if (isButtonPressable()) {
-            if (gamepad1.y) {
-                startGamepadLockout();
-                changedRotator1 = !changedRotator1;
-
-                if (changedRotator1) {
-                    robot.startTurntableBlueGradual();//robot.startTurntableRed(); //change back MAKE SURE
-                } else {
-                    robot.startTurntableBlueGradual();
-                }
-            }
-        }
     }
-    protected void handleTurntable2() {
-        if (isButtonPressable()) {
-            if (gamepad1.x) {
-                startGamepadLockout();
-                changedRotator2 = !changedRotator2;
 
-                if (changedRotator2) {
-                    robot.startTurntableRedGradual();
-                } else {
-                    robot.startTurntableRedGradual();
-                }
-            }
-        }
-    }
 
 
 
 
     protected void handleLiftManual() {
         if (isButtonPressable()) {
-            double liftVal = gamepad2.right_stick_y;
+            double liftVal = -gamepad2.right_stick_y;
             robot.activateLift(liftVal);
 
         }

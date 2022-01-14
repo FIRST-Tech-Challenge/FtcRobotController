@@ -22,4 +22,15 @@ public class FrenzyModeBlue extends FrenzyModeBase {
             }
         }
     }
+
+    @Override
+    protected void handleTurntable() {
+        if (isButtonPressable()) {
+            if (gamepad1.x) {
+                startGamepadLockout();
+                robot.startTurntableBlueGradual();
+            }
+        }
+    }
 }
+

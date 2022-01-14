@@ -31,6 +31,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public static int LIFT_LEVEL_THREE = 2220;
     public static int LIFT_LEVEL_TWO = 1951;
     public static int LIFT_LEVEL_ONE = 1782;
+    public static int LIFT_SHARED_HUB = 600;
     public static int LIFT_NO_EXTENSION = 0;
     public static int LIFT_MIN_EXTENSION = 300;
     public static int LIFT_UNDER_EXTENTION = 5;
@@ -210,6 +211,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
     }
 
+    @BotAction(displayName = "Lift Shared Hub", defaultReturn = "")
+    public void liftSharedHub(){
+        liftLocation = LIFT_SHARED_HUB;
+        this.lift.setTargetPosition(LIFT_SHARED_HUB);
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+    }
     @BotAction(displayName = "Lift to lower", defaultReturn = "")
     public void liftToLower() {
         if (liftLocation != LIFT_UNDER_EXTENTION){
@@ -465,7 +473,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         delayWait(400);
         towerToSharedHubRed();
         delayWait(500);
-        liftToLevel1();
+        liftSharedHub();
         delayWait(1800);
         dropElement();
         delayWait(300);
@@ -479,7 +487,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         delayWait(400);
         towerToSharedHubBlue();
         delayWait(500);
-        liftToLevel1();
+        liftSharedHub();
         delayWait(1800);
         dropElement();
         delayWait(300);
