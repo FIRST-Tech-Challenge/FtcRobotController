@@ -554,11 +554,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     private void duckLoop(boolean red, boolean auto){
-        double startSpeed = -0.2;
-        double speedIncrement = -0.01;
-        int maxLoops = 10;
+        double startSpeed = -0.3;
+        double speedIncrement = -0.065;
+        int maxLoops = 9;
         int loopDelayMs = 140;
-        double maxSpeed = 0.25;
+        double maxSpeed = 0.45;
         if (auto){
             maxSpeed = 0.055;
             maxLoops = maxLoops*2;
