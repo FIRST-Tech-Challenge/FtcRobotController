@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
+import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TsePipeline;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -24,9 +25,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AutoWarehouse extends LinearOpMode {
     protected int multiplier = 1;
 
+    public static double topRectWidthPercentage = 0.25;
+    public static double topRectHeightPercentage = 0.50;
+    public static double middleRectWidthPercentage = 0.50;
+    public static double middleRectHeightPercentage = 0.50;
+    public static double bottomRectWidthPercentage = 0.75;
+    public static double bottomRectHeightPercentage = 0.50;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        TsePipeline.topRectWidthPercentage = topRectWidthPercentage;
+        TsePipeline.topRectHeightPercentage = topRectHeightPercentage;
+        TsePipeline.middleRectWidthPercentage = middleRectWidthPercentage;
+        TsePipeline.middleRectHeightPercentage = middleRectHeightPercentage;
+        TsePipeline.bottomRectWidthPercentage = bottomRectWidthPercentage;
+        TsePipeline.bottomRectHeightPercentage = bottomRectHeightPercentage;
+
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
         AtomicInteger height = new AtomicInteger(-1);
         // first marker shall cache the height
