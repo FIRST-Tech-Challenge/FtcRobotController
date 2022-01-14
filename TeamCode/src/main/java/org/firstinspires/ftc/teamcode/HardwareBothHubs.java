@@ -45,6 +45,8 @@ public class HardwareBothHubs
 
     //====== INERTIAL MEASUREMENT UNIT (IMU) =====
     protected BNO055IMU imu = null;
+    public double headingAngle;
+    public double tiltAngle;
 
     //====== MECANUM DRIVETRAIN MOTORS (RUN_USING_ENCODER) =====
     protected DcMotorEx frontLeftMotor     = null;
@@ -338,17 +340,12 @@ public class HardwareBothHubs
     } // initIMU()
 
     /*--------------------------------------------------------------------------------------------*/
-    double imuZAngle;
-    double imuYAngle;
-    double imuXAngle;
     public double headingIMU()
     {
         Orientation angles = imu.getAngularOrientation( AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES );
-        imuZAngle = angles.firstAngle;
-        imuYAngle = angles.secondAngle;
-        imuXAngle = angles.thirdAngle;
-        double heading = -(double)angles.firstAngle;
-        return heading;  // degrees (+90 is CW; -90 is CCW)
+        headingAngle = angles.firstAngle;
+        tiltAngle = angles.secondAngle;
+        return -headingAngle;  // degrees (+90 is CW; -90 is CCW)
     } // headingIMU
 
     /*--------------------------------------------------------------------------------------------*/

@@ -2,9 +2,12 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -18,6 +21,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Duck motor control
     boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // Capping arm claw open/close
     boolean gamepad1_square_last,     gamepad1_square_now     = false;  // Capping arm collect/store positions
+    boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;  // Freight Arm (Hub-Top)
 
     boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  //
     boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport height)
@@ -37,20 +41,28 @@ public class TestGreatNewFunctionality extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        final String BASE_FOLDER_NAME = "FIRST";
+        telemetry.addData("State", "Initializing (please wait)");
+        telemetry.update();
+
+        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME;
+        File directory = new File(directoryPath);
+        //noinspection ResultOfMethodCallIgnored
+        directory.mkdir();
+        // Initialize robot hardware
+        robot.init(hardwareMap,false);
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("State", "Ready");
+        telemetry.update();
+
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+        telemetry.addData("State", "Running");
+        telemetry.update();
+
         try {
-            log = new FileWriter("autopilotData.txt", true);
-            telemetry.addData("State", "Initializing (please wait)");
-            telemetry.update();
-
-            // Initialize robot hardware
-            robot.init(hardwareMap,false);
-
-            // Send telemetry message to signify robot waiting;
-            telemetry.addData("State", "Ready");
-            telemetry.update();
-
-            // Wait for the game to start (driver presses PLAY)
-            waitForStart();
+            log = new FileWriter(directoryPath+"/"+"autopilotData.txt", false);
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive())
@@ -66,11 +78,15 @@ public class TestGreatNewFunctionality extends LinearOpMode {
                 //===================================================================
                 // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
                 autoDriveLast = autoDrive;
-                if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last) {
+                if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last) {
                     if(autoDrive) {
                         autoDrive = false;
                         robot.stopMotion();
+                        telemetry.addData("State", "Autopiloting Off");
+                        telemetry.update();
                     } else {
+                        telemetry.addData("State", "Autopiloting On");
+                        telemetry.update();
                         autoDrive = true;
                         double driveSpeed = 0.4;
                         robot.frontLeftMotor.setPower(driveSpeed);
@@ -85,22 +101,28 @@ public class TestGreatNewFunctionality extends LinearOpMode {
                     if(!autoDriveLast) {
                         log.write("Starting autopilot session\r\n");
                     }
-                    log.write("IMU Z: " + robot.imuZAngle + " Y: " + robot.imuYAngle + " X: " + robot.imuXAngle);
+                    log.write("IMU Z: " + robot.headingAngle + " Y: " + robot.tiltAngle);
                     log.write(" FL: " + robot.frontLeftMotorAmps + " FR: " + robot.frontLeftMotorAmps + " RL: " + robot.rearLeftMotorAmps + " RR: " + robot.rearRightMotorAmps);
                     log.write("\r\n");
+                    if(robot.tiltAngle < -2.0) {
+                        log.write("AutoStopping\r\n");
+                        robot.stopMotion();
+                        autoDrive = false;
+                    }
                 } else {
-                    log.write("IMU Z: " + robot.imuZAngle + " Y: " + robot.imuYAngle + " X: " + robot.imuXAngle);
-                    log.write(" FL: " + robot.frontLeftMotorAmps + " FR: " + robot.frontLeftMotorAmps + " RL: " + robot.rearLeftMotorAmps + " RR: " + robot.rearRightMotorAmps);
-                    log.write("\r\n");
-
                     // Last time through
                     if(autoDriveLast) {
+                        log.write("IMU Z: " + robot.headingAngle + " Y: " + robot.tiltAngle);
+                        log.write(" FL: " + robot.frontLeftMotorAmps + " FR: " + robot.frontLeftMotorAmps + " RL: " + robot.rearLeftMotorAmps + " RR: " + robot.rearRightMotorAmps);
+                        log.write("\r\n");
                         log.write("Ending autopilot session\r\n");
                     }
                 }
             }
+            log.flush();
             log.close();
         } catch (IOException e) {
+            e.printStackTrace();
         }
     } // runOpMode
     /*---------------------------------------------------------------------------------*/
@@ -109,6 +131,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         gamepad1_circle_last     = gamepad1_circle_now;      gamepad1_circle_now     = gamepad1.circle;
         gamepad1_cross_last      = gamepad1_cross_now;       gamepad1_cross_now      = gamepad1.cross;
         gamepad1_square_last     = gamepad1_square_now;      gamepad1_square_now     = gamepad1.square;
+        gamepad1_dpad_up_last    = gamepad1_dpad_up_now;     gamepad1_dpad_up_now    = gamepad1.dpad_up;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
