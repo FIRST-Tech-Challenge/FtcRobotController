@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@Disabled
 @TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
 public class MecanumTeleOp extends LinearOpMode {
 
@@ -179,22 +178,21 @@ public class MecanumTeleOp extends LinearOpMode {
             controller1lstickx = gamepad1.left_stick_x;
             controller1lsticky = gamepad1.left_stick_y;
             controller1rstickx = gamepad1.right_stick_x;
-            if(controller1lstickx < 0.3 && controller1lstickx > -0.3)
+            if(controller1lstickx < 0.25 && controller1lstickx > -0.25)
                 controller1lstickx = 0.0;
-            if(controller1lsticky < 0.3 && controller1lsticky > -0.3)
+            if(controller1lsticky < 0.25 && controller1lsticky > -0.25)
                 controller1lsticky = 0.0;
-            if(controller1rstickx < 0.3 && controller1rstickx > -0.3)
+            if(controller1rstickx < 0.25 && controller1rstickx > -0.25)
                 controller1rstickx = 0.0;
 
             // Toggles slowdown with B Press or Trigger Press
-            // added an = to ensure that exact 0.5 is not ignored
             if((gamepad1.b && !bpressed) || (gamepad1.right_trigger >= 0.5 && !rtriggerpressed) || (gamepad1.left_trigger >= 0.5 && !ltriggerpressed)){
                 if(slowdownflag){
                     slowdown = 1;
                     slowdownflag = false;
                 }
                 else if(!slowdownflag){
-                    slowdown = 0.5;
+                    slowdown = 0.25;
                     slowdownflag = true;
                 }
             }
@@ -216,10 +214,10 @@ public class MecanumTeleOp extends LinearOpMode {
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = ((y + x + rx) / denominator)*slowdown;
-            double backLeftPower = ((y - x + rx) / denominator)*slowdown;
-            double frontRightPower = ((y - x - rx) / denominator)*slowdown;
-            double backRightPower = ((y + x - rx) / denominator)*slowdown;
+            double frontLeftPower = ((y + x + rx) / denominator);
+            double backLeftPower = ((y - x + rx) / denominator);
+            double frontRightPower = ((y - x - rx) / denominator);
+            double backRightPower = ((y + x - rx) / denominator);
 
             robot.motorFrontLeft.setPower(frontLeftPower);
             robot.motorBackLeft.setPower(backLeftPower);
