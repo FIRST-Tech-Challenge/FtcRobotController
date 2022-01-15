@@ -7,7 +7,7 @@ public class FrenzyModeBlue extends FrenzyModeBase {
     @Override
     protected void depositToTeamHub() {
     if (isButtonPressable()) {
-        if (gamepad2.x) {
+        if (gamepad2.x && !robotMoving) {
             startGamepadLockout();
             robot.dropToTeamHubBlue();
         }
@@ -16,7 +16,7 @@ public class FrenzyModeBlue extends FrenzyModeBase {
     @Override
     protected void depositToSharedHub() {
         if (isButtonPressable()) {
-            if (gamepad2.y) {
+            if (gamepad2.y && !robotMoving) {
                 startGamepadLockout();
                 robot.dropToSharedHubBlue();
             }
@@ -26,7 +26,7 @@ public class FrenzyModeBlue extends FrenzyModeBase {
     @Override
     protected void handleTurntable() {
         if (isButtonPressable()) {
-            if (gamepad1.x) {
+            if (gamepad2.b) {
                 startGamepadLockout();
                 robot.startTurntableBlueGradual();
             }

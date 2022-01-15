@@ -391,26 +391,34 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateIntake(0);
     }
 
+    public void smartStopIntake() {
+        activateIntake(0);
+        intakeDropperUp();
+        delayWait(800);
+        activateIntake(-0.15);
+        delayWait(700);
+        activateIntake(0);
+    }
+
     @BotAction(displayName = "Stop intake", defaultReturn = "")
     public void stopIntake() {
-        delayWait(200);
         activateIntake(0);
-//        initTower();
+        initTower();
 //
 //        int delay = 300;
 //        if(liftLocation != LIFT_UNDER_EXTENTION){
 //            liftToLower();
 //            delay = 1000;
 //        }
-//
+
 //        delayWait(delay);
-//        intakeRunning = false;
-////        prepDropperToMove();
-//        intakeDropperUp();
-//        delayWait(800);
-//        activateIntake(-0.15);
-//        delayWait(700);
-//        activateIntake(0);
+        intakeRunning = false;
+//        prepDropperToMove();
+        intakeDropperUp();
+        delayWait(800);
+        activateIntake(-0.15);
+        delayWait(700);
+        activateIntake(0);
     }
 
     @BotAction(displayName = "Start turntable blue", defaultReturn = "")
@@ -563,17 +571,15 @@ public class FrenzyBot extends FrenzyBaseBot {
             }
         }
 
-        delayWait(200);
+//        delayWait(200);
         activateIntake(0);
-        initTower();
-        delayWait(200);
+        stop();
         intakeRunning = false;
         intakeDropperUp();
         delayWait(800);
         activateIntake(-0.15);
         delayWait(700);
         activateIntake(0);
-        stop();
 
         return gotIt;
     }

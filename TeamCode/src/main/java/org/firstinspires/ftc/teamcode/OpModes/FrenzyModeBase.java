@@ -19,6 +19,8 @@ public class FrenzyModeBase extends LinearOpMode {
     FrenzyBot robot = new FrenzyBot();
     IBaseOdometry odometry = null;
 
+    protected boolean robotMoving = false;
+
     // Timing related variables
     long GAMEPAD_LOCKOUT_TIME_MS = 200;
     Deadline gamepadRateLimit;
@@ -66,7 +68,8 @@ public class FrenzyModeBase extends LinearOpMode {
                 handleDriveTrain();
                 handleSpecialActions();
                 if (robot.isIntakeRunning() && !robot.isIntakeBoxEmpty()){
-                    robot.stopIntake();
+                    robot.stop();
+                    robot.smartStopIntake();
                     changedIntake = !changedIntake;
                 }
 
@@ -122,6 +125,7 @@ public class FrenzyModeBase extends LinearOpMode {
         } else {
             robot.move(drive, turn);
         }
+        robotMoving = Math.abs(drive) > 0.02 || Math.abs(turn) > 0.02;
     }
 
     protected void handleSpecialActions() {
@@ -221,10 +225,10 @@ public class FrenzyModeBase extends LinearOpMode {
 
     protected void handleDropper() {
         if (isButtonPressable()) {
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_right) {
                 robot.dropElement();
                 startGamepadLockout();
-            } else if (gamepad2.dpad_down) {
+            } else if (gamepad2.dpad_left) {
                 robot.resetDropper();
                 startGamepadLockout();
             }
@@ -233,10 +237,10 @@ public class FrenzyModeBase extends LinearOpMode {
 
     protected void handleIntakeDropper() {
         if (isButtonPressable()) {
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 robot.intakeDropperUp();
                 startGamepadLockout();
-            } else if (gamepad1.dpad_up) {
+            } else if (gamepad2.dpad_up) {
                 robot.intakeDropperDown();
                 startGamepadLockout();
             }
