@@ -15,7 +15,7 @@ public class Test_Encoder extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
 
-            int tickCount = 1213;
+            int tickCount = 560;
 
             int halfTurn = tickCount/2;
 

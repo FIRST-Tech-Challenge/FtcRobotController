@@ -16,6 +16,8 @@ public class Beta_TeleOpLeague extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.get(DcMotor.class,"backRightMotor");
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class,"backLeftMotor");
 
+        DcMotor liftControl = hardwareMap.get(DcMotor.class, "liftControl");
+
 //        CRServo carouselSpinner = hardwareMap.get(CRServo.class, "carouselSpinner");
 
         waitForStart();
@@ -57,6 +59,10 @@ public class Beta_TeleOpLeague extends LinearOpMode {
 //            } else {
 //                carouselSpinner.setPower(0.0);
 //            }
+
+            //Add Arm Extending Reader
+
+//            telemetry.addData(lift)
 
 
         }
