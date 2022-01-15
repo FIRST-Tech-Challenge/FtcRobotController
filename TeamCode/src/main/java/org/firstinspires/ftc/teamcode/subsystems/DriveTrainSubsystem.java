@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
+import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -53,8 +54,8 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
 
     private final BNO055IMU imu;
 
-    public static PIDCoefficients FORWARD_PID = new PIDCoefficients(2, 0, 0);
-    public static PIDCoefficients STRAFE_PID = new PIDCoefficients(7, 0, 0);
+    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(2, 0, 0);
+    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(7, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0);
 
     private final TrajectorySequenceRunner trajectorySequenceRunner;
@@ -70,8 +71,8 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
         super(DriveTrainConstants.kV, DriveTrainConstants.kA, DriveTrainConstants.kStatic, 0.259, 1);
         setLocalizer(new Odometry(
                 new DoubleSupplier[]{
-                        this::getLeftEncodersAvg,
-                        this::getRightEncodersAvg
+                        this::getLeftPositionsAvg,
+                        this::getRightPositionsAvg
                 },
                 this::getHeading
         ));
@@ -95,13 +96,13 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
         m_FrontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         m_RearRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        TrajectoryFollower follower = new HolonomicPIDVAFollower(FORWARD_PID, STRAFE_PID, HEADING_PID,
+        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID, CROSS_TRACK_PID,
                 new Pose2d(0.1, 0.1, Math.toRadians(0.5)), 0.5);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
-//        trajectoryControled = !CommandBasedTeleOp.class.isAssignableFrom(opMode.getClass());
-        trajectoryControled = false;
+        // check if Opmode is autonomous
+        trajectoryControled = !CommandBasedTeleOp.class.isAssignableFrom(opMode.getClass());
 
         // Because we aren't extending SubsystemBase
         CommandScheduler.getInstance().registerSubsystem(this);
@@ -110,10 +111,10 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
     @Override
     public void periodic() {
         updatePoseEstimate();
-//        if (trajectoryControled && trajectories) {
-//            DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
-//            if (signal != null) setDriveSignal(signal);
-//        }
+        if (trajectoryControled && trajectories) {
+            DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+            if (signal != null) setDriveSignal(signal);
+        }
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
