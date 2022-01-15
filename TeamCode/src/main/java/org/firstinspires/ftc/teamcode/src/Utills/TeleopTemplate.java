@@ -56,13 +56,14 @@ public abstract class TeleopTemplate extends LinearOpMode {
 
         spinner = new CarouselSpinner(hardwareMap, "cs");
 
-        pod = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
+        pod = new OdometryPodServos(hardwareMap, "vertical_right_odometry_servo", "vertical_left_odometry_servo", "horizontal_odometry_servo");
         pod.raise();
 
         RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
-        slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
+        slide = new LinearSlide(hardwareMap, "linear_slide", s, this::opModeIsActive, this::isStopRequested);
 
-        intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo", "color_sensor", true);
+
+        intake = new ContinuousIntake(hardwareMap, "intake", "bucket", "color_sensor", true);
         intake.setServoDown();
 
         leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
