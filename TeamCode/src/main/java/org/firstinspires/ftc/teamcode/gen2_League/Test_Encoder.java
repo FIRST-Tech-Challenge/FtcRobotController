@@ -2,29 +2,45 @@ package org.firstinspires.ftc.teamcode.gen2_League;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(preselectTeleOp = "Beta_TeleOp")
+@TeleOp
 public class Test_Encoder extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor frontRightMotor = hardwareMap.get(DcMotor.class,"frontRightMotor");
+        DcMotor liftControl = hardwareMap.get(DcMotor.class,"liftControl");
+        Servo hopper = hardwareMap.get(Servo.class,"hopper");
 
+
+        int high = 3500;
+        int mid = 1750;
+        int low = 800;
+        int ground = 0;
 
         waitForStart();
         if (opModeIsActive()) {
 
             int tickCount = 560;
 
-            int halfTurn = tickCount/2;
+            liftControl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontRightMotor.setTargetPosition(halfTurn);
+            liftControl.setTargetPosition(low);
+            liftControl.setPower(0.8);
+            liftControl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRightMotor.setPower(1);
+            if(liftControl.getCurrentPosition() >= low ) {
+                hopper.setPosition(1.0);
+            }
 
+
+            while (opModeIsActive()) {
+
+                telemetry.addData("Position", liftControl.getCurrentPosition());
+                telemetry.update();
+            }
 
         }
 

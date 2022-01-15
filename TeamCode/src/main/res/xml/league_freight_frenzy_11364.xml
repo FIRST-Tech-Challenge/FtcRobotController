@@ -10,12 +10,12 @@
 
 
         </LynxModule>
-        <LynxModule name="Expansion Hub" port="1">
+        <LynxModule name="Expansion Hub" port="2">
             <RevRoboticsCoreHexMotor name="liftControl" port="0"/>
             <RevRoboticsCoreHexMotor name="elementIntake" port="1"/>
 
             <ContinuousRotationServo name="carouselSpinner" port="5"/>
-            <ContinuousRotationServo name="hopper" port="1"/>
+            <Servo name="hopper" port="0"/>
 
             <LynxEmbeddedIMU name="imuE" port="0" bus="0" />
 

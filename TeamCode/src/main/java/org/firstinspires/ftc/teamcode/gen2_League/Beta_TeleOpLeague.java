@@ -79,15 +79,9 @@ public class Beta_TeleOpLeague extends LinearOpMode {
                 intakeMotor.setPower(0);
             }
 
-            //Add Arm Extending Reader
+//            Add Arm Extending Reader
 
-//            telemetry.addData(lift)
-
-            //Add Arm Extending Reader
-
-//            telemetry.addData(lift)
-
-
+            telemetry.addData("Position: ",liftControl.getCurrentPosition());
         }
 
         frontRightMotor.setPower(0.0);
