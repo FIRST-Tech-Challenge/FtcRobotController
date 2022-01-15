@@ -78,23 +78,26 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    private TrajectorySequenceRunner trajectorySequenceRunner;
+    private final TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    private TrajectoryFollower follower;
+    private final TrajectoryFollower follower;
 
-    private DcMotorEx frontLeft, backLeft, backRight, frontRight;
+    private final DcMotorEx frontLeft;
+    private final DcMotorEx backLeft;
+    private final DcMotorEx backRight;
+    private final DcMotorEx frontRight;
     public DcMotor carousel, intakeMotor, linearSlideMotor;
     public DistanceSensor distanceSensorLeft, distanceSensorRight, distanceSensorIntake;
     public Servo linearSlideServo;
     public DigitalChannel redLED, greenLED, redLED2, greenLED2;
 
-    private List<DcMotorEx> motors;
+    private final List<DcMotorEx> motors;
 
-    private BNO055IMU imu;
-    private VoltageSensor batteryVoltageSensor;
+    private final BNO055IMU imu;
+    private final VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
     FreightFrenzyComputerVisionShippingElementReversion CV;
 
@@ -215,11 +218,8 @@ public class SampleMecanumDrive extends MecanumDrive {
             backLeft.setPower(-0.2);
         }
 
-        if (DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit-frontLeft.getCurrentPosition()))<3 || DriveConstants.encoderTicksToInches(Math.abs(frontRightInit-frontRight.getCurrentPosition()))<3
-                || DriveConstants.encoderTicksToInches(Math.abs(backLeftInit-backLeft.getCurrentPosition()))<3 || DriveConstants.encoderTicksToInches(Math.abs(backRightInit-backRight.getCurrentPosition()))<3){
-           return true;
-        }
-        return false;
+        return DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit - frontLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(frontRightInit - frontRight.getCurrentPosition())) < 3
+                || DriveConstants.encoderTicksToInches(Math.abs(backLeftInit - backLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(backRightInit - backRight.getCurrentPosition())) < 3;
     }
 
     public void aquireDuckRed(double speed, double secondaryStopConditionSeconds) {
@@ -396,7 +396,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         while (linearSlideMotor.isBusy() && this.opmode.opModeIsActive()) {
 
         }
-        pause(150);
+        pause(200);
 
         linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         pause(800);

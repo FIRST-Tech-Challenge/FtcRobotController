@@ -331,9 +331,9 @@ public class FreightFrenzyComputerVisionFrontCamera {
 
 
             if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
-                position = DuckPosition.LEFT.LEFT;
+                position = DuckPosition.LEFT;
             } else if (avg2 < FREIGHT_PRESENT_THRESHOLD) {
-                position = DuckPosition.MIDDLE.MIDDLE;
+                position = DuckPosition.MIDDLE;
             } else {
                 position = DuckPosition.RIGHT;
             }

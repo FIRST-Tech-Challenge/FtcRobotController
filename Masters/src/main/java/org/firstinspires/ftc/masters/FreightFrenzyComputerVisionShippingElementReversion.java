@@ -124,9 +124,9 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 200);
-        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(300, 200);
-        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(575, 200);
+        static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 180);
+        static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(300, 180);
+        static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(575, 180);
 
         static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,33);
         static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295,33);
@@ -138,7 +138,7 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
 
         static final int HUB_REGION_HEIGHT = 50;
 
-        final int FREIGHT_PRESENT_THRESHOLD = 110;
+        final int FREIGHT_PRESENT_THRESHOLD = 112;
 
         final int HUB_PRESENT_THRESHOLD = 129;
 

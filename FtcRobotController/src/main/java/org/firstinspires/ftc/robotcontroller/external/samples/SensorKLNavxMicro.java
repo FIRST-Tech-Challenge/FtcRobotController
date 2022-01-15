@@ -70,7 +70,7 @@ public class SensorKLNavxMicro extends LinearOpMode {
         // Get a reference to a Modern Robotics GyroSensor object. We use several interfaces
         // on this object to illustrate which interfaces support which functionality.
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
-        gyro = (IntegratingGyroscope)navxMicro;
+        gyro = navxMicro;
         // If you're only interested int the IntegratingGyroscope interface, the following will suffice.
         // gyro = hardwareMap.get(IntegratingGyroscope.class, "navx");
 

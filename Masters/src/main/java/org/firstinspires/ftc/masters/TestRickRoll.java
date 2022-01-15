@@ -9,9 +9,9 @@ public class TestRickRoll extends LinearOpMode {
 
     private boolean rickAstleyFound;
 
-    private boolean isX = false;
+    private final boolean isX = false;
 
-    private boolean wasX = false;
+    private final boolean wasX = false;
     @Override
     public void runOpMode() throws InterruptedException {
 
