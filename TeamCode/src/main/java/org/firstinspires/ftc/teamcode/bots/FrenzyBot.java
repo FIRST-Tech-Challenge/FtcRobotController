@@ -277,7 +277,6 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Intake Dropper Up", defaultReturn = "")
     public void intakeDropperUp(){
         if (intakeDropperServo != null) {
-            Log.d(TAG, "intakeDropperUp");
             intakeDropperServo.setPosition(1);
         }
     }
@@ -285,8 +284,13 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Intake Dropper Down", defaultReturn = "")
     public void intakeDropperDown(){
         if (intakeDropperServo != null) {
-            Log.d(TAG, "intakeDropperDown");
             intakeDropperServo.setPosition(0);
+        }
+    }
+
+    public void intakeDropperHalfWay(){
+        if (intakeDropperServo != null) {
+            intakeDropperServo.setPosition(0.3);
         }
     }
 

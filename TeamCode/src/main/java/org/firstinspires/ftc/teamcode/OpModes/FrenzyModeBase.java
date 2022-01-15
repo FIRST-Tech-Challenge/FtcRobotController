@@ -244,6 +244,10 @@ public class FrenzyModeBase extends LinearOpMode {
                 robot.intakeDropperDown();
                 startGamepadLockout();
             }
+            else if (gamepad2.dpad_right || gamepad2.dpad_left){
+                robot.intakeDropperHalfWay();
+                startGamepadLockout();
+            }
         }
     }
 
