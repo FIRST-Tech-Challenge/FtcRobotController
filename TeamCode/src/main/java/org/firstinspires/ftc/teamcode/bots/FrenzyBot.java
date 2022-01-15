@@ -48,7 +48,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     NormalizedColorSensor colorSensor;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_TRANSPORT = 0.1; // this is only to pick-up elements
+    private static double DROPPER_SERVO_POS_TRANSPORT = 0.2; // this is only to pick-up elements
     private static double DROPPER_SERVO_POS_START = 0.0;  //default pos to start and transport
     private static double DROPPER_SERVO_POS_DROP = 0.85;
 
@@ -478,7 +478,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         towerToTeamHubRed();
         delayWait(500);
         liftToLevel3();
-        delayWait(1800);
+        delayWait(1300);
         dropElement();
         delayWait(800);
         resetDropper();
@@ -493,7 +493,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         towerToTeamHubBlue();
         delayWait(500);
         liftToLevel3();
-        delayWait(1800);
+        delayWait(1300);
         dropElement();
         delayWait(800);
         resetDropper();

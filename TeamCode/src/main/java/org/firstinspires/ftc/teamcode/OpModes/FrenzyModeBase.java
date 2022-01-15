@@ -21,6 +21,8 @@ public class FrenzyModeBase extends LinearOpMode {
 
     protected boolean robotMoving = false;
 
+    private boolean emergencyMode = false;
+
     // Timing related variables
     long GAMEPAD_LOCKOUT_TIME_MS = 200;
     Deadline gamepadRateLimit;
@@ -69,7 +71,12 @@ public class FrenzyModeBase extends LinearOpMode {
                 handleSpecialActions();
                 if (robot.isIntakeRunning() && !robot.isIntakeBoxEmpty()){
                     robot.stop();
-                    robot.smartStopIntake();
+                    if (!emergencyMode) {
+                        robot.smartStopIntake();
+                    }
+                    else{
+                        robot.stopIntake();
+                    }
                     changedIntake = !changedIntake;
                 }
 
@@ -251,10 +258,27 @@ public class FrenzyModeBase extends LinearOpMode {
         }
     }
 
+    protected void handleEmergency() {
+        if (isButtonPressable()) {
+            if (gamepad1.a) {
+                startGamepadLockout();
+                setEmergencyMode(!emergencyMode);
+            }
+        }
+    }
+
     protected void startGamepadLockout() {
         gamepadRateLimit.reset();
     }
     protected boolean isButtonPressable() {
         return gamepadRateLimit.hasExpired();
+    }
+
+    public boolean isEmergencyMode() {
+        return emergencyMode;
+    }
+
+    public void setEmergencyMode(boolean emergencyMode) {
+        this.emergencyMode = emergencyMode;
     }
 }
