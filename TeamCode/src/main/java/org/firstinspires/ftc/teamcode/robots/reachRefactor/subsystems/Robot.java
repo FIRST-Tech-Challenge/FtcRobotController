@@ -7,7 +7,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.ejml.simple.SimpleMatrix;
@@ -61,10 +60,10 @@ public class Robot implements Subsystem {
     public void drawFieldOverlay(TelemetryPacket packet) {
         Canvas fieldOverlay = packet.fieldOverlay();
 
-        SimpleMatrix pose = driveTrain.getPose();
+        double[] pose = driveTrain.getPose();
 
-        SimpleMatrix position = pose.rows(0, 2);
-        double heading = pose.get(2);
+        SimpleMatrix position = new SimpleMatrix(new double[][] {{ pose[0], pose[1] }});
+        double heading = pose[2];
 
         // calculating wheel positions
         SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
@@ -98,7 +97,7 @@ public class Robot implements Subsystem {
                 UtilMethods.rotateVector(
                     genericWheelVector,
                         Math.toRadians(heading)
-                ).transpose(), Math.toRadians(driveTrain.getSwivelAngle())
+                ), Math.toRadians(driveTrain.getSwivelAngle())
             )
         ), WHEEL_STROKE_COLOR);
     }

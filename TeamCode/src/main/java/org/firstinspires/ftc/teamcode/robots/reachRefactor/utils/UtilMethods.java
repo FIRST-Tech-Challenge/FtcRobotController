@@ -14,7 +14,7 @@ public class UtilMethods {
     public static double servoNormalize(double pulse) {
         return (pulse - 750.0) / 1500.0; // convert mr servo controller pulse width to double on 0 - 1 scale
     }
-    public static double wrapAnglePlus(double angle){
+    public static double wrapAngle(double angle){
         return ((angle % 360) + 360) % 360;
     }
     public static double wrapAnglePlus(double angle1, double angle2){
@@ -57,7 +57,7 @@ public class UtilMethods {
                 {Math.cos(theta), -Math.sin(theta)},
                 {Math.sin(theta), Math.cos(theta)}
         });
-        return rotationMatrix.mult(vector.transpose());
+        return rotationMatrix.mult(vector.transpose()).transpose();
     }
 
 

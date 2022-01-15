@@ -47,18 +47,18 @@ public class Constants {
     }
 
     public enum Position {
-        START_RED_UP(new SimpleMatrix(new double[][] {{0, 0, 180}})),
-        START_RED_DOWN(new SimpleMatrix(new double[][] {{0, 0, 180}})),
-        START_BLUE_UP(new SimpleMatrix(new double[][] {{0, 0, 0}})),
-        START_BLUE_DOWN(new SimpleMatrix(new double[][] {{0, 0, 0}}));
+        START_RED_UP(new double[] {0, 0, 0}),
+        START_RED_DOWN(new double[] {0, 0, 0}),
+        START_BLUE_UP(new double[] {0, 0, 0}),
+        START_BLUE_DOWN(new double[] {0, 0, 0});
 
-        private final SimpleMatrix pose;
+        private final double[] pose;
 
-        Position(SimpleMatrix pose) {
+        Position(double[] pose) {
             this.pose = pose;
         }
 
-        public SimpleMatrix getPose() {
+        public double[] getPose() {
             return pose;
         }
     }

@@ -91,11 +91,13 @@ public class FF_6832 extends OpMode {
     // tele-op state
     private boolean usingDesmosDrive;
     private int chassisDistanceLevelIndex;
+    private double forward, rotate;
 
     // diagnostic state
     private DiagnosticStep diagnosticStep;
     private int diagnosticIndex;
     private boolean diagnosticFinished;
+    private int servoTargetPos;
 
     // timing
     private long lastLoopClockTime, loopTime;
@@ -108,9 +110,9 @@ public class FF_6832 extends OpMode {
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.3;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
-    public static final double MAX_CENTRIPETAL_ACCELERATION = 1.0;
-    public static double FORWARD_SCALING_FACTOR = Math.sqrt(MAX_CENTRIPETAL_ACCELERATION / ((2 / Constants.TRACK_WIDTH)));
-    public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH);
+    public static double MAX_CENTRIPETAL_ACCELERATION_COEFF = 0.5;
+    public static double FORWARD_SCALING_FACTOR = 0.1; // scales the target linear robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {
             Constants.MIN_CHASSIS_LENGTH,
             Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
@@ -272,30 +274,36 @@ public class FF_6832 extends OpMode {
 //        if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
 //            robot.articulate(Robot.Articulation.START);
         robot.driveTrain.setMaintainChassisDistanceEnabled(true);
+        robot.driveTrain.setAntiTippingEnabled(true);
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[0]);
         auto.visionProvider.shutdownVision();
     }
 
 
     private void handleArcadeDrive() {
-        double forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
-        double rotate = -gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
-
-        if(usingDesmosDrive)
-            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
-        else
-            robot.driveTrain.drive(forward, rotate);
+        forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
+        rotate = -gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
     }
 
     private void handleTankDrive() {
         double left = -gamepad1.left_stick_y;
         double right = -gamepad1.right_stick_y;
 
-        double forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
-        double rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
+        forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
+        rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
 
         if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
             rotate = 0;
+    }
+
+    private void sendDriveCommands() {
+        // scaling linear and angular velocities to follow maximum centripetal acceleration constraint
+        double centripetalAcceleration = Math.abs(forward * rotate);
+        double accelerationRatio = centripetalAcceleration / (MAX_CENTRIPETAL_ACCELERATION_COEFF * (Math.pow(FORWARD_SCALING_FACTOR, 2) * (2 / Constants.TRACK_WIDTH)));
+        if(accelerationRatio > 1) {
+            forward /= Math.sqrt(accelerationRatio);
+            rotate /= Math.sqrt(accelerationRatio);
+        }
 
         if(usingDesmosDrive)
             robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
@@ -371,8 +379,11 @@ public class FF_6832 extends OpMode {
             handleTankDrive();
         else if (gamepad2JoysticksActive && !gamepad1JoysticksActive)
             handleArcadeDrive();
-        else
-            robot.driveTrain.drive(0, 0);
+        else {
+            forward = 0;
+            rotate = 0;
+        }
+        sendDriveCommands();
 
         if(stickyGamepad1.guide || stickyGamepad2.guide)
             robot.stop();
@@ -398,8 +409,11 @@ public class FF_6832 extends OpMode {
     }
 
     private void handleDiagnosticServoControls(IntSupplier getTargetPos, IntConsumer setTargetPos) {
-        setTargetPos.accept(UtilMethods.servoClip((int) (getTargetPos.getAsInt() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW)));
-        setTargetPos.accept(UtilMethods.servoClip((int) (getTargetPos.getAsInt() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST)));
+        servoTargetPos = getTargetPos.getAsInt();
+        if(UtilMethods.notDeadZone(gamepad1.right_stick_y, JOYSTICK_DEADZONE_THRESHOLD))
+            setTargetPos.accept(UtilMethods.servoClip((int) (getTargetPos.getAsInt() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW)));
+        else if(UtilMethods.notDeadZone(gamepad1.left_stick_y, JOYSTICK_DEADZONE_THRESHOLD))
+            setTargetPos.accept(UtilMethods.servoClip((int) (getTargetPos.getAsInt() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST)));
     }
 
     private void handleManualDiagnostic() {
@@ -426,13 +440,13 @@ public class FF_6832 extends OpMode {
                 robot.driveTrain.setMaintainSwivelAngleCorrection(-gamepad1.right_stick_y);
                 break;
             case CRANE_SHOULDER_SERVO:
-                handleDiagnosticServoControls(robot.crane::getShoulderTargetPos, robot.crane::setShoulderTargetPos);
+                handleDiagnosticServoControls(robot.crane::getShoulderTargetPos, robot.crane::setShoulderTargetPosRaw);
                 break;
             case CRANE_ELBOW_SERVO:
-                handleDiagnosticServoControls(robot.crane::getElbowTargetPos, robot.crane::setElbowTargetPos);
+                handleDiagnosticServoControls(robot.crane::getElbowTargetPos, robot.crane::setElbowTargetPosRaw);
                 break;
             case CRANE_WRIST_SERVO:
-                handleDiagnosticServoControls(robot.crane::getWristTargetPos, robot.crane::setWristTargetPos);
+                handleDiagnosticServoControls(robot.crane::getWristTargetPos, robot.crane::setWristTargetPosRaw);
                 break;
             case TURRET_MOTOR:
                 robot.crane.turret.setTargetAngle(robot.crane.turret.getTargetAngle() - gamepad1.right_stick_y);
@@ -523,6 +537,9 @@ public class FF_6832 extends OpMode {
         opModeTelemetryMap.put("Active", active);
         opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState.getName()));
         opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_DISTANCE_LEVELS.length));
+        opModeTelemetryMap.put("forward", forward);
+        opModeTelemetryMap.put("rotate", rotate);
+        opModeTelemetryMap.put("a_c", forward * Math.toRadians(rotate));
 
         switch(gameState) {
             case TELE_OP:
@@ -534,6 +551,7 @@ public class FF_6832 extends OpMode {
                 break;
             case MANUAL_DIAGNOSTIC:
                 opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
+                opModeTelemetryMap.put("Servo Target Pos", servoTargetPos);
                 break;
         }
         handleTelemetry(opModeTelemetryMap, gameState.getName(), packet);
@@ -546,7 +564,7 @@ public class FF_6832 extends OpMode {
         // handling vision telemetry
         handleTelemetry(auto.visionProvider.getTelemetry(debugTelemetryEnabled), auto.visionProvider.getTelemetryName(), packet);
 
-        //robot.drawFieldOverlay(packet);
+        robot.drawFieldOverlay(packet);
         dashboard.sendTelemetryPacket(packet);
 
         telemetry.update();

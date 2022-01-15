@@ -41,8 +41,10 @@ public class OpenCVProvider extends VisionProvider {
 
         noCameraBitmap = Bitmap.createBitmap(320, 240, Bitmap.Config.RGB_565);
         Mat noCameraMat = new Mat(240, 320, CvType.CV_8UC3);
-        Imgproc.putText(noCameraMat, "No Webcam Found", new Point(10, 120), Imgproc.FONT_HERSHEY_SIMPLEX,
-                1, new Scalar(0, 0, 255), 3);
+        Imgproc.putText(noCameraMat, "Webcam Could", new Point(40, 110), Imgproc.FONT_HERSHEY_SIMPLEX,
+                1, new Scalar(255, 0, 0), 3);
+        Imgproc.putText(noCameraMat, "Not Be Opened", new Point(40, 150), Imgproc.FONT_HERSHEY_SIMPLEX,
+                1, new Scalar(255, 0, 0), 3);
         Utils.matToBitmap(noCameraMat, noCameraBitmap);
 
         camera.setPipeline(pipeline);
