@@ -225,10 +225,10 @@ public class FrenzyModeBase extends LinearOpMode {
 
     protected void handleDropper() {
         if (isButtonPressable()) {
-            if (gamepad2.dpad_right) {
+            if (gamepad1.dpad_right) {
                 robot.dropElement();
                 startGamepadLockout();
-            } else if (gamepad2.dpad_left) {
+            } else if (gamepad1.dpad_left) {
                 robot.resetDropper();
                 startGamepadLockout();
             }
