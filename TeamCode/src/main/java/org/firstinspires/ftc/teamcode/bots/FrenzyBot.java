@@ -290,7 +290,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public void intakeDropperHalfWay(){
         if (intakeDropperServo != null) {
-            intakeDropperServo.setPosition(0.3);
+            intakeDropperServo.setPosition(0.6);
         }
     }
 
