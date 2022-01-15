@@ -33,8 +33,8 @@ public class RobotClass {
     public DcMotor intakeMotor;
     public DcMotor linearSlideMotor;
     public Servo linearSlideServo;
-    private double ticks = 537;//537
-    private double ticksTheSequel = 2786;
+    private final double ticks = 537;//537
+    private final double ticksTheSequel = 2786;
     BNO055IMU imu;
 
     public Telemetry telemetry;

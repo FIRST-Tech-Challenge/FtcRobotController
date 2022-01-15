@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
@@ -13,6 +14,8 @@ import java.util.Date;
 
 @Autonomous(name = "Blue carousel odometry", group = "competition")
 public class BlueCarouselOdo extends LinearOpMode {
+
+    final int SERVO_DROP_PAUSE=900;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,29 +42,39 @@ public class BlueCarouselOdo extends LinearOpMode {
             telemetry.addData("Position", freightLocation);
             telemetry.update();
         }
+        switch (freightLocation) {
+            case LEFT:
+                drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
+                break;
+            case MIDDLE:
+                drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
+                break;
+            case RIGHT:
+                drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
+                break;
+            default:
+                drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
+        }
+        drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        drive.linearSlideMotor.setPower(.8);
 
         if (isStopRequested()) return;
+
 
 //      Deposit initial freight
         Pose2d hubPosition = new Pose2d(new Vector2d(-12.5, 42), Math.toRadians(270));
         TrajectorySequence toHub = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(hubPosition)
+                .lineToSplineHeading(hubPosition)
                 .build();
         drive.followTrajectorySequence(toHub);
 
-        switch (freightLocation) {
-            case LEFT:
-                drive.dumpFreightTop();
-                break;
-            case MIDDLE:
-                drive.dumpFreightMiddle();
-                break;
-            case RIGHT:
-                drive.dumpFreightTop();
-                break;
-            default:
-                drive.dumpFreightTop();
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+        drive.pause(SERVO_DROP_PAUSE);
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+        if (freightLocation== FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+            drive.pause(300);
         }
+        drive.retract();
 
 //        To spin duck
         Pose2d position = drive.getLocalizer().getPoseEstimate();
@@ -72,16 +85,26 @@ public class BlueCarouselOdo extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(.4, 5);
+        drive.jevilTurnCarousel(-.4, 5);
 
-        TrajectorySequence leaveCarouselAndAcquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+        TrajectorySequence leaveCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(-55, 55))
-                .turn(270)
+                .build();
+        drive.followTrajectorySequence(leaveCarousel);
+
+        drive.turn(Math.toRadians(-90));
+
+        TrajectorySequence AcquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(-55, 63))
                 .build();
-        drive.followTrajectorySequence(leaveCarouselAndAcquireDuck);
+        drive.followTrajectorySequence(AcquireDuck);
+
+
 
         position = drive.getLocalizer().getPoseEstimate();
+        drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
+        drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        drive.linearSlideMotor.setPower(.8);
 
         TrajectorySequence depositDuck = drive.trajectorySequenceBuilder(position)
                 .lineTo(new Vector2d(-50, 55))
@@ -89,12 +112,19 @@ public class BlueCarouselOdo extends LinearOpMode {
                 .build();
         drive.followTrajectorySequence(depositDuck);
 
-        drive.dumpFreightTop();
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+        drive.pause(SERVO_DROP_PAUSE);
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+        if (freightLocation== FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+            drive.pause(300);
+        }
+        drive.retract();
 
         position = drive.getLocalizer().getPoseEstimate();
         TrajectorySequence trajSeq7 = drive.trajectorySequenceBuilder(position)
-                .lineTo(new Vector2d(-22, 44))
-                .lineTo(new Vector2d(-62, 35))
+//                .strafeRight(20)
+                .lineTo(new Vector2d(-32, 42))
+                .splineToLinearHeading (new Pose2d(new Vector2d(-62, 35),Math.toRadians(270)), Math.toRadians(180))
                 .build();
         drive.followTrajectorySequence(trajSeq7);
 
@@ -106,19 +136,15 @@ public class BlueCarouselOdo extends LinearOpMode {
 
 // MeepMeepTesting Code &, more importantly, Vectors and Poses
 
-//RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-//        // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-//        .setConstraints(45, 60, Math.toRadians(60), Math.toRadians(60), 16.4)
-//        .followTrajectorySequence(drive ->
-//                drive.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(270)))
-//                        .lineToSplineHeading(new Pose2d(new Vector2d(-12.5, 42), Math.toRadians(270)))
-//                        .lineToLinearHeading(new Pose2d( new Vector2d(-60, 60), Math.toRadians(0)))
-//                        .lineTo(new Vector2d(-55, 55))
-//                        .lineToLinearHeading(new Pose2d(-55, 54, Math.toRadians(270)))
-//                        .lineTo(new Vector2d(-55, 63))
-//                        .lineTo(new Vector2d(-50, 55))
-//                        .splineToLinearHeading(new Pose2d(-12.5, 42, Math.toRadians(270)), Math.toRadians(270))
-//                        .lineTo(new Vector2d(-22, 44))
-//                        .lineTo(new Vector2d(-61, 34))
-//                        .build()
-//        );
+///drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
+//        .lineToSplineHeading(new Pose2d(new Vector2d(-12.5, 42), Math.toRadians(270)))
+//        .lineToLinearHeading(new Pose2d( new Vector2d(-60, 60), Math.toRadians(0)))
+//        .lineTo(new Vector2d(-55, 55))
+//        .lineToLinearHeading(new Pose2d(-55, 54, Math.toRadians(270)))
+//        .lineTo(new Vector2d(-55, 63))
+//        .lineTo(new Vector2d(-50, 55))
+//        .splineToLinearHeading(new Pose2d(-12.5, 42, Math.toRadians(270)), Math.toRadians(270))
+//        .strafeRight(20)
+//        //.lineTo(new Vector2d(-22, 44))
+//        .splineToLinearHeading (new Pose2d(new Vector2d(-62, 35),Math.toRadians(270)), Math.toRadians(180))
+//        .build() );

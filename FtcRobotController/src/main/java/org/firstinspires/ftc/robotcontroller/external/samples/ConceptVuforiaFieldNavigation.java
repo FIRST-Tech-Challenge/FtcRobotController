@@ -115,7 +115,7 @@ public class ConceptVuforiaFieldNavigation extends LinearOpMode {
     private boolean targetVisible = false;
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    private final float phoneZRotate    = 0;
 
     @Override public void runOpMode() {
         /*

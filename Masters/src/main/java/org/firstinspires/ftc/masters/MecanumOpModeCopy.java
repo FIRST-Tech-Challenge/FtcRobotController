@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class MecanumOpModeCopy extends LinearOpMode {
 
     /* Declare OpMode members. */
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;

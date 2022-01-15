@@ -15,7 +15,7 @@ public class InitialMecanumTeleOp extends LinearOpMode {
     RobotClass robot;
 
     /* Declare OpMode members. */
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;

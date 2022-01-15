@@ -19,7 +19,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     RobotClass robot;
 
     /* Declare OpMode members. */
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;
@@ -140,10 +140,15 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 //            telemetry.addData("Status", "Run Time: " + runtime.toString());
 //            telemetry.update();
 
+            double y = 0; //
+            double x = 0;
+            double rx = 0;
 
-            double y = gamepad1.left_stick_y; //
-            double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1 ) {
+                y = gamepad1.left_stick_y; //
+                x = gamepad1.left_stick_x;
+                rx = gamepad1.right_stick_x;
+            }
 
             double leftFrontPower = y + x + rx;
             double leftRearPower = y - x + rx;

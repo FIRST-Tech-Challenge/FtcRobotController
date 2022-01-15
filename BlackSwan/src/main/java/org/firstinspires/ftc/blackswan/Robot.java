@@ -89,10 +89,10 @@ public class Robot {
 
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
-        frontLeft.setTargetPosition((int) frontLeftTarget);
-        frontRight.setTargetPosition((int) frontRightTarget);
-        backLeft.setTargetPosition((int) backLeftTarget);
-        backRight.setTargetPosition((int) backRightTarget);
+        frontLeft.setTargetPosition(frontLeftTarget);
+        frontRight.setTargetPosition(frontRightTarget);
+        backLeft.setTargetPosition(backLeftTarget);
+        backRight.setTargetPosition(backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -140,10 +140,10 @@ public class Robot {
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
 
-        frontLeft.setTargetPosition((int) frontLeftTarget);
-        frontRight.setTargetPosition((int) frontRightTarget);
-        backLeft.setTargetPosition((int) backLeftTarget);
-        backRight.setTargetPosition((int) backRightTarget);
+        frontLeft.setTargetPosition(frontLeftTarget);
+        frontRight.setTargetPosition(frontRightTarget);
+        backLeft.setTargetPosition(backLeftTarget);
+        backRight.setTargetPosition(backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
