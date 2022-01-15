@@ -27,7 +27,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
     // This method drives a specified number of inches in a straight line when given a target distance and max speed
     // Set direction to false when going forward and true when going backwards
-    public void driveInches(double targetDistance, double minSpeed, boolean backwards) {
+    public void driveInches(double targetDistance, double minSpeed, boolean forwards) {
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -44,13 +44,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
         double distanceLeft;
 
         while (!distanceReached && opModeIsActive()) {
-            if (backwards) {
+            if (forwards) {
                 distanceLeft = targetDistance + position;
             } else {
                 distanceLeft = targetDistance - position;
             }
 
-            if (backwards) {
+            if (forwards) {
                 driveTank(max(distanceLeft / 48, minSpeed, Constants.MIN_DRIVE_PWR) * -1,
                         max(distanceLeft / 48, minSpeed, Constants.MIN_DRIVE_PWR) * -1);
             } else {

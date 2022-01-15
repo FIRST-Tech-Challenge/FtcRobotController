@@ -38,11 +38,10 @@ public class Constants {
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
 
     // Motor Constants
-    public static final int BELT_RESET = 0;
     public static final int ARM_COLLECTING_LEVEL = 100;
     public static final int ARM_SHARED_HUB_LEVEL = 500;
-    public static final int ARM_ALLIANCE_HUB_3RD_LEVEL = 750;
-    public static final int ARM_CAPPING_LEVEL = 900;
+    public static final int ARM_ALLIANCE_HUB_3RD_LEVEL = 900;
+    public static final int ARM_CAPPING_LEVEL = 1050;
 
     // Servo Values
     public static final double CLOSED_GRABBER_POSITION = 0.25;

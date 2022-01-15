@@ -78,22 +78,22 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         telemetry.addData("barcode: ", barcode);
         telemetry.update();
 
-        driveInches(6, Constants.MIN_DRIVE_PWR, false);
+        driveInches(6, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         turnToAngle(-90);
         pauseMillis(125);
         // todo - distance to carousel
-        driveInches(16, Constants.MIN_DRIVE_PWR, false);
+        driveInches(16, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         motorRightDuck.setPower(-0.4);
         pauseMillis(2000);
         motorRightDuck.setPower(0.0);
-        driveInches(4, Constants.MIN_DRIVE_PWR, true);
+        driveInches(4, Constants.MIN_DRIVE_PWR, false);
         pauseMillis(125);
         turnToAngle(-10);
         pauseMillis(125);
         // todo - distance before turning to the shipping hub
-        driveInches(36, Constants.MIN_DRIVE_PWR, false);
+        driveInches(36, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         turnToAngle(80);
         pauseMillis(125);
@@ -102,25 +102,25 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
             case 0:
                 motorArm.setTargetPosition(300);
                 pauseMillis(750);
-                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
+                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 3200.0);
                 // todo - distance to the shipping hub
-                driveInches(10, Constants.MIN_DRIVE_PWR, false);
+                driveInches(10, Constants.MIN_DRIVE_PWR, true);
                 break;
 
             case 1:
                 motorArm.setTargetPosition(550);
                 pauseMillis(750);
-                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
+                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 3200.0);
                 // todo - distance to the shipping hub
-                driveInches(12, Constants.MIN_DRIVE_PWR, false);
+                driveInches(12, Constants.MIN_DRIVE_PWR, true);
                 break;
 
             case 2:
-                motorArm.setTargetPosition(800);
+                motorArm.setTargetPosition(900);
                 pauseMillis(750);
-                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
+                servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 3200.0);
                 // todo - distance to the shipping hub
-                driveInches(14, Constants.MIN_DRIVE_PWR, false);
+                driveInches(14, Constants.MIN_DRIVE_PWR, true);
                 break;
         }
 
@@ -131,28 +131,25 @@ public class BlueAutonomousCompetition extends MasterAutonomous {
         switch (barcode) {
             case 0:
                 // todo - distance backing up from the shipping hub
-                driveInches(6, Constants.MIN_DRIVE_PWR, true);
+                driveInches(6, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 1:
                 // todo - distance backing up from the shipping hub
-                driveInches(8, Constants.MIN_DRIVE_PWR, true);
+                driveInches(8, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 2:
                 // todo - distance backing up from the shipping hub
-                driveInches(10, Constants.MIN_DRIVE_PWR, true);
+                driveInches(10, Constants.MIN_DRIVE_PWR, false);
                 break;
         }
 
         pauseMillis(125);
         turnToAngle(-170);
         pauseMillis(125);
-        driveInches(6, Constants.MIN_DRIVE_PWR, false);
+        driveInches(6, Constants.MIN_DRIVE_PWR, true);
 
-        motorBelt.setPower(0.75);
-        motorBelt.setTargetPosition(1850);
-        pauseMillis(750);
         servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
         motorArm.setTargetPosition(0);
     }
