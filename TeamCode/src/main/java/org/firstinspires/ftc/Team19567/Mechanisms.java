@@ -37,10 +37,6 @@ public class Mechanisms {
         armDC.setTargetPosition(Range.clip(pos,0,1000));
     }
 
-    public void maintainBalance() {
-        balanceServo.setPosition(Range.clip(armDC.getCurrentPosition()/1000.5,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
-    }
-
     public void rotateCarousel(double speed, boolean left) {
         if(left) carouselLeft.setPower(speed);
         else carouselRight.setPower(speed);
@@ -83,5 +79,9 @@ public class Mechanisms {
 
     public void thirdLevel() {
         rotateArm(600,0.9);
+    }
+
+    public void maintainBalance() {
+        balanceServo.setPosition(Range.clip(armDC.getCurrentPosition()/1000.5,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
 }

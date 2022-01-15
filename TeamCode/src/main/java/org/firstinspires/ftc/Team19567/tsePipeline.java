@@ -54,8 +54,6 @@ class tsePipeline extends OpenCvPipeline {
         telemetry.addData("Pipeline Status","Setup Complete");
         telemetry.update();
 
-
-
         Core.inRange(output,lowHSV,highHSV,output);
         telemetry.addData("Pipeline Status","InRange Conv. Completed");
         telemetry.update();

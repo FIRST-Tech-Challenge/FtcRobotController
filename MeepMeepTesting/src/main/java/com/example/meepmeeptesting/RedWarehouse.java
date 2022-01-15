@@ -29,7 +29,7 @@ public class RedWarehouse {
                                     } */
                                 }).waitSeconds(1.5)
                                 .addDisplacementMarker(() -> { /* mechanisms.releaseServoMove(0.6); */ }).waitSeconds(1)
-                                .addDisplacementMarker(() -> { /*mechanisms.reset(); */ }).splineTo(new Vector2d(10, -55), Math.toRadians(270))
+                                .addDisplacementMarker(() -> { /*mechanisms.reset(); */ }).splineTo(new Vector2d(8, -55), Math.toRadians(270))
                                 .splineTo(new Vector2d(36, -64),0).strafeTo(new Vector2d(47, -64)).waitSeconds(3)
                                 .addDisplacementMarker(() -> { /*mechanisms.reset(); */ }).strafeTo(new Vector2d(15,-64))
                                 .lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90))).waitSeconds(3)
