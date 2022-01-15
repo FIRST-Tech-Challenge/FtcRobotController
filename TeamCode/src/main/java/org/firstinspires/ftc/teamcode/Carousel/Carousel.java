@@ -33,8 +33,11 @@ public class Carousel {
 
     }
 
-    public void carouselBoolean(boolean button){
-        if (button){carouselTurningMotor.setPower(.7);}else{carouselTurningMotor.setPower(0);}
+    //mod = true for positive power
+    public void carouselBoolean(boolean button, boolean mod){
+        int mpl;
+        if(mod){mpl=1;}else{mpl = -1;}
+        if(button){carouselTurningMotor.setPower(.7*mpl);}else{carouselTurningMotor.setPower(0*mpl);}
     }
 
 }

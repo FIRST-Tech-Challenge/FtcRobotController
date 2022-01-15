@@ -18,7 +18,7 @@ public class CarouselTest extends LinearOpMode{
 
             Carousel car = new Carousel(hardwareMap);
 
-            car.carouselBoolean(this.gamepad1.a);
+            car.carouselBoolean(this.gamepad1.a, true);
 
         }
     }
