@@ -1,23 +1,12 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.CarouselSpinner;
+import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 @TeleOp(name = "Qualifier Drive Program")
-public class QualifierDriveProgram extends LinearOpMode {
-    DcMotor intake;
-    LinearSlide slide;
-    TeleopDriveTrain drivetrain;
-    Servo bucketServo;
-    CarouselSpinner spinner;
-
+public class QualifierDriveProgram extends TeleopTemplate {
     boolean x_depressed = true;
     boolean y_depressed2 = true;
 
@@ -28,20 +17,7 @@ public class QualifierDriveProgram extends LinearOpMode {
     boolean posOn = false;
 
     public void runOpMode() throws InterruptedException {
-        RobotVoltageSensor r = new RobotVoltageSensor(hardwareMap);
-        slide = new LinearSlide(hardwareMap, "linear_slide", r, this::opModeIsActive, this::isStopRequested);
-
-        intake = hardwareMap.dcMotor.get("intake");
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        bucketServo = hardwareMap.servo.get("bucket");
-
-        drivetrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
-
-        spinner = new CarouselSpinner(hardwareMap, "cs");
-        slide.setMotorPower(.5);
-        Thread.sleep(250);
-        slide.setMotorPower(0);
+        this.initAll();
 
         telemetry.addData("Initialization", "finished");
         telemetry.update();
@@ -49,7 +25,7 @@ public class QualifierDriveProgram extends LinearOpMode {
         //slide.resetEncoder();
 
         while (opModeIsActive() && !isStopRequested()) {
-            if (drivetrain.getFacingDirection()) {
+            if (driveTrain.getFacingDirection()) {
                 telemetry.addData("Facing", "Forward");
             } else {
                 telemetry.addData("Facing", "Backward");
@@ -74,18 +50,18 @@ public class QualifierDriveProgram extends LinearOpMode {
 
             //Declan's controls
             {
-                drivetrain.setPowerFromGamepad(gamepad1);
+                driveTrain.setPowerFromGamepad(gamepad1);
 
                 //Declan Speed Modifiers
                 if (gamepad1.b) {
-                    drivetrain.setDrivePowerMult(0.6);
+                    driveTrain.setDrivePowerMult(0.6);
                 }
                 if (gamepad1.y) {
-                    drivetrain.setDrivePowerMult(1);
+                    driveTrain.setDrivePowerMult(1);
 
                 }
                 if (gamepad1.a) {
-                    drivetrain.setDrivePowerMult(0.3);
+                    driveTrain.setDrivePowerMult(0.3);
                 }
 
                 //Declan gamepad y toggle
@@ -94,7 +70,7 @@ public class QualifierDriveProgram extends LinearOpMode {
                 }
 
                 if (gamepad1.x && x_depressed) {
-                    drivetrain.flipFrontAndBack();
+                    driveTrain.flipFrontAndBack();
                     x_depressed = false;
                 }
             }
@@ -157,18 +133,17 @@ public class QualifierDriveProgram extends LinearOpMode {
                 }
 
 
-                intake.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
-                bucketServo.setPosition(bucketServoPos);
+                intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
 
                 if (!gamepad2.y) {
                     y_depressed2 = true;
                 }
                 if (gamepad2.y && y_depressed2) {
                     y_depressed2 = false;
-                    if (bucketServoPos == 0.7) {
-                        bucketServoPos = 0.4;
+                    if (intake.isClosed()) {
+                        intake.setServoUp();
                     } else {
-                        bucketServoPos = 0.7;
+                        intake.setServoDown();
                     }
                 }
                 if (gamepad2.x) {

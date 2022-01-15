@@ -153,8 +153,9 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
      * Resets the Linear Slide Encoder
      */
     public void resetEncoder() {
-        this.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /**

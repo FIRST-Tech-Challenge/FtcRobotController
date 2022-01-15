@@ -287,7 +287,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         //final double distancePercentage = (totalDistance - currentDistance) / totalDistance;
         //return MiscUtills.boundNumber((-1.0 / 4) * Math.cos(distancePercentage) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
 
-        double powerVariable = 0.5 * Math.sin((currentDistance * Math.PI) / totalDistance) + (0.5 * (normalVoltage / voltageSensor.getVoltage()));
+        double powerVariable = MiscUtills.boundNumber(0.5 * Math.sin((currentDistance * Math.PI) / (totalDistance * .75)) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
         return powerVariable;
 
 

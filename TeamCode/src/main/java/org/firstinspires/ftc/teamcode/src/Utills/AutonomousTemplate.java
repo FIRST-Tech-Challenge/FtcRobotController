@@ -61,7 +61,7 @@ public abstract class AutonomousTemplate extends LinearOpMode {
      * @throws InterruptedException Throws if the OpMode is stopped during function execution
      */
     public void initAll() throws InterruptedException {
-        podServos = new OdometryPodServos(hardwareMap, "right_odometry_servo", "left_odometry_servo", "horizontal_odometry_servo");
+        podServos = new OdometryPodServos(hardwareMap, "vertical_right_odometry_servo", "vertical_left_odometry_servo", "horizontal_odometry_servo");
         podServos.lower();
 
 
@@ -107,16 +107,16 @@ public abstract class AutonomousTemplate extends LinearOpMode {
         driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, s);
 
 
-        spinner = new CarouselSpinner(hardwareMap, "duck_spinner");
+        spinner = new CarouselSpinner(hardwareMap, "cs");
 
 
-        slide = new LinearSlide(hardwareMap, "slide_motor", s, this::opModeIsActive, this::isStopRequested);
+        slide = new LinearSlide(hardwareMap, "linear_slide", s, this::opModeIsActive, this::isStopRequested);
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         slide.start();
         checkStop();
 
-        intake = new ContinuousIntake(hardwareMap, "intake_motor", "bucketServo", "color_sensor", true);
-        intake.setServoUp();
+        intake = new ContinuousIntake(hardwareMap, "intake", "bucket", "distance_sensor", "color_sensor", true);
+        intake.setServoDown();
 
         leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
 

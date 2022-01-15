@@ -39,6 +39,8 @@ public enum FieldPoints {
      * The Key is the point and the value is the location in inches in the form x,y
      */
     public static final HashMap<FieldPoints, double[]> positionsAndPoints = new HashMap<FieldPoints, double[]>() {{
+
+        // the initialization points need to be updated
         put(FieldPoints.RedWestLoadingPoint, new double[]{20, 85});
         put(FieldPoints.RedEastLoadingPoint, new double[]{66, 85.5});
         put(FieldPoints.RedSouthLoadingPoint, new double[]{47, 68});
@@ -61,10 +63,10 @@ public enum FieldPoints {
         put(FieldPoints.RedSSHA, new double[]{55, 7});
         put(FieldPoints.RedBarrierPass, new double[]{30, 63});
         put(FieldPoints.BlueBarrierPass, new double[]{110, 63});
-        put(FieldPoints.RedWareHouseInit, new double[]{7, 63, 90});
-        put(FieldPoints.RedCarouselInit, new double[]{7, 101, 90});
-        put(FieldPoints.BlueWareHouseInit, new double[]{133, 63, 270});
-        put(FieldPoints.BlueCarouselInit, new double[]{133, 101, 270});
+        put(FieldPoints.RedWareHouseInit, new double[]{7, 63, 0});
+        put(FieldPoints.RedCarouselInit, new double[]{7, 101, 0});
+        put(FieldPoints.BlueWareHouseInit, new double[]{133, 63, 180});
+        put(FieldPoints.BlueCarouselInit, new double[]{133, 101, 180});
 
 
     }};

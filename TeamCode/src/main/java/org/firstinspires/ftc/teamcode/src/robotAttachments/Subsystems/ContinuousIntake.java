@@ -32,6 +32,8 @@ public class ContinuousIntake {
      * The Position servo must be to keep and item in the intake compartment
      */
     private static final double closed = .7; // this position needs to be adjusted
+
+    private boolean isClosed;
     /**
      * The item color sensor
      */
@@ -70,6 +72,12 @@ public class ContinuousIntake {
 
 
         itemRelease = hardwareMap.servo.get(servoName);
+        this.setServoDown();
+        isClosed = true;
+    }
+
+    public boolean isClosed() {
+        return this.isClosed;
     }
 
     public gameObject identifyContents() {
@@ -151,6 +159,7 @@ public class ContinuousIntake {
      */
     public void setServoUp() {
         itemRelease.setPosition(open);
+        isClosed = false;
     }
 
     /**
@@ -158,6 +167,7 @@ public class ContinuousIntake {
      */
     public void setServoDown() {
         itemRelease.setPosition(closed);
+        isClosed = true;
     }
 
     /**
@@ -193,6 +203,15 @@ public class ContinuousIntake {
     public double getSensorDistance() {
         double distance = distanceSensor.getDistance(DistanceUnit.CM);
         return distance;
+    }
+
+    /**
+     * @return returns a true or false value of wether or not an item passes the intake distance sensor
+     */
+    public boolean itemInIntake() {
+        boolean tf;
+        tf = this.getSensorDistance() < 9;
+        return tf;
     }
 
     /**
