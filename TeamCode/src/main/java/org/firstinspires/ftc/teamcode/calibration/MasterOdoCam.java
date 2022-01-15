@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 @TeleOp(name="Master Odo Cam", group="Robot15173")
-//@Disabled
+@Disabled
 public class MasterOdoCam extends MasterOdo {
     @Override
     protected void initBot() {

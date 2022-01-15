@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 
 @TeleOp(name="MasterCalib Cam", group="Robot15173")
-//@Disabled
+@Disabled
 public class MasterCalibCam extends MasterCalib {
 
     protected void initBot(){

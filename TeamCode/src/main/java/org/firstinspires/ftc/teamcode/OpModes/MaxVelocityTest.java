@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 
 @TeleOp
-//@Disabled
+@Disabled
 public class MaxVelocityTest extends LinearOpMode {
     FrenzyBot bot = new FrenzyBot();
 
