@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.team6220_2021;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.team6220_2021.ResourceClasses.Button;
-import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
-
+@Disabled
 @TeleOp(name = "TeleOp Competition", group = "Competition")
 public class TeleOpCompetition extends MasterTeleOp {
 
