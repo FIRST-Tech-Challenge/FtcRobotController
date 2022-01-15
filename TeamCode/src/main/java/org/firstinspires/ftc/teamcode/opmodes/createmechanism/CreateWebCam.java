@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
+import org.firstinspires.ftc.teamcode.commands.webcam.CloseDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
@@ -32,6 +33,7 @@ public class CreateWebCam {
 
     private DetectTSEPosition detectTSEPosition;
     private StopDetectTSEPosition stopDetectTSEPosition;
+    private CloseDetectTSEPosition closeDetectTSEPosition;
     private MockDetectTSEPosition mockDetectTSEPosition;
     private StreamToDashboard streamToDashboard;
     private SetArmLevel setArmLevel;
@@ -94,6 +96,7 @@ public class CreateWebCam {
         //mockDetectTSEPosition = new MockDetectTSEPosition(subsystem, telemetry);
         detectTSEPosition = new DetectTSEPosition(subsystem, telemetry);
         stopDetectTSEPosition = new StopDetectTSEPosition(subsystem,telemetry);
+        closeDetectTSEPosition = new CloseDetectTSEPosition(subsystem,telemetry);
 
 
         gotLevelTrigger = new Trigger(()->subsystem.getLevel() > 0);
@@ -108,6 +111,9 @@ public class CreateWebCam {
 
     public StopDetectTSEPosition getStopDetectTSEPosition(){
         return stopDetectTSEPosition;
+    }
+    public CloseDetectTSEPosition getCloseDetectTSEPosition(){
+        return closeDetectTSEPosition;
     }
 
     public MockDetectTSEPosition getMockDetectTSEPositionCommand(){

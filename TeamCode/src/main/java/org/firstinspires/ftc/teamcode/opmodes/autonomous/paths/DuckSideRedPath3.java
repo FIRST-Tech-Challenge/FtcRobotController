@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.commands.webcam.CloseDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -51,7 +52,7 @@ public class DuckSideRedPath3 {
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    private StopDetectTSEPosition stopDetectTSEPosition;
+    private CloseDetectTSEPosition closeDetectTSEPosition;
     private InstantCommand stopDetect;
 
     public DuckSideRedPath3(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
@@ -88,7 +89,7 @@ public class DuckSideRedPath3 {
         //mockDetectTSEPosition.schedule();
 
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
-        stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
+        closeDetectTSEPosition = createWebCam.getCloseDetectTSEPosition();
         detectTSEPosition.schedule();
 
         createCarousel.createAuto();
@@ -153,7 +154,7 @@ public class DuckSideRedPath3 {
 
 
         stopDetect = new InstantCommand(()->{
-            stopDetectTSEPosition.schedule();
+            closeDetectTSEPosition.schedule();
         });
     }
 

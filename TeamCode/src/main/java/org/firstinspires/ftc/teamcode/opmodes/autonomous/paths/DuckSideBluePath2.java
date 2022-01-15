@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.commands.webcam.CloseDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
@@ -52,7 +53,7 @@ public class DuckSideBluePath2 {
     private final HardwareMap hwMap;
     private final Telemetry telemetry;
 
-    private StopDetectTSEPosition stopDetectTSEPosition;
+    private CloseDetectTSEPosition closeDetectTSEPosition;
 
     public DuckSideBluePath2(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
         this.hwMap = hwMap;
@@ -85,7 +86,7 @@ public class DuckSideBluePath2 {
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
-        stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
+        closeDetectTSEPosition = createWebCam.getCloseDetectTSEPosition();
         detectTSEPosition.schedule();
 
         createCarousel.createAuto();
@@ -149,7 +150,7 @@ public class DuckSideBluePath2 {
 
     public void execute(CommandOpMode commandOpMode){
         commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
-                startWarehouseParkingTimerCommand.andThen(stopDetectTSEPosition, sample1Follower1, carouselGroupBlue1,
+                startWarehouseParkingTimerCommand.andThen(closeDetectTSEPosition, sample1Follower1, carouselGroupBlue1,
                         sample1Follower2,sample1Follower3, sample1Follower4,intakeGroup,
                         new WaitUntilCommand(Timers.getInstance()::warehouseTimerIsDone).andThen(sample1Follower5))
         ));
