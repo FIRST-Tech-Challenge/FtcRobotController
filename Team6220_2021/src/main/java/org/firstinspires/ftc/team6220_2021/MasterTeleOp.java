@@ -108,7 +108,7 @@ public abstract class MasterTeleOp extends MasterOpMode {
         motorBelt.setTargetPosition(Constants.BELT_RESET);
 
         motorArm.setPower(0.5);
-        motorArm.setTargetPosition(0);
+        motorArm.setTargetPosition(-50);
         pauseMillis(500);
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setPower(0.5);

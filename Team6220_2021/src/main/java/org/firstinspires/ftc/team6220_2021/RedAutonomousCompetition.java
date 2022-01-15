@@ -150,8 +150,8 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         pauseMillis(125);
         driveInches(6, Constants.MIN_DRIVE_PWR, false);
 
-        motorBelt.setPower(0.5);
-        motorBelt.setTargetPosition(1250);
+        motorBelt.setPower(0.75);
+        motorBelt.setTargetPosition(1850);
         pauseMillis(750);
         servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
         motorArm.setTargetPosition(0);

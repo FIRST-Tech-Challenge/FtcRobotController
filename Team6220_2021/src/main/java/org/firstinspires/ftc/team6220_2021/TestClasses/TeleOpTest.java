@@ -14,9 +14,6 @@ public class TeleOpTest extends MasterTeleOp {
         Initialize();
         waitForStart();
 
-        motorBelt.setPower(0.5);
-        motorBelt.setTargetPosition(1250);
-
         while (opModeIsActive()) {
             telemetry.addData("belt: ", motorBelt.getCurrentPosition());
             telemetry.update();

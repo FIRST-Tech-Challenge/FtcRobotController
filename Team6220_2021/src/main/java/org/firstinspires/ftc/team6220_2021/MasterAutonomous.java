@@ -42,13 +42,8 @@ public abstract class MasterAutonomous extends MasterOpMode {
 
         double position = 0.0;
         double distanceLeft;
-        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        double angleDeviation;
 
         while (!distanceReached && opModeIsActive()) {
-            // This calculates the angle deviation
-            angleDeviation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle;
-
             if (backwards) {
                 distanceLeft = targetDistance + position;
             } else {
@@ -63,25 +58,13 @@ public abstract class MasterAutonomous extends MasterOpMode {
                         max(distanceLeft / 48, minSpeed, Constants.MIN_DRIVE_PWR));
             }
 
-            // todo - find a way to regulate the angle without the robot stopping half way through (maybe a way to concurrently turn and drive?)
-            /*if (Math.abs(angleDeviation) >= 1) {
-                turnDegrees(angleDeviation * -1);
-            }*/
-
             // Update positions using last distance measured by encoders
-            position = Constants.IN_PER_AM_TICK * (motorFL.getCurrentPosition() + motorBL.getCurrentPosition() -
-                    motorFR.getCurrentPosition() - motorBR.getCurrentPosition()) / 4.0;
+            position = Constants.IN_PER_AM_TICK * (motorFL.getCurrentPosition() + motorBL.getCurrentPosition() +
+                    motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / 4.0;
 
-            if (backwards) {
-                if (Math.abs(position + targetDistance) <= 0.5) {
-                    driveTank(0.0, 0.0);
-                    distanceReached = true;
-                }
-            } else {
-                if (Math.abs(position - targetDistance) <= 0.5) {
-                    driveTank(0.0, 0.0);
-                    distanceReached = true;
-                }
+            if (Math.abs(distanceLeft) <= 0.5) {
+                driveTank(0.0, 0.0);
+                distanceReached = true;
             }
         }
     }
