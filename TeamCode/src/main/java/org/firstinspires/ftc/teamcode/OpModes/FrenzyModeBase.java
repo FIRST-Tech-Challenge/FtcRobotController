@@ -221,22 +221,24 @@ public class FrenzyModeBase extends LinearOpMode {
 
     protected void handleDropper() {
         if (isButtonPressable()) {
-            startGamepadLockout();
             if (gamepad2.dpad_up) {
                 robot.dropElement();
+                startGamepadLockout();
             } else if (gamepad2.dpad_down) {
                 robot.resetDropper();
+                startGamepadLockout();
             }
         }
     }
 
     protected void handleIntakeDropper() {
         if (isButtonPressable()) {
-            startGamepadLockout();
-            if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_down) {
                 robot.intakeDropperUp();
-            } else if (gamepad1.dpad_down) {
+                startGamepadLockout();
+            } else if (gamepad1.dpad_up) {
                 robot.intakeDropperDown();
+                startGamepadLockout();
             }
         }
     }

@@ -272,8 +272,8 @@ public class FrenzyBaseBot implements IOdoBot {
 
             //reduce turn
             if (Math.abs(drive)  < 0.02){
-                rightPower = rightPower/2;
-                leftPower = leftPower/2;
+                rightPower = rightPower/1.2;
+                leftPower = leftPower/1.2;
 
             }
 
