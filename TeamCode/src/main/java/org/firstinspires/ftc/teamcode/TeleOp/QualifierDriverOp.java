@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 @TeleOp
 
-public class MecanumWheelChassis extends LinearOpMode {
+public class QualifierDriverOp extends LinearOpMode {
     
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -61,6 +61,7 @@ public class MecanumWheelChassis extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             
+
             
             linearSlide.setPower(gamepad2.right_stick_y * 0.5);
             
@@ -97,7 +98,7 @@ public class MecanumWheelChassis extends LinearOpMode {
             
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            double rx = -gamepad1.right_stick_x ;
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
@@ -113,6 +114,13 @@ public class MecanumWheelChassis extends LinearOpMode {
             frontRight.setPower(frontRightPower * 0.75);
             backRight.setPower(backRightPower * 0.75);
  
+
+            
+            telemetry.addData("FrontLeft Wheel Power: " , frontLeft.getPower());
+            telemetry.addData("BackLeft Wheel Power: " , backLeft.getPower());
+            telemetry.addData("FrontRight Wheel Power: " , frontRight.getPower());
+            telemetry.addData("BackRight Wheel Power: " , backRight.getPower());
+            telemetry.update();
             
             telemetry.addData("Status", "Running");
             telemetry.update();
@@ -162,6 +170,20 @@ public class MecanumWheelChassis extends LinearOpMode {
 
         
         bucketTurner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        
+        
+    }
+    
+    
+    private void wheelValues() {
+        
+        while (opModeIsActive()) {
+            
+            
+            
+            
+        }
+        
         
         
     }
