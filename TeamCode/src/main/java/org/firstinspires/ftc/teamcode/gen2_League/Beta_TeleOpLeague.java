@@ -16,9 +16,10 @@ public class Beta_TeleOpLeague extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.get(DcMotor.class,"backRightMotor");
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class,"backLeftMotor");
 
-        DcMotor liftControl = hardwareMap.get(DcMotor.class, "liftControl");
+        CRServo carouselSpinner = hardwareMap.get(CRServo.class, "carouselSpinner");
 
-//        CRServo carouselSpinner = hardwareMap.get(CRServo.class, "carouselSpinner");
+        DcMotor intakeMotor = hardwareMap.get(DcMotor.class,"intakeMotor");
+        DcMotor liftControl = hardwareMap.get(DcMotor.class, "liftControl");
 
         waitForStart();
         while (opModeIsActive()) {
@@ -51,14 +52,36 @@ public class Beta_TeleOpLeague extends LinearOpMode {
                 backLeftMotor.setPower(-(pivot - vertical - horizontal));
             }
 
-//            double speedSpinner = 0.5;
-//            if (gamepad1.x) {
-//               carouselSpinner.setPower(speedSpinner);
-//            } else if (gamepad1.b) {
-//                carouselSpinner.setPower(-speedSpinner);
-//            } else {
-//                carouselSpinner.setPower(0.0);
-//            }
+            double speedSpinner = 0.5;
+            if (gamepad1.x) {
+                carouselSpinner.setPower(speedSpinner);
+            } else if (gamepad1.b) {
+                carouselSpinner.setPower(-speedSpinner);
+            } else {
+                carouselSpinner.setPower(0.0);
+            }
+
+            if (gamepad2.a) {
+
+            }
+            if (gamepad2.b) {
+
+            }
+            if (gamepad2.y) {
+
+            }
+            if (gamepad2.x) {
+
+            }
+            if (gamepad2.right_trigger == 1) {
+                intakeMotor.setPower(0.2);
+            } else {
+                intakeMotor.setPower(0);
+            }
+
+            //Add Arm Extending Reader
+
+//            telemetry.addData(lift)
 
             //Add Arm Extending Reader
 
