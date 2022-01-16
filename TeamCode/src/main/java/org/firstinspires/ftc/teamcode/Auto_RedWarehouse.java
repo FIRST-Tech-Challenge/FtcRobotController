@@ -5,22 +5,27 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Blue Caroseul Side Test")
-public class Auto_2022FF extends LinearOpMode {
+@Autonomous(name = "Red Warehouse")
+public class Auto_RedWarehouse extends LinearOpMode {
+
     //robot parts
-    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft;
-    private DcMotor intake;
+    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake, motorIntake;
     private CRServo duck;
+    private Servo bucket;
     private BNO055IMU imu;
 
     //for robot motion
     private RobotClass robot;
+
+    private DistanceSensor distsense;
 
     //for OpenCV
     OpenCvCamera cam;// webcam
@@ -37,13 +42,18 @@ public class Auto_2022FF extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
-        intake = hardwareMap.dcMotor.get("intake");
+        motorOuttake = hardwareMap.dcMotor.get("outtake");
+        motorIntake = hardwareMap.dcMotor.get("intake");
+
         duck = hardwareMap.crservo.get("duck");
+        bucket = hardwareMap.servo.get("bucket");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
+        distsense = hardwareMap.get(DistanceSensor.class,"distsense");
+
         //create robot object
-        robot = new RobotClass(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, intake, duck, imu, this);
+        robot = new RobotClass(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorIntake, motorOuttake, bucket, duck, distsense, imu,this);
 
         //setup robot
         robot.setupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
@@ -67,75 +77,30 @@ public class Auto_2022FF extends LinearOpMode {
             }
         });
 
+        telemetry.addData("angle", robot.getAngle());
         waitForStart();//if there is a camera error... and it crashes the program... then we need to find a way to "pause stream"
 
-        telemetry.addData("Did you do PIDCalibration?", "no");
-        telemetry.update();
-        Thread.sleep(1234);
-        System.exit(1);
-
-        int code = mainPipeline.getCode();//get the code (duck position) before we move
+        int code = mainPipeline.getCode();//get the code before we move
         telemetry.addData("barcode value", code);
         if (code == 0) {
             telemetry.addData("assuming", "1");
         }
         telemetry.update();
-        //caroseul
-        robot.pidGyroStrafeIn(90, 62);//2 feet+a bit more(error) to right. todo change the cm
-        robot.duck(1);//turn on duck
-        Thread.sleep(3000);
-        robot.duck(0);
+
 
         //to hub
-        //todo: adjust these values to make it work! You only need to change cm really, and maybe flip the angle for the second strafe if it's going in the wrong direction
-        robot.pidGyroStrafeIn(Math.atan2(4.0, 3.0), 152);
-        robot.pidGyroStrafeIn(-90, 20);
+        //2 sides of rectangle instead of hypotenuse
+        robot.gyroStrafeEncoder(0.5,-90,6);
+        robot.gyroStrafeEncoder(0.5,180,34);
+        robot.gyroTurn(180, 0.5);
 
-        switch (code) {//shell for later, do not delete!!!
-            case 2:
-                //center, middle
-                //dump bucket
-                break;
-            case 3:
-                //right, top
-                //dump bucket
-                break;
-            case 1:
-            default:
-                //left, bottom
-                //error, put on bottom, do case1
-                //dump bucket
-                break;
-        }
+        robot.runToPosDrop(0.25, 18, code);
+        Thread.sleep(500);
 
         //go to warehouse
-        robot.pidGyroTurn(90);
-        robot.gyroDriveSec(1, 3);//todo change the seconds! we don't have a sensor yet, so go with this for now
-        //might add sensor here, but need to make sure we have!
-        //also bruhhhh they put the picture not in the warehouse! it might have been helpful if the picture was int eh warehouse bc we might be able to use openCV to detect the wall...
-
-        //pick up element
-        //todo make this a method later, NOT NOW finish testing first
-        robot.intake(1);
-        robot.gyroDriveSec(0.2, 1);
-        robot.gyroDriveSec(-0.2, 1);
-        robot.intake(0);
-
-        //drive back to hub
-        robot.gyroDriveSec(-1, 3);//todo change the seconds
-
-        //drop in bottom of hub
-        robot.pidGyroTurn(-90);
-
-        //park in warehouse, else park in box
-        //warehouse
-        robot.pidGyroTurn(90);
-        robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
-        //box
-        robot.pidGyroStrafeIn(90, 60);//todo change cm
-
-
+        robot.goToWarehouse_Red(false);//default
     }
+
     /*
      * ways to score in auto:
      * BLUE CAROSEUL SIDE
@@ -147,3 +112,4 @@ public class Auto_2022FF extends LinearOpMode {
      * step 6: park in box since alliance partner in the hub
      * */
 }
+

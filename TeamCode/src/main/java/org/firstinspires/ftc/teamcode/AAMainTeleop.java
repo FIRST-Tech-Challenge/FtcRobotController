@@ -9,14 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.internal.ftdi.eeprom.FT_EEPROM_232H;
 
 @TeleOp(name = "AA Main Teleop")
 public class AAMainTeleop extends LinearOpMode {
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, motorIntake, motorOuttake;
     private CRServo servoDuck;
     private Servo bucket;
-    private Robot_2022FF robot;
+    private RobotClass robot;
     private DistanceSensor distsense;
     private BNO055IMU imu;
 
@@ -26,44 +25,37 @@ public class AAMainTeleop extends LinearOpMode {
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
+
         motorIntake = hardwareMap.dcMotor.get("intake");
         motorOuttake = hardwareMap.dcMotor.get("outtake");
+
         servoDuck = hardwareMap.crservo.get("duck");
         bucket = hardwareMap.servo.get("bucket");
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
         distsense = hardwareMap.get(DistanceSensor.class, "distsense");
 
-        robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, motorIntake, motorOuttake, bucket, servoDuck, distsense, imu, this);
+        robot = new RobotClass(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, motorIntake, motorOuttake, bucket, servoDuck, distsense, imu, this);
+        robot.setupRobot();
+        //not here
+        //Don't set 0 power behavior or direction here
+        //do it in Robot_2022FF
 
-        //reverse the needed motors
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorOuttake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-        double powerMod;
+        double powerMod = 1;
 
         waitForStart();
 
         while(opModeIsActive()){
-            powerMod=1.0;
-            /*if(gamepad1.right_bumper){
-                powerMod = 0.5;
-            }else{
-                powerMod = 1.0;
-            }
-            //gamepad 2 does duck, bucket, and outtake. trigger for duck, bucket dpad, outtake joystick
+//            if(gamepad1.right_bumper){
+//                powerMod = 0.5;
+//            }else{
+//                powerMod = 1.0;
+//            }
+            //bumper is broken
 
-            motorIntake.setPower(gamepad1.left_trigger);
-            motorIntake.setPower(-gamepad1.right_trigger);
-
-            servoDuck.setPower(gamepad2.left_trigger);
-            servoDuck.setPower(-gamepad2.right_trigger);*/
-
+            //the trigger is broken, so using bumper
+            //intake
             if (gamepad1.left_bumper) {
                 motorIntake.setPower(powerMod);
             }
@@ -74,6 +66,7 @@ public class AAMainTeleop extends LinearOpMode {
                 motorIntake.setPower(0);
             }
 
+            //duck
             if (gamepad2.left_bumper) {
                 servoDuck.setPower(1);
             }
@@ -81,9 +74,14 @@ public class AAMainTeleop extends LinearOpMode {
                 servoDuck.setPower(-1);
             }
             else {
-                motorIntake.setPower(0);
+                servoDuck.setPower(0);
             }
 
+            if(gamepad2.left_stick_button){//auto dump bucket
+                robot.dobucket();
+            }
+
+            //manual bucket
             if(gamepad2.dpad_up){
                 bucket.setPosition(bucket.getPosition()+0.01);
             }
@@ -91,19 +89,26 @@ public class AAMainTeleop extends LinearOpMode {
                 bucket.setPosition(bucket.getPosition()-0.01);
             }
 
-            motorOuttake.setPower(gamepad2.right_stick_y/2);
+            //outtake
+            motorOuttake.setPower(gamepad2.right_stick_y/2);//for manual use
 
             //trying to keep the arm in position and not swinging around
-            if (gamepad2.x) {
-                robot.dropBottom(powerMod);
-            }
-            if (gamepad2.a) {
-                robot.dropMiddle(powerMod);
+
+            //top, middle, bottom scoring
+            if (gamepad2.y) {
+                robot.moveSlides(3, 0.5);
             }
             if (gamepad2.b) {
-                robot.dropTop(powerMod);
+                robot.moveSlides(2, 0.5);
+            }
+            if (gamepad2.a) {
+                robot.moveSlides(1, 0.5);
+            }
+            if(gamepad2.x){
+                robot.moveSlides(0, 0.5);
             }
 
+            //drive
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + (Math.PI/4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
@@ -116,10 +121,12 @@ public class AAMainTeleop extends LinearOpMode {
             motorBackLeft.setPower((powerTwo + (rotation))*powerMod);
             motorBackRight.setPower((powerOne + (rotation))*powerMod);
 
+
+            //telemetry
             telemetry.addData("ticks main:", motorFrontLeft.getCurrentPosition());
-            telemetry.addData("intake ticks", motorFrontRight.getCurrentPosition());
-            telemetry.addData("ticks main:", motorOuttake.getCurrentPosition());
+            telemetry.addData("outtake ticks main:", motorOuttake.getCurrentPosition());
             telemetry.addData("intake ticks", motorIntake.getCurrentPosition());
+            telemetry.addData("bucket pos",bucket.getPosition());
             telemetry.update();
 
 

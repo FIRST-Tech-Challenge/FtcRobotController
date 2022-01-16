@@ -23,7 +23,7 @@ public class CVClass extends OpenCvPipeline{
     Mat output = new Mat();
     Mat singleColor = new Mat();
     Mat hierarchy = new Mat();
-
+    Rect box;
     int barcode = 0; //level 1 is bottom, level 2 is mid, 3 is up
     @Override
     public Mat processFrame(Mat input){
@@ -57,23 +57,24 @@ public class CVClass extends OpenCvPipeline{
                     max = area;
                     maxInd = i;
                 }
-            }
+            }//426,218
             //draw a box of the largest one of single color
             Rect largestRect = Imgproc.boundingRect(contours.get(maxInd));
+            box = largestRect;
             Scalar boxColor = new Scalar(255, 255, 255);//should be white
             Imgproc.rectangle(output, largestRect, boxColor, 3, 8, 0);//Currently boxed based on rectangle, Change if needed!!!!
 
             //Determine which box it's in
-            if (largestRect.x<240) {
-                barcode=1;
+            if (largestRect.x>410) {
+                barcode=3;
                 //telemetry.addData("Box", "1");
             }
-            else if (largestRect.x<400) {
+            else if (largestRect.x>175) {
                 barcode=2;
                 //telemetry.addData("Box", "2");
             }
             else {
-                barcode=3;
+                barcode=1;
                 //telemetry.addData("Box", "3");
             }
 
@@ -85,4 +86,6 @@ public class CVClass extends OpenCvPipeline{
     public int getCode() {
         return barcode;
     }
+    public int getX(){return box.x;}
+
 }

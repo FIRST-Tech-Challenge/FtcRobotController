@@ -9,22 +9,20 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Blue Caroseul Side, no PID")
-public class Auto_2022_noPID extends LinearOpMode {
-
+@Autonomous(name = "Blue Caroseul")
+public class Auto_BlueCaroseul extends LinearOpMode {
     //robot parts
-    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake;
+    private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorOuttake, motorIntake;
     private CRServo duck;
     private Servo bucket;
     private BNO055IMU imu;
 
     //for robot motion
-    private Robot_2022FF robot;
+    private RobotClass robot;
 
     private DistanceSensor distsense;
 
@@ -44,6 +42,7 @@ public class Auto_2022_noPID extends LinearOpMode {
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
         motorOuttake = hardwareMap.dcMotor.get("outtake");
+        motorIntake = hardwareMap.dcMotor.get("intake");
 
         duck = hardwareMap.crservo.get("duck");
         bucket = hardwareMap.servo.get("bucket");
@@ -53,7 +52,7 @@ public class Auto_2022_noPID extends LinearOpMode {
         distsense = hardwareMap.get(DistanceSensor.class,"distsense");
 
         //create robot object
-        robot = new Robot_2022FF(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, duck, imu, this);
+        robot = new RobotClass(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorIntake, motorOuttake, bucket, duck, distsense, imu,this);
 
         //setup robot
         robot.setupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
@@ -76,7 +75,9 @@ public class Auto_2022_noPID extends LinearOpMode {
                 System.exit(0);
             }
         });
+
         telemetry.addData("angle", robot.getAngle());
+        telemetry.update();
         waitForStart();//if there is a camera error... and it crashes the program... then we need to find a way to "pause stream"
 
         int code = mainPipeline.getCode();//get the code before we move
@@ -87,67 +88,23 @@ public class Auto_2022_noPID extends LinearOpMode {
         telemetry.update();
 
         //caroseul
-        robot.duck(-1);//turn on duck
-        robot.gyroStrafeCm(0.5,-90,80);//2 feet+a bit more(error) to right. todo change the cm, direction
-        Thread.sleep(3000);
+        robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
+        robot.gyroTurn(-90,0.5);//direction
+//        robot.gyroStrafeEncoder(0.5,90,10);
+
+        robot.gyroStrafeEncoder(0.5,-90,27.5);//2 feet+a bit more(error) to right. todo change the cm, direction
+        robot.duck(-0.55);//turn on duck
+        Thread.sleep(4000);
         robot.duck(0);
 
         //to hub
-        //2 sides of rectangle instead of hypotenuse
-        robot.gyroStrafeCm(0.5,90,130);
-        robot.gyroStrafeCm(0.5,0,85);
-
-        switch (code) {//shell for later, do not delete!!!
-            case 2:
-                robot.dropMiddle(0.25);
-                //center, middle
-                break;
-            case 3:
-                //right, top
-                robot.dropTop(0.25);
-                break;
-            case 1:
-            default:
-                //left, bottom
-                robot.dropBottom(0.25);
-                //error, put on bottom, do case1
-                break;
-        }
-
-        //go to warehouse
+        robot.gyroStrafeEncoder(0.5,90,52.5);//49?
         robot.gyroTurn(90,0.5);
-        robot.driveToWall(0.5);
+        robot.runToPosDrop(0.5, 21.5,code);
+        Thread.sleep(500);
 
-        //pick up element
-        //todo make this a method later, NOT NOW finish testing first
-//        robot.intake(1);
-//        robot.gyroDriveSec(0.2, 1);
-//        robot.gyroDriveSec(-0.2, 1);
-//        robot.intake(0);
-//
-//        //drive back to hub
-//        robot.gyroDriveSec(-1, 3);//todo change the seconds
-//
-//        //drop in bottom of hub
-//        robot.pidGyroTurn(-90);
-//
-//        //park in warehouse, else park in box
-//        //warehouse
-//        robot.pidGyroTurn(90);
-//        robot.gyroDriveSec(1, 3);//warehouse. todo also change seconds here
-//        //box
-//        robot.pidGyroStrafeCm(90, 60);//todo change cm
-
+        robot.goToDepot_Blue();//default
 
     }
-    /*
-     * ways to score in auto:
-     * BLUE CAROSEUL SIDE
-     * step 1: scan
-     * step 2: caroseul
-     * step 3: drop off element
-     * step 4: get more elemnts (against wall? over bump?)
-     * step 5: put in team hub
-     * step 6: park in box since alliance partner in the hub
-     * */
+
 }
