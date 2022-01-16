@@ -108,8 +108,7 @@ public class AutoLift {
                 break;
             case LIFT_MOVEMENT:
                 if (!liftWaiting) {
-                    final double motorPos = liftMotor.getCurrentPosition();
-                    if (motorPos >= position.motorPos - 10 && motorPos <= position.motorPos + 10) {
+                    if (Math.abs(liftMotor.getCurrentPosition() - position.motorPos) <= 10) {
                         armServo.setPosition(position.armPos);
                         if (!position.dumper) state = MovementStates.NONE;
                         else {

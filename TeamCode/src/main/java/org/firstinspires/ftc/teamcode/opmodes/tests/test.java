@@ -12,11 +12,14 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
+import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 @TeleOp
 public class test extends LinearOpMode {
+    private final EventThread eventThread = new EventThread(this::opModeIsActive);
     @Override
     public void runOpMode() {
         hardwareMap.get(DcMotor.class,"liftMotor").setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -35,7 +38,9 @@ public class test extends LinearOpMode {
         two.setDirection(DcMotorSimple.Direction.REVERSE);
         final DcMotor[] motors = {one, two, three, four};
         final GamepadEx gamepadEx = new GamepadEx(gamepad1);
+        final AutoLift lift = new AutoLift(eventThread, hardwareMap);
         waitForStart();
+        lift.setPosition(AutoLift.Positions.TOP);
         carousel.on();
         while (opModeIsActive()) {
             final double stick = gamepadEx.getLeftY();

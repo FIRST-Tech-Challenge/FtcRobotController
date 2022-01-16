@@ -17,7 +17,7 @@ public class CVAuto extends LinearOpMode {
         telemetry.addLine("Running");
         telemetry.update();
         while (opModeIsActive()) {
-            telemetry.addData("webcamOutput", webcam.run());
+            telemetry.addData("webcamOutput", webcam.run(true));
             telemetry.update();
         }
         eventThread.interrupt();
