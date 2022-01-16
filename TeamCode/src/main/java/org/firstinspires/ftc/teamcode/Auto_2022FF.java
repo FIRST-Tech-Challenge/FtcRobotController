@@ -20,7 +20,7 @@ public class Auto_2022FF extends LinearOpMode {
     private BNO055IMU imu;
 
     //for robot motion
-    private Robot_2022FF robot;
+    private RobotClass robot;
 
     //for OpenCV
     OpenCvCamera cam;// webcam
@@ -43,7 +43,7 @@ public class Auto_2022FF extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         //create robot object
-        robot = new Robot_2022FF(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, intake, duck, imu, this);
+        robot = new RobotClass(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, intake, duck, imu, this);
 
         //setup robot
         robot.setupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE

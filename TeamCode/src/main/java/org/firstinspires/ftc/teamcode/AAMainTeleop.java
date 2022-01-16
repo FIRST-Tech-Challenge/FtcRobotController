@@ -15,7 +15,7 @@ public class AAMainTeleop extends LinearOpMode {
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, motorIntake, motorOuttake;
     private CRServo servoDuck;
     private Servo bucket;
-    private Robot_2022FF robot;
+    private RobotClass robot;
     private DistanceSensor distsense;
     private BNO055IMU imu;
 
@@ -36,22 +36,23 @@ public class AAMainTeleop extends LinearOpMode {
 
         distsense = hardwareMap.get(DistanceSensor.class, "distsense");
 
-        robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, motorIntake, motorOuttake, bucket, servoDuck, distsense, imu, this);
+        robot = new RobotClass(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, motorIntake, motorOuttake, bucket, servoDuck, distsense, imu, this);
         robot.setupRobot();
         //not here
         //Don't set 0 power behavior or direction here
         //do it in Robot_2022FF
 
-        double powerMod;
+        double powerMod = 1;
 
         waitForStart();
 
         while(opModeIsActive()){
-            if(gamepad1.right_bumper){
-                powerMod = 0.5;
-            }else{
-                powerMod = 1.0;
-            }
+//            if(gamepad1.right_bumper){
+//                powerMod = 0.5;
+//            }else{
+//                powerMod = 1.0;
+//            }
+            //bumper is broken
 
             //the trigger is broken, so using bumper
             //intake
@@ -76,7 +77,11 @@ public class AAMainTeleop extends LinearOpMode {
                 servoDuck.setPower(0);
             }
 
-            //bucket
+            if(gamepad2.left_stick_button){//auto dump bucket
+                robot.dobucket();
+            }
+
+            //manual bucket
             if(gamepad2.dpad_up){
                 bucket.setPosition(bucket.getPosition()+0.01);
             }

@@ -10,7 +10,7 @@ public class Pushbot extends LinearOpMode {
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight, outtake;
 
     private BNO055IMU imu;
-    private Robot_2022FF robot;
+    private RobotClass robot;
     @Override
     public void runOpMode() throws InterruptedException {
         motorFrontRight = hardwareMap.dcMotor.get("FR");
@@ -22,7 +22,7 @@ public class Pushbot extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        robot = new Robot_2022FF(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, outtake, imu,this);
+        robot = new RobotClass(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, outtake, imu,this);
         robot.setupRobot();
 
         waitForStart();

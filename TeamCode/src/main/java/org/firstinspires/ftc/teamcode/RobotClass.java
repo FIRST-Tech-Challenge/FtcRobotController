@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class Robot_2022FF {
+public class RobotClass {
     private DcMotor motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft;
     private DcMotor intake, outtake;
 
@@ -69,8 +69,8 @@ public class Robot_2022FF {
      * @param imu
      * @param opMode
      * */
-    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                        DcMotor intake, DcMotor outtake, Servo bucket, CRServo duck, DistanceSensor distanceSensor, BNO055IMU imu, LinearOpMode opMode){
+    public RobotClass(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                      DcMotor intake, DcMotor outtake, Servo bucket, CRServo duck, DistanceSensor distanceSensor, BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -96,8 +96,8 @@ public class Robot_2022FF {
      * @param imu
      * @param opMode
      * */
-    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                        DcMotor intake, CRServo duck, BNO055IMU imu, LinearOpMode opMode){
+    public RobotClass(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                      DcMotor intake, CRServo duck, BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -119,8 +119,8 @@ public class Robot_2022FF {
      * @param imu
      * @param opMode
      * */
-    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                        BNO055IMU imu, LinearOpMode opMode){
+    public RobotClass(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                      BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -140,8 +140,8 @@ public class Robot_2022FF {
      * @param imu
      * @param opMode
      * */
-    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                        CRServo duck, BNO055IMU imu, LinearOpMode opMode){
+    public RobotClass(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                      CRServo duck, BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -162,8 +162,8 @@ public class Robot_2022FF {
      * @param imu
      * @param opMode
      * */
-    public Robot_2022FF(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                        DcMotor motorOuttake, BNO055IMU imu, LinearOpMode opMode){
+    public RobotClass(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+                      DcMotor motorOuttake, BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -219,6 +219,7 @@ public class Robot_2022FF {
         //note: Outtake is the only that can seup herebecause we don't want to continuously reset encoders
         outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         setIMUParameters();
         resetEncoders();
         resetAngle();
@@ -247,7 +248,8 @@ public class Robot_2022FF {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        
+
+        outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setTargetPosition(0);
         outtake.setPower(0);
         outtake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -670,9 +672,15 @@ public class Robot_2022FF {
      */
     public void driveToWall(double power) throws InterruptedException{
         resetAngle();
+        motorBackLeft.setPower(-1);
+        motorBackRight.setPower(-1);
+        motorFrontLeft.setPower(-1);
+        motorFrontRight.setPower(-1);
+
         while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
             // double correction = getCorrection();
-            correctedTankStrafe(power, power, 0);
+//            correctedTankStrafe(power, power, 0);//??????????
+
             telemetry.addData("distance reading:", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
