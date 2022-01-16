@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.odometry;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
 
 import java.io.File;
 
@@ -21,40 +21,39 @@ import java.io.File;
  * @author Sarthak
  * @since 6/1/2019
  */
-@Disabled
+//@Disabled
 @TeleOp(name = "Odometry System Calibration", group = "Calibration")
 public class OdometryCalibration extends LinearOpMode {
-    final double PIVOT_SPEED = 0.15;
+    private final static double PIVOT_SPEED = 0.15;
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 1892.3724283364;
-    //Drive motors
-    DcMotor right_front, right_back, left_front, left_back;
-    //Odometry Wheels
-    DcMotor verticalLeft, verticalRight, horizontal;
-    //IMU Sensor
-    BNO055IMU imu;
+    private final static double COUNTS_PER_INCH = 1892.3724283364;
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
-    final String rfName = "front_right";
-    final String rbName = "back_right";
-    final String lfName = "front_left";
-    final String lbName = "back_left ";
-    final String verticalLeftEncoderName = lfName;
-    final String verticalRightEncoderName = rfName;
-    final String horizontalEncoderName = rbName;
-    final ElapsedTime timer = new ElapsedTime();
-
-    double horizontalTickOffset = 0;
-
+    private final static String rfName = "front_right";
+    private final static String rbName = "back_right";
+    private final static String lfName = "front_left";
+    private final static String lbName = "back_left ";
+    private final static String verticalLeftEncoderName = lfName;
+    private final static String verticalRightEncoderName = rfName;
+    private final static String horizontalEncoderName = rbName;
     //Text files to write the values to. The files are stored in the robot controller
     // under Internal Storage\FIRST\settings
-    final File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
-    final File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
+    private final static File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
+    private final static File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
+    private final ElapsedTime timer = new ElapsedTime();
+    //Drive motors
+    private DcMotor right_front, right_back, left_front, left_back;
+    //Odometry Wheels
+    private DcMotor verticalLeft, verticalRight, horizontal;
+    //IMU Sensor
+    private BNO055IMU imu;
+    private double horizontalTickOffset = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
         //Initialize hardware map values. PLEASE UPDATE THESE VALUES TO MATCH YOUR CONFIGURATION
         initHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
-
+        final OdometryPodServos podServos = new OdometryPodServos(hardwareMap, "vertical_right_odometry_servo", "vertical_left_odometry_servo", "horizontal_odometry_servo");
+        podServos.lower();
         //Initialize IMU hardware map value. PLEASE UPDATE THIS VALUE TO MATCH YOUR CONFIGURATION
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 

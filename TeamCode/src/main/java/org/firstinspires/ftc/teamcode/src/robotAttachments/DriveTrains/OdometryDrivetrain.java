@@ -204,7 +204,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      *
      * @param position  a hashmap value referencing the 2 value array of the position
      * @param tolerance The distance the robot can be off from the given position
-     * @throws InterruptedException
+     * @throws InterruptedException Throws if the opMode is stopped
      */
     public void moveToPosition(FieldPoints position, double tolerance) throws InterruptedException {
 

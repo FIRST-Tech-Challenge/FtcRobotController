@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
  */
 @Autonomous(name = "Red Carousel Autonomous")
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
+    static final boolean wareHousePark = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -115,7 +116,6 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             //spin off the duck
             spinner.spinOffRedDuck();
 
-            boolean wareHousePark = true;
             if (wareHousePark) {
                 //Parks in the Warehouse
                 driveSystem.strafeAtAngle(270, .5);

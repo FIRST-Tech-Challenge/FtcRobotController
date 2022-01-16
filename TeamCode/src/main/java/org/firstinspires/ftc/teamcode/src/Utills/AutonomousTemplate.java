@@ -23,44 +23,44 @@ public abstract class AutonomousTemplate extends LinearOpMode {
     /**
      * Provides methods for lifting and lowering Odometry servos
      */
-    public OdometryPodServos podServos;
+    protected OdometryPodServos podServos;
 
     /**
      * Provides methods to use Odometry and associated drive methods
      */
-    public OdometryDrivetrain driveSystem;
+    protected OdometryDrivetrain driveSystem;
 
     /**
      * Provides Carousel Spinner functionality
      */
-    public CarouselSpinner spinner;
+    protected CarouselSpinner spinner;
 
     /**
      * Provides Odometry Methods, Also held by OdometryDrivetrain driveSystem
      */
-    public OdometryGlobalCoordinatePosition odometry;
+    protected OdometryGlobalCoordinatePosition odometry;
 
     /**
      * Provides methods for using the intake
      */
-    public ContinuousIntake intake;
+    protected ContinuousIntake intake;
 
     /**
      * Provides methods for using the linear slide
      */
-    public LinearSlide slide;
+    protected LinearSlide slide;
 
     /**
      * Provides methods for using the robot LED's
      */
-    public RevBlinkinLedDriver leds;
+    protected RevBlinkinLedDriver leds;
 
     /**
      * Initializes all fields provided by this class
      *
      * @throws InterruptedException Throws if the OpMode is stopped during function execution
      */
-    public void initAll() throws InterruptedException {
+    protected void initAll() throws InterruptedException {
         podServos = new OdometryPodServos(hardwareMap, "vertical_right_odometry_servo", "vertical_left_odometry_servo", "horizontal_odometry_servo");
         podServos.lower();
 

@@ -21,37 +21,37 @@ public abstract class TeleopTemplate extends LinearOpMode {
     /**
      * Provides methods for driving
      */
-    public TeleopDriveTrain driveTrain;
+    protected TeleopDriveTrain driveTrain;
 
     /**
      * Provides Carousel Spinner functionality
      */
-    public CarouselSpinner spinner;
+    protected CarouselSpinner spinner;
 
     /**
      * Provides methods for lifting and lowering Odometry servos
      */
-    public OdometryPodServos pod;
+    protected OdometryPodServos pod;
 
     /**
      * Provides methods for using the linear slide
      */
-    public LinearSlide slide;
+    protected LinearSlide slide;
 
     /**
      * Provides methods for using the intake
      */
-    public ContinuousIntake intake;
+    protected ContinuousIntake intake;
 
     /**
      * Provides methods for using the robot LED's
      */
-    public RevBlinkinLedDriver leds;
+    protected RevBlinkinLedDriver leds;
 
     /**
      * Initializes the objects provided by this class
      */
-    public void initAll() {
+    protected void initAll() {
         driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
 
         spinner = new CarouselSpinner(hardwareMap, "cs");

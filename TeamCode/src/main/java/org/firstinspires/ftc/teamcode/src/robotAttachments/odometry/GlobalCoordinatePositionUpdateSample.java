@@ -8,8 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
 
 
 /**
@@ -23,22 +22,22 @@ import java.io.StringWriter;
 public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
 
     //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
-    final double COUNTS_PER_INCH = 1892.3724283364;
-    //Odometry encoder wheels
-    DcMotor verticalRight, verticalLeft, horizontal;
-    BNO055IMU imu;
-    DcMotor right_front;
-    DcMotor right_back;
-    DcMotor left_front;
-    DcMotor left_back;
+    private final static double COUNTS_PER_INCH = 1892.3724283364;
     //Hardware Map Names for drive motors and odometry wheels.
-    final String rfName = "back_left";
-    final String rbName = "front_left";
-    final String lfName = "back_right";
-    final String lbName = "front_right";
-    final String verticalLeftEncoderName = rbName;
-    final String verticalRightEncoderName = lbName;
-    final String horizontalEncoderName = lfName;
+    private final static String rfName = "back_left";
+    private final static String rbName = "front_left";
+    private final static String lfName = "back_right";
+    private final static String lbName = "front_right";
+    private final static String verticalLeftEncoderName = rbName;
+    private final static String verticalRightEncoderName = lbName;
+    private final static String horizontalEncoderName = lfName;
+    //Odometry encoder wheels
+    private DcMotor verticalRight, verticalLeft, horizontal;
+    private BNO055IMU imu;
+    private DcMotor right_front;
+    private DcMotor right_back;
+    private DcMotor left_front;
+    private DcMotor left_back;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -143,7 +142,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
             }
         } catch (Exception e) {
             while (opModeIsActive() && !isStopRequested()) {
-                printStackTrace(e);
+                telemetry.addData("Error", MiscUtills.getStackTraceAsString(e));
             }
         }
 
@@ -206,29 +205,5 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
 
     }
 
-    public String StackTraceAsString(Exception e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return sw.toString();
-    }
-
-    public void printStackTrace(Exception e) {
-        String str = StackTraceAsString(e);
-        print("Error", str);
-        printFlush();
-    }
-
-    private void print(String caption, Object value) {
-        if (this.telemetry != null) {
-            telemetry.addData(caption, value);
-        }
-    }
-
-    private void printFlush() {
-        if (this.telemetry != null) {
-            telemetry.update();
-        }
-    }
 
 }

@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A template for all Autonomous opModes that use Vision, allows easy initialization
@@ -34,12 +33,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     /**
      * A object to lock on to for the thread safety, used in _initVuforia
      */
-    private static final ReentrantLock VF_Lock = new ReentrantLock();
+    private static final Object VF_Lock = new Object();
 
     /**
      * A object to lock on to for the thread safety, used in _initTfod
      */
-    private static final ReentrantLock TFOD_Lock = new ReentrantLock();
+    private static final Object TFOD_Lock = new Object();
 
     /**
      * vuforia object
@@ -85,17 +84,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         //Waits for mutex to be available
 
+        checkStop();
         synchronized (VF_Lock) {
-
-            //  Instantiate the Vuforia engine
-            checkStop();
-            Vuforia = ClassFactory.getInstance().createVuforia(parameters);
-            checkStop();
-
-
-            //Passes initialized obj back to caller class
-            this.vuforia = Vuforia;
+            this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
         }
+        checkStop();
+
 
     }
 
@@ -126,17 +120,13 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             //Runs initialization Code
             int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                     "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            TFObjectDetector Tfod;
             TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
             tfodParameters.minResultConfidence = 0.8f;
             tfodParameters.isModelTensorFlow2 = true;
             tfodParameters.inputSize = 320;
-            Tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-            Tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
 
-
-            //Passes initialized obj back to caller class
-            this.tfod = Tfod;
+            this.tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+            this.tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         }
 
     }

@@ -51,13 +51,13 @@ public class TeamModelObjectDetectionTest extends AutonomousTemplate {
             "AWVWPbH/////AAABmbzQF0cF/EvRnE4ykZKAXvpbnJrPQs1aBJ2i7u5ADGzYU+x0dxqGlB/G8yCrcY4FP8cPEA1w+xTXCpbFDmlYcKMG6VL/6v+H0Es3H/1f8xpQG86nSCXKPLxEbYGHkBxAYSlxB0gueBpnxMYsURezlq2Q9e5Br5OIhY7gmZZNa3VPHupscQkrCrVdRMI9mPAbEjMBhVBWjVJEL0+u2tyvEQuK4tllgi8C7AKq5V5lFoKEQG0VD89xlgUfRZsDq89HToRXBOUE2mubPHUcplKiX+1EfB+801eEt+k7lLJ1VyfrXr2tjwyWPjafvTpnaf3C35ox0/TOPdak5pq2gXLpXzAxXc6+RH28m2572tYB58AN";
 
     /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * vuforia is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
     private VuforiaLocalizer vuforia;
 
     /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * tfod is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */
     private TFObjectDetector tfod;
@@ -69,10 +69,10 @@ public class TeamModelObjectDetectionTest extends AutonomousTemplate {
         initVuforia();
         initTfod();
 
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
+        /*
+          Activate TensorFlow Object Detection before we wait for the start command.
+          Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+         */
         if (tfod != null) {
             tfod.activate();
 
@@ -85,7 +85,7 @@ public class TeamModelObjectDetectionTest extends AutonomousTemplate {
             tfod.setZoom(2, 16.0 / 9.0);
         }
 
-        /** Wait for the game to begin */
+        /* Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
