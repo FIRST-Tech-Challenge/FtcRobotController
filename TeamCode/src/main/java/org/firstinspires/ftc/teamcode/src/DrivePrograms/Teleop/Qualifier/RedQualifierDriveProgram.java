@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop.Qualifier;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.Utills.TeleopTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
-@TeleOp(name = "Qualifier Drive Program")
-public class QualifierDriveProgram extends TeleopTemplate {
+@TeleOp(name = "Red Qualifier Drive Program")
+public class RedQualifierDriveProgram extends TeleopTemplate {
     boolean x_depressed = true;
     boolean y_depressed2 = true;
 
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
     int posToGoTo = 0;
-    double bucketServoPos = 0.7;
     boolean posOn = false;
 
     public void runOpMode() throws InterruptedException {
         this.initAll();
+        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
 
         telemetry.addData("Initialization", "finished");
         telemetry.update();
