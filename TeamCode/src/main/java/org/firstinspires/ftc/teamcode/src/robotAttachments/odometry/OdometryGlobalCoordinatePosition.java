@@ -59,9 +59,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
 
-        this.isStopRequested = _isStopRequested;
-        this.opModeIsActive = _isOpmodeActive;
-
     }
 
 

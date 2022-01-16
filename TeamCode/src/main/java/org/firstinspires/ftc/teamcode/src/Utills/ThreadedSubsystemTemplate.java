@@ -18,12 +18,12 @@ public abstract class ThreadedSubsystemTemplate extends Thread {
     /**
      * A Lambda object that allows this class to check that the OpMode is active
      */
-    protected Executable<Boolean> opModeIsActive;
+    protected final Executable<Boolean> opModeIsActive;
 
     /**
      * A Lambda object that allows this class to check the stop requested condition of the OpMode
      */
-    protected Executable<Boolean> isStopRequested;
+    protected final Executable<Boolean> isStopRequested;
 
     /**
      * A constructor that instantiates the Executable Objects, they allow the thread to end with the OpMode

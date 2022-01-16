@@ -99,7 +99,9 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
      * @param height The height that the slide should go to
      */
     public void setTargetHeight(int height) {
-        targetHeight = height;
+        synchronized (lock) {
+            targetHeight = height;
+        }
     }
 
     /**
@@ -108,9 +110,7 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
      * @param level A enum of height level to go to
      */
     public void setTargetLevel(HeightLevel level) {
-        synchronized (lock) {
-            setTargetHeight(HeightLevel.EncoderCount.get(level));
-        }
+        setTargetHeight(HeightLevel.EncoderCount.get(level));
     }
 
     /**
