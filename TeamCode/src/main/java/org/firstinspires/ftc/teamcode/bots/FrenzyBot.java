@@ -43,7 +43,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private int liftLocation = LIFT_NO_EXTENSION;
     private static double LIFT_SPEED = 0.95;
     private static double LIFT_SPEED_LOW = 0.7;
-    protected static int positionToleranceLift = 10;
+    protected static int positionToleranceLift = 15;
 
     NormalizedColorSensor colorSensor;
 
@@ -400,7 +400,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         intakeDropperUp();
         delayWait(800);
         activateIntake(-0.15);
-        delayWait(700);
+        delayWait(800);
         activateIntake(0);
     }
 
@@ -569,7 +569,7 @@ public class FrenzyBot extends FrenzyBaseBot {
                 gotIt = true;
                 break;
             }
-            if (runtime.milliseconds() > 3000){
+            if (runtime.milliseconds() > 1500){
                 Log.d(TAG, "Ran out of time");
                 break;
             }
@@ -596,11 +596,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     private void duckLoop(boolean red, boolean auto){
-        double startSpeed = -0.3;
-        double speedIncrement = -0.065;
+        double startSpeed = -0.2;
+        double speedIncrement = -0.05;
         int maxLoops = 9;
         int loopDelayMs = 140;
-        double maxSpeed = 0.45;
+        double maxSpeed = 0.38;
         if (auto){
             maxSpeed = 0.055;
             maxLoops = maxLoops*2;

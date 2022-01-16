@@ -73,6 +73,7 @@ public class FrenzyModeBase extends LinearOpMode {
                     robot.stop();
                     if (!emergencyMode) {
                         robot.smartStopIntake();
+//                        robot.stopIntake();
                     }
                     else{
                         robot.stopIntake();
@@ -198,6 +199,17 @@ public class FrenzyModeBase extends LinearOpMode {
         }
     }
 
+    protected void handleTowerRemoveElement() {
+        if (isButtonPressable()) {
+            if (gamepad1.dpad_left) {
+                startGamepadLockout();
+                robot.towerToTeamHubRed();
+            } else if(gamepad1.dpad_right) {
+                robot.towerToTeamHubBlue();
+            }
+        }
+    }
+
 
     protected void handleLiftManual() {
         if (isButtonPressable()) {
@@ -246,6 +258,7 @@ public class FrenzyModeBase extends LinearOpMode {
         if (isButtonPressable()) {
             if (gamepad2.dpad_down) {
                 robot.intakeDropperUp();
+//                robot.smartStopIntake();
                 startGamepadLockout();
             } else if (gamepad2.dpad_up) {
                 robot.intakeDropperDown();

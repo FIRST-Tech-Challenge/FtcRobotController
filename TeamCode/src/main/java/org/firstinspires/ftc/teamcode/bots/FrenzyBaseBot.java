@@ -284,10 +284,20 @@ public class FrenzyBaseBot implements IOdoBot {
             leftPower = leftPower * 100 / 110;
             leftPower = leftPower * leftPower * leftPower;
 
-            this.frontLeft.setVelocity(MAX_VELOCITY_GB*leftPower);
-            this.frontRight.setVelocity(MAX_VELOCITY_GB*rightPower);
-            this.backLeft.setVelocity(MAX_VELOCITY_GB*leftPower);
-            this.backRight.setVelocity(MAX_VELOCITY_GB*rightPower);
+            MotorReductionBot mr = botConfig.getMoveMRForward();
+
+            if(mr != null) {
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB*leftPower*mr.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY_GB*rightPower*mr.getRF());
+                this.backLeft.setVelocity(MAX_VELOCITY_GB*leftPower*mr.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY_GB*rightPower*mr.getRB());
+            } else{
+                this.frontLeft.setVelocity(MAX_VELOCITY_GB*leftPower);
+                this.frontRight.setVelocity(MAX_VELOCITY_GB*rightPower);
+                this.backLeft.setVelocity(MAX_VELOCITY_GB*leftPower);
+                this.backRight.setVelocity(MAX_VELOCITY_GB*rightPower);
+            }
+
         }
     }
 
