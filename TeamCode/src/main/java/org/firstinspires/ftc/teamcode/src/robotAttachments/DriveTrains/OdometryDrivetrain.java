@@ -287,8 +287,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         //final double distancePercentage = (totalDistance - currentDistance) / totalDistance;
         //return MiscUtills.boundNumber((-1.0 / 4) * Math.cos(distancePercentage) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
 
-        double powerVariable = MiscUtills.boundNumber(0.5 * Math.sin((currentDistance * Math.PI) / (totalDistance * .75)) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
-        return powerVariable;
+        return MiscUtills.boundNumber(0.5 * Math.sin((currentDistance * Math.PI) / (totalDistance * .75)) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
 
 
     }
@@ -382,7 +381,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     public void moveToPositionWithTurn(double x, double y, double rotate, double tolerance, boolean consoleOutput) throws InterruptedException {
         final String s = x + " , " + y;
-        double power = 0;
+        double power;
         //by setting distance to max value, we make sure that the loop will execute once
         //by recalculating distance in the loop rather than in the while parenthesises, we remove one distance() call
         double distance = Double.MAX_VALUE;

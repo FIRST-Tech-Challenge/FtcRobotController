@@ -41,15 +41,15 @@ public class OdometryPodServos {
     /**
      * Horizontal Servo Object
      */
-    Servo horizontalServo;
+    final Servo horizontalServo;
     /**
      * Left Servo Object
      */
-    Servo leftServo;
+    final Servo leftServo;
     /**
      * Right Servo Object
      */
-    Servo rightServo;
+    final Servo rightServo;
 
     /**
      * Constructs and initializes servos

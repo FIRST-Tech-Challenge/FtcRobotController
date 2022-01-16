@@ -57,8 +57,7 @@ public abstract class ThreadedSubsystemTemplate extends Thread {
                 this.threadMain();
                 Thread.sleep(sleepTime);
             }
-        } catch (InterruptedException e) {
-            return;
+        } catch (InterruptedException ignored) {
         }
 
     }

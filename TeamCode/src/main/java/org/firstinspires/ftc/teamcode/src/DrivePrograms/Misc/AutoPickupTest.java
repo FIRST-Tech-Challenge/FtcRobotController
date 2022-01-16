@@ -41,7 +41,7 @@ public class AutoPickupTest extends AutonomousTemplate {
 
         try {
             boolean itemPickup = intake.itemInIntake();
-            while (itemPickup == false) {
+            while (!itemPickup) {
                 intake.intakeOn();
                 itemPickup = intake.itemInIntake();
                 driveSystem.strafeAtAngle(0, .3);

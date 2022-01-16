@@ -37,7 +37,7 @@ public class ContinuousIntake {
     /**
      * The item color sensor
      */
-    public ColorRangeSensor colorSensor;
+    public final ColorRangeSensor colorSensor;
     /**
      * the distance sensor on the inside of the intake system, it is used to identify when an object enters the
      */
@@ -45,11 +45,11 @@ public class ContinuousIntake {
     /**
      * DcMotor Object
      */
-    DcMotor intakeMotor;
+    final DcMotor intakeMotor;
     /**
      * The internal Servo Object
      */
-    Servo itemRelease;
+    final Servo itemRelease;
 
     /**
      * Initializes from hardware map and names
@@ -183,7 +183,7 @@ public class ContinuousIntake {
             put("blue", (double) (colorSensor.blue()));
             put("alpha", (double) (colorSensor.red()));
         }};
-        return colorKey.get(color).doubleValue();
+        return colorKey.get(color);
     }
 
     /**
@@ -201,8 +201,7 @@ public class ContinuousIntake {
      * @return The distance in Inches
      */
     public double getSensorDistance() {
-        double distance = distanceSensor.getDistance(DistanceUnit.CM);
-        return distance;
+        return distanceSensor.getDistance(DistanceUnit.CM);
     }
 
     /**
@@ -220,8 +219,7 @@ public class ContinuousIntake {
      * @return Returns the blink pattern for the object in the bucket
      */
     public RevBlinkinLedDriver.BlinkinPattern getLEDPatternFromFreight() {
-        RevBlinkinLedDriver.BlinkinPattern o = gameObject.RevColorOfObj.get(ContinuousIntake.gameObject.identify(this.getRGB()));
-        return o;
+        return gameObject.RevColorOfObj.get(gameObject.identify(this.getRGB()));
     }
 
     /**
@@ -237,7 +235,7 @@ public class ContinuousIntake {
         /**
          * A list of every possible enum value
          */
-        protected static final ArrayList<gameObject> gameObjectList = new ArrayList<gameObject>(Arrays.asList(gameObject.values()));
+        protected static final ArrayList<gameObject> gameObjectList = new ArrayList<>(Arrays.asList(gameObject.values()));
 
         /**
          * The Key is the game object, the value is what LED pattern it should corespond to

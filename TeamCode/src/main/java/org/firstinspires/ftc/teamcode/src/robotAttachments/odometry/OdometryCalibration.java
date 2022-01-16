@@ -34,16 +34,21 @@ public class OdometryCalibration extends LinearOpMode {
     //IMU Sensor
     BNO055IMU imu;
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
-    String rfName = "front_right", rbName = "back_right", lfName = "front_left", lbName = "back_left ";
-    String verticalLeftEncoderName = lfName, verticalRightEncoderName = rfName, horizontalEncoderName = rbName;
-    ElapsedTime timer = new ElapsedTime();
+    final String rfName = "front_right";
+    final String rbName = "back_right";
+    final String lfName = "front_left";
+    final String lbName = "back_left ";
+    final String verticalLeftEncoderName = lfName;
+    final String verticalRightEncoderName = rfName;
+    final String horizontalEncoderName = rbName;
+    final ElapsedTime timer = new ElapsedTime();
 
     double horizontalTickOffset = 0;
 
     //Text files to write the values to. The files are stored in the robot controller
     // under Internal Storage\FIRST\settings
-    File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
-    File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
+    final File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
+    final File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
 
     @Override
     public void runOpMode() throws InterruptedException {

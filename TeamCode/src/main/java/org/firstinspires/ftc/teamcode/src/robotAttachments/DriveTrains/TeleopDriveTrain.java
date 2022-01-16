@@ -68,6 +68,6 @@ public class TeleopDriveTrain extends BasicDrivetrain {
 
 
     public void flipFrontAndBack() {
-        frontDrive = frontDrive != true;
+        frontDrive = !frontDrive;
     }
 }

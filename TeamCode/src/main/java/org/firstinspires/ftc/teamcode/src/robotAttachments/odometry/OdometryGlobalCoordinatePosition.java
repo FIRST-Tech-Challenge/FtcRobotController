@@ -27,11 +27,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     //Algorithm constants
     private final double robotEncoderWheelDistance;
     private final double horizontalEncoderTickPerDegreeOffset;
-    //Files to access the algorithm constants
-    private final File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
-    private final File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
-    //Position variables used for storage and calculations
-    private double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
     private BNO055IMU imu = null;
     private volatile boolean isActive = false;
     private volatile double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
@@ -58,7 +53,10 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         this.horizontalEncoder = horizontalEncoder;
         sleepTime = threadSleepDelay;
 
+        //Files to access the algorithm constants
+        File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
+        File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
 
         this.isStopRequested = _isStopRequested;
@@ -177,10 +175,12 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param initPos the enum key of a three value array of an init position
      */
     public void setPosition(FieldPoints initPos) {
+        double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
+        assert (tmp != null);
         synchronized (lock) {
-            robotGlobalXCoordinatePosition = FieldPoints.positionsAndPoints.get(initPos)[0] * COUNTS_PER_INCH;
-            robotGlobalYCoordinatePosition = FieldPoints.positionsAndPoints.get(initPos)[1] * COUNTS_PER_INCH;
-            setOrientation(FieldPoints.positionsAndPoints.get(initPos)[2]);
+            robotGlobalXCoordinatePosition = tmp[0] * COUNTS_PER_INCH;
+            robotGlobalYCoordinatePosition = tmp[1] * COUNTS_PER_INCH;
+            setOrientation(tmp[2]);
         }
 
     }
@@ -200,7 +200,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @return The angle parallel to the floor in degrees
      */
     protected double getImuAngle() {
-        double returnVal = 0;
+        double returnVal;
         if (imu.getAngularOrientation().firstAngle < 0) {
             returnVal = Math.abs(imu.getAngularOrientation().firstAngle);
         } else {
@@ -232,27 +232,27 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
                 robotOrientationRadians = robotOrientationRadians % 360;
             }
             //Get Current Positions
-            verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
-            verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
+            double verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
+            //Position variables used for storage and calculations
+            double verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
 
             double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
             double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
 
             //Calculate Angle
-            changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
+            double changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
             robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
 
             //Get the components of the motion
-            normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
+            double normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
             double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
             double horizontalChange = rawHorizontalChange - (changeInRobotOrientation * horizontalEncoderTickPerDegreeOffset);
 
             double p = ((rightChange + leftChange) / 2);
-            double n = horizontalChange;
 
             //Calculate and update the position values
-            robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p * Math.sin(robotOrientationRadians) + n * Math.cos(robotOrientationRadians));
-            robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p * Math.cos(robotOrientationRadians) - n * Math.sin(robotOrientationRadians));
+            robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p * Math.sin(robotOrientationRadians) + horizontalChange * Math.cos(robotOrientationRadians));
+            robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p * Math.cos(robotOrientationRadians) - horizontalChange * Math.sin(robotOrientationRadians));
 
             previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
             previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
