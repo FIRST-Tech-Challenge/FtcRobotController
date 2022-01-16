@@ -23,7 +23,7 @@ public class ContinuousIntake {
     /**
      * The power for going forward
      */
-    final static double forwardPower = 1;
+    private final static double forwardPower = 1;
     /**
      * The Position servo must be to release an item
      */
@@ -39,17 +39,17 @@ public class ContinuousIntake {
      */
     public final ColorRangeSensor colorSensor;
     /**
-     * the distance sensor on the inside of the intake system, it is used to identify when an object enters the
-     */
-    public DistanceSensor distanceSensor;
-    /**
      * DcMotor Object
      */
-    final DcMotor intakeMotor;
+    private final DcMotor intakeMotor;
     /**
      * The internal Servo Object
      */
-    final Servo itemRelease;
+    private final Servo itemRelease;
+    /**
+     * the distance sensor on the inside of the intake system, it is used to identify when an object enters the
+     */
+    private DistanceSensor distanceSensor;
 
     /**
      * Initializes from hardware map and names
@@ -72,12 +72,23 @@ public class ContinuousIntake {
 
 
         itemRelease = hardwareMap.servo.get(servoName);
-        this.setServoDown();
+        this.setServoClosed();
         isClosed = true;
     }
 
-    public boolean isClosed() {
-        return this.isClosed;
+    /**
+     * It treats color as 3D space and returns the distance between the two points
+     *
+     * @param sight  The first set of RGB values
+     * @param object The second set of RGB values
+     * @return The distance between the two, smaller is closer
+     */
+    public static double getDifferenceOfColor(double[] sight, double[] object) {
+        double r = Math.abs(sight[0] - object[0]);
+        double g = Math.abs(sight[1] - object[1]);
+        double b = Math.abs(sight[2] - object[2]);
+        // this calculates the 3D distance between colors
+        return Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
     }
 
     public gameObject identifyContents() {
@@ -109,40 +120,32 @@ public class ContinuousIntake {
     }
 
     /**
-     * It treats color as 3D space and returns the distance between the two points
+     * A getter for the isClosed boolean
      *
-     * @param sight  The first set of RGB values
-     * @param object The second set of RGB values
-     * @return The distance between the two, smaller is closer
+     * @return Returns true if the grabber is closed, false if otherwise
      */
-    public static double getDifferenceOfColor(double[] sight, double[] object) {
-        double difference;
-        double r = Math.abs(sight[0] - object[0]);
-        double g = Math.abs(sight[1] - object[1]);
-        double b = Math.abs(sight[2] - object[2]);
-        // this calculates the 3d distance between colors
-        difference = Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
-        return difference;
+    public boolean isClosed() {
+        return this.isClosed;
     }
 
     /**
      * this turns on the intake motor to intake freight
      */
-    public void intakeOn() {
+    public void setIntakeOn() {
         intakeMotor.setPower(forwardPower);
     }
 
     /**
      * turns off the intake motor
      */
-    public void intakeOff() {
+    public void setIntakeOff() {
         intakeMotor.setPower(0);
     }
 
     /**
      * reverses the intake motor to remove freight from the intake bucket
      */
-    public void intakeReverse() {
+    public void setIntakeReverse() {
         intakeMotor.setPower(-forwardPower);
     }
 
@@ -157,7 +160,7 @@ public class ContinuousIntake {
     /**
      * uses the intake's servo hinge to put the intake in the up position
      */
-    public void setServoUp() {
+    public void setServoOpen() {
         itemRelease.setPosition(open);
         isClosed = false;
     }
@@ -165,7 +168,7 @@ public class ContinuousIntake {
     /**
      * uses the intake's servo hinge to put the intake in the down position
      */
-    public void setServoDown() {
+    public void setServoClosed() {
         itemRelease.setPosition(closed);
         isClosed = true;
     }
@@ -177,13 +180,19 @@ public class ContinuousIntake {
      * @return this returns a number of the value for the name of the wanted color
      */
     public double getColor(String color) {
-        HashMap<String, Double> colorKey = new HashMap<String, Double>() {{
-            put("red", (double) (colorSensor.red()));
-            put("green", (double) colorSensor.green());
-            put("blue", (double) (colorSensor.blue()));
-            put("alpha", (double) (colorSensor.red()));
-        }};
-        return colorKey.get(color);
+        if (color.equalsIgnoreCase("red")) {
+            return colorSensor.red();
+        }
+        if (color.equalsIgnoreCase("green")) {
+            return colorSensor.green();
+        }
+        if (color.equalsIgnoreCase("blue")) {
+            return colorSensor.blue();
+        }
+        if (color.equalsIgnoreCase("alpha")) {
+            return colorSensor.red();
+        }
+        throw new NullPointerException();
     }
 
     /**
@@ -208,9 +217,7 @@ public class ContinuousIntake {
      * @return returns a true or false value of wether or not an item passes the intake distance sensor
      */
     public boolean itemInIntake() {
-        boolean tf;
-        tf = this.getSensorDistance() < 9;
-        return tf;
+        return (this.getSensorDistance() < 9);
     }
 
     /**
@@ -235,12 +242,12 @@ public class ContinuousIntake {
         /**
          * A list of every possible enum value
          */
-        protected static final ArrayList<gameObject> gameObjectList = new ArrayList<>(Arrays.asList(gameObject.values()));
+        private static final ArrayList<gameObject> gameObjectList = new ArrayList<>(Arrays.asList(gameObject.values()));
 
         /**
          * The Key is the game object, the value is what LED pattern it should corespond to
          */
-        protected static final HashMap<gameObject, BlinkinPattern> RevColorOfObj = new HashMap<gameObject, BlinkinPattern>() {{
+        private static final HashMap<gameObject, BlinkinPattern> RevColorOfObj = new HashMap<gameObject, BlinkinPattern>() {{
             put(gameObject.BALL, BlinkinPattern.WHITE);
             put(gameObject.CUBESMOOTH, BlinkinPattern.ORANGE);
             put(gameObject.CUBEWAFFLE, BlinkinPattern.ORANGE);
@@ -251,7 +258,7 @@ public class ContinuousIntake {
         /**
          * The Key is the game object, the value is the RGB value of what the sensor sees
          */
-        protected static final HashMap<gameObject, double[]> RGBOfObj = new HashMap<gameObject, double[]>() {{
+        private static final HashMap<gameObject, double[]> RGBOfObj = new HashMap<gameObject, double[]>() {{
             put(gameObject.BALL, new double[]{611.0, 652.0, 594.5});
             put(gameObject.CUBESMOOTH, new double[]{56.5, 34.5, 20});
             put(gameObject.CUBEWAFFLE, new double[]{31, 18.5, 12});
@@ -266,19 +273,19 @@ public class ContinuousIntake {
          * @return Returns what game object the RGB best matches
          */
         public static gameObject identify(double[] RGB) {
-            int size = gameObject.gameObjectList.size();
-            double[][] originalRGB = new double[size][3];
-            double[] differences = new double[size];
-            for (int x = 0; x < size; x++) {
+            int numberOfGameElements = gameObject.gameObjectList.size();
+            double[][] originalRGB = new double[numberOfGameElements][3];
+            double[] differences = new double[numberOfGameElements];
+            for (int x = 0; x < numberOfGameElements; x++) {
                 originalRGB[x] = gameObject.RGBOfObj.get((gameObject.gameObjectList.get(x)));
             }
-            for (int x = 0; x < size; x++) {
+            for (int x = 0; x < numberOfGameElements; x++) {
                 differences[x] = getDifferenceOfColor(RGB, originalRGB[x]);
             }
             double smallestValue = Double.MAX_VALUE;
             int index = -1;
 
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < numberOfGameElements; i++) {
                 if (differences[i] < smallestValue) {
                     smallestValue = differences[i];
                     index = i;

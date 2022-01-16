@@ -64,7 +64,7 @@ public abstract class TeleopTemplate extends LinearOpMode {
 
 
         intake = new ContinuousIntake(hardwareMap, "intake", "bucket", "color_sensor", true);
-        intake.setServoDown();
+        intake.setServoClosed();
 
         leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
 

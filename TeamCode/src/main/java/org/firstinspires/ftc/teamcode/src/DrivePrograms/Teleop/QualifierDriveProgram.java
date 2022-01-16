@@ -141,9 +141,9 @@ public class QualifierDriveProgram extends TeleopTemplate {
                 if (gamepad2.y && y_depressed2) {
                     y_depressed2 = false;
                     if (intake.isClosed()) {
-                        intake.setServoUp();
+                        intake.setServoOpen();
                     } else {
-                        intake.setServoDown();
+                        intake.setServoClosed();
                     }
                 }
                 if (gamepad2.x) {

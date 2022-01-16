@@ -45,14 +45,14 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
 
                     slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
-                    intake.setServoDown();
+                    intake.setServoClosed();
 
                     Thread.sleep(2000);
 
                     //this position will vary for different heights on the goal
                     driveSystem.moveToPosition(115, 81, 1);
 
-                    intake.setServoDown();
+                    intake.setServoClosed();
                     Thread.sleep(500);
 
 
@@ -83,7 +83,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
                     Thread.sleep(1500);
 
-                    intake.setServoDown();
+                    intake.setServoClosed();
                     Thread.sleep(500);
 
                     //this position will vary for different heights on the goal
@@ -103,7 +103,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     //TODO: have robot move in closer to load objects on to the hub
                     Thread.sleep(1500);
 
-                    intake.setServoDown();
+                    intake.setServoClosed();
                     Thread.sleep(500);
 
                     //this position will vary for different heights on the goal
@@ -116,11 +116,11 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             }
             //Shared Code
 
-            intake.intakeOn();
+            intake.setIntakeOn();
             Thread.sleep(1000);
-            intake.intakeOff();
+            intake.setIntakeOff();
             driveSystem.moveToPosition(117, 84, 1);
-            intake.setServoUp();
+            intake.setServoOpen();
             slide.setTargetLevel(LinearSlide.HeightLevel.Down);
             Thread.sleep(500);
 

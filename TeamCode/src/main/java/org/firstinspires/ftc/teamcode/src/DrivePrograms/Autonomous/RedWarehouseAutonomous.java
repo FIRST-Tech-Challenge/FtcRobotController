@@ -51,7 +51,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     //this position will vary for different heights on the goal
                     driveSystem.moveToPosition(25, 81, 1);
-                    intake.setServoDown();
+                    intake.setServoClosed();
                     Thread.sleep(500);
 
 
@@ -65,7 +65,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     Thread.sleep(1500);
 
-                    intake.setServoDown();
+                    intake.setServoClosed();
                     Thread.sleep(500);
 
                     //this position will vary for different heights on the goal
@@ -82,7 +82,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     Thread.sleep(1500);
 
-                    intake.setServoDown();
+                    intake.setServoClosed();
                     Thread.sleep(500);
 
                     //this position will vary for different heights on the goal
@@ -94,11 +94,11 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             }
             //Shared Code
-            intake.intakeOn();
+            intake.setIntakeOn();
             Thread.sleep(1000);
-            intake.intakeOff();
+            intake.setIntakeOff();
             driveSystem.moveToPosition(23, 84, 1);
-            intake.setServoUp();
+            intake.setServoOpen();
             slide.setTargetLevel(LinearSlide.HeightLevel.Down);
             Thread.sleep(500);
             //following this is unique to carousel and warehouse

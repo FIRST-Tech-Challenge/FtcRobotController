@@ -31,7 +31,7 @@ public class AutoPickupTest extends AutonomousTemplate {
             // driveSystem.turnTo(170, .5);
             driveSystem.moveToPosition(FieldPoints.RedWareHousePass, 1);
             driveSystem.moveToPosition(FieldPoints.RedWareHousePark, 1);
-            intake.setServoDown();
+            intake.setServoClosed();
         } catch (Exception e) {
             while (!isStopRequested() && opModeIsActive()) {
                 telemetry.addData("issue: ", getStackTraceAsString(e));
@@ -42,13 +42,13 @@ public class AutoPickupTest extends AutonomousTemplate {
         try {
             boolean itemPickup = intake.itemInIntake();
             while (!itemPickup) {
-                intake.intakeOn();
+                intake.setIntakeOn();
                 itemPickup = intake.itemInIntake();
                 driveSystem.strafeAtAngle(0, .3);
                 checkStop();
 
             }
-            intake.intakeOff();
+            intake.setIntakeOff();
             driveSystem.moveToPosition(FieldPoints.RedWareHousePark, 1);
             driveSystem.moveToPosition(FieldPoints.RedWareHousePass, 1);
             driveSystem.moveToPosition(FieldPoints.RedWestLoadingPoint, 1);
