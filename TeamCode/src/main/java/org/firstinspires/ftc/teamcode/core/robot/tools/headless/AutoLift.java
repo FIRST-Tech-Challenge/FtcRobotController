@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 import java.util.Objects;
 
 public class AutoLift {
-
     // 5 1/4 inch from back of robot to rim
     MultipleTelemetry telemetry = new MultipleTelemetry();
     public enum Positions {
@@ -98,12 +97,14 @@ public class AutoLift {
         switch (state) {
             case START:
                 armServo.setPosition(0.7D);
-                liftMotor.setTargetPosition(position.motorPos);
                 state = MovementStates.LIFT_MOVEMENT;
-                if (lastPosition != null) liftWaiting = false;
+                if (lastPosition != null) {
+                    liftMotor.setTargetPosition(position.motorPos);
+                    liftWaiting = false;
+                }
                 else {
                     liftWaiting = true;
-                    eventThread.addEvent(new TimedEvent(() -> liftWaiting = false, 500));
+                    eventThread.addEvent(new TimedEvent(() -> liftMotor.setTargetPosition(position.motorPos), 500));
                 }
                 break;
             case LIFT_MOVEMENT:
