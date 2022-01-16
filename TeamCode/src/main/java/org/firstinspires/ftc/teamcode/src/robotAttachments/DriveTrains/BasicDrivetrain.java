@@ -15,22 +15,22 @@ public class BasicDrivetrain {
     /**
      * Front Right Motor Object
      */
-    public DcMotor front_right;
+    protected DcMotor front_right;
 
     /**
      * Front Left Motor Object
      */
-    public DcMotor front_left;
+    protected DcMotor front_left;
 
     /**
      * Back Right Motor Object
      */
-    public DcMotor back_right;
+    protected DcMotor back_right;
 
     /**
      * Back Left Motor Object
      */
-    public DcMotor back_left;
+    protected DcMotor back_left;
 
 
     /**

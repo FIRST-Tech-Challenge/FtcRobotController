@@ -18,7 +18,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     /**
      * Internal Telemetry Object, allows debug information
      */
-    Telemetry telemetry;
+    private Telemetry telemetry;
     /**
      * Internal Odometry Global Coordinate Position Object, it runs the localization algorithm in a separate thread
      */
@@ -207,14 +207,24 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @throws InterruptedException Throws if the opMode is stopped
      */
     public void moveToPosition(FieldPoints position, double tolerance) throws InterruptedException {
-
-        moveToPosition(FieldPoints.positionsAndPoints.get(position)[0], FieldPoints.positionsAndPoints.get(position)[1], tolerance, false);
+        double[] pos = FieldPoints.positionsAndPoints.get(position);
+        assert pos != null;
+        moveToPosition(pos[0], pos[1], tolerance, false);
         this.stopAll();
     }
 
+    /**
+     * Moves the robot to the provided position Enum
+     *
+     * @param position  a hashmap value referencing the 2 value array of the position
+     * @param tolerance The distance the robot can be off from the given position
+     * @param debug     A boolean controlling the debug output of this function
+     * @throws InterruptedException Throws if the opMode is stopped
+     */
     public void moveToPosition(FieldPoints position, double tolerance, boolean debug) throws InterruptedException {
-
-        moveToPosition(FieldPoints.positionsAndPoints.get(position)[0], FieldPoints.positionsAndPoints.get(position)[1], tolerance, debug);
+        double[] pos = FieldPoints.positionsAndPoints.get(position);
+        assert pos != null;
+        moveToPosition(pos[0], pos[1], tolerance, debug);
         this.stopAll();
     }
 
