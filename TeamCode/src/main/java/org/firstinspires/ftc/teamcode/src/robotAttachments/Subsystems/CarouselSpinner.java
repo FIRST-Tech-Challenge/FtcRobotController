@@ -34,10 +34,11 @@ public class CarouselSpinner {
     /**
      * Spins off the red duck
      */
-    public void spinOffRedDuck() {
+    public void spinOffRedDuck() throws InterruptedException {
         spinnerServo.setPower(-servoPower);
         ElapsedTime t = new ElapsedTime();
         while (t.milliseconds() < duckSleepTime) {
+            Thread.sleep(1);
         }
         spinnerServo.setPower(0);
 
@@ -46,10 +47,11 @@ public class CarouselSpinner {
     /**
      * Spins off the blue duck
      */
-    public void spinOffBlueDuck() {
+    public void spinOffBlueDuck() throws InterruptedException {
         spinnerServo.setPower(servoPower);
         ElapsedTime t = new ElapsedTime();
         while (t.milliseconds() < duckSleepTime) {
+            Thread.sleep(1);
         }
         spinnerServo.setPower(0);
 
