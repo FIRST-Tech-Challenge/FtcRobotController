@@ -43,6 +43,7 @@ public class test extends LinearOpMode {
         lift.setPosition(AutoLift.Positions.TOP);
         carousel.on();
         while (opModeIsActive()) {
+            lift.update();
             final double stick = gamepadEx.getLeftY();
             for (DcMotor motor : motors) {
                 motor.setPower(stick);
