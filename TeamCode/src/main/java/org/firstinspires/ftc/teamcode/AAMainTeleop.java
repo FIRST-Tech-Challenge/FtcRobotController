@@ -77,6 +77,10 @@ public class AAMainTeleop extends LinearOpMode {
                 servoDuck.setPower(0);
             }
 
+            if(gamepad2.right_stick_button){//auto do duck TODO CHANGE!!!!!!!!!!!!!!!!!
+                robot.doduck(0.55);
+            }
+
             if(gamepad2.left_stick_button){//auto dump bucket
                 robot.dobucket();
             }

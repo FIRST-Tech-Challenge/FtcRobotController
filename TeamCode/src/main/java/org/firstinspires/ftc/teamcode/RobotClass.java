@@ -940,6 +940,12 @@ public class RobotClass {
         duck.setPower(power); //changed power to 1.00 from "power"
     }
 
+    public void doduck(double power) throws InterruptedException{
+        duck(power);
+        Thread.sleep(4000);
+        duck(0);
+    }
+
     public void dobucket() throws InterruptedException{
         bucket.setPosition(1);
         Thread.sleep(1000);
