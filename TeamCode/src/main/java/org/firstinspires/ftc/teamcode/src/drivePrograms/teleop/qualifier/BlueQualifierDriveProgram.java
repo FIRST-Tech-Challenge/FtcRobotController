@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.qualifier;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDistanceSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.TeleopTemplate;
 
@@ -16,9 +17,27 @@ public class BlueQualifierDriveProgram extends TeleopTemplate {
     int posToGoTo = 0;
     boolean posOn = false;
 
+    BlinkinPattern normal = BlinkinPattern.BLUE;
+
+    TripWireDistanceSensor distanceSensor;
+
+    private Void callBack() {
+        this.leds.setPattern(BlinkinPattern.BLACK);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
+        this.leds.setPattern(normal);
+        return null;
+
+    }
+
+
     public void runOpMode() throws InterruptedException {
         this.initAll();
-        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8.5, this::callBack, this::opModeIsActive, this::isStopRequested);
+        distanceSensor.start();
+        leds.setPattern(normal);
 
         telemetry.addData("Initialization", "finished");
         telemetry.update();
