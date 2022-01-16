@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.headless;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,9 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -92,30 +92,34 @@ public class AutoLift {
     }
 
     private boolean dumpWaiting = true;
-
+    private boolean liftWaiting = true;
     public void update() {
         if (position != lastPosition) state = MovementStates.START;
         switch (state) {
             case START:
-                if (lastPosition == null) {
-
-                }
                 armServo.setPosition(0.7D);
                 liftMotor.setTargetPosition(position.motorPos);
                 state = MovementStates.LIFT_MOVEMENT;
+                if (lastPosition != null) liftWaiting = false;
+                else {
+                    liftWaiting = true;
+                    eventThread.addEvent(new TimedEvent(() -> liftWaiting = false, 500));
+                }
                 break;
             case LIFT_MOVEMENT:
-                final double motorPos = liftMotor.getCurrentPosition();
-                if (motorPos >= position.motorPos - 10 && motorPos <= position.motorPos + 10) {
-                    armServo.setPosition(position.armPos);
-                    if (!position.dumper) state = MovementStates.NONE;
-                    else {
-                        dumpWaiting = true;
-                        if (position == Positions.TSE && Objects.nonNull(grabber)) {
-                            grabber.open();
+                if (!liftWaiting) {
+                    final double motorPos = liftMotor.getCurrentPosition();
+                    if (motorPos >= position.motorPos - 10 && motorPos <= position.motorPos + 10) {
+                        armServo.setPosition(position.armPos);
+                        if (!position.dumper) state = MovementStates.NONE;
+                        else {
+                            dumpWaiting = true;
+                            if (position == Positions.TSE && Objects.nonNull(grabber)) {
+                                grabber.open();
+                            }
+                            eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, position == Positions.TSE ? 800 : 1400));
+                            state = MovementStates.SERVO_MOVEMENT;
                         }
-                        eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, position == Positions.TSE ? 800 : 1400));
-                        state = MovementStates.SERVO_MOVEMENT;
                     }
                 }
                 break;
