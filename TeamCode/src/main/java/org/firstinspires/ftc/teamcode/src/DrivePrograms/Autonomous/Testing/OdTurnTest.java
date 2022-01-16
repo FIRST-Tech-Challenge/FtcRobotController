@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous.old;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
  */
 @Autonomous(name = "OdTurn")
 @Disabled
-public class OdTurn extends AutonomousTemplate {
+public class OdTurnTest extends AutonomousTemplate {
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();

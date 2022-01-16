@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop.Testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlid
  * A Teleop to test the Linear Slide
  */
 
+@Disabled
 @TeleOp(name = "LS Test")
 public class LinearSlideTest extends LinearOpMode {
 

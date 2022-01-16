@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Teleop.Qualifier;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 

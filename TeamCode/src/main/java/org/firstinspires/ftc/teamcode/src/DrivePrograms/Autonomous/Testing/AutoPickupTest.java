@@ -1,15 +1,16 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous.Testing;
 
 import static org.firstinspires.ftc.teamcode.src.Utills.MiscUtills.getStackTraceAsString;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.FieldPoints;
 
+@Disabled
 @Autonomous(name = "AutoPickupTest")
-
 public class AutoPickupTest extends AutonomousTemplate {
 
 

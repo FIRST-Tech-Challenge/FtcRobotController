@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous.Qualifier;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -7,10 +7,12 @@ import org.firstinspires.ftc.teamcode.src.Utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
 /**
- * The Autonomous ran on Red side near Warehouse for Meet 3
+ * The Autonomous ran on Red side near spinner for Meet 3
  */
-@Autonomous(name = "Red Warehouse Autonomous")
-public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
+@Autonomous(name = "Red Carousel Autonomous")
+public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
+    static final boolean wareHousePark = true;
+
     @Override
     public void runOpMode() throws InterruptedException {
         this.initAll();
@@ -21,14 +23,13 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
         this.initTfod();
         this.activateTF();
 
-        odometry.setPosition(7, 63, 90);
+        odometry.setPosition(7, 101, 90);
 
         while (!isStarted() && !isStopRequested()) {
             Pos = this.getAverageOfMarker(10, 100);
             telemetry.addData("Position", Pos);
             telemetry.update();
         }
-
 
         waitForStart();
 
@@ -39,10 +40,9 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
 
             switch (Pos) {
-                case NotSeen:
-                    telemetry.addData("position", " is far right ");
+                case Right:
+                    telemetry.addData("position", " is right");
                     telemetry.update();
-
                     driveSystem.moveToPosition(20, 84, 1);
                     slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
 
@@ -50,18 +50,19 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
 
                     //this position will vary for different heights on the goal
-                    driveSystem.moveToPosition(25, 81, 1);
+                    driveSystem.moveToPosition(22, 81, 1);
+
                     intake.setServoClosed();
                     Thread.sleep(500);
 
 
                     break;
-                case Right:
-                    telemetry.addData("position", " is center");
+                case NotSeen:
+                    telemetry.addData("position", " far left");
                     telemetry.update();
-                    driveSystem.moveToPosition(20, 85, 1);
+                    driveSystem.moveToPosition(18, 85, 1);
 
-                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
 
                     Thread.sleep(1500);
 
@@ -74,11 +75,11 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     break;
                 case Left:
-                    telemetry.addData("position", "is left");
+                    telemetry.addData("position", "is center");
                     telemetry.update();
-                    driveSystem.moveToPosition(20, 85, 1);
+                    driveSystem.moveToPosition(19, 85, 1);
 
-                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
 
                     Thread.sleep(1500);
 
@@ -103,19 +104,40 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             Thread.sleep(500);
             //following this is unique to carousel and warehouse
 
-            driveSystem.turnTo(170, .5);
+            driveSystem.moveToPosition(20, 130, 1);
 
-            driveSystem.moveToPosition(10, 63, 1);
-            driveSystem.strafeAtAngle(90, .5);
-            Thread.sleep(300);
+            //strafe at angle into the wall and then the carousel
+            driveSystem.strafeAtAngle(270, .5);
+            Thread.sleep(500);
+            driveSystem.strafeAtAngle(180, .5);
+            Thread.sleep(650);
+            driveSystem.stopAll();
 
-            driveSystem.moveToPosition(9, 24, 1);
+            //spin off the duck
+            spinner.spinOffRedDuck();
 
+            if (wareHousePark) {
+                //Parks in the Warehouse
+                driveSystem.strafeAtAngle(270, .5);
+                Thread.sleep(500);
+                odometry.setPosition(17, 134, 90); //This recalibrates the Odometry to the spot it should be at this point
+                driveSystem.moveToPosition(24, 75, 1);
+                driveSystem.turnTo(180, 0.5);
+                podServos.raise();
+                driveSystem.stopAll();
+                Thread.sleep(500);
+                driveSystem.strafeAtAngle(0, 1);
+                Thread.sleep(1750);
+
+            } else {
+                // parks in depot
+                driveSystem.moveToPosition(31.5, 130, 1);
+                driveSystem.strafeAtAngle(270, .5);
+                Thread.sleep(300);
+                driveSystem.stopAll();
+            }
         }
         slide.end();
         odometry.end();
-
     }
 }
-
-

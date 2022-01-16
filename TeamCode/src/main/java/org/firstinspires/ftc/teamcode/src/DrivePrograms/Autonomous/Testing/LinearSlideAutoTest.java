@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.TeleopDriveTrain;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.LinearSlide;
 
+@Disabled
 @Autonomous(name = "Linear Slide Auto Test")
 public class LinearSlideAutoTest extends LinearOpMode {
 

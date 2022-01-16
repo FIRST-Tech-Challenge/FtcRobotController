@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.src.DrivePrograms.Misc;
+package org.firstinspires.ftc.teamcode.src.DrivePrograms.Autonomous.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.Utills.AutonomousTemplate;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.OdometryDrivetrain;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.DriveTrains.OdometryD
 /**
  * A Autonomous test odometry
  */
+@Disabled
 @Autonomous(name = "TestOfOdometryDriveSystem")
 public class TestOfOdometryDriveSystem extends AutonomousTemplate {
 
