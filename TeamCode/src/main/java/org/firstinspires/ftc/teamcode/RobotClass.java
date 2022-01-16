@@ -514,10 +514,10 @@ public class RobotClass {
      * @param correction
      * */
     public void correctedTankStrafe(double leftPower, double rightPower, double correction){
-        motorFrontLeft.setPower(leftPower + correction);//
-        motorFrontRight.setPower(rightPower - correction);//
-        motorBackLeft.setPower(rightPower + correction);//
-        motorBackRight.setPower(leftPower - correction);//
+        motorFrontLeft.setPower(leftPower + correction);
+        motorFrontRight.setPower(rightPower - correction);
+        motorBackLeft.setPower(rightPower + correction);
+        motorBackRight.setPower(leftPower - correction);
     }
 
     /**
@@ -672,16 +672,16 @@ public class RobotClass {
      */
     public void driveToWall(double power) throws InterruptedException{
         resetAngle();
-        motorBackLeft.setPower(-1);
-        motorBackRight.setPower(-1);
-        motorFrontLeft.setPower(-1);
-        motorFrontRight.setPower(-1);
-
+        //-90
+        double newDirection = (-90) * Math.PI/180 - Math.PI/4;//-3pi/4
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;//-1
+        double rightPower = Math.sin(newDirection) * power;//-1
         while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
-            // double correction = getCorrection();
-//            correctedTankStrafe(power, power, 0);//??????????
-
-            telemetry.addData("distance reading:", distanceSensor.getDistance(DistanceUnit.CM));
+            double correction = getCorrection();
+            correctedTankStrafe(leftPower, rightPower, 0);//??????????
+            telemetry.addData("correction", correction);
+            telemetry.addData("distance reading", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
         completeStop();
