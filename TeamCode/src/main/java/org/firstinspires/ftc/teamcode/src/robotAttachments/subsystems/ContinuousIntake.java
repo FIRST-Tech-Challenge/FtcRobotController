@@ -225,7 +225,11 @@ public class ContinuousIntake {
      * @return The distance in Inches
      */
     public double getSensorDistance() {
-        return distanceSensor.getDistance(DistanceUnit.CM);
+        if (distanceSensor == null) {
+            return colorSensor.getDistance(DistanceUnit.CM);
+        } else {
+            return distanceSensor.getDistance(DistanceUnit.CM);
+        }
     }
 
     /**
@@ -274,11 +278,11 @@ public class ContinuousIntake {
          * The Key is the game object, the value is the RGB value of what the sensor sees
          */
         private static final HashMap<gameObject, double[]> RGBOfObj = new HashMap<gameObject, double[]>() {{
-            put(gameObject.BALL, new double[]{611.0, 652.0, 594.5});
-            put(gameObject.CUBESMOOTH, new double[]{56.5, 34.5, 20});
-            put(gameObject.CUBEWAFFLE, new double[]{31, 18.5, 12});
-            put(gameObject.DUCK, new double[]{17.67, 15.67, 9});
-            put(gameObject.EMPTY, new double[]{8, 9, 6});
+            put(gameObject.BALL, new double[]{111, 111, 97});
+            put(gameObject.CUBESMOOTH, new double[]{41, 25, 15});
+            put(gameObject.CUBEWAFFLE, new double[]{26, 15, 10});
+            put(gameObject.DUCK, new double[]{14, 12, 7});
+            put(gameObject.EMPTY, new double[]{5, 6, 5});
         }};
 
         /**
