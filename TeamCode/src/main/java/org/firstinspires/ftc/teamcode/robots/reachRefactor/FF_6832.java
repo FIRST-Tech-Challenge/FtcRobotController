@@ -110,7 +110,6 @@ public class FF_6832 extends OpMode {
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.3;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
-    public static double MAX_CENTRIPETAL_ACCELERATION_COEFF = 0.5;
     public static double FORWARD_SCALING_FACTOR = 0.1; // scales the target linear robot velocity from tele-op controls
     public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {
@@ -297,14 +296,6 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
-        // scaling linear and angular velocities to follow maximum centripetal acceleration constraint
-        double centripetalAcceleration = Math.abs(forward * rotate);
-        double accelerationRatio = centripetalAcceleration / (MAX_CENTRIPETAL_ACCELERATION_COEFF * (Math.pow(FORWARD_SCALING_FACTOR, 2) * (2 / Constants.TRACK_WIDTH)));
-        if(accelerationRatio > 1) {
-            forward /= Math.sqrt(accelerationRatio);
-            rotate /= Math.sqrt(accelerationRatio);
-        }
-
         if(usingDesmosDrive)
             robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
         else
