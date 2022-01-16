@@ -827,12 +827,14 @@ public class RobotClass {
      */
     public void gyroStrafeEncoder(double power, double angle, double in) throws InterruptedException{
         double ticks = in * TICKS_PER_IN;
-
+//90 is up!!! forwards
+        //0 is
         //convert direction (degrees) into radians
-        double newDirection = angle * Math.PI/180 + Math.PI/4;
+//        double newDirection = angle * Math.PI/180 + Math.PI/4;//3pi/4
+        double newDirection = angle * Math.PI/180 - Math.PI/4;//pi/4
         //calculate powers needed using direction
-        double leftPower = Math.cos(newDirection) * power;
-        double rightPower = Math.sin(newDirection) * power;
+        double leftPower = Math.cos(newDirection) * power;//1
+        double rightPower = Math.sin(newDirection) * power;//-1
 
         resetEncoders();
         resetAngle();
