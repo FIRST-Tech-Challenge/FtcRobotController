@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.src.Utills.Executable;
-import org.firstinspires.ftc.teamcode.src.Utills.ThreadedSubsystemTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.Executable;
+import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemTemplate;
 
 import java.io.File;
 

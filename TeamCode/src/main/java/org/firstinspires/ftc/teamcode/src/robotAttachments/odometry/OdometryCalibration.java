@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.Subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
 
 import java.io.File;
 

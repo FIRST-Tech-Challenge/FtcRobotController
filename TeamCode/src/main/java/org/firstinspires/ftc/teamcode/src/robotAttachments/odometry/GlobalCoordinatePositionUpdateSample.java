@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.src.Utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
 
 
 /**
@@ -92,11 +92,6 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        /**
-         * *****************
-         * OpMode Begins Here
-         * *****************
-         */
         double PIVOT_SPEED = 0.2;
         try {
             while (opModeIsActive() && !isStopRequested()) {
