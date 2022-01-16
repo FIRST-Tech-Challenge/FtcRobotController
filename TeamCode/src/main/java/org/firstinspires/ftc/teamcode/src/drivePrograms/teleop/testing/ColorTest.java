@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
+import static org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake.Colors.Blue;
+import static org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake.Colors.Green;
+import static org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake.Colors.Red;
+
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,9 +31,9 @@ public class ColorTest extends TeleopTemplate {
 
         while (opModeIsActive() && !isStopRequested()) {
 
-            telemetry.addData("red:", intake.getColor("red"));
-            telemetry.addData("green:", intake.getColor("green"));
-            telemetry.addData("blue:", intake.getColor("blue"));
+            telemetry.addData("red:", intake.getColor(Red));
+            telemetry.addData("green:", intake.getColor(Green));
+            telemetry.addData("blue:", intake.getColor(Blue));
             telemetry.addData("distance:", intake.getSensorDistance());
 
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
@@ -45,9 +49,9 @@ public class ColorTest extends TeleopTemplate {
                 intake.setMotorPower(0);
             }
 
-            sight[0] = intake.getColor("red");
-            sight[1] = intake.getColor("green");
-            sight[2] = intake.getColor("blue");
+            sight[0] = intake.getColor(Red);
+            sight[1] = intake.getColor(Green);
+            sight[2] = intake.getColor(Blue);
 
 
             telemetry.addData("identity:", ContinuousIntake.gameObject.identify(sight));

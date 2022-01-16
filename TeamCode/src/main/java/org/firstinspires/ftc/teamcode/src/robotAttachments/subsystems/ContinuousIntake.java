@@ -54,9 +54,12 @@ public class ContinuousIntake {
     /**
      * Initializes from hardware map and names
      *
-     * @param hardwareMap hardware map object
-     * @param motorName   Name of intake motor
-     * @param servoName   Name of lifting servo
+     * @param hardwareMap          hardware map object
+     * @param motorName            Name of intake motor
+     * @param servoName            Name of lifting servo
+     * @param colorSensor          name of the color sensor
+     * @param distanceSensor       name of the distance sensor
+     * @param sensorDetectionLight true if the light should be on, false if the light should be off
      */
     public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String distanceSensor, String colorSensor, boolean sensorDetectionLight) {
         intakeMotor = hardwareMap.dcMotor.get(motorName);
@@ -179,20 +182,28 @@ public class ContinuousIntake {
      * @param color the name of the color wanted as a String
      * @return this returns a number of the value for the name of the wanted color
      */
-    public double getColor(String color) {
-        if (color.equalsIgnoreCase("red")) {
-            return colorSensor.red();
+    public int getColor(Colors color) {
+        switch (color) {
+            case Red:
+                return colorSensor.red();
+
+            case Blue:
+                return colorSensor.blue();
+
+            case Green:
+                return colorSensor.green();
+
+            case Alpha:
+                return colorSensor.alpha();
         }
-        if (color.equalsIgnoreCase("green")) {
-            return colorSensor.green();
-        }
-        if (color.equalsIgnoreCase("blue")) {
-            return colorSensor.blue();
-        }
-        if (color.equalsIgnoreCase("alpha")) {
-            return colorSensor.red();
-        }
-        throw new NullPointerException();
+        throw new RuntimeException("How did we get here");
+    }
+
+    public enum Colors {
+        Red,
+        Green,
+        Blue,
+        Alpha
     }
 
     /**

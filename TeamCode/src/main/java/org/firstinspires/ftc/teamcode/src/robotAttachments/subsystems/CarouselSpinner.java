@@ -33,6 +33,8 @@ public class CarouselSpinner {
 
     /**
      * Spins off the red duck
+     *
+     * @throws InterruptedException raises exception if the OpMode is stopped
      */
     public void spinOffRedDuck() throws InterruptedException {
         spinnerServo.setPower(-servoPower);
@@ -46,6 +48,7 @@ public class CarouselSpinner {
 
     /**
      * Spins off the blue duck
+     * @throws InterruptedException raises exception if the OpMode is stopped
      */
     public void spinOffBlueDuck() throws InterruptedException {
         spinnerServo.setPower(servoPower);
