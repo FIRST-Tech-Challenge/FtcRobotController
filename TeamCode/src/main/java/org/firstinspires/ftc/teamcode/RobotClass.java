@@ -357,10 +357,10 @@ public class RobotClass {
      * @param power power for motors
      */
     public void turnCounterClockwise(double power){
-        motorFrontLeft.setPower(-power);
+        motorFrontLeft.setPower(power);
         motorBackLeft.setPower(power);
         motorFrontRight.setPower(-power);
-        motorBackRight.setPower(power);
+        motorBackRight.setPower(-power);
     }
 
     /**
@@ -368,10 +368,10 @@ public class RobotClass {
      * @param power power for motors, + is CW, - is CCW
      */
     public void turn(double power){
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(-power);
-        motorBackRight.setPower(-power);
+        motorFrontLeft.setPower(-power);
+        motorBackLeft.setPower(-power);
+        motorFrontRight.setPower(power);
+        motorBackRight.setPower(power);
     }
 
     /**
