@@ -85,23 +85,25 @@ public class AutoTest extends LinearOpMode {
         if (code == 0) {
             telemetry.addData("assuming", "1");
         }
+        telemetry.addData("driving to", "wall");
         telemetry.update();
         Thread.sleep(5*1000);
 
         //dist 26 cm == 10 cm here 2.6cm=1cm
         //actually in INCHES!!!! will change in a bit
         //caroseul
-        robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
-        Thread.sleep(1000);
-        robot.gyroStrafeEncoder(0.5,0,3);//to allow turning
-        Thread.sleep(1000);
-        robot.gyroStrafeEncoder(0.5,90,3);//to allow turning
-        Thread.sleep(1000);
-        robot.gyroStrafeEncoder(0.5,180,3);//to allow turning
-        Thread.sleep(1000);
-        robot.gyroTurn(90,0.5);
-        Thread.sleep(1000);
-        robot.gyroTurn(-90,0.5);
-        Thread.sleep(1000);
+         robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
+        // Thread.sleep(1000);
+        // robot.gyroStrafeEncoder(0.5,0,3);//to allow turning
+         Thread.sleep(1000);
+         robot.gyroStrafeEncoder(0.5,90,3);//to allow turning
+         Thread.sleep(1000);
+        // robot.gyroStrafeEncoder(0.5,180,3);//to allow turning
+        // Thread.sleep(1000);
+        // robot.gyroTurn(90,0.5);
+        // Thread.sleep(1000);
+        // robot.gyroTurn(-90,0.5);
+        // Thread.sleep(1000);
+        robot.driveToWall(0.5);
     }
 }

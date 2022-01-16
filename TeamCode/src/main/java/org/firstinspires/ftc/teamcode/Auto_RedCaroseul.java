@@ -95,12 +95,14 @@ public class Auto_RedCaroseul extends LinearOpMode {
         robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
         robot.gyroTurn(90,0.5);//direction
 
+//turning: + is ccw, - is cw
+
         //-90 is forwards, intake is forwards
         //0 is right
         //90 is back
         //180 is left
 //        robot.gyroStrafeEncoder(0.5,90,10);
-        robot.gyroStrafeEncoder(0.5,-90,27.5);//2 feet+a bit more(error) to right. todo change the cm, direction
+        robot.gyroStrafeEncoder(0.5,-90,27);//2 feet+a bit more(error) to right. todo change the cm, direction
         robot.duck(-0.55);//turn on duck
         Thread.sleep(4000);//less time
         robot.duck(0);
@@ -111,7 +113,8 @@ public class Auto_RedCaroseul extends LinearOpMode {
         robot.runToPosDrop(0.5, 21.5, code);
         Thread.sleep(500);
 
-        robot.goToDepot_Red();//default
+        // robot.goToDepot_Red();//default
+        robot.goToWarehouse_Red(false);
     }
 
 

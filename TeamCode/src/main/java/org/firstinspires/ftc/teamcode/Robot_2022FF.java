@@ -216,6 +216,9 @@ public class Robot_2022FF {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //note: Outtake is the only that can seup herebecause we don't want to continuously reset encoders
+        outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setIMUParameters();
         resetEncoders();
         resetAngle();
@@ -244,7 +247,7 @@ public class Robot_2022FF {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        
         outtake.setTargetPosition(0);
         outtake.setPower(0);
         outtake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -669,7 +672,7 @@ public class Robot_2022FF {
         resetAngle();
         while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
             // double correction = getCorrection();
-            tankDrive(power ,power);
+            correctedTankStrafe(power, power, 0);
             telemetry.addData("distance reading:", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
@@ -864,7 +867,7 @@ public class Robot_2022FF {
             //go to warehouse
             gyroTurn(-90, 0.5);
             gyroStrafeEncoder(0.5, 180, 28);//change distance
-            gyroStrafeEncoder(0.5, -90, 56);
+            gyroStrafeEncoder(0.5, 90, 56);
             // driveToWall(0.5);//chnage
             //option 2: there's a robot in the way, and we need to instead go over the bumps...
         }
@@ -937,18 +940,18 @@ public class Robot_2022FF {
         switch (level){
             case 1:
                 //bottom
-                targetTicks = 150;
+                targetTicks = 450;
                 break;
             case 2:
                 //middle
-                targetTicks = 750;
+                targetTicks = 890;
                 break;
             case 3:
                 //top
-                targetTicks = 1350;
+                targetTicks = 1390;
                 break;
             default:
-                targetTicks = 100;
+                targetTicks = 30;
         }
         if(outtake.getCurrentPosition() < targetTicks) {
             outtake.setPower(power);
@@ -962,6 +965,27 @@ public class Robot_2022FF {
         }
     }
 
+    public void rTPMoveSlides (int level, double power) throws InterruptedException {
+        int targetTicks;
+        switch (level) {
+            case 1:
+                //bottom
+                targetTicks = 450;
+                break;
+            case 2:
+                //middle
+                targetTicks = 890;
+                break;
+            case 3:
+                //top
+                targetTicks = 1390;
+                break;
+            default:
+                targetTicks = 30;
+        }
+        motorRunToPos(power, targetTicks);
+        
+    }
     public void autoDrop(int level, double power, double dist) throws InterruptedException{
         bucket.setPosition(0.7);
         moveSlides(level, power);
@@ -990,18 +1014,18 @@ public class Robot_2022FF {
         switch (level) {
             case 1:
                 //bottom
-                targetTicks = 150;
+                targetTicks = 450;
                 break;
             case 2:
                 //middle
-                targetTicks = 750;
+                targetTicks = 890;
                 break;
             case 3:
                 //top
-                targetTicks = 1350;
+                targetTicks = 1390;
                 break;
             default:
-                targetTicks = 100;
+                targetTicks = 30;
         }
         motorRunToPos(power, targetTicks);
         gyroStrafeEncoder(0.5, 90, dist);
@@ -1009,5 +1033,6 @@ public class Robot_2022FF {
         gyroStrafeEncoder(0.5, -90, 6);
         motorRunToPos(power, 100);
     }
+
 
 }

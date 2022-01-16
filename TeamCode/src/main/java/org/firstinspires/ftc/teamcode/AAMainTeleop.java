@@ -85,21 +85,23 @@ public class AAMainTeleop extends LinearOpMode {
             }
 
             //outtake
-            motorOuttake.setPower(gamepad2.right_stick_y/2);
+            motorOuttake.setPower(gamepad2.right_stick_y/2);//for manual use
 
             //trying to keep the arm in position and not swinging around
 
             //top, middle, bottom scoring
             if (gamepad2.y) {
-                robot.moveSlides(3,0.5);
+                robot.moveSlides(3, 0.5);
             }
             if (gamepad2.b) {
-                robot.moveSlides(2,0.5);
+                robot.moveSlides(2, 0.5);
             }
             if (gamepad2.a) {
-                robot.moveSlides(1,0.5);
+                robot.moveSlides(1, 0.5);
             }
-
+            if(gamepad2.x){
+                robot.moveSlides(0, 0.5);
+            }
 
             //drive
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + (Math.PI/4);
