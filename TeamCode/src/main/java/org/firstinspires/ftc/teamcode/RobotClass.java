@@ -921,7 +921,7 @@ public class RobotClass {
      * @param power, + to intake, - to undo intake, 0 to stop
      */
     public void intake(double power) {
-        intake.setPower(1.00); //changed power to 1.00 from "power"
+        intake.setPower(power); //changed power to 1.00 from "power"
     }
 
     /**
@@ -929,7 +929,7 @@ public class RobotClass {
      * @param power, + to drop duck, 0 to stop
      * */
     public void duck(double power){
-        duck.setPower(1.00); //changed power to 1.00 from "power"
+        duck.setPower(power); //changed power to 1.00 from "power"
     }
 
     public void dobucket() throws InterruptedException{
