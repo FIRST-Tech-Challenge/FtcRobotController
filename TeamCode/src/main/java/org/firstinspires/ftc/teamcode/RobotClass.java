@@ -677,9 +677,13 @@ public class RobotClass {
         //calculate powers needed using direction
         double leftPower = Math.cos(newDirection) * power;//-1
         double rightPower = Math.sin(newDirection) * power;//-1
+        telemetry.addData("leftPower:", leftPower);
+        telemetry.addData("rightPower:", rightPower);
+        telemetry.update();
+        Thread.sleep(1000*5);
         while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
             double correction = getCorrection();
-            correctedTankStrafe(leftPower, rightPower, 0);//??????????
+            correctedTankStrafe(leftPower, rightPower, correction);//??????????
             telemetry.addData("correction", correction);
             telemetry.addData("distance reading", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();

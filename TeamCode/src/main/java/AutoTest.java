@@ -87,7 +87,7 @@ public class AutoTest extends LinearOpMode {
         }
         telemetry.addData("driving to", "wall");
         telemetry.update();
-        Thread.sleep(5*1000);
+//        Thread.sleep(5*1000);
 
         //changing so 90 is up and -90 is down (forwards and backwards)
         //dist 26 cm == 10 cm here 2.6cm=1cm
@@ -96,12 +96,12 @@ public class AutoTest extends LinearOpMode {
         //left, f, b,b, diagonal
          robot.gyroStrafeEncoder(0.5,-90,3);//
          Thread.sleep(1000);
-         robot.gyroStrafeEncoder(0.5,0,3);//
-         Thread.sleep(1000);
+//         robot.gyroStrafeEncoder(0.5,0,3);//
+//         Thread.sleep(1000);
          robot.gyroStrafeEncoder(0.5,90,3);//
          Thread.sleep(1000);
-         robot.gyroStrafeEncoder(0.5,180,3);//
-         Thread.sleep(1000);
+//         robot.gyroStrafeEncoder(0.5,180,3);//
+//         Thread.sleep(1000);
          robot.gyroTurn(90,0.5);
          Thread.sleep(1000);
          robot.gyroTurn(-90,0.5);
