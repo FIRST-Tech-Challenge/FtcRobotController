@@ -7,39 +7,22 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
-import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TsePipeline;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 @Autonomous
 public class AutoWarehouse extends LinearOpMode {
     protected int multiplier = 1;
-
-    public double bottomRectWidthPercentage = 0.75;
-    public double bottomRectHeightPercentage = 0.41;
-    public double middleRectWidthPercentage = 0.37;
-    public double middleRectHeightPercentage = 0.315;
-    public double topRectWidthPercentage = 0.08;
-    public double topRectHeightPercentage = 0.25;
+    protected boolean isRed = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        TsePipeline.topRectWidthPercentage = topRectWidthPercentage;
-        TsePipeline.topRectHeightPercentage = topRectHeightPercentage;
-        TsePipeline.middleRectWidthPercentage = middleRectWidthPercentage;
-        TsePipeline.middleRectHeightPercentage = middleRectHeightPercentage;
-        TsePipeline.bottomRectWidthPercentage = bottomRectWidthPercentage;
-        TsePipeline.bottomRectHeightPercentage = bottomRectHeightPercentage;
 
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
         final int[] height = {-1};
@@ -98,7 +81,7 @@ public class AutoWarehouse extends LinearOpMode {
 
         thread.start();
 
-        height[0] = detector.run();
+        height[0] = detector.run(isRed);
 
         if (!isStopRequested()) {
 

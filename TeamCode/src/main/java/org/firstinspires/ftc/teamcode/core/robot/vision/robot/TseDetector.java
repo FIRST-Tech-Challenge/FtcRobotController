@@ -12,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public class TseDetector {
 
-    private OpenCvCamera camera;
+    private final OpenCvCamera camera;
     private final String webcamName;
     private final HardwareMap hardwareMap;
     private final TsePipeline pipeline;
@@ -52,11 +52,11 @@ public class TseDetector {
     /**
      * Resets pipeline on call
      * Stalls code until pipeline is done with figuring out (max time of around 0.33 seconds)
+     *
      * @return integer 1 - 3, corresponds to barcode slots left to right
      */
-    public int run() {
-        pipeline.startPipeline();
-        //noinspection StatementWithEmptyBody
+    public int run(boolean isRed) {
+        pipeline.startPipeline(isRed);
         Pair<Boolean, Integer> result = pipeline.differentSpot();
         while (!result.first) {
             result = pipeline.differentSpot();

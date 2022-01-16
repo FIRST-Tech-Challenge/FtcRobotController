@@ -61,14 +61,28 @@ public class TsePipeline extends OpenCvPipeline {
     private Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
     private int frameCount = 0;
     private boolean running = false;
-
-    public void startPipeline() {
+    public void startPipeline(boolean isRed) {
         different = 0;
         lastFrameValue = 0;
         isComplete = false;
         checks = 0;
         frameCount = 0;
         running = true;
+        if (isRed) {
+            bottomRectHeightPercentage = 0.2;
+            bottomRectWidthPercentage = 0.805;
+            middleRectHeightPercentage = 0.3;
+            middleRectWidthPercentage = 0.534;
+            topRectHeightPercentage = 0.45;
+            topRectWidthPercentage = 0.195;
+        } else {
+            bottomRectHeightPercentage = 0.41;
+            bottomRectWidthPercentage = 0.75;
+            middleRectHeightPercentage = 0.315;
+            middleRectWidthPercentage = 0.37;
+            topRectHeightPercentage = 0.25;
+            topRectWidthPercentage = 0.08;
+        }
     }
     public void stopPipeline() {
         running = false;
