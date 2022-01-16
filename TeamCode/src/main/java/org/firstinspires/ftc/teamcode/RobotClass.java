@@ -347,8 +347,8 @@ public class RobotClass {
      * */
     public void turnClockwise(double power){
         motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(-power);
         motorBackRight.setPower(-power);
     }
 
@@ -357,10 +357,10 @@ public class RobotClass {
      * @param power power for motors
      */
     public void turnCounterClockwise(double power){
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(-power);
-        motorBackRight.setPower(-power);
+        motorFrontLeft.setPower(-power);
+        motorBackLeft.setPower(-power);
+        motorFrontRight.setPower(power);
+        motorBackRight.setPower(power);
     }
 
     /**
@@ -381,7 +381,8 @@ public class RobotClass {
     public void gyroTurn(int degrees, double power) throws InterruptedException{
         //restart angle tracking
         resetAngle();
-
+//+ cw
+        //- ccw
         if(degrees > 0){
             turnClockwise(power);
         }else if(degrees < 0){
@@ -389,8 +390,9 @@ public class RobotClass {
         }else{
             return;
         }
-
+//
         //Rotate until current angle is equal to the target angle
+        //getAngle()-degrees
         if (degrees < 0){
             while (opMode.opModeIsActive() && getAngle() > degrees+10){
                 composeAngleTelemetry();
