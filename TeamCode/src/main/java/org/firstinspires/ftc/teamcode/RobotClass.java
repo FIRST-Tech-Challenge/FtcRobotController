@@ -205,10 +205,10 @@ public class RobotClass {
      * */
     public void setupRobot() throws InterruptedException{
         //reverse the needed motors?
-        // motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 //       motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+//        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -514,10 +514,10 @@ public class RobotClass {
      * @param correction
      * */
     public void correctedTankStrafe(double leftPower, double rightPower, double correction){
-        motorFrontLeft.setPower(leftPower + correction);
-        motorFrontRight.setPower(rightPower - correction);
-        motorBackLeft.setPower(rightPower + correction);
-        motorBackRight.setPower(leftPower - correction);
+        motorFrontLeft.setPower(leftPower + correction);//
+        motorFrontRight.setPower(rightPower - correction);//
+        motorBackLeft.setPower(rightPower + correction);//
+        motorBackRight.setPower(leftPower - correction);//
     }
 
     /**
@@ -831,9 +831,9 @@ public class RobotClass {
         //0 is
         //convert direction (degrees) into radians
 //        double newDirection = angle * Math.PI/180 + Math.PI/4;//3pi/4
-        double newDirection = angle * Math.PI/180 - Math.PI/4;//pi/4
+        double newDirection = angle * Math.PI/180 - Math.PI/4;//-3pi/4
         //calculate powers needed using direction
-        double leftPower = Math.cos(newDirection) * power;//1
+        double leftPower = Math.cos(newDirection) * power;//-1
         double rightPower = Math.sin(newDirection) * power;//-1
 
         resetEncoders();

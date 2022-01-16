@@ -93,13 +93,14 @@ public class AutoTest extends LinearOpMode {
         //dist 26 cm == 10 cm here 2.6cm=1cm
         //actually in INCHES!!!! will change in a bit
         //caroseul
-         robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
+        //left, f, b,b, diagonal
+         robot.gyroStrafeEncoder(0.5,-90,3);//
          Thread.sleep(1000);
-         robot.gyroStrafeEncoder(0.5,0,3);//to allow turning
+         robot.gyroStrafeEncoder(0.5,0,3);//
          Thread.sleep(1000);
-         robot.gyroStrafeEncoder(0.5,90,3);//to allow turning
+         robot.gyroStrafeEncoder(0.5,90,3);//
          Thread.sleep(1000);
-         robot.gyroStrafeEncoder(0.5,180,3);//to allow turning
+         robot.gyroStrafeEncoder(0.5,180,3);//
          Thread.sleep(1000);
          robot.gyroTurn(90,0.5);
          Thread.sleep(1000);
