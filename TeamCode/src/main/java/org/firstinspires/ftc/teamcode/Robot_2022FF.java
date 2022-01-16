@@ -7,12 +7,12 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+//import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.degrees;
+//import org.checkerframework.checker.units.qual.degrees;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -813,7 +813,7 @@ public class Robot_2022FF {
      * @param power, + to intake, - to undo intake, 0 to stop
      */
     public void intake(double power) {
-        intake.setPower(power);
+        intake.setPower(1.00); //changed power to 1.00 from "power"
     }
 
     /**
@@ -821,7 +821,7 @@ public class Robot_2022FF {
      * @param power, + to drop duck, 0 to stop
      * */
     public void duck(double power){
-        duck.setPower(power);
+        duck.setPower(1.00); //changed power to 1.00 from "power"
     }
 
     /**
