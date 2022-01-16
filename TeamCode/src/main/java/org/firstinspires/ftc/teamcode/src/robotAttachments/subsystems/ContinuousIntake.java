@@ -179,7 +179,7 @@ public class ContinuousIntake {
     /**
      * this following method takes a parameter for the type of color and outputs the sensor's number for that color
      *
-     * @param color the name of the color wanted as a String
+     * @param color the name of the color wanted
      * @return this returns a number of the value for the name of the wanted color
      */
     public int getColor(Colors color) {
@@ -195,10 +195,14 @@ public class ContinuousIntake {
 
             case Alpha:
                 return colorSensor.alpha();
+            default:
+                return 0;
         }
-        throw new RuntimeException("How did we get here");
     }
 
+    /**
+     * A enum to represent the RGBA type
+     */
     public enum Colors {
         Red,
         Green,
