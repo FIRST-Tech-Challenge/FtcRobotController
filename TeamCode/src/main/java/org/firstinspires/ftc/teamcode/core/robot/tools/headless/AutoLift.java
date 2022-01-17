@@ -93,7 +93,7 @@ public class AutoLift {
 
     private boolean liftWaiting = true;
     public void update() {
-        if (position != lastPosition) state = MovementStates.START;
+        if (Objects.requireNonNull(position) != lastPosition) state = MovementStates.START;
         switch (state) {
             case START:
                 armServo.setPosition(0.7D);
@@ -101,10 +101,12 @@ public class AutoLift {
                 if (lastPosition != null) {
                     liftMotor.setTargetPosition(position.motorPos);
                     liftWaiting = false;
-                }
-                else {
+                } else {
                     liftWaiting = true;
-                    eventThread.addEvent(new TimedEvent(() -> liftMotor.setTargetPosition(position.motorPos), 500));
+                    eventThread.addEvent(new TimedEvent(() -> {
+                        liftWaiting = false;
+                        liftMotor.setTargetPosition(position.motorPos);
+                    }, 500));
                 }
                 break;
             case LIFT_MOVEMENT:
