@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryDrivetrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.OdometryDirections;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 
 /**
@@ -22,7 +22,7 @@ public class TestOfOdometryDriveSystem extends AutonomousTemplate {
         driveSystem.moveToPosition(0, 100, 0.5, true);
 
         for (int x = 100; x > 0; x -= 10) {
-            driveSystem.move(OdometryDrivetrain.OdometryDirections.Backward, 10, .5);
+            driveSystem.move(OdometryDirections.Backward, 10, .5);
         }
 
         while (opModeIsActive() && !isStopRequested()) {

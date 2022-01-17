@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.OdometryDirections;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
-
-import java.util.HashMap;
 
 /**
  * Odometry Drivetrain Implements basic drive functions that can be inherited by other drive systems.
@@ -450,26 +449,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
         }
         stopAll();
-    }
-
-    /**
-     * A enum to correlate relative terms of measure to absolute angles
-     */
-    public enum OdometryDirections {
-        Forward,
-        Backward,
-        Right,
-        Left;
-
-        /**
-         * A hashmap that contains the data to make the substitution
-         */
-        public static final HashMap<OdometryDirections, Double> positionToAngle = new HashMap<OdometryDirections, Double>() {{
-            put(OdometryDirections.Forward, 0D);
-            put(OdometryDirections.Backward, 180D);
-            put(OdometryDirections.Right, 90D);
-            put(OdometryDirections.Left, 270D);
-        }};
     }
 
     /**

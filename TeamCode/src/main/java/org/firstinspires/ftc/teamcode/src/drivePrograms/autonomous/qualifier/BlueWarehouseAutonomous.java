@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
  * The Autonomous ran on Blue side near warehouse for Qualifier
@@ -18,7 +19,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
 
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
-        MarkerPosition Pos = MarkerPosition.NotSeen;
+        BarcodePositions Pos = BarcodePositions.NotSeen;
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
         odometry.setPosition(133, 63, 270);
 

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
  * The Autonomous ran on Blue side near spinner for Qualifier
@@ -19,7 +20,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
 
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
-        MarkerPosition Pos = MarkerPosition.NotSeen;
+        BarcodePositions Pos = BarcodePositions.NotSeen;
 
 
         odometry.setPosition(133, 101, 270);

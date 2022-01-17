@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
+/**
+ * A Autonomous to test the proportional power drive capabilities of the linear slide
+ */
 @Disabled
 @Autonomous(name = "Linear Slide Auto Test")
 public class LinearSlideAutoTest extends TeleOpTemplate {

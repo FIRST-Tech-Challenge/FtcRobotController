@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
-import static org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake.Colors.Blue;
-import static org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake.Colors.Green;
-import static org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake.Colors.Red;
+import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Blue;
+import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Green;
+import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Red;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 
 /**
  * A Autonomous to test color sensor capabilities
@@ -46,7 +46,7 @@ public class ColorTest extends TeleOpTemplate {
             telemetry.addData("green:", intake.getColor(Green));
             telemetry.addData("blue:", intake.getColor(Blue));
             telemetry.addData("distance:", intake.getSensorDistance());
-            telemetry.addData("identity:", ContinuousIntake.gameObject.identify(intake.getRGB()));
+            telemetry.addData("identity:", FreightFrenzyGameObject.identify(intake.getRGB()));
 
             telemetry.update();
         }

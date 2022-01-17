@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 import java.util.List;
 
@@ -166,9 +167,9 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      * @return It returns the average position of all the samples
      * @throws InterruptedException Throws exception if the opMode is stopped during function execution
      */
-    public MarkerPosition getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
+    public BarcodePositions getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
 
-        MarkerPosition[] markerPositions = new MarkerPosition[arraySize];
+        BarcodePositions[] markerPositions = new BarcodePositions[arraySize];
 
         for (int i = 0; i < arraySize; i++) {
             markerPositions[i] = this.findPositionOfMarker();
@@ -195,13 +196,13 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         switch (result) {
             case 0:
-                return MarkerPosition.NotSeen;
+                return BarcodePositions.NotSeen;
             case 1:
-                return MarkerPosition.Right;
+                return BarcodePositions.Right;
             case 2:
-                return MarkerPosition.Left;
+                return BarcodePositions.Left;
         }
-        return MarkerPosition.Left; //It never reaches this line
+        return BarcodePositions.Left; //It never reaches this line
     }
 
     /**
@@ -209,7 +210,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      *
      * @return Where the marker is
      */
-    public MarkerPosition findPositionOfMarker() {
+    public BarcodePositions findPositionOfMarker() {
         if (tfod != null) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
@@ -218,24 +219,16 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
             if (updatedRecognitions != null && (updatedRecognitions.size() > 0)) {
                 if (updatedRecognitions.get(0).getLeft() > 615) {
-                    return MarkerPosition.Right;
+                    return BarcodePositions.Right;
                 }
                 if (updatedRecognitions.get(0).getLeft() <= 615) {
-                    return MarkerPosition.Left;
+                    return BarcodePositions.Left;
                 }
             }
         }
-        return MarkerPosition.NotSeen;
+        return BarcodePositions.NotSeen;
     }
 
-    /**
-     * An enum returned for position in camera view
-     */
-    public enum MarkerPosition {
-        Right,
-        Left,
-        NotSeen
-    }
 }
 
 

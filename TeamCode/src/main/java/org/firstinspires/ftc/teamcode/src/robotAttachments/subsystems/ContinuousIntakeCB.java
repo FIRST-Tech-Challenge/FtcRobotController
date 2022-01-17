@@ -4,7 +4,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemInterface;
+import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 
+/**
+ * A variation on the Continuous intake that executes a callback if there is a item in the bucket
+ */
 public class ContinuousIntakeCB extends ContinuousIntake implements ThreadedSubsystemInterface {
 
     /**
@@ -48,7 +52,7 @@ public class ContinuousIntakeCB extends ContinuousIntake implements ThreadedSubs
 
     @Override
     public void threadMain() {
-        if (this.identifyContents() != gameObject.EMPTY) {
+        if (this.identifyContents() != FreightFrenzyGameObject.EMPTY) {
             callBack.call();
         }
     }

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
  * The Autonomous ran on Red side near spinner for Qualifier
@@ -19,7 +20,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
 
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-        MarkerPosition Pos = MarkerPosition.NotSeen;
+        BarcodePositions Pos = BarcodePositions.NotSeen;
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
 
 

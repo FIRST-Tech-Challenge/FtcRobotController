@@ -10,6 +10,15 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.Continuous
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
 
+/**
+ * A Abstract class that provides extra reusable functionality to our opModes <P>
+ * The provided functionality:
+ * <ul>
+ * <li>Easy initialization of every generically initialized subsystem on the robot through associated method calls.</li>
+ * <li>Every names of each item in the Hardware map is stored allowing a one line change for a hardware remap</li>
+ * <li>It adds the abstract method {@link #opModeMain()} as a entry point for all child classes. Meanwhile, {@link #runOpMode()} sets some stuff up before calling {@link #opModeMain()}</li>
+ * </ul>
+ */
 public abstract class GenericOpModeTemplate extends LinearOpMode {
     /**
      * Name of the front right motor
@@ -82,7 +91,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     public abstract void opModeMain() throws InterruptedException;
 
     /**
-     * We set some stuff up behind the scenes, child classes should use opModeMain
+     * This method calls {@link #opModeMain()}, and catches and rethrows every {@link RuntimeException} with the stack trace as the message to make debugging easier
      *
      * @throws InterruptedException Throws if OpMode is stopped during Execution
      */

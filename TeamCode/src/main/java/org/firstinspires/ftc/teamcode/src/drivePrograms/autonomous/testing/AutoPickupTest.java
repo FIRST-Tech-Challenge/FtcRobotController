@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.FieldPoints;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 
+/**
+ * A Autonomous to test the automatic pickup abilities of our robot
+ */
 @Disabled
 @Autonomous(name = "AutoPickupTest")
 public class AutoPickupTest extends AutonomousTemplate {
