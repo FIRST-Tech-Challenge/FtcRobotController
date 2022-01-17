@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.src.utills;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 /**
- * This is a template for all subsystems that need threading, provides thread safety
+ * This is a template for all subsystems that need threading, provides some thread safety
  */
 public abstract class ThreadedSubsystemTemplate extends Thread implements ThreadedSubsystemInterface {
 
     /**
-     * A boolean that controlls if the thread is running
+     * A boolean that controls if the thread is running
      */
     protected volatile boolean isRunning = true;
 
     /**
-     * The time in mills that the thread sleeps for after every call of threadMain
+     * The time in mills that the thread sleeps for after every call of {@link #threadMain()}
      */
     protected long sleepTime = 50;
 
@@ -28,8 +30,8 @@ public abstract class ThreadedSubsystemTemplate extends Thread implements Thread
     /**
      * A constructor that instantiates the Executable Objects, they allow the thread to end with the OpMode
      *
-     * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
-     * @param opModeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
+     * @param isStopRequested A Executable object wrapped around {@link LinearOpMode#isStopRequested()}
+     * @param opModeIsActive  A Executable object wrapped around {@link LinearOpMode#opModeIsActive()}
      */
     public ThreadedSubsystemTemplate(Executable<Boolean> opModeIsActive, Executable<Boolean> isStopRequested) {
         this.isStopRequested = isStopRequested;
@@ -44,9 +46,9 @@ public abstract class ThreadedSubsystemTemplate extends Thread implements Thread
     }
 
     /**
-     * This is the method where the thread starts, do not override
+     * This is the method where the thread starts
      */
-    public void run() {
+    final public void run() {
         try {
             while (isRunning && !isStopRequested.call()) {
                 this.threadMain();

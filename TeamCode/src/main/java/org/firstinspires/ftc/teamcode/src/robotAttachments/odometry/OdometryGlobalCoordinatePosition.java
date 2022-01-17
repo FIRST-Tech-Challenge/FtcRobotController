@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.odometry;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -20,22 +21,66 @@ import java.io.File;
  * @since 6/1/2019
  */
 public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate {
+    /**
+     * A lock for thread safety, used to {@link #setImu(BNO055IMU)}, {@link #setPosition(FieldPoints)}, {@link #setPosition(double, double, double)}, and {@link #setOrientation(double)}.
+     */
     private static final Object lock = new Object();
+    /**
+     * The Vertical Left Odometry Encoder
+     */
     private final DcMotor verticalEncoderLeft;
+    /**
+     * The Vertical Right Odometry Encoder
+     */
     private final DcMotor verticalEncoderRight;
+    /**
+     * The Horizontal Odometry Encoder
+     */
     private final DcMotor horizontalEncoder;
+
+    /**
+     * The number of encoder ticks per linear inch
+     */
     private final double COUNTS_PER_INCH = 1892.3724283364;
-    //Algorithm constants
+    /**
+     * An Algorithm constant
+     */
     private final double robotEncoderWheelDistance;
+
+    //Algorithm constants
+    /**
+     * An Algorithm constant
+     */
     private final double horizontalEncoderTickPerDegreeOffset;
+    /**
+     * The IMU for greater angle precision
+     */
     private BNO055IMU imu = null;
-    private volatile boolean isActive = false;
+    /**
+     * An Algorithm constant
+     */
     private volatile double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
+    /**
+     * An Algorithm constant
+     */
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
+    /**
+     * An Algorithm constant
+     */
     private int verticalLeftEncoderPositionMultiplier = 1;
+    /**
+     * An Algorithm constant
+     */
     private int verticalRightEncoderPositionMultiplier = 1;
+    /**
+     * An Algorithm constant
+     */
     private int normalEncoderPositionMultiplier = 1;
+    /**
+     * A internal variable used to set orientation of the IMU. Rather than reset the IMU, we record the offset between the given angle and the desired angle and apply that when we get the IMU angle
+     */
     private double angleOffset = 0;
+
 
     /**
      * Constructor for GlobalCoordinatePosition Thread
@@ -44,11 +89,11 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
      * @param horizontalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
-     * @param _isOpmodeActive      A Executable object wrapped around OpMode.opModeIsActive()
-     * @param _isStopRequested     A Executable object wrapped around OpMode.isStopRequested()
+     * @param _isStopRequested     A Executable object wrapped around {@link LinearOpMode#isStopRequested()}
+     * @param _opModeIsActive      A Executable object wrapped around {@link LinearOpMode#opModeIsActive()}
      */
-    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay, Executable<Boolean> _isOpmodeActive, Executable<Boolean> _isStopRequested) {
-        super(_isOpmodeActive, _isStopRequested);
+    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay, Executable<Boolean> _opModeIsActive, Executable<Boolean> _isStopRequested) {
+        super(_opModeIsActive, _isStopRequested);
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
@@ -183,14 +228,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
 
     }
 
-    /**
-     * Returns if the Thread Main is currently executing
-     *
-     * @return True if Thread Main is currently executing, false otherwise
-     */
-    public boolean isActive() {
-        return isActive;
-    }
+
 
     /**
      * Gets the current angle of the IMU
@@ -223,7 +261,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
     public void threadMain() {
-        isActive = true;
         synchronized (lock) {
             if (imu != null) {
                 robotOrientationRadians = Math.toRadians(getImuAngle()) + angleOffset;
@@ -256,7 +293,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
             previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
             prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
         }
-        isActive = false;
     }
 
     /**

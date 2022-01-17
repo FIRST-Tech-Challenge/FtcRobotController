@@ -26,7 +26,6 @@ public class TestOfOdometryDriveSystem extends AutonomousTemplate {
         }
 
         while (opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("Active", odometry.isActive());
             telemetry.addData("Thread State", odometry.isRunning());
             telemetry.addData("Thread State OBJ", odometry.getState());
             odometry.showPosition(telemetry);

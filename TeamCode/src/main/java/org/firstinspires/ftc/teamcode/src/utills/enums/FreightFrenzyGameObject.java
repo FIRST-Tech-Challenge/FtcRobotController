@@ -21,7 +21,7 @@ public enum FreightFrenzyGameObject {
     /**
      * The Key is the game object, the value is what LED pattern it should corespond to
      */
-    protected static final HashMap<FreightFrenzyGameObject, RevBlinkinLedDriver.BlinkinPattern> RevColorOfObj = new HashMap<FreightFrenzyGameObject, RevBlinkinLedDriver.BlinkinPattern>() {{
+    public static final HashMap<FreightFrenzyGameObject, RevBlinkinLedDriver.BlinkinPattern> RevColorOfObj = new HashMap<FreightFrenzyGameObject, RevBlinkinLedDriver.BlinkinPattern>() {{
         put(FreightFrenzyGameObject.BALL, RevBlinkinLedDriver.BlinkinPattern.WHITE);
         put(FreightFrenzyGameObject.CUBESMOOTH, RevBlinkinLedDriver.BlinkinPattern.ORANGE);
         put(FreightFrenzyGameObject.CUBEWAFFLE, RevBlinkinLedDriver.BlinkinPattern.ORANGE);

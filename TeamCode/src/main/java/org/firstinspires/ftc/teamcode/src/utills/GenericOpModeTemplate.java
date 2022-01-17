@@ -96,7 +96,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * @throws InterruptedException Throws if OpMode is stopped during Execution
      */
     @Override
-    public void runOpMode() throws InterruptedException {
+    public final void runOpMode() throws InterruptedException {
         try {
             opModeMain();
         } catch (RuntimeException e) {

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.sensors;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -22,8 +23,8 @@ public class TripWireDistanceSensor extends ThreadedSubsystemTemplate {
      * @param distanceSensor  The name of the distance sensor to make
      * @param threshold       the threshold for function activation
      * @param callBack        A Executable object wrapped around a function to execute on call back
-     * @param opModeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
-     * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
+     * @param opModeIsActive  A Executable object wrapped around {@link LinearOpMode#opModeIsActive()}
+     * @param isStopRequested A Executable object wrapped around {@link LinearOpMode#isStopRequested()}
      */
     public TripWireDistanceSensor(HardwareMap hardwareMap, String distanceSensor, double threshold, Executable<Void> callBack, Executable<Boolean> opModeIsActive, Executable<Boolean> isStopRequested) {
         super(opModeIsActive, isStopRequested);

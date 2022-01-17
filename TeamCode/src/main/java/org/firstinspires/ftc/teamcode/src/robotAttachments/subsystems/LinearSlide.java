@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -48,15 +49,15 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
     /**
      * Constructs the slide based on hardware map
      *
-     * @param hardwareMap      Hardware Map Object from OpMode
-     * @param dcMotorName      Name of the control motor
-     * @param voltSensor       A Voltage Sensor Object
-     * @param _isStopRequested A Executable object wrapped around OpMode.isStopRequested()
-     * @param _isOpmodeActive  A Executable object wrapped around OpMode.opModeIsActive()
+     * @param hardwareMap     Hardware Map Object from OpMode
+     * @param dcMotorName     Name of the control motor
+     * @param voltSensor      A Voltage Sensor Object
+     * @param isStopRequested A Executable object wrapped around {@link LinearOpMode#isStopRequested()}
+     * @param opModeIsActive  A Executable object wrapped around {@link LinearOpMode#opModeIsActive()}
      */
     public LinearSlide(HardwareMap hardwareMap, String dcMotorName, RobotVoltageSensor voltSensor,
-                       Executable<Boolean> _isOpmodeActive, Executable<Boolean> _isStopRequested) {
-        super(_isOpmodeActive, _isStopRequested);
+                       Executable<Boolean> opModeIsActive, Executable<Boolean> isStopRequested) {
+        super(opModeIsActive, isStopRequested);
         linearSlide = hardwareMap.dcMotor.get(dcMotorName);
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
