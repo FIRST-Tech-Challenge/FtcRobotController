@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.core.robot.tools.driveop;
 import com.arcrobotics.ftclib.gamepad.ButtonReader;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
@@ -18,9 +16,8 @@ import org.firstinspires.ftc.teamcode.opmodes.util.GoodTriggerReader;
  * lift and arm
  */
 public class ControllerLift extends AutoLift {
-    private final GoodTriggerReader leftTrigger;
-    private final GoodTriggerReader rightTrigger;
-    private final ButtonReader leftBumper;
+    private final GoodTriggerReader leftTrigger, rightTrigger;
+    private final ButtonReader leftBumper, rightBumper;
 
     /**
      * @param eventThread local eventThread instance
@@ -31,8 +28,7 @@ public class ControllerLift extends AutoLift {
         leftTrigger = new GoodTriggerReader(toolGamepad, GamepadKeys.Trigger.LEFT_TRIGGER);
         rightTrigger = new GoodTriggerReader(toolGamepad, GamepadKeys.Trigger.RIGHT_TRIGGER);
         leftBumper = new ButtonReader(toolGamepad, GamepadKeys.Button.LEFT_BUMPER);
-        DigitalChannel topSensor = map.get(DigitalChannel.class, "topSensor");
-        topSensor.setMode(DigitalChannel.Mode.INPUT);
+        rightBumper = new ButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
     }
 
     public void init() {
@@ -41,9 +37,11 @@ public class ControllerLift extends AutoLift {
                 leftTrigger.readValue();
                 rightTrigger.readValue();
                 leftBumper.readValue();
+                rightBumper.readValue();
                 if (leftTrigger.wasJustReleased()) setPosition(Positions.TOP);
                 else if (rightTrigger.wasJustReleased()) setPosition(Positions.SAFE);
                 else if (leftBumper.wasJustReleased()) setPosition(Positions.TSE);
+                else if (rightTrigger.wasJustReleased()) setPosition(Positions.INTAKING);
             }
         });
         thread.setPriority(5);

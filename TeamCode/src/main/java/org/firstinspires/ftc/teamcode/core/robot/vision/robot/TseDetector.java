@@ -21,6 +21,7 @@ public class TseDetector {
     public TseDetector(HardwareMap hMap, String webcamName, boolean debug, boolean isRed) {
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
+        //noinspection IfStatementWithIdenticalBranches
         if (debug) {
             int cameraMonitorViewId = hardwareMap
                     .appContext.getResources()
