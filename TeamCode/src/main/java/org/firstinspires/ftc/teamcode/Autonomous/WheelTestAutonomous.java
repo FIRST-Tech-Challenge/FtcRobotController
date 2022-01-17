@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
 
-public class WheelTestAuto extends LinearOpMode{
+public class WheelTestAutonomous extends LinearOpMode{
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
