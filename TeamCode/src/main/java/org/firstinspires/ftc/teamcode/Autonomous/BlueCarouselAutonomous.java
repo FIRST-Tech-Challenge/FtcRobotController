@@ -118,19 +118,10 @@ public class BlueCarouselAutonomous extends LinearOpMode {
     backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
     backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    
     frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    
-    
-    
-    
 
     bucket = (DcMotor)hardwareMap.get(DcMotor.class, "Bucket");
     bucketTurner = (DcMotor)hardwareMap.get(DcMotor.class, "BucketTurner");
@@ -139,10 +130,7 @@ public class BlueCarouselAutonomous extends LinearOpMode {
     
     linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     bucketTurner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    
-    linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    
+
     FrontRightDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "FrontRightDistance");
     FrontLeftDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "FrontLeftDistance");
     BackRightDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "BackRightDistance");
@@ -152,7 +140,6 @@ public class BlueCarouselAutonomous extends LinearOpMode {
     FrontColor = (ColorSensor)hardwareMap.get(ColorSensor.class, "FrontColor");
     BackColor = (ColorSensor)hardwareMap.get(ColorSensor.class, "BackColor");
     
-    carouselTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     carouselTurner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     
     linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -164,7 +151,9 @@ public class BlueCarouselAutonomous extends LinearOpMode {
     frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    
+
+    resetEncoders();
+
     if (initVuforia() == 1)
       return 1; 
     initTfod();
@@ -312,41 +301,49 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   }
   
   private void strafeToCarousel(double pval) {
+
     frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     frontRight.setPower(pval * -1.0D);
     backRight.setPower(pval);
     frontLeft.setPower(pval);
     backLeft.setPower(pval * -1.0D);
+
     while (CarouselDistance.getDistance(DistanceUnit.INCH) >= 15.0D)
-      idle(); 
+      idle();
+
     frontRight.setPower(0.0D);
     backRight.setPower(0.0D);
     frontLeft.setPower(0.0D);
     backLeft.setPower(0.0D);
+
     frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     moveRobotForwardEncoders(0.75D, 200);
+
     frontRight.setPower(0.0D);
     backRight.setPower(0.0D);
     frontLeft.setPower(0.0D);
     backLeft.setPower(0.0D);
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    resetEncoders();
+
     frontRight.setTargetPosition(750);
     backRight.setTargetPosition(750);
     frontLeft.setTargetPosition(-750);
     backLeft.setTargetPosition(-750);
+
     frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     telemetry.addData("Motor Status: ", "Running");
     telemetry.update();
     frontRight.setPower(1.0D);
@@ -364,10 +361,9 @@ public class BlueCarouselAutonomous extends LinearOpMode {
     sleep(3500L);
     carouselTurner.setPower(0.0D);
     strafeRobotLeftEncoders(0.5D, 200);
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    resetEncoders();
+
     frontRight.setTargetPosition(-750);
     backRight.setTargetPosition(-750);
     frontLeft.setTargetPosition(750);
@@ -425,10 +421,9 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   }
   
   private void moveRobotForwardEncoders(double pval, int enCount) {
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    resetEncoders();
+
     frontRight.setTargetPosition(enCount);
     backRight.setTargetPosition(enCount);
     frontLeft.setTargetPosition(enCount);
@@ -452,10 +447,9 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   }
   
   private void moveRobotBackwardEncoders(double pval, int enCount) {
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    resetEncoders();
+
     frontRight.setTargetPosition(enCount * -1);
     backRight.setTargetPosition(enCount * -1);
     frontLeft.setTargetPosition(enCount * -1);
@@ -479,10 +473,9 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   }
   
   private void strafeRobotRightEncoders(double pval, int enCount) {
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    resetEncoders();
+
     frontRight.setTargetPosition(enCount * -1);
     backRight.setTargetPosition(enCount);
     frontLeft.setTargetPosition(enCount);
@@ -506,10 +499,9 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   }
   
   private void strafeRobotLeftEncoders(double pval, int enCount) {
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    resetEncoders();
+
     frontRight.setTargetPosition(enCount);
     backRight.setTargetPosition(enCount * -1);
     frontLeft.setTargetPosition(enCount * -1);
@@ -701,10 +693,9 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   }
   
   private void strafeToShippingHub() {
-    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    resetEncoders();
+
     frontRight.setTargetPosition(1500);
     backRight.setTargetPosition(-1500);
     frontLeft.setTargetPosition(-1500);
@@ -773,6 +764,20 @@ public class BlueCarouselAutonomous extends LinearOpMode {
     } 
     telemetry.addData("Carousel Turner Distance: ", Double.valueOf(CarouselDistance.getDistance(DistanceUnit.INCH)));
     telemetry.update();
+  }
+
+  private void resetEncoders() {
+
+    frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    carouselTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    bucket.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
   }
 }
 
