@@ -37,7 +37,7 @@ public class TripWireDistanceSensor extends ThreadedSubsystemTemplate {
      * The function that monitors the distance sensor
      */
     @Override
-    protected void threadMain() {
+    public void threadMain() {
         if (distanceSensor.getDistance(DistanceUnit.CM) < threshold) {
             this.callBack.call();
         }

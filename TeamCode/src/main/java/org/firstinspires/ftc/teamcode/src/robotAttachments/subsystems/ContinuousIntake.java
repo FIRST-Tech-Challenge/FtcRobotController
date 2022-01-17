@@ -47,34 +47,6 @@ public class ContinuousIntake {
     private final Servo itemRelease;
 
     /**
-     * Initializes from hardware map and names
-     *
-     * @param hardwareMap          hardware map object
-     * @param motorName            Name of intake motor
-     * @param servoName            Name of lifting servo
-     * @param colorSensor          name of the color sensor
-     * @param distanceSensor       name of the distance sensor
-     * @param sensorDetectionLight true if the light should be on, false if the light should be off
-     */
-    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String distanceSensor, String colorSensor, boolean sensorDetectionLight) {
-        intakeMotor = hardwareMap.dcMotor.get(motorName);
-        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-
-        this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
-        this.colorSensor.enableLed(sensorDetectionLight);
-
-
-        itemRelease = hardwareMap.servo.get(servoName);
-        this.setServoClosed();
-        isClosed = true;
-    }
-
-    /**
      * It treats color as 3D space and returns the distance between the two points
      *
      * @param sight  The first set of RGB values

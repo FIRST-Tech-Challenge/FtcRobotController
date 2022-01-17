@@ -115,7 +115,7 @@ public abstract class AutonomousTemplate extends LinearOpMode {
         slide.start();
         checkStop();
 
-        intake = new ContinuousIntake(hardwareMap, "intake", "bucket", "distance_sensor", "color_sensor", true);
+        intake = new ContinuousIntake(hardwareMap, "intake", "bucket", "color_sensor", true);
         intake.setServoClosed();
 
         leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");

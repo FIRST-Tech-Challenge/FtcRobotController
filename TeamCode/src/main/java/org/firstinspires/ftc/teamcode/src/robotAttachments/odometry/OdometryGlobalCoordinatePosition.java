@@ -221,7 +221,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
-    protected void threadMain() {
+    public void threadMain() {
         isActive = true;
         synchronized (lock) {
             if (imu != null) {

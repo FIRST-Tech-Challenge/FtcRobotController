@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.src.utills;
 /**
  * This is a template for all subsystems that need threading, provides thread safety
  */
-public abstract class ThreadedSubsystemTemplate extends Thread {
+public abstract class ThreadedSubsystemTemplate extends Thread implements ThreadedSubsystemInterface {
 
     /**
      * A boolean that controlls if the thread is running
@@ -35,11 +35,6 @@ public abstract class ThreadedSubsystemTemplate extends Thread {
         this.isStopRequested = isStopRequested;
         this.opModeIsActive = opModeIsActive;
     }
-
-    /**
-     * It is the main function of the thread
-     */
-    protected abstract void threadMain();
 
     /**
      * Ends the life of this thread
