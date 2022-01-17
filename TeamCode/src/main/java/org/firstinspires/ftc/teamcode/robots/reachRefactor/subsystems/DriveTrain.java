@@ -50,7 +50,7 @@ public class DriveTrain implements Subsystem {
     private double[] angles; // [heading, roll, pitch]
     private double[] offsetAngles; // [heading, roll, pitch]
     private double[] previousWheelTicks; // [left, right, middle]
-    private double requestedAngularAcceleration, angularAcceleration, lastAngularVelocity;
+    private double angularAcceleration;
 
     // state
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
@@ -78,9 +78,8 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.005, 0, .13);
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
-    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.6, 0,  0);
-    public static double MAX_ANGULAR_ACCELERATION = 0.005;
-    public static double ANGULAR_ACCELERATION_SCALING_FACTOR = 500;
+    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0,  0.3);
+    public static double MAX_ANGULAR_ACCELERATION = 1000;
     public static double SWIVEL_PID_TOLERANCE = 10;
 
     public static double LINEAR_SMOOTHING_FACTOR = 0.2;
@@ -185,6 +184,10 @@ public class DriveTrain implements Subsystem {
     }
 
     private double getMaintainChassisDistanceCorrection() {
+        // returning 0 if distance sensor is likely blocked
+        if(chassisDistance < MIN_CHASSIS_LENGTH - 0.2)
+            return 0;
+
         // initialization of the PID calculator's output range, target value and multipliers
         chassisDistancePID.setOutputRange(-5.0, 5.0);
         chassisDistancePID.setPID(CHASSIS_DISTANCE_PID_COEFFICIENTS);
@@ -230,9 +233,6 @@ public class DriveTrain implements Subsystem {
         swivelAngle = UtilMethods.wrapAngle(motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360);
         long loopClockTime = System.nanoTime();
         loopTime = loopClockTime - lastLoopTime;
-        double angularVelocity = imu.getAngularVelocity().zRotationRate;
-        angularAcceleration = (angularVelocity - lastAngularVelocity) / (loopTime * 1e-9);
-        lastAngularVelocity = angularVelocity;
 
         // PID corrections
         if (maintainSwivelAngleEnabled)
@@ -275,28 +275,29 @@ public class DriveTrain implements Subsystem {
 
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
+//
+//        if(smoothingEnabled) {
+//            targetLinearVelocity = linearSmoother.update(linearVelocity);
+//            targetAngularVelocity = angularSmoother.update(angularVelocity);
+//        }
 
-        if(smoothingEnabled) {
-            linearVelocity = linearSmoother.update(linearVelocity);
-            angularVelocity = angularSmoother.update(angularVelocity);
-        }
-
-        if(antiTippingEnabled) {
-            requestedAngularAcceleration = (targetAngularVelocity - lastTargetAngularVelocity) / (loopTime * 1e-9);
-            if(Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION) {
-                targetAngularVelocity = lastTargetAngularVelocity + Math.signum(angularAcceleration) * MAX_ANGULAR_ACCELERATION * ANGULAR_ACCELERATION_SCALING_FACTOR * (loopTime * 1e-9);
-                targetLinearVelocity = (targetAngularVelocity / angularVelocity) * linearVelocity;
-            }
-        }
+//        if(antiTippingEnabled) {
+//            angularAcceleration = (targetAngularVelocity - lastTargetAngularVelocity) / (loopTime * 1e-9);
+//            if(Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION) {
+//                targetAngularVelocity = lastTargetAngularVelocity + Math.signum(angularAcceleration) * (loopTime * 1e-9);
+//                targetLinearVelocity = (targetAngularVelocity / angularVelocity) * linearVelocity;
+//            }
+//        }
 
         // calculating target velocities and angles
-        targetFrontLeftVelocity = linearVelocity - angularVelocity * (Constants.TRACK_WIDTH / 2);
-        targetFrontRightVelocity = linearVelocity + angularVelocity * (Constants.TRACK_WIDTH / 2);
-        targetMiddleVelocity = Math.hypot(linearVelocity, chassisDistance * angularVelocity);
+        targetFrontLeftVelocity = targetLinearVelocity - targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
+        targetFrontRightVelocity = targetLinearVelocity + targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
+        targetMiddleVelocity = Math.hypot(targetLinearVelocity, chassisDistance * targetAngularVelocity);
 
-        targetSwivelAngle = UtilMethods.wrapAngle(90 + Math.toDegrees(
-                Math.atan2(chassisDistance * angularVelocity, linearVelocity)
-        ));
+        if(linearVelocity != 0 || angularVelocity != 0)
+            targetSwivelAngle = UtilMethods.wrapAngle(90 + Math.toDegrees(
+                    Math.atan2(chassisDistance * angularVelocity, linearVelocity)
+            ));
 
         // reversing the middle wheel if needing to rotate >90 degrees to target angle
         if(middleReversed)
@@ -306,7 +307,8 @@ public class DriveTrain implements Subsystem {
         if(minDiff > 90)
             middleReversed = !middleReversed;
         if(middleReversed) {
-            targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + 180);
+            if(linearVelocity != 0 || angularVelocity != 0)
+                targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + 180);
             targetMiddleVelocity *= -1;
         }
 
@@ -470,9 +472,7 @@ public class DriveTrain implements Subsystem {
             telemetryMap.put("pose (heading)", Math.toDegrees(pose[2]));
 
             telemetryMap.put("middle wheel reversed", middleReversed);
-            telemetryMap.put("requested angular acceleration", requestedAngularAcceleration);
             telemetryMap.put("angular acceleration", angularAcceleration);
-            telemetryMap.put("z angular velocity", lastAngularVelocity);
             telemetryMap.put("anti tip engaged", Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION);
         }
 
@@ -566,5 +566,9 @@ public class DriveTrain implements Subsystem {
 
     public void setPose(Constants.Position position) {
         pose = position.getPose();
+    }
+
+    public boolean chassisDistanceOnTarget() {
+        return chassisDistancePID.onTarget();
     }
 }

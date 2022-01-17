@@ -30,8 +30,8 @@ public class Gripper implements Subsystem{
     public static int CLOSED = 900;
     public static int RELEASE = 1300;
     public static int OPEN = 1300;
-    public static int PITCH_TRANSFER = 2400;
-    public static int PITCH_DOWN = 1240;
+    public static int PITCH_TRANSFER = 2250;
+    public static int PITCH_DOWN = 1100;
     public static int PITCH_INIT = 1854;
     public static int PITCH_VERTICAL = 2100;
     private Articulation articulation;
@@ -122,7 +122,7 @@ public class Gripper implements Subsystem{
     private final Stage Transfer = new Stage();
     private final StateMachine transfer = UtilMethods.getStateMachine(Transfer)
             .addTimedState(() -> .1f, () -> setPitchTargetPos(PITCH_TRANSFER), () -> {})//give freight last-second momentum toward the bucket
-            .addTimedState(() -> .2f, () -> setTargetPos(RELEASE), () -> {})
+            .addTimedState(() -> .5f, () -> setTargetPos(RELEASE), () -> {})
             .addTimedState(() -> 0, () -> setTargetPos(CLOSED), () -> {})
             .addTimedState(() -> 0, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();

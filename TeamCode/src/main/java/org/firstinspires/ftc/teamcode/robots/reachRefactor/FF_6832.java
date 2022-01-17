@@ -34,6 +34,7 @@ import java.util.function.IntSupplier;
  * dpad up - initialize / shutdown vision provider
  * dpad left - increment vision provider index
  * dpad down - toggle debug telemetry
+ * dpad right - toggle
  * left bumper - decrement state
  * right bumper - increment state
  *
@@ -270,10 +271,9 @@ public class FF_6832 extends OpMode {
     public void start() {
         lastLoopClockTime = System.nanoTime();
         initializing = false;
-//        if(gameState.equals(GameState.AUTONOMOUS) || gameState.equals(GameState.TELE_OP))
-//            robot.articulate(Robot.Articulation.START);
+        robot.articulate(Robot.Articulation.START);
         robot.driveTrain.setMaintainChassisDistanceEnabled(true);
-        robot.driveTrain.setAntiTippingEnabled(true);
+        robot.driveTrain.setAntiTippingEnabled(false);
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[0]);
         auto.visionProvider.shutdownVision();
     }
@@ -354,6 +354,9 @@ public class FF_6832 extends OpMode {
 
         if(stickyGamepad2.dpad_down)
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
+
+        if(stickyGamepad2.dpad_left)
+                robot.crane.articulate(Crane.Articulation.HIGH_TIER);
 
         if(stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);

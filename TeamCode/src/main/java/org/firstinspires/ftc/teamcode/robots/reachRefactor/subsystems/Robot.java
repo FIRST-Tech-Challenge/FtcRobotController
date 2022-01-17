@@ -52,6 +52,7 @@ public class Robot implements Subsystem {
 
         articulationMap = new HashMap<>();
         articulationMap.put(Articulation.SELFTEST, selftest);
+        articulationMap.put(Articulation.START, start);
         articulationMap.put(Articulation.LEGALSTARTPOS, startpos);
         articulationMap.put(Articulation.DIAGNOSTIC, diagnostic);
         articulationMap.put(Articulation.TRANSFER, transfer);
@@ -141,6 +142,7 @@ public class Robot implements Subsystem {
         SELFTEST,
         LEGALSTARTPOS,
         DIAGNOSTIC,
+        START,
 
         // tele-op articulations
         TRANSFER,
@@ -213,10 +215,16 @@ public class Robot implements Subsystem {
     // Tele-Op articulations
     private Stage transferStage = new Stage();
     private StateMachine transfer = UtilMethods.getStateMachine(transferStage)
-            .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
-            //todo test whether the crane is in the right position
-            //with some kind of sensor - at least check chassis length
-            .addState(()-> gripper.articulate(Gripper.Articulation.TRANSFER))
+//            .addState(() -> {
+//                        driveTrain.setTargetChassisDistance(Constants.MIN_CHASSIS_LENGTH);
+//                        return driveTrain.chassisDistanceOnTarget();
+//            })
+            .addTimedState(1f, () -> crane.articulate(Crane.Articulation.TRANSFER), () -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .build();
+
+    private Stage startStage = new Stage();
+    private StateMachine start = UtilMethods.getStateMachine(startStage)
+            .addTimedState(2, () -> driveTrain.handleDuckSpinner(0.5), () -> driveTrain.handleDuckSpinner(0))
             .build();
 
     public boolean articulate(Articulation articulation) {
