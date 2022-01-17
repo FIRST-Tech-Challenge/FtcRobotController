@@ -321,9 +321,12 @@ public class RobotClass {
         backLeft.setPower(-speed);
         backRight.setPower(speed);
 
-        while (rightDistance-leftDistance>1) {
+        while ((rightDistance - leftDistance) > 3) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
             rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+            telemetry.addData("Left sensor distance = ", leftDistance);
+            telemetry.addData("Right sensor distance = ", rightDistance);
+            telemetry.update();
         }
         stopMotors();
     }
@@ -337,9 +340,12 @@ public class RobotClass {
         backLeft.setPower(speed);
         backRight.setPower(-speed);
 
-        while (leftDistance-rightDistance>1) {
+        while (leftDistance-rightDistance>3) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
             rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+            telemetry.addData("Left sensor distance = ", leftDistance);
+            telemetry.addData("Right sensor distance = ", rightDistance);
+            telemetry.update();
         }
         stopMotors();
     }
@@ -353,28 +359,56 @@ public class RobotClass {
         backLeft.setPower(speed);
         backRight.setPower(speed);
 
-        while (leftDistance > 15) {
+        while ((leftDistance + rightDistance)/2 > 15) {
             leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+            telemetry.addData("Left sensor distance = ", leftDistance);
+            telemetry.addData("Right sensor distance = ", rightDistance);
+            telemetry.update();
         }
         stopMotors();
     }
 
-    public void distanceSensorStuff () {
+    public void distanceSensorBackward (double speed) {
+        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+
+        frontLeft.setPower(-speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(-speed);
+
+        while ((leftDistance+rightDistance)/2 <15) {
+            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+            telemetry.addData("Left sensor distance = ", leftDistance);
+            telemetry.addData("Right sensor distance = ", rightDistance);
+            telemetry.update();
+        }
+        stopMotors();
+    }
+
+    public void distanceSensorStuff (double speed) {
 
         double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
         double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
 
-        if (leftDistance-rightDistance>1) {
-            distanceSensorStrafeRight(.2);
-        } else if (rightDistance-leftDistance>1) {
-            distanceSensorStrafeLeft(.2);
+        if (leftDistance-rightDistance>3) {
+            distanceSensorStrafeRight(speed);
+        } else if (rightDistance-leftDistance>3) {
+            distanceSensorStrafeLeft(speed);
         }
 
-        if (leftDistance > 15) {
-            distanceSensorForward(.2);
-        }
+        leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+        rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
 
+        if ((leftDistance+rightDistance)/2 > 15) {
+            distanceSensorForward(speed);
+        }
+        else if ((leftDistance+rightDistance)/2<13) {
+            distanceSensorBackward(speed);
+        }
     }
 
     public void parkRed () {
@@ -399,6 +433,11 @@ public class RobotClass {
             strafeRight(0.2,0.35);
         }
         forward(0.2,-1);
+        /*
+        This is a work of art that should be studied by all future generations.
+        Yet it is not being used.
+        Oh sad day.
+         */
     }
 
     public void setSpeedForTurnRight (double speed) {
