@@ -37,12 +37,12 @@ top width = 0.08
 public class TsePipeline extends OpenCvPipeline {
     public TsePipeline(boolean isRed) {
         if (isRed) {
-            bottomRectHeightPercentage = 0.2;
-            bottomRectWidthPercentage = 0.805;
-            middleRectHeightPercentage = 0.3;
-            middleRectWidthPercentage = 0.534;
-            topRectHeightPercentage = 0.45;
-            topRectWidthPercentage = 0.195;
+            bottomRectHeightPercentage = 0.26;
+            bottomRectWidthPercentage = 0.795;
+            middleRectHeightPercentage = 0.345;
+            middleRectWidthPercentage = 0.54;
+            topRectHeightPercentage = 0.47;
+            topRectWidthPercentage = 0.2;
         } else {
             bottomRectHeightPercentage = 0.458;
             bottomRectWidthPercentage = 0.785;
@@ -52,6 +52,7 @@ public class TsePipeline extends OpenCvPipeline {
             topRectWidthPercentage = 0.13;
         }
     }
+    public TsePipeline() {}
 
     private final Scalar red = new Scalar(255,0,0);
     private final Scalar yellow = new Scalar(255,255,0);

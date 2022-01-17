@@ -27,12 +27,13 @@ public class TseDetector {
                     .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             camera = OpenCvCameraFactory.getInstance()
                     .createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
+            camera.setPipeline(pipeline = new TsePipeline(isRed)); //for configurating remove isred from here
         } else {
             camera = OpenCvCameraFactory.getInstance()
                     .createWebcam(hardwareMap.get(WebcamName.class, webcamName));
+            camera.setPipeline(pipeline = new TsePipeline(isRed));
         }
 
-        camera.setPipeline(pipeline = new TsePipeline(isRed));
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

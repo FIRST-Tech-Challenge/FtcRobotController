@@ -93,7 +93,6 @@ public class AutoLift {
         //insert some funny code that blocks until it has moved to position, will be very useful for finian burkard auto
     }
 
-    private boolean dumpWaiting = true;
     private boolean liftWaiting = true;
     public void update() {
         if (position != lastPosition) state = MovementStates.START;
