@@ -8,9 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class AutoRoute implements Serializable, Cloneable {
-    public static String NAME_BLUE = "Blue";
-    public static String NAME_RED = "Red";
-    public static String NAME_NEW = "New";
+    public static final String NAME_BLUE = "Blue";
+    public static final String NAME_RED = "Red";
+    public static final String NAME_NEW = "New";
     private int nameIndex = 0;
     private String name = NAME_BLUE;
     private boolean selected;

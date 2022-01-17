@@ -70,9 +70,8 @@ public class FrenzyModeBase extends LinearOpMode {
                 handleDriveTrain();
                 handleSpecialActions();
                 if (robot.isIntakeRunning() && !robot.isIntakeBoxEmpty()){
-                    robot.stop();
                     if (!emergencyMode) {
-                        robot.smartStopIntake();
+                        robot.smartStopIntakeAsync();//robot.smartStopIntake();
 //                        robot.stopIntake();
                     }
                     else{
@@ -216,29 +215,6 @@ public class FrenzyModeBase extends LinearOpMode {
             double liftVal = -gamepad2.right_stick_y;
             robot.activateLift(liftVal);
 
-        }
-    }
-
-    protected void handleLift() {
-        if (isButtonPressable()) {
-            //lower level
-            double liftVal = gamepad2.left_stick_y;
-            if (liftVal > 0.5) {
-                startGamepadLockout();
-                robot.liftToLower();
-            } else if (liftVal < -0.5) {
-                startGamepadLockout();
-                robot.liftToLevel1();
-            }
-            //upper level
-            double liftValUpper = gamepad2.right_stick_y;
-            if (liftValUpper > 0.5) {
-                startGamepadLockout();
-                robot.liftToLower();
-            } else if (liftValUpper < -0.5) {
-                startGamepadLockout();
-                robot.liftToLevel3();
-            }
         }
     }
 
