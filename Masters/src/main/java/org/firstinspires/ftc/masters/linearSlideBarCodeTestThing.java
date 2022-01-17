@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.Date;
 
 //For this to work, the robot needs to start on the red carousel side.
 
-@Autonomous(name = "Linear Slide and bar code test thing.", group ="test")
+@Disabled
+//@Autonomous(name = "Linear Slide and bar code test thing.", group ="test")
 public class linearSlideBarCodeTestThing extends LinearOpMode {
     RobotClass robot;
 

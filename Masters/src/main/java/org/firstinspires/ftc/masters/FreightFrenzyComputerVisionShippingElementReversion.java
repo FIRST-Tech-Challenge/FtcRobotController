@@ -21,8 +21,6 @@
 
 package org.firstinspires.ftc.masters;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -121,6 +119,15 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
+
+        static final int HUB_REGION_DISTANCE_FROM_TOP = 33;
+
+        static final int REGION_WIDTH = 30;
+        static final int REGION_HEIGHT = 42;
+
+        static final int HUB_REGION_HEIGHT = 50;
+        static final int HUB_REGION_WIDTH = 20;
+
         /*
          * The core values which define the location and size of the sample regions
          */
@@ -128,15 +135,43 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
         static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(300, 180);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(575, 180);
 
-        static final Point REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT = new Point(1,33);
-        static final Point REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT = new Point(295,33);
-        static final Point REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT = new Point(345,33);
+        Point[] hubPositionArrayTopLeftPoint= new Point[32];
+        Point[] hubPositionArrayBottomRightPoint = new Point[32];
+
+        static final Point HUB_REGION_TOP_LEFT_1 = new Point(0,HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_2 = new Point(HUB_REGION_TOP_LEFT_1.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_3 = new Point(HUB_REGION_TOP_LEFT_2.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_4 = new Point(HUB_REGION_TOP_LEFT_3.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_5 = new Point(HUB_REGION_TOP_LEFT_4.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_6 = new Point(HUB_REGION_TOP_LEFT_5.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_7 = new Point(HUB_REGION_TOP_LEFT_6.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_8 = new Point(HUB_REGION_TOP_LEFT_7.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_9 = new Point(HUB_REGION_TOP_LEFT_8.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_10 = new Point(HUB_REGION_TOP_LEFT_9.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_11 = new Point(HUB_REGION_TOP_LEFT_10.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_12 = new Point(HUB_REGION_TOP_LEFT_11.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_13 = new Point(HUB_REGION_TOP_LEFT_12.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_14 = new Point(HUB_REGION_TOP_LEFT_13.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_15 = new Point(HUB_REGION_TOP_LEFT_14.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_16 = new Point(HUB_REGION_TOP_LEFT_15.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_17 = new Point(HUB_REGION_TOP_LEFT_16.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_18 = new Point(HUB_REGION_TOP_LEFT_17.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_19 = new Point(HUB_REGION_TOP_LEFT_18.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_20 = new Point(HUB_REGION_TOP_LEFT_19.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_21 = new Point(HUB_REGION_TOP_LEFT_20.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_22 = new Point(HUB_REGION_TOP_LEFT_21.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_23 = new Point(HUB_REGION_TOP_LEFT_22.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_24 = new Point(HUB_REGION_TOP_LEFT_23.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_25 = new Point(HUB_REGION_TOP_LEFT_24.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_26 = new Point(HUB_REGION_TOP_LEFT_25.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_27 = new Point(HUB_REGION_TOP_LEFT_26.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_28 = new Point(HUB_REGION_TOP_LEFT_27.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_29 = new Point(HUB_REGION_TOP_LEFT_28.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_30 = new Point(HUB_REGION_TOP_LEFT_29.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_31 = new Point(HUB_REGION_TOP_LEFT_30.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
+        static final Point HUB_REGION_TOP_LEFT_32 = new Point(HUB_REGION_TOP_LEFT_31.x + HUB_REGION_WIDTH, HUB_REGION_DISTANCE_FROM_TOP);
 
 
-        static final int REGION_WIDTH = 30;
-        static final int REGION_HEIGHT = 42;
-
-        static final int HUB_REGION_HEIGHT = 50;
 
         final int FREIGHT_PRESENT_THRESHOLD = 112;
 
@@ -165,35 +200,37 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
 
         //        Hub regions
         Point region_hub_left_pointA = new Point(
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x,
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y);
+                HUB_REGION_TOP_LEFT_1.x,
+                HUB_REGION_TOP_LEFT_1.y);
         Point region_hub_left_pointB = new Point(
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.x + 294,
-                REGION_HUB_LEFT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+                HUB_REGION_TOP_LEFT_1.x + 294,
+                HUB_REGION_TOP_LEFT_1.y + HUB_REGION_HEIGHT);
 
         Point region_hub_center_pointA = new Point(
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x,
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y);
+                HUB_REGION_TOP_LEFT_2.x,
+                HUB_REGION_TOP_LEFT_2.y);
         Point region_hub_center_pointB = new Point(
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.x + 50,
-                REGION_HUB_CENTER_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+                HUB_REGION_TOP_LEFT_2.x + 50,
+                HUB_REGION_TOP_LEFT_2.y + HUB_REGION_HEIGHT);
 
         Point region_hub_right_pointA = new Point(
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x,
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y);
+                HUB_REGION_TOP_LEFT_3.x,
+                HUB_REGION_TOP_LEFT_3.y);
         Point region_hub_right_pointB = new Point(
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.x + 294,
-                REGION_HUB_RIGHT_TOP_LEFT_ANCHOR_POINT.y + HUB_REGION_HEIGHT);
+                HUB_REGION_TOP_LEFT_3.x + 294,
+                HUB_REGION_TOP_LEFT_3.y + HUB_REGION_HEIGHT);
 
         /*
          * Working variables
          */
-        Mat region1_A;
-        Mat region2_A;
-        Mat region3_A;
+        Mat region1;
+        Mat region2;
+        Mat region3;
         Mat LAB = new Mat();
 
         Mat A = new Mat();
+        Mat B = new Mat();
+
         int avg1 = 0;
         int avg2 = 0;
         int avg3 = 0;
@@ -201,6 +238,8 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
         Mat hub_region_left_A;
         Mat hub_region_center_A;
         Mat hub_region_right_A;
+
+
 
         int hub_avg_left = 0;
         int hub_avg_center = 0;
@@ -215,19 +254,29 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
          * This function takes the RGB frame, converts to LAB,
          * and extracts the A channel to the 'A' variable*/
 
-        void inputToLAB_A(Mat input) {
+        void inputToLAB(Mat input) {
 
             Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
             Core.extractChannel(LAB, A, 1);
+            Core.extractChannel(LAB, B, 2);
         }
 
         @Override
         public void init(Mat firstFrame) {
-            inputToLAB_A(firstFrame);
 
-            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
-            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
-            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
+            hubPositionArrayTopLeftPoint[0] = new Point(0,33);
+            hubPositionArrayBottomRightPoint[0] = new Point(hubPositionArrayTopLeftPoint[0].x + 20,hubPositionArrayTopLeftPoint[0].y + 50);
+
+            for (int i=0; i<31; i++){
+                hubPositionArrayTopLeftPoint[i]= new Point(hubPositionArrayTopLeftPoint[i-1].x + 20,33);
+                hubPositionArrayBottomRightPoint[i] = new Point(hubPositionArrayTopLeftPoint[i-1].x + 20,hubPositionArrayTopLeftPoint[i-1].y + 50);
+            }
+
+            inputToLAB(firstFrame);
+
+            region1 = A.submat(new Rect(region1_pointA, region1_pointB));
+            region2 = A.submat(new Rect(region2_pointA, region2_pointB));
+            region3 = A.submat(new Rect(region3_pointA, region3_pointB));
 
             hub_region_left_A = A.submat(new Rect(region_hub_left_pointA, region_hub_left_pointB));
             hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
@@ -236,18 +285,36 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
 
         @Override
         public Mat processFrame(Mat input) {
-            inputToLAB_A(input);
-            region1_A = A.submat(new Rect(region1_pointA, region1_pointB));
-            region2_A = A.submat(new Rect(region2_pointA, region2_pointB));
-            region3_A = A.submat(new Rect(region3_pointA, region3_pointB));
+            inputToLAB(input);
+            region1 = A.submat(new Rect(region1_pointA, region1_pointB));
+            region2 = A.submat(new Rect(region2_pointA, region2_pointB));
+            region3 = A.submat(new Rect(region3_pointA, region3_pointB));
 
-            avg1 = (int) Core.mean(region1_A).val[0];
-            avg2 = (int) Core.mean(region2_A).val[0];
-            avg3 = (int) Core.mean(region3_A).val[0];
+            avg1 = (int) Core.mean(region1).val[0];
+            avg2 = (int) Core.mean(region2).val[0];
+            avg3 = (int) Core.mean(region3).val[0];
 
-            region1_A = A.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
-            region2_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
-            region3_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+
+
+            hub_region_left_A = A.submat(new Rect(region_hub_left_pointA, region_hub_right_pointB));
+            hub_region_center_A = A.submat(new Rect(region_hub_center_pointA, region_hub_center_pointB));
+            hub_region_right_A = A.submat(new Rect(region_hub_right_pointA, region_hub_right_pointB));
+
+            Mat[] hubRegionRed = new Mat[32];
+            Mat[] hubRegionBlue = new Mat[32];
+
+            for (int i = 0; i<32; i++) {
+                hubRegionRed[i] = A.submat(new Rect(hubPositionArrayTopLeftPoint[i], hubPositionArrayBottomRightPoint[i]));
+                hubRegionBlue[i] = B.submat(new Rect(hubPositionArrayTopLeftPoint[i], hubPositionArrayBottomRightPoint[i]));
+            }
+
+            int[] hubRegionAvgRed = new int[32];
+            int[] hubRegionAvgBlue = new int[32];
+
+            for (int i = 0; i<32; i++) {
+                hubRegionAvgRed[i] = (int) Core.mean(hubRegionRed[i]).val[0];
+                hubRegionAvgBlue[i] = (int) Core.mean(hubRegionBlue[i]).val[0];
+            }
 
             hub_avg_left = (int) Core.mean(hub_region_left_A).val[0];
             hub_avg_center = (int) Core.mean(hub_region_center_A).val[0];
@@ -275,28 +342,15 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
                     RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region_hub_left_pointA, // First point which defines the rectangle
-                    region_hub_left_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    4); // Thickness of the rectangle lines
+            for (int i = 0; i<32; i++) {
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        hubPositionArrayTopLeftPoint[i], // First point which defines the rectangle
+                        hubPositionArrayBottomRightPoint[i], // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        2); // Thickness of the rectangle lines
 
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region_hub_center_pointA, // First point which defines the rectangle
-                    region_hub_center_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    4); // Thickness of the rectangle lines
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region_hub_right_pointA, // First point which defines the rectangle
-                    region_hub_right_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    4); // Thickness of the rectangle lines
-
+            }
 
             if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
                 position = FreightPosition.LEFT;
@@ -317,10 +371,18 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
             } else {
                 hub_position = HubPosition.RIGHT;
             }
-            telemetry.addData("Analysis of Hub Left", hub_avg_left);
-            telemetry.addData("Analysis2 of Hub Center", hub_avg_center);
-            telemetry.addData("Analysis3 of Hub Right", hub_avg_right);
-            telemetry.addData("Position", hub_position);
+
+            int maxRedIndex = 0;
+
+            for (int i = 0; i<32; i++) {
+                if (hubRegionAvgRed[i] > hubRegionAvgRed[maxRedIndex]) {
+                    maxRedIndex = i;
+                }
+            }
+//            telemetry.addData("Analysis of Hub Left", hub_avg_left);
+//            telemetry.addData("Analysis2 of Hub Center", hub_avg_center);
+//            telemetry.addData("Analysis3 of Hub Right", hub_avg_right);
+//            telemetry.addData("Position", hub_position);
 
 
             telemetry.update();

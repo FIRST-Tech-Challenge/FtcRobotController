@@ -144,7 +144,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             double x = 0;
             double rx = 0;
 
-            if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1 ) {
+            if (Math.abs(gamepad1.left_stick_y) > 0.2 || Math.abs(gamepad1.left_stick_x) > 0.2 || Math.abs(gamepad1.right_stick_x) > 0.2 ) {
                 y = gamepad1.left_stick_y; //
                 x = gamepad1.left_stick_x;
                 rx = gamepad1.right_stick_x;
@@ -231,7 +231,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-                    sleep(1200);
+                    robot.pause(1200);
 
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
                     robot.pause(400);//200 enough for middle
@@ -244,6 +244,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     linearSlideMotor.setTargetPosition(0);
                     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     linearSlideMotor.setPower(-.4);//-.4
+                    //Wayne trying to go backwards for a while
+                    robot.forward(0.5,-.5);
                 }
             }
 
@@ -255,6 +257,20 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     linearSlidePos = linearSlidePositions.BASE;
                     intakeOn = true;
                 }
+            }
+
+            if (gamepad1.b) {
+                leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+                rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+                leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
+                rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+            }
+
+            if (gamepad1.y) {
+                leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+                rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+                leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
+                rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
             }
 
             rotateCarousel();

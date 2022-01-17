@@ -10,8 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-
-@TeleOp(name="testTurn", group ="test")
+//@TeleOp(name="testTurn", group ="test")
 @Disabled
 public class TestTurnToHeading extends LinearOpMode {
     RobotClass robot;

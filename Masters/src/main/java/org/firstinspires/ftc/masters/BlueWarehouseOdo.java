@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name="park city blue warehouse", group = "competition")
+@Autonomous(name="Blue - Warehouse (Park City)", group = "competition")
 public class BlueWarehouseOdo extends LinearOpMode {
 
     final int SERVO_DROP_PAUSE=900;
@@ -30,7 +30,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-15, 44))
+                .strafeTo(new Vector2d(-14, 46))
                 .build();
 
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
@@ -102,7 +102,8 @@ public class BlueWarehouseOdo extends LinearOpMode {
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                     })
-                    .splineToSplineHeading(new Pose2d(-11, 48, Math.toRadians(270)), Math.toRadians(270))
+                    .splineToSplineHeading(new Pose2d(-11, 49, Math.toRadians(270)), Math.toRadians(270))
+//                    -14, 46
                     .build();
             drive.followTrajectorySequence(trajSeq3);
 
