@@ -10,6 +10,12 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /*
 red
 bottom height = 0.2
@@ -144,7 +150,7 @@ public class TsePipeline extends OpenCvPipeline {
             topAverage = Math.abs(topMeanY.val[0] - 0.88) + Math.abs(topMeanCr.val[0] - 0.07) + Math.abs(topMeanCb.val[0] + 0.49);
             middleAverage = Math.abs(middleMeanY.val[0] - 0.88) + Math.abs(middleMeanCr.val[0] - 0.07) + Math.abs(middleMeanCb.val[0] + 0.49);
             bottomAverage = Math.abs(bottomMeanY.val[0] - 0.88) + Math.abs(bottomMeanCr.val[0] - 0.07) + Math.abs(bottomMeanCb.val[0] + 0.49);
-            different = mostDifferent(topAverage, middleAverage, bottomAverage);
+            different = mostSmall(topAverage, middleAverage, bottomAverage);
             switch (different) {
                 case 1:
                     drawRectOnToMat(input, topRect, yellow);
@@ -209,6 +215,11 @@ public class TsePipeline extends OpenCvPipeline {
         double[] array = {Math.abs(valMean - val1),Math.abs(valMean - val2), Math.abs(valMean - val3)};
         int max = array[0] > array[1] ? 1 : 2;
         return array[2] > array[max-1] ? 3 : max;
+    }
+
+    public static int mostSmall(double val1, double val2, double val3) {
+        final ArrayList<Double> numList = (ArrayList<Double>) Arrays.asList(val1, val2, val3);
+        return numList.indexOf(Collections.min(numList)) + 1;
     }
 
     /**
