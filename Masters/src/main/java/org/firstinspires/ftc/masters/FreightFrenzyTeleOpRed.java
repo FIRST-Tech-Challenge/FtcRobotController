@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,7 +19,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     RobotClass robot;
 
     /* Declare OpMode members. */
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;
@@ -41,6 +42,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     double motorMax = 0.99; // Limit motor power to this value for Andymark RUN_USING_ENCODER mode
     int linearSlideTolerance = 5;
 
+    double maxPowerConstraint = 0.75;
+
 
 
     private enum linearSlideTargets {
@@ -60,6 +63,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     linearSlideTargets linearSlideTarget = linearSlideTargets.BASE;
     linearSlidePositions linearSlidePos = linearSlidePositions.BASE;
     boolean carouselOn = false; //Outside of loop()
+
+
 
     @Override
     public void runOpMode() {
@@ -120,6 +125,10 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        robot.lightSet();
+        robot.redLED.setState(true);
+        robot.redLED2.setState(true);
+
         boolean intakeOn = false;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -131,10 +140,15 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 //            telemetry.addData("Status", "Run Time: " + runtime.toString());
 //            telemetry.update();
 
+            double y = 0; //
+            double x = 0;
+            double rx = 0;
 
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1 ) {
+                y = gamepad1.left_stick_y; //
+                x = gamepad1.left_stick_x;
+                rx = gamepad1.right_stick_x;
+            }
 
             double leftFrontPower = y + x + rx;
             double leftRearPower = y - x + rx;
@@ -154,17 +168,23 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 rightRearPower /= max;
             }
 
-            leftFrontMotor.setPower(leftFrontPower);
-            leftRearMotor.setPower(leftRearPower);
-            rightFrontMotor.setPower(rightFrontPower);
-            rightRearMotor.setPower(rightRearPower);
+            leftFrontMotor.setPower(leftFrontPower*maxPowerConstraint);
+            leftRearMotor.setPower(leftRearPower*maxPowerConstraint);
+            rightFrontMotor.setPower(rightFrontPower*maxPowerConstraint);
+            rightRearMotor.setPower(rightRearPower*maxPowerConstraint);
+
+            if(gamepad1.a) {
+                maxPowerConstraint = 1;
+            }
+
+            if(gamepad1.x){
+                maxPowerConstraint = 0.75;
+            }
 
             if(gamepad2.a) {
-                if(intakeMotor.getPower() != 0)
-                    intakeMotor.setPower(0);
-                else
-                    intakeMotor.setPower(-.8);
-                intakeOn = true;
+                robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+                intakeMotor.setPower(-.8);
+
             } else if (gamepad2.b) {
                 intakeMotor.setPower(.8);
                 intakeOn = false;
@@ -184,12 +204,13 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 linearSlideMotor.setPower(.9);
             }
 
-            if (gamepad2.dpad_left) {
+            if (gamepad2.dpad_right) {
 //                Middle scoring
                 dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                 linearSlideTarget = linearSlideTargets.MIDDLE;
                 intakeMotor.setPower(0);
                 intakeOn = false;
+                robot.pause(400);
                 linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_MIDDLE);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.9);
@@ -213,6 +234,12 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     robot.pause(1200);
 
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+                    robot.pause(400);//200 enough for middle
+                    robot.greenLED.setState(false);
+                    robot.greenLED.setState(false);
+
+                    robot.redLED.setState(true);
+                    robot.redLED2.setState(true);
                     linearSlideTarget = linearSlideTargets.BASE;
                     linearSlideMotor.setTargetPosition(0);
                     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -234,12 +261,23 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             rotateCarousel();
 
-            double distance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            telemetry.addData("distance", distance);
-            telemetry.update();
-            if (distance < 7) {
+//            double distance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//            telemetry.addData("distance", distance);
+//            telemetry.update();
+//            if (distance < 7) {
+//                intakeMotor.setPower(0);
+//                intakeOn = false;
+//            }
+
+            double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+            if (intakeDistance<7) {
+                robot.pauseButInSecondsForThePlebeians(.1);
                 intakeMotor.setPower(0);
-                intakeOn = false;
+                robot.redLED.setState(false);
+                robot.greenLED.setState(true);
+                robot.redLED2.setState(false);
+                robot.greenLED2.setState(true);
+                robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
             }
 
 //            if (gamepad2.dpad_right) {

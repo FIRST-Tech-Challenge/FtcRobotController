@@ -1,20 +1,21 @@
 package org.firstinspires.ftc.masters;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-@TeleOp(name="freightFrenzy", group="competition")
+@Disabled
+@TeleOp(name="freightFrenzy")
 public class InitialMecanumTeleOp extends LinearOpMode {
 
 
     RobotClass robot;
 
     /* Declare OpMode members. */
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;

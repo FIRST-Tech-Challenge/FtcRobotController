@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.masters;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 
 @TeleOp(name="testTurn", group ="test")
+@Disabled
 public class TestTurnToHeading extends LinearOpMode {
     RobotClass robot;
 

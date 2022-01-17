@@ -99,7 +99,7 @@ public class ConceptWebcam extends LinearOpMode {
 
     /** State regarding where and how to save frames when the 'A' button is pressed. */
     private int captureCounter = 0;
-    private File captureDirectory = AppUtil.ROBOT_DATA_DIR;
+    private final File captureDirectory = AppUtil.ROBOT_DATA_DIR;
 
     /** A utility object that indicates where the asynchronous callbacks from the camera
      * infrastructure are to run. In this OpMode, that's all hidden from you (but see {@link #startCamera}

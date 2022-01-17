@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.Date;
-
+@Disabled
 @Autonomous(name = "warehouse red strafe", group="competition")
 public class WarehouseRedStrafe extends LinearOpMode {
     RobotClass robot;
