@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Gr
 import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Red;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
  * A Autonomous to test color sensor capabilities
  */
 @TeleOp(name = "ColorTest")
-//@Disabled
+@Disabled
 public class ColorTest extends TeleOpTemplate {
     private final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.BLUE;
 
