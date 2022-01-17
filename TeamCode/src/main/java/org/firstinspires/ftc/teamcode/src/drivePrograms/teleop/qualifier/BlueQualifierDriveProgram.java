@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDistanceSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
-import org.firstinspires.ftc.teamcode.src.utills.TeleopTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
 @TeleOp(name = "Blue Qualifier Drive Program")
-public class BlueQualifierDriveProgram extends TeleopTemplate {
+public class BlueQualifierDriveProgram extends TeleOpTemplate {
     boolean x_depressed = true;
     boolean y_depressed2 = true;
 

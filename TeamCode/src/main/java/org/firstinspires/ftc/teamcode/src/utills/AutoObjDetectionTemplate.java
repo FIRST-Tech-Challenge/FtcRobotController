@@ -145,6 +145,14 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         checkStop();
     }
 
+
+    public void initAll() throws InterruptedException {
+        initVuforia();
+        initTfod();
+        activateTF();
+        super.initAll();
+    }
+
     /**
      * It uses the camera to determine where the object is on the screen
      *

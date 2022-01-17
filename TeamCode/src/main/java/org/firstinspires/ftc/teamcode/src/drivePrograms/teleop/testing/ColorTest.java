@@ -8,14 +8,14 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
-import org.firstinspires.ftc.teamcode.src.utills.TeleopTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
 /**
  * A Autonomous to test color sensor capabilities
  */
 @TeleOp(name = "ColorTest")
 //@Disabled
-public class ColorTest extends TeleopTemplate {
+public class ColorTest extends TeleOpTemplate {
     private final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.BLUE;
 
     public void runOpMode() throws InterruptedException {

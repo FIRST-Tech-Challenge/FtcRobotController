@@ -1,59 +1,32 @@
 package org.firstinspires.ftc.teamcode.src.utills;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryDrivetrain;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.IMU;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CarouselSpinner;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
 
 /**
  * A template for Autonomous OpModes, allows for easy initialization
  */
 @Disabled
-public abstract class AutonomousTemplate extends LinearOpMode {
-    /**
-     * Provides methods for lifting and lowering Odometry servos
-     */
-    protected OdometryPodServos podServos;
+public abstract class AutonomousTemplate extends GenericOpModeTemplate {
+
 
     /**
      * Provides methods to use Odometry and associated drive methods
      */
     protected OdometryDrivetrain driveSystem;
 
-    /**
-     * Provides Carousel Spinner functionality
-     */
-    protected CarouselSpinner spinner;
 
     /**
      * Provides Odometry Methods, Also held by OdometryDrivetrain driveSystem
      */
     protected OdometryGlobalCoordinatePosition odometry;
 
-    /**
-     * Provides methods for using the intake
-     */
-    protected ContinuousIntake intake;
-
-    /**
-     * Provides methods for using the linear slide
-     */
-    protected LinearSlide slide;
-
-    /**
-     * Provides methods for using the robot LED's
-     */
-    protected RevBlinkinLedDriver leds;
 
     /**
      * Initializes all fields provided by this class
@@ -61,14 +34,34 @@ public abstract class AutonomousTemplate extends LinearOpMode {
      * @throws InterruptedException Throws if the OpMode is stopped during function execution
      */
     protected void initAll() throws InterruptedException {
-        podServos = new OdometryPodServos(hardwareMap, "vertical_right_odometry_servo", "vertical_left_odometry_servo", "horizontal_odometry_servo");
-        podServos.lower();
+        initOdometryServos();
 
+        initDriveSystem();
 
-        DcMotor front_right = hardwareMap.dcMotor.get("front_right/vr");
-        DcMotor front_left = hardwareMap.dcMotor.get("front_left/vl");
-        DcMotor back_left = hardwareMap.dcMotor.get("back_left");
-        DcMotor back_right = hardwareMap.dcMotor.get("back_right/h");
+        initSpinner();
+
+        initSlide();
+
+        initIntake();
+
+        initLEDS();
+
+        telemetry.addData("Default Initialization: ", "Finished");
+        telemetry.update();
+        checkStop();
+
+    }
+
+    /**
+     * Initializes the Drive System
+     *
+     * @throws InterruptedException Throws if stop is requested during start
+     */
+    protected void initDriveSystem() throws InterruptedException {
+        DcMotor front_right = hardwareMap.dcMotor.get(frontRightName);
+        DcMotor front_left = hardwareMap.dcMotor.get(frontLeftName);
+        DcMotor back_left = hardwareMap.dcMotor.get(backLeftName);
+        DcMotor back_right = hardwareMap.dcMotor.get(backRightName);
         checkStop();
 
         front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -95,46 +88,36 @@ public abstract class AutonomousTemplate extends LinearOpMode {
         //verticalEncoderLeft, verticalEncoderRight, horizontalEncoder
         odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25, this::opModeIsActive, this::isStopRequested);
         checkStop();
-        IMU imu = new IMU(hardwareMap, "imu");
+        IMU imu = new IMU(hardwareMap, IMUName);
         checkStop();
         odometry.setImu(imu.getImu());
 
 
         odometry.reverseLeftEncoder();
         odometry.start();
-        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
 
-        driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, s);
+        if (voltageSensor == null) {
+            this.initVoltageSensor();
+        }
+
+        driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
+    }
 
 
-        spinner = new CarouselSpinner(hardwareMap, "cs");
-
-
-        slide = new LinearSlide(hardwareMap, "linear_slide", s, this::opModeIsActive, this::isStopRequested);
+    /**
+     * Initializes the Linear Slide
+     */
+    protected void initSlide() throws InterruptedException {
+        super.initLinearSlide();
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-        slide.start();
-        checkStop();
-
-        intake = new ContinuousIntake(hardwareMap, "intake", "bucket", "color_sensor", true);
-        intake.setServoClosed();
-
-        leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
-
-        telemetry.addData("Default Initialization: ", "Finished");
-        telemetry.update();
-        checkStop();
-
     }
 
     /**
-     * Checks to see if the OpMode has been stopped
-     *
-     * @throws InterruptedException Throws if the OpMode is asked to stop
+     * Initializes the Odometry Servos
      */
-    protected void checkStop() throws InterruptedException {
-        if (this.isStopRequested() || Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
+    @Override
+    protected void initOdometryServos() {
+        super.initOdometryServos();
+        podServos.lower();
     }
-
 }

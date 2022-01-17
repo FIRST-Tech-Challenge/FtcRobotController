@@ -2,29 +2,17 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.TeleopDriveTrain;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
 @Disabled
 @Autonomous(name = "Linear Slide Auto Test")
-public class LinearSlideAutoTest extends LinearOpMode {
-
-    TeleopDriveTrain driveTrain;
-    LinearSlide slide;
-
+public class LinearSlideAutoTest extends TeleOpTemplate {
     @Override
     public void runOpMode() throws InterruptedException {
-        driveTrain = new TeleopDriveTrain(hardwareMap, "front_right/vr", "front_left/vl", "back_right/h", "back_left");
-
-
-        RobotVoltageSensor s = new RobotVoltageSensor(hardwareMap);
-        slide = new LinearSlide(hardwareMap, "linear_slide", s, this::opModeIsActive, this::isStopRequested);
-        slide.start();
-
-
+        initLinearSlide();
+        initDriveTrain();
         telemetry.addData("Initialization Status", "Initialized");
         telemetry.update();
 

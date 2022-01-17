@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.src.utills.TeleopTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
 @Disabled
 @TeleOp(name = "DistanceSensorTest")
-public class DistanceSensorTest extends TeleopTemplate {
+public class DistanceSensorTest extends TeleOpTemplate {
     DistanceSensor distanceSensor;
     RevBlinkinLedDriver.BlinkinPattern defaultColor;
     RevBlinkinLedDriver.BlinkinPattern currentColor;

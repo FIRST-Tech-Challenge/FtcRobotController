@@ -4,14 +4,14 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.src.utills.TeleopTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
 /**
  * A Teleop for blue side
  */
 @Disabled
 @TeleOp(name = "Blue Drive Program")
-public class BlueDriveProgram extends TeleopTemplate {
+public class BlueDriveProgram extends TeleOpTemplate {
     private static final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.BLUE;
 
     public void runOpMode() throws InterruptedException {
