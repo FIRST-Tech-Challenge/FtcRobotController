@@ -83,12 +83,12 @@ public class TsePipeline extends OpenCvPipeline {
             topRectHeightPercentage = 0.45;
             topRectWidthPercentage = 0.195;
         } else {
-            bottomRectHeightPercentage = 0.41;
-            bottomRectWidthPercentage = 0.75;
-            middleRectHeightPercentage = 0.315;
-            middleRectWidthPercentage = 0.37;
-            topRectHeightPercentage = 0.25;
-            topRectWidthPercentage = 0.08;
+            bottomRectHeightPercentage = 0.458;
+            bottomRectWidthPercentage = 0.785;
+            middleRectHeightPercentage = 0.37;
+            middleRectWidthPercentage = 0.41;
+            topRectHeightPercentage = 0.3;
+            topRectWidthPercentage = 0.13;
         }
 
     }
