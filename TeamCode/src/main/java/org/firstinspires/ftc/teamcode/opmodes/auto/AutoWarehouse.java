@@ -23,7 +23,6 @@ public class AutoWarehouse extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
         final int[] height = {-1};
         double nextToWall = 70 - inchesToCoordinate(5.8D);
@@ -77,11 +76,10 @@ public class AutoWarehouse extends LinearOpMode {
         });
 
         waitForStart();
-        isStopRequested();
+        height[0] = detector.run(isRed);
 
         thread.start();
 
-        height[0] = detector.run(isRed);
 
         if (!isStopRequested()) {
 
@@ -105,6 +103,11 @@ public class AutoWarehouse extends LinearOpMode {
                                         Math.toRadians(0)))
                                 .build()
                 );
+
+                {
+                    Pose2d pose = drive.getPoseEstimate();
+                    drive.setPoseEstimate(new Pose2d(pose.getX(), nextToWall * multiplier, pose.getHeading()));
+                }
 
                 drive.followTrajectorySequence(secondSequence);
             }

@@ -36,7 +36,7 @@ public class AutoStorage extends LinearOpMode {
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
         final int[] height = {-1};
 
-        final Pose2d initial = new Pose2d(-40, multiplier * (70 - inchesToCoordinate(9)),
+        final Pose2d initial = new Pose2d(-47, multiplier * (70 - inchesToCoordinate(9)),
                 Math.toRadians(90 * multiplier));
 
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
@@ -46,14 +46,14 @@ public class AutoStorage extends LinearOpMode {
         builder.waitSeconds(0.1);
         // 9.35 seconds long
         builder.lineTo(new Vector2d(-40, 55 * multiplier));
-        builder.splineToLinearHeading(new Pose2d(-20, 45 * multiplier, Math.toRadians(100)),
+        builder.splineToLinearHeading(new Pose2d(-21, 42 * multiplier, Math.toRadians(100)),
                 Math.toRadians(-110));
         builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
         builder.waitSeconds(4);
         builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.INTAKING));
 //        builder.waitSeconds(1);
-        builder.lineTo(new Vector2d(-19, 45 * multiplier));
-        builder.lineToLinearHeading(new Pose2d(-59, 57, Math.toRadians(240)));
+        builder.lineTo(new Vector2d(-19, 50 * multiplier));
+        builder.lineToLinearHeading(new Pose2d(-60, 58, Math.toRadians(240)));
         builder.addTemporalMarker(carousel::on);
         builder.waitSeconds(4);
         builder.addTemporalMarker(carousel::off);
@@ -73,9 +73,11 @@ public class AutoStorage extends LinearOpMode {
         });
 
         waitForStart();
-        thread.start();
-
         height[0] = detector.run(isRed);
+
+        thread.start();
+        eventThread.start();
+
         telemetry.addData("height", height[0]);
         telemetry.update();
         if (!isStopRequested()) {

@@ -74,7 +74,7 @@ public class TsePipeline extends OpenCvPipeline {
         checks = 0;
         frameCount = 0;
         running = true;
-        /*
+
         if (isRed) {
             bottomRectHeightPercentage = 0.2;
             bottomRectWidthPercentage = 0.805;
@@ -90,7 +90,7 @@ public class TsePipeline extends OpenCvPipeline {
             topRectHeightPercentage = 0.25;
             topRectWidthPercentage = 0.08;
         }
-         */
+
     }
     public void stopPipeline() {
         running = false;
