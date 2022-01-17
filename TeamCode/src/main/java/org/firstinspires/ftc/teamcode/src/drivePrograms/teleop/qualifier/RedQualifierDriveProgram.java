@@ -42,7 +42,6 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
         telemetry.addData("Initialization", "finished");
         telemetry.update();
         waitForStart();
-        //slide.resetEncoder();
 
         while (opModeIsActive() && !isStopRequested()) {
             if (driveTrain.getFacingDirection()) {

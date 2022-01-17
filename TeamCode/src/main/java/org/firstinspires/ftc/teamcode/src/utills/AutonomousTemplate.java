@@ -106,6 +106,8 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
 
     /**
      * Initializes the Linear Slide
+     *
+     * @throws InterruptedException Throws if the OpMode is stopped during execution
      */
     protected void initSlide() throws InterruptedException {
         super.initLinearSlide();

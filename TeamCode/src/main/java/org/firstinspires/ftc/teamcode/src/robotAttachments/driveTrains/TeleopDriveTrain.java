@@ -12,6 +12,9 @@ public class TeleopDriveTrain extends BasicDrivetrain {
      */
     private double DrivePowerMult;
 
+    /**
+     * A boolean to manipulate the controls, if it is true, controls are normal, if it is false, controls are inverted
+     */
     private boolean frontDrive = true; //Starts facing forward
 
     /**
@@ -28,7 +31,11 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         this.DrivePowerMult = 1;
     }
 
-    //true is forward, false is backwards
+    /**
+     * A getter to determine if the controls are inverted
+     *
+     * @return True if the robot is in normal mode, false if the front and back are reversed in the controls
+     */
     public boolean getFacingDirection() {
         return this.frontDrive;
     }
@@ -66,7 +73,9 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         this.DrivePowerMult = drivePowerMult;
     }
 
-
+    /**
+     * A method to invert the controls
+     */
     public void flipFrontAndBack() {
         frontDrive = !frontDrive;
     }

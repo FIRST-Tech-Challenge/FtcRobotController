@@ -15,15 +15,9 @@ public class TestOfOdometryDriveSystem extends AutonomousTemplate {
 
     public void opModeMain() throws InterruptedException {
         initAll();
-        podServos.lower();
+
         waitForStart();
         odometry.setPosition(0, 0, 0);
-        /*driveSystem.moveToPosition(10,10,0.5,true);
-        driveSystem.moveToPosition(10,-10,0.5,true);
-        driveSystem.moveToPosition(-10,-10,0.5,true);
-        driveSystem.moveToPosition(-10,10,0.5,true);
-        driveSystem.moveToPosition(0,0,0.5,true);
-         */
 
         driveSystem.moveToPosition(0, 100, 0.5, true);
 

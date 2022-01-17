@@ -300,12 +300,26 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
     }
 
+    /**
+     * A method for relative motion
+     *
+     * @param distance  The distance to travel
+     * @param angle     The angle to travel at
+     * @param tolerance The tolerance from the end point
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     */
     public void move(double distance, double angle, double tolerance) throws InterruptedException {
         final double xComponent = distance * Math.sin(angle);
         final double yComponent = distance * Math.cos(angle);
         moveToPosition(odometry.returnRelativeXPosition() + xComponent, odometry.returnRelativeYPosition() + yComponent, tolerance);
     }
 
+    /**
+     * @param direction The distance to travel, specified by the {@link OdometryDirections} enum
+     * @param distance  The angle to travel at
+     * @param tolerance The tolerance from the end point
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     */
     public void move(OdometryDirections direction, double distance, double tolerance) throws InterruptedException {
         Double angle = OdometryDirections.positionToAngle.get(direction);
         assert angle != null;
@@ -365,6 +379,16 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    /**
+     * Moves to the given position and times out
+     *
+     * @param x             The x coordinate to go to
+     * @param y             The y coordinate to go to
+     * @param tolerance     The tolerance for how close it must get
+     * @param consoleOutput A boolean to toggle debug information
+     * @param millis        The time in milliseconds that the robot should attempt to move
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     */
     public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException {
         final String coordinateString = x + " , " + y;
         double power, odometry_angle;
@@ -428,13 +452,18 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
-
+    /**
+     * A enum to correlate relative terms of measure to absolute angles
+     */
     public enum OdometryDirections {
         Forward,
         Backward,
         Right,
         Left;
 
+        /**
+         * A hashmap that contains the data to make the substitution
+         */
         public static final HashMap<OdometryDirections, Double> positionToAngle = new HashMap<OdometryDirections, Double>() {{
             put(OdometryDirections.Forward, 0D);
             put(OdometryDirections.Backward, 180D);
