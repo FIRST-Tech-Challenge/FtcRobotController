@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlid
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 
 /**
- * The Autonomous ran on Red side near Warehouse for Meet 3
+ * The Autonomous ran on Red side near Warehouse for Qualifier
  */
 @Autonomous(name = "Red Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {

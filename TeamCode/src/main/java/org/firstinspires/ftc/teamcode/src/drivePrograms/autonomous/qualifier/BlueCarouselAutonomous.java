@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlid
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 
 /**
- * The Autonomous ran on Blue side near spinner for Meet 3
+ * The Autonomous ran on Blue side near spinner for Qualifier
  */
 @Autonomous(name = "Blue Carousel Autonomous")
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
