@@ -56,7 +56,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
-     * @param voltageSensor an already initialized voltage sensor
+     * @param voltageSensor   an already initialized voltage sensor
      */
     public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(front_right, front_left, back_right, back_left);
@@ -290,7 +290,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      *
      * @param totalDistance   the total distance in inches, that the robot is expected to go
      * @param currentDistance the total distance in inches, that the robot has traveled
-     *
      * @return The power to drive the motor at in a range between -1 and 1
      */
     private double calculateShortDistancePower(double totalDistance, double currentDistance) {
@@ -365,7 +364,8 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
-    public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException {
+
+    public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException, OdometryMovementException {
         final String coordinateString = x + " , " + y;
         double power, odometry_angle;
 
@@ -381,14 +381,14 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         double posA;
         double posB;
-        double tooSmallOfDistance = millis / 1000; // this distance is 1 inch for every second of millis
+        double tooSmallOfDistance = millis / 500; // this distance is 1 inch for every second of millis
 
 
-        while (currentDistance > tolerance && !timeOut && !isStopRequested() && opModeIsActive()) {
+        while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
             timer.reset();
-            posA = distance(odometry_x, odometry_y, x, y);
-            while (timer.milliseconds() < millis) {
+            posA = distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
 
+            while (timer.milliseconds() < millis) {
                 odometry_x = odometry.returnRelativeXPosition(); //odometry x
                 odometry_y = odometry.returnRelativeYPosition(); //odometry y
                 currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
@@ -418,10 +418,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
                 strafeAtAngle(odometry_angle, power);
             }
-            posB = distance(odometry_x, odometry_y, x, y);
 
-            if (posB - posA <= tooSmallOfDistance) {
-                timeOut = true;
+            posB = distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
+
+            if (posA - posB < tooSmallOfDistance) {
+                throw new OdometryMovementException("Timeout");
             }
 
         }
