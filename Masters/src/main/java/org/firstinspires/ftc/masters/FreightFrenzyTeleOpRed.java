@@ -231,7 +231,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-                    sleep(1200);
+                    robot.pause(1200);
 
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
                     robot.pause(400);//200 enough for middle
@@ -244,6 +244,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     linearSlideMotor.setTargetPosition(0);
                     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     linearSlideMotor.setPower(-.4);//-.4
+                    //Wayne trying to go backwards for a while
+                    robot.forward(0.5,-.5);
                 }
             }
 
