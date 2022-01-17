@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
@@ -12,40 +12,33 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
  */
 @Autonomous(name = "Blue Warehouse Autonomous")
 public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
+    static final BlinkinPattern def = BlinkinPattern.BLUE;
+    static final double[] initialPos = {133, 63, 0};
 
     @Override
     public void opModeMain() throws InterruptedException {
-
         this.initAll();
+        leds.setPattern(def);
+        odometry.setPosition(initialPos[0], initialPos[1], initialPos[2]);
 
-        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
-        BarcodePositions Pos = BarcodePositions.NotSeen;
-        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-        odometry.setPosition(133, 63, 270);
+        telemetry.addData("GC", "Started");
+        telemetry.update();
+        System.gc();
+        telemetry.addData("GC", "Finished");
+        telemetry.update();
 
-        while (!isStarted()) {
+        BarcodePositions Pos;
+        do {
             Pos = this.getAverageOfMarker(10, 100);
-            checkStop();
-
-           /* if(Pos != MarkerPosition.NotSeen){
-                leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-            }
-
-            */
             telemetry.addData("Position", Pos);
             telemetry.update();
-        }
+        } while (!isStarted() && !isStopRequested());
 
-        System.gc();
         waitForStart();
-
-        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
 
         if (opModeIsActive() && !isStopRequested()) {
             tfod.shutdown();
             vuforia.close();
-            System.gc();
-
 
             switch (Pos) {
                 case Right:

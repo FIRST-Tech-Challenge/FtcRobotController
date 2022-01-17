@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
@@ -13,31 +13,33 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 @Autonomous(name = "Red Carousel Autonomous")
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final boolean wareHousePark = true;
+    static final BlinkinPattern def = BlinkinPattern.RED;
+    static final double[] initialPos = {7, 101, 90};
 
     @Override
     public void opModeMain() throws InterruptedException {
-
         this.initAll();
+        leds.setPattern(def);
+        odometry.setPosition(initialPos[0], initialPos[1], initialPos[2]);
 
-        leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-        BarcodePositions Pos = BarcodePositions.NotSeen;
-        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+        telemetry.addData("GC", "Started");
+        telemetry.update();
+        System.gc();
+        telemetry.addData("GC", "Finished");
+        telemetry.update();
 
-
-        odometry.setPosition(7, 101, 90);
-
-        while (!isStarted() && !isStopRequested()) {
+        BarcodePositions Pos;
+        do {
             Pos = this.getAverageOfMarker(10, 100);
             telemetry.addData("Position", Pos);
             telemetry.update();
-        }
-        System.gc();
+        } while (!isStarted() && !isStopRequested());
+
         waitForStart();
 
         if (opModeIsActive() && !isStopRequested()) {
             tfod.shutdown();
             vuforia.close();
-            System.gc();
 
 
             switch (Pos) {

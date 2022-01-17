@@ -293,8 +293,8 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     private double calculateShortDistancePower(double totalDistance, double currentDistance) {
 
-        return MiscUtills.boundNumber(0.5 * Math.sin((currentDistance * Math.PI) / (totalDistance * .75)) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
-
+        //return MiscUtills.boundNumber(0.5 * Math.sin((currentDistance * Math.PI) / (totalDistance * .75)) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
+        return 0.8;
 
     }
 

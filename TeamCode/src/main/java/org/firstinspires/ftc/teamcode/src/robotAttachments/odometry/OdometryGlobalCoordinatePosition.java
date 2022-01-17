@@ -81,6 +81,9 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      */
     private double angleOffset = 0;
 
+    private boolean reverseY = false;
+
+    private boolean reverseX = false;
 
     /**
      * Constructor for GlobalCoordinatePosition Thread
@@ -105,6 +108,14 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
 
+    }
+
+    public void reverseY() {
+        reverseY = !reverseY;
+    }
+
+    public void reverseX() {
+        reverseX = !reverseX;
     }
 
 
@@ -229,7 +240,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     }
 
 
-
     /**
      * Gets the current angle of the IMU
      *
@@ -328,7 +338,10 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @return global X Position in inches
      */
     public double returnRelativeXPosition() {
-        return robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
+        if (reverseX) {
+            return robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
+        }
+        return -robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
     }
 
     /**
@@ -337,7 +350,10 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @return global Y Position in inches
      */
     public double returnRelativeYPosition() {
-        return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
+        if (reverseY) {
+            return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
+        }
+        return -robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }
 
     /**
