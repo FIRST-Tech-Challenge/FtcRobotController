@@ -26,9 +26,9 @@ public class AutonomousRedCarouselNoSensor extends LinearOpMode {
         robot.turnLeft(30,.5);
         robot.right(3,.5);
         robot.armThing(3);
-        robot.forward(.8,.5); //adjust to make it work
+        robot.forward(.9,.5); //adjust to make it work
         robot.eject();
-        robot.back(.75,.5); //match the forward
+        robot.back(.8,.5); //match the forward
         robot.turnLeft(.20,.5);
         robot.left(4.25,.5);
         robot.forward(.8,.5); // adjust to make it work
