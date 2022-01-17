@@ -15,7 +15,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
         odometry.setPosition(0, 116, 180);
         waitForStart();
         try {
-            driveSystem.moveToPositionWithTimeOut(150, 116, 1, true, 500);
+            driveSystem.moveToPositionWithDistanceTimeOut(150, 116, 1, true, 500);
         } catch (OdometryMovementException e) {
             driveSystem.strafeAtAngle(0, .5);
             Thread.sleep(1000);

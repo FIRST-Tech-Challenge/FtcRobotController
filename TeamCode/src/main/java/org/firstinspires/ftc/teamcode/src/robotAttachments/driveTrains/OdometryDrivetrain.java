@@ -55,7 +55,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
-     * @param voltageSensor an already initialized voltage sensor
+     * @param voltageSensor   an already initialized voltage sensor
      */
     public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(front_right, front_left, back_right, back_left);
@@ -289,7 +289,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      *
      * @param totalDistance   the total distance in inches, that the robot is expected to go
      * @param currentDistance the total distance in inches, that the robot has traveled
-     *
      * @return The power to drive the motor at in a range between -1 and 1
      */
     private double calculateShortDistancePower(double totalDistance, double currentDistance) {
@@ -379,16 +378,17 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves to the given position and times out
+     * Moves to the given position. Throws error if it is stopped for a time greater than millis.
      *
      * @param x             The x coordinate to go to
      * @param y             The y coordinate to go to
      * @param tolerance     The tolerance for how close it must get
      * @param consoleOutput A boolean to toggle debug information
      * @param millis        The time in milliseconds that the robot should attempt to move
-     * @throws InterruptedException Throws if the OpMode ends during execution
+     * @throws InterruptedException      Throws if the OpMode ends during execution
+     * @throws OdometryMovementException Stops Motors and Throws if the robot gets stuck and times out
      */
-    public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException, OdometryMovementException {
+    public void moveToPositionWithDistanceTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException, OdometryMovementException {
         final String coordinateString = x + " , " + y;
         double power, odometry_angle;
 
@@ -445,7 +445,103 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             posB = distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
 
             if (posA - posB < tooSmallOfDistance) {
+                stopAll();
                 throw new OdometryMovementException("Timeout");
+            }
+
+        }
+        stopAll();
+    }
+
+    /**
+     * Moves to the given position and errors out if the time elapsed in seconds is greater than timeout
+     *
+     * @param x             The x coordinate to go to
+     * @param y             The y coordinate to go to
+     * @param tolerance     The tolerance for how close it must get
+     * @param consoleOutput A boolean to toggle debug information
+     * @param timeout       The time in seconds that the movement may take
+     * @throws InterruptedException      Throws if the OpMode ends during execution
+     * @throws OdometryMovementException Stops Motors and Throws if the movement time exceeds the provided value of timeout
+     */
+    public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, double timeout) throws InterruptedException, OdometryMovementException {
+        ElapsedTime t = new ElapsedTime();
+        Executable<Boolean> e = () -> ((t.milliseconds() / 1000.0) > timeout);
+        moveToPositionWithCallBack(x, y, tolerance, e, consoleOutput);
+
+    }
+
+    /**
+     * Moves to the given position and errors out if the voltage falls to far
+     *
+     * @param x             The x coordinate to go to
+     * @param y             The y coordinate to go to
+     * @param tolerance     The tolerance for how close it must get
+     * @param consoleOutput A boolean to toggle debug information
+     * @throws InterruptedException      Throws if the OpMode ends during execution
+     * @throws OdometryMovementException Stops Motors and Throws if the voltage falls to 2 volts less than the starting voltage
+     */
+    public void moveToPositionWithVoltageSpike(double x, double y, double tolerance, boolean consoleOutput) throws InterruptedException, OdometryMovementException {
+        final double initialVoltage = voltageSensor.getVoltage();
+        Executable<Boolean> e = () -> voltageSensor.getVoltage() < (initialVoltage - 2);
+        moveToPositionWithCallBack(x, y, tolerance, e, consoleOutput);
+    }
+
+    /**
+     * Moves to the given position. Errors out if callBack returns true
+     *
+     * @param x             The x coordinate to go to
+     * @param y             The y coordinate to go to
+     * @param tolerance     The tolerance for how close it must get
+     * @param consoleOutput A boolean to toggle debug information
+     * @param callBack      A Lambda function, if it returns true, this throws a {@link OdometryMovementException}
+     * @throws InterruptedException      Throws if the OpMode ends during execution
+     * @throws OdometryMovementException Stops Motors and Throws if callBack returns true
+     */
+    public void moveToPositionWithCallBack(double x, double y, double tolerance, Executable<Boolean> callBack, boolean consoleOutput) throws InterruptedException, OdometryMovementException {
+        final String coordinateString = x + " , " + y;
+        double power, odometry_angle;
+
+        double odometry_x = odometry.returnRelativeXPosition();
+        double odometry_y = odometry.returnRelativeYPosition();
+
+        double currentDistance = distance(odometry_x, odometry_y, x, y);
+        final double initialDistance = currentDistance;
+
+        double longDistanceThreshold = decelerationDistance + accelerationDistance;
+        final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
+
+        final double initialVoltage = voltageSensor.getVoltage();
+
+        while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
+            odometry_x = odometry.returnRelativeXPosition(); //odometry x
+            odometry_y = odometry.returnRelativeYPosition(); //odometry y
+            currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
+            odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
+
+            if (longDistanceTravel) {
+                power = this.calculateLongDistancePower(initialDistance, currentDistance);
+            } else {
+                power = this.calculateShortDistancePower(initialDistance, currentDistance);
+            }
+
+            if (consoleOutput) {
+                telemetry.addData("Moving to", coordinateString);
+                telemetry.addData("currentDistance", currentDistance);
+                telemetry.addData("angle", odometry_angle);
+                telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
+                telemetry.addData("X Pos", odometry_x);
+                telemetry.addData("Y Pos", odometry_y);
+                telemetry.addData("Power", power);
+                telemetry.addData("Long Distance Mode = ", longDistanceTravel);
+                telemetry.update();
+            }
+
+            strafeAtAngle(odometry_angle, power);
+
+            if (callBack.call()) {
+                stopAll();
+                throw new OdometryMovementException("Voltage dropped too low");
             }
 
         }
