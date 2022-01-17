@@ -261,13 +261,13 @@ public class Robot {
         }
     }
         if(level ==3){
-            arm.setTargetPosition(1200);
+            arm.setTargetPosition(1350);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(.5);
             while (arm.isBusy() && this.opMode.opModeIsActive()) {
             }
     }
-
+            // you are a potato
     }
 
     public void eject(){
