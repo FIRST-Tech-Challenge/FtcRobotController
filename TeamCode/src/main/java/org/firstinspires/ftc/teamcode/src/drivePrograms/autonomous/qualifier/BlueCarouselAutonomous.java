@@ -39,6 +39,8 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
         }
 
 
+        System.gc();
+
         waitForStart();
 
         if (opModeIsActive() && !isStopRequested()) {
