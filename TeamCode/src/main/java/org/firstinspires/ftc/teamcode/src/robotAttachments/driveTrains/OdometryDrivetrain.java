@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.OdometryDirections;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
-
-import java.util.HashMap;
 
 /**
  * Odometry Drivetrain Implements basic drive functions that can be inherited by other drive systems.
@@ -389,7 +388,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param millis        The time in milliseconds that the robot should attempt to move
      * @throws InterruptedException Throws if the OpMode ends during execution
      */
-    public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException {
+    public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException, OdometryMovementException {
         final String coordinateString = x + " , " + y;
         double power, odometry_angle;
 
