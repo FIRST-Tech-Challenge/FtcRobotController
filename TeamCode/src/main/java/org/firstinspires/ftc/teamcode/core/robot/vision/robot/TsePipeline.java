@@ -218,7 +218,7 @@ public class TsePipeline extends OpenCvPipeline {
     }
 
     public static int mostSmall(double val1, double val2, double val3) {
-        final ArrayList<Double> numList = (ArrayList<Double>) Arrays.asList(val1, val2, val3);
+        final List<Double> numList = Arrays.asList(val1, val2, val3);
         return numList.indexOf(Collections.min(numList)) + 1;
     }
 
