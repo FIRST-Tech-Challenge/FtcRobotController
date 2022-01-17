@@ -30,7 +30,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 @Disabled
-@TeleOp(name = "ColorSensorReturnValueTest", group="test")
+//@TeleOp(name = "ColorSensorReturnValueTest", group="test")
 public class ColorSensorReturnValueTest extends LinearOpMode {
     NormalizedColorSensor colorSensor;
 

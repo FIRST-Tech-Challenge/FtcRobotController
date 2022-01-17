@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Test Color Lights Blink A Lot Thing",group= "test")
+@Disabled
+//@Autonomous(name = "Test Color Lights Blink A Lot Thing",group= "test")
 public class TestColoredLightsThing extends LinearOpMode {
     RobotClass robot;
 

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.masters;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+
 
 @TeleOp(name="freightFrenzy Blue", group = "competition")
 public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{

@@ -144,7 +144,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             double x = 0;
             double rx = 0;
 
-            if (Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1 ) {
+            if (Math.abs(gamepad1.left_stick_y) > 0.2 || Math.abs(gamepad1.left_stick_x) > 0.2 || Math.abs(gamepad1.right_stick_x) > 0.2 ) {
                 y = gamepad1.left_stick_y; //
                 x = gamepad1.left_stick_x;
                 rx = gamepad1.right_stick_x;
@@ -255,6 +255,20 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     linearSlidePos = linearSlidePositions.BASE;
                     intakeOn = true;
                 }
+            }
+
+            if (gamepad1.b) {
+                leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+                rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+                leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
+                rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+            }
+
+            if (gamepad1.y) {
+                leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+                rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+                leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
+                rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
             }
 
             rotateCarousel();

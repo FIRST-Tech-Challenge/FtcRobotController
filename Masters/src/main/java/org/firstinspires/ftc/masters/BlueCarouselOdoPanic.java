@@ -6,14 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Blue - Carousel (Park City)", group = "competition")
-public class BlueCarouselOdo extends LinearOpMode {
+@Autonomous(name = "Blue - Carousel (Park City) TWCA alt", group = "competition")
+public class BlueCarouselOdoPanic extends LinearOpMode {
 
     final int SERVO_DROP_PAUSE=900;
 
@@ -62,7 +61,7 @@ public class BlueCarouselOdo extends LinearOpMode {
 
 
 //      Deposit initial freight
-        Pose2d hubPosition = new Pose2d(new Vector2d(-12.5, 42), Math.toRadians(270));
+        Pose2d hubPosition = new Pose2d(new Vector2d(-32, 24), Math.toRadians(0));
         TrajectorySequence toHub = drive.trajectorySequenceBuilder(startPose)
                 .lineToSplineHeading(hubPosition)
                 .build();
@@ -80,7 +79,7 @@ public class BlueCarouselOdo extends LinearOpMode {
         Pose2d position = drive.getLocalizer().getPoseEstimate();
 
         TrajectorySequence toCarousel = drive.trajectorySequenceBuilder(position)
-                .lineToLinearHeading(new Pose2d( new Vector2d(-58.5, 58.5), Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d( new Vector2d(-59, 59), Math.toRadians(0)))
                 .build();
         drive.followTrajectorySequence(toCarousel);
 
@@ -110,7 +109,7 @@ public class BlueCarouselOdo extends LinearOpMode {
 
         TrajectorySequence depositDuck = drive.trajectorySequenceBuilder(position)
                 .lineTo(new Vector2d(-50, 55))
-                .splineToLinearHeading(new Pose2d(-12.5, 42, Math.toRadians(270)), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-32, 24, Math.toRadians(0)), Math.toRadians(0))
                 .build();
         drive.followTrajectorySequence(depositDuck);
 

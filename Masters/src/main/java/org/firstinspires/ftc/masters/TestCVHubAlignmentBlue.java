@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.masters;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Test CV Hub Alignment blue", group="test")
+@Disabled
+//@TeleOp(name = "Test CV Hub Alignment blue", group="test")
 public class TestCVHubAlignmentBlue extends LinearOpMode {
     RobotClass robot;
     @Override

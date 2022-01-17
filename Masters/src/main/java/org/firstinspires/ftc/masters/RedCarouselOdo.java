@@ -13,7 +13,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Red carousel odometry", group = "competition")
+@Autonomous(name = "Red - Carousel (Park City)", group = "competition")
 public class RedCarouselOdo extends LinearOpMode {
 
     final int SERVO_DROP_PAUSE=900;
@@ -85,7 +85,7 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(.4, 5); //can we go faster?
+        drive.jevilTurnCarousel(.4, 4); //can we go faster?
 
 
 
@@ -105,6 +105,7 @@ public class RedCarouselOdo extends LinearOpMode {
 //        boolean hasDuck = drive
 
         drive.pause(250);
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         drive.linearSlideMotor.setPower(.8);
