@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
  * A Autonomous to test our machine learning model
@@ -15,7 +16,7 @@ public class MLTest extends AutoObjDetectionTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
 
-        MarkerPosition Pos = MarkerPosition.Right;
+        BarcodePositions Pos = BarcodePositions.Right;
 
         while (!isStarted()) {
             Pos = this.getAverageOfMarker(10, 100);

@@ -5,9 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
- * The Autonomous ran on Red side near Warehouse for Meet 3
+ * The Autonomous ran on Red side near Warehouse for Qualifier
  */
 @Autonomous(name = "Red Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
@@ -17,7 +18,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
 
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
-        MarkerPosition Pos = MarkerPosition.NotSeen;
+        BarcodePositions Pos = BarcodePositions.NotSeen;
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
 
 

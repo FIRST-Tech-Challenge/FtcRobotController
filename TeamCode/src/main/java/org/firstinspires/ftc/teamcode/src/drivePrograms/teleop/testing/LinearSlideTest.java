@@ -25,18 +25,6 @@ public class LinearSlideTest extends TeleOpTemplate {
         while (opModeIsActive() && !isStopRequested()) {
 
             driveTrain.setPowerFromGamepad(gamepad1);
-            //slide.setMotorPower(-gamepad2.left_stick_y);
-
-
-            /*
-            if ((gamepad2.left_stick_y) != 0) {
-                slide.setMotorPower(gamepad2.left_stick_y);
-                slide.setTargetHeight(slide.getEncoderCount());
-            } else {
-                slide.threadMain();
-            }
-
-             */
 
             slide.setTargetHeight((int) (slide.getTargetHeight() + (10 * -gamepad2.left_stick_y)));
             slide.threadMain();

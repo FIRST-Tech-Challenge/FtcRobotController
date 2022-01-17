@@ -29,10 +29,16 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
         telemetry.update();
     }
 
+    /**
+     * Initializes the Drive Train
+     */
     protected void initDriveTrain() {
         driveTrain = new TeleopDriveTrain(hardwareMap, frontRightName, frontLeftName, backRightName, backLeftName);
     }
 
+    /**
+     * Initializes the Odometry Servos
+     */
     protected void initOdometryServos() {
         super.initOdometryServos();
         podServos.raise();

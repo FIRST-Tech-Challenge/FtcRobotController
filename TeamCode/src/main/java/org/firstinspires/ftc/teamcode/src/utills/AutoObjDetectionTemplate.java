@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     /**
      * The Vuforia licence Key
      */
-    private static final String VUFORIA_KEY = "AWVWPbH/////AAABmbzQF0cF/EvRnE4ykZKAXvpbnJrPQs1aBJ2i7u5ADGzYU+x0dxqGlB/G8yCrcY4FP8cPEA1w+xTXCpbFDmlYcKMG6VL/6v+H0Es3H/1f8xpQG86nSCXKPLxEbYGHkBxAYSlxB0gueBpnxMYsURezlq2Q9e5Br5OIhY7gmZZNa3VPHupscQkrCrVdRMI9mPAbEjMBhVBWjVJEL0+u2tyvEQuK4tllgi8C7AKq5V5lFoKEQG0VD89xlgUfRZsDq89HToRXBOUE2mubPHUcplKiX+1EfB+801eEt+k7lLJ1VyfrXr2tjwyWPjafvTpnaf3C35ox0/TOPdak5pq2gXLpXzAxXc6+RH28m2572tYB58AN";
+    public static final String VUFORIA_KEY = "AWVWPbH/////AAABmbzQF0cF/EvRnE4ykZKAXvpbnJrPQs1aBJ2i7u5ADGzYU+x0dxqGlB/G8yCrcY4FP8cPEA1w+xTXCpbFDmlYcKMG6VL/6v+H0Es3H/1f8xpQG86nSCXKPLxEbYGHkBxAYSlxB0gueBpnxMYsURezlq2Q9e5Br5OIhY7gmZZNa3VPHupscQkrCrVdRMI9mPAbEjMBhVBWjVJEL0+u2tyvEQuK4tllgi8C7AKq5V5lFoKEQG0VD89xlgUfRZsDq89HToRXBOUE2mubPHUcplKiX+1EfB+801eEt+k7lLJ1VyfrXr2tjwyWPjafvTpnaf3C35ox0/TOPdak5pq2gXLpXzAxXc6+RH28m2572tYB58AN";
 
     /**
      * A object to lock on to for the thread safety, used in _initVuforia
@@ -146,6 +147,11 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     }
 
 
+    /**
+     * Initializes all fields provided by this class
+     *
+     * @throws InterruptedException Throws if OpMode is stopped during execution
+     */
     public void initAll() throws InterruptedException {
         initVuforia();
         initTfod();
@@ -161,9 +167,9 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      * @return It returns the average position of all the samples
      * @throws InterruptedException Throws exception if the opMode is stopped during function execution
      */
-    public MarkerPosition getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
+    public BarcodePositions getAverageOfMarker(int arraySize, int sleepTime) throws InterruptedException {
 
-        MarkerPosition[] markerPositions = new MarkerPosition[arraySize];
+        BarcodePositions[] markerPositions = new BarcodePositions[arraySize];
 
         for (int i = 0; i < arraySize; i++) {
             markerPositions[i] = this.findPositionOfMarker();
@@ -190,13 +196,13 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         switch (result) {
             case 0:
-                return MarkerPosition.NotSeen;
+                return BarcodePositions.NotSeen;
             case 1:
-                return MarkerPosition.Right;
+                return BarcodePositions.Right;
             case 2:
-                return MarkerPosition.Left;
+                return BarcodePositions.Left;
         }
-        return MarkerPosition.Left; //It never reaches this line
+        return BarcodePositions.Left; //It never reaches this line
     }
 
     /**
@@ -204,7 +210,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      *
      * @return Where the marker is
      */
-    public MarkerPosition findPositionOfMarker() {
+    public BarcodePositions findPositionOfMarker() {
         if (tfod != null) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
@@ -213,24 +219,16 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
             if (updatedRecognitions != null && (updatedRecognitions.size() > 0)) {
                 if (updatedRecognitions.get(0).getLeft() > 615) {
-                    return MarkerPosition.Right;
+                    return BarcodePositions.Right;
                 }
                 if (updatedRecognitions.get(0).getLeft() <= 615) {
-                    return MarkerPosition.Left;
+                    return BarcodePositions.Left;
                 }
             }
         }
-        return MarkerPosition.NotSeen;
+        return BarcodePositions.NotSeen;
     }
 
-    /**
-     * An enum returned for position in camera view
-     */
-    public enum MarkerPosition {
-        Right,
-        Left,
-        NotSeen
-    }
 }
 
 

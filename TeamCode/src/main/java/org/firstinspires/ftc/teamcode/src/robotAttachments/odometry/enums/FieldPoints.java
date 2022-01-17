@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.odometry;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums;
 
 import java.util.HashMap;
 

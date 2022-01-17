@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
 
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,10 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
+import org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors;
 
 /**
  * this is the class for our robot's intake subsystem
@@ -87,8 +84,13 @@ public class ContinuousIntake {
         return Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
     }
 
-    public gameObject identifyContents() {
-        return ContinuousIntake.gameObject.identify(this.getRGB());
+    /**
+     * Identifies the contents in the bucket
+     *
+     * @return The {@link FreightFrenzyGameObject} inside the bucket
+     */
+    public FreightFrenzyGameObject identifyContents() {
+        return FreightFrenzyGameObject.identify(this.getRGB());
     }
 
 
@@ -152,7 +154,7 @@ public class ContinuousIntake {
      * @param color the name of the color wanted
      * @return this returns a number of the value for the name of the wanted color
      */
-    public int getColor(Colors color) {
+    public int getColor(RGBCameraColors color) {
         switch (color) {
             case Red:
                 return colorSensor.red();
@@ -168,16 +170,6 @@ public class ContinuousIntake {
             default:
                 return 0;
         }
-    }
-
-    /**
-     * A enum to represent the RGBA type
-     */
-    public enum Colors {
-        Red,
-        Green,
-        Blue,
-        Alpha
     }
 
     /**
@@ -211,77 +203,7 @@ public class ContinuousIntake {
      * @return Returns the blink pattern for the object in the bucket
      */
     public RevBlinkinLedDriver.BlinkinPattern getLEDPatternFromFreight() {
-        return gameObject.RevColorOfObj.get(gameObject.identify(this.getRGB()));
-    }
-
-    /**
-     * A Enum for each object the bucket can pick up
-     */
-    public enum gameObject {
-        BALL,
-        CUBESMOOTH,
-        CUBEWAFFLE,
-        DUCK,
-        EMPTY;
-
-        /**
-         * A list of every possible enum value
-         */
-        private static final ArrayList<gameObject> gameObjectList = new ArrayList<>(Arrays.asList(gameObject.values()));
-
-        /**
-         * The Key is the game object, the value is what LED pattern it should corespond to
-         */
-        private static final HashMap<gameObject, BlinkinPattern> RevColorOfObj = new HashMap<gameObject, BlinkinPattern>() {{
-            put(gameObject.BALL, BlinkinPattern.WHITE);
-            put(gameObject.CUBESMOOTH, BlinkinPattern.ORANGE);
-            put(gameObject.CUBEWAFFLE, BlinkinPattern.ORANGE);
-            put(gameObject.DUCK, BlinkinPattern.GREEN);
-            put(gameObject.EMPTY, null);
-        }};
-
-        /**
-         * The Key is the game object, the value is the RGB value of what the sensor sees
-         */
-        private static final HashMap<gameObject, double[]> RGBOfObj = new HashMap<gameObject, double[]>() {{
-            put(gameObject.BALL, new double[]{111, 111, 97});
-            put(gameObject.CUBESMOOTH, new double[]{41, 25, 15});
-            put(gameObject.CUBEWAFFLE, new double[]{26, 15, 10});
-            put(gameObject.DUCK, new double[]{14, 12, 7});
-            put(gameObject.EMPTY, new double[]{5, 6, 5});
-        }};
-
-        /**
-         * Determines what game object best matches the color pattern provided
-         *
-         * @param RGB The color pattern in the form of RGB
-         * @return Returns what game object the RGB best matches
-         */
-        public static gameObject identify(double[] RGB) {
-            int numberOfGameElements = gameObject.gameObjectList.size();
-            double[][] originalRGB = new double[numberOfGameElements][3];
-            double[] differences = new double[numberOfGameElements];
-            for (int x = 0; x < numberOfGameElements; x++) {
-                originalRGB[x] = gameObject.RGBOfObj.get((gameObject.gameObjectList.get(x)));
-            }
-            for (int x = 0; x < numberOfGameElements; x++) {
-                assert originalRGB[x] != null;
-                differences[x] = getDifferenceOfColor(RGB, originalRGB[x]);
-            }
-            double smallestValue = Double.MAX_VALUE;
-            int index = -1;
-
-            for (int i = 0; i < numberOfGameElements; i++) {
-                if (differences[i] < smallestValue) {
-                    smallestValue = differences[i];
-                    index = i;
-                }
-            }
-            return gameObject.gameObjectList.get(index);
-
-
-        }
-
+        return FreightFrenzyGameObject.RevColorOfObj.get(FreightFrenzyGameObject.identify(this.getRGB()));
     }
 
 }

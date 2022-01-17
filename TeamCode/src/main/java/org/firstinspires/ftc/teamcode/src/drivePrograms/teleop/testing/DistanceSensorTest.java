@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
+/**
+ * A test of the distance sensor
+ */
 @Disabled
 @TeleOp(name = "DistanceSensorTest")
 public class DistanceSensorTest extends TeleOpTemplate {
