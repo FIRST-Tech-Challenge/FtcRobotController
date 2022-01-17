@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.Executable;
 
 
 @Autonomous(name = "OdTimeOut")
@@ -14,17 +14,40 @@ public class OdTimeOutTest extends AutonomousTemplate {
         this.initAll();
         odometry.setPosition(0, 116, 180);
         waitForStart();
+
         try {
             driveSystem.moveToPositionWithDistanceTimeOut(150, 116, 1, true, 500);
         } catch (OdometryMovementException e) {
-            driveSystem.strafeAtAngle(0, .5);
+            telemetry.addData("Distance Time Out", "Yay");
+            telemetry.update();
             Thread.sleep(1000);
-            while (!isStopRequested()) {
-                telemetry.addData("this", "happened");
-                telemetry.addData(MiscUtills.getStackTraceAsString(e), "");
-                telemetry.update();
-                //driveSystem.moveToPosition(0,116,1);
-            }
+        }
+
+        try {
+            driveSystem.moveToPositionWithTimeOut(100000, 100000, 1, false, 0.1);
+        } catch (OdometryMovementException e) {
+            telemetry.addData("Standard Time Out", "Yay");
+            telemetry.update();
+            Thread.sleep(1000);
+        }
+
+        try {
+            driveSystem.moveToPositionWithVoltageSpike(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition() + 100, 1, false);
+        } catch (OdometryMovementException e) {
+            telemetry.addData("Voltage Spike", "Yay");
+            telemetry.update();
+            Thread.sleep(1000);
+        }
+
+        try {
+            Executable<Boolean> b = () -> {
+                return true;
+            };
+            driveSystem.moveToPositionWithCallBack(100000, 100000, 1, b, false);
+        } catch (OdometryMovementException e) {
+            telemetry.addData("Callback Error", "Yay");
+            telemetry.update();
+            Thread.sleep(1000);
         }
 
 

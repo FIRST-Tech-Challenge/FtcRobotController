@@ -541,7 +541,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
             if (callBack.call()) {
                 stopAll();
-                throw new OdometryMovementException("Voltage dropped too low");
+                throw new OdometryMovementException("Callback Returned True");
             }
 
         }
