@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.masters;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Autonomous(name = "Distance sensors test thing", group="test")
+@Disabled
+//@Autonomous(name = "Distance sensors test thing", group="test")
 public class TestDistanceSensors extends LinearOpMode {
     RobotClass robot;
 

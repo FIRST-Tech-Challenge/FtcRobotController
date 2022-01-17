@@ -15,7 +15,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import java.util.Date;
 
 @Disabled
-@Autonomous(name = "test auto with roadRunner")
+//@Autonomous(name = "test auto with roadRunner")
 public class TestAutoWithRoadRunner extends LinearOpMode {
 
     @Override

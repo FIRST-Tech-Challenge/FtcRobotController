@@ -15,16 +15,18 @@ public class MeepMeepTesting {
                 .setConstraints(45, 60, Math.toRadians(60), Math.toRadians(60), 16.4)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
-                                .lineToSplineHeading(new Pose2d(new Vector2d(-12.5, 42), Math.toRadians(270)))
-                                .lineToLinearHeading(new Pose2d( new Vector2d(-60, 60), Math.toRadians(0)))
-                                .lineTo(new Vector2d(-55, 55))
-                                .lineToLinearHeading(new Pose2d(-55, 54, Math.toRadians(270)))
-                                .lineTo(new Vector2d(-55, 63))
-                                .lineTo(new Vector2d(-50, 55))
-                                .splineToLinearHeading(new Pose2d(-12.5, 42, Math.toRadians(270)), Math.toRadians(270))
-                                .strafeRight(20)
-                                //.lineTo(new Vector2d(-22, 44))
-                                .splineToLinearHeading (new Pose2d(new Vector2d(-62, 35),Math.toRadians(270)), Math.toRadians(180))
+
+//                                .lineToSplineHeading(new Pose2d(new Vector2d(-12.5, 42), Math.toRadians(270)))
+//                                .lineToLinearHeading(new Pose2d( new Vector2d(-60, 60), Math.toRadians(0)))
+//                                .lineTo(new Vector2d(-55, 55))
+//                                .lineToLinearHeading(new Pose2d(-55, 54, Math.toRadians(270)))
+//                                .lineTo(new Vector2d(-55, 63))
+//                                .lineTo(new Vector2d(-50, 55))
+//                                .splineToLinearHeading(new Pose2d(-12.5, 42, Math.toRadians(270)), Math.toRadians(270))
+//                                .strafeRight(20)
+//                                //.lineTo(new Vector2d(-22, 44))
+//                                .splineToLinearHeading (new Pose2d(new Vector2d(-62, 35),Math.toRadians(270)), Math.toRadians(180))
+//
                                 .build()
                 );
 

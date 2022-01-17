@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.masters;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -38,7 +39,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVisionShippingElement", group ="test")
+@Disabled
+//@TeleOp(name = "TestComputerVisionShippingElement", group ="test")
 public class EasyOpenCVIdentifyShippingElement extends LinearOpMode {
     OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
