@@ -13,12 +13,8 @@ import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 public class MLTest extends AutoObjDetectionTemplate {
     @Override
     public void runOpMode() throws InterruptedException {
-
         this.initAll();
-        this.initVuforia();
-        this.initTfod();
 
-        this.activateTF();
         MarkerPosition Pos = MarkerPosition.Right;
 
         while (!isStarted()) {

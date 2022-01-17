@@ -16,10 +16,9 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     @Override
     public void runOpMode() throws InterruptedException {
         try {
-            this.initVuforia();
-            this.initTfod();
-            this.activateTF();
             this.initAll();
+        } catch (InterruptedException ignored) {
+            return;
         } catch (Exception e) {
             telemetry.addData("issue:", MiscUtills.getStackTraceAsString(e));
             telemetry.update();

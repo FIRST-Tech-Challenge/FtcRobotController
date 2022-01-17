@@ -91,17 +91,6 @@ public class ContinuousIntake {
         return ContinuousIntake.gameObject.identify(this.getRGB());
     }
 
-    /**
-     * Initializes from hardware map and names
-     * Initializes the Color Sensor
-     *
-     * @param hardwareMap          this is the hardware map
-     * @param motorName            this is a string for the name of the intake motor
-     * @param servoName            this is a string for the name of the intake motor
-     * @param colorSensor          this is a string for the name of the color sensor on the intake
-     * @param sensorDetectionLight this is a boolean for turning the color sensor light on(true) or off(false)
-     */
-
 
     /**
      * A getter for the isClosed boolean

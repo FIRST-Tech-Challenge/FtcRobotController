@@ -17,9 +17,6 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     @Override
     public void runOpMode() throws InterruptedException {
         try {
-            this.initVuforia();
-            this.initTfod();
-            this.activateTF();
             this.initAll();
         } catch (Exception e) {
             telemetry.addData("issue:", MiscUtills.getStackTraceAsString(e));
