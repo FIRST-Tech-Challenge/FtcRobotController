@@ -28,8 +28,19 @@ public class ContinuousIntakeCB extends ContinuousIntake implements ThreadedSubs
      */
     final Executable<Void> callBack;
 
-    public ContinuousIntakeCB(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, Executable<Boolean> opModeIsActive, Executable<Boolean> isStopRequested, Executable<Void> callBack, boolean sensorDetectionLight) {
-        super(hardwareMap, motorName, servoName, colorSensor, sensorDetectionLight);
+    /**
+     * A constructor
+     *
+     * @param hardwareMap     The hardware map to initialize devices from
+     * @param motorName       The name of the intake motor
+     * @param servoName       The name of the intake servo
+     * @param colorSensor     The name of the color sensor
+     * @param opModeIsActive  A Lambda object that allows this class to check that the OpMode is active
+     * @param isStopRequested A Lambda object that allows this class to check the stop requested condition of the OpMode
+     * @param callBack        Lambda object that is called once there is a game object in the bucket
+     */
+    public ContinuousIntakeCB(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, Executable<Boolean> opModeIsActive, Executable<Boolean> isStopRequested, Executable<Void> callBack) {
+        super(hardwareMap, motorName, servoName, colorSensor, true);
         this.isStopRequested = isStopRequested;
         this.opModeIsActive = opModeIsActive;
         this.callBack = callBack;

@@ -87,6 +87,11 @@ public class ContinuousIntake {
         return Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
     }
 
+    /**
+     * Identifies the contents in the bucket
+     *
+     * @return The {@link gameObject} inside the bucket
+     */
     public gameObject identifyContents() {
         return ContinuousIntake.gameObject.identify(this.getRGB());
     }

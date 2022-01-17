@@ -34,7 +34,9 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
      */
     private volatile int targetHeight;
 
-
+    /**
+     * Reverses the motor
+     */
     public void reverseMotor() {
         if (this.linearSlide.getDirection() == DcMotorSimple.Direction.FORWARD) {
             this.linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);

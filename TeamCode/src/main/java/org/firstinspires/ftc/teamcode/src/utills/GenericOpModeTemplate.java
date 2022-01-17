@@ -91,7 +91,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         try {
             opModeMain();
         } catch (RuntimeException e) {
-            throw new InitializationException(MiscUtills.getStackTraceAsString(e));
+            throw new RuntimeException(MiscUtills.getStackTraceAsString(e)); //Appends more information to the error message
         }
     }
 
