@@ -114,10 +114,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         {
             DcMotor tmp = hardwareMap.dcMotor.get(linearSlideMotorName);
             tmp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            tmp.setPower(1);
-            Thread.sleep(100);
+            tmp.setPower(.1);
+            Thread.sleep(1100);
             tmp.setPower(0);
-            Thread.sleep(1000);
             tmp.close();
         }
         if (voltageSensor == null) {

@@ -17,7 +17,7 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
     int posToGoTo = 0;
     boolean posOn = false;
 
-    BlinkinPattern normal = BlinkinPattern.BLUE;
+    final BlinkinPattern normal = BlinkinPattern.BLUE;
 
     TripWireDistanceSensor distanceSensor;
 

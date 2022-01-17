@@ -18,7 +18,7 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
     int posToGoTo = 0;
     boolean posOn = false;
 
-    BlinkinPattern normal = BlinkinPattern.RED;
+    final BlinkinPattern normal = BlinkinPattern.RED;
 
     TripWireDistanceSensor distanceSensor;
 

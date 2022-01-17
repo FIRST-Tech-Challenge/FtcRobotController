@@ -22,11 +22,11 @@ public class ContinuousIntakeCB extends ContinuousIntake implements ThreadedSubs
     /**
      * The time in mills that the thread sleeps for after every call of threadMain
      */
-    protected long sleepTime = 50;
+    protected final long sleepTime = 50;
     /**
      * The function to be executed when the bucket detects a object in the bucket
      */
-    Executable<Void> callBack;
+    final Executable<Void> callBack;
 
     public ContinuousIntakeCB(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, Executable<Boolean> opModeIsActive, Executable<Boolean> isStopRequested, Executable<Void> callBack, boolean sensorDetectionLight) {
         super(hardwareMap, motorName, servoName, colorSensor, sensorDetectionLight);
