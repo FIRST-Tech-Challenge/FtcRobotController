@@ -41,11 +41,11 @@ public class AutoPickupTest extends AutonomousTemplate {
         }
 
         try {
-            boolean itemPickup = intake.itemInIntake();
+            boolean itemPickup = intake.itemInBucket();
             while (!itemPickup) {
                 intake.setIntakeOn();
-                itemPickup = intake.itemInIntake();
-                driveSystem.strafeAtAngle(0, .3);
+                itemPickup = intake.itemInBucket();
+                driveSystem.strafeAtAngle(0, .2);
                 checkStop();
 
             }

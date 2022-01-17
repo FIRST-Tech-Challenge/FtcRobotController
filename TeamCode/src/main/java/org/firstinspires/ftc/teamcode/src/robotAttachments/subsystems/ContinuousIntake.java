@@ -210,9 +210,9 @@ public class ContinuousIntake {
     }
 
     /**
-     * @return returns a true or false value of wether or not an item passes the intake distance sensor
+     * @return returns a true or false value of whether or not an item passes the intake distance sensor
      */
-    public boolean itemInIntake() {
+    public boolean itemInBucket() {
         return (this.getSensorDistance() < 9);
     }
 

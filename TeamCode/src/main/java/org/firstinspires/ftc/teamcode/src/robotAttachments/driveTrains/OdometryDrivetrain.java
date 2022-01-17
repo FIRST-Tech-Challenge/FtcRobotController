@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.FieldPoints;
@@ -359,6 +360,69 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             }
 
             strafeAtAngle(odometry_angle, power);
+
+        }
+        stopAll();
+    }
+
+    public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException {
+        final String coordinateString = x + " , " + y;
+        double power, odometry_angle;
+
+        double odometry_x = odometry.returnRelativeXPosition();
+        double odometry_y = odometry.returnRelativeYPosition();
+
+        double currentDistance = distance(odometry_x, odometry_y, x, y);
+        final double initialDistance = currentDistance;
+
+        double longDistanceThreshold = decelerationDistance + accelerationDistance;
+        final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
+        boolean timeOut = false;
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        double posA;
+        double posB;
+        double tooSmallOfDistance = millis / 1000; // this distance is 1 inch for every second of millis
+
+
+        while (currentDistance > tolerance && !timeOut && !isStopRequested() && opModeIsActive()) {
+            timer.reset();
+            posA = distance(odometry_x, odometry_y, x, y);
+            while (timer.milliseconds() < millis) {
+
+                odometry_x = odometry.returnRelativeXPosition(); //odometry x
+                odometry_y = odometry.returnRelativeYPosition(); //odometry y
+                currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
+                odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
+
+
+                if (longDistanceTravel) {
+                    power = this.calculateLongDistancePower(initialDistance, currentDistance);
+                } else {
+                    power = this.calculateShortDistancePower(initialDistance, currentDistance);
+                }
+
+                // if current position does not decrease by a certain amount within a certain time, make timeout true
+
+
+                if (consoleOutput) {
+                    telemetry.addData("Moving to", coordinateString);
+                    telemetry.addData("currentDistance", currentDistance);
+                    telemetry.addData("angle", odometry_angle);
+                    telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
+                    telemetry.addData("X Pos", odometry_x);
+                    telemetry.addData("Y Pos", odometry_y);
+                    telemetry.addData("Power", power);
+                    telemetry.addData("Long Distance Mode = ", longDistanceTravel);
+                    telemetry.update();
+                }
+
+                strafeAtAngle(odometry_angle, power);
+            }
+            posB = distance(odometry_x, odometry_y, x, y);
+
+            if (posB - posA <= tooSmallOfDistance) {
+                timeOut = true;
+            }
 
         }
         stopAll();
