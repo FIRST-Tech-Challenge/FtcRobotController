@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 @Autonomous(name = "TestOfOdometryDriveSystem")
 public class TestOfOdometryDriveSystem extends AutonomousTemplate {
 
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         initAll();
         podServos.lower();
         waitForStart();

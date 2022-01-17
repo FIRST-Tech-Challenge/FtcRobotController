@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 public class ColorTest extends TeleOpTemplate {
     private final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.BLUE;
 
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(defaultColor);
         // this instantiation assumes that the color sensor's name is color_sensor

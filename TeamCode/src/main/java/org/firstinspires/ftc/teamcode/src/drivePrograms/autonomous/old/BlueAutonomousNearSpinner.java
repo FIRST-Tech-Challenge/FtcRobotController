@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 @Disabled
 public class BlueAutonomousNearSpinner extends AutonomousTemplate {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         this.initAll();
         odometry.setPosition(133.5, 112, 180);
         telemetry.addData("Initialization Status: ", "Complete");

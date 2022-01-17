@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 @Autonomous(name = "Linear Slide Auto Test")
 public class LinearSlideAutoTest extends TeleOpTemplate {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         initLinearSlide();
         initDriveTrain();
         telemetry.addData("Initialization Status", "Initialized");

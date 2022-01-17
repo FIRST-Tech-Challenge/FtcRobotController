@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 @TeleOp(name = "LS Test")
 public class LinearSlideTest extends TeleOpTemplate {
 
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         initDriveTrain();
         initLinearSlide();
 

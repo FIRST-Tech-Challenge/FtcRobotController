@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 public class RedAutonomousNearWarehouse extends AutonomousTemplate {
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         this.initAll();
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();

@@ -64,7 +64,7 @@ public class TeamModelObjectDetectionTest extends AutonomousTemplate {
     private TFObjectDetector tfod;
 
     @Override
-    public void runOpMode() {
+    public void opModeMain() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();

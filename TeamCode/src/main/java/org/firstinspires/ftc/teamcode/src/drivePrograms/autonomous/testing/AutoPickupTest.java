@@ -15,7 +15,7 @@ public class AutoPickupTest extends AutonomousTemplate {
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         this.initAll();
         try {
             //leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);

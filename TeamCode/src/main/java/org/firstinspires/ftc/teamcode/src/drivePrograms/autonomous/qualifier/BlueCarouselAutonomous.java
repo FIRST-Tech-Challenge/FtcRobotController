@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         try {
             this.initAll();
         } catch (InterruptedException ignored) {

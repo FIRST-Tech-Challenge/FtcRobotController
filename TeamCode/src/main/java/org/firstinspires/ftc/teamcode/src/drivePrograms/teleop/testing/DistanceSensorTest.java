@@ -17,7 +17,7 @@ public class DistanceSensorTest extends TeleOpTemplate {
     RevBlinkinLedDriver.BlinkinPattern currentColor;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         this.initAll();
 
         leds = hardwareMap.get(RevBlinkinLedDriver.class, "LED");

@@ -15,7 +15,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final boolean wareHousePark = true;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         try {
             this.initAll();
         } catch (Exception e) {

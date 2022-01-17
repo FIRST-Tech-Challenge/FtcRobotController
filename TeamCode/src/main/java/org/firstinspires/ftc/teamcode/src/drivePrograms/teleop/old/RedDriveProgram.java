@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 public class RedDriveProgram extends TeleOpTemplate {
     private static final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.RED;
 
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
 
         this.initAll();
         leds.setPattern(defaultColor);

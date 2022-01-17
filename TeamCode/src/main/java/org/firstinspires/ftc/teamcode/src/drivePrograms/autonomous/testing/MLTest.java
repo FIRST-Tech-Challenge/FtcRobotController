@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 @Autonomous(name = "MLTest")
 public class MLTest extends AutoObjDetectionTemplate {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         this.initAll();
 
         MarkerPosition Pos = MarkerPosition.Right;

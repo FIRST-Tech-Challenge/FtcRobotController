@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
 @Autonomous(name = "Red Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         try {
             this.initAll();
         } catch (Exception e) {

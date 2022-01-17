@@ -32,6 +32,17 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
 
     public static final String IMUName = "imu";
 
+    public abstract void opModeMain() throws InterruptedException;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        try {
+            opModeMain();
+        } catch (InterruptedException ignored) {
+        } catch (Exception e) {
+            throw new InitializationException(MiscUtills.getStackTraceAsString(e));
+        }
+    }
 
     /**
      * Allows the subsystems to look at voltage
