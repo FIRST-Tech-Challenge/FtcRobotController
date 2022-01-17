@@ -36,7 +36,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             telemetry.update();
         }
 
-
+        System.gc();
         waitForStart();
 
         if (opModeIsActive() && !isStopRequested()) {

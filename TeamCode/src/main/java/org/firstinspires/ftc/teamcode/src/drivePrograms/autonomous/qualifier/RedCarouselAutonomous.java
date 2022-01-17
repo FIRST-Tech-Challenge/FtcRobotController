@@ -37,7 +37,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             telemetry.addData("Position", Pos);
             telemetry.update();
         }
-
+        System.gc();
         waitForStart();
 
         if (opModeIsActive() && !isStopRequested()) {

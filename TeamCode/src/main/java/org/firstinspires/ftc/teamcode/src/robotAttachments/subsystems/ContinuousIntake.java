@@ -53,16 +53,14 @@ public class ContinuousIntake {
      * @param motorName            Name of intake motor
      * @param servoName            Name of lifting servo
      * @param colorSensor          name of the color sensor
-     * @param distanceSensor       name of the distance sensor
      * @param sensorDetectionLight true if the light should be on, false if the light should be off
      */
-    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String distanceSensor, String colorSensor, boolean sensorDetectionLight) {
+    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, boolean sensorDetectionLight) {
         intakeMotor = hardwareMap.dcMotor.get(motorName);
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
 
         this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
@@ -103,19 +101,7 @@ public class ContinuousIntake {
      * @param colorSensor          this is a string for the name of the color sensor on the intake
      * @param sensorDetectionLight this is a boolean for turning the color sensor light on(true) or off(false)
      */
-    public ContinuousIntake(HardwareMap hardwareMap, String motorName, String servoName, String colorSensor, boolean sensorDetectionLight) {
-        intakeMotor = hardwareMap.dcMotor.get(motorName);
-        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
-        this.colorSensor.enableLed(sensorDetectionLight);
-
-        itemRelease = hardwareMap.servo.get(servoName);
-
-    }
 
     /**
      * A getter for the isClosed boolean

@@ -42,6 +42,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             telemetry.update();
         }
 
+        System.gc();
         waitForStart();
 
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
