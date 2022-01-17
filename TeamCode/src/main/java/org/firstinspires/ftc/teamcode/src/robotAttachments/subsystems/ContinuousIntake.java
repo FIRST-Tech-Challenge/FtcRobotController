@@ -6,7 +6,6 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -46,10 +45,6 @@ public class ContinuousIntake {
      * The internal Servo Object
      */
     private final Servo itemRelease;
-    /**
-     * the distance sensor on the inside of the intake system, it is used to identify when an object enters the
-     */
-    private DistanceSensor distanceSensor;
 
     /**
      * Initializes from hardware map and names
@@ -68,7 +63,7 @@ public class ContinuousIntake {
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        this.distanceSensor = hardwareMap.get(DistanceSensor.class, distanceSensor);
+
 
         this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
         this.colorSensor.enableLed(sensorDetectionLight);
@@ -225,11 +220,7 @@ public class ContinuousIntake {
      * @return The distance in Inches
      */
     public double getSensorDistance() {
-        if (distanceSensor == null) {
-            return colorSensor.getDistance(DistanceUnit.CM);
-        } else {
-            return distanceSensor.getDistance(DistanceUnit.CM);
-        }
+        return colorSensor.getDistance(DistanceUnit.CM);
     }
 
     /**

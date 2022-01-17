@@ -35,7 +35,7 @@ public class BlueQualifierDriveProgram extends TeleopTemplate {
 
     public void runOpMode() throws InterruptedException {
         this.initAll();
-        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8.5, this::callBack, this::opModeIsActive, this::isStopRequested);
+        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, this::callBack, this::opModeIsActive, this::isStopRequested);
         distanceSensor.start();
         leds.setPattern(normal);
 
