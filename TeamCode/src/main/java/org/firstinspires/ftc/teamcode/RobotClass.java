@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.drawable.GradientDrawable;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -201,6 +199,7 @@ public class RobotClass {
 
     /**
      * Set directions and behaviors of motors, calibrates IMU
+     * Resets encoder for outtake only because we don't want to continuously reset that encoder
      * @throws InterruptedException if robot stopped when IMU is calibrating
      * */
     public void setupRobot() throws InterruptedException{
@@ -216,7 +215,7 @@ public class RobotClass {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //note: Outtake is the only that can seup herebecause we don't want to continuously reset encoders
+        //note: Outtake is the only that can reset encoders here because we don't want to continuously reset encoders
         outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -236,6 +235,12 @@ public class RobotClass {
 
     }
 
+    /**
+     * Sets directions and behaviors of motors, calibrates IMU
+     * Has runToPosition setup for linear slide motor
+     * Resets encoder for outtake only because we don't want to continuously reset that encoder
+     * @throws InterruptedException if robot stopped while IMU is calibrating
+     * */
     public void runToPosSetupRobot() throws InterruptedException{
         //reverse the needed motors?
         //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -271,7 +276,7 @@ public class RobotClass {
     }
     
     /**
-     * Reset motor encoders
+     * Reset motor encoders, except outtake
      */
     public void resetEncoders(){
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -368,15 +373,18 @@ public class RobotClass {
      * @param power power for motors, + is CW, - is CCW
      */
     public void turn(double power){
-        motorFrontLeft.setPower(-power);
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(power);
-        motorBackRight.setPower(power);
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(-power);
+        motorBackRight.setPower(-power);
     }
 
     /**
      * Make precise turn using gyro
-     * Old version
+     * no PID
+     * + is cw, - is ccw
+     * @param degrees
+     * @param power
      * */
     public void gyroTurn(int degrees, double power) throws InterruptedException{
         //restart angle tracking
@@ -418,6 +426,7 @@ public class RobotClass {
     /**
      * Precise turn with gyro and PD tuner (no I)
      * Power is calculated within function
+     * TOBECOMPLETED
      * @param degrees to turn
      * */
     public void pidGyroTurn(int degrees) throws InterruptedException{
@@ -499,8 +508,8 @@ public class RobotClass {
 
     /**
      * Straight Mecanum drive (no turns, allows strafes)
-     * @param leftPower, for frontleft and backright
-     * @param rightPower, for frontright and backleft
+     * @param leftPower, for FL and BR
+     * @param rightPower, for FR and BL
      * */
     public void tankDrive(double leftPower, double rightPower){
         motorFrontLeft.setPower(leftPower);
@@ -511,8 +520,8 @@ public class RobotClass {
 
     /**
      * Straight mecanum drive with correction
-     * @param leftPower for front left and back right
-     * @param rightPower for front right and back left
+     * @param leftPower for FL and BR
+     * @param rightPower for FR and BL
      * @param correction
      * */
     public void correctedTankStrafe(double leftPower, double rightPower, double correction){
@@ -524,6 +533,9 @@ public class RobotClass {
 
     /**
      * Gyro Drive using seconds and power
+     * Used in gyroDriveIn
+     * @param power
+     * @param seconds time in seconds to drive
      * */
     public void gyroDriveSec(double power, double seconds) throws InterruptedException{
         //restart angle tracking
@@ -549,7 +561,7 @@ public class RobotClass {
 
     /**
      * Gyro drive using distance and power
-     * @param in distance in centimeters
+     * @param in distance in inches
      */
     public void gyroDriveIn(double power, double in) throws InterruptedException{
         gyroDriveSec(power, (in*SECONDS_PER_CM)/Math.abs(power));
@@ -560,6 +572,7 @@ public class RobotClass {
      * Straight drive, no angles
      * forwards (+) and backwards (-) only
      * Power is calculated in the function
+     * Todo: Add angles?
      * @param in distance to travel
      */
     public void pidGyroDriveIn(double in) throws InterruptedException{
@@ -598,6 +611,7 @@ public class RobotClass {
 
     /**
      * Drives forward using encoders and gyro (uses gyroStrafe)
+     * Do not use... it uses gyroStrafeEncoder... so just use that more accurate...
      * @param power
      * @param in inches
      * @throws InterruptedException if robot is stopped
@@ -634,7 +648,7 @@ public class RobotClass {
     /**
      * Strafe in any direction using gyro to keep robot facing straight forward
      * @param power power
-     * @param angle direction to strafe, in degrees (0 = forward, 180 = backward)
+     * @param angle direction to strafe, in degrees (0 = forward, 180 = backward)<<may change... 90 should be forward...??
      * @param seconds time to run
      * @throws InterruptedException if the robot is stopped
      */
@@ -669,23 +683,25 @@ public class RobotClass {
         resetAngle();
     }
 
-    /** Drive to wall, straight
-     *
+    /**
+     * Drive to wall. Goes straight backwards
+     * Distance sensor tells when to stop (30 cm)
+     * @param power
+     * @throws InterruptedException
      */
     public void driveToWall(double power) throws InterruptedException{
         resetAngle();
-        //-90
-        double newDirection = (-90) * Math.PI/180 - Math.PI/4;//-3pi/4
+        double newDirection = (-3) * Math.PI/4;//-90 down
         //calculate powers needed using direction
-        double leftPower = Math.cos(newDirection) * power;//-1
-        double rightPower = Math.sin(newDirection) * power;//-1
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
         telemetry.addData("leftPower:", leftPower);
         telemetry.addData("rightPower:", rightPower);
         telemetry.update();
-        Thread.sleep(1000*5);
+        Thread.sleep(1000*5);//get rid of this...
         while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
             double correction = getCorrection();
-            correctedTankStrafe(leftPower, rightPower, correction);//??????????
+            correctedTankStrafe(leftPower, rightPower, correction);
             telemetry.addData("correction", correction);
             telemetry.addData("distance reading", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
@@ -694,8 +710,10 @@ public class RobotClass {
         Thread.sleep(500);
         resetAngle();
     }
+
     /**
      * Strafe in any direction using gyro to keep robot facing forward. Strafes a certain distance
+     * Do not use, use gyroStrafeEncoder
      * */
     public void gyroStrafeIn(double power, double angle, double in) throws InterruptedException{
         gyroStrafeSec(power, angle, (in*SECONDS_PER_CM)/power);
@@ -704,6 +722,7 @@ public class RobotClass {
     /**
      * PID controlled strafe in any direction using gyro to keep robot facing straight forward
      * Power is calculated in the function
+     * wip
      * @param angle direction to strafe, in degrees (0 = forward, 180 = backward)
      * @param in distance to go
      * @throws InterruptedException if the robot is stopped
@@ -823,24 +842,22 @@ public class RobotClass {
         telemetry.addData("current position",dist);
         telemetry.update();
     }
+
     /**
      * Strafe in any direction using encoders.
-     * sorta closed loop...
+     * use this
      * @param power
-     * @param angle Direction to strafe (0 = forward, 180 = backward)
-     * @param in
+     * @param angle Direction to strafe (90 = forward, 0 = right, -90 = backwards, 180 = left)
+     * @param in inches
      * @throws InterruptedException if robot is stopped
      */
     public void gyroStrafeEncoder(double power, double angle, double in) throws InterruptedException{
         double ticks = in * TICKS_PER_IN;
-//90 is up!!! forwards
-        //0 is
         //convert direction (degrees) into radians
-//        double newDirection = angle * Math.PI/180 + Math.PI/4;//3pi/4
-        double newDirection = angle * Math.PI/180 - Math.PI/4;//-3pi/4
+        double newDirection = angle * Math.PI/180 - Math.PI/4;
         //calculate powers needed using direction
-        double leftPower = Math.cos(newDirection) * power;//-1
-        double rightPower = Math.sin(newDirection) * power;//-1
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
 
         resetEncoders();
         resetAngle();
@@ -858,6 +875,7 @@ public class RobotClass {
         resetAngle();
         resetEncoders();
     }
+
     /**
      * Set new gain
      * @param newGain
@@ -874,62 +892,82 @@ public class RobotClass {
         return (motorFrontLeft.getCurrentPosition() / ticksperrev) * DRIVE_WHEEL_CIRCUMFERENCE * 6;
     }
 
+    /**
+     * Converts distance traveled to ticks...
+     * */
     public int distanceToTicks(double in){//CHANGE!!!!
         return (int)((in/DRIVE_WHEEL_CIRCUMFERENCE)*ticksperrev);
     }
 
+    /**
+     * For Autonomous Red
+     * After dumping in shared hub, drive to warehouse
+     * @param goOverBarrier if true, robot will run over barrier. False, will go along side
+     * */
     public void goToWarehouse_Red(boolean goOverBarrier) throws InterruptedException{
         if(!goOverBarrier) {
             //go to warehouse
             gyroTurn(-90, 0.5);
             gyroStrafeEncoder(0.5, 180, 28);//change distance
-            gyroStrafeEncoder(0.5, 90, 56);
-            // driveToWall(0.5);//chnage
-            //option 2: there's a robot in the way, and we need to instead go over the bumps...
+//            gyroStrafeEncoder(0.5, 90, 56);
+             driveToWall(0.5);
         }
-        else{
+        else{//option 2: there's a robot in the way, and we need to instead go over the bumps...
             gyroTurn(90, 0.5);
-            gyroStrafeEncoder(0.5, -90, 56);//???
-            // driveToWall(0.5);
+//            gyroStrafeEncoder(0.5, -90, 56);//???
+            driveToWall(0.5);
         }
     }
-
+    /**
+     * For Autonomous Blue
+     * After dumping in shared hub, drive to warehouse
+     * @param goOverBarrier if true, robot will run over barrier. False, will go along side
+     * */
     public void goToWarehouse_Blue(boolean goOverBarrier) throws InterruptedException{
         if(!goOverBarrier) {
             //go to warehouse
             gyroTurn(-90, 0.5);
             gyroStrafeEncoder(0.5, 0, 28);//change distance
-            gyroStrafeEncoder(0.5, -90, 56);
-//            driveToWall(0.5);
-            //option 2: there's a robot in the way, and we need to instead go over the bumps...
+//            gyroStrafeEncoder(0.5, -90, 56);
+            driveToWall(0.5);
+
         }
-        else{
+        else{ //option 2: there's a robot in the way, and we need to instead go over the bumps...
             gyroTurn(-90, 0.5);
-            gyroStrafeEncoder(0.5, -90, 56);//???
-//            driveToWall(0.5);
+//            gyroStrafeEncoder(0.5, -90, 56);//???
+            driveToWall(0.5);
         }
     }
 
+    /**
+     * For Autonomous Red
+     * After dumping in shared hub, drive to depot
+     * */
     public void goToDepot_Red() throws InterruptedException{
         gyroTurn(90,0.5);
         gyroStrafeEncoder(0.5,90,54);//54
-        // driveToWall(0.5);//other option
+        // driveToWall(0.5);//other option... idk
         gyroStrafeEncoder(0.5,180,12.7);
     }
 
+    /**
+     * For Autonomous Blue
+     * After dumping in shared hub, drive to depot
+     * */
     public void goToDepot_Blue() throws InterruptedException{
         gyroTurn(90,0.5);
         gyroStrafeEncoder(0.5,90,54);//54
 //        robot.driveToWall(0.5);//other option
         gyroStrafeEncoder(0.5,0,12.7);
     }
-    //robot components
+
+    //robot component motion
     /**
      * Set intake power
      * @param power, + to intake, - to undo intake, 0 to stop
      */
     public void intake(double power) {
-        intake.setPower(power); //changed power to 1.00 from "power"
+        intake.setPower(power);
     }
 
     /**
@@ -937,15 +975,24 @@ public class RobotClass {
      * @param power, + to drop duck, 0 to stop
      * */
     public void duck(double power){
-        duck.setPower(power); //changed power to 1.00 from "power"
+        duck.setPower(power);
     }
 
+    /**
+     * Turns on the duck servo, waits 4 seconds, turns off.
+     * Automated duck dispensor
+     * @param power speed to go at
+     * */
     public void doduck(double power) throws InterruptedException{
         duck(power);
         Thread.sleep(4000);
         duck(0);
     }
 
+    /**
+     * Dumps the bucket, and resumes original position
+     * Automated element dumper
+     * */
     public void dobucket() throws InterruptedException{
         bucket.setPosition(1);
         Thread.sleep(1000);
@@ -953,9 +1000,13 @@ public class RobotClass {
         bucket.setPosition(0.4);
         Thread.sleep(500);
     }
+
     /**
-     * Move arm to position...?
-     *
+     * Moves linear slides to desired level (0,1,2,3)
+     * uses encoder position and while loop
+     * Good for teleop, does NOT use run to position
+     * @param power
+     * @param level with 0 being retracted, 1 being bottom, 2 being middle, 3 being higher
      */
     public void moveSlides(int level, double power) throws InterruptedException{
         int targetTicks;
@@ -987,6 +1038,13 @@ public class RobotClass {
         }
     }
 
+    /**
+     * Moves linear slides to desired level (0,1,2,3)
+     * uses run to position.
+     * Would be good for teleop, but can't do manual movements now.
+     * @param power
+     * @param level with 0 being retracted, 1 being bottom, 2 being middle, 3 being higher
+     */
     public void rTPMoveSlides (int level, double power) throws InterruptedException {
         int targetTicks;
         switch (level) {
@@ -1005,9 +1063,18 @@ public class RobotClass {
             default:
                 targetTicks = 30;
         }
-        motorRunToPos(power, targetTicks);
+        moveSlidesRunToPos(power, targetTicks);
         
     }
+
+    /**
+     * Moves linear slides to desired level (0,1,2,3), drives forward, dumps element, backs up and retracts slides
+     * uses moveSlides
+     * Good for autonomous, does NOT use run to position
+     * @param power
+     * @param level with 0 being retracted, 1 being bottom, 2 being middle, 3 being higher
+     * @param dist distance to travel to reach hub
+     */
     public void autoDrop(int level, double power, double dist) throws InterruptedException{
         bucket.setPosition(0.7);
         moveSlides(level, power);
@@ -1017,7 +1084,14 @@ public class RobotClass {
         moveSlides(0,power);
     }
 
-    public void motorRunToPos (double power, double dist) {
+    /**
+     * Moves linear slides to dist
+     * runtopos
+     * sets position, moves outtake.
+     * @param power
+     * @param dist ticks the slide needs to move
+     */
+    public void moveSlidesRunToPos(double power, double dist) {
         outtake.setPower(power);
         outtake.setTargetPosition((int)dist);
                 
@@ -1030,6 +1104,14 @@ public class RobotClass {
         outtake.setPower(0);
     }
 
+    /**
+     * Moves linear slides to desired level (0,1,2,3), drives forward, dumps element, backs up and retracts slides
+     * uses motorRunToPos
+     * Good for autonomous, uses run to position
+     * @param power
+     * @param level with 0 being retracted, 1 being bottom, 2 being middle, 3 being higher
+     * @param dist distance to travel to reach hub
+     */
     public void runToPosDrop (double power, double dist, int level) throws InterruptedException {
         bucket.setPosition(0.7);
         int targetTicks;
@@ -1049,11 +1131,11 @@ public class RobotClass {
             default:
                 targetTicks = 30;
         }
-        motorRunToPos(power, targetTicks);
+        moveSlidesRunToPos(power, targetTicks);
         gyroStrafeEncoder(0.5, 90, dist);
         dobucket();
         gyroStrafeEncoder(0.5, -90, 6);
-        motorRunToPos(power, 100);
+        moveSlidesRunToPos(power, 100);
     }
 
 
