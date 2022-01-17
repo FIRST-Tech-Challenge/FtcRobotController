@@ -40,6 +40,7 @@ public class test extends LinearOpMode {
         final GamepadEx gamepadEx = new GamepadEx(gamepad1);
         final AutoLift lift = new AutoLift(eventThread, hardwareMap);
         waitForStart();
+        eventThread.start();
         lift.setPosition(AutoLift.Positions.TOP);
         carousel.on();
         while (opModeIsActive()) {

@@ -7,11 +7,13 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class AutoLift {
     // 5 1/4 inch from back of robot to rim
@@ -49,6 +51,7 @@ public class AutoLift {
     protected Positions lastPosition = position;
     protected MovementStates state = MovementStates.NONE;
     protected AutoGrabber grabber;
+    private final ElapsedTime timer = new ElapsedTime();
     // fix this later
     /**
      * @param eventThread local eventThread instance
@@ -109,22 +112,21 @@ public class AutoLift {
                 break;
             case LIFT_MOVEMENT:
                 if (!liftWaiting) {
-                    if (Math.abs(liftMotor.getCurrentPosition() - position.motorPos) <= 10) {
+                    if (Math.abs(liftMotor.getCurrentPosition() - position.motorPos) <= 18) {
                         armServo.setPosition(position.armPos);
                         if (!position.dumper) state = MovementStates.NONE;
                         else {
-                            dumpWaiting = true;
                             if (position == Positions.TSE && Objects.nonNull(grabber)) {
                                 grabber.open();
                             }
-                            eventThread.addEvent(new TimedEvent(() -> dumpWaiting = false, position == Positions.TSE ? 800 : 1400));
+                            timer.reset();
                             state = MovementStates.SERVO_MOVEMENT;
                         }
                     }
                 }
                 break;
             case SERVO_MOVEMENT:
-                if (!dumpWaiting) {
+                if (timer.time(TimeUnit.MILLISECONDS) >= (position == Positions.TSE ? 800 : 1400)) {
                     position = Positions.INTAKING;
                     lastPosition = null;
                     return;
