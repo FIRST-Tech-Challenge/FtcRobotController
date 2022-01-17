@@ -15,12 +15,12 @@ public class CVAuto extends LinearOpMode {
     public void runOpMode(){
         telemetry.addLine("Starting");
         telemetry.update();
-        TseDetector webcam = new TseDetector(hardwareMap, "webcam", true);
+        TseDetector webcam = new TseDetector(hardwareMap, "webcam", true, zeroOrOneRedorBlue == 0);
         waitForStart();
         telemetry.addLine("Running");
         telemetry.update();
         while (opModeIsActive()) {
-            telemetry.addData("webcamOutput", webcam.run(zeroOrOneRedorBlue == 0));
+            telemetry.addData("webcamOutput", webcam.run());
             telemetry.update();
         }
         eventThread.interrupt();

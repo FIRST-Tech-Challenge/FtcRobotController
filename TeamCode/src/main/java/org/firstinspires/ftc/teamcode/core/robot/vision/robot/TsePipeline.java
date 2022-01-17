@@ -35,6 +35,24 @@ top width = 0.08
  */
 @Config
 public class TsePipeline extends OpenCvPipeline {
+    public TsePipeline(boolean isRed) {
+        if (isRed) {
+            bottomRectHeightPercentage = 0.2;
+            bottomRectWidthPercentage = 0.805;
+            middleRectHeightPercentage = 0.3;
+            middleRectWidthPercentage = 0.534;
+            topRectHeightPercentage = 0.45;
+            topRectWidthPercentage = 0.195;
+        } else {
+            bottomRectHeightPercentage = 0.458;
+            bottomRectWidthPercentage = 0.785;
+            middleRectHeightPercentage = 0.37;
+            middleRectWidthPercentage = 0.41;
+            topRectHeightPercentage = 0.3;
+            topRectWidthPercentage = 0.13;
+        }
+    }
+
     private final Scalar red = new Scalar(255,0,0);
     private final Scalar yellow = new Scalar(255,255,0);
     private final Mat matYCrCb = new Mat();
@@ -67,30 +85,13 @@ public class TsePipeline extends OpenCvPipeline {
     private Pair<Integer, Integer> greatestConfidence = new Pair<>(0, 0);
     private int frameCount = 0;
     private boolean running = false;
-    public void startPipeline(boolean isRed) {
+    public void startPipeline() {
         different = 0;
         lastFrameValue = 0;
         isComplete = false;
         checks = 0;
         frameCount = 0;
         running = true;
-
-        if (isRed) {
-            bottomRectHeightPercentage = 0.2;
-            bottomRectWidthPercentage = 0.805;
-            middleRectHeightPercentage = 0.3;
-            middleRectWidthPercentage = 0.534;
-            topRectHeightPercentage = 0.45;
-            topRectWidthPercentage = 0.195;
-        } else {
-            bottomRectHeightPercentage = 0.458;
-            bottomRectWidthPercentage = 0.785;
-            middleRectHeightPercentage = 0.37;
-            middleRectWidthPercentage = 0.41;
-            topRectHeightPercentage = 0.3;
-            topRectWidthPercentage = 0.13;
-        }
-
     }
     public void stopPipeline() {
         running = false;

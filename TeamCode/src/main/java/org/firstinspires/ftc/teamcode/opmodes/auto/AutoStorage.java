@@ -33,7 +33,7 @@ public class AutoStorage extends LinearOpMode {
         AutoCarousel carousel = new AutoCarousel(hardwareMap);
         AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
-        TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
+        TseDetector detector = new TseDetector(hardwareMap, "webcam", true, isRed);
         final int[] height = {-1};
 
         final Pose2d initial = new Pose2d(-47, multiplier * (70 - inchesToCoordinate(9)),
@@ -73,7 +73,7 @@ public class AutoStorage extends LinearOpMode {
         });
 
         waitForStart();
-        height[0] = detector.run(isRed);
+        height[0] = detector.run();
 
         thread.start();
         eventThread.start();

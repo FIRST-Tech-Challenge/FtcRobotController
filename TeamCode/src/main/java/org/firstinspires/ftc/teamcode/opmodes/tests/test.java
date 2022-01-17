@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.opmodes.auto.CVAuto;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 @TeleOp
@@ -28,7 +29,7 @@ public class test extends LinearOpMode {
         final Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         final Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "tapeMeasure"));
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
-        TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
+        TseDetector detector = new TseDetector(hardwareMap, "webcam", true, CVAuto.zeroOrOneRedorBlue == 0);
         final Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
         final DcMotor one = hardwareMap.get(DcMotorEx.class, "front left wheel");
         final DcMotor two = hardwareMap.get(DcMotorEx.class, "front right wheel");

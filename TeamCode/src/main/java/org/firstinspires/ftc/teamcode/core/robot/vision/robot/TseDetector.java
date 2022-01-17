@@ -18,7 +18,7 @@ public class TseDetector {
     private final TsePipeline pipeline;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
-    public TseDetector(HardwareMap hMap, String webcamName, boolean debug) {
+    public TseDetector(HardwareMap hMap, String webcamName, boolean debug, boolean isRed) {
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
         if (debug) {
@@ -32,7 +32,7 @@ public class TseDetector {
                     .createWebcam(hardwareMap.get(WebcamName.class, webcamName));
         }
 
-        camera.setPipeline(pipeline = new TsePipeline());
+        camera.setPipeline(pipeline = new TsePipeline(isRed));
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -55,8 +55,8 @@ public class TseDetector {
      *
      * @return integer 1 - 3, corresponds to barcode slots left to right
      */
-    public int run(boolean isRed) {
-        pipeline.startPipeline(isRed);
+    public int run() {
+        pipeline.startPipeline();
         Pair<Boolean, Integer> result = pipeline.differentSpot();
         while (!result.first) {
             result = pipeline.differentSpot();

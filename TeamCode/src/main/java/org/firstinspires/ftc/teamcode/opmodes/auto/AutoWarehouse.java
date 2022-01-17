@@ -23,7 +23,7 @@ public class AutoWarehouse extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        TseDetector detector = new TseDetector(hardwareMap, "webcam", true);
+        TseDetector detector = new TseDetector(hardwareMap, "webcam", true, isRed);
         final int[] height = {-1};
         double nextToWall = 70 - inchesToCoordinate(5.8D);
 
@@ -76,7 +76,7 @@ public class AutoWarehouse extends LinearOpMode {
         });
 
         waitForStart();
-        height[0] = detector.run(isRed);
+        height[0] = detector.run();
 
         thread.start();
 
