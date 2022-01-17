@@ -131,8 +131,6 @@ public class AutoLift {
                     return;
                 }
                 break;
-            case NONE:
-                armServo.setPosition(Objects.requireNonNull(position).armPos);
         }
         lastPosition = position;
     }
