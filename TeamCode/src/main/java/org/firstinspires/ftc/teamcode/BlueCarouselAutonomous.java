@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.QualifierAutonomous;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,27 +17,27 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
-public class RedCarouselAutonomous extends LinearOpMode {
+public class BlueCarouselAutonomous extends LinearOpMode {
 
   private DcMotor frontLeft;
   private DcMotor frontRight;
   private DcMotor backLeft;
   private DcMotor backRight;
-
+  
   private DcMotor bucket;
   private DcMotor bucketTurner;
   private DcMotor linearSlide;
   private DcMotor carouselTurner;
-
+  
   private Servo Marker;
-
+  
   private DistanceSensor FrontRightDistance;
   private DistanceSensor FrontLeftDistance;
   private DistanceSensor BackRightDistance;
   private DistanceSensor BackLeftDistance;
   private DistanceSensor CarouselDistance;
   private DistanceSensor FrontDistance;
-
+  
   private ColorSensor FrontColor;
   private ColorSensor BackColor;
   
@@ -64,7 +64,8 @@ public class RedCarouselAutonomous extends LinearOpMode {
   int bucketTurnerlevel2 = -70;
   int bucketTurnerlevel3 = -120;
 
-  int shippingHubDistance = 1500;
+  int shippingHubDistance = 1100;
+
 
   public void runOpMode() {
     
@@ -87,10 +88,8 @@ public class RedCarouselAutonomous extends LinearOpMode {
       double pval = 0.5D;
       
       objectDetection();
-      strafeToShippingHub(0.75);
+      strafeToShippingHub(0.5);
       placeFreightOnShippingHub();
-      
-      //getSensorValues();
       
       //strafeToCarousel(0.75D);
       
@@ -98,10 +97,7 @@ public class RedCarouselAutonomous extends LinearOpMode {
       while (opModeIsActive()) {
       telemetry.addData("bucket position: ", bucketTurner.getCurrentPosition());
       telemetry.addData("linear position: ", linearSlide.getCurrentPosition());
-      telemetry.addData("level", level);
       telemetry.update();
-      
-      
       }
       */
       
@@ -121,16 +117,10 @@ public class RedCarouselAutonomous extends LinearOpMode {
     backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
     backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     
-    resetEncoders();
-    
     frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    
-    
-    
-    
 
     bucket = (DcMotor)hardwareMap.get(DcMotor.class, "Bucket");
     bucketTurner = (DcMotor)hardwareMap.get(DcMotor.class, "BucketTurner");
@@ -139,9 +129,7 @@ public class RedCarouselAutonomous extends LinearOpMode {
     
     linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     bucketTurner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    
 
-    
     FrontRightDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "FrontRightDistance");
     FrontLeftDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "FrontLeftDistance");
     BackRightDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "BackRightDistance");
@@ -162,7 +150,9 @@ public class RedCarouselAutonomous extends LinearOpMode {
     frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    
+
+    resetEncoders();
+
     if (initVuforia() == 1)
       return 1; 
     initTfod();
@@ -292,15 +282,15 @@ public class RedCarouselAutonomous extends LinearOpMode {
             leftVal = recognition.getLeft();
           } 
           if (leftVal <= xPosMarker && objectsRecognized == 1) {
-            level = 2;
+            level = 3;
             telemetry.addData("Level", Integer.valueOf(level));
             telemetry.update();
           } else if (leftVal >= xPosMarker && objectsRecognized == 1) {
-            level = 1;
+            level = 2;
             telemetry.addData("Level", Integer.valueOf(level));
             telemetry.update();
           } else if (objectsRecognized == 0) {
-            level = 3;
+            level = 1;
             telemetry.addData("Level", Integer.valueOf(level));
             telemetry.update();
           } 
@@ -310,21 +300,107 @@ public class RedCarouselAutonomous extends LinearOpMode {
   }
   
   private void strafeToCarousel(double pval) {
+
     frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    frontRight.setPower(pval);
-    backRight.setPower(pval* -1.0);
-    frontLeft.setPower(pval * -1.0);
-    backLeft.setPower(pval);
-    while (BackRightDistance.getDistance(DistanceUnit.INCH) >= 20.0D)
+
+    frontRight.setPower(pval * -1.0D);
+    backRight.setPower(pval);
+    frontLeft.setPower(pval);
+    backLeft.setPower(pval * -1.0D);
+
+    while (CarouselDistance.getDistance(DistanceUnit.INCH) >= 15.0D)
+      idle();
+
+    frontRight.setPower(0.0D);
+    backRight.setPower(0.0D);
+    frontLeft.setPower(0.0D);
+    backLeft.setPower(0.0D);
+
+    frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    moveRobotForwardEncoders(0.75D, 200);
+
+    frontRight.setPower(0.0D);
+    backRight.setPower(0.0D);
+    frontLeft.setPower(0.0D);
+    backLeft.setPower(0.0D);
+
+    resetEncoders();
+
+    frontRight.setTargetPosition(750);
+    backRight.setTargetPosition(750);
+    frontLeft.setTargetPosition(-750);
+    backLeft.setTargetPosition(-750);
+
+    frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    telemetry.addData("Motor Status: ", "Running");
+    telemetry.update();
+    frontRight.setPower(1.0D);
+    backRight.setPower(1.0D);
+    frontLeft.setPower(-1.0D);
+    backLeft.setPower(-1.0D);
+    while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy())
+      idle(); 
+    frontLeft.setPower(0.0D);
+    backLeft.setPower(0.0D);
+    frontRight.setPower(0.0D);
+    backRight.setPower(0.0D);
+    strafeRobotRightEncoders(0.5D, 300);
+    carouselTurner.setPower(1.0D);
+    sleep(3500L);
+    carouselTurner.setPower(0.0D);
+    strafeRobotLeftEncoders(0.5D, 200);
+
+    resetEncoders();
+
+    frontRight.setTargetPosition(-750);
+    backRight.setTargetPosition(-750);
+    frontLeft.setTargetPosition(750);
+    backLeft.setTargetPosition(750);
+    frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    telemetry.addData("Motor Status: ", "Running");
+    telemetry.update();
+    frontRight.setPower(-1.0D);
+    backRight.setPower(-1.0D);
+    frontLeft.setPower(1.0D);
+    backLeft.setPower(1.0D);
+    while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy())
+      idle(); 
+    frontLeft.setPower(0.0D);
+    backLeft.setPower(0.0D);
+    frontRight.setPower(0.0D);
+    backRight.setPower(0.0D);
+    frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    frontRight.setPower(-0.5D);
+    backRight.setPower(0.5D);
+    frontLeft.setPower(0.5D);
+    backLeft.setPower(-0.5D);
+    while (BackLeftDistance.getDistance(DistanceUnit.INCH) >= 5.0D || FrontLeftDistance.getDistance(DistanceUnit.INCH) >= 5.0D)
       idle(); 
     frontRight.setPower(0.0D);
     backRight.setPower(0.0D);
     frontLeft.setPower(0.0D);
     backLeft.setPower(0.0D);
-    
+    frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     frontRight.setPower(0.25D);
     backRight.setPower(0.25D);
     frontLeft.setPower(0.25D);
@@ -422,6 +498,7 @@ public class RedCarouselAutonomous extends LinearOpMode {
   }
   
   private void strafeRobotLeftEncoders(double pval, int enCount) {
+
     resetEncoders();
 
     frontRight.setTargetPosition(enCount);
@@ -618,20 +695,20 @@ public class RedCarouselAutonomous extends LinearOpMode {
 
     resetEncoders();
 
-    frontRight.setTargetPosition(shippingHubDistance * -1);
-    backRight.setTargetPosition(shippingHubDistance);
-    frontLeft.setTargetPosition(shippingHubDistance);
-    backLeft.setTargetPosition(shippingHubDistance * -1);
+    frontRight.setTargetPosition(shippingHubDistance);
+    backRight.setTargetPosition(shippingHubDistance * -1);
+    frontLeft.setTargetPosition(shippingHubDistance * -1);
+    backLeft.setTargetPosition(shippingHubDistance);
 
     frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    frontRight.setPower(pval * -1);
-    backRight.setPower(pval);
-    frontLeft.setPower(pval);
-    backLeft.setPower(pval * -1);
+    frontRight.setPower(pval);
+    backRight.setPower(pval * -1);
+    frontLeft.setPower(pval * -1);
+    backLeft.setPower(pval);
 
     long curTime = System.currentTimeMillis();
     int timeRunning = 2000;
@@ -672,12 +749,17 @@ public class RedCarouselAutonomous extends LinearOpMode {
   
   private void placeFreightOnShippingHub() {
     if (level == 3) {
+
       telemetry.addData("Placing Freight on Level 3: ", "In Progress");
       telemetry.update();
+
       releaseItemLevel3();
+
     } else if (level == 2) {
+
       telemetry.addData("Placing Freight on Level 2: ", "In Progress");
       telemetry.update();
+
       releaseItemLevel2();
     } else if (level == 1) {
       telemetry.addData("Placing Freight on Level 1: ", "In Progress");
@@ -705,8 +787,5 @@ public class RedCarouselAutonomous extends LinearOpMode {
     linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
   }
-
-
-
 }
 

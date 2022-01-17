@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.QualifierAutonomous;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
-public class RedWarehouseAutonomous extends LinearOpMode {
+public class BlueWarehouseAutonomous extends LinearOpMode {
     private DcMotor frontLeft;
 
     private DcMotor frontRight;
@@ -75,7 +75,6 @@ public class RedWarehouseAutonomous extends LinearOpMode {
     int bucketTurnerlevel2 = -70;
     int bucketTurnerlevel3 = -120;
 
-
     public void runOpMode() {
 
         if (initializeRobot() == 1) {
@@ -100,13 +99,18 @@ public class RedWarehouseAutonomous extends LinearOpMode {
             strafeToShippingHub();
             placeFreightOnShippingHub();
 
+            //getSensorValues();
+
             //strafeToCarousel(0.75D);
 
       /*
       while (opModeIsActive()) {
       telemetry.addData("bucket position: ", bucketTurner.getCurrentPosition());
       telemetry.addData("linear position: ", linearSlide.getCurrentPosition());
+      telemetry.addData("level", level);
       telemetry.update();
+
+
       }
       */
 
@@ -126,10 +130,16 @@ public class RedWarehouseAutonomous extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        resetEncoders();
+
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+
 
         bucket = (DcMotor)hardwareMap.get(DcMotor.class, "Bucket");
         bucketTurner = (DcMotor)hardwareMap.get(DcMotor.class, "BucketTurner");
@@ -138,6 +148,8 @@ public class RedWarehouseAutonomous extends LinearOpMode {
 
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bucketTurner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
         FrontRightDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "FrontRightDistance");
         FrontLeftDistance = (DistanceSensor)hardwareMap.get(DistanceSensor.class, "FrontLeftDistance");
@@ -159,8 +171,6 @@ public class RedWarehouseAutonomous extends LinearOpMode {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        resetEncoders();
 
         if (initVuforia() == 1)
             return 1;
@@ -291,15 +301,15 @@ public class RedWarehouseAutonomous extends LinearOpMode {
                         leftVal = recognition.getLeft();
                     }
                     if (leftVal <= xPosMarker && objectsRecognized == 1) {
-                        level = 3;
-                        telemetry.addData("Level", Integer.valueOf(level));
-                        telemetry.update();
-                    } else if (leftVal >= xPosMarker && objectsRecognized == 1) {
                         level = 2;
                         telemetry.addData("Level", Integer.valueOf(level));
                         telemetry.update();
-                    } else if (objectsRecognized == 0) {
+                    } else if (leftVal >= xPosMarker && objectsRecognized == 1) {
                         level = 1;
+                        telemetry.addData("Level", Integer.valueOf(level));
+                        telemetry.update();
+                    } else if (objectsRecognized == 0) {
+                        level = 3;
                         telemetry.addData("Level", Integer.valueOf(level));
                         telemetry.update();
                     }
@@ -309,107 +319,21 @@ public class RedWarehouseAutonomous extends LinearOpMode {
     }
 
     private void strafeToCarousel(double pval) {
-
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        frontRight.setPower(pval * -1.0D);
-        backRight.setPower(pval);
-        frontLeft.setPower(pval);
-        backLeft.setPower(pval * -1.0D);
-
-        while (CarouselDistance.getDistance(DistanceUnit.INCH) >= 15.0D)
-            idle();
-
-        frontRight.setPower(0.0D);
-        backRight.setPower(0.0D);
-        frontLeft.setPower(0.0D);
-        backLeft.setPower(0.0D);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        moveRobotForwardEncoders(0.75D, 200);
-
-        frontRight.setPower(0.0D);
-        backRight.setPower(0.0D);
-        frontLeft.setPower(0.0D);
-        backLeft.setPower(0.0D);
-
-        resetEncoders();
-
-        frontRight.setTargetPosition(750);
-        backRight.setTargetPosition(750);
-        frontLeft.setTargetPosition(-750);
-        backLeft.setTargetPosition(-750);
-
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        telemetry.addData("Motor Status: ", "Running");
-        telemetry.update();
-        frontRight.setPower(1.0D);
-        backRight.setPower(1.0D);
-        frontLeft.setPower(-1.0D);
-        backLeft.setPower(-1.0D);
-        while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy())
-            idle();
-        frontLeft.setPower(0.0D);
-        backLeft.setPower(0.0D);
-        frontRight.setPower(0.0D);
-        backRight.setPower(0.0D);
-        strafeRobotRightEncoders(0.5D, 300);
-        carouselTurner.setPower(1.0D);
-        sleep(3500L);
-        carouselTurner.setPower(0.0D);
-        strafeRobotLeftEncoders(0.5D, 200);
-
-        resetEncoders();
-
-        frontRight.setTargetPosition(-750);
-        backRight.setTargetPosition(-750);
-        frontLeft.setTargetPosition(750);
-        backLeft.setTargetPosition(750);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.addData("Motor Status: ", "Running");
-        telemetry.update();
-        frontRight.setPower(-1.0D);
-        backRight.setPower(-1.0D);
-        frontLeft.setPower(1.0D);
-        backLeft.setPower(1.0D);
-        while (frontRight.isBusy() || frontLeft.isBusy() || backLeft.isBusy() || backRight.isBusy())
-            idle();
-        frontLeft.setPower(0.0D);
-        backLeft.setPower(0.0D);
-        frontRight.setPower(0.0D);
-        backRight.setPower(0.0D);
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setPower(-0.5D);
-        backRight.setPower(0.5D);
-        frontLeft.setPower(0.5D);
-        backLeft.setPower(-0.5D);
-        while (BackLeftDistance.getDistance(DistanceUnit.INCH) >= 5.0D || FrontLeftDistance.getDistance(DistanceUnit.INCH) >= 5.0D)
+        frontRight.setPower(pval);
+        backRight.setPower(pval* -1.0);
+        frontLeft.setPower(pval * -1.0);
+        backLeft.setPower(pval);
+        while (BackRightDistance.getDistance(DistanceUnit.INCH) >= 20.0D)
             idle();
         frontRight.setPower(0.0D);
         backRight.setPower(0.0D);
         frontLeft.setPower(0.0D);
         backLeft.setPower(0.0D);
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         frontRight.setPower(0.25D);
         backRight.setPower(0.25D);
         frontLeft.setPower(0.25D);
@@ -507,7 +431,6 @@ public class RedWarehouseAutonomous extends LinearOpMode {
     }
 
     private void strafeRobotLeftEncoders(double pval, int enCount) {
-
         resetEncoders();
 
         frontRight.setTargetPosition(enCount);
@@ -704,18 +627,18 @@ public class RedWarehouseAutonomous extends LinearOpMode {
 
         resetEncoders();
 
-        frontRight.setTargetPosition(1500);
-        backRight.setTargetPosition(-1500);
-        frontLeft.setTargetPosition(-1500);
-        backLeft.setTargetPosition(1500);
+        frontRight.setTargetPosition(-1500);
+        backRight.setTargetPosition(1500);
+        frontLeft.setTargetPosition(1500);
+        backLeft.setTargetPosition(-1500);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setPower(0.75D);
-        backRight.setPower(-0.75D);
-        frontLeft.setPower(-0.75D);
-        backLeft.setPower(0.75D);
+        frontRight.setPower(-0.75D);
+        backRight.setPower(0.75D);
+        frontLeft.setPower(0.75D);
+        backLeft.setPower(-0.75D);
         long curTime = System.currentTimeMillis();
         int timeRunning = 2000;
         long desiredTime = curTime + timeRunning;
@@ -808,5 +731,6 @@ public class RedWarehouseAutonomous extends LinearOpMode {
 
 
     }
+
 }
 

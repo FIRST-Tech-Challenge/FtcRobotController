@@ -27,17 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @TeleOp
 public class PIDFControl extends LinearOpMode {
@@ -122,8 +118,8 @@ public class PIDFControl extends LinearOpMode {
 	 * Initialize the mecanum drive with PID.
 	 */
 	public void initializeRobot() {
-		// Get the motors
 
+		// Get the motors
 		frontLeft = hardwareMap.get(DcMotorEx.class,"FrontLeft");
 		frontRight = hardwareMap.get(DcMotorEx.class,"FrontRight");
 		backLeft = hardwareMap.get(DcMotorEx.class,"BackLeft");
@@ -135,19 +131,25 @@ public class PIDFControl extends LinearOpMode {
 		backLeft.setDirection(DcMotor.Direction.FORWARD) ;
 		backRight.setDirection(DcMotor.Direction.REVERSE) ;
 
+		//Run using encoders
+		frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 		// Stop and reset encoders
 		frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
 		frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
 		backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
 		backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
-/*
+
 		// Optional if you want to compare initial PIDF coefficients; these are restored to factory-set on power-cycle
 		// Get the PIDF coefficients for the RUN_USING_ENCODER RunMode
         PIDFCoefficients frontLeftPidfOrig = frontLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients frontRightPidfOrig = frontRight.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients backLeftPidfOrig = backLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         PIDFCoefficients backRightPidfOrig = backRight.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-
+/*
 		// USE THIS TO CUSTOM TUNE YOUR PID COEFFICIENTS DEFINED ABOVE
 		// Change coefficients using methods included with DcMotorEx class
 		PIDFCoefficients frontLeftPidfNew = new PIDFCoefficients(MecanumDrive.frontLeft_kP, MecanumDrive.frontLeft_kI, MecanumDrive.frontLeft_kD, MecanumDrive.frontLeft_kF);
@@ -191,7 +193,7 @@ public class PIDFControl extends LinearOpMode {
 
 			frontLeftVelocity = 1.0;
 
-		} else if (frontLeftVelocity < 1.0) {
+		} else if (frontLeftVelocity < -1.0) {
 
 			frontLeftVelocity = -1.0;
 
@@ -201,7 +203,7 @@ public class PIDFControl extends LinearOpMode {
 
 			frontRightVelocity = 1.0;
 
-		} else if (frontRightVelocity < 1.0) {
+		} else if (frontRightVelocity < -1.0) {
 
 			frontRightVelocity = -1.0;
 
@@ -211,7 +213,7 @@ public class PIDFControl extends LinearOpMode {
 
 			backLeftVelocity = 1.0;
 
-		} else if (backLeftVelocity < 1.0) {
+		} else if (backLeftVelocity < -1.0) {
 
 			backLeftVelocity = -1.0;
 
@@ -221,7 +223,7 @@ public class PIDFControl extends LinearOpMode {
 
 			backRightVelocity = 1.0;
 
-		} else if (backRightVelocity < 1.0) {
+		} else if (backRightVelocity < -1.0) {
 
 			backRightVelocity = -1.0;
 
