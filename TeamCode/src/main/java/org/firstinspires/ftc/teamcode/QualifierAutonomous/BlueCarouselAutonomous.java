@@ -18,38 +18,27 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
 public class BlueCarouselAutonomous extends LinearOpMode {
+
   private DcMotor frontLeft;
-  
   private DcMotor frontRight;
-  
   private DcMotor backLeft;
-  
   private DcMotor backRight;
   
   private DcMotor bucket;
-  
   private DcMotor bucketTurner;
-  
   private DcMotor linearSlide;
-  
   private DcMotor carouselTurner;
   
   private Servo Marker;
   
   private DistanceSensor FrontRightDistance;
-  
   private DistanceSensor FrontLeftDistance;
-  
   private DistanceSensor BackRightDistance;
-  
   private DistanceSensor BackLeftDistance;
-  
   private DistanceSensor CarouselDistance;
-  
   private DistanceSensor FrontDistance;
   
   private ColorSensor FrontColor;
-  
   private ColorSensor BackColor;
   
   private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/10820model.tflite";
@@ -75,6 +64,8 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   int bucketTurnerlevel2 = -70;
   int bucketTurnerlevel3 = -120;
 
+  int shippingHubDistance = 1500;
+
 
   public void runOpMode() {
     
@@ -97,7 +88,7 @@ public class BlueCarouselAutonomous extends LinearOpMode {
       double pval = 0.5D;
       
       objectDetection();
-      strafeToShippingHub();
+      strafeToShippingHub(0.75);
       placeFreightOnShippingHub();
       
       //strafeToCarousel(0.75D);
@@ -700,27 +691,31 @@ public class BlueCarouselAutonomous extends LinearOpMode {
     backLeft.setPower(0.0D);
   }
   
-  private void strafeToShippingHub() {
+  private void strafeToShippingHub(double pval) {
 
     resetEncoders();
 
-    frontRight.setTargetPosition(1500);
-    backRight.setTargetPosition(-1500);
-    frontLeft.setTargetPosition(-1500);
-    backLeft.setTargetPosition(1500);
+    frontRight.setTargetPosition(shippingHubDistance);
+    backRight.setTargetPosition(shippingHubDistance * -1);
+    frontLeft.setTargetPosition(shippingHubDistance * -1);
+    backLeft.setTargetPosition(shippingHubDistance);
+
     frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    frontRight.setPower(0.75D);
-    backRight.setPower(-0.75D);
-    frontLeft.setPower(-0.75D);
-    backLeft.setPower(0.75D);
+
+    frontRight.setPower(pval);
+    backRight.setPower(pval * -1);
+    frontLeft.setPower(pval * -1);
+    backLeft.setPower(pval);
+
     long curTime = System.currentTimeMillis();
     int timeRunning = 2000;
     long desiredTime = curTime + timeRunning;
     while (System.currentTimeMillis() <= desiredTime)
-      idle(); 
+      idle();
+
     frontRight.setPower(0.0D);
     backRight.setPower(0.0D);
     frontLeft.setPower(0.0D);
@@ -754,12 +749,17 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   
   private void placeFreightOnShippingHub() {
     if (level == 3) {
+
       telemetry.addData("Placing Freight on Level 3: ", "In Progress");
       telemetry.update();
+
       releaseItemLevel3();
+
     } else if (level == 2) {
+
       telemetry.addData("Placing Freight on Level 2: ", "In Progress");
       telemetry.update();
+
       releaseItemLevel2();
     } else if (level == 1) {
       telemetry.addData("Placing Freight on Level 1: ", "In Progress");

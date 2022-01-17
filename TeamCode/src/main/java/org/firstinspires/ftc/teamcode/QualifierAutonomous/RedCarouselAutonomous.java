@@ -18,38 +18,27 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
 public class RedCarouselAutonomous extends LinearOpMode {
+
   private DcMotor frontLeft;
-  
   private DcMotor frontRight;
-  
   private DcMotor backLeft;
-  
   private DcMotor backRight;
-  
+
   private DcMotor bucket;
-  
   private DcMotor bucketTurner;
-  
   private DcMotor linearSlide;
-  
   private DcMotor carouselTurner;
-  
+
   private Servo Marker;
-  
+
   private DistanceSensor FrontRightDistance;
-  
   private DistanceSensor FrontLeftDistance;
-  
   private DistanceSensor BackRightDistance;
-  
   private DistanceSensor BackLeftDistance;
-  
   private DistanceSensor CarouselDistance;
-  
   private DistanceSensor FrontDistance;
-  
+
   private ColorSensor FrontColor;
-  
   private ColorSensor BackColor;
   
   private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/10820model.tflite";
@@ -74,7 +63,9 @@ public class RedCarouselAutonomous extends LinearOpMode {
   int bucketTurnerlevel1 = -50;
   int bucketTurnerlevel2 = -70;
   int bucketTurnerlevel3 = -120;
-  
+
+  int shippingHubDistance = 1500;
+
   public void runOpMode() {
     
     if (initializeRobot() == 1) {
@@ -96,7 +87,7 @@ public class RedCarouselAutonomous extends LinearOpMode {
       double pval = 0.5D;
       
       objectDetection();
-      strafeToShippingHub();
+      strafeToShippingHub(0.75);
       placeFreightOnShippingHub();
       
       //getSensorValues();
@@ -623,27 +614,31 @@ public class RedCarouselAutonomous extends LinearOpMode {
     backLeft.setPower(0.0D);
   }
   
-  private void strafeToShippingHub() {
+  private void strafeToShippingHub(double pval) {
 
     resetEncoders();
 
-    frontRight.setTargetPosition(-1500);
-    backRight.setTargetPosition(1500);
-    frontLeft.setTargetPosition(1500);
-    backLeft.setTargetPosition(-1500);
+    frontRight.setTargetPosition(shippingHubDistance * -1);
+    backRight.setTargetPosition(shippingHubDistance);
+    frontLeft.setTargetPosition(shippingHubDistance);
+    backLeft.setTargetPosition(shippingHubDistance * -1);
+
     frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    frontRight.setPower(-0.75D);
-    backRight.setPower(0.75D);
-    frontLeft.setPower(0.75D);
-    backLeft.setPower(-0.75D);
+
+    frontRight.setPower(pval * -1);
+    backRight.setPower(pval);
+    frontLeft.setPower(pval);
+    backLeft.setPower(pval * -1);
+
     long curTime = System.currentTimeMillis();
     int timeRunning = 2000;
     long desiredTime = curTime + timeRunning;
     while (System.currentTimeMillis() <= desiredTime)
-      idle(); 
+      idle();
+
     frontRight.setPower(0.0D);
     backRight.setPower(0.0D);
     frontLeft.setPower(0.0D);
