@@ -67,7 +67,15 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   int level = 0;
   
   int xPosMarker = 150;
-  
+
+  int linearSlidelevel2 = 30;
+  int linearSlidelevel3 = 160;
+
+  int bucketTurnerlevel1 = -50;
+  int bucketTurnerlevel2 = -70;
+  int bucketTurnerlevel3 = -120;
+
+
   public void runOpMode() {
     
     if (initializeRobot() == 1) {
@@ -601,7 +609,7 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   private void releaseItemLevel1() {
     
     bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    bucketTurner.setTargetPosition(-50);
+    bucketTurner.setTargetPosition(bucketTurnerlevel1);
     bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     bucketTurner.setPower(-0.75D);
     while (bucketTurner.isBusy())
@@ -621,13 +629,13 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   
   private void releaseItemLevel2() {
     linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    linearSlide.setTargetPosition(30);
+    linearSlide.setTargetPosition(linearSlidelevel2);
     linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     linearSlide.setPower(0.75D);
     while (linearSlide.isBusy())
       idle(); 
     bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    bucketTurner.setTargetPosition(-70);
+    bucketTurner.setTargetPosition(bucketTurnerlevel2);
     bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     bucketTurner.setPower(-0.75D);
     while (bucketTurner.isBusy())
@@ -657,13 +665,13 @@ public class BlueCarouselAutonomous extends LinearOpMode {
   
   private void releaseItemLevel3() {
     linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    linearSlide.setTargetPosition(160);
+    linearSlide.setTargetPosition(linearSlidelevel3);
     linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     linearSlide.setPower(0.75D);
     while (linearSlide.isBusy())
       idle(); 
     bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    bucketTurner.setTargetPosition(-120);
+    bucketTurner.setTargetPosition(bucketTurnerlevel3);
     bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     bucketTurner.setPower(-0.75D);
     while (bucketTurner.isBusy())
