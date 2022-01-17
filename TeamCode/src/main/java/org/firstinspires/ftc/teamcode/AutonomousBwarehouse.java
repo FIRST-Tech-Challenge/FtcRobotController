@@ -68,11 +68,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
-    public static int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
-    public static boolean alignedLeft = false;   // dynamic (gets updated every cycle during INIT)
-    public static boolean alignedRight = false;   // dynamic (gets updated every cycle during INIT)
-    public static double leftAverage = 0.0;
-    public static double rightAverage = 0.0;
+    public int blockLevel;   // dynamic (gets updated every cycle during INIT)
     public static double collisionDelay = 4.0;  // wait 4 seconds before moving (to avoid collision)
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
@@ -97,7 +93,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             @Override
             public void onOpened()
             {
-                webcam.setPipeline(new FreightFrenzyPipeline());
+                webcam.setPipeline(new FreightFrenzyPipeline(false, false));
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -110,6 +106,8 @@ public class AutonomousBwarehouse extends AutonomousBase {
             }
         });
 
+        int redAlignedCount;
+        int blueAlignedCount;
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
             sonarRangeR = robot.updateSonarRangeR();
@@ -118,12 +116,29 @@ public class AutonomousBwarehouse extends AutonomousBase {
             telemetry.addData("Block Level", "%d", blockLevel );
             telemetry.addData("Sonar Range", "%.1f inches (52.8)", sonarRangeR/2.54 );
             telemetry.addData("Start delay", "%.1f seconds (dpad up/down)", collisionDelay );
-            telemetry.addData("Left Alignment", "%.2f %b", leftAverage, alignedLeft);
-            telemetry.addData("Right Alignment", "%.2f %b", rightAverage, alignedRight);
+            telemetry.addData("Left Blue Alignment", "%.2f %b", FreightFrenzyPipeline.leftBlueAverage, FreightFrenzyPipeline.alignedBlueLeft);
+            telemetry.addData("Center Blue Alignment", "%.2f %b", FreightFrenzyPipeline.centerBlueAverage, FreightFrenzyPipeline.alignedBlueCenter);
+            telemetry.addData("Right Blue Alignment", "%.2f %b", FreightFrenzyPipeline.rightBlueAverage, FreightFrenzyPipeline.alignedBlueRight);
+            redAlignedCount = (FreightFrenzyPipeline.alignedRedLeft ? 1 : 0);
+            redAlignedCount += (FreightFrenzyPipeline.alignedRedCenter ? 1 : 0);
+            redAlignedCount += (FreightFrenzyPipeline.alignedRedRight ? 1 : 0);
+            blueAlignedCount = (FreightFrenzyPipeline.alignedBlueLeft ? 1 : 0);
+            blueAlignedCount += (FreightFrenzyPipeline.alignedBlueCenter ? 1 : 0);
+            blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
+            if(blueAlignedCount >= 2) {
+                telemetry.addLine("Blue aligned for blue autonomous. Good job!");
+            } else if(redAlignedCount >= 2) {
+                telemetry.addLine("WARNING: Red aligned for BLUE autonomous. Something is wrong, so so wrong!");
+            } else {
+                telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
+            }
+
             telemetry.update();
             // Pause briefly before looping
             idle();
         } // !isStarted
+
+        blockLevel = FreightFrenzyPipeline.blockLevel;
 
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
@@ -386,130 +401,6 @@ public class AutonomousBwarehouse extends AutonomousBase {
         robot.sweepServo.setPower(0.0);
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -5.0, 999.9, DRIVE_TO );
     } // collectFreight1
-
-    /* Skystone image procesing pipeline to be run upon receipt of each frame from the camera.
-     * Note that the processFrame() method is called serially from the frame worker thread -
-     * that is, a new camera frame will not come in while you're still processing a previous one.
-     * In other words, the processFrame() method will never be called multiple times simultaneously.
-     *
-     * However, the rendering of your processed image to the viewport is done in parallel to the
-     * frame worker thread. That is, the amount of time it takes to render the image to the
-     * viewport does NOT impact the amount of frames per second that your pipeline can process.
-     *
-     * IMPORTANT NOTE: this pipeline is NOT invoked on your OpMode thread. It is invoked on the
-     * frame worker thread. This should not be a problem in the vast majority of cases. However,
-     * if you're doing something weird where you do need it synchronized with your OpMode thread,
-     * then you will need to account for that accordingly.
-     */
-    class FreightFrenzyPipeline extends OpenCvPipeline
-    {
-        /*
-         * NOTE: if you wish to use additional Mat objects in your processing pipeline, it is
-         * highly recommended to declare them here as instance variables and re-use them for
-         * each invocation of processFrame(), rather than declaring them as new local variables
-         * each time through processFrame(). This removes the danger of causing a memory leak
-         * by forgetting to call mat.release(), and it also reduces memory pressure by not
-         * constantly allocating and freeing large chunks of memory.
-         */
-        private Mat YCrCb = new Mat();
-        private Mat Cb    = new Mat();
-        private Mat subMat1;
-        private Mat subMat2;
-        private Mat subMat3;
-        private int max;
-        private int avg1;
-        private int avg2;
-        private int avg3;
-        private Point skystone   = new Point();        // Team Element (populated once we find it!)
-        private Point sub1PointA = new Point( 50,190); // 15x15 pixels on LEFT  (limited by barrier!)
-        private Point sub1PointB = new Point( 65,205);
-        private Point sub2PointA = new Point(155,190); // 15x15 pixels on CENTER
-        private Point sub2PointB = new Point(170,205);
-        private Point sub3PointA = new Point(272,190); // 15x15 pixels on RIGHT
-        private Point sub3PointB = new Point(287,205);
-
-        // Points for alignment
-        private Mat alignMat1;
-        private Mat alignMat2;
-        private int alignAvg1;
-        private int alignAvg2;
-        private Point alignment1PointA = new Point(40,212);
-        private Point alignment1PointB = new Point(50,222);
-        private Point alignment2PointA = new Point(277,212);
-        private Point alignment2PointB = new Point(287,222);
-        private final static double colorThreshold = 140.0;
-
-        @Override
-        public Mat processFrame(Mat input)
-        {
-            // Convert image frame from RGB to YCrCb
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            // Extract the Cb channel from the image frame
-            Core.extractChannel(YCrCb, Cb, 2);
-            // Pull data for the three sample zones from the Cb channel
-            subMat1 = Cb.submat(new Rect(sub1PointA,sub1PointB) );
-            subMat2 = Cb.submat(new Rect(sub2PointA,sub2PointB) );
-            subMat3 = Cb.submat(new Rect(sub3PointA,sub3PointB) );
-            alignMat1 = Cb.submat(new Rect(alignment1PointA, alignment1PointB));
-            alignMat2 = Cb.submat(new Rect(alignment2PointA, alignment2PointB));
-
-            // Average the three sample zones
-            avg1 = (int)Core.mean(subMat1).val[0];
-            avg2 = (int)Core.mean(subMat2).val[0];
-            avg3 = (int)Core.mean(subMat3).val[0];
-            alignAvg1 = (int)Core.mean(alignMat1).val[0];
-            alignAvg2 = (int)Core.mean(alignMat2).val[0];
-
-            // Draw alignment rectangles
-            Imgproc.rectangle(input, alignment1PointA, alignment1PointB, new Scalar(0, 0, 255), 1);
-            Imgproc.rectangle(input, alignment2PointA, alignment2PointB, new Scalar(0, 0, 255), 1);
-
-            // Draw rectangles around the sample zones
-            Imgproc.rectangle(input, sub1PointA, sub1PointB, new Scalar(0, 0, 255), 1);
-            Imgproc.rectangle(input, sub2PointA, sub2PointB, new Scalar(0, 0, 255), 1);
-            Imgproc.rectangle(input, sub3PointA, sub3PointB, new Scalar(0, 0, 255), 1);
-            // Determine which sample zone had the lowest contrast from blue (lightest color)
-            max = Math.min(avg1, Math.min(avg2, avg3));
-            // Draw a circle on the detected skystone
-            if(max == avg1) {
-                skystone.x = (sub1PointA.x + sub1PointB.x) / 2;
-                skystone.y = (sub1PointA.y + sub1PointB.y) / 2;
-                Imgproc.circle(input, skystone, 5, new Scalar(225, 52, 235), -1);
-                blockLevel = 1;
-            } else if(max == avg2) {
-                skystone.x = (sub2PointA.x + sub2PointB.x) / 2;
-                skystone.y = (sub2PointA.y + sub2PointB.y) / 2;
-                Imgproc.circle(input, skystone, 5, new Scalar(225, 52, 235), -1);
-                blockLevel = 2;
-            } else if(max == avg3) {
-                skystone.x = (sub3PointA.x + sub3PointB.x) / 2;
-                skystone.y = (sub3PointA.y + sub3PointB.y) / 2;
-                Imgproc.circle(input, skystone, 5, new Scalar(225, 52, 235), -1);
-                blockLevel = 3;
-            } else {
-                blockLevel = 3;
-            }
-
-            leftAverage = alignAvg1;
-            alignedLeft = (alignAvg1 >= colorThreshold);
-            rightAverage= alignAvg2;
-            alignedRight = (alignAvg2 >= colorThreshold);
-
-            // Free the allocated submat memory
-            subMat1.release();
-            subMat1 = null;
-            subMat2.release();
-            subMat2 = null;
-            subMat3.release();
-            subMat3 = null;
-            alignMat1.release();
-            alignMat1 = null;
-            alignMat2.release();
-            alignMat2 = null;
-
-            return input;
-        }
-    } // FreightFrenzyPipeline
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Capture range-sensor data (one reading! call from main control loop)  */
