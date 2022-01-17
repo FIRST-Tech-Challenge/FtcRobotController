@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
 
 /**
  * The Autonomous ran on Blue side near spinner for Meet 3
@@ -14,20 +15,29 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        this.initAll();
+        try {
+            this.initVuforia();
+            this.initTfod();
+            this.activateTF();
+            this.initAll();
+        } catch (Exception e) {
+            telemetry.addData("issue:", MiscUtills.getStackTraceAsString(e));
+            telemetry.update();
+        }
+
         leds.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         MarkerPosition Pos = MarkerPosition.NotSeen;
-        this.initVuforia();
-        this.initTfod();
-        this.activateTF();
+
 
         odometry.setPosition(133, 101, 270);
+
 
         while (!isStarted() && !isStopRequested()) {
             Pos = this.getAverageOfMarker(10, 100);
             telemetry.addData("Position", Pos);
             telemetry.update();
         }
+
 
         waitForStart();
 
