@@ -18,7 +18,7 @@ public class AutonomousBlueCarousel extends LinearOpMode {
         robot.turnRight(45,.5);
         robot.right(.5,.5);
         robot.back(.47,.5);
-        robot.redCarousel(4000);
+        robot.blueCarousel(4000);
         //check the code underneath, wrong places, too jerky
         robot.forward(.47,.5);
         robot.left(.5,.5);
@@ -33,28 +33,28 @@ public class AutonomousBlueCarousel extends LinearOpMode {
         robot.turnRight(.15,.5);
         robot.pause(1000); //DELETE AFTER TESTING
         robot.left(.5, .5);
-        if (robot.colorSensorRight.green() > 100) {
-            cubethingwithlevels = 1;
-
-        }
+//        if (robot.colorSensorRight.green() > 100) {
+//            cubethingwithlevels = 1;
+//
+//        }
         robot.left(.80,.5);
-        robot.pause(1000); //DELETE AFTER TESTING
+//        robot.pause(1000); //DELETE AFTER TESTING
         robot.forward(.25, .5);
-        if (robot.colorSensorRight.green() > 100) {
-            cubethingwithlevels = 2;
-        }
+//        if (robot.colorSensorRight.green() > 100) {
+//            cubethingwithlevels = 2;
+//        }
+//
+//        if (cubethingwithlevels == 0 ){
+//            cubethingwithlevels = 3;
+//        }
+//        telemetry.addData("position: ", cubethingwithlevels); //testing
+//        telemetry.update(); //testing
 
-        if (cubethingwithlevels == 0 ){
-            cubethingwithlevels = 3;
-        }
-        telemetry.addData("position: ", cubethingwithlevels); //testing
-        telemetry.update(); //testing
-
-        robot.pause(1000); //DELETE AFTER TESTING
+//        robot.pause(1000); //DELETE AFTER TESTING
         robot.left(1.6,.5);
-        robot.armThing(cubethingwithlevels);
-        robot.forward(0.8, .5);
-        robot.eject();
+//        robot.armThing(cubethingwithlevels);
+        robot.forward(0.6, .5);
+//        robot.eject();
 
         robot.back(.75,.5);
         robot.armThing(1);
