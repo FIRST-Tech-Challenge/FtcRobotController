@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
@@ -9,7 +8,7 @@ import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
  * A Teleop to test the Linear Slide
  */
 
-@Disabled
+//@Disabled
 @TeleOp(name = "LS Test")
 public class LinearSlideTest extends TeleOpTemplate {
 
@@ -35,7 +34,7 @@ public class LinearSlideTest extends TeleOpTemplate {
                 slide.setTargetHeight(720);
             }
 
-            telemetry.addData("Power", -gamepad2.left_stick_y);
+            //telemetry.addData("Power", );
             telemetry.addData("LS Height: ", slide.getEncoderCount());
             telemetry.addData("Target Height: ", slide.getTargetHeight());
             telemetry.addData("Slide", slide);

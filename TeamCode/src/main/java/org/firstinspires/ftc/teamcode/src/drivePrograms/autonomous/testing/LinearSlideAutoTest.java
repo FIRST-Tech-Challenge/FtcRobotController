@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
-import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 
 /**
  * A Autonomous to test the proportional power drive capabilities of the linear slide
  */
-@Disabled
+//@Disabled
 @Autonomous(name = "Linear Slide Auto Test")
-public class LinearSlideAutoTest extends TeleOpTemplate {
+public class LinearSlideAutoTest extends AutonomousTemplate {
     @Override
     public void opModeMain() throws InterruptedException {
-        initLinearSlide();
-        initDriveTrain();
+        this.initAll();
+        slide.start();
+
         telemetry.addData("Initialization Status", "Initialized");
         telemetry.update();
 
@@ -25,30 +25,33 @@ public class LinearSlideAutoTest extends TeleOpTemplate {
 
             telemetry.addData("Current Pos", slide.getEncoderCount());
             telemetry.addData("Destination", slide.getTargetHeight());
+            telemetry.addData("At Pos", slide.isAtPosition(35));
             telemetry.update();
 
-            if (slide.isAtPosition()) {
-                switch (pos) {
-                    case 0:
-                        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-                        pos++;
-                        break;
-                    case 1:
-                        slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
-                        pos++;
-                        break;
-                    case 2:
-                        slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
-                        pos++;
-                        break;
+            if (slide.isAtPosition(35)) {
+                pos++;
+            }
+            switch (pos) {
+                case 0:
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(1000);
+                    break;
+                case 1:
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                    Thread.sleep(1000);
+                    break;
+                case 2:
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                    Thread.sleep(1000);
+                    break;
 
-                    case 3:
-                        pos++;
-                        slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
-                        break;
-                    case 4:
-                        pos = 0;
-                }
+                case 3:
+                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
+                    Thread.sleep(1000);
+                    break;
+                case 4:
+                    pos = 0;
+
             }
         }
     }
