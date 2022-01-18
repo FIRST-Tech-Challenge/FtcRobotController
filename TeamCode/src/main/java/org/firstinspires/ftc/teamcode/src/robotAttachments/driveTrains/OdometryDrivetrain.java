@@ -304,7 +304,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
                 throw new OdometryMovementException("Callback Returned True");
             }
 
-            strafeAtAngleWhileTurn(odometry_angle, theta, power);
+            strafeAtAngle(odometry_angle, power);
 
         }
         stopAll();
