@@ -33,7 +33,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
         }
 
         try {
-            driveSystem.moveToPositionWithVoltageSpike(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition() + 100, 1, false);
+            driveSystem.moveToPositionWithVoltageSpike(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition() + 100, 1);
         } catch (OdometryMovementException e) {
             telemetry.addData("Voltage Spike", "Yay");
             telemetry.update();
@@ -44,7 +44,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
             Executable<Boolean> b = () -> {
                 return true;
             };
-            driveSystem.moveToPositionWithCallBack(100000, 100000, 1, b);
+            driveSystem.moveToPosition(100000, 100000, odometry.returnOrientation(), 1, b);
         } catch (OdometryMovementException e) {
             telemetry.addData("Callback Error", "Yay");
             telemetry.update();
