@@ -23,7 +23,7 @@ public class Pushbot extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         robot = new RobotClass(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, outtake, imu,this);
-        robot.setupRobot();
+        robot.setupRobot(true);
 
         waitForStart();
         robot.resetAngle();

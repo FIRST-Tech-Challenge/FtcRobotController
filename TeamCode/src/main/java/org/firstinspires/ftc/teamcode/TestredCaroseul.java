@@ -56,7 +56,7 @@ public class TestredCaroseul extends LinearOpMode {
         robot = new RobotClass(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorIntake, motorOuttake, bucket, duck, distsense, imu,this);
 
         //setup robot
-        robot.runToPosSetupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
+        robot.setupRobot(true);//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
 
         //setup camera, turn it on
         int camViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());

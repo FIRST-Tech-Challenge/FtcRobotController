@@ -37,12 +37,13 @@ public class AAMainTeleop extends LinearOpMode {
         distsense = hardwareMap.get(DistanceSensor.class, "distsense");
 
         robot = new RobotClass(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft, motorIntake, motorOuttake, bucket, servoDuck, distsense, imu, this);
-        robot.setupRobot();
+        robot.setupRobot(false);
         //not here
         //Don't set 0 power behavior or direction here
         //do it in Robot_2022FF
 
         double powerMod = 1;
+        boolean downBucket = false;//bucket starts up
 
         waitForStart();
 
@@ -82,7 +83,14 @@ public class AAMainTeleop extends LinearOpMode {
             }
 
             if(gamepad2.left_stick_button){//auto dump bucket
-                robot.dobucket();
+                if(!downBucket){
+                    robot.bucket(1);
+                    downBucket = true;
+                }
+                else{
+                    robot.bucket(0.4);
+                    downBucket = false;
+                }
             }
 
             //manual bucket
@@ -112,18 +120,25 @@ public class AAMainTeleop extends LinearOpMode {
                 robot.moveSlides(0, 0.5);
             }
 
+            //left is forwards, right is back
+            //forwards is left, back is right
+            //switch intake
+            //if bucket is inside robot, button to tip robot adjusts it to safe angle
+            //else, dump
+            //right+left-
+            //up-down+?!<<<<<<<<<<
             //drive
-            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + (Math.PI/4);
+            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);//-(0)-45=45
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
 
-            double powerOne = r*Math.cos(angle);
-            double powerTwo = r*Math.sin(angle);
+            double leftPower = r*Math.cos(angle);//1
+            double rightPower = r*Math.sin(angle);//-1
 
-            motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
-            motorFrontRight.setPower((powerTwo - (rotation))*powerMod);
-            motorBackLeft.setPower((powerTwo + (rotation))*powerMod);
-            motorBackRight.setPower((powerOne + (rotation))*powerMod);
+            motorFrontLeft.setPower((leftPower - (rotation))*powerMod);
+            motorFrontRight.setPower((rightPower - (rotation))*powerMod);
+            motorBackLeft.setPower((rightPower + (rotation))*powerMod);
+            motorBackRight.setPower((leftPower + (rotation))*powerMod);
 
 
             //telemetry

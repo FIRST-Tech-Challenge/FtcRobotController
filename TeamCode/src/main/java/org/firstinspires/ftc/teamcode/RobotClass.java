@@ -202,7 +202,7 @@ public class RobotClass {
      * Resets encoder for outtake only because we don't want to continuously reset that encoder
      * @throws InterruptedException if robot stopped when IMU is calibrating
      * */
-    public void setupRobot() throws InterruptedException{
+    public void setupRobot(boolean runtopos) throws InterruptedException{
         //reverse the needed motors?
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 //       motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -215,9 +215,17 @@ public class RobotClass {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //note: Outtake is the only that can reset encoders here because we don't want to continuously reset encoders
-        outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if(runtopos){
+            outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            outtake.setTargetPosition(0);
+            outtake.setPower(0);
+            outtake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        else {
+            //note: Outtake is the only that can reset encoders here because we don't want to continuously reset encoders
+            outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
         setIMUParameters();
         resetEncoders();
@@ -236,12 +244,43 @@ public class RobotClass {
     }
 
     /**
+     * specifically for pid robot and jolie testing usage
+     * @throws InterruptedException if robot stopped when IMU is calibrating
+     * */
+    public void pidSetupRobot() throws InterruptedException{
+        //reverse the needed motors?
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+//       motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+//        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        setIMUParameters();
+        resetEncodersPID();
+        resetAngle();
+
+        while (!imu.isGyroCalibrated()) {
+            telemetry.addData("IMU", "calibrating...");
+            telemetry.update();
+            Thread.sleep(50);
+        }
+
+        telemetry.addData("IMU", "ready");
+        telemetry.update();
+
+    }
+
+    /**
      * Sets directions and behaviors of motors, calibrates IMU
      * Has runToPosition setup for linear slide motor
      * Resets encoder for outtake only because we don't want to continuously reset that encoder
      * @throws InterruptedException if robot stopped while IMU is calibrating
      * */
-    public void runToPosSetupRobot() throws InterruptedException{
+    /*public void runToPosSetupRobot() throws InterruptedException{
         //reverse the needed motors?
         //motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         //motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -273,7 +312,7 @@ public class RobotClass {
         telemetry.addData("IMU", "ready");
         telemetry.update();
 
-    }
+    }*/
     
     /**
      * Reset motor encoders, except outtake
@@ -287,6 +326,19 @@ public class RobotClass {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    /**
+     * Reset motor encoders, runtoPos, PID testing usage
+     */
+    public void resetEncodersPID(){
+        DcMotor motors[] = {motorBackRight, motorBackLeft, motorFrontRight, motorFrontLeft};
+        for(DcMotor m : motors){
+            m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            m.setTargetPosition(0);
+            m.setPower(0);
+            m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     /**
@@ -382,15 +434,14 @@ public class RobotClass {
     /**
      * Make precise turn using gyro
      * no PID
-     * + is cw, - is ccw
+     * + is ccw, - is cw
      * @param degrees
      * @param power
      * */
     public void gyroTurn(int degrees, double power) throws InterruptedException{
         //restart angle tracking
         resetAngle();
-//+ cw
-        //- ccw
+//...?????
         if(degrees > 0){
             turnClockwise(power);
         }else if(degrees < 0){
@@ -402,14 +453,14 @@ public class RobotClass {
         //Rotate until current angle is equal to the target angle
         //getAngle()-degrees
         if (degrees < 0){
-            while (opMode.opModeIsActive() && getAngle() > degrees+10){
+            while (opMode.opModeIsActive() && getAngle() > degrees+15){
                 composeAngleTelemetry();
                 //display the target angle
                 telemetry.addData("Target angle", degrees);
                 telemetry.update();
             }
         }else{
-            while (opMode.opModeIsActive() && getAngle() < degrees-10) {
+            while (opMode.opModeIsActive() && getAngle() < degrees-15) {
                 composeAngleTelemetry();
                 //display the target angle
                 telemetry.addData("Target angle", degrees);
@@ -419,7 +470,7 @@ public class RobotClass {
 
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
     }
 
@@ -437,7 +488,7 @@ public class RobotClass {
         if(degrees < 0){
             clockwise = true;
         }else if(degrees > 0){
-            clockwise = false;
+            clockwise = false;//ccw
         }else{//already reached angle!:)
             return;
         }
@@ -480,7 +531,7 @@ public class RobotClass {
 
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
     }
 
@@ -555,7 +606,7 @@ public class RobotClass {
         }
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
     }
 
@@ -577,7 +628,7 @@ public class RobotClass {
      */
     public void pidGyroDriveIn(double in) throws InterruptedException{
         resetAngle();
-        resetEncoders();
+        resetEncodersPID();
 
         double dist = getDistanceTraveled();
         double error = in-dist;
@@ -679,7 +730,7 @@ public class RobotClass {
         }
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
     }
 
@@ -695,19 +746,18 @@ public class RobotClass {
         //calculate powers needed using direction
         double leftPower = Math.cos(newDirection) * power;
         double rightPower = Math.sin(newDirection) * power;
-        telemetry.addData("leftPower:", leftPower);
-        telemetry.addData("rightPower:", rightPower);
-        telemetry.update();
-        Thread.sleep(1000*5);//get rid of this...
-        while(distanceSensor.getDistance(DistanceUnit.CM) > 30){
+
+        while(distanceSensor.getDistance(DistanceUnit.CM) > 30 && opMode.opModeIsActive()){
             double correction = getCorrection();
             correctedTankStrafe(leftPower, rightPower, correction);
-            telemetry.addData("correction", correction);
+//            telemetry.addData("correction", correction);
+            telemetry.addData("leftPower:", leftPower);
+            telemetry.addData("rightPower:", rightPower);
             telemetry.addData("distance reading", distanceSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
         completeStop();
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
     }
 
@@ -729,7 +779,7 @@ public class RobotClass {
      */
     public void pidGyroStrafeIn(double angle, double in) throws InterruptedException{
         resetAngle();
-        resetEncoders();
+        resetEncodersPID();
         //set gain???
 
         double newDirection = angle * Math.PI/180 + Math.PI/4;
@@ -766,9 +816,9 @@ public class RobotClass {
         }
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
-        resetEncoders();
+        resetEncodersPID();
     }
 
     /**
@@ -835,9 +885,9 @@ public class RobotClass {
         }
         completeStop();
         //Wait .5 seconds to ensure robot is stopped before continuing
-        Thread.sleep(500);
+        Thread.sleep(250);
         resetAngle();
-        resetEncoders();
+        resetEncodersPID();
         dist = getDistanceTraveled();
         telemetry.addData("current position",dist);
         telemetry.update();
@@ -863,18 +913,46 @@ public class RobotClass {
         resetAngle();
         setNewGain(0.02);
         while(Math.abs(motorFrontLeft.getCurrentPosition()) < ticks && opMode.opModeIsActive()){
-            // telemetry.addData("Target ticks", ticks);
-            // telemetry.addData("Current ticks", Math.abs(motorFrontLeft.getCurrentPosition()));
-            // telemetry.update();
-
             double correction = getCorrection();
-            correctedTankStrafe(leftPower, rightPower, correction);
+            correctedTankStrafe(leftPower, rightPower, correction);//put this here bc correction may change
         }
         completeStop();
         Thread.sleep(250);
         resetAngle();
         resetEncoders();
     }
+
+    /**
+     * Strafe in any direction using encoders.
+     * uses runtopos
+     * Todo test with PID testing
+     * @param power
+     * @param angle Direction to strafe (90 = forward, 0 = right, -90 = backwards, 180 = left)
+     * @param in inches
+     * @throws InterruptedException if robot is stopped
+     */
+    public void gyroStrafeRunToPos(double power, double angle, double in) throws InterruptedException{
+        double ticks = in * TICKS_PER_IN;
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 - Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+        resetEncodersPID();
+        resetAngle();
+        setNewGain(0.02);
+        tankDrive(leftPower, rightPower);
+        motorFrontRight.setTargetPosition((int)ticks);
+        motorFrontLeft.setTargetPosition((int)ticks);
+        motorBackRight.setTargetPosition((int)ticks);
+        motorBackLeft.setTargetPosition((int)ticks);
+        while(motorBackRight.getCurrentPosition() < ticks && opMode.opModeIsActive());
+        completeStop();
+        Thread.sleep(250);
+        resetAngle();
+        resetEncodersPID();
+    }
+
 
     /**
      * Set new gain
@@ -903,39 +981,40 @@ public class RobotClass {
      * For Autonomous Red
      * After dumping in shared hub, drive to warehouse
      * @param goOverBarrier if true, robot will run over barrier. False, will go along side
+     * @param power
      * */
-    public void goToWarehouse_Red(boolean goOverBarrier) throws InterruptedException{
+    public void goToWarehouse_Red(boolean goOverBarrier, double power) throws InterruptedException{
         if(!goOverBarrier) {
             //go to warehouse
             gyroTurn(-90, 0.5);
-            gyroStrafeEncoder(0.5, 180, 28);//change distance
+            gyroStrafeEncoder(0.5, 180, 35);//change distance
 //            gyroStrafeEncoder(0.5, 90, 56);
-             driveToWall(0.5);
         }
         else{//option 2: there's a robot in the way, and we need to instead go over the bumps...
-            gyroTurn(90, 0.5);
+            gyroTurn(-90, 0.5);
 //            gyroStrafeEncoder(0.5, -90, 56);//???
-            driveToWall(0.5);
         }
+        driveToWall(power);
     }
     /**
      * For Autonomous Blue
      * After dumping in shared hub, drive to warehouse
      * @param goOverBarrier if true, robot will run over barrier. False, will go along side
+     * @param power
      * */
-    public void goToWarehouse_Blue(boolean goOverBarrier) throws InterruptedException{
+    public void goToWarehouse_Blue(boolean goOverBarrier, double power) throws InterruptedException{
         if(!goOverBarrier) {
             //go to warehouse
             gyroTurn(-90, 0.5);
             gyroStrafeEncoder(0.5, 0, 28);//change distance
 //            gyroStrafeEncoder(0.5, -90, 56);
-            driveToWall(0.5);
+            driveToWall(power);
 
         }
         else{ //option 2: there's a robot in the way, and we need to instead go over the bumps...
             gyroTurn(-90, 0.5);
 //            gyroStrafeEncoder(0.5, -90, 56);//???
-            driveToWall(0.5);
+            driveToWall(power);
         }
     }
 
@@ -977,6 +1056,9 @@ public class RobotClass {
     public void duck(double power){
         duck.setPower(power);
     }
+    public void bucket(double pos){
+        bucket.setPosition(pos);
+    }
 
     /**
      * Turns on the duck servo, waits 4 seconds, turns off.
@@ -984,8 +1066,19 @@ public class RobotClass {
      * @param power speed to go at
      * */
     public void doduck(double power) throws InterruptedException{
-        duck(power);
-        Thread.sleep(4000);
+        double actualPower = power/8;
+        if (power > 0) {
+            for (; actualPower <= power; actualPower += power / 8) {
+                duck(actualPower);
+                Thread.sleep(500);
+            }
+        }
+        else{
+            for (; actualPower >= power; actualPower += power / 8) {
+                duck(actualPower);
+                Thread.sleep(500);
+            }
+        }
         duck(0);
     }
 
@@ -995,11 +1088,12 @@ public class RobotClass {
      * */
     public void dobucket() throws InterruptedException{
         bucket.setPosition(1);
-        Thread.sleep(1000);
+        Thread.sleep(1500);
         //turn back
         bucket.setPosition(0.4);
-        Thread.sleep(500);
+        Thread.sleep(250);
     }
+    
 
     /**
      * Moves linear slides to desired level (0,1,2,3)
@@ -1132,9 +1226,9 @@ public class RobotClass {
                 targetTicks = 30;
         }
         moveSlidesRunToPos(power, targetTicks);
-        gyroStrafeEncoder(0.5, 90, dist);
+        gyroStrafeEncoder(0.5, -90, dist);
         dobucket();
-        gyroStrafeEncoder(0.5, -90, 6);
+        gyroStrafeEncoder(0.5, 90, 6);
         moveSlidesRunToPos(power, 100);
     }
 

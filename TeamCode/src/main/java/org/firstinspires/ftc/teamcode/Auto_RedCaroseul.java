@@ -56,7 +56,7 @@ public class Auto_RedCaroseul extends LinearOpMode {
         robot = new RobotClass(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorIntake, motorOuttake, bucket, duck, distsense, imu,this);
 
         //setup robot
-        robot.runToPosSetupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
+        robot.setupRobot(true);//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
 
         //setup camera, turn it on
         int camViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -91,27 +91,26 @@ public class Auto_RedCaroseul extends LinearOpMode {
         //dist 26 cm == 10 cm here 2.6cm=1cm
         //actually in INCHES!!!! will change in a bit
         //caroseul
-        robot.gyroStrafeEncoder(0.5,-90,3);//to allow turning
-        robot.gyroTurn(90,0.5);//direction
+        robot.gyroStrafeEncoder(0.75,90,3);//to allow turning
+        robot.gyroTurn(90,0.4);//direction
 
-//turning: + is ccw, - is cw
 
         //-90 is forwards, intake is forwards
         //0 is right
         //90 is back
         //180 is left
-//        robot.gyroStrafeEncoder(0.5,90,10);
-        robot.gyroStrafeEncoder(0.5,-90,27);//2 feet+a bit more(error) to right. todo change the cm, direction
-        robot.doduck(-0.55);//turn on duck
+        robot.gyroStrafeEncoder(0.75,90,24);
+        // robot.gyroStrafeEncoder(0.4,90,1);//2 feet+a bit more(error) to right. todo change the cm, direction
+        robot.doduck(-0.8);//turn on duck
 
         //to hub
-        robot.gyroStrafeEncoder(0.5,90,52.5);
-        robot.gyroTurn(90,0.5);
-        robot.runToPosDrop(0.5, 21.5, code);
-        Thread.sleep(500);
+        robot.gyroStrafeEncoder(0.75,-90,52.5);
+        robot.gyroTurn(90,0.45);
+        robot.runToPosDrop(0.75, 17, code);
+        Thread.sleep(250);
 
         // robot.goToDepot_Red();//default
-        robot.goToWarehouse_Red(false);
+        robot.goToWarehouse_Red(false, 0.75);
     }
 
 

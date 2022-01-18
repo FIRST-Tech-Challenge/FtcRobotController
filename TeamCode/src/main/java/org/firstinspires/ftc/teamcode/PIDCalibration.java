@@ -27,7 +27,7 @@ public class PIDCalibration extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         robot = new RobotClass(motorFrontRight,motorFrontLeft,motorBackRight,motorBackLeft,imu,this);
-        robot.setupRobot();
+        robot.setupRobot(false);
         kp = 1.8;
         kd = 0;//Todo make note of the numbers you use!!! Copy over to Robot_2022FF when finished!
         waitForStart();

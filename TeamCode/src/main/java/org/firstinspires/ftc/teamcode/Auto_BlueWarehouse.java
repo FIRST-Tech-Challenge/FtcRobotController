@@ -55,7 +55,7 @@ public class Auto_BlueWarehouse extends LinearOpMode {
         robot = new RobotClass(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, motorIntake, motorOuttake, bucket, duck, distsense, imu,this);
 
         //setup robot
-        robot.setupRobot();//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
+        robot.setupRobot(true);//TODO: if motors need swapping directions, go to this method in Robot_2022FF.java and change! DO NOT CHANGE IN HERE
 
         //setup camera, turn it on
         int camViewID = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -96,7 +96,7 @@ public class Auto_BlueWarehouse extends LinearOpMode {
         Thread.sleep(500);
 
         //go to warehouse
-        robot.goToWarehouse_Blue(false);//default
+        robot.goToWarehouse_Blue(false,0.75);//default
 
     }
 
