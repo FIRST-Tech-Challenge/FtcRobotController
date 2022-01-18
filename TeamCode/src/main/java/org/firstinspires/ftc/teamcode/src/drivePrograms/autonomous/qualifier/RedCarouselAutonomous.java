@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -51,10 +52,13 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.moveToPosition(20, 86, 270, 1);
             Thread.sleep(3000);
             //this is where the loadoff of first freight goes
-
-            driveSystem.moveToPosition(16, 138, 270, 1);
+            try {
+                driveSystem.moveToPositionWithDistanceTimeOut(16, 138, 1, 1, 500);
+            } catch (OdometryMovementException ignored) {
+            }
             // this moves into the wall before spinning off the duck
-            driveSystem.strafeAtAngle(45, 1);
+            driveSystem.strafeAtAngle(10, 1);
+
             Thread.sleep(1000);
             driveSystem.stopAll();
             spinner.spinOffRedDuck();

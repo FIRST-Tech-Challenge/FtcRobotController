@@ -219,10 +219,11 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
         if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
             Recognition rec = updatedRecognitions.get(0);
-            double rightLeftCenterLine = (rec.getRight() + rec.getLeft()) / 2;
-            if (rightLeftCenterLine < screenWidth / 3.0) {
+            double rightLeftCenterLine = (rec.getRight() + rec.getLeft()) / 2.0;
+
+            if (rightLeftCenterLine < 450) {
                 return BarcodePositions.Left;
-            } else if (rightLeftCenterLine < ((screenWidth / 3.0)) * 2) {
+            } else if (rightLeftCenterLine < 820) {
                 return BarcodePositions.Center;
             } else {
                 return BarcodePositions.Right;

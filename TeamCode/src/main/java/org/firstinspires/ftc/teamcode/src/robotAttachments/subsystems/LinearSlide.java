@@ -81,9 +81,7 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
      * @return True if it is close enough, false otherwise
      */
     public boolean isAtPosition(int tolerance) {
-        int currentPos = this.getEncoderCount();
-        int target = this.linearSlide.getTargetPosition();
-        int dist = Math.abs(currentPos - target);
+        int dist = Math.abs(this.getEncoderCount() - this.linearSlide.getTargetPosition());
         return dist < tolerance;
     }
 
@@ -144,12 +142,14 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
         double volts = voltageSensor.getVoltage();
         int encoderTicks = linearSlide.getCurrentPosition();
         int distanceFromPos = targetHeight - encoderTicks;
-        final double C1 = 0.01; //Scales the sensitivity of the function, smaller value is lower sensativity
-        final double C2 = 0.017; //The approximate power required to hold itself at the current height
+
+        final double C1 = 0.015; //Scales the sensitivity of the function, smaller value is lower sensativity
+        final double C2 = 0.1; //The approximate power required to hold itself at the current height
 
         power = (Math.pow(((distanceFromPos * C1)), 3));
-        power = power + (volts * C2);
+        power = power + (C2) * (volts * (1 / 12.0));
         power = MiscUtills.boundNumber(power);
+        //if (distanceFromPos <= 0){power = 0;}
 
         linearSlide.setPower(power);
     }
@@ -177,8 +177,8 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
          */
         protected static final HashMap<HeightLevel, Integer> EncoderCount = new HashMap<HeightLevel, Integer>() {{
             put(HeightLevel.BottomLevel, 0);
-            put(HeightLevel.MiddleLevel, 207);
-            put(HeightLevel.TopLevel, 438);
+            put(HeightLevel.MiddleLevel, 233);
+            put(HeightLevel.TopLevel, 584);
             put(HeightLevel.GetOverObstacles, 0);
             put(HeightLevel.Down, 0);
         }};
