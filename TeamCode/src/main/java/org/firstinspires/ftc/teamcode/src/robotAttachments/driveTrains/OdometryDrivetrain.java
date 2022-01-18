@@ -431,6 +431,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     public void moveToPosition(double x, double y, double theta, double tolerance) throws InterruptedException {
         double power, odometry_angle = 0;
+        final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ");";
         final String coordinateString = x + " , " + y;
 
         double odometry_x = odometry.returnRelativeXPosition();
@@ -448,6 +449,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
                 power = this.calculateShortDistancePower(initialDistance, currentDistance);
             }
             if (this.debug) {
+                telemetry.addData("Function", args);
                 telemetry.addData("Moving to", coordinateString);
                 telemetry.addData("currentDistance", currentDistance);
                 telemetry.addData("angle", odometry_angle);
