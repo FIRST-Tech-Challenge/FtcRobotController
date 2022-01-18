@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
+import java.util.Objects;
+
 @Autonomous
 public class AutoWarehouse extends LinearOpMode {
     protected int multiplier = 1;
@@ -27,7 +30,9 @@ public class AutoWarehouse extends LinearOpMode {
         final int[] height = {-1};
         double nextToWall = 70 - inchesToCoordinate(5.8D);
 
-        EventThread eventThread = new EventThread();
+        MultipleTelemetry goodTelemetry = new MultipleTelemetry(telemetry);
+
+        EventThread eventThread = new EventThread(() -> !isStopRequested());
 
         AutoIntake intake = new AutoIntake(hardwareMap);
         AutoLift lift = new AutoLift(eventThread, hardwareMap);
@@ -41,11 +46,11 @@ public class AutoWarehouse extends LinearOpMode {
 
         {
             TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(initial);
-
-            builder.lineToLinearHeading(new Pose2d(-1, 41.5 * multiplier,
+            builder.lineTo(new Vector2d(-3, 58 * multiplier));
+            builder.lineToLinearHeading(new Pose2d(-2, 41.5 * multiplier,
                     Math.toRadians(70 * multiplier)));
             builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
-            builder.waitSeconds(4);
+            builder.waitSeconds(3.75);
             builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.INTAKING));
             builder.lineToLinearHeading(new Pose2d(0, nextToWall * multiplier, Math.toRadians(3)));
             builder.lineTo(new Vector2d(20, nextToWall * multiplier));
@@ -62,7 +67,7 @@ public class AutoWarehouse extends LinearOpMode {
             builder.lineToLinearHeading(new Pose2d(-1, 41.5 * multiplier,
                     Math.toRadians(70 * multiplier)));
             builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
-            builder.waitSeconds(8);
+            builder.waitSeconds(4);
             builder.lineToLinearHeading(new Pose2d(0, nextToWall * multiplier, Math.toRadians(3)));
             builder.lineTo(new Vector2d(40, nextToWall * multiplier));
 
@@ -77,9 +82,11 @@ public class AutoWarehouse extends LinearOpMode {
 
         waitForStart();
         height[0] = detector.run();
+        goodTelemetry.addData("height", height[0]);
+        goodTelemetry.update();
 
         thread.start();
-
+        eventThread.start();
 
         if (!isStopRequested()) {
 

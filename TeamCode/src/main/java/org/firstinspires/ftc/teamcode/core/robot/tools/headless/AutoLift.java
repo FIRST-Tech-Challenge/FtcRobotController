@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerOnceEvent;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 
 import java.util.Objects;
@@ -18,11 +19,11 @@ public class AutoLift {
     // 5 1/4 inch from back of robot to rim
     public enum Positions {
         INTAKING(0, 0.76D, false),
-        SAFE(1375, 0.7D, false),
+        SAFE(1375, 0.716D, false),
         TOP(2880, 0.3D, true),
         MIDDLE(1850, 0.3D, true),
-        BOTTOM(1375, 0.26D, true),
-        TSE(4500, 0.7D, true);
+        BOTTOM(1375, 0.25D, true),
+        TSE(4500, 0.716D, true);
 
         public final double armPos;
         public final int motorPos;
@@ -96,7 +97,7 @@ public class AutoLift {
         if (Objects.requireNonNull(position) != lastPosition) state = MovementStates.START;
         switch (state) {
             case START:
-                armServo.setPosition(0.7D);
+                armServo.setPosition(0.716D);
                 state = MovementStates.LIFT_MOVEMENT;
                 if (lastPosition != null) {
                     liftMotor.setTargetPosition(position.motorPos);
@@ -123,6 +124,12 @@ public class AutoLift {
                         }
                     }
                 } else if (position == Positions.INTAKING) {
+                    eventThread.addEvent(new RunListenerOnceEvent(() -> armServo.setPosition(0.76D)) {
+                        @Override
+                        public boolean shouldRun() {
+                            return liftMotor.getCurrentPosition() <= 5;
+                        }
+                    });
                     state = MovementStates.NONE;
                 }
                 break;
