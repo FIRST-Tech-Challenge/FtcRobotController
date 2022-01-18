@@ -64,5 +64,18 @@ public class MiscUtills {
         return (m * x) + b;
     }
 
+    /**
+     * Maps value that is in range [a, b] into the range [c, d]
+     *
+     * @param value The value to be mapped
+     * @param a     The lower bound of the native range
+     * @param b     The upper bound of the native range
+     * @param c     The lower bound of the new range
+     * @param d     The upper bound of the new range
+     * @return The new value mapped to the new range
+     */
+    public static double map(double value, double a, double b, double c, double d) {
+        return ((value - a) * ((d - c) / (b - a))) + c;
+    }
 
 }

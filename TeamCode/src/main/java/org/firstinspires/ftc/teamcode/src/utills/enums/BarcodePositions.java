@@ -6,5 +6,6 @@ package org.firstinspires.ftc.teamcode.src.utills.enums;
 public enum BarcodePositions {
     Right,
     Left,
+    Center,
     NotSeen
 }

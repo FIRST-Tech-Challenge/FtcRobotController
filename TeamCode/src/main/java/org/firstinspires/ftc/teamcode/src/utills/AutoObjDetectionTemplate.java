@@ -125,7 +125,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             tfodParameters.minResultConfidence = 0.8f;
             tfodParameters.isModelTensorFlow2 = true;
             tfodParameters.inputSize = 320;
-
             this.tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
             this.tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         }
@@ -141,7 +140,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         checkStop();
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(2, 16.0 / 9.0);
+            tfod.setZoom(1.4, 16.0 / 9.0);
         }
         checkStop();
     }
@@ -188,6 +187,9 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 case Left:
                     sum = sum + 2;
                     break;
+                case Center:
+                    sum = sum + 3;
+                    break;
             }
         }
 
@@ -195,14 +197,15 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
 
         switch (result) {
-            case 0:
-                return BarcodePositions.NotSeen;
             case 1:
                 return BarcodePositions.Right;
             case 2:
                 return BarcodePositions.Left;
+            case 3:
+                return BarcodePositions.Center;
+            default:
+                return BarcodePositions.NotSeen;
         }
-        return BarcodePositions.Left; //It never reaches this line
     }
 
     /**
@@ -211,22 +214,22 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      * @return Where the marker is
      */
     public BarcodePositions findPositionOfMarker() {
-        if (tfod != null) {
+        final int screenWidth = 1260;
 
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-
-            if (updatedRecognitions != null && (updatedRecognitions.size() > 0)) {
-                if (updatedRecognitions.get(0).getLeft() > 615) {
-                    return BarcodePositions.Right;
-                }
-                if (updatedRecognitions.get(0).getLeft() <= 615) {
-                    return BarcodePositions.Left;
-                }
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
+            Recognition rec = updatedRecognitions.get(0);
+            double rightLeftCenterLine = (rec.getRight() + rec.getLeft()) / 2;
+            if (rightLeftCenterLine < screenWidth / 3.0) {
+                return BarcodePositions.Left;
+            } else if (rightLeftCenterLine < ((screenWidth / 3.0)) * 2) {
+                return BarcodePositions.Center;
+            } else {
+                return BarcodePositions.Right;
             }
+        } else {
+            return BarcodePositions.NotSeen;
         }
-        return BarcodePositions.NotSeen;
     }
 
 }
