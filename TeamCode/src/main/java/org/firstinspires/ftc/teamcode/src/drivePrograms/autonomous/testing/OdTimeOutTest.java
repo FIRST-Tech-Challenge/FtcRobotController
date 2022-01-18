@@ -17,7 +17,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
         waitForStart();
 
         try {
-            driveSystem.moveToPositionWithDistanceTimeOut(150, 116, 1, true, 500);
+            driveSystem.moveToPositionWithDistanceTimeOut(150, 116, 1, 500);
         } catch (OdometryMovementException e) {
             telemetry.addData("Distance Time Out", "Yay");
             telemetry.update();
@@ -25,7 +25,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
         }
 
         try {
-            driveSystem.moveToPositionWithTimeOut(100000, 100000, 1, false, 0.1);
+            driveSystem.moveToPositionWithTimeOut(100000, 100000, 1, 0.1);
         } catch (OdometryMovementException e) {
             telemetry.addData("Standard Time Out", "Yay");
             telemetry.update();
@@ -44,7 +44,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
             Executable<Boolean> b = () -> {
                 return true;
             };
-            driveSystem.moveToPositionWithCallBack(100000, 100000, 1, b, false);
+            driveSystem.moveToPositionWithCallBack(100000, 100000, 1, b);
         } catch (OdometryMovementException e) {
             telemetry.addData("Callback Error", "Yay");
             telemetry.update();

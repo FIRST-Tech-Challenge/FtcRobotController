@@ -60,7 +60,7 @@ public class MiscUtills {
      * @param x this is the x value
      * @return It returns the y value
      */
-    public double linearEquation(double m, double b, double x) {
+    public static double linearEquation(double m, double b, double x) {
         return (m * x) + b;
     }
 
@@ -78,4 +78,34 @@ public class MiscUtills {
         return ((value - a) * ((d - c) / (b - a))) + c;
     }
 
+    /**
+     * Determines the distance between two points
+     *
+     * @param x1 the x-value of the first point
+     * @param y1 the y-value of the first point
+     * @param x2 the x-value of the second point
+     * @param y2 the y-value of the second point
+     * @return The distance between two points
+     */
+    public static double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+    }
+
+    /**
+     * This is used to get the angle between two points
+     *
+     * @param rx       The robot x position
+     * @param ry       Robot Y Position
+     * @param x        X Position to go to
+     * @param y        Y position to go to
+     * @param robotRot The orientation of the robot
+     * @return The heading the point is from the robot
+     */
+    public static double getAngle(double rx, double ry, double x, double y, double robotRot) {
+        double angle;
+        x = x - rx;
+        y = y - ry;
+        angle = Math.toDegrees(Math.atan2(x, y));
+        return ((angle - robotRot) % 360);
+    }
 }
