@@ -23,22 +23,22 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     /**
      * Internal Odometry Global Coordinate Position Object, it runs the localization algorithm in a separate thread
      */
-    OdometryGlobalCoordinatePosition odometry;
+    final OdometryGlobalCoordinatePosition odometry;
 
     /**
      * A Lambda object that allows this class to check the stop requested condition of the OpMode
      */
-    Executable<Boolean> _isStopRequested;
+    final Executable<Boolean> _isStopRequested;
 
     /**
      * A Lambda object that allows this class to check that the OpMode is active
      */
-    Executable<Boolean> _opModeIsActive;
+    final Executable<Boolean> _opModeIsActive;
 
     /**
      * A voltage sensor to monitor the robot voltage
      */
-    RobotVoltageSensor voltageSensor;
+    final RobotVoltageSensor voltageSensor;
 
     /**
      * accelerationDistance controls the distance (in inches) that the robot uses to accelerate to maximum speed
@@ -325,13 +325,13 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     public void moveToPositionWithDistanceTimeOut(double x, double y, double theta, double tolerance, long millis) throws InterruptedException, OdometryMovementException {
         final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        final double[] positionBeforeTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
-        final double[] positionAfterTimeLoop = {0.0}; //These are arrays to make the compiler happy. Treat them as a normal double
+        final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
+        final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
         final double tooSmallOfDistance = millis / 500.0; // this travels ~1 inch for every 1000 millis
 
         Executable<Boolean> e = () -> {
 
-            if (timer.milliseconds() > millis) {
+            if (timer.milliseconds() >= millis) {
                 positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
                 positionAfterTimeLoop[0] = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
                 if (positionBeforeTimeLoop[0] - positionAfterTimeLoop[0] < tooSmallOfDistance) {
@@ -345,6 +345,72 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         moveToPosition(x, y, theta, tolerance, e);
 
     }
+
+    /*public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException {
+        final String coordinateString = x + " , " + y;
+        double power, odometry_angle;
+
+        double odometry_x = odometry.returnRelativeXPosition();
+        double odometry_y = odometry.returnRelativeYPosition();
+
+        double currentDistance = distance(odometry_x, odometry_y, x, y);
+        final double initialDistance = currentDistance;
+
+        double longDistanceThreshold = decelerationDistance + accelerationDistance;
+        final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
+        boolean timeOut = false;
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        double posA;
+        double posB;
+        double tooSmallOfDistance = millis / 1000; // this distance is 1 inch for every second of millis
+
+
+        while (currentDistance > tolerance && !timeOut && !isStopRequested() && opModeIsActive()) {
+            timer.reset();
+            posA = distance(odometry_x, odometry_y, x, y);
+
+            while (timer.milliseconds() < millis) {
+
+                odometry_x = odometry.returnRelativeXPosition(); //odometry x
+                odometry_y = odometry.returnRelativeYPosition(); //odometry y
+                currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
+                odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
+
+
+                if (longDistanceTravel) {
+                    power = this.calculateLongDistancePower(initialDistance, currentDistance);
+                } else {
+                    power = this.calculateShortDistancePower(initialDistance, currentDistance);
+                }
+
+                // if current position does not decrease by a certain amount within a certain time, make timeout true
+
+
+                if (consoleOutput) {
+                    telemetry.addData("Moving to", coordinateString);
+                    telemetry.addData("currentDistance", currentDistance);
+                    telemetry.addData("angle", odometry_angle);
+                    telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
+                    telemetry.addData("X Pos", odometry_x);
+                    telemetry.addData("Y Pos", odometry_y);
+                    telemetry.addData("Power", power);
+                    telemetry.addData("Long Distance Mode = ", longDistanceTravel);
+                    telemetry.update();
+                }
+
+                strafeAtAngle(odometry_angle, power);
+            }
+            posB = distance(odometry_x, odometry_y, x, y);
+
+            if (posB - posA <= tooSmallOfDistance) {
+                timeOut = true;
+            }
+
+        }
+        stopAll();
+    }
+
+     */
 
     /**
      * Moves the robot to the given (x,y) position. Errors out if the time elapsed is greater than timeout.
