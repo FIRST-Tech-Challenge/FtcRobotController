@@ -22,7 +22,7 @@ public class ContourPipelineSim extends OpenCvPipeline {
 
     // Green                        Y      Cr     Cb    (Do not change Y)
     public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 130.0);
 
     Telemetry telemetry;
 
@@ -72,14 +72,14 @@ public class ContourPipelineSim extends OpenCvPipeline {
 
         telemetry = t;
 
-        this.borderLeftX = 0.2;
-        this.borderRightX = 0.2;
-        this.borderTopY = 0.2;
-        this.borderBottomY = 0.2;
+        this.borderLeftX = 0.25;
+        this.borderRightX = 0.25;
+        this.borderTopY = 0.25;
+        this.borderBottomY = 0.45;
 
         // Green Range                                      Y      Cr     Cb
-        Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
-        Scalar initScalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
+        Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
+        Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
     }
@@ -158,8 +158,8 @@ public class ContourPipelineSim extends OpenCvPipeline {
                 }
             }
             // Draw Rectangles If Area Is At Least 500
-            if (first && maxRect.area() > 500) {
-                Imgproc.rectangle(input, maxRect, new Scalar(0, 255, 0), 2);
+            if (maxRect.area() > 1500 && maxRect.area() < 2300){
+                Imgproc.rectangle(input, maxRect, new Scalar(0, 255, 0), 2); // GREEN
             }
             // Draw Borders
             Imgproc.rectangle(input, new Rect(
@@ -170,7 +170,15 @@ public class ContourPipelineSim extends OpenCvPipeline {
             ), GREEN, 2);
 
             // Display Data
-            Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(5, CAMERA_HEIGHT - 5), 0, 0.2, new Scalar(255, 255, 255), 2);
+            Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(10, 10), 0, 0.35, new Scalar(255, 255, 255), 1);
+
+            if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
+                telemetry.addData("X", "Level 1");
+            } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
+                telemetry.addData("X", "Level 2");
+            } else {
+                telemetry.addData("X", "Level 3");
+            }
 
             loopCounter++;
         } catch (Exception e) {
