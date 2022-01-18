@@ -311,8 +311,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
     //-Special Forms of MoveToPosition----------------------------------------------------------------------------------------------------------
 
-    //TODO Make this function dependent on the callback moveToPosition
-
     /**
      * Moves to the given position. Throws error if it is stopped for a time greater than millis.
      *
@@ -324,68 +322,26 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @throws OdometryMovementException Stops Motors and Throws if the robot gets stuck and times out
      */
     public void moveToPositionWithDistanceTimeOut(double x, double y, double tolerance, long millis) throws InterruptedException, OdometryMovementException {
-        final String coordinateString = x + " , " + y;
-        double power, odometry_angle;
-
-        double odometry_x = odometry.returnRelativeXPosition();
-        double odometry_y = odometry.returnRelativeYPosition();
-
-        double currentDistance = MiscUtills.distance(odometry_x, odometry_y, x, y);
-        final double initialDistance = currentDistance;
-
-        double longDistanceThreshold = decelerationDistance + accelerationDistance;
-        final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
-
-
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        double posA;
-        double posB;
+        final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double[] positionBeforeTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
+        final double[] positionAfterTimeLoop = {0.0}; //These are arrays to make the compiler happy. Treat them as a normal double
         final double tooSmallOfDistance = millis / 500.0; // this travels ~1 inch for every 1000 millis
 
+        Executable<Boolean> e = () -> {
 
-        while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
-            timer.reset();
-            posA = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
-
-            while (timer.milliseconds() < millis) {
-                odometry_x = odometry.returnRelativeXPosition(); //odometry x
-                odometry_y = odometry.returnRelativeYPosition(); //odometry y
-                currentDistance = MiscUtills.distance(odometry_x, odometry_y, x, y); //currentDistance value
-                odometry_angle = MiscUtills.getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
-
-
-                if (longDistanceTravel) {
-                    power = this.calculateLongDistancePower(initialDistance, currentDistance);
-                } else {
-                    power = this.calculateShortDistancePower(initialDistance, currentDistance);
+            if (timer.milliseconds() > millis) {
+                positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
+                positionAfterTimeLoop[0] = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
+                if (positionBeforeTimeLoop[0] - positionAfterTimeLoop[0] < tooSmallOfDistance) {
+                    return true;
                 }
-
-
-                if (this.debug) {
-                    telemetry.addData("Moving to", coordinateString);
-                    telemetry.addData("currentDistance", currentDistance);
-                    telemetry.addData("angle", odometry_angle);
-                    telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
-                    telemetry.addData("X Pos", odometry_x);
-                    telemetry.addData("Y Pos", odometry_y);
-                    telemetry.addData("Power", power);
-                    telemetry.addData("Long Distance Mode = ", longDistanceTravel);
-                    telemetry.update();
-                }
-
-                //TODO Make this method use strafeAtAngleWithTurn
-                this.strafeAtAngle(odometry_angle, power);
+                timer.reset();
             }
+            return false;
+        };
 
-            posB = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
+        moveToPosition(x, y, odometry.returnOrientation(), tolerance, e);
 
-            if (posA - posB < tooSmallOfDistance) {
-                stopAll();
-                throw new OdometryMovementException("Timeout");
-            }
-
-        }
-        stopAll();
     }
 
     /**
