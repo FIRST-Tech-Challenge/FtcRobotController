@@ -93,7 +93,8 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
         odometry.setImu(imu.getImu());
 
 
-        odometry.reverseLeftEncoder();
+        odometry.reverseRightEncoder();
+
         odometry.start();
 
         if (voltageSensor == null) {

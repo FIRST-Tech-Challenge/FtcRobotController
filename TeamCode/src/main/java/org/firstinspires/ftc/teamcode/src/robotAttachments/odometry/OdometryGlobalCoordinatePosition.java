@@ -83,7 +83,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
 
     private boolean reverseY = false;
 
-    private boolean reverseX = false;
+    private final boolean reverseX = false;
 
     /**
      * Constructor for GlobalCoordinatePosition Thread
@@ -114,9 +114,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         reverseY = !reverseY;
     }
 
-    public void reverseX() {
-        reverseX = !reverseX;
-    }
+
 
 
     /**
@@ -338,10 +336,8 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @return global X Position in inches
      */
     public double returnRelativeXPosition() {
-        if (reverseX) {
-            return robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
-        }
-        return -robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
+
+        return robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
     }
 
     /**
@@ -350,10 +346,8 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @return global Y Position in inches
      */
     public double returnRelativeYPosition() {
-        if (reverseY) {
-            return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
-        }
-        return -robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
+
+        return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }
 
     /**
@@ -408,7 +402,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     /**
      * Reverses the Horizontal encoder
      */
-    public void reverseNormalEncoder() {
+    public void reverseHorizontalEncoder() {
         if (normalEncoderPositionMultiplier == 1) {
             normalEncoderPositionMultiplier = -1;
         } else {

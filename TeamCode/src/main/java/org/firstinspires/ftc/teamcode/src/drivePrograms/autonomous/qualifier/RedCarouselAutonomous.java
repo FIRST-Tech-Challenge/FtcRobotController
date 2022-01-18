@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -13,13 +14,13 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final boolean wareHousePark = true;
     static final BlinkinPattern def = BlinkinPattern.RED;
-    static final double[] initialPos = {7, 101, 90};
+    //static final double[] initialPos = {7, 101, 90};
 
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
-        odometry.setPosition(initialPos[0], initialPos[1], initialPos[2]);
+        odometry.setPosition(7, 112, 180);
 
         telemetry.addData("GC", "Started");
         telemetry.update();
@@ -40,7 +41,13 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
 
-            //driveSystem.moveToPosition();
+            driveSystem.strafeAtAngle(270, .6);
+            Thread.sleep(1000);
+            driveSystem.turnTo(248.5, .5);
+            driveSystem.moveToPosition(FieldPoints.RedWestLoadingPoint, 1);
+
+
+
 
 
             /*switch (Pos) {

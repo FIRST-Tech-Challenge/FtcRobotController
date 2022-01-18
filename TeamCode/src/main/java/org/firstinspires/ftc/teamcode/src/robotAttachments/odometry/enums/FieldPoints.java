@@ -41,7 +41,7 @@ public enum FieldPoints {
     public static final HashMap<FieldPoints, double[]> positionsAndPoints = new HashMap<FieldPoints, double[]>() {{
 
         // the initialization points need to be updated
-        put(FieldPoints.RedWestLoadingPoint, new double[]{20, 85});
+        put(FieldPoints.RedWestLoadingPoint, new double[]{26.5, 86});
         put(FieldPoints.RedEastLoadingPoint, new double[]{66, 85.5});
         put(FieldPoints.RedSouthLoadingPoint, new double[]{47, 68});
         put(FieldPoints.RedNorthLoadingPoint, new double[]{47, 100});
