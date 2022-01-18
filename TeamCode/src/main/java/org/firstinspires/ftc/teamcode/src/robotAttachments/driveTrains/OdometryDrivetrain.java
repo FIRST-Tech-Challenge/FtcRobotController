@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
 
 /**
- * Odometry Drivetrain Implements basic drive functions that can be inherited by other drive systems.
+ * Odometry Drivetrain Implements more advanced drive functions that can be inherited by other drive systems.
  */
 public class OdometryDrivetrain extends BasicDrivetrain {
 
@@ -224,11 +224,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves the robot to the given position with the option for debug information
+     * Moves the robot to the given (x,y) position
      *
      * @param x         X Value to move to
      * @param y         Y Value to move to
-     * @param tolerance The distance the robot can be off from the given position
+     * @param tolerance The distance the robot can from the given position (in inches)
      * @throws InterruptedException Throws an exception if stop is requested during the move
      */
     public void moveToPosition(double x, double y, double tolerance) throws InterruptedException {
@@ -236,12 +236,12 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves to position while strafing at angle
+     * Moves the robot to the given (x,y) position and turns to the angle (theta)
      *
      * @param x         The x-coordinate to move to
      * @param y         The y-coordinate to move to
      * @param theta     The angle to turn to, relative to the field
-     * @param tolerance The tolerance in inches that is good enough
+     * @param tolerance The tolerance for how close it must get (in inches)
      * @throws InterruptedException Throws if stop is requested during this time
      */
     public void moveToPosition(double x, double y, double theta, double tolerance) throws InterruptedException {
@@ -252,11 +252,12 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves to the given position. Errors out if callBack returns true
+     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Errors out if callBack returns true
      *
      * @param x         The x coordinate to go to
      * @param y         The y coordinate to go to
-     * @param tolerance The tolerance for how close it must get
+     * @param tolerance The tolerance for how close it must get (in inches)
+     * @param theta     The angle (relative to the field) to turn to during the movement
      * @param callBack  A Lambda function, if it returns true, this throws a {@link OdometryMovementException}
      * @throws InterruptedException      Throws if the OpMode ends during execution
      * @throws OdometryMovementException Stops Motors and Throws if callBack returns true
@@ -312,16 +313,17 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     //-Special Forms of MoveToPosition----------------------------------------------------------------------------------------------------------
 
     /**
-     * Moves to the given position. Throws error if it is stopped for a time greater than millis.
+     * Moves the robot to the given (x,y) position. Throws error if it is stopped for a time greater than millis.
      *
      * @param x         The x coordinate to go to
      * @param y         The y coordinate to go to
      * @param tolerance The tolerance for how close it must get
      * @param millis    The time in milliseconds that the robot should attempt to move
+     * @param theta     The angle (relative to the field) to turn to during the movement
      * @throws InterruptedException      Throws if the OpMode ends during execution
      * @throws OdometryMovementException Stops Motors and Throws if the robot gets stuck and times out
      */
-    public void moveToPositionWithDistanceTimeOut(double x, double y, double tolerance, long millis) throws InterruptedException, OdometryMovementException {
+    public void moveToPositionWithDistanceTimeOut(double x, double y, double theta, double tolerance, long millis) throws InterruptedException, OdometryMovementException {
         final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         final double[] positionBeforeTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
         final double[] positionAfterTimeLoop = {0.0}; //These are arrays to make the compiler happy. Treat them as a normal double
@@ -340,39 +342,41 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             return false;
         };
 
-        moveToPosition(x, y, odometry.returnOrientation(), tolerance, e);
+        moveToPosition(x, y, theta, tolerance, e);
 
     }
 
     /**
-     * Moves to the given position and errors out if the time elapsed in seconds is greater than timeout
+     * Moves the robot to the given (x,y) position. Errors out if the time elapsed is greater than timeout.
      *
-     * @param x         The x coordinate to go to
-     * @param y         The y coordinate to go to
-     * @param tolerance The tolerance for how close it must get
-     * @param timeout   The time in seconds that the movement may take
-     * @throws InterruptedException      Throws if the OpMode ends during execution
-     * @throws OdometryMovementException Stops Motors and Throws if the movement time exceeds the provided value of timeout
+     * @param x         The x coordinate to go to.
+     * @param y         The y coordinate to go to.
+     * @param tolerance The tolerance for how close it must get (in inches).
+     * @param timeout   The time (in seconds) before the method errors out.
+     * @param theta     The angle (relative to the field) to turn to during the movement
+     * @throws InterruptedException      Throws if the OpMode ends during execution.
+     * @throws OdometryMovementException Stops Motors and Throws if the movement time exceeds the provided value of timeout.
      */
-    public void moveToPositionWithTimeOut(double x, double y, double tolerance, double timeout) throws InterruptedException, OdometryMovementException {
+    public void moveToPositionWithTimeOut(double x, double y, double theta, double tolerance, double timeout) throws InterruptedException, OdometryMovementException {
         ElapsedTime t = new ElapsedTime();
         Executable<Boolean> e = () -> ((t.milliseconds() / 1000.0) > timeout);
-        moveToPosition(x, y, odometry.returnOrientation(), tolerance, e);
+        moveToPosition(x, y, theta, tolerance, e);
     }
 
     /**
-     * Moves to the given position and errors out if the voltage falls to far
+     * Moves the robot to the given (x,y) position. Errors out if the voltage falls by 2V
      *
      * @param x         The x coordinate to go to
      * @param y         The y coordinate to go to
      * @param tolerance The tolerance for how close it must get
+     * @param theta     The angle (relative to the field) to turn to during the movement
      * @throws InterruptedException      Throws if the OpMode ends during execution
      * @throws OdometryMovementException Stops Motors and Throws if the voltage falls to 2 volts less than the starting voltage
      */
-    public void moveToPositionWithVoltageSpike(double x, double y, double tolerance) throws InterruptedException, OdometryMovementException {
+    public void moveToPositionWithVoltageDrop(double x, double y, double theta, double tolerance) throws InterruptedException, OdometryMovementException {
         final double initialVoltage = voltageSensor.getVoltage();
         Executable<Boolean> e = () -> voltageSensor.getVoltage() < (initialVoltage - 2);
-        moveToPosition(x, y, odometry.returnOrientation(), tolerance, e);
+        moveToPosition(x, y, theta, tolerance, e);
     }
 
     /**

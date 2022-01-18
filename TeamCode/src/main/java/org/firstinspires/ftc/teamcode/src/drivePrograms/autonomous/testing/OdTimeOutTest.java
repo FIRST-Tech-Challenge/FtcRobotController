@@ -15,7 +15,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
         waitForStart();
 
         try {
-            driveSystem.moveToPositionWithDistanceTimeOut(150, 0, 1, 2000);
+            driveSystem.moveToPositionWithDistanceTimeOut(150, 0, odometry.returnOrientation(), 1, 2000);
         } catch (OdometryMovementException e) {
             telemetry.addData("Distance Time Out", "Yay");
             telemetry.update();
