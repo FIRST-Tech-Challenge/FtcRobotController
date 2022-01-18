@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final boolean wareHousePark = true;
     static final BlinkinPattern def = BlinkinPattern.RED;
+    public DistanceSensor distanceSensor;
+
     //static final double[] initialPos = {7, 101, 90};
 
     @Override
@@ -21,6 +24,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
         leds.setPattern(def);
         odometry.setPosition(7, 112, 180);
+        distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
 
         telemetry.addData("GC", "Started");
         telemetry.update();
@@ -47,14 +51,34 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.moveToPosition(20, 86, 270, 1);
             Thread.sleep(3000);
             //this is where the loadoff of first freight goes
-            driveSystem.moveToPosition(FieldPoints.RedCarouselSpin, 1);
+
+            driveSystem.moveToPosition(16, 138, 270, 1);
+            // this moves into the wall before spinning off the duck
             driveSystem.strafeAtAngle(45, 1);
             Thread.sleep(1000);
+            driveSystem.stopAll();
             spinner.spinOffRedDuck();
             driveSystem.strafeAtAngle(270, 1);
             Thread.sleep(1000);
-            driveSystem.moveToPosition(7, 63, 180, 1);
+            driveSystem.moveToPosition(7, 80, 180, 1);
+            driveSystem.strafeAtAngle(90, 1);
+            Thread.sleep(500);
+            driveSystem.moveToPosition(7, 60, 1);
+            //Thread.sleep(1000);
+            /*
+            try {
+                driveSystem.moveToPositionWithDistanceTimeOut(63,7,1,1000);
+            }catch(OdometryMovementException stuck){
+              //TODO: create backup program
+            }
 
+             */
+            while (distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested()) {
+                intake.setIntakeOn();
+                driveSystem.strafeAtAngle(0, .7);
+            }
+            intake.setIntakeOff();
+            this.stop();
 
             /*driveSystem.strafeAtAngle(270, .6);
             Thread.sleep(1000);
