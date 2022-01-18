@@ -57,11 +57,11 @@ public class AAMainTeleop extends LinearOpMode {
 
             //the trigger is broken, so using bumper
             //intake
-            if (gamepad1.left_bumper) {
-                motorIntake.setPower(powerMod);
-            }
-            else if (gamepad1.right_bumper) {
+            if (gamepad1.left_bumper) {//out
                 motorIntake.setPower(-powerMod);
+            }
+            else if (gamepad1.right_bumper) {//in
+                motorIntake.setPower(powerMod);
             }
             else {
                 motorIntake.setPower(0);
@@ -83,7 +83,10 @@ public class AAMainTeleop extends LinearOpMode {
             }
 
             if(gamepad2.left_stick_button){//auto dump bucket
-                if(!downBucket){
+                if(motorOuttake.getCurrentPosition() < 300){
+                    robot.bucket(0.4);
+                }
+                else if(!downBucket){
                     robot.bucket(1);
                     downBucket = true;
                 }
@@ -120,11 +123,8 @@ public class AAMainTeleop extends LinearOpMode {
                 robot.moveSlides(0, 0.5);
             }
 
-            //left is forwards, right is back
-            //forwards is left, back is right
-            //switch intake
-            //if bucket is inside robot, button to tip robot adjusts it to safe angle
-            //else, dump
+
+
             //right+left-
             //up-down+?!<<<<<<<<<<
             //drive
