@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 
 import java.util.Objects;

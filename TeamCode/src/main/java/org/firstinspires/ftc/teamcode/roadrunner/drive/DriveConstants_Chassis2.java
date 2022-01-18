@@ -32,8 +32,8 @@ public class DriveConstants_Chassis2 {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(20, 0, 10,
-            14.13);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(30, 0, 15,
+            13.55);//9.9
     //f:getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)
 
     /*
@@ -44,10 +44,9 @@ public class DriveConstants_Chassis2 {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 1.89; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 11
-            ; // in
+    public static double WHEEL_RADIUS = 1.8898; // in
+    public static double GEAR_RATIO = 0.99173; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 14.1; // 15.08333in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -66,9 +65,9 @@ public class DriveConstants_Chassis2 {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 51.8; //You can adjust the max velocity value here
+    public static double MAX_VEL = 60; //You can adjust the max velocity value here
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = 5.4;
+    public static double MAX_ANG_VEL = 7;
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
 

@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,14 +18,14 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.DriveMethod;
 import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.PoseStorage;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "BLUE DUCK - STORAGE 2", group = "Competition")
+@Autonomous(name = "BLUE DUCK - STORAGE 2", group = "Competition 2")
 public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -32,10 +33,9 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
     private DcMotor LB = null;
     private DcMotor RB = null;
     private DcMotor Intake = null;
-    private DcMotor Spin = null;
+    private CRServo Spin = null;
     private DcMotor Slide = null;
     private Servo Rotate = null;
-    private Servo Push = null;
     private ElapsedTime runtime = new ElapsedTime();
 
     BNO055IMU imu;
@@ -60,7 +60,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
         Slide = hardwareMap.get(DcMotor.class, "Slide");
         Intake = hardwareMap.get(DcMotor.class, "Intake");
-        Spin = hardwareMap.get(DcMotor.class, "Spin");
+        Spin = hardwareMap.get(CRServo.class, "Spin");
 
         LF.setDirection(DcMotor.Direction.REVERSE);
         RF.setDirection(DcMotor.Direction.FORWARD);
@@ -78,12 +78,10 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
         Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Spin.setDirection(DcMotor.Direction.FORWARD);
-        Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         Rotate = hardwareMap.get(Servo.class, "Rotate");
         Rotate.setDirection(Servo.Direction.FORWARD);
-        Push = hardwareMap.get(Servo.class, "Push");
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -91,12 +89,11 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //initialize position
-        Push.setPosition(0.4);
         Slide.setPower(0.15);
         sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Rotate.setPosition(0.03);
+        Rotate.setPosition(0.95);
 
         //Vision
         initVuforia();
@@ -114,7 +111,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
         telemetry.update();
 
         //Traj
-        SampleMecanumDrive_Chassis1 drive = new SampleMecanumDrive_Chassis1(hardwareMap);
+        SampleMecanumDrive_Chassis2 drive = new SampleMecanumDrive_Chassis2(hardwareMap);
         Pose2d startPose = new Pose2d(-41, 62.125, toRadians(90));
         drive.setPoseEstimate(startPose);
         Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
@@ -149,7 +146,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
             }
             if (center < 0) {
                 visionResult = "LEFT";
-            } else if (center < 321.85) {
+            } else if (center < 273) {
                 visionResult = "MIDDLE";
             } else {
                 visionResult = "RIGHT";
@@ -159,20 +156,20 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
 
             //MOTION TO DUCK
             Trajectory duckTraj = drive.trajectoryBuilder(startPose,true)
-                    .splineToLinearHeading(new Pose2d(-64, 54, toRadians(90)), toRadians(0))
+                    .splineToLinearHeading(new Pose2d(-56.91, 56.91, toRadians(135)), toRadians(0))
                     .build();
             drive.followTrajectory(duckTraj);
             sleep(500);
 
             //ROTATE DUCK
-            drive.setMotorPowers(0.1, 0.1,0.1,0.1);
-            sleep(340);
+            drive.setMotorPowers(0.05, 0.05,0.05,0.05);
+            sleep(350);
             drive.setMotorPowers(0, 0,0,0);
             Spin.setPower(0.5);
             sleep(3500);
             Spin.setPower(0.0);
 
-            Pose2d wall = new Pose2d(-63.88, 53.25, drive.getExternalHeading()); //Math.toRadians(90)
+            Pose2d wall = new Pose2d(-56.91, 56.91, drive.getExternalHeading()); //Math.toRadians(90)
             drive.setPoseEstimate(wall);
 
             //MOTION TO PLATE
@@ -185,10 +182,6 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
                     .build();
             drive.followTrajectory(plateTraj2);
 
-            //ROTATE
-            rotateWithSpeed(1.0, 0.5);
-            Rotate.setPosition(1.0);
-            sleep(800);
 
             //SLIDE UP
             if (visionResult == "LEFT") {
@@ -196,11 +189,11 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             } else if (visionResult == "MIDDLE") {
-                Slide.setTargetPosition(initialHeight + 700);
+                Slide.setTargetPosition(initialHeight + 500);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             } else if (visionResult == "RIGHT") {
-                Slide.setTargetPosition(initialHeight + 1500);
+                Slide.setTargetPosition(initialHeight + 1150);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             }
@@ -208,24 +201,24 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
 
             //CLOSER TO PLATE
             Trajectory closeTraj = drive.trajectoryBuilder(plateTraj2.end())
-                    .back(1)
+                    .back(2.5)
                     .build();
             drive.followTrajectory(closeTraj);
 
             //DUMP AND SLIDE DOWN
-            Push.setPosition(0.0);
-            sleep(300);
-            Push.setPosition(0.4);
-            sleep(500);
-            Rotate.setPosition(0.03);
+            Rotate.setPosition(0.25);
+            sleep(800);
+            Rotate.setPosition(0.90);
             sleep(500);
             Slide.setTargetPosition(initialHeight);
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Slide.setPower(0.8);
+            sleep(500);
+            Rotate.setPosition(0.95);
 
             //BACK TO STORAGE UNIT & PARK
             Trajectory parkTraj1 = drive.trajectoryBuilder(closeTraj.end())
-                    .forward(31)
+                    .forward(30)
                     .build();
             drive.followTrajectory(parkTraj1);
             Trajectory parkTraj2 = drive.trajectoryBuilder(parkTraj1.end())

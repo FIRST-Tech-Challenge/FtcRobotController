@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis2;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 
 import java.util.Objects;
@@ -66,7 +66,7 @@ public class MaxVelocityTuner extends LinearOpMode {
 
         drive.setDrivePower(new Pose2d());
 
-        double effectiveKf = DriveConstants_Chassis1.getMotorVelocityF(veloInchesToTicks(maxVelocity));
+        double effectiveKf = DriveConstants_Chassis2.getMotorVelocityF(veloInchesToTicks(maxVelocity));
 
         telemetry.addData("Max Velocity", maxVelocity);
         telemetry.addData("Voltage Compensated kF", effectiveKf * batteryVoltageSensor.getVoltage() / 12);
@@ -76,6 +76,6 @@ public class MaxVelocityTuner extends LinearOpMode {
     }
 
     private double veloInchesToTicks(double inchesPerSec) {
-        return inchesPerSec / (2 * Math.PI * DriveConstants_Chassis1.WHEEL_RADIUS) / DriveConstants_Chassis1.GEAR_RATIO * DriveConstants_Chassis1.TICKS_PER_REV;
+        return inchesPerSec / (2 * Math.PI * DriveConstants_Chassis2.WHEEL_RADIUS) / DriveConstants_Chassis2.GEAR_RATIO * DriveConstants_Chassis2.TICKS_PER_REV;
     }
 }

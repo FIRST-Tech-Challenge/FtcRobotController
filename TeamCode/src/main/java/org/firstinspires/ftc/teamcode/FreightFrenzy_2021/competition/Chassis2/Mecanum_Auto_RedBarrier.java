@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.DriveMethod;
 import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.FieldConstant;
 import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.PoseStorage;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis1;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED BARRIER 2", group = "Competition")
+@Autonomous(name = "RED BARRIER 2", group = "Competition 2")
 public class Mecanum_Auto_RedBarrier extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -33,10 +34,9 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
     private DcMotor LB = null;
     private DcMotor RB = null;
     private DcMotor Intake = null;
-    private DcMotor Spin = null;
+    private CRServo Spin = null;
     private DcMotor Slide = null;
     private Servo Rotate = null;
-    private Servo Push = null;
     private ArrayList<Double[]> speedList = new ArrayList<Double[]>();
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -66,7 +66,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
         Slide = hardwareMap.get(DcMotor.class, "Slide");
         Intake = hardwareMap.get(DcMotor.class, "Intake");
-        Spin = hardwareMap.get(DcMotor.class, "Spin");
+        Spin = hardwareMap.get(CRServo.class, "Spin");
 
         LF.setDirection(DcMotor.Direction.REVERSE);
         RF.setDirection(DcMotor.Direction.FORWARD);
@@ -84,12 +84,10 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Spin.setDirection(DcMotor.Direction.FORWARD);
-        Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         Rotate = hardwareMap.get(Servo.class, "Rotate");
         Rotate.setDirection(Servo.Direction.FORWARD);
-        Push = hardwareMap.get(Servo.class, "Push");
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -97,12 +95,11 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //initialize position
-        Push.setPosition(0.4);
         Slide.setPower(0.15);
         sleep(200);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Rotate.setPosition(0.03);
+        Rotate.setPosition(0.95);
 
         //Vision
         initVuforia();
@@ -120,7 +117,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
         telemetry.update();
 
         //Traj
-        SampleMecanumDrive_Chassis1 drive = new SampleMecanumDrive_Chassis1(hardwareMap);
+        SampleMecanumDrive_Chassis2 drive = new SampleMecanumDrive_Chassis2(hardwareMap);
 
         waitForStart();
         if(opModeIsActive()) {
@@ -152,7 +149,7 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             drive.setPoseEstimate(startPose);
             if (center < 0) {
                 visionResult = "RIGHT";
-            } else if (center < 420.725) {
+            } else if (center < 402) {
                 visionResult = "LEFT";
                 Trajectory plateTraj0 = drive.trajectoryBuilder(startPose,true)
                         .strafeLeft(5)
@@ -196,11 +193,11 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             } else if (visionResult == "MIDDLE") {
-                Slide.setTargetPosition(initialHeight + 700);
+                Slide.setTargetPosition(initialHeight + 500);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             } else if (visionResult == "RIGHT") {
-                Slide.setTargetPosition(initialHeight + 1500);
+                Slide.setTargetPosition(initialHeight + 1150);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             }
@@ -214,11 +211,9 @@ public class Mecanum_Auto_RedBarrier extends LinearOpMode {
             drive.setPoseEstimate(closerTraj.end());
 
             //DUMP AND SLIDE DOWN
-            Push.setPosition(0.0);
+            Rotate.setPosition(0.25);
             sleep(300);
-            Push.setPosition(0.4);
-            sleep(500);
-            Rotate.setPosition(0.03);
+            Rotate.setPosition(0.95);
             sleep(500);
             Slide.setTargetPosition(initialHeight);
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

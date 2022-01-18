@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.FieldConsta
 import org.firstinspires.ftc.teamcode.FreightFrenzy_2021.competition.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassis2;
 
-@TeleOp(name = "TELEOP FINAL - NEW CHASSIS", group = "Competition")
+@TeleOp(name = "TELEOP FINAL - NEW CHASSIS", group = "Competition 2")
 public class Mecanum_TeleOp_Final extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -31,7 +31,7 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     double rotate = 0;
-    double speed = 0.25;
+    double speed = 0.6;
     boolean reverse = false;
 
     @Override
@@ -311,11 +311,12 @@ public class Mecanum_TeleOp_Final extends LinearOpMode {
 
             if(gamepad2.x){
                 if(releasedX2) {
-                    Slide.setTargetPosition(initialHeight + 1150);
+                    rotateWithSpeed(Rotate,0.90, rotateSpeed);
+                    sleep(500);
+                    Slide.setTargetPosition(initialHeight);
                     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Slide.setPower(0.8);
-                    sleep(500);
-                    rotateWithSpeed(Rotate,0.25, rotateSpeed);
+                    Rotate.setPosition(0.95);
                     releasedX2 = false;
                 }
             } else if(!releasedX2){

@@ -19,11 +19,11 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassi
 
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis1.kV;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis2.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis2.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis2.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis2.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Chassis2.kV;
 
 /*
  * This routine is designed to tune the PID coefficients used by the REV Expansion Hubs for closed-
@@ -55,7 +55,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants_Cha
 @Autonomous(group = "drive")
 
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 72; // in
+    public static double DISTANCE = 120; // in
 
     enum Mode {
         DRIVER_MODE,
