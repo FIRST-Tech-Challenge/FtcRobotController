@@ -117,7 +117,7 @@ public class WebCamSubsystem extends SubsystemBase {
                 /*
                  * This will be called if the camera could not be opened
                  */
-                
+
             }
         });
     }

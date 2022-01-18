@@ -60,7 +60,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
     private String[] classNames;
 
-    private final String modelPathDuckSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_blue\\converted_keras_duckside_blue\\optimized\\freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideBlue = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
     private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_red\\converted_keras_duckside_red\\optimized\\freight_frenzy_barcodes_duckside_red_graph.pb";
     private final String modelPathWarehouseSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\warehouseside_blue\\converted_keras_warehouseside_blue\\optimized\\freight_frenzy_barcodes_warehouseside_blue_graph.pb";
     private final String modelPathWarehouseSideRed = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\warehouseside_blue\\converted_keras_warehouseside_blue\\optimized\\freight_frenzy_barcodes_warehouseside_blue_graph.pb";
@@ -277,10 +277,10 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
 
 
-                int centerX = (int) (row.get(0, 0)[0] * row.cols());
-                int centerY = (int) (row.get(0, 1)[0] * row.rows());
-                int width = (int) (row.get(0, 2)[0] * row.cols());
-                int height = (int) (row.get(0, 3)[0] * row.rows());
+                int centerX = (int) (row.get(0, 0)[0] * imageRGB.cols());
+                int centerY = (int) (row.get(0, 1)[0] * imageRGB.rows());
+                int width = (int) (row.get(0, 2)[0] * imageRGB.cols());
+                int height = (int) (row.get(0, 3)[0] * imageRGB.rows());
 
                 //row.release();
 
@@ -291,7 +291,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
                 Point left_top = new Point(left, top);
                 Point right_bottom = new Point(right, bottom);
-                Point label_left_top = new Point(left, top + 30);
+                Point label_left_top = new Point(left, top - 20);
                 DecimalFormat df = new DecimalFormat("#.##");
 
                 int class_id = (int) classIdPoint.x;
@@ -325,7 +325,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
                 telemetry.addData("This is a real location", getLocation());
                 telemetry.update();
 
-                //Imgproc.rectangle(imageRGB, left_top, right_bottom, color, 3, 2);
+                Imgproc.rectangle(imageRGB, left_top, right_bottom, new Scalar(0,0,255), 3, 2);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(0, 0, 0), 4);
                 Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(255, 255, 255), 2);
             }
