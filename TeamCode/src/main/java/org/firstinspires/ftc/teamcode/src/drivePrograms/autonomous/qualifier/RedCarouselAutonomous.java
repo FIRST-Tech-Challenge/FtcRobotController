@@ -41,10 +41,28 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
 
-            driveSystem.strafeAtAngle(270, .6);
+            driveSystem.debugOn();
+            driveSystem.strafeAtAngle(270, .8);
+            Thread.sleep(500);
+            driveSystem.moveToPosition(20, 86, 270, 1);
+            Thread.sleep(3000);
+            //this is where the loadoff of first freight goes
+            driveSystem.moveToPosition(FieldPoints.RedCarouselSpin, 1);
+            driveSystem.strafeAtAngle(45, 1);
+            Thread.sleep(1000);
+            spinner.spinOffRedDuck();
+            driveSystem.strafeAtAngle(270, 1);
+            Thread.sleep(1000);
+            driveSystem.moveToPosition(7, 63, 180, 1);
+
+
+            /*driveSystem.strafeAtAngle(270, .6);
             Thread.sleep(1000);
             driveSystem.turnTo(248.5, .5);
             driveSystem.moveToPosition(FieldPoints.RedWestLoadingPoint, 1);
+            driveSystem.strafeAt
+
+             */
 
 
 
