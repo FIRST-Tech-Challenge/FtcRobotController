@@ -327,14 +327,15 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
         final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
-        final double tooSmallOfDistance = millis / 500.0; // this travels ~1 inch for every 1000 millis
+        final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
 
         Executable<Boolean> e = () -> {
 
             if (timer.milliseconds() >= millis) {
                 positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
                 positionAfterTimeLoop[0] = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
-                if (positionBeforeTimeLoop[0] - positionAfterTimeLoop[0] < tooSmallOfDistance) {
+                double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
+                if (traveledDistance < tooSmallOfDistance) {
                     return true;
                 }
                 timer.reset();
