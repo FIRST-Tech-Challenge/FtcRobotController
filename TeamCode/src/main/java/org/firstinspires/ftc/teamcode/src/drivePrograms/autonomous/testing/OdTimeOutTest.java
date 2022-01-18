@@ -13,13 +13,13 @@ public class OdTimeOutTest extends AutonomousTemplate {
         this.initAll();
         odometry.setPosition(0, 0, 0);
         waitForStart();
-
+        driveSystem.debugOn();
         try {
-            driveSystem.moveToPositionWithDistanceTimeOut(150, 0, odometry.returnOrientation(), 1, 2000);
+            driveSystem.moveToPositionWithDistanceTimeOut(50, 0, odometry.returnOrientation(), 1, 500);
         } catch (OdometryMovementException e) {
             telemetry.addData("Distance Time Out", "Yay");
             telemetry.update();
-            Thread.sleep(1000);
+            while (opModeIsActive() && !isStopRequested()) ;
         }
         /*
         try {

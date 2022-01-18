@@ -454,11 +454,13 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param power     The power to turn at
      */
     private void strafeAtAngleWhileTurn(double angle, double turnAngle, double power) {
+
+        final boolean factorInAngleTurn = false;
         power = MiscUtills.boundNumber(power);
         double power1;
         double power2;
-        double power3;
-        double power4;
+        double power3 = 0;
+        double power4 = 0;
 
         angle = angle % 360;
 
@@ -468,15 +470,17 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         power1 = power * power1;
         power2 = power * power2;
 
-        double degreesOff = ((odometry.returnOrientation() - turnAngle) % 360);
-        double tmp;
-        if (degreesOff < 180) {
-            tmp = MiscUtills.map(degreesOff, 0, 180, 0, 1);
-        } else {
-            tmp = MiscUtills.map(degreesOff, 180, 360, -1, 0);
+        if (factorInAngleTurn) {
+            double degreesOff = ((odometry.returnOrientation() - turnAngle) % 360);
+            double tmp;
+            if (degreesOff < 180) {
+                tmp = MiscUtills.map(degreesOff, 0, 180, 0, 1);
+            } else {
+                tmp = MiscUtills.map(degreesOff, 180, 360, -1, 0);
+            }
+            power3 = -tmp;
+            power4 = tmp;
         }
-        power3 = -tmp;
-        power4 = tmp;
 
 
         front_right.setPower(power1 + power3);
