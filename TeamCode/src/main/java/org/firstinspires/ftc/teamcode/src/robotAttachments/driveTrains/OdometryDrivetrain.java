@@ -102,7 +102,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @throws InterruptedException Throws if stop is requested
      */
     boolean isStopRequested() throws InterruptedException {
-        if (_isStopRequested.call()) {
+        if (_isStopRequested.call() || Thread.currentThread().isInterrupted()) {
             throw new InterruptedException();
         }
         return false;
@@ -117,15 +117,16 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         return _opModeIsActive.call();
     }
 
+    /**
+     * Turns the debug information on
+     */
     public void debugOn() {
         this.debug = true;
     }
 
-
-    /*
-     * These four variables configure the speed at which the robot moves during the odometry movement functions
+    /**
+     * Turns the debug information off
      */
-
     public void debugOff() {
         this.debug = false;
     }
@@ -457,6 +458,13 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    /**
+     * Strafes at the provided angle relative to the robot, and turns to the given turnAngle
+     *
+     * @param angle     The angle to strafe at
+     * @param turnAngle The angle to turn to
+     * @param power     The power to turn at
+     */
     private void strafeAtAngleWhileTurn(double angle, double turnAngle, double power) {
         power = MiscUtills.boundNumber(power);
         double power1;
