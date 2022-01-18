@@ -311,6 +311,8 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
     //-Special Forms of MoveToPosition----------------------------------------------------------------------------------------------------------
 
+    //TODO Make this function dependent on the callback moveToPosition
+
     /**
      * Moves to the given position. Throws error if it is stopped for a time greater than millis.
      *
@@ -333,10 +335,12 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
         double longDistanceThreshold = decelerationDistance + accelerationDistance;
         final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
+
+
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         double posA;
         double posB;
-        double tooSmallOfDistance = millis / 500.0; // this distance is 1 inch for every second of millis
+        final double tooSmallOfDistance = millis / 500.0; // this travels ~1 inch for every 1000 millis
 
 
         while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
@@ -356,8 +360,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
                     power = this.calculateShortDistancePower(initialDistance, currentDistance);
                 }
 
-                // if current position does not decrease by a certain amount within a certain time, make timeout true
-
 
                 if (this.debug) {
                     telemetry.addData("Moving to", coordinateString);
@@ -371,7 +373,8 @@ public class OdometryDrivetrain extends BasicDrivetrain {
                     telemetry.update();
                 }
 
-                strafeAtAngle(odometry_angle, power);
+                //TODO Make this method use strafeAtAngleWithTurn
+                this.strafeAtAngle(odometry_angle, power);
             }
 
             posB = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
