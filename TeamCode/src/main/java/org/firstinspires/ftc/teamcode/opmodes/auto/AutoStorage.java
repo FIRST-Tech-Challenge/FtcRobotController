@@ -80,12 +80,12 @@ public class AutoStorage extends LinearOpMode {
 
         telemetry.addData("height", height[0]);
         telemetry.update();
-        if (!isStopRequested()) {
-            drive.followTrajectorySequence(trajSeq);
+        drive.followTrajectorySequenceAsync(trajSeq);
+        while (isStopRequested()) {
+            drive.update();
+            PoseStorage.currentPose = drive.getPoseEstimate();
         }
         drive.followTrajectorySequenceAsync(null);
-        drive.update();
-        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 
     public AutoLift.Positions getPosition(int input) {
