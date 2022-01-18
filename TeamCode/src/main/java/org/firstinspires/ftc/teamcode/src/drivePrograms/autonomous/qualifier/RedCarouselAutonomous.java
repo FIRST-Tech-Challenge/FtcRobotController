@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -41,8 +40,10 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
 
+            //driveSystem.moveToPosition();
 
-            switch (Pos) {
+
+            /*switch (Pos) {
                 case Right:
                     telemetry.addData("position", " is right");
                     telemetry.update();
@@ -139,6 +140,9 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 Thread.sleep(300);
                 driveSystem.stopAll();
             }
+
+
+             */
         }
         slide.end();
         odometry.end();

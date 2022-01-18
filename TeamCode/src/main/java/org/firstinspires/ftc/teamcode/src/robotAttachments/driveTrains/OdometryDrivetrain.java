@@ -377,6 +377,50 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    public void moveToPosition(double x, double y, double tolerance, double turnAngle, boolean consoleOutput) throws InterruptedException {
+        final String coordinateString = x + " , " + y;
+        double power, odometry_angle;
+
+        double odometry_x = odometry.returnRelativeXPosition();
+        double odometry_y = odometry.returnRelativeYPosition();
+
+        double currentDistance = distance(odometry_x, odometry_y, x, y);
+        final double initialDistance = currentDistance;
+
+        double longDistanceThreshold = decelerationDistance + accelerationDistance;
+        final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
+
+
+        while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
+            odometry_x = odometry.returnRelativeXPosition(); //odometry x
+            odometry_y = odometry.returnRelativeYPosition(); //odometry y
+            currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
+            odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
+
+            if (longDistanceTravel) {
+                power = this.calculateLongDistancePower(initialDistance, currentDistance);
+            } else {
+                power = this.calculateShortDistancePower(initialDistance, currentDistance);
+            }
+
+            if (consoleOutput) {
+                telemetry.addData("Moving to", coordinateString);
+                telemetry.addData("currentDistance", currentDistance);
+                telemetry.addData("angle", odometry_angle);
+                telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
+                telemetry.addData("X Pos", odometry_x);
+                telemetry.addData("Y Pos", odometry_y);
+                telemetry.addData("Power", power);
+                telemetry.addData("Long Distance Mode = ", longDistanceTravel);
+                telemetry.update();
+            }
+
+            strafeAtAngle(odometry_angle, power);
+
+        }
+        stopAll();
+    }
+
     /**
      * Moves to the given position. Throws error if it is stopped for a time greater than millis.
      *
@@ -548,6 +592,40 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    public void strafeAtAngleWhileTurn(double angle, double turnAngle, double power) {
+        power = MiscUtills.boundNumber(power);
+        double power1;
+        double power2;
+        double power3;
+        double power4;
+
+        angle = angle % 360;
+
+        power1 = -Math.cos(Math.toRadians(angle + 45.0)); //power 1 is front right and back left
+        power2 = -Math.cos(Math.toRadians(angle - 45)); // power 2 is front right and back left
+
+        power1 = power * power1;
+        power2 = power * power2;
+
+        double degreesOff = ((odometry.returnOrientation() - turnAngle) % 360);
+        double tmp;
+        if (degreesOff < 180) {
+            tmp = MiscUtills.map(degreesOff, 0, 180, 0, 1);
+        } else {
+            tmp = MiscUtills.map(degreesOff, 180, 360, -1, 0);
+        }
+        power3 = -tmp;
+        power4 = tmp;
+
+
+        front_right.setPower(power1 + power3);
+        back_left.setPower(power1 + power4);
+
+        front_left.setPower(power2 + power4);
+        back_right.setPower(power2 + power3);
+
+    }
+
     /**
      * Moves to position and turns over the movement
      *
@@ -614,6 +692,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         }
         stopAll();
     }
+
 
     /**
      * A debug method

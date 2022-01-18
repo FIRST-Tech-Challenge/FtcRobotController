@@ -63,10 +63,10 @@ public enum FieldPoints {
         put(FieldPoints.RedSSHA, new double[]{55, 7});
         put(FieldPoints.RedBarrierPass, new double[]{30, 63});
         put(FieldPoints.BlueBarrierPass, new double[]{110, 63});
-        put(FieldPoints.RedWareHouseInit, new double[]{7, 63, 0});
-        put(FieldPoints.RedCarouselInit, new double[]{7, 101, 0});
-        put(FieldPoints.BlueWareHouseInit, new double[]{133, 63, 180});
-        put(FieldPoints.BlueCarouselInit, new double[]{133, 101, 180});
+        put(FieldPoints.RedWareHouseInit, new double[]{7, 63, 180});
+        put(FieldPoints.RedCarouselInit, new double[]{7, 112, 180});
+        put(FieldPoints.BlueWareHouseInit, new double[]{133, 63, 0});
+        put(FieldPoints.BlueCarouselInit, new double[]{133, 101, 0});
 
 
     }};
