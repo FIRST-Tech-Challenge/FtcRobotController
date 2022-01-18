@@ -57,11 +57,12 @@ public class AAMainTeleop extends LinearOpMode {
 
             //the trigger is broken, so using bumper
             //intake
+            
             if (gamepad1.left_bumper) {//out
-                motorIntake.setPower(-powerMod);
+                motorIntake.setPower(powerMod);
             }
             else if (gamepad1.right_bumper) {//in
-                motorIntake.setPower(powerMod);
+                motorIntake.setPower(-powerMod);
             }
             else {
                 motorIntake.setPower(0);
