@@ -19,7 +19,7 @@ public class TestOfOdometryDriveSystem extends AutonomousTemplate {
         waitForStart();
         odometry.setPosition(0, 0, 0);
 
-        driveSystem.moveToPosition(0, 100, 0.5, true);
+        driveSystem.moveToPosition(0, 100, 0.5);
 
         for (int x = 100; x > 0; x -= 10) {
             driveSystem.move(OdometryDirections.Backward, 10, .5);

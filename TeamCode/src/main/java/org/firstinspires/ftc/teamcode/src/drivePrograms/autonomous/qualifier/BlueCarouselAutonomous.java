@@ -116,7 +116,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 driveSystem.strafeAtAngle(180, .5);
                 Thread.sleep(400);
                 odometry.setPosition(144 - 17, 144 - 7, 180);
-                driveSystem.moveToPosition(144 - 24, 64, 1, true);
+                driveSystem.moveToPosition(144 - 24, 64, 1);
                 driveSystem.turnTo(180, 0.5);
                 podServos.raise();
                 driveSystem.stopAll();

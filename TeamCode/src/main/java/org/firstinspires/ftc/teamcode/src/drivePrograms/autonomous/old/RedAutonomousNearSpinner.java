@@ -19,13 +19,13 @@ public class RedAutonomousNearSpinner extends AutonomousTemplate {
         telemetry.update();
         waitForStart();
         odometry.setPosition(7.5, 111, 90);
-        driveSystem.moveToPosition(17.5, 111, 1, true);
-        driveSystem.moveToPosition(17.5, 134, 1, true);
+        driveSystem.moveToPosition(17.5, 111, 1);
+        driveSystem.moveToPosition(17.5, 134, 1);
         driveSystem.strafeAtAngle(235, 0.5);
         Thread.sleep(500);
         driveSystem.stopAll();
         spinner.spinOffRedDuck();
-        driveSystem.moveToPosition(32, 134, 1, true);
+        driveSystem.moveToPosition(32, 134, 1);
         driveSystem.strafeAtAngle(270, 1);
         Thread.sleep(500);
 
