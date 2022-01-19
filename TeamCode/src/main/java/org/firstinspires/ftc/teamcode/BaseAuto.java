@@ -18,7 +18,11 @@ public abstract class BaseAuto extends CommandBasedAuto {
         driveTrain = new DriveTrainSubsystem();
         armSubsystem = new ArmSubsystem();
         armSubsystem.setVerticalPosition(0);
+
+        initialize();
     }
+
+    abstract public void initialize();
 
     protected Command forward(double distance) {
         return new FollowTrajectoryCommand(
