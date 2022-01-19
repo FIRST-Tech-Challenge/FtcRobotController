@@ -11,11 +11,15 @@ public final class Constants {
         public static final class RevHDHexMotor {
             public static final int ticks_per_revolution = 28;
         }
+
+        public static final class REVThroughBoreEncoder {
+            public static final int ticks_per_revolution = 8192;
+        }
     }
 
     public static final class DriveTrainConstants {
         public final static double ticks_per_revolution =
-                20 * MotorConstants.RevHDHexMotor.ticks_per_revolution;
+                MotorConstants.REVThroughBoreEncoder.ticks_per_revolution;
 
         public final static MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
                 new Translation2d(0.28, 0.34),
@@ -24,10 +28,10 @@ public final class Constants {
                 new Translation2d(-0.28, -0.34)
         );
 
-        public final static double WheelRadios = 0.05;
+        public final static double WheelDiameter = 0.096;
 
-        public final static DoubleFunction<Integer> m_to_ticks = (double m) -> (int)(m / WheelRadios / 2 / Math.PI * ticks_per_revolution);
-        public final static IntFunction<Double> ticks_to_m = (int ticks) -> ticks * WheelRadios * 2 * Math.PI / ticks_per_revolution;
+        public final static DoubleFunction<Integer> m_to_ticks = (double m) -> (int)(m / WheelDiameter / Math.PI * ticks_per_revolution);
+        public final static IntFunction<Double> ticks_to_m = (int ticks) -> ticks * WheelDiameter * Math.PI / ticks_per_revolution;
 
         public final static double kV = 0.55;
         public final static double kStatic = 0.114;
