@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.cv.sims;
+package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -17,15 +18,7 @@ import java.util.List;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
 
-public class ContourPipelineSim extends OpenCvPipeline {
-
-    public enum TSELocation {
-        DUCKSIDE_BLUE_LEVEL_3,
-        DUCKSIDE_BLUE_LEVEL_2,
-        DUCKSIDE_BLUE_LEVEL_1,
-        NONE
-    }
-    TSELocation location;
+public class ContourPipeline extends OpenCvPipeline {
 
     Scalar GREEN = new Scalar(0, 0, 255);
 
@@ -77,7 +70,7 @@ public class ContourPipelineSim extends OpenCvPipeline {
 
     private final Object sync = new Object();
 
-    public ContourPipelineSim(Telemetry t) {
+    public ContourPipeline(Telemetry t) {
 
         telemetry = t;
 
@@ -183,13 +176,13 @@ public class ContourPipelineSim extends OpenCvPipeline {
             telemetry.addData("Drawing countours at loop:",loopCounter);
             if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
                 telemetry.addData("X", "Level 1");
-                location = TSELocation.DUCKSIDE_BLUE_LEVEL_1;
+                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
             } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
                 telemetry.addData("X", "Level 2");
-                location = TSELocation.DUCKSIDE_BLUE_LEVEL_2;
+                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_2);
             } else {
                 telemetry.addData("X", "Level 3");
-                location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
+                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
             }
 
             telemetry.update();
@@ -261,7 +254,7 @@ public class ContourPipelineSim extends OpenCvPipeline {
         }
     }
 
-    public TSELocation getLocation() {
-        return location;
+    public Levels.TSELocation getLocation() {
+        return Levels.getInstance().getTSELocation();
     }
 }

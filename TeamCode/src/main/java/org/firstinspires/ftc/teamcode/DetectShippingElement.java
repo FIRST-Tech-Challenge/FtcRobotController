@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.hardwaremaps.ExternalCameraHardwareMap;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.OPCVFFObjectDetector3;
@@ -121,7 +122,7 @@ public class DetectShippingElement extends LinearOpMode
             telemetry.addData("Theoretical max FPS", robot.webCam.getCurrentPipelineMaxFps());
             //telemetry.update();
 
-            OpenCvShippingElementDetector.TSELocation location = detector.getLocation();
+            Levels.TSELocation location = detector.getLocation();
             telemetry.addData("We have a", location);
 
 

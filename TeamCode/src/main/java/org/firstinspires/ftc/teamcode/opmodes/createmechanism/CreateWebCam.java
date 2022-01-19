@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
+import org.firstinspires.ftc.teamcode.cv.ContourPipeline;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
@@ -90,7 +91,9 @@ public class CreateWebCam {
     }
 
     public void createAuto(){
-        subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(320,240,telemetry));
+        //subsystem = new WebCamSubsystem(hwMap,deviceName,new OpenCvShippingElementDetector(320,240,telemetry));
+        subsystem = new WebCamSubsystem(hwMap,deviceName,new ContourPipeline(telemetry));
+
         streamToDashboard = new StreamToDashboard(subsystem,dashboard);
         streamToDashboard.schedule();
         //mockDetectTSEPosition = new MockDetectTSEPosition(subsystem, telemetry);

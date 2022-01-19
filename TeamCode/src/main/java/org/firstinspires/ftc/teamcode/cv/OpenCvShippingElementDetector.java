@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.globals.Alliance;
+import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.globals.Side;
 import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.DNNObject;
 import org.firstinspires.ftc.teamcode.mentor.samples.ObjectDector.OPCVFFObjectDetector3;
@@ -35,8 +36,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         NONE
     }
 
-    TSELocation location;
-    Map<TSELocation, Integer> levels = new HashMap<>();
+    //TSELocation location;
+    Map<Levels.TSELocation, Integer> levels = new HashMap<>();
 
 
     private int width = 224; // width of the image
@@ -90,13 +91,13 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         //this.height = height;
         this.telemetry = telemetry;
 
-        levels.put(TSELocation.NONE,0);
+        levels.put(Levels.TSELocation.NONE,0);
 
-        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_1,1);
-        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_2,2);
-        levels.put(TSELocation.DUCKSIDE_BLUE_LEVEL_3,3);
+        levels.put(Levels.TSELocation.LEVEL_1,1);
+        levels.put(Levels.TSELocation.LEVEL_2,2);
+        levels.put(Levels.TSELocation.LEVEL_3,3);
 
-        location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
+        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
 
 
         try {
@@ -282,22 +283,22 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
                 switch (className)
                 {
                     case "duckside_blue_level_1":
-                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_1;
+                        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
                         break;
 
                     case "duckside_blue_level_2":
-                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_2;
+                        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_2);
                         break;
 
                     case "duckside_blue_level_3":
-                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
+                        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
                         break;
 
                     default:
-                        location = TSELocation.NONE;
+                        Levels.getInstance().setTSELocation(Levels.TSELocation.NONE);
                 }
 
-                telemetry.addData("The location being set is", location);
+                telemetry.addData("The location being set is", Levels.getInstance().getTSELocation());
                 telemetry.addData("With confidence", confidence);
 
                 telemetry.addData("This is a real location", getLocation());
@@ -314,11 +315,11 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     }
 
 
-    public TSELocation getLocation() {
-        return location;
+    public Levels.TSELocation getLocation() {
+        return Levels.getInstance().getTSELocation();
     }
     public int getTSELevel(){
         //telemetry.addData("getTSELevel", location);
-        return levels.get(location);
+        return levels.get(Levels.getInstance().getTSELocation());
     }
 }

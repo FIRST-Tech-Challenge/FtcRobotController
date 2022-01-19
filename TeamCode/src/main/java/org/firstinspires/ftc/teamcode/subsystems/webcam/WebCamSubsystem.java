@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.commands.webcam.StreamToDashboard;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
+import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -28,7 +29,7 @@ public class WebCamSubsystem extends SubsystemBase {
     private static final String ID_NAME = "cameraMonitorViewId";
     private static final String ID_DEF_TYPE = "id";
 
-    private OpenCvShippingElementDetector.TSELocation location;
+    //private OpenCvShippingElementDetector.TSELocation location;
     private int currrentLevel = 0;
 
     public WebCamSubsystem(final HardwareMap hwMap, final String deviceName){
@@ -122,16 +123,17 @@ public class WebCamSubsystem extends SubsystemBase {
         });
     }
 
-    public void setLocation(OpenCvShippingElementDetector.TSELocation location){
-        this.location = location;
+    public void setLocation(Levels.TSELocation location){
+        Levels.getInstance().setTSELocation(location);
+
     }
 
     public void setLevel(int level){
         currrentLevel = level;
     }
 
-    public OpenCvShippingElementDetector.TSELocation getLocation(){
-        return location;
+    public Levels.TSELocation getLocation(){
+        return Levels.getInstance().getTSELocation();
     }
 
     public int getLevel(){
