@@ -73,10 +73,10 @@ public class RobotClass {
         carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
-        linearSlideServo = hardwareMap.servo.get("dump");
+        linearSlideServo = hardwareMap.servo.get("dumpServo");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
-        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
+//        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
+//        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
         redLED = (DigitalChannel) hardwareMap.get("red");
         redLED2 = (DigitalChannel) hardwareMap.get("red2");
