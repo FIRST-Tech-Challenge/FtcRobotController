@@ -83,7 +83,7 @@ public class FrenzyBaseBot implements IOdoBot {
     public static final double ROBOT_CENTER_Y = 8.25;
 
 
-    private BotCalibConfig botConfig;
+    protected BotCalibConfig botConfig;
 
     public static String LEFT_FRONT = "frontLeft";
     public static String RIGHT_FRONT = "frontRight";
@@ -699,7 +699,7 @@ public class FrenzyBaseBot implements IOdoBot {
             leftDesiredSpeed = -leftDesiredSpeed;
         }
 
-        double slowdownMark = Math.abs(degrees) * 075;
+        double slowdownMark = Math.abs(degrees) * 075;  // TODO: is this meant to be an OCTAL number?
 
 
         double leftPower = 0;

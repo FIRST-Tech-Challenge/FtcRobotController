@@ -27,8 +27,17 @@ public class BotCalibConfig implements Serializable {
     private MotorReductionBot moveMRForward = new MotorReductionBot();
     private MotorReductionBot moveMRBack  = new MotorReductionBot();
     private MotorReductionBot spinLeftConfig = new MotorReductionBot();
-    private MotorReductionBot spinRightConfig  = new MotorReductionBot();;
+    private MotorReductionBot spinRightConfig  = new MotorReductionBot();
 
+    private FreightFrenzyConfig freightFrenzyConfig = new FreightFrenzyConfig();
+
+    public FreightFrenzyConfig getFreightFrenzyConfig() {
+        return freightFrenzyConfig;
+    }
+
+    public void setFreightFrenzyConfig(FreightFrenzyConfig freightFrenzyConfig) {
+        this.freightFrenzyConfig = freightFrenzyConfig;
+    }
 
     public String serialize() {
         return SimpleGson.getInstance().toJson(this);
