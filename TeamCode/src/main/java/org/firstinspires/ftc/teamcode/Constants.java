@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.function.DoubleFunction;
+import java.util.function.IntFunction;
 
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.MecanumDriveKinematics;
@@ -23,9 +24,10 @@ public final class Constants {
                 new Translation2d(-0.28, -0.34)
         );
 
-        public final static double WheelRadios = 50;
+        public final static double WheelRadios = 0.05;
 
-        public final static DoubleFunction<Double> mm_to_ticks = (double mm) -> mm / WheelRadios / 2 / Math.PI * ticks_per_revolution;
+        public final static DoubleFunction<Integer> m_to_ticks = (double m) -> (int)(m / WheelRadios / 2 / Math.PI * ticks_per_revolution);
+        public final static IntFunction<Double> ticks_to_m = (int ticks) -> ticks * WheelRadios * 2 * Math.PI / ticks_per_revolution;
 
         public final static double kV = 0.55;
         public final static double kStatic = 0.114;

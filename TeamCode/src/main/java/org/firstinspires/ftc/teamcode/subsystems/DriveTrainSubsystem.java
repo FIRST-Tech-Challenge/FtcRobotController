@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -22,29 +21,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.commandftc.opModes.CommandBasedTeleOp;
-import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Constants.DriveTrainConstants;
 import org.firstinspires.ftc.teamcode.lib.drive.ArcadeDrive;
 import org.firstinspires.ftc.teamcode.lib.drive.HorizontalDrive;
-import org.firstinspires.ftc.teamcode.lib.drive.Odometry;
 import org.firstinspires.ftc.teamcode.lib.drive.TankDrive;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.DoubleSupplier;
-
-
-import static org.commandftc.RobotUniversal.hardwareMap;
-import static org.commandftc.RobotUniversal.opMode;
-
-import org.firstinspires.ftc.teamcode.Constants.DriveTrainConstants;
 import org.firstinspires.ftc.teamcode.lib.tragectory.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.lib.tragectory.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.lib.tragectory.TrajectorySequenceRunner;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+import static org.commandftc.RobotUniversal.hardwareMap;
+import static org.commandftc.RobotUniversal.opMode;
 
 public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, ArcadeDrive, HorizontalDrive {
     private final DcMotor m_FrontLeftMotor;
@@ -63,19 +56,12 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(6, Math.toRadians(165), 0.28);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(0.4);
 
-    private final boolean trajectoryControled;
+    private final boolean trajectoryControlled;
 
     public boolean trajectories = true;
 
     public DriveTrainSubsystem() {
         super(DriveTrainConstants.kV, DriveTrainConstants.kA, DriveTrainConstants.kStatic, 0.259, 1);
-        setLocalizer(new Odometry(
-                new DoubleSupplier[]{
-                        this::getLeftPositionsAvg,
-                        this::getRightPositionsAvg
-                },
-                this::getHeading
-        ));
         m_FrontLeftMotor  =  hardwareMap.dcMotor.get("FrontLeftDriveMotor");
         m_RearLeftMotor   =  hardwareMap.dcMotor.get("RearLeftDriveMotor");
         m_FrontRightMotor =  hardwareMap.dcMotor.get("FrontRightDriveMotor");
@@ -102,7 +88,7 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         // check if Opmode is autonomous
-        trajectoryControled = !CommandBasedTeleOp.class.isAssignableFrom(opMode.getClass());
+        trajectoryControlled = !CommandBasedTeleOp.class.isAssignableFrom(opMode.getClass());
 
         // Because we aren't extending SubsystemBase
         CommandScheduler.getInstance().registerSubsystem(this);
@@ -111,7 +97,7 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
     @Override
     public void periodic() {
         updatePoseEstimate();
-        if (trajectoryControled && trajectories) {
+        if (trajectoryControlled && trajectories) {
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
             if (signal != null) setDriveSignal(signal);
         }
@@ -198,7 +184,7 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
     }
 
     public int getRearLeftEncoder() {
-        return m_RearRightMotor.getCurrentPosition();
+        return m_RearLeftMotor.getCurrentPosition();
     }
 
     public int getFrontRightEncoder() {
@@ -218,19 +204,19 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
     }
 
     public double getFrontLeftPosition() {
-        return DriveTrainConstants.mm_to_ticks.apply(getFrontLeftEncoder());
+        return DriveTrainConstants.ticks_to_m.apply(getFrontLeftEncoder());
     }
 
     public double getRearLeftPosition() {
-        return DriveTrainConstants.mm_to_ticks.apply(m_RearRightMotor.getCurrentPosition());
+        return DriveTrainConstants.ticks_to_m.apply(m_RearLeftMotor.getCurrentPosition());
     }
 
     public double getFrontRightPosition() {
-        return DriveTrainConstants.mm_to_ticks.apply(m_FrontRightMotor.getCurrentPosition());
+        return DriveTrainConstants.ticks_to_m.apply(m_FrontRightMotor.getCurrentPosition());
     }
 
     public double getRearRightPosition() {
-        return DriveTrainConstants.mm_to_ticks.apply(m_RearRightMotor.getCurrentPosition());
+        return DriveTrainConstants.ticks_to_m.apply(m_RearRightMotor.getCurrentPosition());
     }
 
     public double getLeftPositionsAvg() {
@@ -322,5 +308,9 @@ public class DriveTrainSubsystem extends MecanumDrive implements TankDrive, Arca
 
     public Pose2d getLastError() {
         return trajectorySequenceRunner.getLastPoseError();
+    }
+
+    public boolean isBusy() {
+        return trajectorySequenceRunner.isBusy();
     }
 }
