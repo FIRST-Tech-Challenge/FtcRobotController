@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Disabled
+@Autonomous(name="test servo")
 public class TestMovement extends LinearOpMode {
     RobotClass robot;
     @Override
@@ -14,7 +14,8 @@ public class TestMovement extends LinearOpMode {
 
         waitForStart();
 
-        robot.forward(1,-4);
+        robot.linearSlideServo.setPosition(0.65);
+        sleep(5000);
 
     }
 }

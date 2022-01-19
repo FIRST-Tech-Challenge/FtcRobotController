@@ -77,7 +77,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         intakeMotor = hardwareMap.dcMotor.get("intake");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
 
-        dumpServo = hardwareMap.servo.get("dump");
+        dumpServo = hardwareMap.servo.get("dumpServo");
         dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
 
         // Set the drive motor direction:
@@ -203,7 +203,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-                    robot.pause(1200);
+                    sleep(1200);
 
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
                     linearSlideTarget = linearSlideTargets.BASE;
