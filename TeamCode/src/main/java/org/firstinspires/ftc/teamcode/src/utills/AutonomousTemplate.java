@@ -115,6 +115,53 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
     }
 
+    protected void initDriveSystemWithWheelDrift() throws InterruptedException {
+        DcMotor front_right = hardwareMap.dcMotor.get(frontRightName);
+        DcMotor front_left = hardwareMap.dcMotor.get(frontLeftName);
+        DcMotor back_left = hardwareMap.dcMotor.get(backLeftName);
+        DcMotor back_right = hardwareMap.dcMotor.get(backRightName);
+        checkStop();
+
+        front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+
+        back_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        front_right.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder
+        //verticalEncoderLeft, verticalEncoderRight, horizontalEncoder
+        odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25, this::opModeIsActive, this::isStopRequested);
+        checkStop();
+        IMU imu = new IMU(hardwareMap, IMUName);
+        checkStop();
+        odometry.setImu(imu.getImu());
+
+
+        odometry.reverseRightEncoder();
+
+        odometry.start();
+
+        if (voltageSensor == null) {
+            this.initVoltageSensor();
+        }
+
+        driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
+    }
+
     /**
      * Initializes the Odometry Servos
      */

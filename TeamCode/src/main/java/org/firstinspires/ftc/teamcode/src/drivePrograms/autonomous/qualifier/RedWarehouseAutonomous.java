@@ -2,9 +2,14 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.Executable;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
@@ -14,12 +19,14 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
     static final double[] initialPos = {7, 63, 90};
     static final BlinkinPattern def = BlinkinPattern.RED;
+    public DistanceSensor distanceSensor;
 
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
-        odometry.setPosition(initialPos[0], initialPos[1], initialPos[2]);
+        odometry.setPosition(6.5, 64, 180);
+        distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
 
         telemetry.addData("GC", "Started");
         telemetry.update();
@@ -40,7 +47,82 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
 
+            driveSystem.debugOn();
 
+            driveSystem.strafeAtAngle(270, .6);
+            Thread.sleep(1000);
+            driveSystem.turnTo(260, .5);
+            driveSystem.moveToPosition(23, 82, 1);
+            Thread.sleep(3000);
+            //this is where the first load-off of minerals happens
+            try {
+                driveSystem.moveToPositionWithDistanceTimeOut(12, 70, 1, 1, 500);
+            } catch (OdometryMovementException stop) {
+            }
+            driveSystem.turnTo(190, .8);
+            try {
+                driveSystem.moveToPositionWithDistanceTimeOut(5, 70, 1, 1, 500);
+            } catch (OdometryMovementException ignored) {
+            }
+
+
+            intake.setIntakeOn();
+            try {
+
+                double millis = 500;
+                final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+                final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
+                final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
+                final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
+
+                Executable<Boolean> t = () -> {
+
+                    if (timer.milliseconds() >= millis) {
+                        positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
+                        positionAfterTimeLoop[0] = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 7, 7);
+                        double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
+                        if (traveledDistance < tooSmallOfDistance) {
+                            return true;
+                        }
+                        timer.reset();
+                    }
+                    return false;
+                };
+
+
+                Executable<Boolean> e = () -> {
+                    return !(distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested());
+                };
+
+                Executable<Boolean> q = () -> {
+                    return (t.call() || e.call());
+                };
+                driveSystem.moveToPosition(7, 7, 1, 1, q);
+
+            } catch (OdometryMovementException ignored) {
+            } finally {
+                intake.setIntakeOff();
+            }
+
+            while (distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested()) {
+                driveSystem.strafeAtAngle(180, .5);
+
+            }
+            intake.setIntakeOff();
+            /*
+            try{
+                driveSystem.moveToPositionWithDistanceTimeOut(7,80,1,1,500);
+            }catch(OdometryMovementException stuck){
+                driveSystem.stopAll();
+            }
+            intake.setIntakeOn();
+
+             */
+
+
+
+
+    /*
             switch (Pos) {
                 case NotSeen:
                     telemetry.addData("position", " is far right ");
@@ -113,7 +195,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             Thread.sleep(300);
 
             driveSystem.moveToPosition(9, 24, 1);
-
+            */
         }
         slide.end();
         odometry.end();

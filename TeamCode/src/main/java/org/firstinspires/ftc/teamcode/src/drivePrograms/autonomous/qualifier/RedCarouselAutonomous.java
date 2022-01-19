@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -24,7 +25,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
-        odometry.setPosition(7, 112, 180);
+        odometry.setPosition(6, 111, 180);
         distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
 
         telemetry.addData("GC", "Started");
@@ -35,48 +36,99 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
         BarcodePositions Pos;
         do {
-            Pos = this.getAverageOfMarker(10, 100);
+            Pos = this.findPositionOfMarker();
             telemetry.addData("Position", Pos);
             telemetry.update();
+            Thread.sleep(200);
         } while (!isStarted() && !isStopRequested());
 
         waitForStart();
+        slide.start();
 
         if (opModeIsActive() && !isStopRequested()) {
             tfod.shutdown();
             vuforia.close();
-
             driveSystem.debugOn();
-            driveSystem.strafeAtAngle(270, .8);
-            Thread.sleep(500);
-            driveSystem.moveToPosition(20, 86, 270, 1);
-            Thread.sleep(3000);
-            //this is where the loadoff of first freight goes
+
+            driveSystem.strafeAtAngle(270, .6);
+            Thread.sleep(1000);
+            driveSystem.turnTo(260, .5);
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(16, 138, 1, 1, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(23, 86, 1, 1, 1000);
             } catch (OdometryMovementException ignored) {
             }
-            // this moves into the wall before spinning off the duck
-            driveSystem.strafeAtAngle(10, 1);
+            driveSystem.turnTo(255, .3);
 
-            Thread.sleep(1000);
+
+            switch (Pos) {
+                case Right:
+                case NotSeen:
+                    // got to the top level when right
+                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
+                    Thread.sleep(1000);
+                    driveSystem.strafeAtAngle(180, .3);
+                    Thread.sleep(500);
+                    intake.setServoOpen();
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(500);
+                    break;
+                case Center:
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                    Thread.sleep(750);
+                    driveSystem.strafeAtAngle(180, .3);
+                    Thread.sleep(500);
+                    intake.setServoOpen();
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(500);
+                    break;
+                case Left:
+                    // go to bottom when left
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .3);
+                    Thread.sleep(500);
+                    intake.setServoOpen();
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(500);
+                    break;
+            }
+
+            //this is where the loadoff of first freight goes
+            try {
+                driveSystem.moveToPositionWithDistanceTimeOut(16, 150, 1, 1, 500);
+            } catch (OdometryMovementException ignored) {
+            }
+
+            // this moves into the wall before spinning off the duck
+            driveSystem.strafeAtAngle(5, .5);
+
+            Thread.sleep(700);
             driveSystem.stopAll();
             spinner.spinOffRedDuck();
             driveSystem.strafeAtAngle(270, 1);
             Thread.sleep(1000);
-            driveSystem.moveToPosition(7, 80, 180, 1);
-            driveSystem.strafeAtAngle(90, 1);
-            Thread.sleep(500);
-            driveSystem.moveToPosition(7, 60, 1);
-            //Thread.sleep(1000);
-            /*
+            driveSystem.moveToPosition(10, 80, 1);
+            driveSystem.turnTo(180, .5);
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(63,7,1,1000);
-            }catch(OdometryMovementException stuck){
-              //TODO: create backup program
+                driveSystem.moveToPositionWithDistanceTimeOut(5, 80, 0, 1, 500);
+            } catch (OdometryMovementException ignored) {
+            }
+            try {
+                driveSystem.moveToPositionWithDistanceTimeOut(7, 45, 1, 1, 1000);
+            } catch (OdometryMovementException stuck) {
+                //TODO: create backup program
+                driveSystem.stopAll();
             }
 
-             */
             while (distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested()) {
                 intake.setIntakeOn();
                 driveSystem.strafeAtAngle(0, .7);
@@ -84,13 +136,9 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             intake.setIntakeOff();
             this.stop();
 
-            /*driveSystem.strafeAtAngle(270, .6);
-            Thread.sleep(1000);
-            driveSystem.turnTo(248.5, .5);
-            driveSystem.moveToPosition(FieldPoints.RedWestLoadingPoint, 1);
-            driveSystem.strafeAt
 
-             */
+
+
 
 
 

@@ -142,7 +142,9 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             return 1.0;
         }
 
-        return MiscUtills.boundNumber(power);
+        //return MiscUtills.boundNumber(power);
+        return .8 * (normalVoltage / voltageSensor.getVoltage());
+
 
     }
 
