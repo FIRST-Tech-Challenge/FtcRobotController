@@ -8,8 +8,6 @@ import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 //@Disabled
 @Autonomous(name = "ODTest")
 public class PushOdometryTest extends AutonomousTemplate {
-
-
     @Override
     public void opModeMain() throws InterruptedException {
         TeleopDriveTrain dt = new TeleopDriveTrain(hardwareMap, frontRightName, frontLeftName, backRightName, backLeftName);
@@ -18,7 +16,7 @@ public class PushOdometryTest extends AutonomousTemplate {
 
         this.initOdometryServos();
         podServos.lower();
-        odometry.setPosition(133.5, 103, 0);
+        //odometry.setPosition(133.5, 103, 180);
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {

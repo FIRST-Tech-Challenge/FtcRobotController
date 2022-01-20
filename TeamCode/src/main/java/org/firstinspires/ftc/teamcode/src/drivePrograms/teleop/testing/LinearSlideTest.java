@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
  * A Teleop to test the Linear Slide
  */
 
-//@Disabled
+@Disabled
 @TeleOp(name = "LS Test")
 public class LinearSlideTest extends TeleOpTemplate {
 

@@ -53,8 +53,9 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             Thread.sleep(1000);
             driveSystem.turnTo(260, .5);
             driveSystem.moveToPosition(23, 82, 1);
-            Thread.sleep(3000);
-            //this is where the first load-off of minerals happens
+
+            //TODO Add Raises and lowers
+
             try {
                 driveSystem.moveToPositionWithDistanceTimeOut(12, 70, 1, 1, 500);
             } catch (OdometryMovementException stop) {

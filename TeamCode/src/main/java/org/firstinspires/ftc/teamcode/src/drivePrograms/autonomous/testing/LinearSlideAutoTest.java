@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 /**
  * A Autonomous to test the proportional power drive capabilities of the linear slide
  */
-//@Disabled
+@Disabled
 @Autonomous(name = "Linear Slide Auto Test")
 public class LinearSlideAutoTest extends AutonomousTemplate {
     @Override

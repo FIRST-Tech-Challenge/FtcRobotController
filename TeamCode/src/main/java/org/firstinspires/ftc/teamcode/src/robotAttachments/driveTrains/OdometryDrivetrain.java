@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
@@ -123,46 +124,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     //-Movement Methods---------------------------------------------------------------------------------------------
 
     /**
-     * Determines the power to drive the motor at for the given distance away
-     *
-     * @param totalDistance   the total distance in inches, that the robot is expected to go
-     * @param currentDistance the total distance in inches, that the robot has traveled
-     * @return The power to drive the motor at in a range between -1 and 1
-     */
-    private double calculateLongDistancePower(double totalDistance, double currentDistance) {
-        final double distanceTraveled = totalDistance - currentDistance;
-        double power;
-
-
-        if (distanceTraveled < accelerationDistance) {
-            power = (-0.3 * Math.cos(distanceTraveled * (1.0 / accelerationDistance) * Math.PI)) + (0.7 * (normalVoltage / voltageSensor.getVoltage()));
-        } else if (currentDistance < decelerationDistance) {
-            power = (0.4 * Math.cos(distanceTraveled * (1.0 / decelerationDistance) * Math.PI)) + (0.6 * (normalVoltage / voltageSensor.getVoltage()));
-        } else {
-            return 1.0;
-        }
-
-        //return MiscUtills.boundNumber(power);
-        return .8 * (normalVoltage / voltageSensor.getVoltage());
-
-
-    }
-
-    /**
-     * Determines the power to drive the motor at for the given distance away
-     *
-     * @param totalDistance   the total distance in inches, that the robot is expected to go
-     * @param currentDistance the total distance in inches, that the robot has traveled
-     * @return The power to drive the motor at in a range between -1 and 1
-     */
-    private double calculateShortDistancePower(double totalDistance, double currentDistance) {
-
-        //return MiscUtills.boundNumber(0.5 * Math.sin((currentDistance * Math.PI) / (totalDistance * .75)) + (0.5 * (normalVoltage / voltageSensor.getVoltage())));
-        return 0.8;
-
-    }
-
-    /**
      * Turns the robot to the given angle relative to the odometry zero angle.
      *
      * @param angle The angle to turn to
@@ -266,22 +227,27 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     public void moveToPosition(double x, double y, double theta, double tolerance, Executable<Boolean> callBack) throws InterruptedException, OdometryMovementException {
         double power, odometry_angle = 0;
-        final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ");";
+        final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
         final String coordinateString = x + " , " + y;
 
         double odometry_x = odometry.returnRelativeXPosition();
         double odometry_y = odometry.returnRelativeYPosition();
 
         double currentDistance = MiscUtills.distance(odometry_x, odometry_y, x, y);
-        final double initialDistance = currentDistance;
 
-        double longDistanceThreshold = decelerationDistance + accelerationDistance;
-        final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
         while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
-            if (longDistanceTravel) {
-                power = this.calculateLongDistancePower(initialDistance, currentDistance);
+
+            /*The next if-else block takes the distance from target and
+             sets the power variable to odometry_angle power following the function
+             @param zeroPoint is the point where the robot goes at 1
+             power = 0.8/zeroPoint(distance) + 0.2
+             if the distance is greater than 24 in or ~2 ft, robot moves at power of 1
+             */
+            final double zeroPoint = 24;
+            if (currentDistance > zeroPoint) {
+                power = 1;
             } else {
-                power = this.calculateShortDistancePower(initialDistance, currentDistance);
+                power = ((0.9 / zeroPoint) * currentDistance) + 0.2;
             }
             if (this.debug) {
                 telemetry.addData("Function", args);
@@ -292,7 +258,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
                 telemetry.addData("X Pos", odometry_x);
                 telemetry.addData("Y Pos", odometry_y);
                 telemetry.addData("Power", power);
-                telemetry.addData("Long Distance Mode = ", longDistanceTravel);
                 telemetry.update();
             }
 
@@ -302,6 +267,9 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             odometry_angle = MiscUtills.getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 
             if (callBack.call()) {
+                if (this.debug) {
+                    RobotLog.addGlobalWarningMessage("Failed Odometry Movement: " + args);
+                }
                 stopAll();
                 throw new OdometryMovementException("Callback Returned True");
             }
@@ -348,72 +316,6 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         moveToPosition(x, y, theta, tolerance, e);
 
     }
-
-    /*public void moveToPositionWithTimeOut(double x, double y, double tolerance, boolean consoleOutput, long millis) throws InterruptedException {
-        final String coordinateString = x + " , " + y;
-        double power, odometry_angle;
-
-        double odometry_x = odometry.returnRelativeXPosition();
-        double odometry_y = odometry.returnRelativeYPosition();
-
-        double currentDistance = distance(odometry_x, odometry_y, x, y);
-        final double initialDistance = currentDistance;
-
-        double longDistanceThreshold = decelerationDistance + accelerationDistance;
-        final boolean longDistanceTravel = (initialDistance > longDistanceThreshold);
-        boolean timeOut = false;
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        double posA;
-        double posB;
-        double tooSmallOfDistance = millis / 1000; // this distance is 1 inch for every second of millis
-
-
-        while (currentDistance > tolerance && !timeOut && !isStopRequested() && opModeIsActive()) {
-            timer.reset();
-            posA = distance(odometry_x, odometry_y, x, y);
-
-            while (timer.milliseconds() < millis) {
-
-                odometry_x = odometry.returnRelativeXPosition(); //odometry x
-                odometry_y = odometry.returnRelativeYPosition(); //odometry y
-                currentDistance = distance(odometry_x, odometry_y, x, y); //currentDistance value
-                odometry_angle = getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
-
-
-                if (longDistanceTravel) {
-                    power = this.calculateLongDistancePower(initialDistance, currentDistance);
-                } else {
-                    power = this.calculateShortDistancePower(initialDistance, currentDistance);
-                }
-
-                // if current position does not decrease by a certain amount within a certain time, make timeout true
-
-
-                if (consoleOutput) {
-                    telemetry.addData("Moving to", coordinateString);
-                    telemetry.addData("currentDistance", currentDistance);
-                    telemetry.addData("angle", odometry_angle);
-                    telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
-                    telemetry.addData("X Pos", odometry_x);
-                    telemetry.addData("Y Pos", odometry_y);
-                    telemetry.addData("Power", power);
-                    telemetry.addData("Long Distance Mode = ", longDistanceTravel);
-                    telemetry.update();
-                }
-
-                strafeAtAngle(odometry_angle, power);
-            }
-            posB = distance(odometry_x, odometry_y, x, y);
-
-            if (posB - posA <= tooSmallOfDistance) {
-                timeOut = true;
-            }
-
-        }
-        stopAll();
-    }
-
-     */
 
     /**
      * Moves the robot to the given (x,y) position. Errors out if the time elapsed is greater than timeout.
@@ -472,17 +374,15 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         power1 = power * power1;
         power2 = power * power2;
 
-        if (factorInAngleTurn) {
-            double degreesOff = ((odometry.returnOrientation() - turnAngle) % 360);
-            double tmp;
-            if (degreesOff < 180) {
-                tmp = MiscUtills.map(degreesOff, 0, 180, 0, 1);
-            } else {
-                tmp = MiscUtills.map(degreesOff, 180, 360, -1, 0);
-            }
-            power3 = -tmp;
-            power4 = tmp;
+        double degreesOff = ((odometry.returnOrientation() - turnAngle) % 360);
+        double tmp;
+        if (degreesOff < 180) {
+            tmp = MiscUtills.map(degreesOff, 0, 180, 0, 1);
+        } else {
+            tmp = MiscUtills.map(degreesOff, 180, 360, -1, 0);
         }
+        power3 = -tmp;
+        power4 = tmp;
 
 
         front_right.setPower(power1 + power3);
