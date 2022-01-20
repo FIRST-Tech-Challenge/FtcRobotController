@@ -163,6 +163,11 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    @Override
+    protected void onEnd() {
+        linearSlide.setPower(0);
+    }
+
     /**
      * A Enum for Height Levels
      */

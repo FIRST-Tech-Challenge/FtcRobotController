@@ -42,9 +42,15 @@ public abstract class ThreadedSubsystemTemplate extends Thread implements Thread
      * Ends the life of this thread
      */
     public void end() {
+        onEnd();
         this.isRunning = false;
         this.interrupt();
     }
+
+    /**
+     * Cleans up before the thread spools down
+     */
+    protected abstract void onEnd();
 
     /**
      * This is the method where the thread starts

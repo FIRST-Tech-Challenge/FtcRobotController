@@ -148,6 +148,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initLinearSlide();
         initVoltageSensor();
         initSpinner();
+        if (voltageSensor.getVoltage() < 12.5) {
+            RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
+        }
     }
 
     /**

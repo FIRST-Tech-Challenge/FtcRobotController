@@ -114,7 +114,10 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         reverseY = !reverseY;
     }
 
+    @Override
+    protected void onEnd() {
 
+    }
 
 
     /**
