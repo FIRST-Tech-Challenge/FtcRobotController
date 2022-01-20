@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
 import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.commands.webcam.CloseDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.MockDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
@@ -46,7 +47,7 @@ public class DuckSideBluePath1 {
     private final Telemetry telemetry;
 
     private CreateIntake createIntake;
-    private StopDetectTSEPosition stopDetectTSEPosition;
+    private CloseDetectTSEPosition closeDetectTSEPosition;
      private InstantCommand stopDetect;
 
     public DuckSideBluePath1(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
@@ -82,7 +83,7 @@ public class DuckSideBluePath1 {
         telemetry.addLine("Detecting Position");
 
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
-        stopDetectTSEPosition = createWebCam.getStopDetectTSEPosition();
+        closeDetectTSEPosition = createWebCam.getCloseDetectTSEPosition();
         detectTSEPosition.schedule();
 
 
@@ -133,7 +134,7 @@ public class DuckSideBluePath1 {
         sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
 
         stopDetect = new InstantCommand(()->{
-            stopDetectTSEPosition.schedule();
+            closeDetectTSEPosition.schedule();
         });
 
 

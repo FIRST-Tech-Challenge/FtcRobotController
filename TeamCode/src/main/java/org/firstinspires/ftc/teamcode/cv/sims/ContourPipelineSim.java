@@ -15,26 +15,25 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-// Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
+// Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future, modified by 14169 PartyTime ^s
 
 public class ContourPipelineSim extends OpenCvPipeline {
-    Scalar GREEN = new Scalar(0, 0, 255);
+
+    public enum TSELocation {
+        LEVEL_3,
+        LEVEL_2,
+        LEVEL_1,
+        NONE
+    }
+    TSELocation location;
 
     // Green                        Y      Cr     Cb    (Do not change Y)
+    // use this picture for you own color https://raw.githubusercontent.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/main/7e8azlgi.bmp
+    Scalar GREEN = new Scalar(0, 0, 255);
     public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 130.0);
 
     Telemetry telemetry;
-
-    // Green                                             Y      Cr     Cb
-    //public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
-    //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
-    // use this picture for you own color https://raw.githubusercontent.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/main/7e8azlgi.bmp
-    // Note that the Cr and Cb values range between 0-255. this means that the origin of the coordinate system is (128,128)
-
-    //Volatile bc accessed by opmode without sync
-    public boolean error = false;
-    //public Exception debug;
 
     public double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
     public double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
@@ -44,18 +43,6 @@ public class ContourPipelineSim extends OpenCvPipeline {
     private int CAMERA_WIDTH;
     private int CAMERA_HEIGHT;
 
-    private int loopCounter = 0;
-    private int pLoopCounter = 0;
-
-
-    // private Mat output = new Mat();
-
-    //private Mat matInit = new Mat();
-    //private Mat mat = matInit.submat(new Rect(80.0,80.0,160.0,120.0));
-
-    //private Mat processedInit = new Mat();
-    //private Mat processed = processedInit.submat(new Rect(80.0,80.0,160.0,120.0));
-
     private Mat mat = new Mat();
     private Mat processed = new Mat();
     private Mat output = new Mat();
@@ -63,23 +50,19 @@ public class ContourPipelineSim extends OpenCvPipeline {
     private Rect maxRect = new Rect(600,1,1,1);
     private Rect rect = new Rect(600,1,1,1);
 
-    private double maxArea = 0;
-    private boolean first = false;
-
-    private final Object sync = new Object();
 
     public ContourPipelineSim(Telemetry t) {
 
         telemetry = t;
 
-        this.borderLeftX = 0.2;
-        this.borderRightX = 0.2;
-        this.borderTopY = 0.2;
-        this.borderBottomY = 0.2;
+        this.borderLeftX = 0.25;
+        this.borderRightX = 0.25;
+        this.borderTopY = 0.25;
+        this.borderBottomY = 0.45;
 
         // Green Range                                      Y      Cr     Cb
-        Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
-        Scalar initScalarUpperYCrCb = new Scalar(255.0, 80.0, 130.0);
+        Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
+        Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
     }
@@ -93,150 +76,108 @@ public class ContourPipelineSim extends OpenCvPipeline {
         scalarUpperYCrCb = new Scalar(y, cr, cb);
     }
 
-    public void configureScalarLower(int y, int cr, int cb) {
-        scalarLowerYCrCb = new Scalar(y, cr, cb);
-    }
-
-    public void configureScalarUpper(int y, int cr, int cb) {
-        scalarUpperYCrCb = new Scalar(y, cr, cb);
-    }
-
     @Override
     public Mat processFrame(Mat input) {
         CAMERA_WIDTH = input.width();
         CAMERA_HEIGHT = input.height();
-        try {
-            // Process Image
+
+            // Process Image, convert to YCrCb,
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
             Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
-            // Core.bitwise_and(input, input, output, processed);
 
             // Remove Noise
             Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_OPEN, new Mat());
             Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
+
             // GaussianBlur
             Imgproc.GaussianBlur(processed, processed, new Size(5.0, 15.0), 0.00);
+
             // Find Contours
             List<MatOfPoint> contours = new ArrayList<>();
             Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            telemetry.addLine("Drawing countours");
-            telemetry.update();
-
             // Draw Contours, red lines that show color areas that match
             Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
+            telemetry.addLine("Drawing countours");
 
-            //lock this up to prevent errors when outside threads access the max rect property.
-            synchronized (sync) {
-                // Loop Through Contours
-                for (MatOfPoint contour : contours) {
-                    Point[] contourArray = contour.toArray();
 
-                    // Bound Rectangle if Contour is Large Enough
-                    if (contourArray.length >= 15) {
-                        MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
-                        Rect rect = Imgproc.boundingRect(areaPoints);
+            // Loop Through Contours, find the counter with matching max and min area
+            for (MatOfPoint contour : contours) {
+                Point[] contourArray = contour.toArray();
 
-                        // if rectangle is larger than previous cycle or if rectangle is not larger than previous 6 cycles > then replace
+                // Set default maxRect to one pixel. Default will return as Level 3
+                maxRect = new Rect(0,0,1,1);
 
-                        if (rect.area() > maxArea
-                                && rect.x > (borderLeftX * CAMERA_WIDTH) && rect.x + rect.width < CAMERA_WIDTH - (borderRightX * CAMERA_WIDTH)
-                                && rect.y > (borderTopY * CAMERA_HEIGHT) && rect.y + rect.height < CAMERA_HEIGHT - (borderBottomY * CAMERA_HEIGHT)
-                                || loopCounter - pLoopCounter > 6) {
-                            maxArea = rect.area();
-                            maxRect = rect;
-                            pLoopCounter++;
-                            loopCounter = pLoopCounter;
-                            first = true;
-                        }
-                        areaPoints.release();
+                // Bound Rectangle if Contour is Large Enough
+                if (contourArray.length >= 15) {
+                    MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
+                    Rect rect = Imgproc.boundingRect(areaPoints);
+
+                    if (rect.area() > 1500 && rect.area() < 2300){
+                        Imgproc.rectangle(input, rect, new Scalar(0, 255, 0), 2); // GREEN
+                        maxRect = rect;
                     }
-                    contour.release();
+                    areaPoints.release();
                 }
-                if (contours.isEmpty()) {
-                    maxRect = new Rect();
-                }
+                contour.release();
             }
-            // Draw Rectangles If Area Is At Least 500
-            if (first && maxRect.area() > 500) {
-                Imgproc.rectangle(input, maxRect, new Scalar(0, 255, 0), 2);
+
+            // Check maxRect for midpoint value to determine which location the element is in
+            if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
+                location = TSELocation.LEVEL_1;
+            } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
+                location = TSELocation.LEVEL_2;
+            } else {
+                location = TSELocation.LEVEL_3;
             }
-            // Draw Borders
-            Imgproc.rectangle(input, new Rect(
-                    (int) (borderLeftX * CAMERA_WIDTH),
-                    (int) (borderTopY * CAMERA_HEIGHT),
-                    (int) (CAMERA_WIDTH - (borderRightX * CAMERA_WIDTH) - (borderLeftX * CAMERA_HEIGHT)),
-                    (int) (CAMERA_HEIGHT - (borderBottomY * CAMERA_WIDTH) - (borderTopY * CAMERA_HEIGHT))
-            ), GREEN, 2);
 
             // Display Data
-            Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(5, CAMERA_HEIGHT - 5), 0, 0.2, new Scalar(255, 255, 255), 2);
+            Imgproc.putText(input, "Location" + location, new Point(10, 20), 0, 0.35, new Scalar(255, 255, 255), 1);
+            Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(10, 10), 0, 0.35, new Scalar(255, 255, 255), 1);
 
-            loopCounter++;
-        } catch (Exception e) {
-            //debug = e;
-            error = true;
-        }
+            telemetry.addData("level", location);
+            telemetry.update();
+
         return input;
     }
-    /*
-    Synchronize these operations as the user code could be incorrect otherwise, i.e a property is read
-    while the same rectangle is being processed in the pipeline, leading to some values being not
-    synced.
-     */
-
 
     public int getRectHeight() {
-        synchronized (sync) {
-            return maxRect.height;
-        }
+        return maxRect.height;
     }
 
     public int getRectWidth() {
-        synchronized (sync) {
-            return maxRect.width;
-        }
+        return maxRect.width;
     }
 
     public int getRectX() {
-        synchronized (sync) {
-            return maxRect.x;
-        }
+        return maxRect.x;
     }
 
     public int getRectY() {
-        synchronized (sync) {
-            return maxRect.y;
-        }
+        return maxRect.y;
     }
 
     public double getRectMidpointX() {
-        synchronized (sync) {
-            return getRectX() + (getRectWidth() / 2.0);
-        }
+        return getRectX() + (getRectWidth() / 2.0);
     }
 
     public double getRectMidpointY() {
-        synchronized (sync) {
-            return getRectY() + (getRectHeight() / 2.0);
-        }
+        return getRectY() + (getRectHeight() / 2.0);
     }
 
     public Point getRectMidpointXY() {
-        synchronized (sync) {
-            return new Point(getRectMidpointX(), getRectMidpointY());
-        }
+        return new Point(getRectMidpointX(), getRectMidpointY());
     }
 
     public double getAspectRatio() {
-        synchronized (sync) {
-            return getRectArea() / (CAMERA_HEIGHT * CAMERA_WIDTH);
-        }
+        return getRectArea() / (CAMERA_HEIGHT * CAMERA_WIDTH);
     }
 
     public double getRectArea() {
-        synchronized (sync) {
-            return maxRect.area();
-        }
+        return maxRect.area();
+    }
+
+    public TSELocation getLocation() {
+        return location;
     }
 }

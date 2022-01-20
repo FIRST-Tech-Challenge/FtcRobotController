@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
+import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -14,7 +15,7 @@ public class MockDetectTSEPosition extends CommandBase {
     //private final OpenCvShippingElementDetector detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
-    private OpenCvShippingElementDetector.TSELocation location;
+    private Levels.TSELocation location;
     private int level = 0;
 
     private static final int MIN_LEVEL = 1;
