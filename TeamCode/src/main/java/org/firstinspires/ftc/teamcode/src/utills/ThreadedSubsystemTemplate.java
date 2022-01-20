@@ -43,6 +43,7 @@ public abstract class ThreadedSubsystemTemplate extends Thread implements Thread
      */
     public void end() {
         this.isRunning = false;
+        this.interrupt();
     }
 
     /**
