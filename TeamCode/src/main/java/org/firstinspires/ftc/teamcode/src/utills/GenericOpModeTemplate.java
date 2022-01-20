@@ -101,7 +101,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         try {
             opModeMain();
         } catch (RuntimeException e) {
-            RobotLog.setGlobalErrorMsg(MiscUtills.getStackTraceAsString(e)); //Appends more information to the error message
+            RobotLog.setGlobalErrorMsg(MiscUtils.getStackTraceAsString(e)); //Appends more information to the error message
         }
     }
 

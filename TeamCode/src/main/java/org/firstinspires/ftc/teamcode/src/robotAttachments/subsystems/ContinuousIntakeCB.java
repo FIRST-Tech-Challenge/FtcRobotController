@@ -20,7 +20,7 @@ public class ContinuousIntakeCB extends ContinuousIntake implements ThreadedSubs
      */
     protected final Executable<Boolean> isStopRequested;
     /**
-     * A boolean that controlls if the thread is running
+     * A boolean that controls if the thread is running
      */
     protected volatile boolean isRunning = true;
     /**

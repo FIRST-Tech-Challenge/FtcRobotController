@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
@@ -58,7 +58,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             try {
                 driveSystem.moveToPositionWithDistanceTimeOut(12, 70, 1, 1, 500);
-            } catch (OdometryMovementException stop) {
+            } catch (OdometryMovementException ignored) {
             }
             driveSystem.turnTo(190, .8);
             try {
@@ -80,7 +80,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     if (timer.milliseconds() >= millis) {
                         positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 7, 7);
+                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 7, 7);
                         double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
                         if (traveledDistance < tooSmallOfDistance) {
                             return true;

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlob
 import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 /**
  * Odometry Drivetrain Implements more advanced drive functions that can be inherited by other drive systems.
@@ -233,7 +233,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         double odometry_x = odometry.returnRelativeXPosition();
         double odometry_y = odometry.returnRelativeYPosition();
 
-        double currentDistance = MiscUtills.distance(odometry_x, odometry_y, x, y);
+        double currentDistance = MiscUtils.distance(odometry_x, odometry_y, x, y);
 
         while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
 
@@ -263,8 +263,8 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
             odometry_x = odometry.returnRelativeXPosition(); //odometry x
             odometry_y = odometry.returnRelativeYPosition(); //odometry y
-            currentDistance = MiscUtills.distance(odometry_x, odometry_y, x, y); //currentDistance value
-            odometry_angle = MiscUtills.getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
+            currentDistance = MiscUtils.distance(odometry_x, odometry_y, x, y); //currentDistance value
+            odometry_angle = MiscUtils.getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
 
             if (callBack.call()) {
                 if (this.debug) {
@@ -303,7 +303,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
 
             if (timer.milliseconds() >= millis) {
                 positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                positionAfterTimeLoop[0] = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
+                positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
                 double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
                 if (traveledDistance < tooSmallOfDistance) {
                     return true;
@@ -360,11 +360,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     private void strafeAtAngleWhileTurn(double angle, double turnAngle, double power) {
 
         final boolean factorInAngleTurn = false;
-        power = MiscUtills.boundNumber(power);
+        power = MiscUtils.boundNumber(power);
         double power1;
         double power2;
-        double power3 = 0;
-        double power4 = 0;
+        double power3;
+        double power4;
 
         angle = angle % 360;
 
@@ -377,9 +377,9 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         double degreesOff = ((odometry.returnOrientation() - turnAngle) % 360);
         double tmp;
         if (degreesOff < 180) {
-            tmp = MiscUtills.map(degreesOff, 0, 180, 0, 1);
+            tmp = MiscUtils.map(degreesOff, 0, 180, 0, 1);
         } else {
-            tmp = MiscUtills.map(degreesOff, 180, 360, -1, 0);
+            tmp = MiscUtils.map(degreesOff, 180, 360, -1, 0);
         }
         power3 = -tmp;
         power4 = tmp;

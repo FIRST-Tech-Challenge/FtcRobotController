@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemTemplate;
 
 import java.util.HashMap;
@@ -122,7 +122,7 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
      * @param power The power to set to
      */
     public void setMotorPower(double power) {
-        linearSlide.setPower(MiscUtills.boundNumber(power));
+        linearSlide.setPower(MiscUtils.boundNumber(power));
     }
 
     /**
@@ -143,12 +143,12 @@ public class LinearSlide extends ThreadedSubsystemTemplate {
         int encoderTicks = linearSlide.getCurrentPosition();
         int distanceFromPos = targetHeight - encoderTicks;
 
-        final double C1 = 0.015; //Scales the sensitivity of the function, smaller value is lower sensativity
+        final double C1 = 0.015; //Scales the sensitivity of the function, smaller value is lower sensitivity
         final double C2 = 0.1; //The approximate power required to hold itself at the current height
 
         power = (Math.pow(((distanceFromPos * C1)), 3));
         power = power + (C2) * (volts * (1 / 12.0));
-        power = MiscUtills.boundNumber(power);
+        power = MiscUtils.boundNumber(power);
         //if (distanceFromPos <= 0){power = 0;}
 
         linearSlide.setPower(power);

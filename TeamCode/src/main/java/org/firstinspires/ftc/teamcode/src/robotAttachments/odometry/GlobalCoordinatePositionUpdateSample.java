@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 
 /**
@@ -137,7 +137,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
             }
         } catch (Exception e) {
             while (opModeIsActive() && !isStopRequested()) {
-                telemetry.addData("Error", MiscUtills.getStackTraceAsString(e));
+                telemetry.addData("Error", MiscUtils.getStackTraceAsString(e));
             }
         }
 

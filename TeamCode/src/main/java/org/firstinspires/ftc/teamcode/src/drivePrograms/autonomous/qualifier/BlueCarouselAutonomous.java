@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryM
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
@@ -130,7 +130,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
                     if (timer.milliseconds() >= millis) {
                         positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtills.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 135, 7);
+                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 135, 7);
                         double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
                         if (traveledDistance < tooSmallOfDistance) {
                             return true;
