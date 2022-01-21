@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
@@ -57,23 +58,74 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(260, .5);
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(22, 84, 1, 2, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(23.5, 85, 1, 2, 500);
             } catch (OdometryMovementException ignored) {
             }
+            driveSystem.turnTo(270, .3);
 
-            driveSystem.turnTo(260, .4);
+
+            // driveSystem.turnTo(260, .4);
 
 
             //TODO add movements
+            switch (Pos) {
+                case NotSeen:
+                case Right:
+                    // got to the top level when right
+                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
+                    Thread.sleep(1000);
+                    driveSystem.strafeAtAngle(180, .2);
+                    Thread.sleep(1000);
+                    driveSystem.stopAll();
+                    intake.setServoOpen();
+                    Thread.sleep(750);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    break;
+                case Center:
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .25);
+                    Thread.sleep(725);
+                    driveSystem.stopAll();
+                    intake.setServoOpen();
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(500);
+                    break;
+                case Left:
+                    // go to bottom when left
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .2);
+                    Thread.sleep(1000);
+                    driveSystem.stopAll();
+                    intake.setServoOpen();
+                    Thread.sleep(1000);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+
+                    driveSystem.stopAll();
+
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(500);
+                    break;
+            }
 
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(16, 150, 1, 1, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(20, 150, 1, 1, 500);
             } catch (OdometryMovementException ignored) {
             }
 
             // this moves into the wall before spinning off the duck
-            driveSystem.strafeAtAngle(5, .5);
+
+            driveSystem.strafeAtAngle(15, .475);
 
             Thread.sleep(1000);
             driveSystem.stopAll();
@@ -94,7 +146,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             intake.setIntakeOn();
             try {
 
-                double millis = 500;
+                double millis = 250;
                 final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
                 final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
                 final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
@@ -104,7 +156,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
                     if (timer.milliseconds() >= millis) {
                         positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 5, 7);
+                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 0, 8);
                         double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
                         if (traveledDistance < tooSmallOfDistance) {
                             return true;
@@ -122,7 +174,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 Executable<Boolean> q = () -> {
                     return (t.call() || e.call());
                 };
-                driveSystem.moveToPosition(5, 7, 1, 1, q);
+                driveSystem.moveToPosition(0, 8, 1, 1, q);
 
             } catch (OdometryMovementException ignored) {
             } finally {

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 @Autonomous(name = "Blue Warehouse Autonomous")
 public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
-    static final double[] initialPos = {133.5, 54.5, 0};
+    static final double[] initialPos = {133.5, 55, 0};
     DistanceSensor distanceSensor;
 
     @Override
@@ -37,19 +37,21 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
         BarcodePositions Pos;
         do {
-            Pos = this.getAverageOfMarker(10, 100);
+            Pos = this.findPositionOfMarker();
             telemetry.addData("Position", Pos);
             telemetry.update();
+            Thread.sleep(200);
         } while (!isStarted() && !isStopRequested());
 
         waitForStart();
         slide.start();
-        driveSystem.strafeAtAngle(0, 1);
+        driveSystem.strafeAtAngle(0, .8);
         Thread.sleep(500);
         driveSystem.strafeAtAngle(270, .8);
         Thread.sleep(500);
-        driveSystem.turnTo(80, .8);
-        driveSystem.moveToPosition(117, 83, 1);
+        driveSystem.turnTo(90, .5);
+        driveSystem.moveToPosition(116.5, 80, 1);
+        driveSystem.turnTo(90, .4);
 
         switch (Pos) {
             case NotSeen:
@@ -57,6 +59,9 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                 // got to the top level when right
                 slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
                 Thread.sleep(1000);
+                driveSystem.strafeAtAngle(180, .2);
+                Thread.sleep(1000);
+                driveSystem.stopAll();
                 intake.setServoOpen();
                 Thread.sleep(750);
                 driveSystem.strafeAtAngle(0, .5);
@@ -68,9 +73,10 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                 slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
                 Thread.sleep(500);
                 driveSystem.strafeAtAngle(180, .25);
-                Thread.sleep(400);
+                Thread.sleep(725);
+                driveSystem.stopAll();
                 intake.setServoOpen();
-                Thread.sleep(750);
+                Thread.sleep(500);
                 driveSystem.strafeAtAngle(0, .5);
                 Thread.sleep(500);
                 driveSystem.stopAll();
@@ -81,11 +87,11 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                 // go to bottom when left
                 slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
                 Thread.sleep(500);
-                driveSystem.strafeAtAngle(180, .3);
-                Thread.sleep(250);
+                driveSystem.strafeAtAngle(180, .2);
+                Thread.sleep(1000);
                 driveSystem.stopAll();
                 intake.setServoOpen();
-                Thread.sleep(750);
+                Thread.sleep(1000);
                 driveSystem.strafeAtAngle(0, .5);
                 Thread.sleep(500);
 

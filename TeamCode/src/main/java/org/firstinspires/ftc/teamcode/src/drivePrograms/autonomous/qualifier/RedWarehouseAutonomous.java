@@ -37,9 +37,10 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
         BarcodePositions Pos;
         do {
-            Pos = this.getAverageOfMarker(10, 100);
+            Pos = this.findPositionOfMarker();
             telemetry.addData("Position", Pos);
             telemetry.update();
+            Thread.sleep(200);
         } while (!isStarted() && !isStopRequested());
 
         waitForStart();
@@ -63,8 +64,9 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     // got to the top level when right
                     slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
                     Thread.sleep(1000);
-                    driveSystem.strafeAtAngle(180, .15);
+                    driveSystem.strafeAtAngle(180, .2);
                     Thread.sleep(500);
+                    driveSystem.stopAll();
                     intake.setServoOpen();
                     Thread.sleep(750);
                     driveSystem.strafeAtAngle(0, .5);
@@ -76,9 +78,10 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .25);
-                    Thread.sleep(400);
+                    Thread.sleep(725);
+                    driveSystem.stopAll();
                     intake.setServoOpen();
-                    Thread.sleep(750);
+                    Thread.sleep(500);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
                     driveSystem.stopAll();
@@ -90,7 +93,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .2);
-                    Thread.sleep(1500);
+                    Thread.sleep(1000);
                     driveSystem.stopAll();
                     intake.setServoOpen();
                     Thread.sleep(1000);
@@ -111,6 +114,8 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(200, .8);
             try {
                 driveSystem.moveToPositionWithDistanceTimeOut(4, 70, 1, 2, 1000);
+                driveSystem.strafeAtAngle(90, 1);
+                Thread.sleep(250);
             } catch (OdometryMovementException ignored) {
             }
 
@@ -128,7 +133,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     if (timer.milliseconds() >= millis) {
                         positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 7, 7);
+                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 0, 8);
                         double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
                         if (traveledDistance < tooSmallOfDistance) {
                             return true;
@@ -146,7 +151,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                 Executable<Boolean> q = () -> {
                     return (t.call() || e.call());
                 };
-                driveSystem.moveToPosition(7, 7, 1, 1, q);
+                driveSystem.moveToPosition(0, 8, 1, 1, q);
 
             } catch (OdometryMovementException ignored) {
             } finally {

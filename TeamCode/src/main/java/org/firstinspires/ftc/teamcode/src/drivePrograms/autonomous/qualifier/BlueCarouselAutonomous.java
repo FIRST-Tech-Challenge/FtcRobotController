@@ -37,9 +37,10 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
         BarcodePositions Pos;
         do {
-            Pos = this.getAverageOfMarker(10, 100);
+            Pos = this.findPositionOfMarker();
             telemetry.addData("Position", Pos);
             telemetry.update();
+            Thread.sleep(200);
         } while (!isStarted() && !isStopRequested());
 
         waitForStart();
@@ -54,7 +55,8 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.strafeAtAngle(270, .8);
             Thread.sleep(500);
             driveSystem.turnTo(70, .8);
-            driveSystem.moveToPosition(117, 85, 1);
+            driveSystem.moveToPosition(117, 82.5, 1);
+            driveSystem.turnTo(90, .5);
 
             switch (Pos) {
                 case NotSeen:
@@ -62,6 +64,9 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     // got to the top level when right
                     slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
                     Thread.sleep(1000);
+                    driveSystem.strafeAtAngle(180, .2);
+                    Thread.sleep(1000);
+                    driveSystem.stopAll();
                     intake.setServoOpen();
                     Thread.sleep(750);
                     driveSystem.strafeAtAngle(0, .5);
@@ -69,41 +74,41 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.stopAll();
                     slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     break;
-
                 case Center:
-                    //Go to the center level
                     slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .25);
-                    Thread.sleep(400);
+                    Thread.sleep(725);
+                    driveSystem.stopAll();
                     intake.setServoOpen();
-                    Thread.sleep(750);
+                    Thread.sleep(500);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
                     driveSystem.stopAll();
                     slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     break;
-
                 case Left:
                     // go to bottom when left
                     slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
                     Thread.sleep(500);
-                    driveSystem.strafeAtAngle(180, .3);
-                    Thread.sleep(250);
+                    driveSystem.strafeAtAngle(180, .2);
+                    Thread.sleep(1000);
                     driveSystem.stopAll();
                     intake.setServoOpen();
-                    Thread.sleep(750);
+                    Thread.sleep(1000);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
+
                     driveSystem.stopAll();
+
                     slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     break;
             }
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(120, 144, 1, 1, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(118, 144, 1, 1, 500);
             } catch (OdometryMovementException ignored) {
             }
             driveSystem.strafeAtAngle(355, .5);
