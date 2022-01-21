@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -101,7 +102,7 @@ public class AutoWarehouse extends LinearOpMode {
                         return;
                     }
                 }
-                intake.stop();
+                eventThread.addEvent(new TimedEvent(intake::stop, 250));
                 // You'll want to correct for the distance that made it travel
                 drive.setMotorPowers(0, 0, 0, 0);
                 drive.followTrajectory(
