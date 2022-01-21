@@ -19,7 +19,7 @@ public class TrikeKinematics {
         );
     }
 
-    public static List<Double> robotToModuleOrientations(Pose2d robotVel, double trackWidth, double chassisLength) {
+    public static List<Double> robotToModuleOrientations(Pose2d robotVel, double chassisLength) {
         assert UtilMethods.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for trike drives";
 
         return Arrays.asList(

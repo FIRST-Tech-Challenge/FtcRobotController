@@ -13,13 +13,6 @@ import java.util.Arrays;
 public class Constants {
 
     //----------------------------------------------------------------------------------------------
-    // Control Constants
-    //----------------------------------------------------------------------------------------------
-
-    public static double EPSILON = 0.001; // small value used for the approximately equal calculation in MathUtils
-    public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
-
-    //----------------------------------------------------------------------------------------------
     // Physical Constants
     //----------------------------------------------------------------------------------------------
 
@@ -28,6 +21,27 @@ public class Constants {
     public static double MAX_CHASSIS_LENGTH = 0.9;
     public static double WHEEL_RADIUS = 0.1016;
     public static double TRACK_WIDTH = 0.308162;
+    public static double GEAR_RATIO = 1;
+
+    // constraints
+    public static final double TICKS_PER_REV = 1;
+    public static final double MAX_RPM = 1;
+
+    //----------------------------------------------------------------------------------------------
+    // Control Constants
+    //----------------------------------------------------------------------------------------------
+
+    public static double EPSILON = 0.001; // small value used for the approximately equal calculation in MathUtils
+    public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
+
+    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0;
+    public static double kStatic = 0;
+
+    public static double MAX_VEL = 30;
+    public static double MAX_ACCEL = 30;
+    public static double MAX_ANG_VEL = Math.toRadians(60);
+    public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
     //----------------------------------------------------------------------------------------------
     // Enums
@@ -61,5 +75,18 @@ public class Constants {
         public double[] getPose() {
             return pose;
         }
+    }
+
+    public static double encoderTicksToInches(double ticks) {
+        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+    }
+
+    public static double rpmToVelocity(double rpm) {
+        return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
+    }
+
+    public static double getMotorVelocityF(double ticksPerSecond) {
+        // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx
+        return 32767 / ticksPerSecond;
     }
 }

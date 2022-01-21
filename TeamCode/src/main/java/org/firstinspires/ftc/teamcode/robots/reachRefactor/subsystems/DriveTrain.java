@@ -3,8 +3,15 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
+import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
@@ -27,8 +34,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,14 +60,6 @@ public class DriveTrain implements Subsystem {
     private BNO055IMU imu;
     private DistanceSensor sensorChassisDistance;
 
-    // kinematics
-    private double[] pose; // [x, y, yaw]
-    private double[] velocity; // [vx, vy, w]
-    private double[] angles; // [heading, roll, pitch]
-    private double[] offsetAngles; // [heading, roll, pitch]
-    private double[] previousWheelTicks; // [left, right, middle]
-    private double angularAcceleration;
-
     // state
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
     private double targetLinearVelocity, targetAngularVelocity, lastTargetAngularVelocity;
@@ -69,8 +70,18 @@ public class DriveTrain implements Subsystem {
     private boolean middleReversed, smoothingEnabled, antiTippingEnabled;
     private long lastLoopTime, loopTime;
 
+    private double[] offsetAngles;
+
+    private TrajectorySequenceRunner trajectorySequenceRunner;
+
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(Constants.MAX_VEL, Constants.MAX_ANG_VEL, Constants.TRACK_WIDTH);
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(Constants.MAX_ACCEL);
+
+    private TrajectoryFollower follower;
+
+
     // PID
-    private PIDController turnPID, drivePID, distPID, swivelPID, chassisDistancePID;
+    private PIDController turnPID, swivelPID, chassisDistancePID;
     private double maintainSwivelAngleCorrection, maintainChassisDistanceCorrection;
     private boolean maintainChassisDistanceEnabled, maintainSwivelAngleEnabled;
 
@@ -86,6 +97,14 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0,  0.3);
+
+    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+
+    public static double VX_WEIGHT = 1;
+    public static double OMEGA_WEIGHT = 1;
+
     public static double MAX_ANGULAR_ACCELERATION = 1000;
     public static double SWIVEL_PID_TOLERANCE = 10;
 
@@ -125,14 +144,6 @@ public class DriveTrain implements Subsystem {
 
         motorMiddleSwivel.setMode(RunMode.RUN_WITHOUT_ENCODER);
 
-        // Kinematics
-        pose = new double[3];
-        velocity = new double[3];
-        velocity = new double[3];
-        angles = new double[3];
-        offsetAngles = new double[3];
-        previousWheelTicks = new double[3];
-
         // Sensors
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         initializeIMU();
@@ -141,9 +152,7 @@ public class DriveTrain implements Subsystem {
 
         // PID
         turnPID = new PIDController(ROTATE_PID_COEFFICIENTS);
-        drivePID = new PIDController(DRIVE_PID_COEFFICIENTS);
         swivelPID = new PIDController(SWIVEL_PID_COEFFICIENTS);
-        distPID = new PIDController(DIST_PID_COEFFICIENTS);
         chassisDistancePID = new PIDController(CHASSIS_DISTANCE_PID_COEFFICIENTS);
 
         // Smoother
@@ -151,7 +160,6 @@ public class DriveTrain implements Subsystem {
         angularSmoother = new ExponentialSmoother(ANGULAR_SMOOTHING_FACTOR);
 
         // Miscellaneous
-        previousWheelTicks = getWheelTicks();
         maintainSwivelAngleEnabled = true;
         lastLoopTime = System.nanoTime();
     }
@@ -577,5 +585,16 @@ public class DriveTrain implements Subsystem {
 
     public boolean chassisDistanceOnTarget() {
         return chassisDistancePID.onTarget();
+    }
+
+    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
+        return new MinVelocityConstraint(Arrays.asList(
+                new AngularVelocityConstraint(maxAngularVel),
+
+        ));
+    }
+
+    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
+        return new ProfileAccelerationConstraint(maxAccel);
     }
 }

@@ -18,12 +18,15 @@ public abstract class TrikeDrive extends Drive {
 
     private double kV, kA, kStatic;
     private double trackWidth;
+    private Localizer localizer;
 
     public TrikeDrive(double kV, double kA, double kStatic, double trackWidth) {
         this.kV = kV;
         this.kA = kA;
         this.kStatic = kStatic;
         this.trackWidth = trackWidth;
+
+        localizer = new TrikeLocalizer(this);
     }
 
     class TrikeLocalizer implements Localizer {
@@ -43,20 +46,6 @@ public abstract class TrikeDrive extends Drive {
 
         public TrikeLocalizer(TrikeDrive drive) {
             this(drive, true);
-        }
-
-        public void setPoseEstimate(Pose2d poseEstimate) {
-            lastWheelPositions = new ArrayList<>();
-            lastExternalHeading = Double.NaN;
-            if(useExternalHeading)
-                drive.setExternalHeading(poseEstimate.getHeading());
-            this.poseEstimate = poseEstimate;
-        }
-
-        @Nullable
-        @Override
-        public Pose2d getPoseVelocity() {
-            return poseVelocity;
         }
 
         @Override
@@ -80,6 +69,8 @@ public abstract class TrikeDrive extends Drive {
                         poseVelocity = new Pose2d(poseVelocity.vec(), externalHeadingVel);
                 }
 
+                lastWheelPositions = wheelPositions;
+                lastExternalHeading = externalHeading;
             }
         }
 
@@ -88,32 +79,46 @@ public abstract class TrikeDrive extends Drive {
         public Pose2d getPoseEstimate() {
             return poseEstimate;
         }
+
+        public void setPoseEstimate(Pose2d poseEstimate) {
+            lastWheelPositions = new ArrayList<>();
+            lastExternalHeading = Double.NaN;
+            if(useExternalHeading)
+                drive.setExternalHeading(poseEstimate.getHeading());
+            this.poseEstimate = poseEstimate;
+        }
+
+        @Nullable
+        @Override
+        public Pose2d getPoseVelocity() {
+            return poseVelocity;
+        }
     }
 
     @NonNull
     @Override
     public Localizer getLocalizer() {
-        return null;
+        return localizer;
     }
 
     @Override
     public void setLocalizer(@NonNull Localizer localizer) {
-
-    }
-
-    @Override
-    protected double getRawExternalHeading() {
-        return 0;
-    }
-
-    @Override
-    public void setDrivePower(@NonNull Pose2d pose2d) {
-
+        this.localizer = localizer;
     }
 
     @Override
     public void setDriveSignal(@NonNull DriveSignal driveSignal) {
+        List<Double> velocities = TrikeKinematics.robotToWheelVelocities(driveSignal.getVel(), trackWidth, getChassisLength());
+        List<Double> accelerations = TrikeKinematics.robotToWheelAccelerations(driveSignal.getAccel(), trackWidth, getChassisLength());
+        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
 
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
+    }
+
+    @Override
+    public void setDrivePower(@NonNull Pose2d drivePower) {
+        List<Double> powers = TrikeKinematics.robotToWheelVelocities(drivePower, trackWidth, getChassisLength());
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
     }
 
     public double getTrackWidth() {
