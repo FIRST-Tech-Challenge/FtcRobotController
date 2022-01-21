@@ -1,0 +1,262 @@
+<html>
+<head>
+<title>PIDFControl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6897bb;}
+.s4 { color: #6a8759;}
+.s5 { color: #629755; font-style: italic;}
+.s6 { color: #629755; font-weight: bold; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PIDFControl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">/* Copyright (c) 2017 FIRST. All rights reserved. 
+ * 
+ * Redistribution and use in source and binary forms, with or without modification, 
+ * are permitted (subject to the limitations in the disclaimer below) provided that 
+ * the following conditions are met: 
+ * 
+ * Redistributions of source code must retain the above copyright notice, this list 
+ * of conditions and the following disclaimer. 
+ * 
+ * Redistributions in binary form must reproduce the above copyright notice, this 
+ * list of conditions and the following disclaimer in the documentation and/or 
+ * other materials provided with the distribution. 
+ * 
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or 
+ * promote products derived from this software without specific prior written permission. 
+ * 
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS 
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ * &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */</span>
+
+<span class="s2">package </span><span class="s1">org.firstinspires.ftc.teamcode</span><span class="s2">;</span>
+
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.LinearOpMode</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.eventloop.opmode.TeleOp</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.hardware.DcMotor</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.hardware.DcMotorEx</span><span class="s2">;</span>
+<span class="s2">import </span><span class="s1">com.qualcomm.robotcore.hardware.PIDFCoefficients</span><span class="s2">;</span>
+
+<span class="s1">@TeleOp</span>
+<span class="s2">public class </span><span class="s1">PIDFControl </span><span class="s2">extends </span><span class="s1">LinearOpMode {</span>
+
+	<span class="s0">// Declare OpMode members.</span>
+	<span class="s2">static double </span><span class="s1">MAX_TICKS_PER_SECOND = </span><span class="s3">2000.0</span><span class="s2">;</span>
+
+	<span class="s0">// Motors</span>
+	<span class="s2">public </span><span class="s1">DcMotorEx frontLeft</span><span class="s2">;</span>
+	<span class="s2">public </span><span class="s1">DcMotorEx frontRight</span><span class="s2">;</span>
+	<span class="s2">public </span><span class="s1">DcMotorEx backLeft</span><span class="s2">;</span>
+	<span class="s2">public </span><span class="s1">DcMotorEx backRight</span><span class="s2">;</span>
+
+    <span class="s0">/* 
+        // UNCOMMENT IF DOING CUSTOM PID TUNING. F IS FEED-FORWARD WHICH ALLOWS THE MOTOR TO &quot;HOLD POSITION&quot;. 
+        static double frontLeft_kP = 0.3; 
+        static double frontLeft_kI = 0.0; 
+        static double frontLeft_kD = 0.0; 
+        static double frontLeft_kF = 0.01; 
+ 
+        static double frontRight_kP = 0.3; 
+        static double frontRight_kI = 0.0; 
+        static double frontRight_kD = 0.0; 
+        static double frontRight_kF = 0.01; 
+ 
+        static double backLeft_kP = 0.3; 
+        static double backLeft_kI = 0.0; 
+        static double backLeft_kD = 0.0; 
+        static double backLeft_kF = 0.01; 
+ 
+        static double backRight_kP = 0.3; 
+        static double backRight_kI = 0.0; 
+        static double backRight_kD = 0.0; 
+        static double backRight_kF = 0.01; 
+    */</span>
+
+	<span class="s1">@Override</span>
+	<span class="s2">public void </span><span class="s1">runOpMode() </span><span class="s2">throws </span><span class="s1">InterruptedException {</span>
+
+		<span class="s1">initializeRobot()</span><span class="s2">;</span>
+
+		<span class="s1">telemetry.addData(</span><span class="s4">&quot;Status&quot;</span><span class="s2">, </span><span class="s4">&quot;Initialized&quot;</span><span class="s1">)</span><span class="s2">;</span>
+		<span class="s1">telemetry.update()</span><span class="s2">;</span>
+
+		<span class="s0">// Initialize the hardware variables. Note that the strings used here as parameters</span>
+		<span class="s0">// to 'get' must correspond to the names assigned during the robot configuration</span>
+		<span class="s0">// step (using the FTC Robot Controller app on the phone).</span>
+
+		<span class="s0">// Most robots need the motor on one side to be reversed to drive forward</span>
+		<span class="s0">// Reverse the motor that runs backwards when connected directly to the battery</span>
+
+
+		<span class="s0">// Wait for the game to start (driver presses PLAY)</span>
+		<span class="s1">waitForStart()</span><span class="s2">;</span>
+
+		<span class="s0">// run until the end of the match (driver presses STOP)</span>
+		<span class="s2">while </span><span class="s1">(opModeIsActive()) {</span>
+
+			<span class="s2">double </span><span class="s1">y = -gamepad1.left_stick_y</span><span class="s2">; </span><span class="s0">// Remember, this is reversed!</span>
+			<span class="s2">double </span><span class="s1">x = gamepad1.left_stick_x * </span><span class="s3">1.1</span><span class="s2">; </span><span class="s0">// Counteract imperfect strafing</span>
+			<span class="s2">double </span><span class="s1">rx = -gamepad1.right_stick_x </span><span class="s2">;</span>
+
+			<span class="s0">// Denominator is the largest motor power (absolute value) or 1</span>
+			<span class="s0">// This ensures all the powers maintain the same ratio, but only when</span>
+			<span class="s0">// at least one is out of the range [-1, 1]</span>
+			<span class="s2">double </span><span class="s1">denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx)</span><span class="s2">, </span><span class="s3">1</span><span class="s1">)</span><span class="s2">;</span>
+			<span class="s2">double </span><span class="s1">frontLeftPower = (y + x + rx) / denominator</span><span class="s2">;</span>
+			<span class="s2">double </span><span class="s1">backLeftPower = (y - x + rx) / denominator</span><span class="s2">;</span>
+			<span class="s2">double </span><span class="s1">frontRightPower = (y - x - rx) / denominator</span><span class="s2">;</span>
+			<span class="s2">double </span><span class="s1">backRightPower = (y + x - rx) / denominator</span><span class="s2">;</span>
+
+			<span class="s0">//set motor powers</span>
+			<span class="s1">setThrottle(frontLeftPower</span><span class="s2">, </span><span class="s1">frontRightPower</span><span class="s2">, </span><span class="s1">backLeftPower</span><span class="s2">, </span><span class="s1">backRightPower)</span><span class="s2">;</span>
+
+
+
+
+		<span class="s1">}</span>
+	<span class="s1">}</span>
+
+	<span class="s5">/**</span>
+	 <span class="s5">* Initialize the mecanum drive with PID.</span>
+	 <span class="s5">*/</span>
+	<span class="s2">public void </span><span class="s1">initializeRobot() {</span>
+
+		<span class="s0">// Get the motors</span>
+		<span class="s1">frontLeft = hardwareMap.get(DcMotorEx.</span><span class="s2">class,</span><span class="s4">&quot;FrontLeft&quot;</span><span class="s1">)</span><span class="s2">;</span>
+		<span class="s1">frontRight = hardwareMap.get(DcMotorEx.</span><span class="s2">class,</span><span class="s4">&quot;FrontRight&quot;</span><span class="s1">)</span><span class="s2">;</span>
+		<span class="s1">backLeft = hardwareMap.get(DcMotorEx.</span><span class="s2">class,</span><span class="s4">&quot;BackLeft&quot;</span><span class="s1">)</span><span class="s2">;</span>
+		<span class="s1">backRight = hardwareMap.get(DcMotorEx.</span><span class="s2">class,</span><span class="s4">&quot;BackRight&quot;</span><span class="s1">)</span><span class="s2">;</span>
+
+		<span class="s0">// Initialize motor direction</span>
+		<span class="s1">frontLeft.setDirection(DcMotor.Direction.FORWARD) </span><span class="s2">;</span>
+		<span class="s1">frontRight.setDirection(DcMotor.Direction.REVERSE) </span><span class="s2">;</span>
+		<span class="s1">backLeft.setDirection(DcMotor.Direction.FORWARD) </span><span class="s2">;</span>
+		<span class="s1">backRight.setDirection(DcMotor.Direction.REVERSE) </span><span class="s2">;</span>
+
+		<span class="s0">//Run using encoders</span>
+		<span class="s1">frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+		<span class="s1">frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+		<span class="s1">backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+		<span class="s1">backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+
+		<span class="s0">// Stop and reset encoders</span>
+		<span class="s1">frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) </span><span class="s2">;</span>
+		<span class="s1">frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) </span><span class="s2">;</span>
+		<span class="s1">backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) </span><span class="s2">;</span>
+		<span class="s1">backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) </span><span class="s2">;</span>
+
+		<span class="s0">// Optional if you want to compare initial PIDF coefficients; these are restored to factory-set on power-cycle</span>
+		<span class="s0">// Get the PIDF coefficients for the RUN_USING_ENCODER RunMode</span>
+        <span class="s1">PIDFCoefficients frontLeftPidfOrig = frontLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+        <span class="s1">PIDFCoefficients frontRightPidfOrig = frontRight.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+        <span class="s1">PIDFCoefficients backLeftPidfOrig = backLeft.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+        <span class="s1">PIDFCoefficients backRightPidfOrig = backRight.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER)</span><span class="s2">;</span>
+<span class="s0">/* 
+        // USE THIS TO CUSTOM TUNE YOUR PID COEFFICIENTS DEFINED ABOVE 
+        // Change coefficients using methods included with DcMotorEx class 
+        PIDFCoefficients frontLeftPidfNew = new PIDFCoefficients(MecanumDrive.frontLeft_kP, MecanumDrive.frontLeft_kI, MecanumDrive.frontLeft_kD, MecanumDrive.frontLeft_kF); 
+        frontLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, frontLeftPidfNew); 
+        PIDFCoefficients frontRightPidfNew = new PIDFCoefficients(MecanumDrive.frontRight_kP, MecanumDrive.frontRight_kI, MecanumDrive.frontRight_kD, MecanumDrive.frontRight_kF); 
+        frontRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, frontRightPidfNew); 
+        PIDFCoefficients backLeftPidfNew = new PIDFCoefficients(MecanumDrive.backLeft_kP, MecanumDrive.backLeft_kI, MecanumDrive.backLeft_kD, MecanumDrive.backLeft_kF); 
+        backLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, backLeftPidfNew); 
+        PIDFCoefficients backRightPidfNew = new PIDFCoefficients(MecanumDrive.backRight_kP, MecanumDrive.backRight_kI, MecanumDrive.backRight_kD, MecanumDrive.backRight_kF); 
+        backRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, backRightPidfNew); 
+*/</span>
+	<span class="s1">}</span>
+
+	<span class="s5">/**</span>
+	 <span class="s5">* Sets the velocity of each of the four wheels in ticks per second.</span>
+	 <span class="s5">*</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">frontLeftVelocity ticks per second the front left wheel should turn</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">frontRightVelocity ticks per second the front right wheel should turn</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">backLeftVelocity ticks per second the back left wheel should turn</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">backRightVelocity ticks per second the back right wheel should turn</span>
+	 <span class="s5">*/</span>
+	<span class="s2">public void </span><span class="s1">setVelocity(</span><span class="s2">double </span><span class="s1">frontLeftVelocity</span><span class="s2">, double </span><span class="s1">frontRightVelocity</span><span class="s2">, double </span><span class="s1">backLeftVelocity</span><span class="s2">, double </span><span class="s1">backRightVelocity) {</span>
+		<span class="s1">frontLeft.setVelocity(frontLeftVelocity)</span><span class="s2">;</span>
+		<span class="s1">frontRight.setVelocity(frontRightVelocity)</span><span class="s2">;</span>
+		<span class="s1">backLeft.setVelocity(backLeftVelocity)</span><span class="s2">;</span>
+		<span class="s1">backRight.setVelocity(backRightVelocity)</span><span class="s2">;</span>
+	<span class="s1">}</span>
+
+	<span class="s0">// CALL THIS TO CONTROL WHEELS INSTEAD OF setPower</span>
+	<span class="s5">/**</span>
+	 <span class="s5">* Sets the velocity of each of the four wheels in ticks per second based on a throttle value between -1.0 and 1.0.</span>
+	 <span class="s5">*</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">frontLeftVelocity throttle value for the front left wheel should turn</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">frontRightVelocity throttle value for the front right wheel should turn</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">backLeftVelocity throttle value for the back left wheel should turn</span>
+	 <span class="s5">* </span><span class="s6">@param </span><span class="s5">backRightVelocity throttle value for the back right wheel should turn</span>
+	 <span class="s5">*/</span>
+	<span class="s2">public void </span><span class="s1">setThrottle(</span><span class="s2">double </span><span class="s1">frontLeftVelocity</span><span class="s2">, double </span><span class="s1">frontRightVelocity</span><span class="s2">, double </span><span class="s1">backLeftVelocity</span><span class="s2">, double </span><span class="s1">backRightVelocity) {</span>
+		<span class="s0">// Constrain throttle values to between -1.0 to 1.0</span>
+		<span class="s2">if </span><span class="s1">(frontLeftVelocity &gt; </span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">frontLeftVelocity = </span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">} </span><span class="s2">else if </span><span class="s1">(frontLeftVelocity &lt; -</span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">frontLeftVelocity = -</span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">}</span>
+
+		<span class="s2">if </span><span class="s1">(frontRightVelocity &gt; </span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">frontRightVelocity = </span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">} </span><span class="s2">else if </span><span class="s1">(frontRightVelocity &lt; -</span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">frontRightVelocity = -</span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">}</span>
+
+		<span class="s2">if </span><span class="s1">(backLeftVelocity &gt; </span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">backLeftVelocity = </span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">} </span><span class="s2">else if </span><span class="s1">(backLeftVelocity &lt; -</span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">backLeftVelocity = -</span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">}</span>
+
+		<span class="s2">if </span><span class="s1">(backRightVelocity &gt; </span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">backRightVelocity = </span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">} </span><span class="s2">else if </span><span class="s1">(backRightVelocity &lt; -</span><span class="s3">1.0</span><span class="s1">) {</span>
+
+			<span class="s1">backRightVelocity = -</span><span class="s3">1.0</span><span class="s2">;</span>
+
+		<span class="s1">}</span>
+
+		<span class="s0">// Set velocities</span>
+		<span class="s1">frontLeft.setVelocity(frontLeftVelocity * PIDFControl.MAX_TICKS_PER_SECOND)</span><span class="s2">;</span>
+		<span class="s1">frontRight.setVelocity(frontRightVelocity * PIDFControl.MAX_TICKS_PER_SECOND)</span><span class="s2">;</span>
+		<span class="s1">backLeft.setVelocity(backLeftVelocity * PIDFControl.MAX_TICKS_PER_SECOND)</span><span class="s2">;</span>
+		<span class="s1">backRight.setVelocity(backRightVelocity * PIDFControl.MAX_TICKS_PER_SECOND)</span><span class="s2">;</span>
+	<span class="s1">}</span>
+
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

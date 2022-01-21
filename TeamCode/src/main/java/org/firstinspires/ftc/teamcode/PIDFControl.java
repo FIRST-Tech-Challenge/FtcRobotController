@@ -39,7 +39,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class PIDFControl extends LinearOpMode {
 
 	// Declare OpMode members.
-	static double MAX_TICKS_PER_SECOND = 2800.0;
+	static double MAX_TICKS_PER_SECOND = 2000.0;
 
 	// Motors
 	public DcMotorEx frontLeft;
