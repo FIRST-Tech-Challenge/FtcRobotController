@@ -21,7 +21,17 @@ public class UtilMethods {
         return (((angle1 + angle2) % 360) + 360) % 360;
     }
     public static double wrapAngleMinus(double angle1, double angle2){
-        return (((angle1 - angle2) % 360) + 360) % 360;
+        return (((angle1 - angle2) % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+    }
+
+    public static double wrapAngleRad(double angle){
+        return ((angle % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+    }
+    public static double wrapAnglePlusRad(double angle1, double angle2){
+        return (((angle1 + angle2) % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+    }
+    public static double wrapAngleMinusRad(double angle1, double angle2){
+        return (((angle1 - angle2) % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
     }
 
     public static boolean notDeadZone(double value, double threshold){
