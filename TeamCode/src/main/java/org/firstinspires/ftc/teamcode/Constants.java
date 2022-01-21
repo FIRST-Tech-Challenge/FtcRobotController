@@ -33,9 +33,9 @@ public final class Constants {
         public final static DoubleFunction<Integer> m_to_ticks = (double m) -> (int)(m / WheelDiameter / Math.PI * ticks_per_revolution);
         public final static IntFunction<Double> ticks_to_m = (int ticks) -> ticks * WheelDiameter * Math.PI / ticks_per_revolution;
 
-        public final static double kV = 0.55;
-        public final static double kStatic = 0.114;
-        public final static double kA = 0.056;
+        public final static double kV = 0.60152;
+        public final static double kStatic = 0.07691;
+        public final static double kA = 0.0585;
     }
 
     public static final class LiftConstants {
