@@ -3,7 +3,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class AutonomousRedWarehouseNoSensor extends LinearOpMode{
+public class AutonomousBlueWarehouseNoSensor extends LinearOpMode{
     Robot robot;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -11,12 +11,12 @@ public class AutonomousRedWarehouseNoSensor extends LinearOpMode{
         waitForStart();
         robot.forward(1.5, .5);
         robot.armThing(3);
-        robot.left(1.75, .5);
+        robot.right(1.75, .5);
         robot.eject();
         robot.back(.25,.5);
         robot.back(.2, .5);
-        robot.turnRight(70, .5);
+        robot.turnLeft(70, .5);
         robot.forward(6.5, 1);
-        robot.turnRight(30, .5);
+        robot.turnLeft(30, .5);
     }
 }
