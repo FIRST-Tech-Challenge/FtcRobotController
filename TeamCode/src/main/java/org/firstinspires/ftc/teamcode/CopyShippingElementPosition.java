@@ -166,7 +166,7 @@ public class CopyShippingElementPosition extends LinearOpMode
             telemetry.addLine("we are in the save mode");
             telemetry.update();
             Mat resizeimage = new Mat();
-            Size scaleSize = new Size(224,224);
+            Size scaleSize = new Size(width,height);
             Imgproc.resize(input, resizeimage, scaleSize , 0, 0, Imgproc.INTER_AREA);
 
             String random = getSaltString();

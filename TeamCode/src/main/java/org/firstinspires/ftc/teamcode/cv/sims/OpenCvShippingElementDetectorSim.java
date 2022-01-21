@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.cv.sims;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
@@ -92,7 +94,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
         classNames = classNamesDuckSideBlue;
         modelPath = modelTSE;
         modelPathConfig = modelPath + "txt";
-        inScaleFactor = 1; //0.0278;
+        inScaleFactor = 0.006; //0.0278;
         redMeanVal = 127.5; //5;
         greenMeanVal = 127.5; //113;
         blueMeanVal = 127.5; //119;
@@ -243,10 +245,9 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
         }*/
 
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow(modelPath);
-
-
-
+        net = cvDNN.readNetFromTensorflow(modelPath,modelPathConfig);
+        net.setPreferableBackend(Dnn.DNN_BACKEND_DEFAULT);
+        net.setPreferableTarget(Dnn.DNN_TARGET_OPENCL_FP16);
     }
 
 
@@ -255,30 +256,39 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
 
 
+        // Show the bounding area in which we will search -
+        Imgproc.rectangle(inputFrame, new Rect(50, 35, 180, 75), new Scalar(0, 0, 255), 2); // BLUE
+
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_BGR2RGB);
 
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
-                new Size(width, height),
+                new Size(180, 75),
                 new Scalar(redMeanVal, greenMeanVal, blueMeanVal),
-                false, cropDNN);
+                false, cropDNN, CvType.CV_32F);
 
+        telemetry.addData("blob shape", blob.shape());
         net.setInput(blob);
         detections = net.forward();
 
-        int cols = imageRGB.cols();
-        int rows = imageRGB.rows();
 
-        //detections = detections.reshape(1, (int) detections.total() / 7);
+
+        int cols = detections.cols();
+        int rows = detections.rows();
+        telemetry.addData("cols",  blob.size());
+        telemetry.addData("rows",  rows);
+
+        //detections = detections.reshape(1, (int) detections.total() / 4);
         //telemetry.addData("With ext con", detections.get(0,0));
 
         double[] detect = detections.get(0,0);
-        telemetry.addData("With ext con", (int) (detections.get(0, 0)[0] * inputFrame.rows()));
+        telemetry.addData("With size",  detections.size());
 
         for (int i = 0; i < detections.rows(); ++i) {
 
             row = detections.row(i);
-            telemetry.addData("With ext con", (int) (row.get(0, 0)[0] * inputFrame.cols()));
+            telemetry.addData("With row size", row.size());
             Core.MinMaxLocResult mm = Core.minMaxLoc(row);
+            int classId = (int) mm.maxLoc.x;
 
             float confidence = (float) mm.maxVal;
 
@@ -288,7 +298,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
             telemetry.addData("mm max", mm.maxLoc);
             telemetry.addData("mm min", mm.minLoc);
             telemetry.addData("row total", detections.total());
-            //row.reshape(1, (int) row.total() / 7);
+            //row.reshape(1,  4);
             for(int j=0; j < row.cols(); ++j){
 
                 telemetry.addData("With col val", row.get(i, j)[0]);
@@ -296,23 +306,35 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
             if (confidence < CONF_THRESHOLD)
                 continue;
 
-            int classId = (int) detections.get(i, 1)[0];
+            //int classId = (int)detections.get(i, 1)[0];
+            //int classId = (int) row.get(i, 2)[0];
 
             //calculate position
-            int centerX = (int) (row.get(i, 0)[0] * imageRGB.cols());
-            int centerY = (int) (row.get(i, 1)[0] * imageRGB.rows());
-            int width = (int) (row.get(i, 2)[0] * imageRGB.cols());
-            int height = (int) (row.get(i, 3)[0] * imageRGB.rows());
+            int left = (int) (row.get(i, 0)[0] * (inputFrame.cols()+50));
+            int top = (int) (row.get(i, 1)[0] * (inputFrame.rows()+35));
+            int right = (int) (row.get(i, 2)[0] * (inputFrame.cols()+50));
+            int bottom = (int) (row.get(i, 3)[0] * (inputFrame.rows()+35));
 
-            telemetry.addData("centerX", (int) centerX);
-            telemetry.addData("centerY", (int) centerY);
-            telemetry.addData("width", (int) width);
-            telemetry.addData("height", (int) height);
+            Imgproc.circle(imageRGB,new Point(0,59),2,new Scalar(255,0,0),3);
 
-            int left = (int) (centerX - width * 0.5);
-            int top = (int) (centerY - height * 0.5);
-            int right = (int) (centerX + width * 0.5);
-            int bottom = (int) (centerY + height * 0.5);
+            //Imgproc.circle(imageRGB,new Point(left,top),2,new Scalar(0,0,255),3);
+            Imgproc.rectangle(imageRGB, new Point(left, top), new Point(right, 200),
+                    new Scalar(0, 255, 0));
+
+            telemetry.addData("left", (int) left);
+            telemetry.addData("top", (int) top);
+            telemetry.addData("right", (int) right);
+            telemetry.addData("bottom", (int) bottom);
+
+            //int left   = (int)(detections.get(i, 3)[0] * cols);
+            //int top    = (int)(detections.get(i, 4)[0] * rows);
+            //int right  = (int)(detections.get(i, 5)[0] * cols);
+            //int bottom = (int)(detections.get(i, 6)[0] * rows);
+
+            //int left = (int) (centerX - width * 0.5);
+            //int top = (int) (centerY - height * 0.5);
+            //int right = (int) (centerX + width * 0.5);
+            //int bottom = (int) (centerY + height * 0.5);
 
             Point left_top = new Point(left, top);
             Point right_bottom = new Point(right, bottom);
