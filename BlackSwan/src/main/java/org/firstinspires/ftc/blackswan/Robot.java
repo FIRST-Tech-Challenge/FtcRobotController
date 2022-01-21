@@ -233,7 +233,7 @@ public class Robot {
     }
 
     public void blueCarousel(int millis) {
-        carousel.setPower(0.35);
+        carousel.setPower(-0.35);
         pause(millis);
         carousel.setPower(0);
     }
