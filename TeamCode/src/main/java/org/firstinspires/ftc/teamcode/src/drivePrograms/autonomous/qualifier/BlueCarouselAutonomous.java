@@ -49,9 +49,11 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             tfod.shutdown();
             vuforia.close();
             driveSystem.debugOn();
+            telemetry.addData("Executing Auto", Pos);
+            telemetry.update();
             driveSystem.strafeAtAngle(270, .8);
             Thread.sleep(500);
-            driveSystem.turnTo(80, .8);
+            driveSystem.turnTo(70, .8);
             driveSystem.moveToPosition(117, 85, 1);
 
             switch (Pos) {
@@ -67,7 +69,9 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.stopAll();
                     slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     break;
+
                 case Center:
+                    //Go to the center level
                     slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .25);
@@ -80,6 +84,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     break;
+
                 case Left:
                     // go to bottom when left
                     slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
@@ -91,16 +96,14 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     Thread.sleep(750);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
-
                     driveSystem.stopAll();
-
                     slide.setTargetLevel(LinearSlide.HeightLevel.Down);
                     Thread.sleep(500);
                     break;
             }
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(120, 139, 1, 1, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(120, 144, 1, 1, 500);
             } catch (OdometryMovementException ignored) {
             }
             driveSystem.strafeAtAngle(355, .5);
@@ -117,42 +120,54 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             Thread.sleep(750);
             intake.setIntakeOn();
 
+            Executable<Boolean> q;
+
+            double millis = 500;
+            final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+            final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
+            final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
+            final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
+
+            Executable<Boolean> t = () -> {
+
+                if (timer.milliseconds() >= millis) {
+                    positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
+                    positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 135, 7);
+                    double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
+                    if (traveledDistance < tooSmallOfDistance) {
+                        return true;
+                    }
+                    timer.reset();
+                }
+                return false;
+            };
+
+
+            Executable<Boolean> e = () -> {
+                return !(distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested());
+            };
+
+            q = () -> {
+                return (t.call() || e.call());
+            };
 
             try {
 
-                double millis = 500;
-                final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-                final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
-                final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
-                final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
 
-                Executable<Boolean> t = () -> {
-
-                    if (timer.milliseconds() >= millis) {
-                        positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 135, 7);
-                        double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
-                        if (traveledDistance < tooSmallOfDistance) {
-                            return true;
-                        }
-                        timer.reset();
-                    }
-                    return false;
-                };
-
-
-                Executable<Boolean> e = () -> {
-                    return !(distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested());
-                };
-
-                Executable<Boolean> q = () -> {
-                    return (t.call() || e.call());
-                };
-                driveSystem.moveToPosition(135, 7, 1, 1, q);
+                driveSystem.moveToPosition(135, 20, 1, 1, q);
 
             } catch (OdometryMovementException ignored) {
             } finally {
                 intake.setIntakeOff();
+            }
+            while (!isStopRequested() && opModeIsActive() && (!q.call())) {
+                driveSystem.strafeAtAngle(0, 0.5);
+            }
+            if (odometry.returnRelativeYPosition() < 20) {
+                try {
+                    driveSystem.moveToPositionWithDistanceTimeOut(odometry.returnRelativeXPosition(), 15, 1, 1, 500);
+                } catch (OdometryMovementException ignored) {
+                }
             }
 
 

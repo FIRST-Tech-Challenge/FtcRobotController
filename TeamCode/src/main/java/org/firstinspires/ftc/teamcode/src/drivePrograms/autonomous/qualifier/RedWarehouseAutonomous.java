@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
@@ -42,6 +43,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
         } while (!isStarted() && !isStopRequested());
 
         waitForStart();
+        slide.start();
 
         if (opModeIsActive() && !isStopRequested()) {
             tfod.shutdown();
@@ -52,17 +54,63 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.strafeAtAngle(270, .6);
             Thread.sleep(1000);
             driveSystem.turnTo(260, .5);
-            driveSystem.moveToPosition(23, 82, 1);
+            driveSystem.moveToPosition(23, 85, 1);
 
             //TODO Add Raises and lowers
+            switch (Pos) {
+                case NotSeen:
+                case Right:
+                    // got to the top level when right
+                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
+                    Thread.sleep(1000);
+                    driveSystem.strafeAtAngle(180, .15);
+                    Thread.sleep(500);
+                    intake.setServoOpen();
+                    Thread.sleep(750);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    break;
+                case Center:
+                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .25);
+                    Thread.sleep(400);
+                    intake.setServoOpen();
+                    Thread.sleep(750);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(500);
+                    break;
+                case Left:
+                    // go to bottom when left
+                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                    Thread.sleep(500);
+                    driveSystem.strafeAtAngle(180, .2);
+                    Thread.sleep(1500);
+                    driveSystem.stopAll();
+                    intake.setServoOpen();
+                    Thread.sleep(1000);
+                    driveSystem.strafeAtAngle(0, .5);
+                    Thread.sleep(500);
+
+                    driveSystem.stopAll();
+
+                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    Thread.sleep(500);
+                    break;
+            }
 
             try {
                 driveSystem.moveToPositionWithDistanceTimeOut(12, 70, 1, 1, 500);
             } catch (OdometryMovementException ignored) {
             }
-            driveSystem.turnTo(190, .8);
+            driveSystem.turnTo(200, .8);
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(5, 70, 1, 1, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(4, 70, 1, 2, 1000);
             } catch (OdometryMovementException ignored) {
             }
 
@@ -70,7 +118,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             intake.setIntakeOn();
             try {
 
-                double millis = 500;
+                double millis = 250;
                 final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
                 final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
                 final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
@@ -105,98 +153,9 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                 intake.setIntakeOff();
             }
 
-            while (distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested()) {
-                driveSystem.strafeAtAngle(180, .5);
-
-            }
             intake.setIntakeOff();
-            /*
-            try{
-                driveSystem.moveToPositionWithDistanceTimeOut(7,80,1,1,500);
-            }catch(OdometryMovementException stuck){
-                driveSystem.stopAll();
-            }
-            intake.setIntakeOn();
-
-             */
 
 
-
-
-    /*
-            switch (Pos) {
-                case NotSeen:
-                    telemetry.addData("position", " is far right ");
-                    telemetry.update();
-
-                    driveSystem.moveToPosition(20, 84, 1);
-                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
-
-                    Thread.sleep(1500);
-
-
-                    //this position will vary for different heights on the goal
-                    driveSystem.moveToPosition(25, 81, 1);
-                    intake.setServoClosed();
-                    Thread.sleep(500);
-
-
-                    break;
-                case Right:
-                    telemetry.addData("position", " is center");
-                    telemetry.update();
-                    driveSystem.moveToPosition(20, 85, 1);
-
-                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
-
-                    Thread.sleep(1500);
-
-                    intake.setServoClosed();
-                    Thread.sleep(500);
-
-                    //this position will vary for different heights on the goal
-                    driveSystem.moveToPosition(25, 84, 1);
-
-
-                    break;
-                case Left:
-                    telemetry.addData("position", "is left");
-                    telemetry.update();
-                    driveSystem.moveToPosition(20, 85, 1);
-
-                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
-
-                    Thread.sleep(1500);
-
-                    intake.setServoClosed();
-                    Thread.sleep(500);
-
-                    //this position will vary for different heights on the goal
-                    driveSystem.moveToPosition(25, 84, 1);
-
-
-                    break;
-
-
-            }
-            //Shared Code
-            intake.setIntakeOn();
-            Thread.sleep(1000);
-            intake.setIntakeOff();
-            driveSystem.moveToPosition(23, 84, 1);
-            intake.setServoOpen();
-            slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-            Thread.sleep(500);
-            //following this is unique to carousel and warehouse
-
-            driveSystem.turnTo(170, .5);
-
-            driveSystem.moveToPosition(10, 63, 1);
-            driveSystem.strafeAtAngle(90, .5);
-            Thread.sleep(300);
-
-            driveSystem.moveToPosition(9, 24, 1);
-            */
         }
         slide.end();
         odometry.end();

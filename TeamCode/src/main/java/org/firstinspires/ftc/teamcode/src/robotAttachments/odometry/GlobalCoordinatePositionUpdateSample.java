@@ -136,9 +136,9 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
 
             }
         } catch (Exception e) {
-            while (opModeIsActive() && !isStopRequested()) {
-                telemetry.addData("Error", MiscUtils.getStackTraceAsString(e));
-            }
+            telemetry.addData("Error", MiscUtils.getStackTraceAsString(e));
+            telemetry.update();
+            while (opModeIsActive() && !isStopRequested()) ;
         }
 
         //Stop the thread
