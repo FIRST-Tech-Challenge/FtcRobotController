@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.opmodes.util.GoodTriggerReader;
  */
 public class ControllerLift extends AutoLift {
     private final GoodTriggerReader leftTrigger, rightTrigger;
-    private final ButtonReader leftBumper, rightBumper;
+    private final ButtonReader leftBumper, rightBumper, downDPad;
 
     /**
      * @param eventThread local eventThread instance
@@ -29,6 +29,7 @@ public class ControllerLift extends AutoLift {
         rightTrigger = new GoodTriggerReader(toolGamepad, GamepadKeys.Trigger.RIGHT_TRIGGER);
         leftBumper = new ButtonReader(toolGamepad, GamepadKeys.Button.LEFT_BUMPER);
         rightBumper = new ButtonReader(toolGamepad, GamepadKeys.Button.RIGHT_BUMPER);
+        downDPad = new ButtonReader(toolGamepad, GamepadKeys.Button.DPAD_DOWN);
     }
 
     public void init() {
@@ -38,10 +39,12 @@ public class ControllerLift extends AutoLift {
                 rightTrigger.readValue();
                 leftBumper.readValue();
                 rightBumper.readValue();
+                downDPad.readValue();
                 if (leftTrigger.wasJustReleased()) setPosition(Positions.TOP);
                 else if (rightTrigger.wasJustReleased()) setPosition(Positions.SAFE);
                 else if (leftBumper.wasJustReleased()) setPosition(Positions.TSE);
                 else if (rightTrigger.wasJustReleased()) setPosition(Positions.INTAKING);
+                else if (downDPad.wasJustReleased()) setPosition(Positions.BOTTOM);
             }
         });
         thread.setPriority(5);
