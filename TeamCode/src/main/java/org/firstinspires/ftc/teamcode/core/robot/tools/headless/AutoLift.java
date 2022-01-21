@@ -20,6 +20,7 @@ public class AutoLift {
     public enum Positions {
         INTAKING(0, 0.76D, false),
         SAFE(1375, 0.716D, false),
+        CATAPULT(2000, 0D, true),
         TOP(2880, 0.3D, true),
         MIDDLE(1850, 0.3D, true),
         BOTTOM(1375, 0.25D, true),
