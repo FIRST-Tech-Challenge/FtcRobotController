@@ -14,11 +14,13 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.GameElement;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
+import org.firstinspires.ftc.teamcode.calibration.FreightFrenzyConfig;
 import org.firstinspires.ftc.teamcode.skills.FrenzyIntake;
 import org.firstinspires.ftc.teamcode.skills.FrenzyLift;
 import org.firstinspires.ftc.teamcode.skills.FrenzyLiftMode;
@@ -31,6 +33,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     private Servo dropperServo = null;
     private Servo intakeDropperServo = null;
     private Servo tower = null;
+
+    FreightFrenzyConfig frenzyConfig = null;
+
     private static final String TAG = "FrenzyBot";
     public static int LIFT_LEVEL_THREE = 2220;
     public static int LIFT_LEVEL_TWO = 1945;
@@ -83,6 +88,15 @@ public class FrenzyBot extends FrenzyBaseBot {
     @Override
     public void init(LinearOpMode owner, HardwareMap ahwMap, Telemetry telemetry) throws Exception {
         super.init(owner, ahwMap, telemetry);
+
+        try {
+            this.frenzyConfig = this.botConfig.getFreightFrenzyConfig();
+            Log.d(TAG, "FreightFrenzy BotConfig loaded");
+            Log.d(TAG, SimpleGson.getInstance().toJson(this.frenzyConfig));
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize FreightFrenzy BotConfig", ex);
+        }
+
         try {
             intake = hwMap.get(DcMotorEx.class, "intake");
             intake.setDirection(DcMotor.Direction.FORWARD);
@@ -291,6 +305,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void dropElement(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_DROP);
+            // TODO: dropperServo.setPosition(frenzyConfig.getDropperPositionDrop());
         }
     }
 
@@ -303,6 +318,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void prepDropperToMove(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_START);
+            // TODO: dropperServo.setPosition(frenzyConfig.getDropperPositionReset());
         }
     }
 
@@ -407,12 +423,14 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void dropperTransportPosition(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_TRANSPORT);
+            // TODO: dropperServo.setPosition(frenzyConfig.getDropperPositionTransport());
         }
     }
 
     @BotAction(displayName = "Start intake", defaultReturn = "")
     public void startIntake() {
         activateIntake(INTAKE_SPEED);
+        // TODO: activateIntake(frenzyConfig.getIntakeSpeedIn());
         intakeRunning = true;
         intakeDropperDown();
 //        dropperPickupPosition();
@@ -421,6 +439,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Reverse intake", defaultReturn = "")
     public void reverseIntake() {
         activateIntake(INTAKE_SPEED_REVERSE);
+        // TODO: activateIntake(frenzyConfig.getIntakeSpeedOut());
     }
 
     public void stopOuttake() {
@@ -611,6 +630,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         startIntake();
         //move straight until an element is detected in the intake box
         moveAuto(INTAKE_ELEMENT_MOVE_SPEED);
+        // TODO: moveAuto(frenzyConfig.getIntakeSpeedSlowIn());
         while (owner.opModeIsActive()){
             if (!isIntakeBoxEmpty()){
                 Log.d(TAG, "Element is in the intake");
