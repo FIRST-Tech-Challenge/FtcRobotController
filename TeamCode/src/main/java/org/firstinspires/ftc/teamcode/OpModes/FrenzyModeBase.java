@@ -146,6 +146,7 @@ public class FrenzyModeBase extends LinearOpMode {
         depositToTeamHub();
         depositToSharedHub();
         handleIntakeDropper();
+        handleEmergency();
     }
 
     protected void depositToTeamHub() {
