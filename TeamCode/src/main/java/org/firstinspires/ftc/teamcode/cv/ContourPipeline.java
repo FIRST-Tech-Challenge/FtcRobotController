@@ -49,7 +49,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
     private int loopCounter = 0;
     private int pLoopCounter = 0;
-    
+
 
     private Mat mat = new Mat();
     private Mat processed = new Mat();
