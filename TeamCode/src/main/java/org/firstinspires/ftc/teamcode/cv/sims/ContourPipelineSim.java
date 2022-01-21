@@ -30,8 +30,10 @@ public class ContourPipelineSim extends OpenCvPipeline {
     // Green                        Y      Cr     Cb    (Do not change Y)
     // use this picture for you own color https://raw.githubusercontent.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/main/7e8azlgi.bmp
     Scalar GREEN = new Scalar(0, 0, 255);
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
-    public static Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 130.0);
+    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(165.0, 195.0, 110.0);
+    // public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
+    // public static Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 130.0);
 
     Telemetry telemetry;
 
@@ -61,8 +63,10 @@ public class ContourPipelineSim extends OpenCvPipeline {
         this.borderBottomY = 0.45;
 
         // Green Range                                      Y      Cr     Cb
+        // Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
+        // Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
         Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
-        Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
+        Scalar initScalarUpperYCrCb = new Scalar(165.0, 195.0, 110.0);
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
     }
