@@ -49,22 +49,22 @@ public class DashboardUtil {
 
         corners[0] = pose.plus(
                 new Transform2d(
-                        new Translation2d(.2125, .205),
+                        new Translation2d(.2125, .1825),
                         new Rotation2d())).getTranslation();
 
         corners[1] = pose.plus(
                 new Transform2d(
-                        new Translation2d(-.2125, .205),
+                        new Translation2d(-.2125, .182),
                         new Rotation2d())).getTranslation();
 
         corners[2] = pose.plus(
                 new Transform2d(
-                        new Translation2d(-.2125, -.205),
+                        new Translation2d(-.2125, -.182),
                         new Rotation2d())).getTranslation();
 
         corners[3] = pose.plus(
                 new Transform2d(
-                        new Translation2d(.2125, -.205),
+                        new Translation2d(.2125, -.182),
                         new Rotation2d())).getTranslation();
 
         return corners;
