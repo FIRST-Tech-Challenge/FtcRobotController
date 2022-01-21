@@ -45,8 +45,9 @@ public class test3 extends LinearOpMode {
         final AutoLift lift = new AutoLift(eventThread, hardwareMap);
         waitForStart();
         eventThread.start();
-        eventThread.addEvent(new RunEveryTimedEvent(() -> lift.setPosition(AutoLift.Positions.TOP), 7600));
+        eventThread.addEvent(new RunEveryTimedEvent(() -> lift.setPosition(AutoLift.Positions.TOP), 6000));
         while (opModeIsActive()) {
+            lift.update();
             final double stick = gamepadEx.getLeftY();
             for (DcMotor motor : motors) {
                 motor.setPower(stick);
