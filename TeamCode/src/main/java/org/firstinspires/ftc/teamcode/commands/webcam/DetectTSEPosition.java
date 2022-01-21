@@ -9,19 +9,19 @@ import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 public class DetectTSEPosition extends CommandBase {
 
     private final WebCamSubsystem webCamSubsytem;
-    private final OpenCvShippingElementDetector detector;
+    //private final OpenCvPipeline detector;
     private Telemetry telemetry;
-    private Boolean gotPosition = false;
     private Levels.TSELocation location;
     private int level = 0;
 
     public DetectTSEPosition(WebCamSubsystem subsystem){
         webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
+        //detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
 
         addRequirements(subsystem);
     }
@@ -29,7 +29,7 @@ public class DetectTSEPosition extends CommandBase {
     public DetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
         //telemetry.addData("DetectTSEPosition", level);
         webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
+        //detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -45,12 +45,12 @@ public class DetectTSEPosition extends CommandBase {
     @Override
     public void execute(){
 
-        //telemetry.addData("We are executingt", "detectPosition");
-        location = detector.getLocation();
-        level = detector.getTSELevel();
 
-        setLocation();
-        setLevel();
+        //location = detector.getLocation();
+       // level = detector.getTSELevel();
+
+        //setLocation();
+        //setLevel();
 
     }
 
@@ -65,18 +65,10 @@ public class DetectTSEPosition extends CommandBase {
         //telemetry.addData("We have a detect", level);
         //telemetry.update();
         webCamSubsytem.setLevel(level);
-        if(level > 0) {
-            gotPosition = true;
-            //telemetry.addData("We are setting level", level);
-        }
+
 
     }
 
-   /* @Override
-    public boolean isFinished() {
-        //telemetry.addData("We are finished", gotPosition);
-        //telemetry.update();
-        return level > 0;
-    }*/
+
 
 }
