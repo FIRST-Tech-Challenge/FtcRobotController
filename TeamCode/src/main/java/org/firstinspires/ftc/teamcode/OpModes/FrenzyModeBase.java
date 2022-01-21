@@ -191,10 +191,8 @@ public class FrenzyModeBase extends LinearOpMode {
 
     protected void handleTower() {
         if (isButtonPressable()) {
-            if (gamepad2.a) {
-                startGamepadLockout();
-                robot.initTower();
-            }
+            double turretValue = gamepad2.left_stick_x;
+            robot.activateTurret(turretValue);
         }
     }
 

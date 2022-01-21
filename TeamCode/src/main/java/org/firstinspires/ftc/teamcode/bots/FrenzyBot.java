@@ -27,6 +27,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx intake = null;
     private DcMotorEx lift = null;
     private DcMotorEx rotatorLeft = null;
+    private DcMotorEx turret = null;
     private Servo dropperServo = null;
     private Servo intakeDropperServo = null;
     private Servo tower = null;
@@ -47,6 +48,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private static double LIFT_SPEED = 0.95;
     private static double LIFT_SPEED_LOW = 0.7;
     protected static int positionToleranceLift = 15;
+    protected static int positionToleranceTurret = 15;
 
     NormalizedColorSensor colorSensor;
 
@@ -98,6 +100,17 @@ public class FrenzyBot extends FrenzyBaseBot {
             lift.setTargetPositionTolerance(positionToleranceLift);
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize lift", ex);
+        }
+
+        try {
+            turret = hwMap.get(DcMotorEx.class, "turret");
+            turret.setDirection(DcMotor.Direction.REVERSE);
+            turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            turret.setVelocity(0);
+            turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            turret.setTargetPositionTolerance(positionToleranceTurret);
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize turret", ex);
         }
 
         try {
@@ -173,6 +186,12 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void activateLift(double velocity) {
         if (lift != null) {
             lift.setVelocity(MAX_VELOCITY_REV*velocity);
+        }
+    }
+
+    public void activateTurret(double velocity) {
+        if (turret != null){
+            turret.setVelocity(MAX_VELOCITY_REV*velocity);
         }
     }
 
