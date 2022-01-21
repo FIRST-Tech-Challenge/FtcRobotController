@@ -374,11 +374,18 @@ public class FreightFrenzyComputerVisionShippingElementReversion{
 
             int maxRedIndex = 0;
 
+
+//            Nonfunctional! Logic problem not a syntax one.
             for (int i = 0; i<32; i++) {
                 if (hubRegionAvgRed[i] > hubRegionAvgRed[maxRedIndex]) {
                     maxRedIndex = i;
                 }
             }
+
+            telemetry.addData("Hub Red Center Average", hubRegionAvgRed[16]);
+            telemetry.addData("Hub Blue Center Average", hubRegionAvgBlue[16]);
+            telemetry.addData("Hub Blue Center Average", (int) Core.mean(hubRegionBlue[16]).val[0]);
+
 //            telemetry.addData("Analysis of Hub Left", hub_avg_left);
 //            telemetry.addData("Analysis2 of Hub Center", hub_avg_center);
 //            telemetry.addData("Analysis3 of Hub Right", hub_avg_right);
