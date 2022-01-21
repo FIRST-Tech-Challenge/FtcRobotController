@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.commands.webcam.CloseDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
@@ -119,7 +120,7 @@ public class DuckSideRedPath3 {
                 .strafeTo(new Vector2d(-60, 22))
                 .addDisplacementMarker(()->{
                     telemetry.addData("Path 2", "performing path 2 action");
-                    SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(Levels.getInstance().getTSELevel());
                     setArmLevel.schedule();
                 })
                 .build();
