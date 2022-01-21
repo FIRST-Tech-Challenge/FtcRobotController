@@ -106,7 +106,7 @@ public class ContourPipelineSim extends OpenCvPipeline {
             telemetry.addLine("Drawing countours");
 
             // Show the bounding area in which we will search -
-            Imgproc.rectangle(input, new Rect(50, 40, 180, 40), new Scalar(0, 0, 255), 2); // GREEN
+            Imgproc.rectangle(input, new Rect(50, 30, 180, 50), new Scalar(0, 0, 255), 2); // GREEN
 
 
             // Set default maxRect to one pixel. Default will return as Level 3
@@ -123,7 +123,7 @@ public class ContourPipelineSim extends OpenCvPipeline {
 
                     if (
                             (rect.area() > 1300 && rect.area() < 2200)
-                            && rect.y > 40 && rect.y < 80
+                            && rect.y > 30 && rect.y < 80
                             && rect.x > 50
                         ){
                         maxRect = rect;
