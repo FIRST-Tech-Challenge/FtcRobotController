@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.cv;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.cv.sims.ContourPipelineSim;
+import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.globals.Levels;
+import org.firstinspires.ftc.teamcode.globals.Side;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -114,7 +116,7 @@ public class ContourPipeline extends OpenCvPipeline {
         telemetry.addLine("Drawing countours");
 
         // Show the bounding area in which we will search -
-        Imgproc.rectangle(input, new Rect(50, 30, 180, 50), new Scalar(0, 0, 255), 2); // GREEN
+        Imgproc.rectangle(input, new Rect(50, 30, 180, 50), new Scalar(0, 0, 255), 2); // BLUE
 
 
         // Set default maxRect to one pixel. Default will return as Level 3
@@ -152,14 +154,26 @@ public class ContourPipeline extends OpenCvPipeline {
 
         // Outline found rectangle in Green
         Imgproc.rectangle(input, maxRect, new Scalar(0, 255, 0), 2); // GREEN
-        
+
         // Check maxRect for midpoint value to determine which location the element is in
         if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
-            Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_1);
+            if(Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE) {
+                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
+            }
+            else
+            {
+                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
+            }
         } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
             Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_2);
         } else {
-            Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_3);
+            if(Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE) {
+                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
+            }
+            else
+            {
+                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
+            }
         }
 
         // Display Data
