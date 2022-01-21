@@ -20,9 +20,9 @@ import java.util.List;
 public class ContourPipelineSim extends OpenCvPipeline {
 
     public enum TSELocation {
-        DUCKSIDE_BLUE_LEVEL_3,
-        DUCKSIDE_BLUE_LEVEL_2,
-        DUCKSIDE_BLUE_LEVEL_1,
+        LEVEL_3,
+        LEVEL_2,
+        LEVEL_1,
         NONE
     }
     TSELocation location;
@@ -128,11 +128,11 @@ public class ContourPipelineSim extends OpenCvPipeline {
 
             // Check maxRect for midpoint value to determine which location the element is in
             if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
-                location = TSELocation.DUCKSIDE_BLUE_LEVEL_1;
+                location = TSELocation.LEVEL_1;
             } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
-                location = TSELocation.DUCKSIDE_BLUE_LEVEL_2;
+                location = TSELocation.LEVEL_2;
             } else {
-                location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
+                location = TSELocation.LEVEL_3;
             }
 
             // Display Data
