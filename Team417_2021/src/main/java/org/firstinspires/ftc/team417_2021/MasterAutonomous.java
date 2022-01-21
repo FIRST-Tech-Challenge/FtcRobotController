@@ -55,13 +55,49 @@ abstract public class MasterAutonomous extends MasterOpMode {
         do {
             currentInches = robotInches() - initialInches;
             errorDistance = inches - currentInches;
-            errorAngle = robot.getCorrectedHeading() - targetAngle;
+            errorAngle = adjustAngle(robot.getCorrectedHeading() - targetAngle);
 
             moveFilter.roll(errorDistance);
             turnFilter.roll(errorAngle);
 
             movingPower = Range.clip(moveFilter.getFilteredValue(), -maxSpeed, maxSpeed);
-            turningPower = turnFilter.getFilteredValue();
+            turningPower = Range.clip(turnFilter.getFilteredValue(), -maxSpeed, maxSpeed);
+            drive(movingPower, turningPower);
+            telemetry.addData("error angle", errorAngle);
+            telemetry.addData("heading", robot.getCorrectedHeading());
+            telemetry.addData("error dist", errorDistance);
+            telemetry.update();
+        }
+        while ((Math.abs(errorAngle) > 3 || Math.abs(errorDistance) > distanceTolerance) && opModeIsActive());
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        telemetry.clear();
+    }
+
+    public void moveAtAngle(double inches, double maxSpeed, double targetAngle) throws InterruptedException {
+        double movingPower;
+        double turningPower;
+        //double targetAngle = robot.getCorrectedHeading();
+        double errorAngle;
+        double initialInches = robotInches();
+        double errorDistance;
+        double currentInches;
+        double distanceTolerance = 0.5;
+
+        turnFilter.reset();
+        moveFilter.reset();
+        do {
+            currentInches = robotInches() - initialInches;
+            errorDistance = inches - currentInches;
+            errorAngle = adjustAngle(robot.getCorrectedHeading() - targetAngle);
+
+            moveFilter.roll(errorDistance);
+            turnFilter.roll(errorAngle);
+
+            movingPower = Range.clip(moveFilter.getFilteredValue(), -maxSpeed, maxSpeed);
+            turningPower = Range.clip(turnFilter.getFilteredValue(), -maxSpeed, maxSpeed);
             drive(movingPower, turningPower);
             telemetry.addData("error", errorAngle);
             telemetry.addData("heading", robot.getCorrectedHeading());

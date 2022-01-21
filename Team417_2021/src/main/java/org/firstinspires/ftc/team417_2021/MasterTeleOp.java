@@ -12,6 +12,15 @@ abstract public class MasterTeleOp extends MasterOpMode {
     Toggler grabberToggle = new Toggler();
     boolean grabberState = false;
 
+    boolean movingShoulder = false;
+    boolean movingElbow = false;
+    int shoulderTarget = 0;
+    int elbowTarget = 0;
+    int shoulderError;
+    int elbowError;
+    double shoulderPower;
+    double elbowPower;
+
     double inches = 0;
 
     public void driveRobotUsingController() {
@@ -22,9 +31,6 @@ abstract public class MasterTeleOp extends MasterOpMode {
         drivePower *= 1 - (0.8 * gamepad1.right_trigger);
         rotationalPower *= 1 - (0.8 * gamepad1.right_trigger);
 
-        /*telemetry.addData("Inches", robotInches() - inches);
-        telemetry.addData("heading", robot.getCorrectedHeading());
-        telemetry.update();*/
         if (gamepad1.a) {
             inches = robotInches();
         }
@@ -37,7 +43,6 @@ abstract public class MasterTeleOp extends MasterOpMode {
         return ((float) motorFL.getCurrentPosition() + motorBL.getCurrentPosition() +
                 motorFR.getCurrentPosition() + motorBR.getCurrentPosition() ) / ( 4 * COUNTS_PER_INCH );
     }
-
 
     // joysticks change target position of arm joints
     public void encoderControlArm() {
@@ -74,30 +79,74 @@ abstract public class MasterTeleOp extends MasterOpMode {
 
         // carousel
         if (gamepad2.right_trigger != 0) {
-            carouselMotor.setPower(0.8);
+            carouselMotor.setPower(1);
         } else if (gamepad2.left_trigger != 0) {
-            carouselMotor.setPower(-0.8);
+            carouselMotor.setPower(-1);
         } else {
             carouselMotor.setPower(0);
         }
-        telemetry.addData("Shoulder", shoulderMotor.getCurrentPosition());
-        telemetry.addData("Elbow", elbowMotor.getCurrentPosition());
-        telemetry.addData("Wrist", wristServo.getPosition());
+
+        telemetry.addData("Wrist position", wristServo.getPosition());
+        telemetry.addData("wrist target", wristPos);
         telemetry.addData("grabber", grabberServo.getPosition());
         telemetry.update();
-/*
-        telemetry.addData("toggle", grabberState);
-        telemetry.addData("shoulder target", shoulderPos);
-        telemetry.addData("elbow target", elbowPos);
-
-        telemetry.addData("Shoulder", shoulderMotor.getCurrentPosition());
-        telemetry.addData("Elbow", elbowMotor.getCurrentPosition());
-        telemetry.addData("Wrist", wristServo.getPosition());
-        telemetry.addData("shoulder", gamepad2.left_stick_y);
-        telemetry.addData("elbow", gamepad2.right_stick_y);
-        telemetry.update();*/
-
     }
 
+    public void armToPosition() {
+        // control using joysticks
+        if (!movingShoulder && !movingElbow) {
+            shoulderMotor.setPower(gamepad2.left_stick_y);
+            elbowMotor.setPower(gamepad2.right_stick_y);
+        }
 
+        // setting target positions
+        if (gamepad2.x) {
+            movingShoulder = true;
+            movingElbow = true;
+            shoulderTarget = SHOULDER_LEVEL_1;
+            elbowTarget = ELBOW_LEVEL_1;
+
+        }
+        else if (gamepad2.y) {
+            movingShoulder = true;
+            movingElbow = true;
+            shoulderTarget = SHOULDER_LEVEL_3;
+            elbowTarget = ELBOW_LEVEL_3;
+        }
+
+        // controlling shoulder
+        if (Math.abs(shoulderTarget - shoulderMotor.getCurrentPosition()) > 5 && movingShoulder) {
+            // finds error and inputs into PID filter to find power to set motor to
+            shoulderError = shoulderTarget - shoulderMotor.getCurrentPosition();
+
+            shoulderFilter.roll(shoulderError);
+
+            shoulderPower = shoulderFilter.getFilteredValue();
+
+            shoulderMotor.setPower(shoulderPower);
+
+        }
+        // if it's close to the target and moving, or if B is pressed, stop
+        if ((Math.abs(shoulderTarget - shoulderMotor.getCurrentPosition()) <= 5 && movingShoulder)
+                || gamepad2.b) {
+            shoulderMotor.setPower(0.0);
+            movingShoulder = false;
+        }
+
+        // controlling elbow
+        if ((Math.abs(elbowTarget - elbowMotor.getCurrentPosition()) > 5 && movingElbow)
+                || gamepad2.b) {
+            elbowError = elbowTarget - elbowMotor.getCurrentPosition();
+
+            elbowFilter.roll(elbowError);
+
+            elbowPower = elbowFilter.getFilteredValue();
+
+            elbowMotor.setPower(elbowPower);
+        }
+        if (Math.abs(elbowTarget - elbowMotor.getCurrentPosition()) >= 5 && movingElbow) {
+            elbowMotor.setPower(0.0);
+            movingElbow = false;
+        }
+    }
 }

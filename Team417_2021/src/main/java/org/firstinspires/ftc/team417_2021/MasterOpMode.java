@@ -30,6 +30,9 @@ abstract public class MasterOpMode extends LinearOpMode {
     FIRFilter accelerationFilter;
     int filterLength = 10;
 
+    PIDFilter shoulderFilter;
+    PIDFilter elbowFilter;
+
     // drive constants
     static final double COUNTS_PER_MOTOR_REV = 537.7; // GoBilda 5302 19:2:1 motor
     static final double DRIVE_GEAR_REDUCTION = 1.0;
@@ -37,22 +40,29 @@ abstract public class MasterOpMode extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
 
     // arm and grabber constants
-    static final double GRABBER_IN = 1;
-    static final double GRABBER_OUT = 0.1;
-    static final int ELBOW_LEVEL_1 = 1900;
-    static final int ELBOW_LEVEL_2 = 1100;
-    static final int ELBOW_LEVEL_3 = 300;
+
+    static final double GRABBER_IN = 0.75;
+    static final double GRABBER_OUT = 0.05;
+    static final int ELBOW_LEVEL_1 = 2450;
+    static final int ELBOW_LEVEL_2 = 1705;
+    static final int ELBOW_LEVEL_3 = 600;
+
     static final int ELBOW_CAP = 0;
-    static final int SHOULDER_LEVEL_1 = -1650;
+    static final int SHOULDER_LEVEL_1 = -1970;
     static final int SHOULDER_LEVEL_2 = -1650;
     static final int SHOULDER_LEVEL_3 = -1500;
     static final int SHOULDER_CAP = 0; // todo get correct values
-    static final double WRIST_POS = 0.85;
+    static final double WRIST_POS = 0.15;
 
     protected void initializeHardware() {
         // initialize move filters
         turnFilter = new PIDFilter(0.005, 0, 0.0005);
         moveFilter = new PIDFilter(0.04, 0, 0);
+
+        // arm filters
+        shoulderFilter = new PIDFilter(0.01,0,0);
+        elbowFilter = new PIDFilter(0.01,0,0);
+
         // weights for weighted average
         double[] filterCoefficients = {1};
         accelerationFilter = new FIRFilter(new Polynomial(filterCoefficients),filterLength);
@@ -148,8 +158,5 @@ abstract public class MasterOpMode extends LinearOpMode {
         motor.setTargetPosition(targetPosition);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(power);
-
-
     }
-
 }

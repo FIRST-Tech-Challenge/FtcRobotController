@@ -13,7 +13,7 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
     int barcodeIndex = 0;
     boolean farSide = false;
     int x;
-    int offset = 200;
+    int offset = 40;
     @Override
     public void runOpMode() throws InterruptedException {
         // set up detection
@@ -39,9 +39,8 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
                 allianceSide *= -1;
             }
 
-            if (allianceSide == -1) {
-                barcodeIndex = barcodeDetector.index;
-            } else {
+
+
                 x = barcodeDetector.x;
 
                 if (gamepad1.x) {
@@ -53,11 +52,11 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
                 }
                 if (x < 213 - offset) { // prob need to decrease
                     barcodeIndex = 0;
-                } else if (x > 213 - offset && x < 486 - offset) {
+                } else if (x > 213 - offset && x < 400 - offset) {
                     barcodeIndex = 1;
-                } else if (x > 486 - offset) {
+                } else if (x > 400 - offset) {
                     barcodeIndex = 2;
-                }
+
             }
 
             telemetry.addLine("1 for blue, -1 for red");
@@ -72,11 +71,15 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
 
         waitForStart();
         robot.setInitialAngle();
-        sleep(5000);
+
+        moveInches(1, 0.5);
+        pivot(-22 * allianceSide, 0.5);
+        moveInches(10, 0.5);
+        pivot(-90 * allianceSide, 0.5);
+        sleep(100);
+        pivot(-90 * allianceSide, 0.5);
 
         if (barcodeIndex == 0) {
-            moveInches(9, 0.7);
-            pivot(-90 * allianceSide, 0.5);
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_1, 0.5);
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_1, 0.3);
             // 15 for level 3
@@ -84,51 +87,61 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
             while (shoulderMotor.isBusy() || elbowMotor.isBusy()) {
                 telemetry.addLine("pathli");
             }
+
+            moveInches(18, 0.5);
+            pivot(0, 0.5);
+            moveInches(8, 0.5);
+            grabberServo.setPosition(GRABBER_OUT);
+            sleep(500);
+            moveInches(-5, 0.5);
+            pivot(90 * allianceSide, 0.5);
+            runMotorToPosition(shoulderMotor, 0, 0.5);
+            runMotorToPosition(elbowMotor, 0, 0.3);
+            moveInches(80, 1);
+
         } else if (barcodeIndex == 1) {
-            moveInches(7, 0.7);
-            pivot(-90 * allianceSide, 0.5);
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_2, 0.5);
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_2, 0.3);
             // 15 for level 3
             while (shoulderMotor.isBusy() || elbowMotor.isBusy()) {
                 telemetry.addLine("pathli");
             }
+            moveInches(21, 0.5);
+            pivot(0, 0.5);
+
+            // THIS MOVEMENT VARIES I THINK
+            moveInches(8, 0.5);
+
+            grabberServo.setPosition(GRABBER_OUT);
+            sleep(500);
+
+            moveInches(-5, 0.5);
+            pivot(90 * allianceSide, 0.5);
+            runMotorToPosition(shoulderMotor, 0, 0.5);
+            runMotorToPosition(elbowMotor, 0, 0.3);
+            moveInches(80, 1);
         } else {
-            moveInches(9, 0.7);
-            pivot(-90 * allianceSide, 0.5);
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_3, 0.5);
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.3);
             // 15 for level 3
             while (shoulderMotor.isBusy() || elbowMotor.isBusy()) {
                 telemetry.addLine("pathli");
             }
-        }
-        //
-        //pivot(90, 0.5);
-        if (barcodeIndex == 2) {
-            moveInches(18, 0.7);
-        } else {
-            moveInches(18, 0.7);
-        }
-        pivot(0, 0.5);
-        if (barcodeIndex == 0) {
-            moveInches(6, 0.7);
-        } else{
-            moveInches(9, 0.7);
-        }
 
+            moveInches(21, 0.5);
+            pivot(0, 0.5);
 
-        grabberServo.setPosition(GRABBER_OUT);
-        moveInches(-7,0.7);
+            // THIS MOVEMENT VARIES I THINK
+            moveInches(10, 0.5);
 
-        pivot(90 * allianceSide, 0.9);
-        runMotorToPosition(shoulderMotor, 0, 0.5);
-        runMotorToPosition(elbowMotor, 0, 0.5);
-        while (shoulderMotor.isBusy() || elbowMotor.isBusy()) {
-            telemetry.addLine("moving arm");
+            grabberServo.setPosition(GRABBER_OUT);
+            sleep(500);
+            moveInches(-5, 0.5);
+            pivot(90 * allianceSide, 0.5);
+            runMotorToPosition(shoulderMotor, 0, 0.5);
+            runMotorToPosition(elbowMotor, 0, 0.3);
+            moveInches(80, 1);
         }
-        moveInches(70, 1.0);
-
     }
 
     public void dropElement() {
