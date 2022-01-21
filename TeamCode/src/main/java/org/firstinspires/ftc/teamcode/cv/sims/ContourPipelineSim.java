@@ -31,7 +31,7 @@ public class ContourPipelineSim extends OpenCvPipeline {
     // use this picture for you own color https://raw.githubusercontent.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/main/7e8azlgi.bmp
     Scalar GREEN = new Scalar(0, 0, 255);
     public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
-    public static Scalar scalarUpperYCrCb = new Scalar(165.0, 195.0, 110.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(220.0, 255.0, 90.0);
     // public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
     // public static Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 130.0);
 
@@ -66,7 +66,7 @@ public class ContourPipelineSim extends OpenCvPipeline {
         // Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
         // Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
         Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
-        Scalar initScalarUpperYCrCb = new Scalar(165.0, 195.0, 110.0);
+        Scalar initScalarUpperYCrCb = new Scalar(220.0, 255.0, 90.0);
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
     }
@@ -85,7 +85,8 @@ public class ContourPipelineSim extends OpenCvPipeline {
         CAMERA_WIDTH = input.width();
         CAMERA_HEIGHT = input.height();
 
-            // Process Image, convert to YCrCb,
+            // Process Image, convert to RGB, then processed to YCrCb,
+            Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
             Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
 
@@ -104,27 +105,41 @@ public class ContourPipelineSim extends OpenCvPipeline {
             Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
             telemetry.addLine("Drawing countours");
 
+            // Show the bounding area in which we will search -
+            Imgproc.rectangle(input, new Rect(50, 40, 180, 40), new Scalar(0, 0, 255), 2); // GREEN
+
+
+            // Set default maxRect to one pixel. Default will return as Level 3
+            maxRect = new Rect(0,0,1,1);
 
             // Loop Through Contours, find the counter with matching max and min area
             for (MatOfPoint contour : contours) {
                 Point[] contourArray = contour.toArray();
 
-                // Set default maxRect to one pixel. Default will return as Level 3
-                maxRect = new Rect(0,0,1,1);
-
                 // Bound Rectangle if Contour is Large Enough
-                if (contourArray.length >= 15) {
+                if (contourArray.length >= 1) {
                     MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
                     Rect rect = Imgproc.boundingRect(areaPoints);
 
-                    if (rect.area() > 1500 && rect.area() < 2300){
-                        Imgproc.rectangle(input, rect, new Scalar(0, 255, 0), 2); // GREEN
+                    if (
+                            (rect.area() > 1300 && rect.area() < 2200)
+                            && rect.y > 40 && rect.y < 80
+                            && rect.x > 50
+                        ){
                         maxRect = rect;
+                        Imgproc.rectangle(input, maxRect, new Scalar(255, 255, 255), 1); // GREEN
+
+                        telemetry.addData("maxrectX", maxRect.x);
+                        telemetry.addData("maxrectY", maxRect.y);
+                        telemetry.addData("maxrectArea", maxRect.area());
                     }
                     areaPoints.release();
                 }
                 contour.release();
             }
+
+            // Outline found rectangle in Green
+            Imgproc.rectangle(input, maxRect, new Scalar(0, 255, 0), 2); // GREEN
 
             // Check maxRect for midpoint value to determine which location the element is in
             if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
