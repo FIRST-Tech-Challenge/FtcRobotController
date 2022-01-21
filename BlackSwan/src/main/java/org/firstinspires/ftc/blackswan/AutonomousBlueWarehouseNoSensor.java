@@ -9,6 +9,7 @@ public class AutonomousBlueWarehouseNoSensor extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         robot = new Robot(hardwareMap, telemetry, this);
         waitForStart();
+        robot.liftForMovement();
         robot.forward(1.5, .5);
         robot.armThing(3);
         robot.right(1.75, .5);
