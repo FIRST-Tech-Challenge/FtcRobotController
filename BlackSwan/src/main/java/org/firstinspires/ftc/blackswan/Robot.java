@@ -89,10 +89,10 @@ public class Robot {
 
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
-        frontLeft.setTargetPosition(frontLeftTarget);
-        frontRight.setTargetPosition(frontRightTarget);
-        backLeft.setTargetPosition(backLeftTarget);
-        backRight.setTargetPosition(backRightTarget);
+        frontLeft.setTargetPosition((int) frontLeftTarget);
+        frontRight.setTargetPosition((int) frontRightTarget);
+        backLeft.setTargetPosition((int) backLeftTarget);
+        backRight.setTargetPosition((int) backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -140,10 +140,10 @@ public class Robot {
         int frontRightTarget = frontRightPosition + (int) distanceInTicks;
 
 
-        frontLeft.setTargetPosition(frontLeftTarget);
-        frontRight.setTargetPosition(frontRightTarget);
-        backLeft.setTargetPosition(backLeftTarget);
-        backRight.setTargetPosition(backRightTarget);
+        frontLeft.setTargetPosition((int) frontLeftTarget);
+        frontRight.setTargetPosition((int) frontRightTarget);
+        backLeft.setTargetPosition((int) backLeftTarget);
+        backRight.setTargetPosition((int) backRightTarget);
 
         motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -261,13 +261,13 @@ public class Robot {
         }
     }
         if(level ==3){
-            arm.setTargetPosition(1350);
+            arm.setTargetPosition(1200);
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(.5);
             while (arm.isBusy() && this.opMode.opModeIsActive()) {
             }
     }
-            // you are a potato
+
     }
 
     public void eject(){
