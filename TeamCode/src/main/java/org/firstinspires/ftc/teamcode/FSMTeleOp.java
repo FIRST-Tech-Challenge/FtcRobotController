@@ -30,6 +30,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -50,7 +54,6 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp
-
 public class FSMTeleOp extends OpMode {
     
     // Declare OpMode members.
@@ -60,22 +63,22 @@ public class FSMTeleOp extends OpMode {
     private DcMotor backRight;
     
     private DcMotor bucket;
-    private DcMotor linearSlide;
+    private DcMotorEx linearSlide;
     private DcMotor carouselTurner;
     private DcMotor bucketTurner;
     
     public enum LinearSlideState {
     
+        LINEAR_SLIDE_IDLE, 
         LINEAR_SLIDE_START,
         LINEAR_SLIDE_EXTEND,
         LINEAR_SLIDE_BUCKET,
         LINEAR_SLIDE_RELEASE,
         LINEAR_SLIDE_RETRACT
     
-    
     }
     
-    LinearSlideState linearSlideState = LinearSlideState.LINEAR_SLIDE_START;
+    LinearSlideState linearSlideState = LinearSlideState.LINEAR_SLIDE_IDLE;
     
     int LINEAR_SLIDE_HIGH = -150;
     int LINEAR_SLIDE_LOW = -15;
@@ -86,10 +89,16 @@ public class FSMTeleOp extends OpMode {
     double BUCKET_IDLE = 0;
     double BUCKET_RELEASE = 1;
     
-    double RELEASE_TIME = 1000;
+    double RELEASE_TIME = 5000;
     
     ElapsedTime releaseTimer = new ElapsedTime();
     
+    public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
+
+    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0); //PID coefficients that need to be tuned probably through FTC dashboard
+    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); //PID gains which we will define later in the process
+
+    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); //timer
     
     /*
      * Code to run ONCE when the driver hits INIT
@@ -99,12 +108,6 @@ public class FSMTeleOp extends OpMode {
         
         initRobot();
 
-        
-                    
-        
-        
-
-        
     }
 
     /*
@@ -115,7 +118,6 @@ public class FSMTeleOp extends OpMode {
         
         //linearSlide.setTargetPosition(-150);
         //linearSlide.setPower(-1);
-        
         
         telemetry.addData("Linear Slide: ", linearSlide.getCurrentPosition() );
         telemetry.addData("Bucket Turner: ", bucketTurner.getCurrentPosition() );
@@ -128,9 +130,7 @@ public class FSMTeleOp extends OpMode {
      */
     @Override
     public void start() {
-        
-        
-        
+        // nothing much here         
     }
 
     /*
@@ -145,123 +145,66 @@ public class FSMTeleOp extends OpMode {
         switch (linearSlideState) {
             case LINEAR_SLIDE_START:
                     
-                    linearSlide.setPower(gamepad2.right_stick_y);
-                    
-                    bucketTurner.setPower(gamepad2.left_stick_y * 0.5);
-                    
-                    
-                    if (gamepad2.dpad_up) {
-                        
-                        bucket.setPower(1);
-                        
-                    } else if (gamepad2.dpad_down) {
-                        
-                        bucket.setPower(-0.75);
-                        
-                    } else if (gamepad2.dpad_right) {
-                        
-                        bucket.setPower(0);
-                        
-                    }
-                    
-                    if (gamepad2.y) {
-                        
-                        carouselTurner.setPower(1);
-                    
-                    } else if (gamepad2.a) {
-                        
-                        carouselTurner.setPower(-1);
-                        
-                    } else {
-                        
-                        carouselTurner.setPower(0);
-                        
-                    }
-                    
-                    
-                    double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-                    double x = gamepad1.left_stick_x * 1.3; // Counteract imperfect strafing
-                    double rx = gamepad1.right_stick_x;
-                    // Denominator is the largest motor power (absolute value) or 1
-                    // This ensures all the powers maintain the same ratio, but only when
-                    // at least one is out of the range [-1, 1]
-                    double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-                    double frontLeftPower = (y + x + rx) / denominator;
-                    double backLeftPower = (y - x + rx) / denominator;
-                    double frontRightPower = (y - x - rx) / denominator;
-                    double backRightPower = (y + x - rx) / denominator;
-                    
-                    frontLeft.setPower(frontLeftPower * 0.75);
-                    backLeft.setPower(backLeftPower * 0.75);
-                    frontRight.setPower(frontRightPower * 0.75);
-                    backRight.setPower(backRightPower * 0.75);
-            
-                    if (gamepad1.x) {
+                    linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bucketTurner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
                     linearSlide.setTargetPosition(LINEAR_SLIDE_HIGH);
                     
                     linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                     linearSlide.setPower(1);
                     
-                    while (linearSlide.isBusy()) {
-                        
-                        
-                    }
-                    
                     linearSlideState = LinearSlideState.LINEAR_SLIDE_EXTEND;
                     
                     telemetry.addData("Automation Stage", linearSlideState );
                     telemetry.update();
                     
-                    }
-                
+
                 break;
                 
             case LINEAR_SLIDE_EXTEND:
                 
-                if (Math.abs(linearSlide.getCurrentPosition() - LINEAR_SLIDE_HIGH) < 5) {
+                    if (linearSlide.isBusy()) {
+                        // dont do anything                         
+                    } else {
+                        // extra check 
+                        if (Math.abs(linearSlide.getCurrentPosition() - LINEAR_SLIDE_HIGH) < 5) {
                 
-                    bucketTurner.setTargetPosition(BUCKET_TURNER_HIGH);
+                            bucketTurner.setTargetPosition(BUCKET_TURNER_HIGH);
                     
-                    bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    bucketTurner.setPower(1);
+                            bucketTurner.setPower(1);
                     
-                    while (bucketTurner.isBusy()) {
-                        
-                        
+                            linearSlideState = LinearSlideState.LINEAR_SLIDE_BUCKET;
+                        }
                     }
-                   
-                    linearSlideState = LinearSlideState.LINEAR_SLIDE_BUCKET;
 
-                }
                 break;
            
             case LINEAR_SLIDE_BUCKET:
                 
-                //if (Math.abs(bucketTurner.getCurrentPosition() - BUCKET_TURNER_HIGH) < 5) {
+                    if (linearSlide.isBusy() || bucketTurner.isBusy()) {
+                        // dont do anything
+                    } else {
+                        if (Math.abs(bucketTurner.getCurrentPosition() - BUCKET_TURNER_HIGH) < 5) {
+                            //bucket.setTargetPosition(-750);
+                        
+                            //bucket.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    
+                            bucket.setPower(1);
+                            
+                            linearSlideState = LinearSlideState.LINEAR_SLIDE_RELEASE;
+                            
+                            releaseTimer.reset();
+                        }
                 
-                    bucket.setTargetPosition(-750);
-                    
-                    bucket.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    bucket.setPower(1);
-                    
-                    while (bucket.isBusy()) {
-                        
-                        
                     }
-                    
-                    linearSlideState = LinearSlideState.LINEAR_SLIDE_RELEASE;
-                    
-                    releaseTimer.reset();
-                
-                //}
-                break;
+                    break;
             
             case LINEAR_SLIDE_RELEASE:
                 
-                //if (releaseTimer.seconds() >= RELEASE_TIME) {
+                if (releaseTimer.seconds() >= RELEASE_TIME) {
                     
                     bucket.setPower(BUCKET_IDLE);
                     
@@ -275,54 +218,54 @@ public class FSMTeleOp extends OpMode {
                     linearSlide.setPower(-1);
 
                     
-                    while (bucketTurner.isBusy() || linearSlide.isBusy()) {
-                        
-                        
-                    }
-                    
                     linearSlideState = LinearSlideState.LINEAR_SLIDE_RETRACT;
                     
-                //}
+                } else {
+                    // just have it run the way it is going 
+                    // linear slide is trying to maintain position
+                    // bucket turner is trying to maintain position
+                    // bucket is still running for 1 second 
+                }
                 
                 break;
                 
             case LINEAR_SLIDE_RETRACT:
             
-                //if (Math.abs(linearSlide.getCurrentPosition() - LINEAR_SLIDE_HIGH) < 10) {
+                if ((Math.abs(linearSlide.getCurrentPosition() - LINEAR_SLIDE_LOW) < 10) && (Math.abs(bucketTurner.getCurrentPosition() - BUCKET_TURNER_LOW) < 10)) {
                     
                     linearSlide.setPower(0);
                     bucketTurner.setPower(0);
                     
-                    linearSlideState = LinearSlideState.LINEAR_SLIDE_START;
+                    linearSlideState = LinearSlideState.LINEAR_SLIDE_IDLE;
                     
-                //}
+                }
                 break;
-            
+                
+            case LINEAR_SLIDE_IDLE:
             default:
             
-                linearSlideState = LinearSlideState.LINEAR_SLIDE_START;
+                linearSlideState = LinearSlideState.LINEAR_SLIDE_IDLE;
 
-        
-        
-        
- 
-        
         }
-        
         
     
-        if (gamepad1.y && linearSlideState != LinearSlideState.LINEAR_SLIDE_START) {
-        
-            linearSlideState = LinearSlideState.LINEAR_SLIDE_START;
-            
+        if (gamepad1.y) {
+            linearSlideState = LinearSlideState.LINEAR_SLIDE_IDLE;
+            linearSlide.setPower(0.0); 
+            bucketTurner.setPower(0.0);
+            bucket.setPower(0.0);
         }
         
+        if (gamepad1.x) {
+            linearSlideState = LinearSlideState.LINEAR_SLIDE_START;
+        }
         
-        linearSlide.setPower(gamepad2.right_stick_y);
+        if (linearSlideState == LinearSlideState.LINEAR_SLIDE_IDLE) {
             
-        bucketTurner.setPower(gamepad2.left_stick_y * 0.5);
-            
-            
+            linearSlide.setPower(gamepad2.right_stick_y);
+                
+            bucketTurner.setPower(gamepad2.left_stick_y * 0.5);
+
             if (gamepad2.dpad_up) {
                 
                 bucket.setPower(1);
@@ -331,48 +274,50 @@ public class FSMTeleOp extends OpMode {
                 
                 bucket.setPower(-0.75);
                 
-            } else if (gamepad2.dpad_right) {
+            } else if (gamepad2.dpad_right || gamepad2.dpad_left) {
                 
                 bucket.setPower(0);
-                
-            }
+            }       
+        }
+        
+        
+        // The carousel and drive train can be controlled even when in state machine
+        if (gamepad2.y) {
             
-            if (gamepad2.y) {
-                
-                carouselTurner.setPower(1);
+            carouselTurner.setPower(1);
+        
+        } else if (gamepad2.a) {
             
-            } else if (gamepad2.a) {
-                
-                carouselTurner.setPower(-1);
-                
-            } else {
-                
-                carouselTurner.setPower(0);
-                
-            }
+            carouselTurner.setPower(-1);
             
+        } else {
             
-            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double x = gamepad1.left_stick_x * 1.3; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio, but only when
-            // at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            carouselTurner.setPower(0);
             
-            frontLeft.setPower(frontLeftPower * 0.75);
-            backLeft.setPower(backLeftPower * 0.75);
-            frontRight.setPower(frontRightPower * 0.75);
-            backRight.setPower(backRightPower * 0.75);
- 
-            
-            telemetry.addData("Status", "Running");
-            telemetry.update();
-            
+        }
+        
+        
+        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+        double x = gamepad1.left_stick_x * 1.3; // Counteract imperfect strafing
+        double rx = gamepad1.right_stick_x;
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio, but only when
+        // at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+        
+        frontLeft.setPower(frontLeftPower * 0.75);
+        backLeft.setPower(backLeftPower * 0.75);
+        frontRight.setPower(frontRightPower * 0.75);
+        backRight.setPower(backRightPower * 0.75);
+
+        
+        telemetry.addData("Status", "Running");
+        telemetry.update();
+        
     }
 
     /*
@@ -392,7 +337,7 @@ public class FSMTeleOp extends OpMode {
         
         bucket = hardwareMap.get(DcMotor.class,"Bucket");
         bucketTurner = hardwareMap.get(DcMotor.class, "BucketTurner" );
-        linearSlide = hardwareMap.get(DcMotor.class, "LinearSlide");
+        linearSlide = hardwareMap.get(DcMotorEx.class, "LinearSlide");
         carouselTurner = hardwareMap.get(DcMotor.class, "CarouselTurner" );
         
         frontLeft.setDirection(DcMotor.Direction.FORWARD) ;
@@ -415,7 +360,12 @@ public class FSMTeleOp extends OpMode {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER) ;
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER) ;
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER) ;
+        
+        linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
         /*
         bucket.setMode(DcMotor.RunMode.RUN_TO_POSITION) ;
         bucketTurner.setMode(DcMotor.RunMode.RUN_TO_POSITION) ;
@@ -424,8 +374,7 @@ public class FSMTeleOp extends OpMode {
         */
         
 
-        linearSlide.setDirection(DcMotor.Direction.FORWARD) ;
-        
+
         
         bucket.setDirection(DcMotor.Direction.FORWARD) ;
  
@@ -443,4 +392,40 @@ public class FSMTeleOp extends OpMode {
         
         
     }
+    
+    double lastError = 0;
+    double integral = 0;
+    //initializing our variables
+
+    public void PID(double targetVelocity) {
+        
+        PIDTimer.reset(); //resets the timer
+
+        double currentVelocity = linearSlide.getVelocity();
+        double error = targetVelocity - currentVelocity; //pretty self explanatory--just finds the error
+
+        double deltaError = error - lastError; //finds how the error changes from the previous cycle
+        double derivative = deltaError / PIDTimer.time(); //deltaError/time gives the rate of change (sensitivity of the system)
+
+        integral += error * PIDTimer.time();
+        //continuously sums error accumulation to prevent steady-state error (friction, not enough p-gain to cause change)
+
+        pidGains.p = error * pidCoeffs.p;
+        //acts directly on the error; p-coefficient identifies how much to act upon it
+        // p-coefficient (very low = not much effect; very high = lots of overshoot/oscillations)
+        pidGains.i = integral * pidCoeffs.i;
+        //multiplies integrated error by i-coefficient constant
+        // i-coefficient (very high = fast reaction to steady-state error but lots of overshoot; very low = slow reaction to steady-state error)
+        // for velocity, because friction isn't a big issue, only reason why you would need i would be for insufficient correction from p-gain
+        pidGains.d = derivative * pidCoeffs.d;
+        //multiplies derivative by d-coefficient
+        // d-coefficient (very high = increased volatility; very low = too little effect on dampening system)
+
+        linearSlide.setVelocity(pidGains.p + pidGains.i + pidGains.d + targetVelocity);
+        //adds up the P I D gains with the targetVelocity bias
+
+        lastError = error;
+        //makes our current error as our new last error for the next cycle
+    }
+    
 }
