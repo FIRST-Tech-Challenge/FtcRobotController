@@ -11,6 +11,10 @@ public class linSlide extends LinearOpMode {
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH};
     states state = states.LOW;
 
+    private int toggle;//toggle for setting height
+    final double modeCD = 0.1;//these two values are for putting a cooldown on switching heights, just in case pushing down the button would make it switch heights more than 1 time
+    double CDtimer = 0;
+
     //Encoder positions for each level on linear slide
     final int low = 0;
     final int mid = 1200;
@@ -20,80 +24,89 @@ public class linSlide extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        if(gamepad1.x){//set which level using controller buttons
-            state=states.toLOW;
-        }
-        if(gamepad1.b){
-            state=states.toMID;
-        }
-        if(gamepad1.y){
-            state=states.toHIGH;
-        }
 
-        switch(state){
-            case LOW:
-                if(motor.getCurrentPosition()!= low){//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
-                    state=states.toLOW;
+        while (opModeIsActive()) {
+
+            if(gamepad1.right_trigger==1&&(runtime.time()-CDtimer)>=modeCD){
+                if(toggle==2){
+                    toggle=-1;
+                }
+                toggle+=1;
+                switch(toggle){
+                    case 0:
+                        state=states.LOW;
+                        break;
+                    case 1:
+                        state=states.MID;
+                        break;
+                    case 2:
+                        state = states.HIGH;
+                        break;
+                }
+                CDtimer=runtime.time();
+            }
+
+            switch (state) {
+                case LOW:
+                    if (motor.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
+                        state = states.toLOW;
+                        break;
+                    }
+
+                    //code when low goes here
+
                     break;
-                }
 
-                //code when low goes here
-
-                break;
-
-            case MID:
-                if(motor.getCurrentPosition()!= mid){
-                    state=states.toMID;
+                case MID:
+                    if (motor.getCurrentPosition() != mid) {
+                        state = states.toMID;
+                        break;
+                    }
                     break;
-                }
-                break;
 
-            case HIGH:
-                if(motor.getCurrentPosition()!= high){
-                    state=states.toHIGH;
+                case HIGH:
+                    if (motor.getCurrentPosition() != high) {
+                        state = states.toHIGH;
+                        break;
+                    }
                     break;
-                }
-                break;
 
-            case toLOW:
-                if(motor.getCurrentPosition()==low){
-                    state=states.LOW;
-                }
-                else {
-                    //motor.setPower(PID(low,prevPos,prevTime));
-                    motor.setTargetPosition(low);
-                    motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
-                break;
+                case toLOW:
+                    if (motor.getCurrentPosition() == low) {
+                        state = states.LOW;
+                    } else {
+                        //motor.setPower(PID(low,prevPos,prevTime));
+                        motor.setTargetPosition(low);
+                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    }
+                    break;
 
-            case toMID:
-                if(motor.getCurrentPosition()==mid){
-                    state=states.MID;
-                }
-                else {
-                    //motor.setPower(PID(mid,prevPos,prevTime));
-                    motor.setTargetPosition(mid);
-                    motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
-                break;
+                case toMID:
+                    if (motor.getCurrentPosition() == mid) {
+                        state = states.MID;
+                    } else {
+                        //motor.setPower(PID(mid,prevPos,prevTime));
+                        motor.setTargetPosition(mid);
+                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    }
+                    break;
 
-            case toHIGH:
-                if(motor.getCurrentPosition()==high){
-                    state=states.HIGH;
-                }
-                else{
-                    //motor.setPower(PID(high,prevPos,prevTime));
-                    motor.setTargetPosition(high);
-                    motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
-                break;
+                case toHIGH:
+                    if (motor.getCurrentPosition() == high) {
+                        state = states.HIGH;
+                    } else {
+                        //motor.setPower(PID(high,prevPos,prevTime));
+                        motor.setTargetPosition(high);
+                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    }
+                    break;
 
 
+            }
+
+            //telemetry
+            telemetry.addData("motorPos ", motor.getCurrentPosition());
         }
-
-        //telemetry
-        telemetry.addData("motorPos ",motor.getCurrentPosition());
-
     }
 
     public void initialize(){
@@ -101,6 +114,7 @@ public class linSlide extends LinearOpMode {
         //motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
         //runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time, used for PID
+        toggle=0;
     }
 
 
