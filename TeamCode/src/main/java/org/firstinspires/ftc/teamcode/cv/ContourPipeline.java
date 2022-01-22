@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.cv;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.cv.sims.ContourPipelineSim;
 import org.firstinspires.ftc.teamcode.globals.Levels;
@@ -15,17 +17,20 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
-
+@Config
 public class ContourPipeline extends OpenCvPipeline {
 
     Scalar GREEN = new Scalar(0, 0, 255);
 
     // Green                        Y      Cr     Cb    (Do not change Y)
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
-    public static Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 130.0);
+    public static final Scalar scalarLowerYCrCb = new Scalar(0.0, 150.0, 60.00);
+    //public static final Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
+    public static final Scalar scalarUpperYCrCb = new Scalar(165.0, 195.0, 110.0);
 
     Telemetry telemetry;
 
@@ -63,6 +68,8 @@ public class ContourPipeline extends OpenCvPipeline {
 
     private final Object sync = new Object();
 
+    Map<Levels.TSELocation, Integer> levels = new HashMap<>();
+
     public ContourPipeline(Telemetry t) {
 
         telemetry = t;
@@ -77,24 +84,34 @@ public class ContourPipeline extends OpenCvPipeline {
         Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
+
+        levels.put(Levels.TSELocation.NONE,0);
+
+        levels.put(Levels.TSELocation.LEVEL_1,1);
+        levels.put(Levels.TSELocation.LEVEL_2,2);
+        levels.put(Levels.TSELocation.LEVEL_3,3);
+
+        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
     }
 
 
     public void configureScalarLower(double y, double cr, double cb) {
-        scalarLowerYCrCb = new Scalar(y, cr, cb);
+        //scalarLowerYCrCb = new Scalar(y, cr, cb);
     }
 
     public void configureScalarUpper(double y, double cr, double cb) {
-        scalarUpperYCrCb = new Scalar(y, cr, cb);
+        //scalarUpperYCrCb = new Scalar(y, cr, cb);
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        CAMERA_WIDTH = input.width();
-        CAMERA_HEIGHT = input.height();
+        CAMERA_WIDTH = 240;
+        CAMERA_HEIGHT = 240;
+
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2RGB);
 
         // Process Image, convert to YCrCb,
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGB2YCrCb);
         Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
 
         // Remove Noise
@@ -193,5 +210,9 @@ public class ContourPipeline extends OpenCvPipeline {
 
     public Levels.TSELocation getLocation() {
         return Levels.getInstance().getTSELocation();
+    }
+    public int getTSELevel(){
+        //telemetry.addData("getTSELevel", location);
+        return levels.get(Levels.getInstance().getTSELocation());
     }
 }

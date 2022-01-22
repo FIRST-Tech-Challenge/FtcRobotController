@@ -60,7 +60,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
     private String[] classNames;
 
-    private final String modelPathDuckSideBlue = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_red\\converted_keras_duckside_red\\optimized\\freight_frenzy_barcodes_duckside_red_graph.pb";
     private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_red\\converted_keras_duckside_red\\optimized\\freight_frenzy_barcodes_duckside_red_graph.pb";
     private final String modelPathWarehouseSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\warehouseside_blue\\converted_keras_warehouseside_blue\\optimized\\freight_frenzy_barcodes_warehouseside_blue_graph.pb";
     private final String modelPathWarehouseSideRed = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\warehouseside_blue\\converted_keras_warehouseside_blue\\optimized\\freight_frenzy_barcodes_warehouseside_blue_graph.pb";
