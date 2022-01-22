@@ -58,16 +58,15 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(260, .5);
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(23.5, 85, 1, 2, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(23.5, 85.5, 1, 2, 500);
             } catch (OdometryMovementException ignored) {
             }
-            driveSystem.turnTo(270, .3);
+            driveSystem.turnTo(272, .3);
 
 
             // driveSystem.turnTo(260, .4);
 
 
-            //TODO add movements
             switch (Pos) {
                 case NotSeen:
                 case Right:
@@ -125,9 +124,9 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
             // this moves into the wall before spinning off the duck
 
-            driveSystem.strafeAtAngle(15, .475);
+            driveSystem.strafeAtAngle(15, .5);
 
-            Thread.sleep(1000);
+            Thread.sleep(1250);
             driveSystem.stopAll();
             spinner.spinOffRedDuck();
             driveSystem.strafeAtAngle(270, 1);
@@ -156,7 +155,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
                     if (timer.milliseconds() >= millis) {
                         positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 0, 8);
+                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 0, 10);
                         double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
                         if (traveledDistance < tooSmallOfDistance) {
                             return true;
@@ -174,7 +173,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 Executable<Boolean> q = () -> {
                     return (t.call() || e.call());
                 };
-                driveSystem.moveToPosition(0, 8, 1, 1, q);
+                driveSystem.moveToPosition(0, 10, 1, 1, q);
 
             } catch (OdometryMovementException ignored) {
             } finally {

@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
  */
 @Autonomous(name = "Red Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
-    static final double[] initialPos = {7, 63, 90};
     static final BlinkinPattern def = BlinkinPattern.RED;
     public DistanceSensor distanceSensor;
 

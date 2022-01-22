@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Gr
 import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Red;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
@@ -15,7 +14,7 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
  * A Autonomous to test color sensor capabilities
  */
 @TeleOp(name = "ColorTest")
-@Disabled
+//@Disabled
 public class ColorTest extends TeleOpTemplate {
     private final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.BLUE;
 
@@ -26,14 +25,27 @@ public class ColorTest extends TeleOpTemplate {
         waitForStart();
         intake.setServoOpen();
 
+        boolean y_depressed2 = true;
+
         while (opModeIsActive() && !isStopRequested()) {
 
+            if (!gamepad2.y) {
+                y_depressed2 = true;
+            }
+            if (gamepad2.y && y_depressed2) {
+                y_depressed2 = false;
+                if (intake.isClosed()) {
+                    intake.setServoOpen();
+                } else {
+                    intake.setServoClosed();
+                }
+            }
 
 
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                 intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
                 RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
-                if (o == null) {
+                if (o == null || !intake.isClosed()) {
                     leds.setPattern(defaultColor);
                 } else {
                     leds.setPattern(o);

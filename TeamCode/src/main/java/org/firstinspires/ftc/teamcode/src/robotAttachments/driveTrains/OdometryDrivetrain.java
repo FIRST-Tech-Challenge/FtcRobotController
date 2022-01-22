@@ -133,7 +133,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     public void turnTo(double angle, double power) throws InterruptedException {
         double startingAngle = odometry.returnOrientation();
 
-        // the following calculation determines the value of the angle between the current startingAngle and the desired startingAngle in a counterclockwise rotation/left turn
+        // the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a counterclockwise rotation/left turn
         if (((360 - angle) + startingAngle) % 360 > 180) {
             while (((360 - angle) + odometry.returnOrientation()) % 360 > 180) {
                 if (!isStopRequested() && opModeIsActive()) {

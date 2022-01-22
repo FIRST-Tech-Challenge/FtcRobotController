@@ -4,6 +4,7 @@ import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDistanceSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
@@ -23,6 +24,8 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
     BlinkinPattern currentColor = defaultColor;
 
     TripWireDistanceSensor distanceSensor;
+
+    private final ElapsedTime yTimer = new ElapsedTime();
 
     private Void callBack() {
         this.leds.setPattern(BlinkinPattern.BLACK);
@@ -156,7 +159,7 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
                 if (Math.abs(gamepad2.left_trigger - gamepad2.right_trigger) > 0.01) {
                     intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
                     RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
-                    if (o == null) {
+                    if (o == null || !intake.isClosed()) {
                         if (currentColor != defaultColor) {
                             leds.setPattern(defaultColor);
                             currentColor = defaultColor;
@@ -180,10 +183,19 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
                     y_depressed2 = false;
                     if (intake.isClosed()) {
                         intake.setServoOpen();
+                        yTimer.reset();
                     } else {
                         intake.setServoClosed();
                     }
+
+                    leds.setPattern(defaultColor);
+                    currentColor = defaultColor;
                 }
+
+                if (yTimer.seconds() > 1.25) {
+                    intake.setServoClosed();
+                }
+
                 if (gamepad2.x) {
                     spinner.setPowerBlueDirection();
                 } else if (gamepad2.b) {
