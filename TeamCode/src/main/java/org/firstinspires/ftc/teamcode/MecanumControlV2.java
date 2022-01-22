@@ -135,15 +135,15 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Turn Spinner on
-        if (gamepad1.x && !isSpinnerOn) {
+        if (gamepad2.x && !isSpinnerOn) {
             isSpinnerOn = true;
-        }else if (!gamepad1.x && isSpinnerOn) {
+        }else if (!gamepad2.x && isSpinnerOn) {
             isSpinnerOf = false;
         }
         //Turn Spinner off
-        if (gamepad1.x && !isSpinnerOf) {
+        if (gamepad2.x && !isSpinnerOf) {
             isSpinnerOn = false;
-        }else if (!gamepad1.x && !isSpinnerOn) {
+        }else if (!gamepad2.x && !isSpinnerOn) {
             isSpinnerOf = true;
         }
 
@@ -209,13 +209,13 @@ public class MecanumControlV2 extends OpMode {
         //toggle for spinner, already exists above in different form^^^
 
 
-        if (gamepad1.guide && !spinpos) {
+        if (gamepad2.guide && !spinpos) {
             spinpos = true;
         }else if (!gamepad1.guide && spinpos) {
             spinneg = false;
         }
         //Turn Spinner off
-        if (gamepad1.guide && !spinneg) {
+        if (gamepad2.guide && !spinneg) {
             spinpos = false;
         }else if (!gamepad1.guide && !spinpos) {
             spinneg = true;
@@ -223,16 +223,16 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Change spinner power
-        if(gamepad1.guide&&spinpos){
+        if(gamepad2.guide&&spinpos){
             shooterPower*=-1;
         }
 
 
 
-        if(gamepad1.start&&isSpinnerOn){
-            Motor.rotaterPower(shooterPower*1.2);
+        if(gamepad2.start&&isSpinnerOn){
+            Motor.rotaterPower(shooterPower*1.4);
         }
-        if(gamepad1.back&&isSpinnerOn){
+        if(gamepad2.back&&isSpinnerOn){
             Motor.rotaterPower(shooterPower*8);
         }
         if(isSpinnerOn){
@@ -267,20 +267,20 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Vertical Lift Movement
-        if(gamepad1.dpad_up){
+        if(gamepad2.left_stick_y>0.1){
             Motor.VertLift.setPower(-.6);
         }
-        else if(gamepad1.dpad_down){
+        else if(gamepad2.left_stick_y<-.1){
             Motor.VertLift.setPower(.6);
         }
        else {
             Motor.VertLift.setPower(0);
         }
         //Horizontal Slide Movement
-        if(gamepad1.dpad_right){
+        if(gamepad2.left_stick_x>.1){
             Motor.HorzLift.setPower(.4);
         }
-        else if(gamepad1.dpad_left){
+        else if(gamepad2.left_stick_x<-.1){
             Motor.HorzLift.setPower(-.4);
         }
         else{
@@ -302,11 +302,11 @@ public class MecanumControlV2 extends OpMode {
 
         //Control Output Servos, initial middle and final positions
 
-        if(gamepad1.y){
+        if(gamepad2.y){
 
             isPrimed = true;
         }
-        else if(isPrimed && !gamepad1.y){
+        else if(isPrimed && !gamepad2.y){
             if(servopos<2){
                 servopos++;
             }
@@ -321,13 +321,13 @@ public class MecanumControlV2 extends OpMode {
 
         switch (servopos){
             case 0:
-                spinny.changePos(0.3);
+                spinny.changePos(0.18);
                 break;
             case 1:
                 spinny.changePos(.5);
                 break;
             case 2:
-                spinny.changePos(.92);
+                spinny.changePos(.8);
                 break;
         }
         // SERVO FOR OUTPUT BOX ^^^^^^

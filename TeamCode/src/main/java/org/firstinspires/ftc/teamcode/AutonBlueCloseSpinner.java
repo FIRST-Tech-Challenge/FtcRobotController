@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
-@Autonomous(name="Test for Basics", group="Competition")
-public class AutonomousTest extends OpMode {
+@Autonomous(name="Blue Left Park", group="AB")
+public class AutonBlueCloseSpinner extends OpMode {
     MecanumDrive robot = new MecanumDrive();
 //    Intake intake = new Intake();
     MotorControl motor = new MotorControl();
@@ -21,7 +21,7 @@ public class AutonomousTest extends OpMode {
     public void init() {
         msStuckDetectInit = 11500;
         msStuckDetectLoop = 10000;
-
+        robot.initIMU(hardwareMap);
         //Maps all the variables to the correct corresponding  hardware part on the robot
         robot.init(hardwareMap);
 //        intake.init(hardwareMap);
@@ -36,24 +36,28 @@ public class AutonomousTest extends OpMode {
     public void loop() {
         switch(stateMachineFlow) {
             case 0:
-                telemetry.addData("Intake Power", "I am in case 0.");
-                telemetry.update();
-                waitTime = 3;
-                runtime.reset();
-                time = runtime.seconds();
-                robot.leftBack.setPower(10);
-                robot.leftFront.setPower(10);
-                robot.rightBack.setPower(10);
-                robot.rightFront.setPower(10);
-                waitTime = .5;
+                waitTime = .2;
                 runtime.reset();
                 while (waitTime > runtime.time());
-                robot.leftBack.setPower(-10);
-                robot.leftFront.setPower(10);
-                robot.rightBack.setPower(10);
-                robot.rightFront.setPower(-10);
-                telemetry.addData("Intake Power", "I am at the end of case 0.");
-                telemetry.update();
+                robot.frontLinearDrive(.7,-22);
+//                telemetry.addData("Intake Power", "I am in case 0.");
+//                telemetry.update();
+//                waitTime = 3;
+//                runtime.reset();
+//                time = runtime.seconds();
+//                robot.leftBack.setPower(10);
+//                robot.leftFront.setPower(10);
+//                robot.rightBack.setPower(10);
+//                robot.rightFront.setPower(10);
+//                waitTime = .5;
+//                runtime.reset();
+//                while (waitTime > runtime.time());
+//                robot.leftBack.setPower(-10);
+//                robot.leftFront.setPower(10);
+//                robot.rightBack.setPower(10);
+//                robot.rightFront.setPower(-10);
+//                telemetry.addData("Intake Power", "I am at the end of case 0.");
+//                telemetry.update();
                 stateMachineFlow++;
                 break;
 
@@ -61,18 +65,25 @@ public class AutonomousTest extends OpMode {
                 waitTime = .5;
                 runtime.reset();
                 while (waitTime > runtime.time());
-                telemetry.addData("Intake Power", "I am in case 1 at the top");
-                telemetry.update();
-
-                robot.leftBack.setPower(0);
-                robot.leftFront.setPower(0);
-                robot.rightBack.setPower(0);
-                robot.rightFront.setPower(0);
-                telemetry.addData("Intake Power", "I am at the end of case 1.");
-                telemetry.update();
+                robot.gStatTurn(.8,84);
+//                waitTime = 5;
+//                runtime.reset();
+//                while (waitTime > runtime.time());
+//                waitTime = .5;
+//                runtime.reset();
+//                while (waitTime > runtime.time());
+//                telemetry.addData("Intake Power", "I am in case 1 at the top");
+//                telemetry.update();
+//
+//                robot.leftBack.setPower(0);
+//                robot.leftFront.setPower(0);
+//                robot.rightBack.setPower(0);
+//                robot.rightFront.setPower(0);
+//                telemetry.addData("Intake Power", "I am at the end of case 1.");
+//                telemetry.update();
                 stateMachineFlow++;
                 break;
-//            case 2:
+            case 2:
 //                grabber.gripperPosition(0);
 //                waitTime = .5;
 //                runtime.reset();
@@ -80,18 +91,25 @@ public class AutonomousTest extends OpMode {
 //                while (waitTime > runtime.time() - time) {
 //
 //                }
-//                stateMachineFlow++;
-//                break;
-//            case 3:
-//                grabber.gripWrist.setPosition(.23);
-//                waitTime = 1;
+                robot.frontLinearDrive(100,-72);
+                stateMachineFlow++;
+                break;
+            case 3:
+//                waitTime = .8;
 //                runtime.reset();
-//                time = runtime.time();
-//                while (waitTime > runtime.time() - time) {
-//
+//                while(waitTime > runtime.time()){
+//                    motor.rotaterPower(.6);
 //                }
-//                stateMachineFlow++;
-//                break;
+//                motor.rotaterPower(0);
+////                grabber.gripWrist.setPosition(.23);
+////                waitTime = 1;
+////                runtime.reset();
+////                time = runtime.time();
+////                while (waitTime > runtime.time() - time) {
+////
+////                }
+                stateMachineFlow++;
+                break;
 //            case 4:
 //                robot.frontLinearDrive(.35,22);
 //                stateMachineFlow++;

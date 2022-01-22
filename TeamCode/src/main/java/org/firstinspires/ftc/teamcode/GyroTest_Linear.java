@@ -45,9 +45,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
-
-@Autonomous(name="Pushbot: Auto Drive By Gyro", group="Pushbot")
 @Disabled
+@Autonomous(name="Pushbot: Auto Drive By Gyro", group="Pushbot")
 public class GyroTest_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */

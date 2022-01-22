@@ -107,7 +107,7 @@ public class MecanumDrive {
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
-        imu = hwMap.get(BNO055IMU.class, "imu 1");
+        imu = hwMap.get(BNO055IMU.class, "imu");
 
         imu.initialize(parameters);
     }
@@ -649,6 +649,107 @@ public class MecanumDrive {
         }
     }
 
+
+    public void oneSideRotate(double degrees, double power){
+
+        double leftPower, rightPower;
+
+        // restart imu movement tracking.
+        resetAngle();
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        if (degrees < 0) {   // turn right.
+            leftPower = -power;
+            rightPower = power;
+            leftFront.setPower(leftPower);
+            leftBack.setPower(leftPower);
+        } else if (degrees > 0) {   // turn left.
+            leftPower = power;
+            rightPower = -power;
+            rightBack.setPower(rightPower);
+            rightFront.setPower(rightPower);
+
+        } else return;
+
+        // set power to rotate.
+//        leftBack.setPower(leftPower);
+//        rightBack.setPower(rightPower);
+//        leftFront.setPower(leftPower);
+//        rightFront.setPower(rightPower);
+
+        // rotate until turn is completed.
+        if (degrees < 0) {
+            // On right turn we have to get off zero first.
+            while (getAngle() == 0) {
+            }
+
+            while (getAngle() > degrees) {
+            }
+        } else    // left turn.
+            while (getAngle() < degrees) {
+            }
+
+        // turn the motors off.
+        rightBack.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        leftFront.setPower(0);
+        resetAngle();
+//        resetAngle();
+//        double leftPower = power;
+//        double rightPower = power;
+////        if (degrees < 0) {   // turn right.
+////            leftPower = -power;
+////            rightPower = power;
+////        } else if (degrees > 0) {   // turn left.
+////            leftPower = power;
+////            rightPower = -power;
+////        } else return;
+//
+//        // set power to rotate.
+//        if(degrees<0) {
+//            leftBack.setPower(leftPower);
+//            leftFront.setPower(leftPower);
+//        }
+//        else if(degrees<0) {
+//            rightBack.setPower(rightPower);
+//            rightFront.setPower(rightPower);
+//        }
+//        else {
+//            if (degrees < 0) {   // turn right.
+//            leftPower = -power;
+//            rightPower = power;
+//        } else if (degrees > 0) {   // turn left.
+//            leftPower = power;
+//            rightPower = -power;
+//        } else return;
+//            leftBack.setPower(leftPower);
+//            leftFront.setPower(leftPower);
+//            rightBack.setPower(rightPower);
+//            rightFront.setPower(rightPower);
+//
+//        }
+//        // rotate until turn is completed.
+//        if (degrees < 0) {
+//            // On right turn we have to get off zero first.
+//            while (getAngle() == 0) {
+//            }
+//
+//            while (getAngle() > degrees) {
+//            }
+//        } else    // left turn.
+//            while (getAngle() < degrees) {
+//            }
+//
+//        // turn the motors off.
+//        rightBack.setPower(0);
+//        leftBack.setPower(0);
+//        rightFront.setPower(0);
+//        leftFront.setPower(0);
+//        resetAngle();
+    }
 
     private void rotate(double degrees, double power) {
         double leftPower, rightPower;
