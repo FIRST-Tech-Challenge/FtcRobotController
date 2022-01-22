@@ -73,10 +73,10 @@ public class blueWarehouse extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63,Math.toRadians(90)))
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63,Math.toRadians(90)))
                 .strafeTo(new Vector2d(9,24)).turn(Math.toRadians(-93)).back(3)
                 .build();
-        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,-63, Math.toRadians(90)))
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,63, Math.toRadians(90)))
                 .strafeTo(new Vector2d(9,24)).turn(Math.toRadians(-93)).back(1.5)
                 .build();
         TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63, Math.toRadians(90)))

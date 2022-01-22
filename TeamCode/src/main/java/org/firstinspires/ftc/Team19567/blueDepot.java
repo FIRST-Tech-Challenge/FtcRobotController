@@ -79,17 +79,19 @@ public class blueDepot extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63,Math.toRadians(270)))
-                .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(93)).back(3)
-                .build();
-        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,-63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(93)).back(1.5)
-                .build();
-        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(6,-24)).turn(Math.toRadians(93)).build();
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
+                .strafeTo(new Vector2d(-38,-24)).turn(Math.toRadians(-90)).build();
+
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
+                .strafeTo(new Vector2d(-42,-24)).turn(Math.toRadians(-90)).build();
+
+        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
+                .strafeTo(new Vector2d(-32.5,-24)).turn(Math.toRadians(-90)).build();
         TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -24, Math.toRadians(3)))
                 .strafeTo(new Vector2d(6, 27))
                 .strafeTo(new Vector2d(-40,27)).build();
+
+
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
             telemetry.addData("location",location);
@@ -102,16 +104,16 @@ public class blueDepot extends LinearOpMode {
 
         switch(location) {
             case ALLIANCE_FIRST: {
-                chosenTrajectorySequence = secondLevelSequence;
-                chosenArmPos = 700;
+                chosenTrajectorySequence = firstLevelSequence;
+                chosenArmPos = 870;
                 chosenArmSpeed = 0.25;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_SECOND: {
-                chosenTrajectorySequence = firstLevelSequence;
-                chosenArmPos = 650;
+                chosenTrajectorySequence = secondLevelSequence;
+                chosenArmPos = 750;
                 chosenArmSpeed = 0.2;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();

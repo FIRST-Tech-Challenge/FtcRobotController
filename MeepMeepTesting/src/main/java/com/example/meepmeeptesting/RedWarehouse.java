@@ -15,7 +15,7 @@ public class RedWarehouse {
                 // Background opacity from 0-1
                 .setBackgroundAlpha(1f)
                 // Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15).setBotDimensions(13.2,16.603)
+                .setConstraints(38.7, 30, 4.5836622, Math.toRadians(60), 14.2).setBotDimensions(13.2,16.603)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
                                 .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(-90)).back(3)
