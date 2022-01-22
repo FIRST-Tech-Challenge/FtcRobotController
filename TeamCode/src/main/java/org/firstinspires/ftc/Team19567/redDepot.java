@@ -87,9 +87,10 @@ public class redDepot extends LinearOpMode {
 
         TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(90)))
                 .strafeTo(new Vector2d(-32.5,-24)).turn(Math.toRadians(-90)).build();
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -24, Math.toRadians(3)))
-                .strafeTo(new Vector2d(6, -27))
-                .strafeTo(new Vector2d(-40,-27)).build();
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(-3)))
+                .strafeTo(new Vector2d(-62,52)).build();
+        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-62, 52,Math.toRadians(3)))
+                .strafeTo(new Vector2d(-60,36)).build();
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -144,6 +145,10 @@ public class redDepot extends LinearOpMode {
         mechanisms.rotateArm(0,0.1);
         mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(secondTrajectory);
+        mechanisms.rotateCarousel(-0.5);
+        sleep(2000);
+        mechanisms.rotateCarousel(0.0);
+        chassis.followTrajectorySequence(thirdTrajectory);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();
