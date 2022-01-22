@@ -33,8 +33,8 @@ public class automethods extends LinearOpMode {
 
 
 
-    static final double COUNTS_PER_MOTOR_REV = 537.6;    //need to adjust for big wheels
-    static final double WHEEL_DIAMETER_INCHES = 3.937;     // For figuring circ0umference
+    static final double COUNTS_PER_MOTOR_REV = 537.7;    //need to adjust for big wheels
+    static final double WHEEL_DIAMETER_INCHES = 5.98425;     // For figuring circ0umference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
@@ -66,7 +66,7 @@ public class automethods extends LinearOpMode {
            // robot.cannon.setPower(.86);//////necessary to shoot accurately///////////
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = robot.frontRight.getCurrentPosition() + (int) (-inches * COUNTS_PER_INCH);
+            newLeftFrontTarget = robot.frontLeft.getCurrentPosition() + (int) (-inches * COUNTS_PER_INCH);
             newRightFrontTarget = robot.frontRight.getCurrentPosition() + (int) (-inches * COUNTS_PER_INCH);
             newLeftBackTarget = robot.backLeft.getCurrentPosition() + (int) (-inches * COUNTS_PER_INCH);
             newRightBackTarget = robot.backRight.getCurrentPosition() + (int) (-inches * COUNTS_PER_INCH);

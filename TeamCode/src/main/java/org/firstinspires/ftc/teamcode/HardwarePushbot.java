@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 
 
 public class HardwarePushbot {
@@ -153,7 +152,7 @@ public class HardwarePushbot {
 
 
     }
-        /*public static void autoinit (HardwareMap ahwMap){
+        public static void autoinit (HardwareMap ahwMap){
             // Save reference to Hardware map
             hwMap = ahwMap;
 
@@ -176,5 +175,5 @@ public class HardwarePushbot {
 
             //////close claw
             //
-        }*/
+        }
     }

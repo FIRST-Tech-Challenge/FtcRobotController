@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode;
 
 import org.opencv.core.Core;
@@ -154,13 +155,13 @@ public class ContourPipeline extends OpenCvPipeline {
         }
         return input;
     }
-    /*
+
     Synchronize these operations as the user code could be incorrect otherwise, i.e a property is read
     while the same rectangle is being processed in the pipeline, leading to some values being not
     synced.
      */
 
-
+/*
     public int getRectHeight() {
         synchronized (sync) {
             return maxRect.height;
@@ -214,4 +215,4 @@ public class ContourPipeline extends OpenCvPipeline {
             return maxRect.area();
         }
     }
-}
+} */
