@@ -121,10 +121,12 @@ public class WarehouseSideRedPath1 {
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+                /*
                 .addDisplacementMarker(()->{
                     SetArmLevel setArmLevel = createArm.createSetArmLevel(0);
                     setArmLevel.schedule();
                 })
+                */
                 .strafeTo(new Vector2d(43, -49))
                 .build();
 
