@@ -5,14 +5,13 @@ import numpy as np
 from keras.models import load_model
 
 #path of the directory where you want to save your model
-
-frozen_out_path = 'C:/development/BC4HStem/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_tse/converted_freight_frenzy_tse_frozen'
+frozen_out_path = '/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/tse_giant_sensor_converted_keras/frozen'
 
 # name of the .pb file
-frozen_graph_filename = 'freight_frenzy_tse_graph'
+frozen_graph_filename = 'freight_frenzy_barcodes_graph'
 
-model = load_model('C:/development/BC4HStem/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_tse/converted_freight_frenzy_tse_keras/keras_model.h5')
-#model = tf.saved_model.load('my_savedmodel')
+model = load_model('/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/tse_giant_sensor_converted_keras/keras_model.h5')
+#model = tf.saved_model.load('/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/tse_giant_sensor_converted_savedmodel/savedmodel/saved_model.pb')
 
 # Convert Keras model to ConcreteFunction
 full_model = tf.function(lambda x: model(x))
@@ -21,7 +20,17 @@ full_model = full_model.get_concrete_function(
 
 # Get frozen graph def
 frozen_func = convert_variables_to_constants_v2(full_model)
-frozen_func.graph.as_graph_def()
+graph_def = frozen_func.graph.as_graph_def()
+
+# Remove NoOp nodes
+for i in reversed(range(len(graph_def.node))):
+    if graph_def.node[i].op == 'NoOp':
+        del graph_def.node[i]
+
+for node in graph_def.node:
+    for i in reversed(range(len(node.input))):
+        if node.input[i][0] == '^':
+            del node.input[i]
 
 layers = [op.name for op in frozen_func.graph.get_operations()]
 print("-" * 60)
@@ -34,11 +43,11 @@ print(frozen_func.inputs)
 print("Frozen model outputs: ")
 print(frozen_func.outputs)
 
-tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
+tf.io.write_graph(graph_or_graph_def=graph_def,
                   logdir=frozen_out_path,
                   name=f"{frozen_graph_filename}.pb",
                   as_text=False)
-tf.io.write_graph(graph_or_graph_def=frozen_func.graph,
+tf.io.write_graph(graph_or_graph_def=graph_def,
                   logdir=frozen_out_path,
                   name=f"{frozen_graph_filename}.pbtxt",
                   as_text=True)

@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
@@ -210,6 +211,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat inputFrame) {
 
+
+
+        // Show the bounding area in which we will search -
+        Imgproc.rectangle(inputFrame, new Rect(50, 30, 180, 80), new Scalar(0, 0, 255), 2); // BLUE
 
 
         Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_BGR2RGB);

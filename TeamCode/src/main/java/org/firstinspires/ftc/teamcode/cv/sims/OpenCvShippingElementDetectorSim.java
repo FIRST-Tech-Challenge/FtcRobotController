@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.cv.sims;
 
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+//import org.firstinspires.ftc.robotcore.internal.android.dex.util.FileUtils;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
@@ -11,11 +15,17 @@ import org.opencv.dnn.Net;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 
 public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
@@ -58,17 +68,19 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
             "duckside_blue_level_3", "duckside_blue_level_2", "duckside_blue_level_1" };
 
 
-    private String[] classNames;
+    //private String[] classNames;
 
-    private final String modelTSE = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/tse_giant_sensor_converted_keras/optimized/freight_frenzy_barcodes_tse_giants_sensor_graph.pb";
-    private final String modelPathDuckSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_red\\converted_keras_duckside_red\\optimized\\freight_frenzy_barcodes_duckside_red_graph.pb";
 
-private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\duckside_red\\converted_keras_duckside_red\\optimized\\freight_frenzy_barcodes_duckside_red_graph.pb";
+    private final String modelTSE = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue_images_2/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideBlue = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideRed = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_red/converted_keras_duckside_red/optimized/freight_frenzy_barcodes_duckside_red_graph.pb";
     private final String modelPathWarehouseSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\warehouseside_blue\\converted_keras_warehouseside_blue\\optimized\\freight_frenzy_barcodes_warehouseside_blue_graph.pb";
     private final String modelPathWarehouseSideRed = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\warehouseside_blue\\converted_keras_warehouseside_blue\\optimized\\freight_frenzy_barcodes_warehouseside_blue_graph.pb";
 
     private String modelPath = modelTSE;
     private String modelPathConfig = modelTSE + "txt";
+
+    private String labelsPath = "";
 
     //JSONObject dnnConfig = new JSONObject();
 
@@ -77,6 +89,9 @@ private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobot
     private Mat row = null;
 
     List<Mat> result = new ArrayList<>();
+    List<String> classNames = new ArrayList<>();
+
+
 
     public OpenCvShippingElementDetectorSim(Telemetry telemetry) {
 
@@ -90,10 +105,11 @@ private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobot
 
         location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
 
-        classNames = classNamesDuckSideBlue;
-        modelPath = modelTSE;
+
+        modelPath = modelPathDuckSideRed;
         modelPathConfig = modelPath + "txt";
-        inScaleFactor = 1; //0.0278;
+        labelsPath = modelPath.substring(0, nthLastIndexOf(2, "/", modelPath)+1) + "labels.txt";
+        inScaleFactor = 0.006; //0.0278;
         redMeanVal = 127.5; //5;
         greenMeanVal = 127.5; //113;
         blueMeanVal = 127.5; //119;
@@ -243,11 +259,23 @@ private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobot
 
         }*/
 
+        try{
+            Scanner s = new Scanner(new File(labelsPath));
+
+            while (s.hasNextLine()){
+                classNames.add(s.nextLine());
+            }
+            s.close();
+        }
+        catch (FileNotFoundException ex){
+
+        }
+
+
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow(modelPath);
-
-
-
+        net = cvDNN.readNetFromTensorflow(modelPath,modelPathConfig);
+        net.setPreferableBackend(Dnn.DNN_BACKEND_DEFAULT);
+        net.setPreferableTarget(Dnn.DNN_TARGET_CPU);
     }
 
 
@@ -256,75 +284,85 @@ private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobot
 
 
 
-        Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_BGR2RGB);
+        telemetry.addData("labels",classNames);
+        // Show the bounding area in which we will search -
+        Rect boundingRect = new Rect(50, 60, 180, 80);
+        Imgproc.rectangle(inputFrame, boundingRect, new Scalar(0, 0, 255), 2); // BLUE
 
+        Mat croppedMat = new Mat(inputFrame,boundingRect);
+        Imgproc.resize(croppedMat,imageRGB,new Size(224,224),0,0);
+        Imgproc.cvtColor(croppedMat,imageRGB,Imgproc.COLOR_BGR2RGB);
+
+        telemetry.addData("imageRGB size",imageRGB.size());
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
-                new Size(width, height),
-                new Scalar(redMeanVal, greenMeanVal, blueMeanVal),
-                false, cropDNN);
+                new Size(224, 224),new Scalar(redMeanVal,greenMeanVal,blueMeanVal),false,cropDNN);
 
+        //Mat blobMat = blob.reshape(blob.get(0,2) * blob.get(0,1), blob.shape[3], 1)
+        //telemetry.addData("blob shape", blob.);
         net.setInput(blob);
         detections = net.forward();
 
-        int cols = imageRGB.cols();
-        int rows = imageRGB.rows();
 
         //detections = detections.reshape(1, (int) detections.total() / 7);
         //telemetry.addData("With ext con", detections.get(0,0));
 
-        double[] detect = detections.get(0,0);
-        telemetry.addData("With ext con", (int) (detections.get(0, 0)[0] * inputFrame.rows()));
+        int cols = detections.cols();
+        int rows = detections.rows();
+
+        float[] result = new float[detections.size(0)*detections.size(1)];
+
 
         for (int i = 0; i < detections.rows(); ++i) {
 
             row = detections.row(i);
-            telemetry.addData("With ext con", (int) (row.get(0, 0)[0] * inputFrame.cols()));
+
             Core.MinMaxLocResult mm = Core.minMaxLoc(row);
+            int classId = (int) mm.maxLoc.x;
 
             float confidence = (float) mm.maxVal;
 
-            //double confidence = detections.get(i, 2)[0];
-            //telemetry.addData("With det confidence", detections.get(i, 2)[0]);
 
             telemetry.addData("mm max", mm.maxLoc);
             telemetry.addData("mm min", mm.minLoc);
             telemetry.addData("row total", detections.total());
-            //row.reshape(1, (int) row.total() / 7);
+
             for(int j=0; j < row.cols(); ++j){
+
+                double[] newRow = row.get(i, j);
 
                 telemetry.addData("With col val", row.get(i, j)[0]);
             }
             if (confidence < CONF_THRESHOLD)
                 continue;
 
-            int classId = (int) detections.get(i, 1)[0];
+            //int classId = (int)detections.get(i, 1)[0];
+            //int classId = (int) row.get(i, 2)[0];
 
             //calculate position
-            int centerX = (int) (row.get(i, 0)[0] * imageRGB.cols());
-            int centerY = (int) (row.get(i, 1)[0] * imageRGB.rows());
-            int width = (int) (row.get(i, 2)[0] * imageRGB.cols());
-            int height = (int) (row.get(i, 3)[0] * imageRGB.rows());
+            int left = 5;
+            int top = 40;
+            //int right = (int) (row.get(i, 2)[0] * (inputFrame.cols()));
+            //int bottom = (int) (row.get(i, 3)[0] * (inputFrame.rows()));
 
-            telemetry.addData("centerX", (int) centerX);
-            telemetry.addData("centerY", (int) centerY);
-            telemetry.addData("width", (int) width);
-            telemetry.addData("height", (int) height);
+            //Imgproc.circle(imageRGB,new Point(0,59),2,new Scalar(255,0,0),3);
 
-            int left = (int) (centerX - width * 0.5);
-            int top = (int) (centerY - height * 0.5);
-            int right = (int) (centerX + width * 0.5);
-            int bottom = (int) (centerY + height * 0.5);
 
-            Point left_top = new Point(left, top);
-            Point right_bottom = new Point(right, bottom);
+
+            telemetry.addData("left", (int) left);
+            telemetry.addData("top", (int) top);
+            //telemetry.addData("right", (int) right);
+            //telemetry.addData("bottom", (int) bottom);
+
+
+
             Point label_left_top = new Point(left, top - 5);
             DecimalFormat df = new DecimalFormat("#.##");
 
             //int class_id = (int) classIdPoint.x;
-            String className = classNames[classId].toString();
+            String className = classNames.get(classId);
             String label =  className + ": " + df.format(confidence);
 
-            Imgproc.rectangle(imageRGB, left_top, right_bottom, new Scalar(0,0,255), 3, 2);
+            //Imgproc.rectangle(imageRGB, left_top, right_bottom, new Scalar(0,0,255), 3, 2);
             Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(0, 0, 0), 4);
             Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(255, 255, 255), 2);
 
@@ -338,129 +376,12 @@ private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobot
 
         }
 
-        /*for (int i = 0; i < result.size(); ++i) {
-            // each row is a candidate detection, the 1st 4 numbers are
-            // [center_x, center_y, width, height], followed by (N-4) class probabilities
-            Mat level = result.get(i);
-            for (int j = 0; j < level.rows(); ++j) {
-                Mat row = level.row(j);
-                Mat scores = row.colRange(4, level.cols());
 
-
-                Core.MinMaxLocResult mm = Core.minMaxLoc(level);
-                float confidence = (float) mm.maxVal;
-                Point classIdPoint = mm.maxLoc;
-
-                telemetry.addData("confidence", confidence);
-                telemetry.addData("With Class", mm.maxLoc);
-                telemetry.addData("minLoc.x", mm.minLoc.x);
-                telemetry.update();
-
-                if (confidence > CONF_THRESHOLD) {
-
-                    int centerX = (int) (row.get(0, 0)[0] * imageRGB.cols());
-                    int centerY = (int) (row.get(0, 1)[0] * imageRGB.rows());
-                    int width = (int) (row.get(0, 2)[0] * imageRGB.cols());
-                    int height = (int) (row.get(0, 3)[0] * imageRGB.rows());
-
-                    int left = (int) (centerX - width * 0.5);
-                    int top =(int)(centerY - height * 0.5);
-                    int right =(int)(centerX + width * 0.5);
-                    int bottom =(int)(centerY + height * 0.5);
-
-                    Point left_top = new Point(left, top);
-                    Point right_bottom=new Point(right, bottom);
-                    Point label_left_top = new Point(left, top-5);
-                    DecimalFormat df = new DecimalFormat("#.##");
-
-                    int class_id = (int) classIdPoint.x;
-                    //String label= classNames[class_id] + ": " + df.format(confidence);
-                    //Scalar color= colors.get(class_id);
-
-                    //Imgproc.rectangle(imageRGB, left_top,right_bottom , new Scalar(0,255,0), 3, 2);
-                    //Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0, 0, 0), 4);
-                    //Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255, 255, 255), 2);
-                }
-            }
-        }*/
         telemetry.update();
         return imageRGB;
     }
 
-        /*for (int i = 0; i < detections.rows(); ++i) {
-            row = detections.row(i);
 
-            Core.MinMaxLocResult mm = Core.minMaxLoc(row);
-
-            float confidence = (float) mm.maxVal;
-            Point classIdPoint = mm.maxLoc;
-
-            telemetry.addData("With confidence", confidence);
-            telemetry.addData("With Class", mm.maxLoc);
-            telemetry.addData("minLoc.x", mm.minLoc.x);
-            //telemetry.update();
-
-            if (confidence >= CONF_THRESHOLD) {
-
-
-
-                int centerX = (int) (row.get(0, 0)[0] * imageRGB.cols());
-                int centerY = (int) (row.get(0, 1)[0] * imageRGB.rows());
-                int width = (int) (row.get(0, 2)[0] * imageRGB.cols());
-                int height = (int) (row.get(0, 3)[0] * imageRGB.rows());
-
-                //row.release();
-
-                int left = (int) (centerX - width * 0.5);
-                int top = (int) (centerY - height * 0.5);
-                int right = (int) (centerX + width * 0.5);
-                int bottom = (int) (centerY + height * 0.5);
-
-                Point left_top = new Point(left, top);
-                Point right_bottom = new Point(right, bottom);
-                Point label_left_top = new Point(left, top - 20);
-                DecimalFormat df = new DecimalFormat("#.##");
-
-                int class_id = (int) classIdPoint.x;
-                String className = classNames[class_id].toString();
-                String label =  className + ": " + df.format(confidence);
-
-                //telemetry.addData("This is a real new", label);
-                //telemetry.update();
-
-                switch (className)
-                {
-                    case "duckside_blue_level_1":
-                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_1;
-                        break;
-
-                    case "duckside_blue_level_2":
-                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_2;
-                        break;
-
-                    case "duckside_blue_level_3":
-                        location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
-                        break;
-
-                    default:
-                        location = TSELocation.NONE;
-                }
-
-                telemetry.addData("The location being set is", location);
-                telemetry.addData("With confidence", confidence);
-
-                telemetry.addData("This is a real location", getLocation());
-                telemetry.update();
-
-                Imgproc.rectangle(imageRGB, left_top, right_bottom, new Scalar(0,0,255), 3, 2);
-                Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(0, 0, 0), 4);
-                Imgproc.putText(imageRGB, label, label_left_top, Imgproc.FONT_HERSHEY_SIMPLEX, .5, new Scalar(255, 255, 255), 2);
-            }
-
-        }
-
-        return imageRGB;
-    }*/
 
 
     public TSELocation getLocation() {
@@ -469,5 +390,10 @@ private final String modelPathDuckSideRed = "C:\\development\\BC4HStem\\FtcRobot
     public int getTSELevel(){
         //telemetry.addData("getTSELevel", location);
         return levels.get(location);
+    }
+
+    static int nthLastIndexOf(int nth, String ch, String string) {
+        if (nth <= 0) return string.length();
+        return nthLastIndexOf(--nth, ch, string.substring(0, string.lastIndexOf(ch)));
     }
 }
