@@ -25,7 +25,7 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "BLUE DUCK - STORAGE 2", group = "Competition 2")
+@Autonomous(name = "BLUE DUCK - STORAGE 2", group = "A Competition")
 public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -93,7 +93,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
         sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Rotate.setPosition(0.95);
+        Rotate.setPosition(0.85);
 
         //Vision
         initVuforia();
@@ -162,8 +162,8 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
             sleep(500);
 
             //ROTATE DUCK
-            drive.setMotorPowers(0.05, 0.05,0.05,0.05);
-            sleep(350);
+            drive.setMotorPowers(0.07, 0.07,0.07,0.07);
+            sleep(600);
             drive.setMotorPowers(0, 0,0,0);
             Spin.setPower(0.5);
             sleep(3500);
@@ -173,7 +173,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
             drive.setPoseEstimate(wall);
 
             //MOTION TO PLATE
-            Trajectory plateTraj1 = drive.trajectoryBuilder(duckTraj.end(),true)
+            Trajectory plateTraj1 = drive.trajectoryBuilder(wall,true)
                     .splineToLinearHeading(new Pose2d(-59, 23.75, toRadians(180)), toRadians(-90))
                     .build();
             drive.followTrajectory(plateTraj1);
@@ -182,6 +182,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
                     .build();
             drive.followTrajectory(plateTraj2);
 
+            Rotate.setPosition(0.8);
 
             //SLIDE UP
             if (visionResult == "LEFT") {
@@ -218,7 +219,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
 
             //BACK TO STORAGE UNIT & PARK
             Trajectory parkTraj1 = drive.trajectoryBuilder(closeTraj.end())
-                    .forward(30)
+                    .forward(31)
                     .build();
             drive.followTrajectory(parkTraj1);
             Trajectory parkTraj2 = drive.trajectoryBuilder(parkTraj1.end())
@@ -227,7 +228,7 @@ public class Mecanum_Auto_BlueDuck_Storage extends LinearOpMode {
             drive.followTrajectory(parkTraj2);
             sleep(500);
 
-            PoseStorage.currentPose = parkTraj2.end();
+            PoseStorage.currentPose = drive.getPoseEstimate();
             PoseStorage.state = DriveMethod.poseState.BLUE;
         }
 

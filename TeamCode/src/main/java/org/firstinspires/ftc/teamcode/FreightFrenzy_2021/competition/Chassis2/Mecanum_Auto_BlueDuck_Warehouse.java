@@ -25,7 +25,7 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "BLUE DUCK - WAREHOUSE 2", group = "Competition 2")
+@Autonomous(name = "BLUE DUCK - WAREHOUSE 2", group = "A Competition")
 public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -93,7 +93,7 @@ public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
         sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Rotate.setPosition(0.95);
+        Rotate.setPosition(0.85);
 
         //Vision
         initVuforia();
@@ -162,8 +162,8 @@ public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
             sleep(500);
 
             //ROTATE DUCK
-            drive.setMotorPowers(0.05, 0.05,0.05,0.05);
-            sleep(350);
+            drive.setMotorPowers(0.07, 0.07,0.07,0.07);
+            sleep(600);
             drive.setMotorPowers(0, 0,0,0);
             Spin.setPower(0.5);
             sleep(3500);
@@ -227,16 +227,16 @@ public class Mecanum_Auto_BlueDuck_Warehouse extends LinearOpMode {
                     .build();
             drive.followTrajectory(parkTraj2);
             Trajectory parkTraj3 = drive.trajectoryBuilder(parkTraj2.end())
-                    .lineToLinearHeading(new Pose2d(-31.625, 43.75, toRadians(0)))
+                    .lineToLinearHeading(new Pose2d(-31.625, 44.75, toRadians(0)))
                     .build();
             drive.followTrajectory(parkTraj3);
             Trajectory parkTraj4 = drive.trajectoryBuilder(parkTraj3.end())
-                    .forward(75)
+                    .forward(78)
                     .build();
             drive.followTrajectory(parkTraj4);
             sleep(500);
 
-            PoseStorage.currentPose = parkTraj4.end();
+            PoseStorage.currentPose = drive.getPoseEstimate();
             PoseStorage.state = DriveMethod.poseState.BLUE;
         }
 

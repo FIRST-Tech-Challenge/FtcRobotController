@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassi
  */
 @Config
 @Autonomous(group = "drive")
-
+@Disabled
 public class TurnTest extends LinearOpMode {
     public static double ANGLE = 180; // deg
 

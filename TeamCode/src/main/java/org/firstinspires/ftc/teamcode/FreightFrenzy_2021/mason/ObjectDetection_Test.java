@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 import java.util.List;
 
 @TeleOp(name = "FF TensorFlow Object Detection Webcam", group = "Concept")
-
+@Disabled
 public class ObjectDetection_Test extends LinearOpMode {
     /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
      * the following 4 detectable objects

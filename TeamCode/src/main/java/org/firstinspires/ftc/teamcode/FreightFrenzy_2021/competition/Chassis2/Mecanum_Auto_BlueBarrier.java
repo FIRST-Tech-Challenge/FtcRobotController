@@ -26,7 +26,7 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "BLUE BARRIER 2", group = "Competition 2")
+@Autonomous(name = "BLUE BARRIER 2", group = "A Competition")
 public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -101,7 +101,7 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
         sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Rotate.setPosition(0.95);
+        Rotate.setPosition(0.85);
 
         //Vision
         initVuforia();
@@ -185,6 +185,12 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
                     .build();
             drive.followTrajectory(plateTraj3);
 
+            Intake.setPower(0.8);
+            sleep(300);
+            Intake.setPower(0);
+            Rotate.setPosition(0.8);
+
+
             //SLIDE UP
             if (visionResult == "LEFT") {
                 Slide.setTargetPosition(initialHeight);
@@ -199,7 +205,6 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.8);
             }
-            sleep(600);
 
             //CLOSER TO PLATE
             Trajectory closerTraj = drive.trajectoryBuilder(plateTraj3.end())
@@ -235,15 +240,62 @@ public class Mecanum_Auto_BlueBarrier extends LinearOpMode {
                     .lineToLinearHeading(new Pose2d(6.5, 65, toRadians(0)))
                     .build();
             drive.followTrajectory(wallTraj1);
-            sleep(300);
+
 
             Trajectory wallTraj2 = drive.trajectoryBuilder(wallTraj1.end())
                     .forward(36)
                     .build();
             drive.followTrajectory(wallTraj2);
 
+//            //Collect another block
+//            Intake.setPower(1);
+//            sleep(600);
+//            Intake.setPower(0);
+//            Rotate.setPosition(1);
+//            Intake.setPower(-0.8);
+//            sleep(500);
+//            Intake.setPower(0);
+//            Rotate.setPosition(0.95);
+//            Trajectory collTraj1 = drive.trajectoryBuilder(wallTraj2.end())
+//                    .back(35)
+//                    .build();
+//            drive.followTrajectory(collTraj1);
+//
+//            Trajectory collTraj2 = drive.trajectoryBuilder(collTraj1.end())
+//                    .lineToLinearHeading(new Pose2d(-4.25, 40.88, toRadians(65.99)))
+//                    .build();
+//            drive.followTrajectory(collTraj2);
+//
+//            Intake.setPower(0.8);
+//            sleep(300);
+//            Intake.setPower(0);
+//            Slide.setTargetPosition(initialHeight + 1150);
+//            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            Slide.setPower(0.8);
+//            sleep(600);
+//            Rotate.setPosition(0.25);
+//            sleep(800);
+//            Rotate.setPosition(0.90);
+//            sleep(500);
+//            Slide.setTargetPosition(initialHeight);
+//            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            Slide.setPower(0.8);
+//            sleep(500);
+//            Rotate.setPosition(0.95);
+//
+//            Trajectory collTraj3 = drive.trajectoryBuilder(collTraj2.end())
+//                    .lineToLinearHeading(new Pose2d(6.5, 65, toRadians(0)))
+//                    .build();
+//            drive.followTrajectory(collTraj3);
+//
+//            Trajectory collTraj4 = drive.trajectoryBuilder(collTraj3.end())
+//                    .forward(36)
+//                    .build();
+//            drive.followTrajectory(collTraj4);
+//            sleep(300);
+//
 
-            PoseStorage.currentPose = wallTraj1.end();
+            PoseStorage.currentPose = drive.getPoseEstimate();
             PoseStorage.state = DriveMethod.poseState.BLUE;
         }
 

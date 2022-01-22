@@ -25,7 +25,7 @@ import java.util.List;
 
 import static java.lang.Math.toRadians;
 
-@Autonomous(name = "RED DUCK - STORAGE 2", group = "Competition 2")
+@Autonomous(name = "RED DUCK - STORAGE 2", group = "A Competition")
 public class Mecanum_Auto_RedDuck_Storage extends LinearOpMode {
 
     private DcMotor LF = null;
@@ -97,7 +97,7 @@ public class Mecanum_Auto_RedDuck_Storage extends LinearOpMode {
         sleep(100);
         Slide.setPower(0.0);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Rotate.setPosition(0.95);
+        Rotate.setPosition(0.85);
 
         //Vision
         initVuforia();
@@ -116,7 +116,7 @@ public class Mecanum_Auto_RedDuck_Storage extends LinearOpMode {
 
         //Traj
         SampleMecanumDrive_Chassis2 drive = new SampleMecanumDrive_Chassis2(hardwareMap);
-        Pose2d startPose = new Pose2d(-41, -62.125, toRadians(-90));
+        Pose2d startPose = new Pose2d(-41, -61.5, toRadians(-90));
         drive.setPoseEstimate(startPose);
         Trajectory myTrajectory1 = drive.trajectoryBuilder(startPose,true)
                 .splineToConstantHeading(new Vector2d(-11.875, -43), toRadians(90))
@@ -166,14 +166,9 @@ public class Mecanum_Auto_RedDuck_Storage extends LinearOpMode {
             sleep(500);
 
             //ROTATE DUCK
-//            drive.setMotorPowers(0.2, -0.2,-0.2,0.2);
-//            sleep(340);
-//            drive.setMotorPowers(0, 0,0,0);
-            Trajectory closeDuckTraj = drive.trajectoryBuilder(duckTraj.end(),true)
-                    .strafeLeft(2)
-                    .build();
-            drive.followTrajectory(closeDuckTraj);
-
+            drive.setMotorPowers(0.07, 0.07,0.07,0.07);
+            sleep(600);
+            drive.setMotorPowers(0, 0,0,0);
             Spin.setPower(-0.5);
             sleep(3500);
             Spin.setPower(0.0);
@@ -183,18 +178,16 @@ public class Mecanum_Auto_RedDuck_Storage extends LinearOpMode {
 
             //MOTION TO PLATE
             Trajectory plateTraj1 = drive.trajectoryBuilder(wall, true)
-                    .splineToLinearHeading(new Pose2d(-59, -23.75, toRadians(180)), toRadians(-90))
+                    .splineToLinearHeading(new Pose2d(-59, -23.75, toRadians(180)), toRadians(90))
                     .build();
             drive.followTrajectory(plateTraj1);
 
             Trajectory plateTraj2 = drive.trajectoryBuilder(plateTraj1.end())
-                    .back(25.5)
+                    .back(26.375)
                     .build();
             drive.followTrajectory(plateTraj2);
 
-            //ROTATE
-            rotateWithSpeed(1.0, 0.5);
-            sleep(800);
+            Rotate.setPosition(0.8);
 
             //SLIDE UP
             if (visionResult == "LEFT") {
@@ -214,7 +207,7 @@ public class Mecanum_Auto_RedDuck_Storage extends LinearOpMode {
 
             //CLOSER TO PLATE
             Trajectory closeTraj = drive.trajectoryBuilder(plateTraj2.end())
-                    .back(1)
+                    .back(2.5)
                     .build();
             drive.followTrajectory(closeTraj);
 

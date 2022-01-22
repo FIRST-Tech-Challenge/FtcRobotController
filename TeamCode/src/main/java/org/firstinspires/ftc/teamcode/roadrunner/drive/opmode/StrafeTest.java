@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive_Chassi
  */
 @Config
 @Autonomous(group = "drive")
-
+@Disabled
 public class StrafeTest extends LinearOpMode {
     public static double DISTANCE = 50; // in
 

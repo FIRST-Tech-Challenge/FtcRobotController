@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOp_slide_Rotate_Push", group = "Linear OpMode")
+@Disabled
 public class TeleOp_slide_Rotate_Push extends LinearOpMode{
     private DcMotor Slide = null;
     private Servo Rotate = null;
