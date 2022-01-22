@@ -6,15 +6,23 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import static java.lang.Math.abs;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="TeleopRed")
 
 public class TeleopRed extends LinearOpMode {
-
+    BNO055IMU imu;
     double MAX_SPEED = 0.9;
     Robot  robot;
+    final int TICKS_PER_ROTATION = 537;
+    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -41,11 +49,21 @@ public class TeleopRed extends LinearOpMode {
         backRight.setDirection(DcMotor.Direction.REVERSE);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
         waitForStart();
 
         //telemetry testing delete later!!!
         String detection = "none";
         while (opModeIsActive()) {
+            Orientation angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             //turn with right stick
 //            telemetry.addData("left stick value x", gamepad1.left_stick_x);
 //            telemetry.addData("left stick value y", gamepad1.left_stick_y);
@@ -203,7 +221,11 @@ public class TeleopRed extends LinearOpMode {
 
             turnDuck(carousel);
 
-            If(asdf )
+            if(angles.secondAngle > -120 && angles.secondAngle < 120){
+                GyroSensorVariable = 1;
+            }else{
+                GyroSensorVariable = 2;
+            }
 
 
         }
