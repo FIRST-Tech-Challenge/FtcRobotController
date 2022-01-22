@@ -24,7 +24,7 @@ public class Turret implements Subsystem {
 
     private double heading;
     private double targetHeading;
-    private double ticksPerDegree = 160/90;
+    private double ticksPerDegree = 160.0/90.0;
 
     // Constants
     private static final String TELEMETRY_NAME = "Turret";
@@ -46,9 +46,7 @@ public class Turret implements Subsystem {
         else if(targetHeading < -90)
             targetHeading = -90;
 
-        heading = motor.getCurrentPosition() / ticksPerDegree;
-
-        motor.setTargetPosition((int)(targetHeading * ticksPerDegree));
+        motor.setTargetPosition((int)(getTargetAngle() * ticksPerDegree));
     }
 
     @Override
@@ -65,7 +63,7 @@ public class Turret implements Subsystem {
         return targetHeading;
     }
 
-    public double getHeading(){return heading;}
+    public double getHeading(){return motor.getCurrentPosition() / ticksPerDegree;}
 
     public boolean isTurretNearTarget(){
         return between360Clockwise(heading, targetHeading - TURRET_TOLERANCE, heading + TURRET_TOLERANCE);
@@ -83,6 +81,7 @@ public class Turret implements Subsystem {
             telemetryMap.put("motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turretTargetPos", getTargetAngle());
             telemetryMap.put("turretCurrentAngle", getHeading());
+            telemetryMap.put("turretCurrentTest", ticksPerDegree);
         }
 
 
