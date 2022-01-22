@@ -14,12 +14,11 @@ public class linSlide extends LinearOpMode {
     //Encoder positions for each level on linear slide
     final int low = 0;
     final int mid = 1200;
-    final int high = 2400;
-
-
+    final int high = 2600;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        initialize();
 
         if(gamepad1.x){//set which level using controller buttons
             state=states.toLOW;
@@ -92,8 +91,10 @@ public class linSlide extends LinearOpMode {
 
         }
 
-    }
+        //telemetry
+        telemetry.addData("motorPos ",motor.getCurrentPosition());
 
+    }
 
     public void initialize(){
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -101,6 +102,7 @@ public class linSlide extends LinearOpMode {
         motor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
         //runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time, used for PID
     }
+
 
     //-tried making PID again using these values below.
     //-pretty sure it would work if these numbers got tuned. that's not important right now tho
