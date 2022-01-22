@@ -45,6 +45,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     public static int LIFT_MIN_EXTENSION = 300;
     public static int LIFT_UNDER_EXTENTION = 5;
 
+    protected static int TURRET_POS_CENTER = 0;
+    protected static int TURRET_POS_MAX_LEFT = 840;  //red side team hub
+    protected static int TURRET_POS_MAX_RIGHT = -728; //blue side team hub
+    private static double TURRET_SPEED = 0.95;
+
     private boolean liftEmergencyMode = false; //if the lift is broken, operate with the intake
 
     //New lift vals: TOP - 1755. MIDDLE -1482. LOW - 1282
@@ -70,7 +75,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
-    private static double INTAKE_SPEED = -0.8;
+    private static double INTAKE_SPEED = -0.6;
     private static double INTAKE_SPEED_REVERSE = 0.55;
 
     private boolean intakeRunning = false;
@@ -154,12 +159,12 @@ public class FrenzyBot extends FrenzyBaseBot {
             Log.e(TAG, "Cannot initialize Intake Dropper", ex);
         }
 
-        try {
-            tower =  hwMap.get(Servo.class, "tower");
-            initTower();
-        } catch (Exception ex) {
-            Log.e(TAG, "Cannot initialize tower servo", ex);
-        }
+//        try {
+//            tower =  hwMap.get(Servo.class, "tower");
+//            initTower();
+//        } catch (Exception ex) {
+//            Log.e(TAG, "Cannot initialize tower servo", ex);
+//        }
 
     }
 
@@ -220,6 +225,10 @@ public class FrenzyBot extends FrenzyBaseBot {
         return this.lift.getCurrentPosition();
     }
 
+    public int getTurretPosition(){
+        return this.turret.getCurrentPosition();
+    }
+
     @BotAction(displayName = "Lift level 3", defaultReturn = "")
     public void liftToLevel3(boolean block){
         liftLocation = LIFT_LEVEL_THREE;
@@ -262,14 +271,19 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     @BotAction(displayName = "Lift Shared Hub", defaultReturn = "")
-    public void liftSharedHub(){
+    public void liftSharedHub(boolean block){
         liftLocation = LIFT_SHARED_HUB;
         this.lift.setTargetPosition(LIFT_SHARED_HUB);
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+        if (block){
+            while (owner.opModeIsActive() && this.lift.isBusy()){
+
+            }
+        }
     }
     @BotAction(displayName = "Lift to lower", defaultReturn = "")
-    public void liftToLower() {
+    public void liftToLower(boolean block) {
         if (liftLocation != LIFT_UNDER_EXTENTION){
             //reset dropper before retracting the lift all the way
             if (dropperServo.getPosition() > 0.5) {
@@ -285,6 +299,11 @@ public class FrenzyBot extends FrenzyBaseBot {
                 this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED_LOW);
             } else {
                 this.lift.setVelocity(MAX_VELOCITY_REV * LIFT_SPEED);
+            }
+            if (block){
+                while (owner.opModeIsActive() && this.lift.isBusy()){
+
+                }
             }
         }
     }
@@ -342,53 +361,53 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Init tower", defaultReturn = "")
-    public void initTower(){
-        if (tower != null) {
-            tower.setPosition(0.5);
-        }
-    }
 
     @BotAction(displayName = "Main Tower to RED team hub", defaultReturn = "")
-    public void towerToTeamHubRed(){
-        if (tower != null) {
-            tower.setPosition(0.75);
-        }
+    public void turretToTeamHubRed(){
+        this.turret.setTargetPosition(TURRET_POS_MAX_LEFT);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Main Tower to BLUE team hub", defaultReturn = "")
     public void towerToTeamHubBlue(){
-        if (tower != null) {
-            tower.setPosition(0.25);
-        }
+        this.turret.setTargetPosition(TURRET_POS_MAX_RIGHT);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Main Tower to RED shared hub", defaultReturn = "")
-    public void towerToSharedHubRed(){
-        if (tower != null) {
-            tower.setPosition(0.33);
-            delayWait(1000);
-            tower.setPosition(0.32);
+    public void towerToSharedHubRed(boolean block){
+        this.turret.setTargetPosition(TURRET_POS_MAX_RIGHT);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
+        if (block){
+            while (owner.opModeIsActive() && this.lift.isBusy()){
+
+            }
         }
+
+
     }
 
     @BotAction(displayName = "Main Tower to BLUE shared hub", defaultReturn = "")
-    public void towerToSharedHubBlue(){
-        if (tower != null) {
-            tower.setPosition(0.75);
+    public void towerToSharedHubBlue(boolean block){
+        this.turret.setTargetPosition(TURRET_POS_MAX_LEFT);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
+        if (block){
+            while (owner.opModeIsActive() && this.lift.isBusy()){
+
+            }
         }
     }
 
     @BotAction(displayName = "Reset tower", defaultReturn = "")
-    public void resetTower(){
-        if (tower != null) {
-            double currentPos = tower.getPosition();
-            double diff = 0.5 - currentPos;
-            double targetPos = 0.51;
-            if (diff > 0){
-                targetPos = 0.49;
-            }
-            tower.setPosition(targetPos);
+    public void resetTurret(){
+        if (turret != null) {
+            this.turret.setTargetPosition(TURRET_POS_CENTER);
+            this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
         }
     }
 
@@ -449,10 +468,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void smartStopIntake() {
         activateIntake(0);
         intakeDropperUp();
-        delayWait(800);
-        activateIntake(-0.15);
-        delayWait(800);
-        activateIntake(0);
+        delayWait(500);
     }
 
     public void smartStopIntakeAsync() {
@@ -515,14 +531,14 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void dropToTeamHubRed() {
         liftToLevelMin(true);
         dropperTransportPosition();
-        towerToTeamHubRed();
-        delayWait(500);
+        turretToTeamHubRed();
         liftToLevel3(true);
         dropElement();
         delayWait(800);
         resetDropper();
         resetLift();
     }
+
 
     @BotAction(displayName = "Async Drop to TH RED", defaultReturn = "")
     public void dropToTeamHubRedAsync() {
@@ -534,7 +550,6 @@ public class FrenzyBot extends FrenzyBaseBot {
         liftToLevelMin(true);
         dropperTransportPosition();
         towerToTeamHubBlue();
-        delayWait(500);
         liftToLevel3(true);
         dropElement();
         delayWait(800);
@@ -555,12 +570,24 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Drop to Shared Hub Red", defaultReturn = "")
     public void dropToSharedHubRed() {
-        dropToSharedHub();
+        liftToLevelMin(true);
+        towerToSharedHubRed(false);
+        liftSharedHub(true);
+        dropElement();
+        delayWait(800);
+        resetDropper();
+        resetLift();
     }
 
     @BotAction(displayName = "Drop to Shared Hub Blue", defaultReturn = "")
-    public void dropToSharedHubBlue() {
-        dropToSharedHub();
+    public void dropToSharedHubBlue(){
+        liftToLevelMin(true);
+        towerToSharedHubBlue(false);
+        liftSharedHub(true);
+        dropElement();
+        delayWait(800);
+        resetDropper();
+        resetLift();
     }
 
     public void dropToSharedHubRedAsync() {
@@ -572,19 +599,6 @@ public class FrenzyBot extends FrenzyBaseBot {
         deliverToSharedHubAsync(AutoRoute.NAME_BLUE);
     }
 
-    public void dropToSharedHub() {
-        //liftToLevelMin();
-        //delayWait(400);
-        //towerToSharedHubRed();
-        //delayWait(1000);
-        initTower();
-        liftSharedHub();
-        delayWait(700);
-        dropElement();
-        delayWait(800);
-        resetDropper();
-        resetLift();
-    }
 
     protected void deliverToSharedHubAsync(String opModeSide){
         FrenzyLift asyncLift = new FrenzyLift(this, opModeSide, FrenzyLiftMode.SharedHub);
@@ -594,9 +608,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public void resetLift() {
         liftToLevelMin(true);
-        resetTower();
-        liftToLower();
-        delayWait(500);
+        resetTurret();
+        liftToLower(true);
     }
 
     public float detectColor(Telemetry telemetry, float timeout) {
@@ -648,10 +661,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         stop();
         intakeRunning = false;
         intakeDropperUp();
-        delayWait(800);
-        activateIntake(-0.15);
-        delayWait(700);
-        activateIntake(0);
+        delayWait(500);
 
         return gotIt;
     }

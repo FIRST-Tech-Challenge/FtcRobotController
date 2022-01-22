@@ -17,7 +17,15 @@ public class FrenzyLift implements Runnable {
     @Override
     public void run() {
         if (liftMode.equals(FrenzyLiftMode.SharedHub)){
-            frenzyBot.dropToSharedHub();
+            switch (opModeSide) {
+                case AutoRoute.NAME_BLUE:
+                    frenzyBot.dropToSharedHubBlue();
+                    break;
+
+                case AutoRoute.NAME_RED:
+                    frenzyBot.dropToSharedHubRed();
+                    break;
+            }
         }
         else if (liftMode.equals(FrenzyLiftMode.TeamHub)) {
             switch (opModeSide) {

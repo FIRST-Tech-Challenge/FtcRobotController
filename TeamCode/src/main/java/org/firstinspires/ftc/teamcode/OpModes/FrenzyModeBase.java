@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
@@ -106,6 +103,7 @@ public class FrenzyModeBase extends LinearOpMode {
         telemetry.addData("Heading", "%.3f", odometry.getOrientation());
         telemetry.addData("Heading Adjusted", "%.3f", odometry.getAdjustedCurrentHeading());
         telemetry.addData("Lift position", "%d", robot.getLiftPosition());
+        telemetry.addData("Turret position", "%d", robot.getTurretPosition());
         telemetry.update();
     }
 
@@ -201,7 +199,7 @@ public class FrenzyModeBase extends LinearOpMode {
         if (isButtonPressable()) {
             if (gamepad1.dpad_left) {
                 startGamepadLockout();
-                robot.towerToTeamHubRed();
+                robot.turretToTeamHubRed();
             } else if(gamepad1.dpad_right) {
                 robot.towerToTeamHubBlue();
             }
