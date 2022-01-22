@@ -30,7 +30,7 @@ public abstract class Teleop extends LinearOpMode {
 //  boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 //  boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;  // gamepad1 bumpers used live/realtime
 //  boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;  //  (see processCappingArmControls() below)
-    boolean gamepad1_share_last,      gamepad1_share_now      = false;  // autodrive to shared hub
+    boolean gamepad1_touchpad_last,   gamepad1_touchpad_now   = false;  // autodrive to shared hub
 
     boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  //
     boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport height)
@@ -42,6 +42,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Freight Arm (score FRONT)
     boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // sweeper (reverse)
     boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // box servo (dump)
+    boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // TEST MDOE: toggle link arm up/down
 
     boolean sweeperRunning  = false;  // Intake sweeper forward (fast/continuous - for collecting)
     boolean sweeperEjecting = false;  // Intake sweeper reverse (fast/continuous - eject extra freight)
@@ -78,6 +79,9 @@ public abstract class Teleop extends LinearOpMode {
     boolean   autoDrive                = false;
 
     boolean   duckMotorEnable = false;
+
+    boolean   linkArmUp = true;
+    int       sweepMotorState = 0; // 0=OFF, 1=ON-FORWARD, 2=ON-REVERSE
 
     //freight detection section
     boolean collectingFreight = false;
@@ -258,7 +262,7 @@ public abstract class Teleop extends LinearOpMode {
     private void processFreightDetector() {
         if(collectingFreight){
             if (robot.freightPresent()) {
-                freightDetectionCounts++;
+//              freightDetectionCounts++;  DISABLE FOR NOW!!!
                 // Set freightpresent if set number of detections occurred
                 if(freightDetectionCounts > 15) {
                     freightPresent = true;
@@ -291,7 +295,7 @@ public abstract class Teleop extends LinearOpMode {
 //      gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
 //      gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
 //      gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
-        gamepad1_share_last      = gamepad1_share_now;       gamepad1_share_now      = gamepad1.share;
+        gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -306,36 +310,52 @@ public abstract class Teleop extends LinearOpMode {
         gamepad2_dpad_right_last = gamepad2_dpad_right_now;  gamepad2_dpad_right_now = gamepad2.dpad_right;
         gamepad2_l_bumper_last   = gamepad2_l_bumper_now;    gamepad2_l_bumper_now   = gamepad2.left_bumper;
         gamepad2_r_bumper_last   = gamepad2_r_bumper_now;    gamepad2_r_bumper_now   = gamepad2.right_bumper;
+        gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
     } // captureGamepad2Buttons
 
     /*---------------------------------------------------------------------------------*/
     void processSweeperControls() {
         // Check if gamepad2 LEFT BUMPER is pressed
-        if( gamepad2_l_bumper_now ) {
-            robot.sweepServo.setPower( -0.15 );  // ON (reverse)
-            sweeperDumping = true;   // note that we need to turn it back OFF
+//      if( gamepad2_l_bumper_now ) {
+//          robot.sweepServo.setPower( -0.15 );  // ON (reverse)
+//          sweeperDumping = true;   // note that we need to turn it back OFF
+//      }
+        // Check if gamepad2 LEFT BUMPER is pressed
+        if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last ) {
+            if( sweepMotorState == 0 ) {
+                robot.sweepMotor.setPower( 1.00 );  // ON (forward)
+                sweepMotorState = 1;
+            }
+            else if( sweepMotorState == 1 ) {
+                robot.sweepMotor.setPower( -0.50 );  // ON (reverse)
+                sweepMotorState = 2;
+            }
+            else { // sweepMotorState == 2
+                robot.sweepMotor.setPower( 0.00 );  // OFF
+                sweepMotorState = 0;
+            }
         }
         // or not. but was PREVIOUSLY
         else if( sweeperDumping ) {
-            robot.sweepServo.setPower( 0.0 );  // OFF
+//          robot.sweepServo.setPower( 0.0 );  // OFF
             sweeperDumping = false;   // only do this once!
         }
         // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
         if( gamepad2_square_now && !gamepad2_square_last) {
           if( sweeperEjecting ) {  // already reverse; toggle back to forward
-            robot.sweepServo.setPower( 1.0 );  // ON (forward)
+//          robot.sweepServo.setPower( 1.0 );  // ON (forward)
             sweeperRunning  = true;
             sweeperEjecting = false;
           }
           else {  // currently forward, so switch to reverse
-            robot.sweepServo.setPower( -1.0 );  // ON (reverse)
+//          robot.sweepServo.setPower( -1.0 );  // ON (reverse)
             sweeperRunning  = true;
             sweeperEjecting = true;
           }
         } // square
         // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
         if( gamepad2_triangle_now && !gamepad2_triangle_last) {
-            robot.sweepServo.setPower( 0.0 );  // OFF
+  //        robot.sweepServo.setPower( 0.0 );  // OFF
             sweeperRunning  = false;
             sweeperEjecting = false;
         } // triangle
@@ -400,6 +420,18 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processFreightArmControls() {
+        // Check for an OFF-to-ON toggle of the gamepad2 TOUCHPAD
+        if( gamepad2_touchpad_now && !gamepad2_touchpad_last)
+        {
+            if( linkArmUp ) {
+                robot.linkServo.setPosition(robot.LINK_SERVO_LOWERED);
+                linkArmUp = false;
+            }
+            else {
+                robot.linkServo.setPosition(robot.LINK_SERVO_RAISED);
+                linkArmUp = true;
+            }
+        }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
         {
@@ -414,7 +446,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.80 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
             // automatically turn OFF the sweeper
-            robot.sweepServo.setPower( 0.0 );  // OFF
+//          robot.sweepServo.setPower( 0.0 );  // OFF
             collectingFreight = false;
             sweeperRunning = false;
         }
@@ -425,7 +457,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.20 );
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
             // automatically turn ON the sweeper
-            robot.sweepServo.setPower( 1.0 );  // ON
+//          robot.sweepServo.setPower( 1.0 );  // ON
             sweeperRunning = true;
         }
 
@@ -714,8 +746,8 @@ public abstract class Teleop extends LinearOpMode {
             rearLeft   =  fineTurnSpeed;
             rearRight  = -fineTurnSpeed;
         }
-        else if( autoDrive || (gamepad1_share_now && !gamepad1_share_last) ) {
-            telemetry.addData("Share","FORWARD");
+        else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
+            telemetry.addData("Touchpad","FORWARD");
             frontLeft  = autoDriveSpeed;
             frontRight = autoDriveSpeed;
             rearLeft   = autoDriveSpeed;

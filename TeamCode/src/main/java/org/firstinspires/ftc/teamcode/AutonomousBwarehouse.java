@@ -342,10 +342,10 @@ public class AutonomousBwarehouse extends AutonomousBase {
                      break;
         } // switch()
 
-        robot.sweepServo.setPower( -0.25 );         // start sweeper in reverse
+//      robot.sweepServo.setPower( -0.25 );         // start sweeper in reverse
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
         sleep( 1500 );                    // let cube drop out
-        robot.sweepServo.setPower( 0.0 );           // stop sweeper
+//      robot.sweepServo.setPower( 0.0 );           // stop sweeper
         // back away and store arm
         if( level == 1 ){
             gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 2.0, 999.9, DRIVE_TO );
@@ -379,7 +379,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.50 );
-        robot.sweepServo.setPower(1.0);
+//      robot.sweepServo.setPower(1.0);
         gyroTurn(TURN_SPEED_20, 45.0 );   // Turn toward the freight
         robot.driveTrainMotors( slowlyCollectMyPrecious, slowlyCollectMyPrecious,
                                 slowlyCollectMyPrecious, slowlyCollectMyPrecious );
@@ -398,7 +398,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             robot.boxServo.setPosition(robot.BOX_SERVO_TRANSPORT);
             sleep(750);
         }
-        robot.sweepServo.setPower(0.0);
+//      robot.sweepServo.setPower(0.0);
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -5.0, 999.9, DRIVE_TO );
     } // collectFreight1
 
