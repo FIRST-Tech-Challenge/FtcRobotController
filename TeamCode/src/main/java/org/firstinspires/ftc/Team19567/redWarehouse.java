@@ -122,6 +122,8 @@ public class redWarehouse extends LinearOpMode {
             }
         }
 
+        mechanisms.rotateArm(0);
+        mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(mainTrajectory);
 
         telemetry.addData("Status", "Path Complete");

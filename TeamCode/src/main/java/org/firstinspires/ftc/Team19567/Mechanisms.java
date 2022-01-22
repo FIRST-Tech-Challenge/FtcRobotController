@@ -35,7 +35,9 @@ public class Mechanisms {
     }
 
     public void rotateArm(int pos) {
+        armDC.setPower(0.5);
         armDC.setTargetPosition(Range.clip(pos,0,1000));
+        armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void rotateCarousel(double speed, boolean left) {
