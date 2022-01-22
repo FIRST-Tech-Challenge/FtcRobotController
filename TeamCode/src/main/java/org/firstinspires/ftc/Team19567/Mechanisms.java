@@ -31,6 +31,7 @@ public class Mechanisms {
     public void rotateArm(int pos, double speed) {
         armDC.setPower(speed);
         armDC.setTargetPosition(Range.clip(pos,0,1000));
+        armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void rotateArm(int pos) {

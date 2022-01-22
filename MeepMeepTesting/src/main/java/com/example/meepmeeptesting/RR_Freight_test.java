@@ -7,7 +7,7 @@ import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 
 public class RR_Freight_test {
     public static void main(String args[]) {
-        MeepMeep mm = new MeepMeep(800)
+        MeepMeep mm = new MeepMeep(801)
                 // Set field image
                 .setBackground(MeepMeep.Background.FIELD_FREIGHT_FRENZY)
                 // Set theme

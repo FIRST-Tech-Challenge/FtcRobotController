@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -48,7 +49,7 @@ public class RoadrunnerTest extends LinearOpMode {
 
         SampleMecanumDrive chassis = new SampleMecanumDrive(hardwareMap);
 
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -58,9 +59,6 @@ public class RoadrunnerTest extends LinearOpMode {
                 camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("OpenCV","OpenCV actually connected wow");
                 telemetry.update();
-
-                waitForStart();
-
             }
             @Override
             public void onError(int errorCode) {
@@ -69,13 +67,14 @@ public class RoadrunnerTest extends LinearOpMode {
             }
         });
 
-        TrajectorySequence mainSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(90)))
+        TrajectorySequence mainSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
                 .addTemporalMarker(8000,() -> { mechanisms.moveIntake(1.0); })
-                .lineToSplineHeading(new Pose2d(8,-24,0))
+                .lineTo(new Vector2d(6, 12)).turn(Math.toRadians(90))
+                //.lineToSplineHeading(new Pose2d(6,-24,0))
                 .addDisplacementMarker(() -> {
-                    timeout.reset();
-                    mechanisms.rotateArm(1400,0.5);
-                    while(mechanisms.armDC.getCurrentPosition() <= 1400 || timeout.milliseconds() <= 3000) {
+                    //timeout.reset();
+                    mechanisms.rotateArm(600,0.2);
+                    while(mechanisms.armDC.getCurrentPosition() <= 600 && opModeIsActive()/*|| timeout.milliseconds() <= 3000 */) {
                         mechanisms.maintainBalance();
                     }
                 }).waitSeconds(1.5)
@@ -86,6 +85,11 @@ public class RoadrunnerTest extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90))).waitSeconds(3)
                 .splineTo(new Vector2d(45,-64),0).waitSeconds(5)
                 .build();
+
+        armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armDC.setDirection(DcMotorSimple.Direction.REVERSE);
+        balanceServo.setDirection(Servo.Direction.REVERSE);
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
