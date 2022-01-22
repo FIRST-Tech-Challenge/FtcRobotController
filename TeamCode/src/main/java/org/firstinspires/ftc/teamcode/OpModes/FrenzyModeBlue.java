@@ -7,18 +7,18 @@ public class FrenzyModeBlue extends FrenzyModeBase {
     @Override
     protected void depositToTeamHub() {
     if (isButtonPressable()) {
-        if (gamepad2.x && !robotMoving) {
+        if (gamepad2.x) {
             startGamepadLockout();
-            robot.dropToTeamHubBlueAsync();
+            robot.dropToTeamHubBlue();
         }
     }
 }
     @Override
     protected void depositToSharedHub() {
         if (isButtonPressable()) {
-            if (gamepad2.y && !robotMoving) {
+            if (gamepad2.y) {
                 startGamepadLockout();
-                robot.dropToSharedHubBlueAsync();
+                robot.dropToSharedHubBlue();
             }
         }
     }

@@ -68,7 +68,7 @@ public class FrenzyModeBase extends LinearOpMode {
                 handleSpecialActions();
                 if (robot.isIntakeRunning() && !robot.isIntakeBoxEmpty()){
                     if (!emergencyMode) {
-                        robot.smartStopIntakeAsync();//robot.smartStopIntake();
+                        robot.smartStopIntake();//robot.smartStopIntake();
 //                        robot.stopIntake();
                     }
                     else{
