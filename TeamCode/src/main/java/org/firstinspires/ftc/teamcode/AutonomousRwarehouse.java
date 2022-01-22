@@ -137,10 +137,10 @@ public class AutonomousRwarehouse extends AutonomousBase {
             idle();
         } // !isStarted
 
-        blockLevel = FreightFrenzyPipeline.blockLevel;
-
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
+        blockLevel = FreightFrenzyPipeline.blockLevel;
+        FreightFrenzyPipeline.saveLastAutoImage();
         webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------

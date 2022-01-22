@@ -1,12 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Environment;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 
 /* Skystone image procesing pipeline to be run upon receipt of each frame from the camera.
  * Note that the processFrame() method is called serially from the frame worker thread -
@@ -97,6 +105,8 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     public static int rightRedAverage;
     public static boolean alignedRedRight;
 
+    public static Mat finalAutoImage = new Mat();
+
     private final boolean redAlliance;
     private final boolean duckySide;
 
@@ -137,6 +147,34 @@ class FreightFrenzyPipeline extends OpenCvPipeline
                 sub3PointB = new Point(287,205);
             }
         }
+    }
+
+    public static void saveLastAutoImage() {
+        final String BASE_FOLDER_NAME = "FIRST";
+        String dateTime = new SimpleDateFormat("yyyy-MM-ddThh-mm-ss", Locale.getDefault()).format(new Date());
+        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME+
+                "/"+"AutoImage"+dateTime+".png";
+
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    Imgproc.cvtColor(finalAutoImage, finalAutoImage, Imgproc.COLOR_RGB2BGR);
+                    Imgcodecs.imwrite(directoryPath, finalAutoImage);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    finalAutoImage.release();
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -217,6 +255,8 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         alignedRedCenter = (alignRedAvg2 >= colorRedThreshold);
         rightRedAverage = alignRedAvg3;
         alignedRedRight = (alignRedAvg3 >= colorRedThreshold);
+
+        input.copyTo(finalAutoImage);
 
         // Free the allocated submat memory
         subMat1.release();
