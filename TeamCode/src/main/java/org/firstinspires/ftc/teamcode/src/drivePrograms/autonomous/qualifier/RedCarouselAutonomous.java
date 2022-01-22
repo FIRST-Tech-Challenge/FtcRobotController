@@ -21,6 +21,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final boolean wareHousePark = true;
     static final BlinkinPattern def = BlinkinPattern.RED;
     public DistanceSensor distanceSensor;
+    private final boolean overBarrier = true;
 
     //static final double[] initialPos = {7, 101, 90};
 
@@ -58,7 +59,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(260, .5);
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(23.5, 85.5, 1, 2, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(23, 82, 1, 2, 500);
             } catch (OdometryMovementException ignored) {
             }
             driveSystem.turnTo(272, .3);
@@ -131,53 +132,66 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             spinner.spinOffRedDuck();
             driveSystem.strafeAtAngle(270, 1);
             Thread.sleep(1000);
-            try {
-                driveSystem.moveToPositionWithDistanceTimeOut(17, 80, 1, 2, 1000);
-            } catch (OdometryMovementException stopOnStuck) {
-                this.stop();
-            }
-            driveSystem.turnTo(180, .5);
-            try {
-                driveSystem.moveToPositionWithDistanceTimeOut(0, 80, 0, 2, 750);
-            } catch (OdometryMovementException ignored) {
-            }
+            if (!overBarrier) {
+                try {
+                    driveSystem.moveToPositionWithDistanceTimeOut(17, 80, 1, 2, 1000);
+                } catch (OdometryMovementException stopOnStuck) {
+                    this.stop();
+                }
+                driveSystem.turnTo(180, .5);
+                try {
+                    driveSystem.moveToPositionWithDistanceTimeOut(0, 80, 0, 2, 750);
+                } catch (OdometryMovementException ignored) {
+                }
 
-            intake.setIntakeOn();
-            try {
+                intake.setIntakeOn();
+                try {
 
-                double millis = 250;
-                final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-                final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
-                final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
-                final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
+                    double millis = 250;
+                    final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+                    final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
+                    final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
+                    final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
 
-                Executable<Boolean> t = () -> {
+                    Executable<Boolean> t = () -> {
 
-                    if (timer.milliseconds() >= millis) {
-                        positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 0, 10);
-                        double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
-                        if (traveledDistance < tooSmallOfDistance) {
-                            return true;
+                        if (timer.milliseconds() >= millis) {
+                            positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
+                            positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 0, 10);
+                            double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
+                            if (traveledDistance < tooSmallOfDistance) {
+                                return true;
+                            }
+                            timer.reset();
                         }
-                        timer.reset();
-                    }
-                    return false;
-                };
+                        return false;
+                    };
 
 
-                Executable<Boolean> e = () -> {
-                    return !(distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested());
-                };
+                    Executable<Boolean> e = () -> {
+                        return !(distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested());
+                    };
 
-                Executable<Boolean> q = () -> {
-                    return (t.call() || e.call());
-                };
-                driveSystem.moveToPosition(0, 10, 1, 1, q);
+                    Executable<Boolean> q = () -> {
+                        return (t.call() || e.call());
+                    };
+                    driveSystem.moveToPosition(0, 10, 1, 1, q);
 
-            } catch (OdometryMovementException ignored) {
-            } finally {
-                intake.setIntakeOff();
+                } catch (OdometryMovementException ignored) {
+                } finally {
+                    intake.setIntakeOff();
+                }
+            } else if (overBarrier) {
+                try {
+                    driveSystem.moveToPositionWithDistanceTimeOut(33, 77, 1, 2, 1000);
+                } catch (OdometryMovementException ignored) {
+                }
+                driveSystem.turnTo(180, .8);
+                driveSystem.turnTo(180, .2);
+                podServos.raise();
+                driveSystem.strafeAtAngle(0, 1);
+                Thread.sleep(1900);
+                this.stop();
             }
         }
         slide.end();

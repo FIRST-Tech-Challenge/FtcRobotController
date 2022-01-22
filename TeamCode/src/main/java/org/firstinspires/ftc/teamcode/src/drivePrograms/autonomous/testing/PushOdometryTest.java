@@ -16,7 +16,6 @@ public class PushOdometryTest extends AutonomousTemplate {
 
         this.initOdometryServos();
         podServos.lower();
-        odometry.setPosition(6, 111, 180);
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {

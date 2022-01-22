@@ -36,7 +36,7 @@ public class OdometryPodServos {
     /**
      * The position the horizontal servo must go to to be down
      */
-    private static final double horizontalServoLowerPosition = 0.5;
+    private static final double horizontalServoLowerPosition = 0.52;
 
     /**
      * Horizontal Servo Object

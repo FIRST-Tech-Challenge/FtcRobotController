@@ -49,11 +49,7 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            if (driveTrain.getFacingDirection()) {
-                telemetry.addData("Facing", "Forward");
-            } else {
-                telemetry.addData("Facing", "Backward");
-            }
+
 
             if (posOn) {
                 switch (posToGoTo) {
@@ -93,10 +89,6 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
                     x_depressed = true;
                 }
 
-                if (gamepad1.x && x_depressed) {
-                    driveTrain.flipFrontAndBack();
-                    x_depressed = false;
-                }
             }
 
             //Eli's controls
