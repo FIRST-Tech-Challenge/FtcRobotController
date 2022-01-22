@@ -9,16 +9,14 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="TeleopBlue")
+@TeleOp(name="TeleopNoOptimisation")
 
-public class TeleopBlue extends LinearOpMode {
+public class TeleopNoOptimisation extends LinearOpMode {
 
     double MAX_SPEED = 0.9;
-    Robot robot;
+
     @Override
     public void runOpMode() throws InterruptedException {
-
-        robot = new Robot(hardwareMap, telemetry, this);
 
         DcMotor frontLeft, backLeft, frontRight, backRight, arm, carousel, intake;
 
