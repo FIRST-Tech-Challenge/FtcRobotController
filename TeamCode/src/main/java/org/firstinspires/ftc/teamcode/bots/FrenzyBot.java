@@ -63,9 +63,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     NormalizedColorSensor colorSensor;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_TRANSPORT = 0.2; // this is only to pick-up elements
-    private static double DROPPER_SERVO_POS_START = 0.0;  //default pos to start and transport
-    private static double DROPPER_SERVO_POS_DROP = 0.85;
+    private static double DROPPER_SERVO_POS_TRANSPORT = 0.45; // this is only to pick-up elements
+    private static double DROPPER_SERVO_POS_START = 0.3;  //default pos to start and transport
+    private static double DROPPER_SERVO_POS_DROP = 1;
 
     // Detection
     CVDetector detector;
