@@ -162,7 +162,7 @@ public class ContourPipeline320w240hSim extends OpenCvPipeline {
             telemetry.addData("level", location);
             telemetry.update();
 
-        return input;
+        return processed;
     }
 
     public int getRectHeight() {
