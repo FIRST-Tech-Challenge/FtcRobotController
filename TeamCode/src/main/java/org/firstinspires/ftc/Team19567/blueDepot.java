@@ -21,9 +21,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
 
-@Autonomous(name="Roadrunner Test", group="Dababy")
+@Autonomous(name="Blue Depot", group="Dababy")
 
-public class RoadrunnerTest extends LinearOpMode {
+public class blueDepot extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
     private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
@@ -35,17 +35,29 @@ public class RoadrunnerTest extends LinearOpMode {
     private Servo balanceServo = null;
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private Mechanisms mechanisms = null;
+    private TrajectorySequence chosenTrajectorySequence;
+    private int chosenArmPos = 600;
+    private double chosenArmSpeed = 0.3;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
+        //Get the motors from the robot's configuration
+
         armDC = hardwareMap.get(DcMotor.class, "armDC");
         carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
-        carouselRight = hardwareMap.get(DcMotor.class,"carouselRight");
-        intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
+        carouselRight = hardwareMap.get(DcMotor.class, "carouselRight");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
-
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
+
+        armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armDC.setDirection(DcMotor.Direction.REVERSE);
+        balanceServo.setDirection(Servo.Direction.REVERSE);
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
 
         SampleMecanumDrive chassis = new SampleMecanumDrive(hardwareMap);
 
@@ -56,7 +68,7 @@ public class RoadrunnerTest extends LinearOpMode {
             @Override
             public void onOpened() {
                 camera.setPipeline(pipeline);
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(544,288, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("OpenCV","OpenCV actually connected wow");
                 telemetry.update();
             }
@@ -67,32 +79,21 @@ public class RoadrunnerTest extends LinearOpMode {
             }
         });
 
-        TrajectorySequence mainSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
-                .addTemporalMarker(8000,() -> { mechanisms.moveIntake(1.0); })
-                .lineTo(new Vector2d(6, 12)).turn(Math.toRadians(90))
-                //.lineToSplineHeading(new Pose2d(6,-24,0))
-                .addDisplacementMarker(() -> {
-                    //timeout.reset();
-                    mechanisms.rotateArm(600,0.2);
-                    while(mechanisms.armDC.getCurrentPosition() <= 600 && opModeIsActive()/*|| timeout.milliseconds() <= 3000 */) {
-                        mechanisms.maintainBalance();
-                    }
-                }).waitSeconds(1.5)
-                .addDisplacementMarker(() -> { mechanisms.releaseServoMove(0.6); }).waitSeconds(1)
-                .addDisplacementMarker(() -> { mechanisms.reset(); }).splineTo(new Vector2d(10, -55), Math.toRadians(270))
-                .splineTo(new Vector2d(36, -64),0).strafeTo(new Vector2d(47, -64)).waitSeconds(3)
-                .addDisplacementMarker(() -> { mechanisms.reset(); }).strafeTo(new Vector2d(15,-64))
-                .lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90))).waitSeconds(3)
-                .splineTo(new Vector2d(45,-64),0).waitSeconds(5)
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63,Math.toRadians(270)))
+                .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(93)).back(3)
                 .build();
-
-        armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armDC.setDirection(DcMotorSimple.Direction.REVERSE);
-        balanceServo.setDirection(Servo.Direction.REVERSE);
-
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,-63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(93)).back(1.5)
+                .build();
+        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(6,-24)).turn(Math.toRadians(93)).build();
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -24, Math.toRadians(3)))
+                .strafeTo(new Vector2d(6, 27))
+                .strafeTo(new Vector2d(-40,27)).build();
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
+            telemetry.addData("location",location);
+            telemetry.update();
         }
 
         waitForStart();
@@ -101,19 +102,25 @@ public class RoadrunnerTest extends LinearOpMode {
 
         switch(location) {
             case ALLIANCE_FIRST: {
-                location = LOCATION.ALLIANCE_FIRST;
+                chosenTrajectorySequence = secondLevelSequence;
+                chosenArmPos = 700;
+                chosenArmSpeed = 0.25;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_SECOND: {
-                location = LOCATION.ALLIANCE_SECOND;
+                chosenTrajectorySequence = firstLevelSequence;
+                chosenArmPos = 650;
+                chosenArmSpeed = 0.2;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
-                location = LOCATION.ALLIANCE_THIRD;
+                chosenTrajectorySequence = thirdLevelSequence;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -123,7 +130,21 @@ public class RoadrunnerTest extends LinearOpMode {
             }
         }
 
-        chassis.followTrajectorySequence(mainSequence);
+        mechanisms.rotateArm(0);
+        mechanisms.releaseServoMove(1.0);
+        chassis.followTrajectorySequence(chosenTrajectorySequence);
+        mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
+        while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
+            mechanisms.maintainBalance();
+        }
+        sleep(1000);
+        mechanisms.releaseServoMove(0.5);
+        sleep(1000);
+        mechanisms.rotateArm(0,0.1);
+        mechanisms.releaseServoMove(1.0);
+        chassis.followTrajectorySequence(secondTrajectory);
 
+        telemetry.addData("Status", "Path Complete");
+        telemetry.update();
     }
 }

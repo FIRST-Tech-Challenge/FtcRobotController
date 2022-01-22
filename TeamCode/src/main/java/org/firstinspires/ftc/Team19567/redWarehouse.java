@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
 
-@Autonomous(name="Red Warehouse", group="Linear Opmode")
+@Autonomous(name="Red Warehouse", group="Dababy")
 
 public class redWarehouse extends LinearOpMode {
 
@@ -35,6 +35,9 @@ public class redWarehouse extends LinearOpMode {
     private Servo balanceServo = null;
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private Mechanisms mechanisms = null;
+    private TrajectorySequence chosenTrajectorySequence;
+    private int chosenArmPos = 600;
+    private double chosenArmSpeed = 0.3;
 
     @Override
     public void runOpMode() {
@@ -76,7 +79,13 @@ public class redWarehouse extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63,Math.toRadians(270)))
+                .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(93)).back(3)
+                .build();
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,-63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(93)).back(1.5)
+                .build();
+        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
                 .strafeTo(new Vector2d(6,-24)).turn(Math.toRadians(93)).build();
         TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -24, Math.toRadians(3)))
                 .strafeTo(new Vector2d(6, 27))
@@ -93,19 +102,25 @@ public class redWarehouse extends LinearOpMode {
 
         switch(location) {
             case ALLIANCE_FIRST: {
-                location = LOCATION.ALLIANCE_SECOND;
+                chosenTrajectorySequence = secondLevelSequence;
+                chosenArmPos = 700;
+                chosenArmSpeed = 0.25;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_SECOND: {
-                location = LOCATION.ALLIANCE_FIRST;
+                chosenTrajectorySequence = firstLevelSequence;
+                chosenArmPos = 650;
+                chosenArmSpeed = 0.2;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
-                location = LOCATION.ALLIANCE_THIRD;
+                chosenTrajectorySequence = thirdLevelSequence;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -117,9 +132,9 @@ public class redWarehouse extends LinearOpMode {
 
         mechanisms.rotateArm(0);
         mechanisms.releaseServoMove(1.0);
-        chassis.followTrajectorySequence(firstTrajectory);
-        mechanisms.rotateArm(600,0.2);
-        while(armDC.getCurrentPosition() <= 600 && opModeIsActive()) {
+        chassis.followTrajectorySequence(chosenTrajectorySequence);
+        mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
+        while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
             mechanisms.maintainBalance();
         }
         sleep(1000);

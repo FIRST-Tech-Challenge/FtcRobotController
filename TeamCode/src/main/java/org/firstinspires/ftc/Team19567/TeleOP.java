@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="TeleOP", group="Iterative Opmode") //Gives the TeleOp its name in the driver station menu and categorizes it as a TeleOp (Iterative OpMode)
+@TeleOp(name="TeleOP", group="Dababy") //Gives the TeleOp its name in the driver station menu and categorizes it as an Iterative OpMode
 public class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
