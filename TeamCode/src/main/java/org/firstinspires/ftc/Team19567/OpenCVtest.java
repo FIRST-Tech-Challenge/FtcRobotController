@@ -17,7 +17,7 @@ public class OpenCVtest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap
                         .appContext.getPackageName());
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance()
                 .createWebcam(webcamName,cameraMonitorViewId);
 
@@ -25,7 +25,7 @@ public class OpenCVtest extends LinearOpMode {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(640,240, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(544,288, OpenCvCameraRotation.UPRIGHT);
                 camera.setPipeline(pipeline);
                 telemetry.addData("OpenCV","OpenCV actually connected wow");
                 telemetry.update();

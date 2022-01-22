@@ -2,28 +2,22 @@ package org.firstinspires.ftc.Team19567;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
+@Autonomous(name="Blue Warehouse", group="Linear Opmode")
 
-@Autonomous(name="Red Warehouse", group="Linear Opmode")
-
-public class redWarehouse extends LinearOpMode {
+public class blueWarehouse extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
     private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
@@ -33,7 +27,7 @@ public class redWarehouse extends LinearOpMode {
     private DcMotor intakeDC = null;
     private Servo releaseServo = null;
     private Servo balanceServo = null;
-    private LOCATION location = LOCATION.ALLIANCE_THIRD;
+    private tsePipeline.LOCATION location = tsePipeline.LOCATION.ALLIANCE_THIRD;
     private Mechanisms mechanisms = null;
 
     @Override
@@ -76,11 +70,11 @@ public class redWarehouse extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(6,-24)).turn(Math.toRadians(93)).build();
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, -24, Math.toRadians(3)))
-                .strafeTo(new Vector2d(6, 27))
-                .strafeTo(new Vector2d(-40,27)).build();
+        TrajectorySequence firstTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, 63, Math.toRadians(90)))
+                .strafeTo(new Vector2d(6,24)).turn(Math.toRadians(-93)).build();
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, 24, Math.toRadians(-3)))
+                .strafeTo(new Vector2d(6, -27.5))
+                .strafeTo(new Vector2d(-40,-27.5)).build();
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
             telemetry.addData("location",location);
@@ -93,27 +87,30 @@ public class redWarehouse extends LinearOpMode {
 
         switch(location) {
             case ALLIANCE_FIRST: {
-                location = LOCATION.ALLIANCE_SECOND;
+                location = tsePipeline.LOCATION.ALLIANCE_FIRST;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_SECOND: {
-                location = LOCATION.ALLIANCE_FIRST;
+                location = tsePipeline.LOCATION.ALLIANCE_SECOND;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
-                location = LOCATION.ALLIANCE_THIRD;
+                location = tsePipeline.LOCATION.ALLIANCE_THIRD;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
             }
             default: {
-                location = LOCATION.ALLIANCE_THIRD;
+                location = tsePipeline.LOCATION.ALLIANCE_THIRD;
             }
         }
+
+        telemetry.addData("Freight Level", "3");
+        telemetry.update();
 
         mechanisms.rotateArm(0);
         mechanisms.releaseServoMove(1.0);

@@ -11,19 +11,23 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 class tsePipeline extends OpenCvPipeline {
     private Mat output = new Mat();
+    private static final double width = 544;
+    private static final double height = 288;
+    private static final double margin = 10;
+    private static final double one_square = (width-4*margin)/3;
     private static final Rect LEFT_SQUARE = new Rect(
-        new Point(12.5,30), new Point(102.5,210)
+            new Point(margin,margin), new Point(margin+one_square,height-margin)
     );
 
     private static final Rect RIGHT_SQUARE = new Rect(
-            new Point(115,30), new Point(205,210)
+            new Point(2*margin+one_square,margin), new Point(2*(margin+one_square),height-margin)
     );
 
-    private static final Rect RIGHTMOST_SQUARE = new Rect(
-      new Point(217.5,30), new Point( 307.5,210)
+    private static final Rect RIGHTEST_SQUARE = new Rect(
+            new Point(3*margin+2*one_square,margin), new Point( 3*(margin+one_square),height-margin)
     );
 
-    private static double THRESHOLD = 0.05;
+    private static double THRESHOLD = 0.075;
 
     Telemetry telemetry;
 
@@ -46,28 +50,24 @@ class tsePipeline extends OpenCvPipeline {
     Scalar detectedColor = new Scalar(0,255,0);
     Scalar none = new Scalar(255,0,0);
 
-    private LOCATION location;
+    private LOCATION location = LOCATION.ALLIANCE_THIRD;
 
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input,output,Imgproc.COLOR_RGB2HSV);
         telemetry.addData("Pipeline Status","Setup Complete");
-        telemetry.update();
 
         Core.inRange(output,lowHSV,highHSV,output);
         telemetry.addData("Pipeline Status","InRange Conv. Completed");
-        telemetry.update();
 
         Mat first = output.submat(LEFT_SQUARE);
         Mat second = output.submat(RIGHT_SQUARE);
         telemetry.addData("Pipeline Status","Submats Computed");
-        telemetry.update();
 
         firstConf = Core.sumElems(first).val[0] / LEFT_SQUARE.area()/255;
         secondConf = Core.sumElems(second).val[0] / RIGHT_SQUARE.area()/255;
 
         telemetry.addData("Pipeline Status","Confidences Ascertained");
-        telemetry.update();
 
         first.release();
         second.release();
@@ -77,14 +77,12 @@ class tsePipeline extends OpenCvPipeline {
         telemetry.addData("LeftP(%.2f)",firstConf*100);
         telemetry.addData("RightP(%.2f)",secondConf*100);
         telemetry.addData("Telemetry Status","Values Broadcasted via Telemetry");
-        telemetry.update();
 
         tseFirst = firstConf > THRESHOLD;
         tseSecond = secondConf > THRESHOLD;
 
         telemetry.addData("Yop?",tseFirst);
         telemetry.addData("Yop2?",tseSecond);
-        telemetry.update();
 
         if(tseFirst) {
             location = LOCATION.ALLIANCE_FIRST;
@@ -99,7 +97,6 @@ class tsePipeline extends OpenCvPipeline {
             telemetry.addData("Level","Third");
         }
         telemetry.addData("OpenCV Status","Location Decided");
-        telemetry.update();
 
         Imgproc.cvtColor(output, output, Imgproc.COLOR_GRAY2RGB);
 
@@ -109,9 +106,8 @@ class tsePipeline extends OpenCvPipeline {
 
         Imgproc.rectangle(output,LEFT_SQUARE,location==LOCATION.ALLIANCE_FIRST? detectedColor:none);
         Imgproc.rectangle(output,RIGHT_SQUARE,location==LOCATION.ALLIANCE_SECOND? detectedColor:none);
-        Imgproc.rectangle(output, RIGHTMOST_SQUARE,(location==LOCATION.ALLIANCE_THIRD)? detectedColor:none);
+        Imgproc.rectangle(output,RIGHTEST_SQUARE,(location==LOCATION.ALLIANCE_THIRD)? detectedColor:none);
         telemetry.addData("OpenCV Status","Rectangles Drawn");
-        telemetry.update();
         System.gc();
         telemetry.addData("Input Frame Size",input.rows()+" x "+input.cols());
         telemetry.addData("Output Frame Size", output.rows()+" x "+output.cols());
