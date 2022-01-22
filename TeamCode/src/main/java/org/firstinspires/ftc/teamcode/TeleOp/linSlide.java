@@ -34,13 +34,13 @@ public class linSlide extends LinearOpMode {
                 toggle+=1;
                 switch(toggle){
                     case 0:
-                        state=states.LOW;
+                        state=states.toLOW;
                         break;
                     case 1:
-                        state=states.MID;
+                        state=states.toMID;
                         break;
                     case 2:
-                        state = states.HIGH;
+                        state = states.toHIGH;
                         break;
                 }
                 CDtimer=runtime.time();
