@@ -82,6 +82,6 @@ public class Mechanisms {
     }
 
     public void maintainBalance() {
-        balanceServo.setPosition(Range.clip(armDC.getCurrentPosition()/1000.5,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
+        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()-50)/1100.5,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
 }

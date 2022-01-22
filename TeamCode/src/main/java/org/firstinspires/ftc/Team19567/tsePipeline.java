@@ -19,7 +19,7 @@ class tsePipeline extends OpenCvPipeline {
             new Point(115,30), new Point(205,210)
     );
 
-    private static final Rect RIGHTEST_SQUARE = new Rect(
+    private static final Rect RIGHTMOST_SQUARE = new Rect(
       new Point(217.5,30), new Point( 307.5,210)
     );
 
@@ -109,7 +109,7 @@ class tsePipeline extends OpenCvPipeline {
 
         Imgproc.rectangle(output,LEFT_SQUARE,location==LOCATION.ALLIANCE_FIRST? detectedColor:none);
         Imgproc.rectangle(output,RIGHT_SQUARE,location==LOCATION.ALLIANCE_SECOND? detectedColor:none);
-        Imgproc.rectangle(output,RIGHTEST_SQUARE,(location==LOCATION.ALLIANCE_THIRD)? detectedColor:none);
+        Imgproc.rectangle(output, RIGHTMOST_SQUARE,(location==LOCATION.ALLIANCE_THIRD)? detectedColor:none);
         telemetry.addData("OpenCV Status","Rectangles Drawn");
         telemetry.update();
         System.gc();
