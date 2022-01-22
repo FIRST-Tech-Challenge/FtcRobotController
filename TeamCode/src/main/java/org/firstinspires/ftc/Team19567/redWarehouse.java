@@ -147,5 +147,4 @@ public class redWarehouse extends LinearOpMode {
         telemetry.addData("Status", "Path Complete");
         telemetry.update();
     }
-
 }
