@@ -300,10 +300,10 @@ public class AutonomousBducks extends AutonomousBase {
                      break;
         } // switch()
 
-        robot.sweepServo.setPower( -0.25 );         // start sweeper in reverse
+//      robot.sweepServo.setPower( -0.25 );         // start sweeper in reverse
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
         sleep( 1500 );                    // let cube drop out
-        robot.sweepServo.setPower( 0.0 );           // stop sweeper
+//      robot.sweepServo.setPower( 0.0 );           // stop sweeper
         // back away and store arm
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );

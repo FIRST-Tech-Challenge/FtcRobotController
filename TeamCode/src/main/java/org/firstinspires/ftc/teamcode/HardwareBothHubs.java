@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -137,7 +138,15 @@ public class HardwareBothHubs
     public double       BOX_SERVO_DUMP_BOTTOM      = 0.55;
     public double       BOX_SERVO_DUMP_FRONT       = 0.80;  // ??
 
-    public CRServo      sweepServo                 = null;  // CONTINUOUS, so no need for fixed positions
+//  public CRServo      sweepServo                 = null;  // CONTINUOUS, so no need for fixed positions
+
+    public Servo        linkServo                  = null;
+    public double       LINK_SERVO_INIT            = 0.500; // we init to the FULLY STORED position
+    public double       LINK_SERVO_STORED          = 0.500;
+    public double       LINK_SERVO_RAISED          = 0.500; // in case we want to tweak/optimize
+    public double       LINK_SERVO_LOWERED         = 0.265;
+
+    protected DcMotorEx sweepMotor    = null;
 
     //====== NAVIGATION DISTANCE SENSORS =====
     private MaxSonarI2CXL sonarRangeL = null;   // Must include MaxSonarI2CXL.java in teamcode folder
@@ -291,9 +300,21 @@ public class HardwareBothHubs
             boxServo.setPosition( BOX_SERVO_INIT );
         }
 
-        sweepServo = hwMap.crservo.get("SweepServo");    // servo port 5 (hub 2)
-        sweepServo.setDirection( CRServo.Direction.REVERSE );
-        sweepServo.setPower( 0.0 );
+//      sweepServo = hwMap.crservo.get("SweepServo");    // servo port 5 (hub 2)
+//      sweepServo.setDirection( CRServo.Direction.REVERSE );
+//      sweepServo.setPower( 0.0 );
+
+        linkServo = hwMap.servo.get("linkServo");        // servo port 5 (hub 2)
+        if (!transitionFromAutonomous) {
+            linkServo.setPosition( LINK_SERVO_INIT );
+        }
+
+        //Initialize sweeper motor
+        sweepMotor = hwMap.get(DcMotorEx.class,"sweepMotor");
+        sweepMotor.setDirection(DcMotor.Direction.REVERSE);
+        sweepMotor.setPower( 0.0 );
+        sweepMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sweepMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Instantiate Maxbotics ultrasonic range sensors (sensors wired to I2C ports)
         sonarRangeL = hwMap.get( MaxSonarI2CXL.class, "left_ultrasonic" );
