@@ -42,6 +42,7 @@ public class autonomous extends automethods {
 
 ////////////////////////////////////ROBOT  START////////////////////////////////////////////////////
     encoderDrive(.5, 12, 3);
+    imuHold(1);
     imuTurn(.3, 90);
     imuHold(1);
     strafeRight(0.5, 12, 3);
