@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
      double frontRightPower;
      double backRightPower;
 
+     double power;
+
 
      int armStart;
      int armTarget;
