@@ -17,23 +17,36 @@ public class RedWarehouse {
                 // Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15).setBotDimensions(12,13.5)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(90)))
-                                .addTemporalMarker(6500,() -> { /* mechanisms.moveIntake(0.7); */ })
-                                .addTemporalMarker(20000,() -> { /* mechanisms.moveIntake(0.7); */ })
-                                .lineToSplineHeading(new Pose2d(8,-24,0))
+                        drive.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
+                                .strafeTo(new Vector2d(6,-12)).turn(Math.toRadians(-90))
                                 .addDisplacementMarker(() -> {
-                                    /* timeout.reset();
-                                    mechanisms.rotateArm(1400,0.5);
-                                    while(mechanisms.armDC.getCurrentPosition() <= 1400 || timeout.milliseconds() <= 3000) {
+                                    /*
+                                        mechanisms.rotateArm(600,0.5);
+                                        while(mechanisms.armDC.getCurrentPosition() <= 600 && opModeisActive()) {
                                         mechanisms.maintainBalance();
-                                    } */
-                                }).waitSeconds(1.5)
-                                .addDisplacementMarker(() -> { /* mechanisms.releaseServoMove(0.6); */ }).waitSeconds(1)
-                                .addDisplacementMarker(() -> { /*mechanisms.reset(); */ }).splineTo(new Vector2d(8, -55), Math.toRadians(270))
-                                .splineTo(new Vector2d(36, -64),0).strafeTo(new Vector2d(47, -64)).waitSeconds(3)
-                                .addDisplacementMarker(() -> { /*mechanisms.reset(); */ }).strafeTo(new Vector2d(15,-64))
-                                .lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90))).waitSeconds(3)
-                                .splineTo(new Vector2d(45,-64),0)
+                                        }
+                                     */
+                                })
+                                .waitSeconds(3).addDisplacementMarker(() -> {
+                                    /*
+                                        mechanisms.releaseServoMove(0.5);
+                                     */
+                                 }).waitSeconds(1)
+                                //.lineToSplineHeading(new Pose2d(8,-24,0))
+                                //.addDisplacementMarker(() -> {
+                            //        /* timeout.reset();
+                              //      mechanisms.rotateArm(1400,0.5);
+                               //     while(mechanisms.armDC.getCurrentPosition() <= 1400 || timeout.milliseconds() <= 3000) {
+                               //         mechanisms.maintainBalance();
+                              //      }
+                              //  }).waitSeconds(1.5)
+                               // .addDisplacementMarker(() -> { /* mechanisms.releaseServoMove(0.6); */ }).waitSeconds(1)
+                               // .addDisplacementMarker(() -> { /*mechanisms.reset(); */ }).splineTo(new Vector2d(8, -55), Math.toRadians(270))
+                              //  .splineTo(new Vector2d(36, -64),0).strafeTo(new Vector2d(47, -64)).waitSeconds(3)
+                              //  .addDisplacementMarker(() -> { /*mechanisms.reset(); */ }).strafeTo(new Vector2d(15,-64))
+                              //  .lineToSplineHeading(new Pose2d(-11.5,-41,Math.toRadians(-90))).waitSeconds(3)
+                                .strafeTo(new Vector2d(6, -63))
+                                .strafeTo(new Vector2d(45,-64))
                                 .build())
                 .start();
     }

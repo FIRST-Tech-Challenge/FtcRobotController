@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="Blue Depot", group="Linear Opmode")
+@Autonomous(name="OG Blue Warehouse", group="Linear Opmode")
 
-public class blue_Depot extends LinearOpMode {
+public class og_blue_warehouse extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
@@ -72,7 +72,7 @@ public class blue_Depot extends LinearOpMode {
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        carouselDC.setDirection(DcMotor.Direction.FORWARD);
+        carouselDC.setDirection(DcMotor.Direction.REVERSE);
 
         //Set DC motors to run with encoder
         resetEncoders();
@@ -88,33 +88,9 @@ public class blue_Depot extends LinearOpMode {
 
         if(!opModeIsActive()) return;
 
-        releaseServoMove(0.65);
-        mecanumStrafe(13, 0, 0.5);
-        sleep(1000);
-        linearSlideMove(1800,0.8);
-        sleep(2000);
-        releaseServoMove(0.30);
-        sleep(500);
-        changeDirection();
-        mecanumStrafe(3,0,0.7);
-        sleep(500);
-        changeDirection();
-        linearSlideMove(0,1.0);
-        releaseServoMove(releaseServo.MAX_POSITION);
-        mecanumStrafe(32,90,0.7);
-        sleep(500);
-        changeDirection();
-        mecanumRotate(153,0.2);
-        sleep(500);
-        changeDirection();
-        mecanumStrafe(5.5,0,0.4);
-        sleep(500);
-        changeDirection();
-        carouselMove(0.5);
-        sleep(3000);
-        carouselMove(0.0);
-        mecanumStrafe(12.5,20,0.6);
-        sleep(3000);
+        mecanumStrafe(11,0,0.7);
+        mecanumRotate(80,0.5);
+        mecanumStrafe(30,0,0.7);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();

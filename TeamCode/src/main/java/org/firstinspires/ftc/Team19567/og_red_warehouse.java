@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="Blue Warehouse", group="Linear Opmode")
+@Autonomous(name="OG Red Warehouse", group="Linear Opmode")
 
-public class blue_Warehouse extends LinearOpMode {
+public class og_red_warehouse extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
@@ -72,7 +72,7 @@ public class blue_Warehouse extends LinearOpMode {
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        carouselDC.setDirection(DcMotor.Direction.REVERSE);
+        carouselDC.setDirection(DcMotor.Direction.FORWARD);
 
         //Set DC motors to run with encoder
         resetEncoders();
@@ -89,8 +89,13 @@ public class blue_Warehouse extends LinearOpMode {
         if(!opModeIsActive()) return;
 
         mecanumStrafe(11,0,0.7);
-        mecanumRotate(80,0.5);
+        sleep(1000);
+        changeDirection();
+        mecanumRotate(70,0.5);
+        sleep(2000);
+        changeDirection();
         mecanumStrafe(30,0,0.7);
+        sleep(3000);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();

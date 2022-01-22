@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="Red Warehouse", group="Linear Opmode")
+@Autonomous(name="OG Blue Depot", group="Linear Opmode")
 
-public class red_Warehouse extends LinearOpMode {
+public class og_blue_depot extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
@@ -88,13 +88,32 @@ public class red_Warehouse extends LinearOpMode {
 
         if(!opModeIsActive()) return;
 
-        mecanumStrafe(11,0,0.7);
+        releaseServoMove(0.65);
+        mecanumStrafe(13, 0, 0.5);
         sleep(1000);
-        changeDirection();
-        mecanumRotate(70,0.5);
+        linearSlideMove(1800,0.8);
         sleep(2000);
+        releaseServoMove(0.30);
+        sleep(500);
         changeDirection();
-        mecanumStrafe(30,0,0.7);
+        mecanumStrafe(3,0,0.7);
+        sleep(500);
+        changeDirection();
+        linearSlideMove(0,1.0);
+        releaseServoMove(releaseServo.MAX_POSITION);
+        mecanumStrafe(32,90,0.7);
+        sleep(500);
+        changeDirection();
+        mecanumRotate(153,0.2);
+        sleep(500);
+        changeDirection();
+        mecanumStrafe(5.5,0,0.4);
+        sleep(500);
+        changeDirection();
+        carouselMove(0.5);
+        sleep(3000);
+        carouselMove(0.0);
+        mecanumStrafe(12.5,20,0.6);
         sleep(3000);
 
         telemetry.addData("Status", "Path Complete");
