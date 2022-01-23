@@ -79,18 +79,19 @@ public class redDepot extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-38,-24)).turn(Math.toRadians(-90)).build();
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-30, -63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-34,-24)).turn(Math.toRadians(-96)).build();
 
-        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-42,-24)).turn(Math.toRadians(-90)).build();
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-30, -63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-30,-24)).turn(Math.toRadians(-96)).build();
 
-        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-32.5,-24)).turn(Math.toRadians(-90)).build();
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(-3)))
-                .strafeTo(new Vector2d(-62,52)).build();
-        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-62, 52,Math.toRadians(3)))
-                .strafeTo(new Vector2d(-60,36)).build();
+        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-20,-23)).turn(Math.toRadians(-96)).build();
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-35.2, -23, Math.toRadians(174)))
+                .strafeTo(new Vector2d(0,0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(0,22)).build();
+        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-3, 22, Math.toRadians(354)))
+                .strafeTo(new Vector2d(0,-8)).build();
+
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -145,8 +146,8 @@ public class redDepot extends LinearOpMode {
         mechanisms.rotateArm(0,0.1);
         mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(secondTrajectory);
-        mechanisms.rotateCarousel(-0.5);
-        sleep(2000);
+        mechanisms.rotateCarousel(0.4);
+        sleep(3000);
         mechanisms.rotateCarousel(0.0);
         chassis.followTrajectorySequence(thirdTrajectory);
 

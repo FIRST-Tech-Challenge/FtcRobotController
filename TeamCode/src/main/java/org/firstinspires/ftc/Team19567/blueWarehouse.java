@@ -82,8 +82,8 @@ public class blueWarehouse extends LinearOpMode {
         TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63, Math.toRadians(90)))
                 .strafeTo(new Vector2d(6,24)).turn(Math.toRadians(-93)).build();
         TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, 24, Math.toRadians(-3)))
-                .strafeTo(new Vector2d(6, -27.5))
-                .strafeTo(new Vector2d(-40,-27.5)).build();
+                .strafeTo(new Vector2d(6, -27.25))
+                .strafeTo(new Vector2d(-40,-27.25)).build();
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
             telemetry.addData("location",location);
@@ -96,19 +96,25 @@ public class blueWarehouse extends LinearOpMode {
 
         switch(location) {
             case ALLIANCE_FIRST: {
-                chosenTrajectorySequence = firstLevelSequence;
+                chosenTrajectorySequence = thirdLevelSequence;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = secondLevelSequence;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
-                chosenTrajectorySequence = thirdLevelSequence;
+                chosenTrajectorySequence = firstLevelSequence;
+                chosenArmPos = 750;
+                chosenArmSpeed = 0.2;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;

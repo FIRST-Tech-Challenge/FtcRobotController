@@ -58,6 +58,10 @@ public class Mechanisms {
         releaseServo.setPosition(Range.clip(pos,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION));
     }
 
+    public void balanceServoMove(double pos) {
+        balanceServo.setPosition(Range.clip(pos,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION));
+    }
+
     public void reset() {
         releaseServo.setPosition(0);
         carouselLeft.setPower(0);
