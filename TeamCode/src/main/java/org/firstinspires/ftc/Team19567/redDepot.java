@@ -38,6 +38,7 @@ public class redDepot extends LinearOpMode {
     private TrajectorySequence chosenTrajectorySequence;
     private int chosenArmPos = 600;
     private double chosenArmSpeed = 0.3;
+    private double chosenTrajectoryX = -20;
 
     @Override
     public void runOpMode() {
@@ -79,19 +80,14 @@ public class redDepot extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-30, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-34,-24)).turn(Math.toRadians(-96)).build();
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-34,-23)).turn(Math.toRadians(-96)).build();
 
-        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-30, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-30,-24)).turn(Math.toRadians(-96)).build();
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-30,-23)).turn(Math.toRadians(-96)).build();
 
         TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
                 .strafeTo(new Vector2d(-20,-23)).turn(Math.toRadians(-96)).build();
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-35.2, -23, Math.toRadians(174)))
-                .strafeTo(new Vector2d(0,0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(0,22)).build();
-        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-3, 22, Math.toRadians(354)))
-                .strafeTo(new Vector2d(0,-8)).build();
-
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -105,25 +101,28 @@ public class redDepot extends LinearOpMode {
 
         switch(location) {
             case ALLIANCE_FIRST: {
-                chosenTrajectorySequence = secondLevelSequence;
-                chosenArmPos = 700;
-                chosenArmSpeed = 0.25;
+                chosenTrajectorySequence = thirdLevelSequence;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.3;
+                chosenTrajectoryX = -20;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_SECOND: {
-                chosenTrajectorySequence = firstLevelSequence;
-                chosenArmPos = 650;
-                chosenArmSpeed = 0.2;
+                chosenTrajectorySequence = secondLevelSequence;
+                chosenArmPos = 770;
+                chosenArmSpeed = 0.25;
+                chosenTrajectoryX = -30;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
-                chosenTrajectorySequence = thirdLevelSequence;
-                chosenArmPos = 600;
-                chosenArmSpeed = 0.3;
+                chosenTrajectorySequence = firstLevelSequence;
+                chosenArmPos = 900;
+                chosenArmSpeed = 0.2;
+                chosenTrajectoryX = -34;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -133,6 +132,11 @@ public class redDepot extends LinearOpMode {
             }
         }
 
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX-15.2, -23, Math.toRadians(174)))
+                .strafeTo(new Vector2d(-15,0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-8,19)).build();
+        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-8, 19, Math.toRadians(354)))
+                .strafeTo(new Vector2d(-3,-10)).build();
+
         mechanisms.rotateArm(0);
         mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
@@ -140,11 +144,12 @@ public class redDepot extends LinearOpMode {
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
             mechanisms.maintainBalance();
         }
-        sleep(1000);
+        sleep(500);
         mechanisms.releaseServoMove(0.5);
         sleep(1000);
         mechanisms.rotateArm(0,0.1);
         mechanisms.releaseServoMove(1.0);
+        mechanisms.balanceServoMove(0.0);
         chassis.followTrajectorySequence(secondTrajectory);
         mechanisms.rotateCarousel(0.4);
         sleep(3000);
