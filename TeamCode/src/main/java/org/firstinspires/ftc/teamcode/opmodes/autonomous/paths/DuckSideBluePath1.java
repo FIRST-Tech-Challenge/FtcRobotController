@@ -71,10 +71,18 @@ public class DuckSideBluePath1 {
     public void createPath(){
 
         drive.setPoseEstimate(startPose);
+        telemetry.addLine("Start Pose");
+        telemetry.update();
 
         CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
+        telemetry.addLine("createCarousel");
+        telemetry.update();
         CreateWebCam createWebCam = new CreateWebCam(hwMap, "Webcam 1", dashboard, telemetry);
+        telemetry.addLine("createWebCam");
+        telemetry.update();
         CreateArm createArm = new CreateArm(hwMap, "arm", telemetry);
+        telemetry.addLine("createArm");
+        telemetry.update();
 
         createArm.createAuto();
 
