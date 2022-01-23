@@ -161,11 +161,6 @@ public class Autonothree extends LinearOpMode {
         this.robot.lift.setPower(power);
     }
 
-    private void exten(int target, double power){
-        this.robot.exten.setTargetPosition(target);
-        this.robot.exten.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.robot.exten.setPower(power);
-    }
 
     private void initVuforia() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();

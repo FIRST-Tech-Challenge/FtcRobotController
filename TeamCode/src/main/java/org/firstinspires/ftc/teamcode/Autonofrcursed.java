@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "yxorauto")
-public class Autono extends LinearOpMode {
+@Autonomous(name = "cursedautono")
+public class Autonofrcursed extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -39,9 +39,17 @@ public class Autono extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
+    private final int[] pos = {-375, -775, -1100};
+
+    volatile double Tpower;
+    volatile int Tsleep;
+    volatile int Tsleep2;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
+
         /*
         initVuforia();
         initTfod();
@@ -90,7 +98,8 @@ public class Autono extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        int DuckPos = 3;
+        int duckPos = 3;
+        /*
         // TensorFlow find duck
         if (tfod != null) {
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -108,51 +117,97 @@ public class Autono extends LinearOpMode {
                 telemetry.update();
             }
         }
-        /*
-        lift(-0.7, -100, 30);
-        goToWayPoint(-0.15, 0.45, 0, 0.7, 30, 0.01, 1);
-        setPower(0,0,0,0);
-        lift(-0.7, -2000, 30);
-        goToWayPoint(-0.15,0.65,0,0.5,30,0.01,1);
-        setPower(0,0,0,0);
-        robot.intakeUp.setPower(-1);
-        sleep(1500);
-        robot.intakeUp.setPower(0);
-        goToWayPoint(-0.15,0.3,-90,0.7,30,0.01,1);
-        setPower(0,0,0,0);
-        lift(0.7, 0, 15);
-
-         */
-        /*
-        goToWayPoint(-0.28, 0.7, 0, 2, 30, 0.01, 1);
-        setPower(0,0,0,0);
-        lift(-900, -0.3);
-        this.robot.intakeUp.setPower(0.7);
-        sleep(2500);
-        this.robot.intakeUp.setPower(0);
-        goToWayPoint(-1.9,0.38,-90,2,80,0.01,1);
-        goToWayPoint(-1.9,0.285,-90,0.5,30,0.002,1);
-        setPower(0,0,0,0);
-        this.robot.duck.setPower(-0.2);
-        sleep(3000);
-        this.robot.duck.setPower(0);
-        goToWayPoint(0.7,0.03,-90,2,30,0.005,1);
-        goToWayPoint(1.4,0.03,-90,2,30,0.005,1);
         */
-        goToWayPoint(-0.15, 0.15, 0, 10, 30, 0.005, 1);
-        lift(-375, -0.3);
-        goToWayPoint(-0.15, 0.47, 0, 10, 30, 0.005, 1);
-        this.robot.intakeUp.setPower(0.7);
-        sleep(2500);
-        this.robot.intakeUp.setPower(0);
-        goToWayPoint(-1.48, 0.17, -90, 10, 69, 0.005, 1);
+
+        // spin duck +
         this.robot.duck.setPower(-0.2);
-        lift(0, 0.3);
-        sleep(5000);
+        goToWayPoint(-0.5, 0.15, -53, 0.7, 30, 0.01, 1);
+        sleep(1500);
+        // spin duck -
+
+
+        // drive to team shipping hub +
+        lift(pos[duckPos-1],1);
+        if(duckPos == 1){
+
+        } else if(duckPos == 2){
+
+        } else {
+            goToWayPoint(0.4, 0.756, -53, 1, 30, 0.01, 1);
+        }
+        // drive to team shipping hub -
+
+
+        // score preloaded cube +
+        this.robot.intakeUp.setPower(1.0);
+        sleep(1500);
+        // score preloaded cube -
+
+
+        // drive to warehouse +
         this.robot.duck.setPower(0);
-        goToWayPoint(0.3, -0.01, -90, 10, 80, 0.005, 1);
-        goToWayPoint(1.1, -0.01, -90, 10, 80, 0.01, 1);
-        lift(0, 0.5);
+        this.robot.intakeUp.setPower(0);
+        goToWayPoint(0.3, 0.55, -53, 2.5, 30, 0.02, 3);
+        lift(-50,0.5);
+        goToWayPoint(1.6, -0.18, -90,   2.5, 77, 0.01, 1);
+        // drive to warehouse -
+
+
+        // pick up new cube +
+        this.robot.intakeUp.setPower(-1.0);
+        lift(50,0.3);
+        goToWayPoint(2.5, -0.18, -90,   0.7, 30, 0.03, 1);
+        sleep(1000);
+        // pick up new cube
+
+
+        // drive to team shipping hub +
+        goToWayPoint(1.4, -0.13, -90,   1, 30, 0.02, 1);
+        lift(pos[duckPos-1],1);
+        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
+        // drive to team shipping hub -
+
+
+        // score new cube +
+        this.robot.intakeUp.setPower(1.0);
+        sleep(1500);
+        // score new cube -
+
+
+        // drive to warehouse +
+        this.robot.intakeUp.setPower(0);
+        goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
+        lift(-50,0.3);
+        // drive to warehouse -
+
+
+        // pick up new cube +
+        this.robot.intakeUp.setPower(-1.0);
+        lift(50,0.3);
+        goToWayPoint(2.7, -0.18, -90,   0.7, 30, 0.03, 1);
+        sleep(1000);
+        // pick up new cube -
+
+
+        // drive to team shipping hub +
+        goToWayPoint(1.4, -0.18, -90,   1, 30, 0.02, 1);
+        lift(pos[duckPos-1],1);
+        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
+        // drive to team shipping hub -
+
+
+        // score new cube +
+        this.robot.intakeUp.setPower(1.0);
+        sleep(1500);
+        // score new cube -
+
+
+        // park in warehouse +
+        goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
+        lift(-50,0.7);
+        goToWayPoint(2.45, -0.18, -90,   1, 30, 0.03, 1);
+        // park in warehouse -
+
 
 
     }
@@ -176,6 +231,19 @@ public class Autono extends LinearOpMode {
         Thread.sleep(200);
 
     }
+   public void intake(double power, int sleep, int sleep2){
+        Tpower = power;
+        Tsleep = sleep;
+        Tsleep2 = sleep2;
+        Autonofrcursed thread = new Autonofrcursed();
+        thread.start();
+   }
+
+   public void run(){
+        sleep(Tsleep);
+        this.robot.intakeUp.setPower(Tpower);
+        sleep(Tsleep2);
+   }
 
     private void setPower(double frontLeft, double frontRight, double backLeft, double backRight){
         this.robot.leftFrontDrive.setPower(frontLeft);
@@ -189,7 +257,6 @@ public class Autono extends LinearOpMode {
         this.robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.robot.lift.setPower(power);
     }
-
 
     private void initVuforia() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
@@ -212,3 +279,4 @@ public class Autono extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
 }
+

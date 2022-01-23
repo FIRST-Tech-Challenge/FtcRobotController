@@ -86,13 +86,6 @@ public class FreightFrenzy extends LinearOpMode {
                 robot.lift.setPower(0);
             }
 
-            if(gamepad1.dpad_up){
-                robot.exten.setPower(0.7);
-            } else if(gamepad1.dpad_down){
-                robot.exten.setPower(-0.7);
-            } else{
-                robot.exten.setPower(0);
-            }
 
             if(gamepad1.b){
                 robot.duck.setPower(0.3);
@@ -112,8 +105,6 @@ public class FreightFrenzy extends LinearOpMode {
             telemetry.addData("Back Right", robot.rightRearDrive.getCurrentPosition());
 
             telemetry.addData("Arm", robot.lift.getCurrentPosition()); // 0 - 2235
-
-            telemetry.addData("Extend", robot.exten.getCurrentPosition());
 
             telemetry.update();
 

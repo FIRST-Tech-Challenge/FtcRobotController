@@ -112,38 +112,96 @@ public class Autonocursed extends LinearOpMode {
             }
         }
         */
-        this.robot.duck.setPower(-0.2);
-        goToWayPoint(-0.5, 0.15, -53, 1, 30, 0.005, 1);
-        sleep(1500);
 
+        // spin duck +
+        this.robot.duck.setPower(-0.2);
+        goToWayPoint(-0.5, 0.15, -53, 0.7, 30, 0.01, 1);
+        sleep(1500);
+        // spin duck -
+
+
+        // drive to team shipping hub +
         lift(pos[duckPos-1],1);
         if(duckPos == 1){
 
         } else if(duckPos == 2){
 
         } else {
-            goToWayPoint(0.373, 0.756, -53, 1, 30, 0.01, 1);
+            goToWayPoint(0.4, 0.756, -53, 1, 30, 0.01, 1);
         }
+        // drive to team shipping hub -
+
+
+        // score preloaded cube +
         this.robot.intakeUp.setPower(1.0);
         sleep(1500);
+        // score preloaded cube -
+
+
+        // drive to warehouse +
         this.robot.duck.setPower(0);
         this.robot.intakeUp.setPower(0);
+        goToWayPoint(0.3, 0.55, -53, 2.5, 30, 0.02, 3);
+        lift(-50,0.5);
+        goToWayPoint(1.6, -0.18, -90,   2.5, 77, 0.01, 1);
+        // drive to warehouse -
 
-        goToWayPoint(0.4, 0.1, -90, 1, 50, 0.05, 1);
-        lift(-50,0.3);
-        goToWayPoint(1.6, -0.05, -90,   1, 30, 0.01, 1);
+
+        // pick up new cube +
         this.robot.intakeUp.setPower(-1.0);
-        goToWayPoint(2.5, -0.05, -90,   0.7, 30, 0.01, 1);
-        goToWayPoint(1.4, -0.05, -90,   0.7, 30, 0.1, 1);
-        this.robot.intakeUp.setPower(0.0);
+        lift(50,0.3);
+        goToWayPoint(2.5, -0.18, -90,   0.7, 30, 0.03, 1);
+        sleep(1000);
+        // pick up new cube
+
+
+        // drive to team shipping hub +
+        goToWayPoint(1.4, -0.13, -90,   1, 30, 0.02, 1);
         lift(pos[duckPos-1],1);
-        goToWayPoint(1.2, 0.756, 30, 1, 80, 0.01, 1);
+        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
+        // drive to team shipping hub -
+
+
+        // score new cube +
         this.robot.intakeUp.setPower(1.0);
         sleep(1500);
+        // score new cube -
+
+
+        // drive to warehouse +
         this.robot.intakeUp.setPower(0);
-        goToWayPoint(1.4, -0.05, -90,   1, 30, 0.1, 1);
+        goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
         lift(-50,0.3);
-        
+        // drive to warehouse -
+
+
+        // pick up new cube +
+        this.robot.intakeUp.setPower(-1.0);
+        lift(50,0.3);
+        goToWayPoint(2.7, -0.18, -90,   0.7, 30, 0.03, 1);
+        sleep(1000);
+        // pick up new cube -
+
+
+        // drive to team shipping hub +
+        goToWayPoint(1.4, -0.18, -90,   1, 30, 0.02, 1);
+        lift(pos[duckPos-1],1);
+        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
+        // drive to team shipping hub -
+
+
+        // score new cube +
+        this.robot.intakeUp.setPower(1.0);
+        sleep(1500);
+        // score new cube -
+
+
+        // park in warehouse +
+        goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
+        lift(-50,0.7);
+        goToWayPoint(2.45, -0.18, -90,   1, 30, 0.03, 1);
+        // park in warehouse -
+
 
 
     }
@@ -187,23 +245,6 @@ public class Autonocursed extends LinearOpMode {
         this.robot.lift.setTargetPosition(target);
         this.robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.robot.lift.setPower(power);
-    }
-
-    private void extend(int target, double power){
-        this.robot.exten.setTargetPosition(target);
-        this.robot.exten.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.robot.exten.setPower(power);
-    }
-
-    private void liftnextend(int targetL, int targetE, double powerL, double powerE){
-        this.robot.exten.setTargetPosition(targetE);
-        this.robot.lift.setTargetPosition(targetL);
-
-        this.robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.robot.exten.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        this.robot.lift.setPower(powerL);
-        this.robot.exten.setPower(powerE);
     }
 
     private void initVuforia() {
