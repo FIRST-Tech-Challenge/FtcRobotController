@@ -174,7 +174,7 @@ public class automethods extends LinearOpMode {
     //////////////////////////turning////////////////////
     public void imuTurn(double speed, double angle) {
 
-        // keep looping while we are still active, and not on heading.
+        // keep looping while we are still actifve, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
             telemetry.update();
