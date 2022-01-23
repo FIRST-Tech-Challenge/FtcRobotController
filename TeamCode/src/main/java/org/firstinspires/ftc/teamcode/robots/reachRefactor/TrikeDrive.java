@@ -60,18 +60,18 @@ public abstract class TrikeDrive extends Drive {
                 Pose2d robotPoseDelta = TrikeKinematics.wheelToRobotVelocities(wheelDeltas, drive.getTrackWidth());
                 double finalHeadingDelta = useExternalHeading ? UtilMethods.wrapAngleRad(externalHeading - lastExternalHeading) : robotPoseDelta.getHeading();
                 poseEstimate = Kinematics.relativeOdometryUpdate(poseEstimate, new Pose2d(robotPoseDelta.vec(), finalHeadingDelta));
-
-                List<Double> wheelVelocities = drive.getWheelVelocities();
-                double externalHeadingVel = drive.getExternalHeadingVelocity();
-                if(wheelVelocities != null) {
-                    poseVelocity = TrikeKinematics.wheelToRobotVelocities(wheelVelocities, drive.getTrackWidth());
-                    if(useExternalHeading)
-                        poseVelocity = new Pose2d(poseVelocity.vec(), externalHeadingVel);
-                }
-
-                lastWheelPositions = wheelPositions;
-                lastExternalHeading = externalHeading;
             }
+
+            List<Double> wheelVelocities = drive.getWheelVelocities();
+            double externalHeadingVel = drive.getExternalHeadingVelocity();
+            if(wheelVelocities != null) {
+                poseVelocity = TrikeKinematics.wheelToRobotVelocities(wheelVelocities, drive.getTrackWidth());
+                if(useExternalHeading)
+                    poseVelocity = new Pose2d(poseVelocity.vec(), externalHeadingVel);
+            }
+
+            lastWheelPositions = wheelPositions;
+            lastExternalHeading = externalHeading;
         }
 
         @NonNull
@@ -95,17 +95,6 @@ public abstract class TrikeDrive extends Drive {
         }
     }
 
-    @NonNull
-    @Override
-    public Localizer getLocalizer() {
-        return localizer;
-    }
-
-    @Override
-    public void setLocalizer(@NonNull Localizer localizer) {
-        this.localizer = localizer;
-    }
-
     @Override
     public void setDriveSignal(@NonNull DriveSignal driveSignal) {
         List<Double> velocities = TrikeKinematics.robotToWheelVelocities(driveSignal.getVel(), trackWidth, getChassisLength());
@@ -121,13 +110,22 @@ public abstract class TrikeDrive extends Drive {
         setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
     }
 
+    @NonNull
+    @Override
+    public Localizer getLocalizer() {
+        return localizer;
+    }
+
+    @Override
+    public void setLocalizer(@NonNull Localizer localizer) {
+        this.localizer = localizer;
+    }
+
     public double getTrackWidth() {
         return trackWidth;
     }
 
-    public abstract void setMotorPowers(double left, double right, double swerve);
-
-    public abstract void setModuleOrientations(double swerve);
+    public abstract double getChassisLength();
 
     public abstract List<Double> getWheelPositions();
 
@@ -135,5 +133,7 @@ public abstract class TrikeDrive extends Drive {
 
     public abstract List<Double> getModuleOrientations();
 
-    public abstract double getChassisLength();
+    public abstract void setModuleOrientations(double swerve);
+
+    public abstract void setMotorPowers(double left, double right, double swerve);
 }

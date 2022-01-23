@@ -17,21 +17,21 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
 
     // distance measurements
-    public static double MIN_CHASSIS_LENGTH = 314;
+    public static double MIN_CHASSIS_LENGTH = 0.314;
     public static double MAX_CHASSIS_LENGTH = 0.9;
     public static double WHEEL_RADIUS = 0.1016;
     public static double TRACK_WIDTH = 0.308162;
     public static double GEAR_RATIO = 1;
 
     // constraints
-    public static final double TICKS_PER_REV = 1;
-    public static final double MAX_RPM = 1;
+    public static final double TICKS_PER_REV = 1120;
+    public static final double MAX_RPM = 150;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants
     //----------------------------------------------------------------------------------------------
 
-    public static double EPSILON = 0.001; // small value used for the approximately equal calculation in MathUtils
+    public static double EPSILON = 1e-6; // small value used for the approximately equal calculation in MathUtils
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
 
     public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
@@ -86,7 +86,6 @@ public class Constants {
     }
 
     public static double getMotorVelocityF(double ticksPerSecond) {
-        // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx
         return 32767 / ticksPerSecond;
     }
 }
