@@ -55,6 +55,7 @@ public class DriveTrain implements Subsystem {
     // state
     private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
     private double targetLinearVelocity, targetAngularVelocity, lastTargetAngularVelocity;
+    private double currentLinearVelocity, currentAngularVelocity;
 
     private double swivelAngle;
     private double chassisDistance, targetChassisDistance;
@@ -79,7 +80,7 @@ public class DriveTrain implements Subsystem {
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
     public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
     public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0,  0.3);
-    public static double MAX_ANGULAR_ACCELERATION = 1000;
+    public static double MAX_ANGULAR_ACCELERATION = 3e-4;
     public static double SWIVEL_PID_TOLERANCE = 10;
 
     public static double LINEAR_SMOOTHING_FACTOR = 0.2;
@@ -98,7 +99,7 @@ public class DriveTrain implements Subsystem {
 
     public DriveTrain(HardwareMap hardwareMap) {
         ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new ZeroPowerBehavior[]{ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE};
-        boolean[] REVERSED = {true, false, true, false, false};
+        boolean[] REVERSED = {true, false, false, true, false};
 
         // Motors
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
@@ -185,7 +186,7 @@ public class DriveTrain implements Subsystem {
 
     private double getMaintainChassisDistanceCorrection() {
         // returning 0 if distance sensor is likely blocked
-        if(chassisDistance < MIN_CHASSIS_LENGTH - 0.2)
+        if(chassisDistance < MIN_CHASSIS_LENGTH)
             return 0;
 
         // initialization of the PID calculator's output range, target value and multipliers
@@ -265,6 +266,10 @@ public class DriveTrain implements Subsystem {
         updatePose();
     }
 
+    double minChange(double a, double b, double wrap) {
+        return Math.IEEEremainder(a - b, wrap);
+    }
+
     /**
      * Drives the robot with the specified linear and angular velocities
      * @param linearVelocity the velocity, in m/s, to drive the robot
@@ -275,28 +280,29 @@ public class DriveTrain implements Subsystem {
 
         targetLinearVelocity = linearVelocity;
         targetAngularVelocity = angularVelocity;
-//
-//        if(smoothingEnabled) {
-//            targetLinearVelocity = linearSmoother.update(linearVelocity);
-//            targetAngularVelocity = angularSmoother.update(angularVelocity);
-//        }
 
-//        if(antiTippingEnabled) {
-//            angularAcceleration = (targetAngularVelocity - lastTargetAngularVelocity) / (loopTime * 1e-9);
-//            if(Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION) {
-//                targetAngularVelocity = lastTargetAngularVelocity + Math.signum(angularAcceleration) * (loopTime * 1e-9);
-//                targetLinearVelocity = (targetAngularVelocity / angularVelocity) * linearVelocity;
-//            }
-//        }
+        if(smoothingEnabled) {
+            targetLinearVelocity = linearSmoother.update(linearVelocity);
+            targetAngularVelocity = angularSmoother.update(angularVelocity);
+        }
 
-        // calculating target velocities and angles
-        targetFrontLeftVelocity = targetLinearVelocity - targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
-        targetFrontRightVelocity = targetLinearVelocity + targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
+        if(antiTippingEnabled) {
+            angularAcceleration = (targetAngularVelocity - lastTargetAngularVelocity) / (loopTime * 1e-9);
+            if(Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION) {
+                double newTargetAngularVelocity = lastTargetAngularVelocity + Math.signum(angularAcceleration) * MAX_ANGULAR_ACCELERATION * (loopTime * 1e-9);
+                targetAngularVelocity = newTargetAngularVelocity;
+            }
+            angularAcceleration = (targetAngularVelocity - lastTargetAngularVelocity) / (loopTime * 1e-9);
+        }
+
+        // calculating target velocities
+//        targetFrontLeftVelocity = targetLinearVelocity + targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
+//        targetFrontRightVelocity = targetLinearVelocity - targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
         targetMiddleVelocity = Math.hypot(targetLinearVelocity, chassisDistance * targetAngularVelocity);
 
         if(linearVelocity != 0 || angularVelocity != 0)
             targetSwivelAngle = UtilMethods.wrapAngle(90 + Math.toDegrees(
-                    Math.atan2(chassisDistance * angularVelocity, linearVelocity)
+                    Math.atan2(chassisDistance * targetAngularVelocity, targetLinearVelocity)
             ));
 
         // reversing the middle wheel if needing to rotate >90 degrees to target angle
@@ -311,6 +317,13 @@ public class DriveTrain implements Subsystem {
                 targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + 180);
             targetMiddleVelocity *= -1;
         }
+
+        // back-calculating current velocities
+        currentLinearVelocity = Math.abs(targetMiddleVelocity) * Math.cos(Math.toRadians(UtilMethods.wrapAngle(swivelAngle - 90)));
+        currentAngularVelocity = (Math.abs(targetMiddleVelocity) * Math.sin(Math.toRadians(UtilMethods.wrapAngle(swivelAngle - 90)))) / chassisDistance;
+
+        targetFrontLeftVelocity = currentLinearVelocity + currentAngularVelocity * (Constants.TRACK_WIDTH / 2);
+        targetFrontRightVelocity = currentLinearVelocity - currentAngularVelocity * (Constants.TRACK_WIDTH / 2);
 
         lastTargetAngularVelocity = targetAngularVelocity;
     }
@@ -444,6 +457,8 @@ public class DriveTrain implements Subsystem {
 
             telemetryMap.put("target linear velocity", targetLinearVelocity);
             telemetryMap.put("target angular velocity", targetAngularVelocity);
+            telemetryMap.put("current linear velocity", currentLinearVelocity);
+            telemetryMap.put("current angular velocity", currentAngularVelocity);
 
             telemetryMap.put("fl target velocity", targetFrontLeftVelocity);
             telemetryMap.put("fr target velocity", targetFrontRightVelocity);

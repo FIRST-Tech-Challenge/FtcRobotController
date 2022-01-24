@@ -48,6 +48,13 @@ public class Crane implements Subsystem {
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
 
+    // transfer
+    // shoulder: 1933,
+    // elbow: 1879,
+    // wrist: 1496,
+
+
+
 
     public Crane(HardwareMap hardwareMap) {
         shoulderServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
@@ -63,11 +70,11 @@ public class Crane implements Subsystem {
         MANUAL(0, 0, 0, 0, 0,0),
         SIZING(-90,0,70,0, 1.5f,0),
         HOME(0,0,0,0, 0,0),
-        LOWEST_TIER(75,130,20,0, 1.5f, 130),
-        MIDDLE_TIER(60,130,40,0, 1, 150),
-        HIGH_TIER(40, 130,70,0, 1, 170),
+        LOWEST_TIER(1043,975,1556,0, 1.5f, 130, true),
+        MIDDLE_TIER(1273,1233,1621,0, 1, 150, true),
+        HIGH_TIER(1391, 1128,1751,0, 1, 170, true),
         CAP(30, 140,0,0, 1, 170),
-        TRANSFER(-70,-60,-35,0, 2,0),
+        TRANSFER(1933,1879,1496,0, 2,0, true),
         //these articulations are meant to observe the motions and angles to check for belt skips
         VALIDATE_ELBOW90(0,90,90,0, .5f,0),
         VALIDATE_SHOULDER90(90,15,-90+15,0, .5f,0),
@@ -79,6 +86,7 @@ public class Crane implements Subsystem {
         public double turretAngle;
         public float toHomeTime;
         public int dumpPos;
+        public boolean rawValues;
 
         Articulation(int shoulderPos, int elbowPos, int wristPos, double turretAngle, float toHomeTime, int dumpPos){
             this.shoulderPos = shoulderPos;
@@ -87,6 +95,11 @@ public class Crane implements Subsystem {
             this.turretAngle = turretAngle;
             this.toHomeTime = toHomeTime;
             this.dumpPos = dumpPos;
+        }
+
+        Articulation(int shoulderPos, int elbowPos, int wristPos, double turretAngle, float toHomeTime, int dumpPos, boolean rawValues) {
+            this(shoulderPos, elbowPos, wristPos, turretAngle, toHomeTime, dumpPos);
+            this.rawValues = rawValues;
         }
     }
 
@@ -158,6 +171,12 @@ public class Crane implements Subsystem {
         return newpos;
     }
 
+    private double shoulderPositionToAngle(double targetAngle) {
+        double newpos = Range.clip(targetAngle,SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
+        newpos = (newpos - SHOULDER_HOME_PWM) / SHOULDER_PWM_PER_DEGREE;
+        return newpos;
+    }
+
 
     @Override
     public void stop(){
@@ -193,9 +212,15 @@ public class Crane implements Subsystem {
     }
 
     private void setTargetPositions(Articulation articulation) {
-        setShoulderTargetPos(articulation.shoulderPos);
-        setElbowTargetPos(articulation.elbowPos);
-        setWristTargetPos(articulation.wristPos);
+        if(articulation.rawValues) {
+            this.shoulderTargetPos = articulation.shoulderPos;
+            this.elbowTargetPos = articulation.elbowPos;
+            this.wristTargetPos = articulation.wristPos;
+        } else {
+            setShoulderTargetPos(articulation.shoulderPos);
+            setElbowTargetPos(articulation.elbowPos);
+            setWristTargetPos(articulation.wristPos);
+        }
 
         this.turretTargetPos = articulation.turretAngle;
 

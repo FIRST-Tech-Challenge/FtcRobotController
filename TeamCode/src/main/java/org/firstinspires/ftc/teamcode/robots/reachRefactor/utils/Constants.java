@@ -24,7 +24,7 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
 
     // distance measurements
-    public static double MIN_CHASSIS_LENGTH = 314;
+    public static double MIN_CHASSIS_LENGTH = 0.314;
     public static double MAX_CHASSIS_LENGTH = 0.9;
     public static double WHEEL_RADIUS = 0.1016;
     public static double TRACK_WIDTH = 0.308162;

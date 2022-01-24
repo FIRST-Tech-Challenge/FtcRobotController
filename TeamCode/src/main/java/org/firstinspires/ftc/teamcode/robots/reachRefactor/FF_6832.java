@@ -273,7 +273,7 @@ public class FF_6832 extends OpMode {
         initializing = false;
         robot.articulate(Robot.Articulation.START);
         robot.driveTrain.setMaintainChassisDistanceEnabled(true);
-        robot.driveTrain.setAntiTippingEnabled(false);
+        robot.driveTrain.setAntiTippingEnabled(true);
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[0]);
         auto.visionProvider.shutdownVision();
     }
@@ -281,7 +281,7 @@ public class FF_6832 extends OpMode {
 
     private void handleArcadeDrive() {
         forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
-        rotate = -gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
+        rotate = gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
     }
 
     private void handleTankDrive() {
@@ -289,7 +289,7 @@ public class FF_6832 extends OpMode {
         double right = -gamepad1.right_stick_y;
 
         forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
-        rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
+        rotate = -(right - left) / 2 * ROTATE_SCALING_FACTOR;
 
         if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
             rotate = 0;
@@ -345,18 +345,18 @@ public class FF_6832 extends OpMode {
 //            robot.crane.articulate(Crane.Articulation.HOME);
 
         if(stickyGamepad2.dpad_up)  //High Tier
-            robot.crane.articulate(Crane.Articulation.HOME);
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
         //robot.crane.articulate(Crane.Articulation.HIGH_TIER);
 
         if(stickyGamepad2.dpad_right)
-            robot.crane.articulate(Crane.Articulation.VALIDATE_TURRET90R);
-            //robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+//            robot.crane.articulate(Crane.Articulation.VALIDATE_TURRET90R);
+            robot.crane.articulate(Crane.Articulation.HOME);
 
         if(stickyGamepad2.dpad_down)
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
 
         if(stickyGamepad2.dpad_left)
-                robot.crane.articulate(Crane.Articulation.HIGH_TIER);
+                robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
 
         if(stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
@@ -508,7 +508,7 @@ public class FF_6832 extends OpMode {
         for(Map.Entry<String, Object> entry: telemetryMap.entrySet()) {
             String line = String.format("%s: %s", entry.getKey(), entry.getValue());
             telemetry.addLine(line);
-            packet.addLine(line);
+            packet.put(entry.getKey(), entry.getValue());
         }
 
         telemetry.addLine();

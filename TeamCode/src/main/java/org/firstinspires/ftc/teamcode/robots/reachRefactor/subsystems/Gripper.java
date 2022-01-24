@@ -31,9 +31,9 @@ public class Gripper implements Subsystem{
     public static int RELEASE = 1300;
     public static int OPEN = 1300;
     public static int PITCH_TRANSFER = 2250;
-    public static int PITCH_DOWN = 1100;
+    public static int PITCH_DOWN = 1154;
     public static int PITCH_INIT = 1854;
-    public static int PITCH_VERTICAL = 2100;
+    public static int PITCH_VERTICAL = 2037;
     private Articulation articulation;
     private Map<Gripper.Articulation, StateMachine> articulationMap;
 
