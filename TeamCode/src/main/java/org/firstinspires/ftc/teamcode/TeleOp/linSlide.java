@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Disabled
 public class linSlide extends LinearOpMode {
     private DcMotor motor = hardwareMap.dcMotor.get("motorFrontLeft");//hardware
     private ElapsedTime runtime;
@@ -116,7 +118,7 @@ public class linSlide extends LinearOpMode {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
-        //runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time, used for PID
+        runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time, used for PID
         toggle=0;
     }
 

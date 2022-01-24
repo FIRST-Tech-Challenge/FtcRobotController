@@ -55,6 +55,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Control", group="Linear Opmode")
+@Disabled
 public class drive extends LinearOpMode {
 
     // Declare OpMode members.
