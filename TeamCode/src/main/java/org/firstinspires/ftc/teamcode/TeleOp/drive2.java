@@ -23,6 +23,7 @@ public class drive2 extends LinearOpMode {
     }
 
     public double angleOfJoystick(double joystickY, double joystickX){ //getting angle of left joystick
+        /** all angles are in STANDARD POSITION**/
 
         double theta;
         if(joystickX==0 && joystickY>0){ //avoids tan90 error
@@ -49,10 +50,17 @@ public class drive2 extends LinearOpMode {
     public void move (double nearest45){ //movement method
         //using double to allow modification to trueAngle in the future
 
-        switch;
+/** !!!!!!!!!!!!! incomplete code !!!!!!!!!!!!!
 
+        if(nearest45 < 0.1){ // move right
+
+        }
+
+        if(nearest45 < (3.14159265/4)+0.3){ // move front-right
+
+        }
     }
-
+**/
     @Override
     public void runOpMode() throws InterruptedException {
 
