@@ -198,4 +198,4 @@ public class AutoSpinnerBlue extends LinearOpMode {
             sleep(25000); // Stop
         }
     }
-}
+} 
