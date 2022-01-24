@@ -68,8 +68,7 @@ public class FrenzyModeBase extends LinearOpMode {
                 handleSpecialActions();
                 if (robot.isIntakeRunning() && !robot.isIntakeBoxEmpty()){
                     if (!emergencyMode) {
-                        robot.smartStopIntake();//robot.smartStopIntake();
-//                        robot.stopIntake();
+                        robot.smartStopIntake();
                     }
                     else{
                         robot.stopIntake();
@@ -145,6 +144,7 @@ public class FrenzyModeBase extends LinearOpMode {
         depositToSharedHub();
         handleIntakeDropper();
         handleEmergency();
+        handleScoring();
     }
 
     protected void depositToTeamHub() {
@@ -249,6 +249,15 @@ public class FrenzyModeBase extends LinearOpMode {
             if (gamepad1.a) {
                 startGamepadLockout();
                 setEmergencyMode(!emergencyMode);
+            }
+        }
+    }
+
+    protected void handleScoring() {
+        if (isButtonPressable()) {
+            if (gamepad2.a) {
+                startGamepadLockout();
+                robot.scoreAndFold();
             }
         }
     }

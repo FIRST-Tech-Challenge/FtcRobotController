@@ -541,47 +541,55 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Drop to Team Hub Red", defaultReturn = "")
     public void dropToTeamHubRed() {
-        Log.d(TAG, "dropToTeamHubRed");
+        extendToTeamHubRed();
+        scoreAndFold();
+    }
+
+    public void extendToTeamHubRed() {
         liftToLevelMin(true, false);
-        Log.d(TAG, "Lift to min");
         turretToTeamHubRed();
-        Log.d(TAG, "turretToTeamHubRed rotated");
         liftToLevel3(true);
-        Log.d(TAG, "liftToLevel3 done");
-        dropElement();
-        delayWait(800);
-        Log.d(TAG, "dropElement done");
-        prepDropperToMove();
-        Log.d(TAG, "prepDropperToMove done");
-        resetLift();
-        Log.d(TAG, "Lift reset");
-        resetTurret();
     }
 
-
-    @BotAction(displayName = "Async Drop to TH RED", defaultReturn = "")
-    public void dropToTeamHubRedAsync() {
-        deliverToTeamHubAsync(AutoRoute.NAME_RED);
-    }
 
     @BotAction(displayName = "Drop to Team Hub Blue", defaultReturn = "")
     public void dropToTeamHubBlue() {
+        extendToTeamHubBlue();
+        scoreAndFold();
+    }
+
+    public void extendToTeamHubBlue() {
         liftToLevelMin(true, false);
         towerToTeamHubBlue();
         liftToLevel3(true);
+    }
+
+    public void scoreAndFold() {
         dropElement();
         delayWait(800);
         prepDropperToMove();
         resetLift();
+        resetTurret();
     }
 
-    @BotAction(displayName = "Async Drop to TH BLUE", defaultReturn = "")
-    public void dropToTeamHubBlueAsync() {
-        deliverToTeamHubAsync(AutoRoute.NAME_BLUE);
+    public void extendToTeamHubBlueAsync() {
+        deliverToTeamHubAsync(AutoRoute.NAME_BLUE, false);
     }
 
-    protected void deliverToTeamHubAsync(String opModeSide){
-        FrenzyLift asyncLift = new FrenzyLift(this, opModeSide, FrenzyLiftMode.TeamHub);
+    public void scoreToTeamHubBlueAsync() {
+        deliverToTeamHubAsync(AutoRoute.NAME_BLUE, true);
+    }
+
+    public void extendToTeamHubRedAsync() {
+        deliverToTeamHubAsync(AutoRoute.NAME_RED, false);
+    }
+
+    public void scoreToTeamHubRedAsync() {
+        deliverToTeamHubAsync(AutoRoute.NAME_RED, true);
+    }
+
+    protected void deliverToTeamHubAsync(String opModeSide, boolean score){
+        FrenzyLift asyncLift = new FrenzyLift(this, opModeSide, FrenzyLiftMode.TeamHub, score);
         Thread liftTread = new Thread(asyncLift);
         liftTread.start();
     }
@@ -619,7 +627,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
 
     protected void deliverToSharedHubAsync(String opModeSide){
-        FrenzyLift asyncLift = new FrenzyLift(this, opModeSide, FrenzyLiftMode.SharedHub);
+        FrenzyLift asyncLift = new FrenzyLift(this, opModeSide, FrenzyLiftMode.SharedHub, false);
         Thread liftTread = new Thread(asyncLift);
         liftTread.start();
     }

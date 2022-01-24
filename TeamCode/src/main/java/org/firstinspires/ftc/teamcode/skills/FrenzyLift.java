@@ -8,7 +8,8 @@ public class FrenzyLift implements Runnable {
     private FrenzyBot frenzyBot;
     private FrenzyLiftMode liftMode;
     private String opModeSide = AutoRoute.NAME_RED;
-    public FrenzyLift(FrenzyBot bot, String side, FrenzyLiftMode mode){
+    private boolean score = false; //extend or score
+    public FrenzyLift(FrenzyBot bot, String side, FrenzyLiftMode mode, boolean score){
         frenzyBot = bot;
         opModeSide = side;
         liftMode = mode;
@@ -16,26 +17,29 @@ public class FrenzyLift implements Runnable {
 
     @Override
     public void run() {
-        if (liftMode.equals(FrenzyLiftMode.SharedHub)){
-            switch (opModeSide) {
-                case AutoRoute.NAME_BLUE:
-                    frenzyBot.dropToSharedHubBlue();
-                    break;
+        if (score) {
+            frenzyBot.scoreAndFold();
+        } else {
+            if (liftMode.equals(FrenzyLiftMode.SharedHub)) {
+                switch (opModeSide) {
+                    case AutoRoute.NAME_BLUE:
+                        frenzyBot.extendToTeamHubBlue();
+                        break;
 
-                case AutoRoute.NAME_RED:
-                    frenzyBot.dropToSharedHubRed();
-                    break;
-            }
-        }
-        else if (liftMode.equals(FrenzyLiftMode.TeamHub)) {
-            switch (opModeSide) {
-                case AutoRoute.NAME_BLUE:
-                    frenzyBot.dropToTeamHubBlue();
-                    break;
+                    case AutoRoute.NAME_RED:
+                        frenzyBot.extendToTeamHubRed();
+                        break;
+                }
+            } else if (liftMode.equals(FrenzyLiftMode.TeamHub)) {
+                switch (opModeSide) {
+                    case AutoRoute.NAME_BLUE:
+                        frenzyBot.dropToTeamHubBlue();
+                        break;
 
-                case AutoRoute.NAME_RED:
-                    frenzyBot.dropToTeamHubRed();
-                    break;
+                    case AutoRoute.NAME_RED:
+                        frenzyBot.dropToTeamHubRed();
+                        break;
+                }
             }
         }
     }

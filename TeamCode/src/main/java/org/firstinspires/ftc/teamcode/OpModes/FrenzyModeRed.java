@@ -10,7 +10,7 @@ public class FrenzyModeRed extends FrenzyModeBase{
         if (isButtonPressable()) {
             if (gamepad2.x) {
                 startGamepadLockout();
-                robot.dropToTeamHubRed();
+                robot.extendToTeamHubRed();
             }
         }
     }
