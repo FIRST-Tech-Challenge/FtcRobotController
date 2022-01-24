@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
 public class AutoLift {
     // 5 1/4 inch from back of robot to rim
     public enum Positions {
-        INTAKING(0, 0.76D, false),
-        SAFE(1375, 0.716D, false),
-        CATAPULT(2000, 0D, true),
-        TOP(2880, 0.3D, true),
-        MIDDLE(1850, 0.3D, true),
-        BOTTOM(1375, 0.25D, true),
-        TSE(4500, 0.716D, true);
+        INTAKING(-0, 0.76D, false),
+        SAFE(-1375, 0.716D, false),
+        CATAPULT(-2400, 0D, true),
+        TOP(-2880, 0.3D, true),
+        MIDDLE(-1850, 0.3D, true),
+        BOTTOM(-1375, 0.25D, true),
+        TSE(-4500, 0.716D, true);
 
         public final double armPos;
         public final int motorPos;
@@ -98,7 +98,7 @@ public class AutoLift {
         if (Objects.requireNonNull(position) != lastPosition) state = MovementStates.START;
         switch (state) {
             case START:
-                armServo.setPosition(0.716D);
+                armServo.setPosition(Positions.TSE.armPos);
                 state = MovementStates.LIFT_MOVEMENT;
                 if (lastPosition != null) {
                     liftMotor.setTargetPosition(position.motorPos);
@@ -125,7 +125,7 @@ public class AutoLift {
                         }
                     }
                 } else if (position == Positions.INTAKING) {
-                    eventThread.addEvent(new RunListenerOnceEvent(() -> armServo.setPosition(0.76D)) {
+                    eventThread.addEvent(new RunListenerOnceEvent(() -> armServo.setPosition(Positions.INTAKING.armPos)) {
                         @Override
                         public boolean shouldRun() {
                             return liftMotor.getCurrentPosition() <= 5;
