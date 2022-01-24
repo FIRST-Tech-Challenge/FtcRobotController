@@ -8,12 +8,12 @@ import java.util.Date;
 @Autonomous(name="Testing CV")
 public class TestingCV extends LinearOpMode {
 
-    FreightFrenzyComputerVisionShippingElementReversion CV;
+    FreightFrenzyComputerVisionFindDuck CV;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        CV = new FreightFrenzyComputerVisionShippingElementReversion(hardwareMap, telemetry);
-        FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        CV = new FreightFrenzyComputerVisionFindDuck(hardwareMap, telemetry);
+        FreightFrenzyComputerVisionFindDuck.SkystoneDeterminationPipeline.DuckPosition duckLocation = null;
 
         waitForStart();
 
@@ -22,13 +22,13 @@ public class TestingCV extends LinearOpMode {
 
         while (time < 200 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
-            freightLocation = analyze();
+            duckLocation = analyze();
 
-            telemetry.addData("Position", freightLocation);
+            telemetry.addData("Position", duckLocation);
             telemetry.update();
         }
     }
-    public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition analyze() {
+    public FreightFrenzyComputerVisionFindDuck.SkystoneDeterminationPipeline.DuckPosition analyze() {
         return CV.pipeline.position;
     }
 
