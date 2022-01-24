@@ -69,7 +69,6 @@ public class ContourPipeline extends OpenCvPipeline {
 
     private final Object sync = new Object();
 
-    Map<Levels.TSELocation, Integer> levels = new HashMap<>();
 
     public ContourPipeline(Telemetry t) {
 
@@ -86,13 +85,6 @@ public class ContourPipeline extends OpenCvPipeline {
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
 
-        levels.put(Levels.TSELocation.NONE,0);
-
-        levels.put(Levels.TSELocation.LEVEL_1,1);
-        levels.put(Levels.TSELocation.LEVEL_2,2);
-        levels.put(Levels.TSELocation.LEVEL_3,3);
-
-        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
     }
 
 
@@ -246,6 +238,6 @@ public class ContourPipeline extends OpenCvPipeline {
     }
     public int getTSELevel(){
         //telemetry.addData("getTSELevel", location);
-        return levels.get(Levels.getInstance().getTSELocation());
+        return Levels.getInstance().getTSELevel();
     }
 }
