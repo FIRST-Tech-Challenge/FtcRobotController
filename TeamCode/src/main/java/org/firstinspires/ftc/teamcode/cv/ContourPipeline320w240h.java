@@ -22,14 +22,6 @@ import java.util.List;
 
 public class ContourPipeline320w240h extends OpenCvPipeline {
 
-    public enum TSELocation {
-        LEVEL_3,
-        LEVEL_2,
-        LEVEL_1,
-        NONE
-    }
-    org.firstinspires.ftc.teamcode.cv.sims.ContourPipeline320w240hSim.TSELocation location;
-
     // Green                        Y      Cr     Cb    (Do not change Y)
     // use this picture for you own color https://raw.githubusercontent.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/main/7e8azlgi.bmp
     Scalar GREEN = new Scalar(0, 0, 255);
@@ -171,10 +163,10 @@ public class ContourPipeline320w240h extends OpenCvPipeline {
         }
 
         // Display Data
-        Imgproc.putText(input, "Location" + location, new Point(10, 20), 0, 0.35, new Scalar(255, 255, 255), 1);
+        Imgproc.putText(input, "Location" + Levels.getInstance().getTSELocation(), new Point(10, 20), 0, 0.35, new Scalar(255, 255, 255), 1);
         Imgproc.putText(input, "Area: " + getRectArea() + " Midpoint: " + getRectMidpointXY().x + " , " + getRectMidpointXY().y, new Point(10, 10), 0, 0.35, new Scalar(255, 255, 255), 1);
 
-        telemetry.addData("level", location);
+        telemetry.addData("level", Levels.getInstance().getTSELevel());
         telemetry.update();
 
         return processed;
@@ -216,7 +208,11 @@ public class ContourPipeline320w240h extends OpenCvPipeline {
         return maxRect.area();
     }
 
-    public org.firstinspires.ftc.teamcode.cv.sims.ContourPipeline320w240hSim.TSELocation getLocation() {
-        return location;
+    public Levels.TSELocation getLocation() {
+        return Levels.getInstance().getTSELocation();
+    }
+    public int getTSELevel(){
+        //telemetry.addData("getTSELevel", location);
+        return Levels.getInstance().getTSELevel();
     }
 }
