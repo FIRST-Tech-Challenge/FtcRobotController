@@ -55,6 +55,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Control", group="Linear Opmode")
+@Disabled
 public class drive extends LinearOpMode {
 
     // Declare OpMode members.
@@ -69,9 +70,9 @@ public class drive extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);//gets time, used for PID
     ElapsedTime timing = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);//gets time, used for a second PID
 
-    static double kP=0.8; //tuning factor, change these numbers around if the PID overshoots or is too slow
-    static double kI=0.8;
-    static double kD=0.5;
+    static double kP=0.02; //tuning factor, change these numbers around if the PID overshoots or is too slow
+    static double kI=0.001;
+    static double kD=0.003;
 
     static double skP=0.8; //tuning factor for servo
     static double skI=0.8;
