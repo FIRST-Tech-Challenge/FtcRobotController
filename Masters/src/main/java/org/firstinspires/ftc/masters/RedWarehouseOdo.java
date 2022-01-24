@@ -15,7 +15,7 @@ import java.util.Date;
 @Autonomous(name="Red - Warehouse (Park City)", group = "competition")
 public class RedWarehouseOdo extends LinearOpMode {
 
-    final int SERVO_DROP_PAUSE=900;
+    final int SERVO_DROP_PAUSE=800;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,12 +31,14 @@ public class RedWarehouseOdo extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-14, -46))
+                .strafeTo(new Vector2d(-13, -45))
                 .build();
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
+                .addTemporalMarker(1,()->{drive.retract();})
                 .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
                 .build();
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
 
@@ -72,10 +74,10 @@ public class RedWarehouseOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition.LEFT){
-            drive.pause(300);
-        }
-       drive.retract();
+//        if (freightLocation== FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+//            drive.pause(300);
+//        }
+      // drive.retract();
 
         drive.followTrajectorySequence(fromHubToWarehouse);
 
@@ -92,12 +94,13 @@ public class RedWarehouseOdo extends LinearOpMode {
             TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
 
                     .lineTo(new Vector2d(15, -66))
+                    .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
                     .addDisplacementMarker(() -> {
                         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                     })
-                    .splineToSplineHeading(new Pose2d(-11, -49, Math.toRadians(90)), Math.toRadians(90))
+                    .splineToSplineHeading(new Pose2d(-10, -47, Math.toRadians(90)), Math.toRadians(90))
                     .build();
             drive.followTrajectorySequence(trajSeq3);
 
@@ -112,12 +115,15 @@ public class RedWarehouseOdo extends LinearOpMode {
                  trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
 
                          .lineTo(new Vector2d(15, -66))
+                         .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
+
                          .addDisplacementMarker(() -> {
                              drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                              drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                              drive.linearSlideMotor.setPower(.8);
                          })
-                         .splineToSplineHeading(new Pose2d(-11, -48, Math.toRadians(90)), Math.toRadians(90))
+                         .splineToSplineHeading(new Pose2d(-10, -47, Math.toRadians(90)), Math.toRadians(90))
+
                          .build();
                  drive.followTrajectorySequence(trajSeq3);
 

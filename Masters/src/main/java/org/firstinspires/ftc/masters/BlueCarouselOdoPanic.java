@@ -28,6 +28,7 @@ public class BlueCarouselOdoPanic extends LinearOpMode {
         Pose2d startPose = new Pose2d(new Vector2d(-35, 63), Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
 
