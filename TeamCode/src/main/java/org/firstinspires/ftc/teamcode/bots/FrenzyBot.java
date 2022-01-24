@@ -252,6 +252,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public void liftToLevelMin(boolean block, boolean dirDown){
+        if (dirDown == false){
+            intakeDropperReady();
+        }
         dropperTransportPosition();
         liftLocation = LIFT_MIN_EXTENSION;
         this.lift.setTargetPosition(LIFT_MIN_EXTENSION);
@@ -478,7 +481,6 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateIntake(0);
         intakeDropperUp();
         delayWait(500);
-        intakeDropperReady();
     }
 
     public void smartStopIntakeAsync() {
