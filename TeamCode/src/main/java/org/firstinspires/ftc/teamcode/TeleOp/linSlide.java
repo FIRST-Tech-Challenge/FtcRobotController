@@ -12,7 +12,7 @@ public class linSlide extends LinearOpMode {
     states state = states.LOW;
 
     private int toggle;//toggle for setting height
-    final double modeCD = 0.1;//these two values are for putting a cooldown on switching heights, just in case pushing down the button would make it switch heights more than 1 time
+    final double modeCD = 0.15;//these two values are for putting a cooldown on switching heights, just in case pushing down the button would make it switch heights more than 1 time
     double CDtimer = 0;
 
     //Encoder positions for each level on linear slide
@@ -27,7 +27,7 @@ public class linSlide extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            if(gamepad1.right_trigger==1&&(runtime.time()-CDtimer)>=modeCD){
+            if(gamepad1.right_bumper&&(runtime.time()-CDtimer)>=modeCD){
                 if(toggle==2){
                     toggle=-1;
                 }
@@ -44,6 +44,9 @@ public class linSlide extends LinearOpMode {
                         break;
                 }
                 CDtimer=runtime.time();
+            }
+            if(gamepad1.right_trigger==1){
+                state=states.toLOW;
             }
 
             switch (state) {
