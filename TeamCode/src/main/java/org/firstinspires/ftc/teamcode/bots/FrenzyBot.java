@@ -37,10 +37,10 @@ public class FrenzyBot extends FrenzyBaseBot {
     FreightFrenzyConfig frenzyConfig = null;
 
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = 2220;
-    public static int LIFT_LEVEL_TWO = 1945;
-    public static int LIFT_LEVEL_ONE = 1720;
-    public static int LIFT_SHARED_HUB = 260;
+    public static int LIFT_LEVEL_THREE = 1880;
+    public static int LIFT_LEVEL_TWO = 1650;
+    public static int LIFT_LEVEL_ONE = 1380;
+    public static int LIFT_SHARED_HUB = 400;
     public static int LIFT_MIN_EXTENSION = 450;
     public static int LIFT_UNDER_EXTENTION = 0;
 
@@ -49,14 +49,13 @@ public class FrenzyBot extends FrenzyBaseBot {
     protected static int TURRET_POS_MAX_RIGHT = -728; //blue side team hub
     protected static int TURRET_POS_TEAMHUB_RED = 640;  //red side team hub
     protected static int TURRET_POS_TEAMHUB_BLUE = -620;  //red side team hub
-    protected static int TURRET_POS_SHAREDHUB_RED = -680;  //red side team hub
+    protected static int TURRET_POS_SHAREDHUB_RED = -634;  //red side team hub
     protected static int TURRET_POS_SHAREDHUB_BLUE = 700;  //red side team hub
     private static double TURRET_SPEED = 0.95;
     private static double TURRET_SPEED_LOW = 0.8;
 
     private boolean liftEmergencyMode = false; //if the lift is broken, operate with the intake
 
-    //New lift vals: TOP - 1755. MIDDLE -1482. LOW - 1282
 
     private int liftLocation = LIFT_UNDER_EXTENTION;
     private static double LIFT_SPEED = 0.95;
@@ -219,7 +218,8 @@ public class FrenzyBot extends FrenzyBaseBot {
             if (currentPos >= TURRET_POS_MAX_LEFT || currentPos <= TURRET_POS_MAX_RIGHT){
                 return;
             }
-            turret.setVelocity(MAX_VELOCITY_REV*velocity);
+            double turretVelocity = MAX_VELOCITY_REV*velocity/10;
+            turret.setVelocity(turretVelocity);
         }
     }
 
@@ -368,7 +368,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public void intakeDropperReady(){
         if (intakeDropperServo != null) {
-            intakeDropperServo.setPosition(0.8);
+            intakeDropperServo.setPosition(0.7);
         }
     }
 
@@ -397,8 +397,6 @@ public class FrenzyBot extends FrenzyBaseBot {
 
             }
         }
-
-
     }
 
     @BotAction(displayName = "Main Tower to BLUE shared hub", defaultReturn = "")
