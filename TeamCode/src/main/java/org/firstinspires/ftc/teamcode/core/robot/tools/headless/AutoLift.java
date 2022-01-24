@@ -18,12 +18,12 @@ import java.util.concurrent.TimeUnit;
 public class AutoLift {
     // 5 1/4 inch from back of robot to rim
     public enum Positions {
-        INTAKING(0, 0.76D, false),
-        SAFE(1375, 0.716D, false),
-        TOP(2880, 0.3D, true),
-        MIDDLE(1850, 0.3D, true),
-        BOTTOM(1375, 0.25D, true),
-        TSE(4500, 0.716D, true);
+        INTAKING(-0, 0.76D, false),
+        SAFE(-1375, 0.716D, false),
+        TOP(-2880, 0.3D, true),
+        MIDDLE(-1850, 0.3D, true),
+        BOTTOM(-1375, 0.25D, true),
+        TSE(-4500, 0.716D, true);
 
         public final double armPos;
         public final int motorPos;
