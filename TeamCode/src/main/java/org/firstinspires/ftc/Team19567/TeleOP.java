@@ -83,7 +83,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setDirection(DcMotor.Direction.REVERSE);
         balanceServo.setDirection(Servo.Direction.REVERSE);
 
-        releaseServoPos = releaseServo.MAX_POSITION;
+        releaseServoPos = 0.97;
         balanceServoPos = balanceServo.MIN_POSITION;
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
 
@@ -131,7 +131,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         final double leftBackSpeed = (r * Math.cos(angleDC) - gamepad1.right_stick_x)*acc;
         final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x)*acc;
         //INTAKE
-        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.5*gamepad1.right_trigger);
+        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.65*gamepad1.right_trigger);
         else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.7);
         else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
         else mechanisms.moveIntake(-0.065);
@@ -148,8 +148,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             mechanisms.rotateCarousel(0.0);
         }
         //ARM
-        if(gamepad1.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,1000);
-        else if(gamepad1.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*4,0,1000);
+        if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,1000);
+        else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*4,0,1000);
         if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,1000);
         if(gamepad1.x || gamepad2.x) {
             presetState = PRESETSTATE.ALLIANCE_FIRST;
@@ -168,10 +168,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             presetState = PRESETSTATE.GOING_DOWN;
         }
         if(presetState != PRESETSTATE.NO_PRESET) {
-            armPower = 0.4;
+            armPower = 0.23;
             switch(presetState) {
                 case ALLIANCE_FIRST: {
-                    armPower = 0.3;
+                    armPower = 0.17;
                     armPos = 870;
                     if(armDC.getCurrentPosition() >= 870) {
                         presetState = PRESETSTATE.NO_PRESET;
@@ -186,8 +186,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                     break;
                 }
                 case ALLIANCE_THIRD: {
-                    armPos = 600;
-                    if(armDC.getCurrentPosition() >= 600) {
+                    armPos = 610;
+                    if(armDC.getCurrentPosition() >= 610) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
                     break;
@@ -195,7 +195,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 case GOING_DOWN: {
                     armPower = 0.125;
                     armPos = 0;
-                    releaseServoPos = 1.0;
+                    releaseServoPos = 0.9;
                     if(armDC.getCurrentPosition() <= 5) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
@@ -208,7 +208,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else {
             armPower = 0.5;
         }
-
+// BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE
         balanceServoPos = Range.clip((armDC.getCurrentPosition()-50)/1150.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
         /* if(runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
         else if(presetState != PRESETSTATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
