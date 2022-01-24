@@ -70,8 +70,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
-        /* blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor"); */
+        //blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        //distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
 
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
 

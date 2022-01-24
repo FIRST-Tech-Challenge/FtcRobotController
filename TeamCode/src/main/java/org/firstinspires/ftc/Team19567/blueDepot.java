@@ -113,7 +113,7 @@ public class blueDepot extends LinearOpMode {
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = secondLevelSequence;
                 chosenArmPos = 750;
-                chosenArmSpeed = 0.25;
+                chosenArmSpeed = 0.2;
                 chosenTrajectoryX = -30;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
@@ -122,7 +122,7 @@ public class blueDepot extends LinearOpMode {
             case ALLIANCE_THIRD: {
                 chosenTrajectorySequence = firstLevelSequence;
                 chosenArmPos = 870;
-                chosenArmSpeed = 0.1;
+                chosenArmSpeed = 0.15;
                 chosenTrajectoryX = -32;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();

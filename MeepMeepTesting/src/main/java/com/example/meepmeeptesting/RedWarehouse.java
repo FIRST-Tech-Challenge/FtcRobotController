@@ -18,7 +18,7 @@ public class RedWarehouse {
                 .setConstraints(38.7, 30, 4.5836622, Math.toRadians(60), 14.2).setBotDimensions(13.2,16.603)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
-                                .strafeTo(new Vector2d(9,-24)).turn(Math.toRadians(-90)).back(3)
+                                .strafeTo(new Vector2d(0,-45)).turn(Math.toRadians(-150))
                                 .addDisplacementMarker(() -> {})
                                 .waitSeconds(2).addDisplacementMarker(() -> {})
                                 .strafeTo(new Vector2d(6, 27))

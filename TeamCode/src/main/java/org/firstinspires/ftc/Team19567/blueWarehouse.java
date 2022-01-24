@@ -31,6 +31,8 @@ public class blueWarehouse extends LinearOpMode {
     private TrajectorySequence chosenTrajectorySequence;
     private int chosenArmPos = 600;
     private double chosenArmSpeed = 0.3;
+    private double chosenTrajectoryX = -1;
+    private double chosenTrajectoryY = 39;
     private Mechanisms mechanisms = null;
 
     @Override
@@ -73,17 +75,15 @@ public class blueWarehouse extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63,Math.toRadians(90)))
-                .strafeTo(new Vector2d(9,24)).turn(Math.toRadians(-93)).back(3)
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63,Math.toRadians(270)))
+                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(-150))
                 .build();
-        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(9,24)).turn(Math.toRadians(-93)).back(1.5)
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(0,45)).turn(Math.toRadians(-150))
                 .build();
-        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(6,24)).turn(Math.toRadians(-93)).build();
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(6, 24, Math.toRadians(-3)))
-                .strafeTo(new Vector2d(6, -27.25))
-                .strafeTo(new Vector2d(-40,-27.25)).build();
+        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(-150)).strafeTo(new Vector2d(-1,39)).build();
+
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
             telemetry.addData("location",location);
@@ -97,6 +97,8 @@ public class blueWarehouse extends LinearOpMode {
         switch(location) {
             case ALLIANCE_FIRST: {
                 chosenTrajectorySequence = thirdLevelSequence;
+                chosenTrajectoryX = -1;
+                chosenTrajectoryY = -39;
                 chosenArmPos = 600;
                 chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","First Level Detected");
@@ -105,6 +107,8 @@ public class blueWarehouse extends LinearOpMode {
             }
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = secondLevelSequence;
+                chosenTrajectoryX = 0;
+                chosenTrajectoryY = -45;
                 chosenArmPos = 600;
                 chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","Second Level Detected");
@@ -113,6 +117,8 @@ public class blueWarehouse extends LinearOpMode {
             }
             case ALLIANCE_THIRD: {
                 chosenTrajectorySequence = firstLevelSequence;
+                chosenTrajectoryX = 2;
+                chosenTrajectoryY = -50;
                 chosenArmPos = 750;
                 chosenArmSpeed = 0.2;
                 telemetry.addData("OpenCV","Third Level Detected");
@@ -127,6 +133,10 @@ public class blueWarehouse extends LinearOpMode {
         telemetry.addData("Freight Level", "3");
         telemetry.update();
 
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX, chosenTrajectoryY, Math.toRadians(120)))
+                .strafeTo(new Vector2d(6, -27))
+                .strafeTo(new Vector2d(-40,-27)).build();
+
         mechanisms.rotateArm(0);
         mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
@@ -134,9 +144,9 @@ public class blueWarehouse extends LinearOpMode {
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
             mechanisms.maintainBalance();
         }
-        sleep(1000);
-        mechanisms.releaseServoMove(0.5);
-        sleep(1000);
+        sleep(500);
+        mechanisms.releaseServoMove(0.25);
+        sleep(1500);
         mechanisms.rotateArm(0,0.1);
         mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(secondTrajectory);
