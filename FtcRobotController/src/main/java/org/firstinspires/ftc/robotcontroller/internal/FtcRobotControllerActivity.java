@@ -133,7 +133,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@SuppressWarnings({"deprecation","WeakerAccess"})
+@SuppressWarnings({"WeakerAccess"})
 
 public class FtcRobotControllerActivity extends Activity
   {

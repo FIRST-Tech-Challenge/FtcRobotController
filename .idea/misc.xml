@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Code/FtcRobotController/FtcRobotController/src/main/res/layout/activity_ftc_controller.xml" value="0.18932748538011696" />
+      </map>
+    </option>
+  </component>
   <component name="EntryPointsManager">
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="com.qualcomm.robotcore.eventloop.opmode.TeleOp" />
