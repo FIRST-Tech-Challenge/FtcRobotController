@@ -12,7 +12,7 @@ public class driveAndLinslide extends LinearOpMode {
     private DcMotor motor = hardwareMap.dcMotor.get("motorFrontLeft");//hardware
     private ElapsedTime runtime;
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH};
-    linSlide.states state = linSlide.states.LOW;
+    states state = states.LOW;
 
     private int toggle;//toggle for setting height
     final double modeCD = 0.15;//these two values are for putting a cooldown on switching heights, just in case pushing down the button slightly too long would make it switch heights more than 1 time
@@ -76,45 +76,45 @@ public class driveAndLinslide extends LinearOpMode {
                 toggle+=1;
                 switch(toggle){
                     case 0:
-                        state= linSlide.states.toLOW;
+                        state= states.toLOW;
                         break;
                     case 1:
-                        state= linSlide.states.toMID;
+                        state= states.toMID;
                         break;
                     case 2:
-                        state = linSlide.states.toHIGH;
+                        state = states.toHIGH;
                         break;
                 }
                 CDtimer=runtime.time();
             }
             if(gamepad1.right_trigger==1){
-                state= linSlide.states.toLOW;
+                state= states.toLOW;
             }
 
             switch (state) {
                 case LOW:
                     if (motor.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
-                        state = linSlide.states.toLOW;
+                        state = states.toLOW;
                         break;
                     }
                     //code when low goes here
                     break;
                 case MID:
                     if (motor.getCurrentPosition() != mid) {
-                        state = linSlide.states.toMID;
+                        state = states.toMID;
                         break;
                     }
                     break;
                 case HIGH:
                     if (motor.getCurrentPosition() != high) {
-                        state = linSlide.states.toHIGH;
+                        state = states.toHIGH;
                         break;
                     }
                     break;
 
                 case toLOW:
                     if (motor.getCurrentPosition() == low) {
-                        state = linSlide.states.LOW;
+                        state = states.LOW;
                     } else {
                         //motor.setPower(PID(low,prevPos,prevTime));
                         motor.setTargetPosition(low);
@@ -123,7 +123,7 @@ public class driveAndLinslide extends LinearOpMode {
                     break;
                 case toMID:
                     if (motor.getCurrentPosition() == mid) {
-                        state = linSlide.states.MID;
+                        state = states.MID;
                     } else {
                         //motor.setPower(PID(mid,prevPos,prevTime));
                         motor.setTargetPosition(mid);
@@ -132,7 +132,7 @@ public class driveAndLinslide extends LinearOpMode {
                     break;
                 case toHIGH:
                     if (motor.getCurrentPosition() == high) {
-                        state = linSlide.states.HIGH;
+                        state = states.HIGH;
                     } else {
                         //motor.setPower(PID(high,prevPos,prevTime));
                         motor.setTargetPosition(high);
