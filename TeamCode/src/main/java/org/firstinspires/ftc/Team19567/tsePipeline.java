@@ -27,7 +27,7 @@ class tsePipeline extends OpenCvPipeline {
             new Point(3*margin+2*one_square,margin), new Point( 3*(margin+one_square),height-margin)
     );
 
-    private static double THRESHOLD = 0.075;
+    private static double THRESHOLD = 0.025;
 
     Telemetry telemetry;
 

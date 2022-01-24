@@ -47,6 +47,7 @@ public class redDepot extends LinearOpMode {
         armDC = hardwareMap.get(DcMotor.class, "armDC");
         carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
         carouselRight = hardwareMap.get(DcMotor.class, "carouselRight");
+        intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
@@ -81,7 +82,7 @@ public class redDepot extends LinearOpMode {
         });
 
         TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-34,-23)).turn(Math.toRadians(-96)).build();
+                .strafeTo(new Vector2d(-32,-23)).turn(Math.toRadians(-96)).build();
 
         TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
                 .strafeTo(new Vector2d(-30,-23)).turn(Math.toRadians(-96)).build();
@@ -121,8 +122,8 @@ public class redDepot extends LinearOpMode {
             case ALLIANCE_THIRD: {
                 chosenTrajectorySequence = firstLevelSequence;
                 chosenArmPos = 900;
-                chosenArmSpeed = 0.2;
-                chosenTrajectoryX = -34;
+                chosenArmSpeed = 0.1;
+                chosenTrajectoryX = -32;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -133,9 +134,11 @@ public class redDepot extends LinearOpMode {
         }
 
         TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX-15.2, -23, Math.toRadians(174)))
-                .strafeTo(new Vector2d(-15,0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-8,19)).build();
-        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-8, 19, Math.toRadians(354)))
-                .strafeTo(new Vector2d(-3,-10)).build();
+                .strafeTo(new Vector2d(-15+(34+chosenTrajectoryX),0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-8+(34+chosenTrajectoryX),16)).build();
+        //TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX-15.2, -23, Math.toRadians(174)))
+          //  .strafeTo(new Vector2d(-5,0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-15,19)).build();
+        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-8, 16, Math.toRadians(354)))
+                .strafeTo(new Vector2d(-3,-12)).build();
 
         mechanisms.rotateArm(0);
         mechanisms.releaseServoMove(1.0);
@@ -145,13 +148,13 @@ public class redDepot extends LinearOpMode {
             mechanisms.maintainBalance();
         }
         sleep(500);
-        mechanisms.releaseServoMove(0.5);
-        sleep(1000);
+        mechanisms.releaseServoMove(0.25);
+        sleep(1500);
         mechanisms.rotateArm(0,0.1);
         mechanisms.releaseServoMove(1.0);
         mechanisms.balanceServoMove(0.0);
         chassis.followTrajectorySequence(secondTrajectory);
-        mechanisms.rotateCarousel(0.4);
+        mechanisms.rotateCarousel(0.5);
         sleep(3000);
         mechanisms.rotateCarousel(0.0);
         chassis.followTrajectorySequence(thirdTrajectory);

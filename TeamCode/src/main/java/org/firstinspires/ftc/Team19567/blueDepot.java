@@ -38,6 +38,7 @@ public class blueDepot extends LinearOpMode {
     private TrajectorySequence chosenTrajectorySequence;
     private int chosenArmPos = 600;
     private double chosenArmSpeed = 0.3;
+    private double chosenTrajectoryX = -20;
 
     @Override
     public void runOpMode() {
@@ -80,18 +81,13 @@ public class blueDepot extends LinearOpMode {
         });
 
         TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-34,24)).turn(Math.toRadians(93)).build();
+                .strafeTo(new Vector2d(-32,23)).turn(Math.toRadians(93)).build();
 
         TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-30,24)).turn(Math.toRadians(93)).build();
+                .strafeTo(new Vector2d(-30,23)).turn(Math.toRadians(93)).build();
 
         TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-20,24)).turn(Math.toRadians(93)).build();
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-35.2, 24, Math.toRadians(183)))
-                .strafeTo(new Vector2d(-3,0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-3,-21)).build();
-        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-3, -21, Math.toRadians(3)))
-                .strafeTo(new Vector2d(-3,8)).build();
-
+                .strafeTo(new Vector2d(-20,23)).turn(Math.toRadians(93)).build();
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -109,6 +105,7 @@ public class blueDepot extends LinearOpMode {
                 chosenTrajectorySequence = thirdLevelSequence;
                 chosenArmPos = 600;
                 chosenArmSpeed = 0.3;
+                chosenTrajectoryX = -20;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -117,14 +114,16 @@ public class blueDepot extends LinearOpMode {
                 chosenTrajectorySequence = secondLevelSequence;
                 chosenArmPos = 750;
                 chosenArmSpeed = 0.25;
+                chosenTrajectoryX = -30;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
-                chosenTrajectorySequence = thirdLevelSequence;
-                chosenArmPos = 600;
-                chosenArmSpeed = 0.3;
+                chosenTrajectorySequence = firstLevelSequence;
+                chosenArmPos = 870;
+                chosenArmSpeed = 0.1;
+                chosenTrajectoryX = -32;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -134,6 +133,11 @@ public class blueDepot extends LinearOpMode {
             }
         }
 
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX-15.2, 23, Math.toRadians(183)))
+                .strafeTo(new Vector2d(-15+(30+chosenTrajectoryX),0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-8+(30+chosenTrajectoryX),-28)).build();
+        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-3, -28, Math.toRadians(3)))
+                .strafeTo(new Vector2d(-3,-2)).build();
+
         mechanisms.rotateArm(0);
         mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
@@ -142,7 +146,7 @@ public class blueDepot extends LinearOpMode {
             mechanisms.maintainBalance();
         }
         sleep(1000);
-        mechanisms.releaseServoMove(0.5);
+        mechanisms.releaseServoMove(0.75);
         sleep(1000);
         mechanisms.rotateArm(0,0.1);
         mechanisms.releaseServoMove(1.0);
