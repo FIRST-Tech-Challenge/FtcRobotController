@@ -97,7 +97,7 @@ public class AutoLift {
         if (Objects.requireNonNull(position) != lastPosition) state = MovementStates.START;
         switch (state) {
             case START:
-                armServo.setPosition(0.716D);
+                armServo.setPosition(Positions.SAFE.armPos);
                 state = MovementStates.LIFT_MOVEMENT;
                 if (lastPosition != null) {
                     liftMotor.setTargetPosition(position.motorPos);
@@ -124,7 +124,7 @@ public class AutoLift {
                         }
                     }
                 } else if (position == Positions.INTAKING) {
-                    eventThread.addEvent(new RunListenerOnceEvent(() -> armServo.setPosition(0.76D)) {
+                    eventThread.addEvent(new RunListenerOnceEvent(() -> armServo.setPosition(Positions.INTAKING.armPos)) {
                         @Override
                         public boolean shouldRun() {
                             return Math.abs(liftMotor.getCurrentPosition()) <= 5;
