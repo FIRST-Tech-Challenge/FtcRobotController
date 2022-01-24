@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
@@ -171,15 +172,11 @@ public class FrenzyBot extends FrenzyBaseBot {
 //        }
 
     }
-//    public double getIntakeVoltage(){
-//        VoltageSensor vs = hwMap.voltageSensor.get("intake");
-//        if (vs == null){
-//            return 0;
-//        }
-//        double voltage = vs.getVoltage();
-//        return voltage;
-//
-//    }
+    public double getIntakeCurrent(){
+        double curr = intake.getCurrent(CurrentUnit.AMPS);
+        return curr;
+
+    }
     @Override
     public void initDetectorThread(String side, LinearOpMode caller) {
         try {

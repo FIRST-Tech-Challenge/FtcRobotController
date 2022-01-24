@@ -103,7 +103,7 @@ public class FrenzyModeBase extends LinearOpMode {
         telemetry.addData("Heading Adjusted", "%.3f", odometry.getAdjustedCurrentHeading());
         telemetry.addData("Lift position", "%d", robot.getLiftPosition());
         telemetry.addData("Turret position", "%d", robot.getTurretPosition());
-//        telemetry.addData("Intake Voltage: ", robot.getIntakeVoltage());
+        telemetry.addData("Intake Current: ", robot.getIntakeCurrent());
         telemetry.update();
     }
 
