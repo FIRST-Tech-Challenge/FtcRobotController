@@ -34,12 +34,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx turret = null;
     private Servo dropperServo = null;
     private Servo intakeDropperServo = null;
-    private Servo tower = null;
 
     FreightFrenzyConfig frenzyConfig = null;
 
     private static final String TAG = "FrenzyBot";
-    public static int LIFT_LEVEL_THREE = 1880;
+    public static int LIFT_LEVEL_THREE = 1820;
     public static int LIFT_LEVEL_TWO = 1650;
     public static int LIFT_LEVEL_ONE = 1380;
     public static int LIFT_SHARED_HUB = 400;
@@ -431,32 +430,30 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Tower to hub from red warehouse", defaultReturn = "")
     public void towerToTeamHubFromAuto(){
-        if (tower != null) {
-            this.turret.setTargetPosition(-300);
-            this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
-        }
+        this.turret.setTargetPosition(-360);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from blue warehouse", defaultReturn = "")
     public void towerToTeamHubFromAutoWarehouseBlue(){
-        if (tower != null) {
-            tower.setPosition(0.62);
-        }
+        this.turret.setTargetPosition(-500);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from red ducks", defaultReturn = "")
     public void towerToTeamHubFromAutoRedDucks(){
-        if (tower != null) {
-            tower.setPosition(0.35);
-        }
+        this.turret.setTargetPosition(-500);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from blue ducks", defaultReturn = "")
     public void towerToTeamHubFromAutoBlueDucks(){
-        if (tower != null) {
-            tower.setPosition(0.35);
-        }
+        this.turret.setTargetPosition(-500);
+        this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     public void dropperTransportPosition(){
