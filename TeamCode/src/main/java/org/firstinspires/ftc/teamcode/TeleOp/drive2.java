@@ -47,10 +47,10 @@ public class drive2 extends LinearOpMode {
         return theta;
     }
 
-    public void move (double nearest45){ //movement method
+       public void move (double nearest45){ //movement method
         //using double to allow modification to trueAngle in the future
 
-/** !!!!!!!!!!!!! incomplete code !!!!!!!!!!!!!
+ /** !!!!!!!!!!!!! incomplete code !!!!!!!!!!!!! **/
 
         if(nearest45 < 0.1){ // move right
 
@@ -59,8 +59,11 @@ public class drive2 extends LinearOpMode {
         if(nearest45 < (3.14159265/4)+0.3){ // move front-right
 
         }
+        if(nearest45 < (2*(3.14159265/4))+0.3){ // move front
+
+        }
     }
-**/
+/**end of incomplete code **/
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -91,7 +94,5 @@ public class drive2 extends LinearOpMode {
             }
         }
     }
-
-}
 
 }
