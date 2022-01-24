@@ -435,7 +435,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Tower to hub from red warehouse", defaultReturn = "")
     public void towerToTeamHubFromAuto(){
         if (tower != null) {
-            tower.setPosition(0.39);
+            this.turret.setTargetPosition(-300);
+            this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
         }
     }
 
