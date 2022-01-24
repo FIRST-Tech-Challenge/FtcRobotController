@@ -49,7 +49,7 @@ public class AutoLift {
     protected Positions position = Positions.INTAKING;
     protected Positions lastPosition = position;
     protected MovementStates state = MovementStates.NONE;
-    protected AutoGrabber grabber;
+    @Nullable @javax.annotation.Nullable @org.jetbrains.annotations.Nullable @org.checkerframework.checker.nullness.qual.Nullable protected AutoGrabber grabber;
     private final ElapsedTime timer = new ElapsedTime();
     // fix this later
     /**
@@ -116,7 +116,7 @@ public class AutoLift {
                         armServo.setPosition(position.armPos);
                         if (!position.dumper) state = MovementStates.NONE;
                         else {
-                            if (position == Positions.TSE && Objects.nonNull(grabber)) {
+                            if (position == Positions.TSE && grabber != null) {
                                 grabber.open();
                             }
                             timer.reset();
