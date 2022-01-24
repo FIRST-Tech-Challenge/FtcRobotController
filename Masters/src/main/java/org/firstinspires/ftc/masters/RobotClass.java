@@ -41,9 +41,10 @@ public class RobotClass {
     RevColorSensorV3 colorSensorLeft;
     RevColorSensorV3 colorSensorRight;
 
-    public DistanceSensor distanceSensorLeft;
-    public DistanceSensor distanceSensorRight;
+//    public DistanceSensor distanceSensorLeft;
+//    public DistanceSensor distanceSensorRight;
     public DistanceSensor distanceSensorIntake;
+    public DistanceSensor distanceSensorTop;
 
     public DigitalChannel redLED, redLED2;
     public DigitalChannel greenLED, greenLED2;
@@ -78,6 +79,7 @@ public class RobotClass {
 //        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
 //        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+        distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
         redLED = (DigitalChannel) hardwareMap.get("red");
         redLED2 = (DigitalChannel) hardwareMap.get("red2");
         greenLED = (DigitalChannel) hardwareMap.get("green");
@@ -338,105 +340,105 @@ public class RobotClass {
         redLED2.setState(false);
         greenLED2.setState(true);
     }
-    public void distanceSensorStrafeLeft (double speed) {
-
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(speed);
-
-        while ((rightDistance - leftDistance) > 3) {
-            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-            telemetry.addData("Left sensor distance = ", leftDistance);
-            telemetry.addData("Right sensor distance = ", rightDistance);
-            telemetry.update();
-        }
-        stopMotors();
-    }
-
-    public void distanceSensorStrafeRight (double speed) {
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
-
-        while (leftDistance-rightDistance>3) {
-            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-            telemetry.addData("Left sensor distance = ", leftDistance);
-            telemetry.addData("Right sensor distance = ", rightDistance);
-            telemetry.update();
-        }
-        stopMotors();
-    }
-
-    public void distanceSensorForward (double speed) {
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
-
-        while ((leftDistance + rightDistance)/2 > 15) {
-            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-            telemetry.addData("Left sensor distance = ", leftDistance);
-            telemetry.addData("Right sensor distance = ", rightDistance);
-            telemetry.update();
-        }
-        stopMotors();
-    }
-
-    public void distanceSensorBackward (double speed) {
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        frontLeft.setPower(-speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(-speed);
-
-        while ((leftDistance+rightDistance)/2 <15) {
-            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-            telemetry.addData("Left sensor distance = ", leftDistance);
-            telemetry.addData("Right sensor distance = ", rightDistance);
-            telemetry.update();
-        }
-        stopMotors();
-    }
-
-    public void distanceSensorStuff (double speed) {
-
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-
-        if (leftDistance-rightDistance>3) {
-            distanceSensorStrafeRight(speed);
-        } else if (rightDistance-leftDistance>3) {
-            distanceSensorStrafeLeft(speed);
-        }
-
-        leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        if ((leftDistance+rightDistance)/2 > 15) {
-            distanceSensorForward(speed);
-        }
-        else if ((leftDistance+rightDistance)/2<13) {
-            distanceSensorBackward(speed);
-        }
-    }
+//    public void distanceSensorStrafeLeft (double speed) {
+//
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        frontLeft.setPower(speed);
+//        frontRight.setPower(-speed);
+//        backLeft.setPower(-speed);
+//        backRight.setPower(speed);
+//
+//        while ((rightDistance - leftDistance) > 3) {
+//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//            telemetry.addData("Left sensor distance = ", leftDistance);
+//            telemetry.addData("Right sensor distance = ", rightDistance);
+//            telemetry.update();
+//        }
+//        stopMotors();
+//    }
+//
+//    public void distanceSensorStrafeRight (double speed) {
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        frontLeft.setPower(-speed);
+//        frontRight.setPower(speed);
+//        backLeft.setPower(speed);
+//        backRight.setPower(-speed);
+//
+//        while (leftDistance-rightDistance>3) {
+//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//            telemetry.addData("Left sensor distance = ", leftDistance);
+//            telemetry.addData("Right sensor distance = ", rightDistance);
+//            telemetry.update();
+//        }
+//        stopMotors();
+//    }
+//
+//    public void distanceSensorForward (double speed) {
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        frontLeft.setPower(speed);
+//        frontRight.setPower(speed);
+//        backLeft.setPower(speed);
+//        backRight.setPower(speed);
+//
+//        while ((leftDistance + rightDistance)/2 > 15) {
+//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//            telemetry.addData("Left sensor distance = ", leftDistance);
+//            telemetry.addData("Right sensor distance = ", rightDistance);
+//            telemetry.update();
+//        }
+//        stopMotors();
+//    }
+//
+//    public void distanceSensorBackward (double speed) {
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        frontLeft.setPower(-speed);
+//        frontRight.setPower(-speed);
+//        backLeft.setPower(-speed);
+//        backRight.setPower(-speed);
+//
+//        while ((leftDistance+rightDistance)/2 <15) {
+//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//            telemetry.addData("Left sensor distance = ", leftDistance);
+//            telemetry.addData("Right sensor distance = ", rightDistance);
+//            telemetry.update();
+//        }
+//        stopMotors();
+//    }
+//
+//    public void distanceSensorStuff (double speed) {
+//
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//
+//        if (leftDistance-rightDistance>3) {
+//            distanceSensorStrafeRight(speed);
+//        } else if (rightDistance-leftDistance>3) {
+//            distanceSensorStrafeLeft(speed);
+//        }
+//
+//        leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        if ((leftDistance+rightDistance)/2 > 15) {
+//            distanceSensorForward(speed);
+//        }
+//        else if ((leftDistance+rightDistance)/2<13) {
+//            distanceSensorBackward(speed);
+//        }
+//    }
 
     public void parkRed () {
 
