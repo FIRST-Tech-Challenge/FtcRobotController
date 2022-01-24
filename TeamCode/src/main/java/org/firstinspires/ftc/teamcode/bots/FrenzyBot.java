@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -47,7 +48,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     protected static int TURRET_POS_CENTER = 0;
     protected static int TURRET_POS_MAX_LEFT = 840;  //red side team hub
     protected static int TURRET_POS_MAX_RIGHT = -728; //blue side team hub
-    protected static int TURRET_POS_TEAMHUB_RED = 640;  //red side team hub
+    protected static int TURRET_POS_TEAMHUB_RED = 610;  //red side team hub
     protected static int TURRET_POS_TEAMHUB_BLUE = -620;  //red side team hub
     protected static int TURRET_POS_SHAREDHUB_RED = -634;  //red side team hub
     protected static int TURRET_POS_SHAREDHUB_BLUE = 700;  //red side team hub
@@ -78,8 +79,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
-    private static double INTAKE_SPEED = -0.6;
-    private static double INTAKE_SPEED_REVERSE = 0.55;
+    private static double INTAKE_SPEED = -0.4;
+    private static double INTAKE_SPEED_REVERSE = 0.3;
 
     private boolean intakeRunning = false;
 
@@ -170,7 +171,15 @@ public class FrenzyBot extends FrenzyBaseBot {
 //        }
 
     }
-
+//    public double getIntakeVoltage(){
+//        VoltageSensor vs = hwMap.voltageSensor.get("intake");
+//        if (vs == null){
+//            return 0;
+//        }
+//        double voltage = vs.getVoltage();
+//        return voltage;
+//
+//    }
     @Override
     public void initDetectorThread(String side, LinearOpMode caller) {
         try {
