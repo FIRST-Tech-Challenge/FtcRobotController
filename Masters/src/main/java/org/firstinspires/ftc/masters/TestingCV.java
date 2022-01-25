@@ -13,7 +13,7 @@ public class TestingCV extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         CV = new FreightFrenzyComputerVisionFindDuck(hardwareMap, telemetry);
-        FreightFrenzyComputerVisionFindDuck.SkystoneDeterminationPipeline.DuckPosition duckLocation = null;
+        FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition duckLocation = null;
 
         waitForStart();
 
@@ -28,7 +28,7 @@ public class TestingCV extends LinearOpMode {
             telemetry.update();
         }
     }
-    public FreightFrenzyComputerVisionFindDuck.SkystoneDeterminationPipeline.DuckPosition analyze() {
+    public FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition analyze() {
         return CV.pipeline.position;
     }
 

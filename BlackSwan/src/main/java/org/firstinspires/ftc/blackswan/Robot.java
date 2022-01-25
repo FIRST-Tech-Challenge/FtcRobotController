@@ -27,7 +27,6 @@ public class Robot {
     LinearOpMode opMode;
     RevColorSensorV3 colorSensorLeft;
     RevColorSensorV3 colorSensorRight;
-    RevColorSensorV3 colorSensorBack;
 
 
     final int TICKS_PER_ROTATION = 537;
@@ -54,18 +53,18 @@ public class Robot {
         arm = hardwareMap.get(DcMotor.class, "arm");
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class, "colorSensorRight");
-        colorSensorBack = hardwareMap.get(RevColorSensorV3.class,"colorSensorBack");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+//        parameters.loggingEnabled = true;
+//        parameters.loggingTag = "IMU";
+//        parameters.accelerationIntegrationAlgorithm = null;//= new JustLoggingAccelerationIntegrator();
+        imu = IMUstorage.getImu(hardwareMap, telemetry);
 
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = null;//= new JustLoggingAccelerationIntegrator();
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        imu.initialize(parameters);
 
         this.opMode = opMode;
         this.telemetry = telemetry;

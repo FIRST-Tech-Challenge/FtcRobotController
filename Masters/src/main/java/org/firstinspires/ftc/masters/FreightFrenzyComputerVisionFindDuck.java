@@ -42,13 +42,14 @@ import java.util.ArrayList;
 
 public class FreightFrenzyComputerVisionFindDuck {
     OpenCvWebcam webcam;
-    public SkystoneDeterminationPipeline pipeline;
+    public DuckDeterminationPipeline pipeline;
 
     public FreightFrenzyComputerVisionFindDuck(HardwareMap hardwareMap, Telemetry telemetry){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline(telemetry);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamDuck"), cameraMonitorViewId);
+        pipeline = new DuckDeterminationPipeline(telemetry);
         webcam.setPipeline(pipeline);
+
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
@@ -91,9 +92,9 @@ public class FreightFrenzyComputerVisionFindDuck {
 
 
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
+    public static class DuckDeterminationPipeline extends OpenCvPipeline {
         Telemetry telemetry;
-        public SkystoneDeterminationPipeline(Telemetry telemetry) {
+        public DuckDeterminationPipeline(Telemetry telemetry) {
             this.telemetry = telemetry;
         }
 
@@ -226,7 +227,7 @@ public class FreightFrenzyComputerVisionFindDuck {
                 indexOfMaximumBAvg -= 11;
             }
 
-            position = SkystoneDeterminationPipeline.DuckPosition.values()[indexOfMaximumBAvg];
+            position = DuckDeterminationPipeline.DuckPosition.values()[indexOfMaximumBAvg];
 
             telemetry.addData("Position",position);
             telemetry.update();
