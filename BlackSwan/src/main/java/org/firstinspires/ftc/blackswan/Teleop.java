@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="TeleopRed")
 
-public class TeleopRed extends LinearOpMode {
+public class Teleop extends LinearOpMode {
     BNO055IMU imu;
     double MAX_SPEED = 0.9;
     Robot  robot;
