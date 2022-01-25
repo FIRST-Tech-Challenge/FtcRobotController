@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
+import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionFindDuck;
 import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionShippingElementReversion;
 import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -101,6 +102,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
     FreightFrenzyComputerVisionShippingElementReversion CV;
+    FreightFrenzyComputerVisionFindDuck duckCV;
 
     HardwareMap hardwareMap;
     Telemetry telemetry;
@@ -528,13 +530,61 @@ public class SampleMecanumDrive extends MecanumDrive {
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void findDuckRed(){
+
+        //strafe right
+        double speed = 0.35;
+
+        while (this.opmode.opModeIsActive() && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
+                analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.LEFT1
+                && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.CENTER){
+            frontLeft.setPower(speed);
+            frontRight.setPower(-speed);
+            backLeft.setPower(-speed);
+            backRight.setPower(speed);
+        }
+
+        intakeMotor.setPower(0.8);
+        forward(0.4, -1.5);
+
+        stopMotors();
+    }
+
+    public void findDuckBlue(){
+
+        //strafe right
+        double speed = 0.35;
+
+        while (this.opmode.opModeIsActive() && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.RIGHT2 &&
+                analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.RIGHT1
+                && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.CENTER){
+            frontLeft.setPower(-speed);
+            frontRight.setPower(speed);
+            backLeft.setPower(speed);
+            backRight.setPower(-speed);
+        }
+
+        intakeMotor.setPower(0.8);
+        forward(0.4, -1.5);
+
+        stopMotors();
+    }
+
     public void openCVInnitShenanigans(String color) {
         CV = new FreightFrenzyComputerVisionShippingElementReversion(hardwareMap, telemetry);
 
     }
 
+    public void openDuckCVInit(){
+        duckCV = new FreightFrenzyComputerVisionFindDuck(hardwareMap, telemetry);
+    }
+
     public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition analyze() {
         return CV.pipeline.position;
+    }
+
+    public FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition analyzeDuck() {
+        return duckCV.pipeline.position;
     }
 
 
@@ -585,6 +635,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void turn(double angle) {
+        turnAsync(angle);
         turnAsync(angle);
         waitForIdle();
     }

@@ -24,7 +24,9 @@ public class RedCarouselOdo extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
+        drive.openDuckCVInit();
         FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition duckPosition = null;
         freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(-35, -63), Math.toRadians(90));
@@ -61,6 +63,7 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.linearSlideMotor.setPower(.8);
 
         if (isStopRequested()) return;
+        duckPosition=drive.analyzeDuck();
 
 //      Deposit initial freight
         Pose2d hubPosition = new Pose2d(new Vector2d(-27.7, -37), Math.toRadians(45));
@@ -94,14 +97,17 @@ public class RedCarouselOdo extends LinearOpMode {
                 .strafeRight(2, SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         drive.followTrajectorySequence(getOffCarousel);
+
+        //find duck
+
+
+
         position = drive.getLocalizer().getPoseEstimate();
 
         TrajectorySequence acquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(-55,-64))
                 .build();
         drive.followTrajectorySequence(acquireDuck);
-
-        position = drive.getLocalizer().getPoseEstimate();
 
 //        boolean hasDuck = drive
 
