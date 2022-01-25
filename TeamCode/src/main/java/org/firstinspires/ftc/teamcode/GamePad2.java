@@ -47,7 +47,6 @@ import java.util.concurrent.TimeUnit;
      public void init() {
          robot.init(hardwareMap);
          armStart = robot.arm.getCurrentPosition();
-         elbowStart = robot.elbow.getCurrentPosition();
 
      }
 
@@ -55,7 +54,6 @@ import java.util.concurrent.TimeUnit;
      @Override
      public void loop() {
          telemetry.addData("Arm", "Current Position : %7d", robot.arm.getCurrentPosition());
-         telemetry.addData("Elbow", "Current Position : %7d", robot.elbow.getCurrentPosition());
          telemetry.update();
 
          /////Drive System//////
@@ -101,18 +99,7 @@ import java.util.concurrent.TimeUnit;
              robot.arm.setPower(0);
          }
  ///////////////////////elbow//////////////////////////////
-         if (gamepad1.right_bumper ) {// goes up
-             robot.elbow.setPower(0.5);
 
-
-         } else if (gamepad1.right_trigger > .5 && !robot.elbowstop.isPressed()) {// goes down
-             robot.elbow.setPower(-0.5);
-
-
-
-         } else {
-             robot.elbow.setPower(0);
-         }
 
 
  ///////////////////////////intake//////////////////
@@ -120,13 +107,15 @@ import java.util.concurrent.TimeUnit;
          if (gamepad1.dpad_down && System.currentTimeMillis() - lastPressed > 500) {
              lastPressed = System.currentTimeMillis();
              motorOn = !motorOn;
-             if (robot.intake.getPower() == 0) {
-                 robot.intake.setPower(1);
+             if (robot.intakeLeft.getPower() == 0 && robot.intakeRight.getPower() == 0) {
+                 robot.intakeLeft.setPower(1);
+                 robot.intakeLeft.setPower(1);
                  // robot.topIntake.setPower(1);
                  //robot.windmill.setPower(1);
 
              } else {
-                 robot.intake.setPower(0);
+                 robot.intakeRight.setPower(0);
+                 robot.intakeLeft.setPower(0);
                  //robot.topIntake.setPower(0);
                  //  robot.windmill.setPower(0);
 
@@ -164,18 +153,13 @@ import java.util.concurrent.TimeUnit;
          }
          if (gamepad1.circle) {
              robot.arm.setTargetPosition(armTarget);
-             robot.elbow.setTargetPosition(elbowTarget);
 
              robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-             robot.elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-             while (robot.arm.isBusy() && robot.elbow.isBusy()) {
+             while (robot.arm.isBusy()) {
                  telemetry.addData("ARM", "Running to %7d : %7d",
                          armTarget,
                          robot.arm.getCurrentPosition());
-                 telemetry.addData("ELBOW", "Running to %7d : %7d",
-                         elbowTarget,
-                         robot.elbow.getCurrentPosition());
                  telemetry.update();
 
 

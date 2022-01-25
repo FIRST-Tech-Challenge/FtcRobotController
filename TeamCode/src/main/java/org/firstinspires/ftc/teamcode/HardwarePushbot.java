@@ -30,8 +30,8 @@ public class HardwarePushbot {
 
 
     public static DcMotor arm = null;
-    public static DcMotor elbow = null;
-    public static DcMotor intake = null;
+    public static DcMotor intakeRight = null;
+    public static DcMotor intakeLeft = null;
 
 
 
@@ -44,7 +44,6 @@ public class HardwarePushbot {
     //public static DistanceSensor FrontDistance = null;
     //public static DigitalChannel CascadeTouch = null;  // Hardware Device Object
     public static TouchSensor armstop = null;
-    public static TouchSensor elbowstop = null;
     public static CRServo turntable = null;
 
     /*
@@ -73,8 +72,8 @@ public class HardwarePushbot {
         frontRight = hwMap.get(DcMotor.class, "frontRight");
         backRight = hwMap.get(DcMotor.class, "backRight");
         arm = hwMap.get(DcMotor.class, "arm");
-        elbow = hwMap.get(DcMotor.class, "elbow");
-        intake = hwMap.get(DcMotor.class, "intake");
+        intakeLeft = hwMap.get(DcMotor.class, "intakeLeft");
+        intakeLeft = hwMap.get(DcMotor.class, "intakeRight");
 
 
 
@@ -88,7 +87,6 @@ public class HardwarePushbot {
         //Define and Initialize Sensors///////////////////
 
         armstop = hwMap.get(TouchSensor.class,"armstop");
-        elbowstop = hwMap.get(TouchSensor.class, "elbowstop");
 
 
 
@@ -100,8 +98,8 @@ public class HardwarePushbot {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         arm.setDirection(DcMotor.Direction.REVERSE);
-        elbow.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.REVERSE);
+        intakeRight.setDirection(DcMotor.Direction.REVERSE);
+        intakeLeft.setDirection(DcMotor.Direction.REVERSE);
 
 
 
@@ -114,8 +112,8 @@ public class HardwarePushbot {
         frontRight.setPower(0);
         backRight.setPower(0);
         arm.setPower(0);
-        elbow.setPower(0);
-        intake.setPower(0);
+        intakeRight.setPower(0);
+        intakeLeft.setPower(0);
 
 
 
@@ -129,8 +127,8 @@ public class HardwarePushbot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
@@ -144,8 +142,8 @@ public class HardwarePushbot {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
