@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-public class ConceptTensorFlowObjectDetection extends LinearOpMode {
+public class Auto_ObjectDetection extends LinearOpMode {
 
     private static final String TFOD_MODEL_ASSET = "FreightFrenzy_DM.tflite";
     private static final String[] LABELS = {

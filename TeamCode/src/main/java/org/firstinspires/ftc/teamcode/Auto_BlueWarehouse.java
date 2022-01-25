@@ -6,14 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
-public class TestTwo extends LinearOpMode {
+public class Auto_BlueWarehouse extends LinearOpMode {
+    private ElapsedTime runtime = new ElapsedTime();
+
     public static double encoderMethod(double distance){
 //      384.5(PPM) = ~50cm = ~20in
 //      7.9(PPM) = 1cm
         double ppm = distance * 7.9;
-
         return ppm;
     }
 
@@ -27,8 +29,6 @@ public class TestTwo extends LinearOpMode {
         DcMotorEx frontR = hardwareMap.get(DcMotorEx.class, "rightFront");
         DcMotorEx backL  = hardwareMap.get(DcMotorEx.class, "leftRear");
         DcMotorEx backR = hardwareMap.get(DcMotorEx.class, "rightRear");
-//      DcMotor intakeL = hardwareMap.get(CRServo.class, "intakeL");
-//      DcMotor intakeR = hardwareMap.get(CRServo.class, "intakeR");
         DcMotorEx extender = hardwareMap.get(DcMotorEx.class, "extender");
         DcMotorEx arm = hardwareMap.get(DcMotorEx.class, "arm");
 
@@ -47,9 +47,6 @@ public class TestTwo extends LinearOpMode {
         backL.setDirection(DcMotorEx.Direction.FORWARD);
         frontR.setDirection(DcMotorEx.Direction.REVERSE);
         backR.setDirection(DcMotorEx.Direction.REVERSE);
-//      intakeL.setDirection(CRServo.Direction.REVERSE);
-//      CRServo intakeR.setDirection(CRServo.Direction.FORWARD);
-//      DcMotor duckWheel.setDirection(DcMotorSimple.Direction.REVERSE);
 //      Full revolution 384.5(PPR) = ~50cm = ~20in
 
         int power = 100;
@@ -57,40 +54,14 @@ public class TestTwo extends LinearOpMode {
 
 
         waitForStart();
-        while(!gamepad1.left_bumper) {
-            while (!gamepad1.right_bumper) {
-                sleep(100);
-                if (gamepad1.a) {
-                    power += 10;
-
-                }
-                if (gamepad1.b) {
-                    power -= 10;
-
-                }
-                if (gamepad1.x) {
-                    distance += 50;
-
-                }
-                if (gamepad1.y) {
-                    distance -= 50;
-
-                }
-                telemetry.addData("Target Position: ", distance);
-                telemetry.addData("Power: ", power);
-                telemetry.update();
-            }
-//      Run While the Autonomous Mode is Active
-
-
 //      Update telemetry status to show that it is running
         telemetry.addData("Status", "Running");
         telemetry.update();
 
-        frontL.setTargetPosition((int) encoderMethod(distance));
-        frontR.setTargetPosition((int) encoderMethod(distance));
-        backL.setTargetPosition((int) encoderMethod(distance));
-        backR.setTargetPosition((int) encoderMethod(distance));
+        frontL.setTargetPosition((int) Math.round(encoderMethod(distance)));
+        frontR.setTargetPosition((int) Math.round(encoderMethod(distance)));
+        backL.setTargetPosition((int) Math.round(encoderMethod(distance)));
+        backR.setTargetPosition((int) Math.round(encoderMethod(distance)));
 
         frontL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         frontR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -113,6 +84,5 @@ public class TestTwo extends LinearOpMode {
             telemetry.update();
         }
 //      Stop the Autonomous Mode after we finish parking
-        }
     }
 }
