@@ -27,11 +27,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     private static final String[] LABELS = {"Pink Team Marker"};
 
     /**
-     * The Vuforia licence Key
-     */
-    public static final String VUFORIA_KEY = "AWVWPbH/////AAABmbzQF0cF/EvRnE4ykZKAXvpbnJrPQs1aBJ2i7u5ADGzYU+x0dxqGlB/G8yCrcY4FP8cPEA1w+xTXCpbFDmlYcKMG6VL/6v+H0Es3H/1f8xpQG86nSCXKPLxEbYGHkBxAYSlxB0gueBpnxMYsURezlq2Q9e5Br5OIhY7gmZZNa3VPHupscQkrCrVdRMI9mPAbEjMBhVBWjVJEL0+u2tyvEQuK4tllgi8C7AKq5V5lFoKEQG0VD89xlgUfRZsDq89HToRXBOUE2mubPHUcplKiX+1EfB+801eEt+k7lLJ1VyfrXr2tjwyWPjafvTpnaf3C35ox0/TOPdak5pq2gXLpXzAxXc6+RH28m2572tYB58AN";
-
-    /**
      * A object to lock on to for the thread safety, used in _initVuforia
      */
     private static final Object VF_Lock = new Object();
@@ -80,7 +75,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.vuforiaLicenseKey = VuforiaKey.VUFORIA_KEY;
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
         //Waits for mutex to be available
