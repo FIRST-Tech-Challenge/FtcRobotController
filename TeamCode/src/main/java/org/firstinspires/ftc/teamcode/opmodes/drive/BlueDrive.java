@@ -48,7 +48,8 @@ import java.util.concurrent.TimeUnit;
  * This sample utilizes the SampleMecanumDriveCancelable.java class.
  */
 @TeleOp(group = "advanced")
-public class WillNotPutUsInTheNews extends LinearOpMode {
+public class BlueDrive extends LinearOpMode {
+    protected double power = 1;
     private final EventThread eventThread = new EventThread(() -> !isStopRequested());
     // Define 2 states, drive control or automatic control
     enum Mode {
@@ -87,7 +88,7 @@ public class WillNotPutUsInTheNews extends LinearOpMode {
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
 
         // will automatically run update method
-        new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
+        new ControllerCarousel(eventThread, hardwareMap, toolGamepad, power);
         final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
 
         Thread thread = new Thread(() -> {

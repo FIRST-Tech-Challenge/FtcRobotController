@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Blinker;
@@ -49,7 +50,9 @@ import java.util.concurrent.TimeUnit;
  * This sample utilizes the SampleMecanumDriveCancelable.java class.
  */
 @TeleOp(group = "advanced")
+@Disabled
 public class TeleOpAugmentedDriving extends LinearOpMode {
+    protected double power = -1;
     private final EventThread eventThread = new EventThread(this::opModeIsActive);
     // Define 2 states, drive control or automatic control
     enum Mode {
@@ -88,7 +91,7 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
 
         // will automatically run update method
-        new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
+        new ControllerCarousel(eventThread, hardwareMap, toolGamepad, power);
         final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
 
         Thread thread = new Thread(() -> {

@@ -30,7 +30,7 @@ public class AutoStorage extends LinearOpMode {
 
         EventThread eventThread = new EventThread(() -> !isStopRequested());
 
-        AutoCarousel carousel = new AutoCarousel(hardwareMap);
+        AutoCarousel carousel = new AutoCarousel(hardwareMap, multiplier);
         AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true, isRed);
