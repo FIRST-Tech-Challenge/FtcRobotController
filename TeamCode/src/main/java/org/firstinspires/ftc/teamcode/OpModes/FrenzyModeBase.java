@@ -131,7 +131,7 @@ public class FrenzyModeBase extends LinearOpMode {
             }
         } else {
             if (isManualDriveMode()){
-                drive = drive/2;
+                drive = drive*0.8;
             }
             robot.move(drive, turn);
         }
