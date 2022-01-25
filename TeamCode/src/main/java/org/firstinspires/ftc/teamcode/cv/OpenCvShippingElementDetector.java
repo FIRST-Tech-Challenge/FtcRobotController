@@ -214,8 +214,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         }
 
-        cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow(modelPath);
+
+        net = Dnn.readNetFromTensorflow(modelPath);
 
 
     }
