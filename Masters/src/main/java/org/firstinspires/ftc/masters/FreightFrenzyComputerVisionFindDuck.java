@@ -170,7 +170,7 @@ public class FreightFrenzyComputerVisionFindDuck {
             for (int i = 1; i < 33; i++) {
                 if (tempX == 520) {
                     tempX = 20;
-                    tempY += 100;
+                    tempY += REGION_HEIGHT;
                 } else {
                     tempX += 50;
                 }
