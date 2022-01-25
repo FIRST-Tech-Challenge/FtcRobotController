@@ -22,7 +22,7 @@ public class TeleopRed extends LinearOpMode {
     double MAX_SPEED = 0.9;
     Robot  robot;
     final int TICKS_PER_ROTATION = 537;
-    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
     int GyroSensorVariable = 1;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -50,14 +50,17 @@ public class TeleopRed extends LinearOpMode {
         backRight.setDirection(DcMotor.Direction.REVERSE);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        //    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+//        parameters.loggingEnabled      = true;
+//        parameters.loggingTag          = "IMU";
+//        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        imu.initialize(parameters);
+        imu = IMUstorage.getImu(hardwareMap);
 
         waitForStart();
 
@@ -75,8 +78,12 @@ public class TeleopRed extends LinearOpMode {
             telemetry.addData("angle" , angles.secondAngle);
             telemetry.update();
             //sensorvar 1 = facing forward 2= facing backward 3 = facing left 4= facing right
-            if(angles.secondAngle > -120 && angles.secondAngle < 120){
+            if(angles.secondAngle > -45 && angles.secondAngle < 45){
                 GyroSensorVariable = 1;
+            }else if(angles.secondAngle < -45 && angles.secondAngle > -135){
+                GyroSensorVariable = 3;
+            }else if(angles.secondAngle > 45 && angles.secondAngle < 135){
+                GyroSensorVariable = 4;
             }else{
                 GyroSensorVariable = 2;
             }
