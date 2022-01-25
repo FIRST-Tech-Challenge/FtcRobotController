@@ -101,10 +101,8 @@ public class ContourPipeline extends OpenCvPipeline {
         CAMERA_WIDTH = 240;
         CAMERA_HEIGHT = 240;
 
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2RGB);
-
         // Process Image, convert to RGB, then processed to YCrCb,
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
+        //Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
         Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
