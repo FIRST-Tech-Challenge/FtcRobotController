@@ -15,7 +15,9 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
 
@@ -29,6 +31,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
     Telemetry telemetry;
 
+    Map<Levels.TSELocation, Integer> levels = new HashMap<>();
     // Green                                             Y      Cr     Cb
     //public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
     //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
@@ -77,6 +80,14 @@ public class ContourPipeline extends OpenCvPipeline {
         Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
+
+        levels.put(Levels.TSELocation.NONE,0);
+
+        levels.put(Levels.TSELocation.LEVEL_1,1);
+        levels.put(Levels.TSELocation.LEVEL_2,2);
+        levels.put(Levels.TSELocation.LEVEL_3,3);
+
+        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
     }
 
 
@@ -193,5 +204,9 @@ public class ContourPipeline extends OpenCvPipeline {
 
     public Levels.TSELocation getLocation() {
         return Levels.getInstance().getTSELocation();
+    }
+    public int getTSELevel(){
+        //telemetry.addData("getTSELevel", location);
+        return Levels.getInstance().getTSELevel();
     }
 }

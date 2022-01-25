@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DetectShippingElement;
+import org.firstinspires.ftc.teamcode.cv.ContourPipeline;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 public class DetectTSEPosition extends CommandBase {
 
     private final WebCamSubsystem webCamSubsytem;
-    private final OpenCvShippingElementDetector detector;
+    private final ContourPipeline detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
     private Levels.TSELocation location;
@@ -21,7 +22,7 @@ public class DetectTSEPosition extends CommandBase {
 
     public DetectTSEPosition(WebCamSubsystem subsystem){
         webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
+        detector = (ContourPipeline) webCamSubsytem.getPipeline();
 
         addRequirements(subsystem);
     }
@@ -29,7 +30,7 @@ public class DetectTSEPosition extends CommandBase {
     public DetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
         //telemetry.addData("DetectTSEPosition", level);
         webCamSubsytem = subsystem;
-        detector = (OpenCvShippingElementDetector) webCamSubsytem.getPipeline();
+        detector = (ContourPipeline) webCamSubsytem.getPipeline();
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
