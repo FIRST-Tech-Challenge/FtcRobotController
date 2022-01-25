@@ -324,7 +324,8 @@ public class automethods extends LinearOpMode {
         robot.backLeft.setPower(0);
         robot.backRight.setPower(0);
         // robot.wobble.setPower(0);
-        robot.intake.setPower(0);
+        robot.intakeRight.setPower(0);
+        robot.intakeLeft.setPower(0);
     }
 
 
