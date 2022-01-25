@@ -13,6 +13,11 @@ public class AutonomousRedCarouselNoSensor extends LinearOpMode {
     public void runOpMode() {
         robot = new Robot(hardwareMap,telemetry,this);
         waitForStart();
+        //setup for fieldcentric driving
+        robot.forward(1,.5);
+        robot.turnRight(90,.5);
+        robot.right(1,.5);
+        //movelift
         robot.liftForMovement();
         // turns to rotate carousel and rotates carousel
         robot.left(.5,.5);
