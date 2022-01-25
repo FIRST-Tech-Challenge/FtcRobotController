@@ -46,9 +46,10 @@ public class FreightFrenzyComputerVisionFindDuck {
 
     public FreightFrenzyComputerVisionFindDuck(HardwareMap hardwareMap, Telemetry telemetry){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamDuck"), cameraMonitorViewId);
         pipeline = new DuckDeterminationPipeline(telemetry);
         webcam.setPipeline(pipeline);
+
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
