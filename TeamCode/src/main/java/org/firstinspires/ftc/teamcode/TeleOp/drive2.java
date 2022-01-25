@@ -47,23 +47,74 @@ public class drive2 extends LinearOpMode {
         return theta;
     }
 
-       public void move (double nearest45){ //movement method
+    public double sidewaysForce(double joystickY, double joystickX){
+        double sideForce = (Math.sqrt((joystickX*joystickX)+(joystickY*joystickY)))/1.41421;
+        return sideForce;
+    }
+
+    public void move (double nearest45, double diagnonalForce){ //movement method
         //using double to allow modification to trueAngle in the future
 
- /** !!!!!!!!!!!!! incomplete code !!!!!!!!!!!!! **/
+
 
         if(nearest45 < 0.1){ // move right
+            motorFrontLeft.setPower(gamepad1.left_stick_x);
+            motorBackLeft.setPower(-gamepad1.left_stick_x);
+            motorFrontRight.setPower(-gamepad1.left_stick_x);
+            motorBackRight.setPower(gamepad1.left_stick_x);
+
+        }else if(nearest45 < (3.14159265/4)+0.3){ // move front-right
+            motorFrontLeft.setPower(diagnonalForce);
+            motorBackLeft.setPower(0);
+            motorFrontRight.setPower(0);
+            motorBackRight.setPower(diagnonalForce);
+
+        }else if(nearest45 < (2*(3.14159265/4))+0.3){ // move front
+            motorFrontLeft.setPower(gamepad1.left_stick_y);
+            motorBackLeft.setPower(gamepad1.left_stick_y);
+            motorFrontRight.setPower(gamepad1.left_stick_y);
+            motorBackRight.setPower(gamepad1.left_stick_y);
+
+        }else if(nearest45 < (3*(3.14159265/4))+0.3){ // move front-left
+            motorFrontLeft.setPower(0);
+            motorBackLeft.setPower(diagnonalForce);
+            motorFrontRight.setPower(diagnonalForce);
+            motorBackRight.setPower(0);
+
+        }else if(nearest45 < (4*(3.14159265/4))+0.3){ // move left
+            motorFrontLeft.setPower(gamepad1.left_stick_x);
+            motorBackLeft.setPower(-gamepad1.left_stick_x);
+            motorFrontRight.setPower(-gamepad1.left_stick_x);
+            motorBackRight.setPower(gamepad1.left_stick_x);
+
+        }else if(nearest45 < (5*(3.14159265/4))+0.3){ // move back-left
+            motorFrontLeft.setPower(0);
+            motorBackLeft.setPower(-diagnonalForce);
+            motorFrontRight.setPower(-diagnonalForce);
+            motorBackRight.setPower(0);
+
+        }else if(nearest45 < (6*(3.14159265/4))+0.3){ // move back
+            motorFrontLeft.setPower(gamepad1.left_stick_y);
+            motorBackLeft.setPower(gamepad1.left_stick_y);
+            motorFrontRight.setPower(gamepad1.left_stick_y);
+            motorBackRight.setPower(gamepad1.left_stick_y);
+
+        }else if(nearest45 < (7*(3.14159265/4))+0.3){ // move back-right
+            motorFrontLeft.setPower(-diagnonalForce);
+            motorBackLeft.setPower(0);
+            motorFrontRight.setPower(0);
+            motorBackRight.setPower(-diagnonalForce);
+
+        }else { // move right
+            motorFrontLeft.setPower(gamepad1.left_stick_x);
+            motorBackLeft.setPower(-gamepad1.left_stick_x);
+            motorFrontRight.setPower(-gamepad1.left_stick_x);
+            motorBackRight.setPower(gamepad1.left_stick_x);
 
         }
 
-        if(nearest45 < (3.14159265/4)+0.3){ // move front-right
-
-        }
-        if(nearest45 < (2*(3.14159265/4))+0.3){ // move front
-
-        }
     }
-/**end of incomplete code **/
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -85,7 +136,8 @@ public class drive2 extends LinearOpMode {
                 double trueAngle = angleOfJoystick(gamepad1.left_stick_y, gamepad1.left_stick_x); //gets ideal movement angle
                 double roundedAngle = (Math.round(trueAngle/(3.14159265/4)))*(3.14159265/4);
 
-                move(roundedAngle);
+
+                move(roundedAngle, sidewaysForce(gamepad1.left_stick_y,gamepad1.left_stick_x)); //main move method
 
             } else { //turning - low priority. currently can't turn AND move
 
