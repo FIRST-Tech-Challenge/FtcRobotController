@@ -17,11 +17,11 @@ public class Grabber {
      */
     private static final float closePosition = .8f;
     /**
-     * The servo that controlls the intake
+     * The servo that controls the intake
      */
     private final Servo grabberServo;
     /**
-     * A bolean that says if the servo is open or closed
+     * A boolean that says if the servo is open or closed
      */
     private boolean isOpen;
 

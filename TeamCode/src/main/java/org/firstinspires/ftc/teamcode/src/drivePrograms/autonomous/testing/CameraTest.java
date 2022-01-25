@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 
 import java.util.List;
 
+@Disabled
 @TeleOp(name = "HI Son of Carl")
 public class CameraTest extends AutoObjDetectionTemplate {
 

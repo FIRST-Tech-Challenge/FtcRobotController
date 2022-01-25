@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 
-//@Disabled
+@Disabled
 @Autonomous(name = "OdTimeOut")
 public class OdTimeOutTest extends AutonomousTemplate {
     @Override

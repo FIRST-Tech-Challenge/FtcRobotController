@@ -43,4 +43,9 @@ public class TripWireDistanceSensor extends ThreadedSubsystemTemplate {
             this.callBack.call();
         }
     }
+
+    @Override
+    protected void onEnd() {
+        distanceSensor.close();
+    }
 }

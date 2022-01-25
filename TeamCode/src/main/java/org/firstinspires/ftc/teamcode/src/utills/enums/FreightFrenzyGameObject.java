@@ -36,11 +36,11 @@ public enum FreightFrenzyGameObject {
      * The Key is the game object, the value is the RGB value of what the sensor sees
      */
     private static final HashMap<FreightFrenzyGameObject, double[]> RGBOfObj = new HashMap<FreightFrenzyGameObject, double[]>() {{
-        put(FreightFrenzyGameObject.BALL, new double[]{111, 111, 97});
-        put(FreightFrenzyGameObject.CUBESMOOTH, new double[]{41, 25, 15});
-        put(FreightFrenzyGameObject.CUBEWAFFLE, new double[]{26, 15, 10});
-        put(FreightFrenzyGameObject.DUCK, new double[]{14, 12, 7});
-        put(FreightFrenzyGameObject.EMPTY, new double[]{5, 6, 5});
+        put(FreightFrenzyGameObject.BALL, new double[]{58, 57, 50});
+        put(FreightFrenzyGameObject.CUBESMOOTH, new double[]{25, 16, 10});
+        put(FreightFrenzyGameObject.CUBEWAFFLE, new double[]{18, 10, 7});
+        put(FreightFrenzyGameObject.DUCK, new double[]{11, 9, 5});
+        put(FreightFrenzyGameObject.EMPTY, new double[]{5, 5, 3});
     }};
 
     /**

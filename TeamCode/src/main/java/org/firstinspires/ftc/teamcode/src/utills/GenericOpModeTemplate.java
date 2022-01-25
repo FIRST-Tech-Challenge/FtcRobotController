@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.utills;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CarouselSpinner;
@@ -100,7 +101,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         try {
             opModeMain();
         } catch (RuntimeException e) {
-            throw new RuntimeException(MiscUtills.getStackTraceAsString(e)); //Appends more information to the error message
+            RobotLog.setGlobalErrorMsg(MiscUtils.getStackTraceAsString(e)); //Appends more information to the error message
         }
     }
 
@@ -147,6 +148,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initLinearSlide();
         initVoltageSensor();
         initSpinner();
+        if (voltageSensor.getVoltage() < 12.5) {
+            RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
+        }
     }
 
     /**

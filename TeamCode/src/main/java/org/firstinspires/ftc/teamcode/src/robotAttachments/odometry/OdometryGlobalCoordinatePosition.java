@@ -114,7 +114,10 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         reverseY = !reverseY;
     }
 
+    @Override
+    protected void onEnd() {
 
+    }
 
 
     /**
@@ -222,7 +225,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     }
 
     /**
-     * Sets the position of the robot using an Enum key from FeildPoints
+     * Sets the position of the robot using an Enum key from FieldPoints
      *
      * @param initPos the enum key of a three value array of an init position
      */

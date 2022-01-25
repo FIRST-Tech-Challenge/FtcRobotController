@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtills;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 /**
  * BasicDrivetrain
@@ -158,7 +158,7 @@ public class BasicDrivetrain {
      * @param power The power to strafe at
      */
     public void strafeAtAngle(double angle, double power) {
-        power = MiscUtills.boundNumber(power);
+        power = MiscUtils.boundNumber(power);
         double power1;
         double power2;
 

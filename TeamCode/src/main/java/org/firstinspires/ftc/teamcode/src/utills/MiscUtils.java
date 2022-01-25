@@ -6,7 +6,7 @@ import java.io.StringWriter;
 /**
  * A class full of miscellaneous utilities
  */
-public class MiscUtills {
+public class MiscUtils {
     /**
      * This constrains the input number between 1 and -1 inclusive
      *

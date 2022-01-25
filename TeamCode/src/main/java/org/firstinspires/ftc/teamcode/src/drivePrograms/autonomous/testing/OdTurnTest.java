@@ -16,7 +16,7 @@ public class OdTurnTest extends AutonomousTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
         odometry.setPosition(0, 0, 0);
-        telemetry.addData("Intialize Status", "complete");
+        telemetry.addData("Initialization Status", "complete");
         telemetry.update();
 
         waitForStart();

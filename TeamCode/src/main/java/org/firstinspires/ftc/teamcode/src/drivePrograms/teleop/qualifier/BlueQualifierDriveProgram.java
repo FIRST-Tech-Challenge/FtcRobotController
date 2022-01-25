@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.qualifier;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
+import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
+
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDistanceSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
@@ -17,9 +20,12 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
     int posToGoTo = 0;
     boolean posOn = false;
 
-    final BlinkinPattern normal = BlinkinPattern.BLUE;
+    final BlinkinPattern defaultColor = BlinkinPattern.BLUE;
+    BlinkinPattern currentColor = defaultColor;
 
     TripWireDistanceSensor distanceSensor;
+
+    private final ElapsedTime yTimer = new ElapsedTime();
 
     private Void callBack() {
         this.leds.setPattern(BlinkinPattern.BLACK);
@@ -27,7 +33,7 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
             Thread.sleep(1000);
         } catch (InterruptedException ignored) {
         }
-        this.leds.setPattern(normal);
+        this.leds.setPattern(currentColor);
         return null;
 
     }
@@ -37,18 +43,13 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
         this.initAll();
         distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, this::callBack, this::opModeIsActive, this::isStopRequested);
         distanceSensor.start();
-        leds.setPattern(normal);
+        leds.setPattern(defaultColor);
 
         telemetry.addData("Initialization", "finished");
         telemetry.update();
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            if (driveTrain.getFacingDirection()) {
-                telemetry.addData("Facing", "Forward");
-            } else {
-                telemetry.addData("Facing", "Backward");
-            }
 
             if (posOn) {
                 switch (posToGoTo) {
@@ -88,10 +89,6 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                     x_depressed = true;
                 }
 
-                if (gamepad1.x && x_depressed) {
-                    driveTrain.flipFrontAndBack();
-                    x_depressed = false;
-                }
             }
 
             //Eli's controls
@@ -150,9 +147,25 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                         slide.setMotorPower(0);
                     }
                 }
+                if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
+                    intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
+                    RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
+                    if (o == null || !intake.isClosed()) {
+                        if (currentColor != defaultColor) {
+                            leds.setPattern(defaultColor);
+                            currentColor = defaultColor;
+                        }
+                    } else {
+                        if (currentColor != o) {
+                            leds.setPattern(o);
+                            currentColor = o;
+                        }
+                    }
 
 
-                intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
+                } else {
+                    intake.setMotorPower(0);
+                }
 
                 if (!gamepad2.y) {
                     y_depressed2 = true;
@@ -161,10 +174,18 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                     y_depressed2 = false;
                     if (intake.isClosed()) {
                         intake.setServoOpen();
+                        yTimer.reset();
                     } else {
                         intake.setServoClosed();
                     }
+                    leds.setPattern(defaultColor);
+                    currentColor = defaultColor;
                 }
+
+                if (yTimer.seconds() > 1.25) {
+                    intake.setServoClosed();
+                }
+
                 if (gamepad2.x) {
                     spinner.setPowerBlueDirection();
                 } else if (gamepad2.b) {

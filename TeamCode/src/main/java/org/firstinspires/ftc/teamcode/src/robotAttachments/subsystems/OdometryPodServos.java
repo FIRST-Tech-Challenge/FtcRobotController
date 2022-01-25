@@ -17,7 +17,7 @@ public class OdometryPodServos {
     /**
      * The position the right servo must go to to be down
      */
-    private static final double rightServoLowerPosition = .055;
+    private static final double rightServoLowerPosition = .05;
 
     /**
      * The position the left servo must go to to be up
@@ -36,20 +36,20 @@ public class OdometryPodServos {
     /**
      * The position the horizontal servo must go to to be down
      */
-    private static final double horizontalServoLowerPosition = 0.49;
+    private static final double horizontalServoLowerPosition = 0.52;
 
     /**
      * Horizontal Servo Object
      */
-    final Servo horizontalServo;
+    public final Servo horizontalServo;
     /**
      * Left Servo Object
      */
-    final Servo leftServo;
+    public final Servo leftServo;
     /**
      * Right Servo Object
      */
-    final Servo rightServo;
+    public final Servo rightServo;
 
     /**
      * Constructs and initializes servos
