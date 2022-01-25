@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.ftccommon.SoundPlayer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -70,7 +71,7 @@ import java.io.File;
  */
 
 @TeleOp(name="Concept: Sound Resources", group="Concept")
-@Disabled
+
 public class AudioTest extends LinearOpMode {
 
     // Declare OpMode members.
@@ -82,6 +83,7 @@ public class AudioTest extends LinearOpMode {
 
     private boolean wasX = false;   // Gamepad button history variables
     private boolean WasB = false;
+
 
     @Override
     public void runOpMode() {
