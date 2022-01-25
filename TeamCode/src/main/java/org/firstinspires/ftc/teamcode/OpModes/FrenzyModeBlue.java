@@ -9,7 +9,7 @@ public class FrenzyModeBlue extends FrenzyModeBase {
     if (isButtonPressable()) {
         if (gamepad2.x) {
             startGamepadLockout();
-            robot.extendToTeamHubBlue();
+            robot.extendToTeamHubBlueAsync();
         }
     }
 }
@@ -18,7 +18,7 @@ public class FrenzyModeBlue extends FrenzyModeBase {
         if (isButtonPressable()) {
             if (gamepad2.y) {
                 startGamepadLockout();
-                robot.dropToSharedHubBlue();
+                robot.extendToSharedHubBlueAsync();
             }
         }
     }

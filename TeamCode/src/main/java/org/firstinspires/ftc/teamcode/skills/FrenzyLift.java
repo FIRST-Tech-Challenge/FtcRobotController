@@ -9,10 +9,17 @@ public class FrenzyLift implements Runnable {
     private FrenzyLiftMode liftMode;
     private String opModeSide = AutoRoute.NAME_RED;
     private boolean score = false; //extend or score
+
+    public FrenzyLift(FrenzyBot bot, boolean score){
+        frenzyBot = bot;
+        this.score = score;
+    }
+
     public FrenzyLift(FrenzyBot bot, String side, FrenzyLiftMode mode, boolean score){
         frenzyBot = bot;
         opModeSide = side;
         liftMode = mode;
+        this.score = score;
     }
 
     @Override
@@ -23,21 +30,20 @@ public class FrenzyLift implements Runnable {
             if (liftMode.equals(FrenzyLiftMode.SharedHub)) {
                 switch (opModeSide) {
                     case AutoRoute.NAME_BLUE:
-                        frenzyBot.extendToTeamHubBlue();
+                        frenzyBot.extendToSharedHubBlue();
                         break;
-
                     case AutoRoute.NAME_RED:
-                        frenzyBot.extendToTeamHubRed();
+                        frenzyBot.extendToSharedHubRed();
                         break;
                 }
             } else if (liftMode.equals(FrenzyLiftMode.TeamHub)) {
                 switch (opModeSide) {
                     case AutoRoute.NAME_BLUE:
-                        frenzyBot.dropToTeamHubBlue();
+                        frenzyBot.extendToTeamHubBlue();
                         break;
 
                     case AutoRoute.NAME_RED:
-                        frenzyBot.dropToTeamHubRed();
+                        frenzyBot.extendToTeamHubRed();
                         break;
                 }
             }

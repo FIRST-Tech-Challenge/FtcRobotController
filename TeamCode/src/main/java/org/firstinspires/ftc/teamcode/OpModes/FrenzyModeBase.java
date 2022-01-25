@@ -19,6 +19,8 @@ public class FrenzyModeBase extends LinearOpMode {
     protected boolean robotMoving = false;
 
     private boolean emergencyMode = false;
+    private boolean manualDriveMode = false;
+    private boolean manualLiftMode = false;
 
     // Timing related variables
     long GAMEPAD_LOCKOUT_TIME_MS = 200;
@@ -68,7 +70,7 @@ public class FrenzyModeBase extends LinearOpMode {
                 handleSpecialActions();
                 if (robot.isIntakeRunning() && !robot.isIntakeBoxEmpty()){
                     if (!emergencyMode) {
-                        robot.smartStopIntake();
+                        robot.smartStopIntakeAsync();
                     }
                     else{
                         robot.stopIntake();
@@ -128,24 +130,32 @@ public class FrenzyModeBase extends LinearOpMode {
                 robot.strafeLeft(Math.abs(strafe));
             }
         } else {
+            if (isManualDriveMode()){
+                drive = drive/2;
+            }
             robot.move(drive, turn);
         }
         robotMoving = Math.abs(drive) > 0.02 || Math.abs(turn) > 0.02;
     }
 
     protected void handleSpecialActions() {
-//        handleLift();
-        handleLiftManual();
         handleDropper();
         handleIntake();
         handleOuttake();
         handleTurntable();
-        handleTower();
-        depositToTeamHub();
-        depositToSharedHub();
+        if (isManualLiftMode()) {
+            handleTower();
+            handleLiftManual();
+        }
+        else {
+            depositToTeamHub();
+            depositToSharedHub();
+            handleScoring();
+        }
         handleIntakeDropper();
         handleEmergency();
-        handleScoring();
+        handleManualDrive();
+        handleManualLift();
     }
 
     protected void depositToTeamHub() {
@@ -258,10 +268,30 @@ public class FrenzyModeBase extends LinearOpMode {
         if (isButtonPressable()) {
             if (gamepad2.a) {
                 startGamepadLockout();
-                robot.scoreAndFold();
+                robot.scoreAndFoldAsync();
             }
         }
     }
+
+    protected void handleManualDrive() {
+        if (isButtonPressable()) {
+            if (gamepad1.start) {
+                startGamepadLockout();
+                setManualDriveMode(!manualDriveMode);
+            }
+        }
+    }
+
+    protected void handleManualLift() {
+        if (isButtonPressable()) {
+            if (gamepad2.start) {
+                startGamepadLockout();
+                setManualLiftMode(!manualLiftMode);
+            }
+        }
+    }
+
+
 
     protected void startGamepadLockout() {
         gamepadRateLimit.reset();
@@ -276,5 +306,21 @@ public class FrenzyModeBase extends LinearOpMode {
 
     public void setEmergencyMode(boolean emergencyMode) {
         this.emergencyMode = emergencyMode;
+    }
+
+    public boolean isManualDriveMode() {
+        return manualDriveMode;
+    }
+
+    public void setManualDriveMode(boolean manualDriveMode) {
+        this.manualDriveMode = manualDriveMode;
+    }
+
+    public boolean isManualLiftMode() {
+        return manualLiftMode;
+    }
+
+    public void setManualLiftMode(boolean manualLiftMode) {
+        this.manualLiftMode = manualLiftMode;
     }
 }
