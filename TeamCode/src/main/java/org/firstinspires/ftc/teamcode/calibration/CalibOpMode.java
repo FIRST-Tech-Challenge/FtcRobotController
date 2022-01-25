@@ -39,6 +39,6 @@ public class CalibOpMode extends LinearOpMode {
         int flags = 0;
         flags |= Calib3d.CALIB_FIX_INTRINSIC;
 
-        Calib3d.stereoCalibrate()
+//        Calib3d.stereoCalibrate();
     }
 }

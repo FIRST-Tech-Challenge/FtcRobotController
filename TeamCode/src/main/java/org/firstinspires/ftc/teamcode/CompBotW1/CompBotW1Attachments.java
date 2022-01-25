@@ -117,6 +117,8 @@ public class CompBotW1Attachments extends CompBotW1 {
     }
 
     public void setBucket(double position) {
+//        bucket 0 and 1 are the two servoes, so what I should do is check the voltage
+
         bucket0.setPosition(position);
         bucket1.setPosition(1-position);
     }

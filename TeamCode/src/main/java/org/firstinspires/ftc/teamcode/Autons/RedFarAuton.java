@@ -42,15 +42,15 @@ public class RedFarAuton extends LinearOpMode {
         r.gyroTurn(90,dPower,3000);
 
         // Strafe over
-        r.AEncDrive(14,0,dPower,0);
+        r.AEncDrive(0,24,0,-dPower);
         r.AEncDrive(10,0,dPower,0,2000);
 
         // Spin
         r.spin(2000);
 
         // Move over
-        r.AEncDrive(-56,0,-dPower,0);
-        r.gyroTurn(-90,-dPower,3000);
+        r.AEncDrive(0,-56,0,dPower);
+        r.gyroTurn(180,dPower);
         r.AEncDrive(-6,0,0.15,0,1500);
 
         // lift and drop
