@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 public class DetectTSEPosition extends CommandBase {
 
     private final WebCamSubsystem webCamSubsytem;
-    private final ContourPipeline320w240h detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
     private Levels.TSELocation location;
@@ -23,7 +22,6 @@ public class DetectTSEPosition extends CommandBase {
 
     public DetectTSEPosition(WebCamSubsystem subsystem){
         webCamSubsytem = subsystem;
-        detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
 
         addRequirements(subsystem);
     }
@@ -31,7 +29,6 @@ public class DetectTSEPosition extends CommandBase {
     public DetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
         //telemetry.addData("DetectTSEPosition", level);
         webCamSubsytem = subsystem;
-        detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -44,41 +41,8 @@ public class DetectTSEPosition extends CommandBase {
         //telemetry.addData("We are initialize", "detectPosition");
     }
 
-    @Override
-    public void execute(){
 
-        //telemetry.addData("We are executingt", "detectPosition");
-        location = detector.getLocation();
-        level = detector.getTSELevel();
 
-        setLocation();
-        setLevel();
 
-    }
-
-    private void setLocation(){
-        //telemetry.addData("We have a detect", location);
-        webCamSubsytem.setLocation(location);
-    }
-
-    private void setLevel(){
-
-        //telemetry.update();
-        //telemetry.addData("We have a detect", level);
-        //telemetry.update();
-        webCamSubsytem.setLevel(level);
-        if(level > 0) {
-            gotPosition = true;
-            //telemetry.addData("We are setting level", level);
         }
 
-    }
-
-   /* @Override
-    public boolean isFinished() {
-        //telemetry.addData("We are finished", gotPosition);
-        //telemetry.update();
-        return level > 0;
-    }*/
-
-}
