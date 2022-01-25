@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp (name="drivechain2", group="Linear Opmode")
+@TeleOp (name="driveChain2", group="Linear Opmode")
 public class drive2 extends LinearOpMode {
 
     //there is no servo code in this program
@@ -23,7 +23,6 @@ public class drive2 extends LinearOpMode {
     }
 
     public double angleOfJoystick(double joystickY, double joystickX){ //getting angle of left joystick
-        /** all angles are in STANDARD POSITION**/
 
         double theta;
         if(joystickX==0 && joystickY>0){ //avoids tan90 error
@@ -48,11 +47,10 @@ public class drive2 extends LinearOpMode {
     }
 
     public double sidewaysForce(double joystickY, double joystickX){
-        double sideForce = (Math.sqrt((joystickX*joystickX)+(joystickY*joystickY)))/1.41421;
-        return sideForce;
+        return (Math.sqrt((joystickX*joystickX)+(joystickY*joystickY)))/1.41421;
     }
 
-    public void move (double nearest45, double diagnonalForce){ //movement method
+    public void move (double nearest45, double diagonalForce){ //movement method
         //using double to allow modification to trueAngle in the future
 
 
@@ -64,10 +62,10 @@ public class drive2 extends LinearOpMode {
             motorBackRight.setPower(gamepad1.left_stick_x);
 
         }else if(nearest45 < (3.14159265/4)+0.3){ // move front-right
-            motorFrontLeft.setPower(diagnonalForce);
+            motorFrontLeft.setPower(diagonalForce);
             motorBackLeft.setPower(0);
             motorFrontRight.setPower(0);
-            motorBackRight.setPower(diagnonalForce);
+            motorBackRight.setPower(diagonalForce);
 
         }else if(nearest45 < (2*(3.14159265/4))+0.3){ // move front
             motorFrontLeft.setPower(gamepad1.left_stick_y);
@@ -77,8 +75,8 @@ public class drive2 extends LinearOpMode {
 
         }else if(nearest45 < (3*(3.14159265/4))+0.3){ // move front-left
             motorFrontLeft.setPower(0);
-            motorBackLeft.setPower(diagnonalForce);
-            motorFrontRight.setPower(diagnonalForce);
+            motorBackLeft.setPower(diagonalForce);
+            motorFrontRight.setPower(diagonalForce);
             motorBackRight.setPower(0);
 
         }else if(nearest45 < (4*(3.14159265/4))+0.3){ // move left
@@ -89,8 +87,8 @@ public class drive2 extends LinearOpMode {
 
         }else if(nearest45 < (5*(3.14159265/4))+0.3){ // move back-left
             motorFrontLeft.setPower(0);
-            motorBackLeft.setPower(-diagnonalForce);
-            motorFrontRight.setPower(-diagnonalForce);
+            motorBackLeft.setPower(-diagonalForce);
+            motorFrontRight.setPower(-diagonalForce);
             motorBackRight.setPower(0);
 
         }else if(nearest45 < (6*(3.14159265/4))+0.3){ // move back
@@ -100,10 +98,10 @@ public class drive2 extends LinearOpMode {
             motorBackRight.setPower(gamepad1.left_stick_y);
 
         }else if(nearest45 < (7*(3.14159265/4))+0.3){ // move back-right
-            motorFrontLeft.setPower(-diagnonalForce);
+            motorFrontLeft.setPower(-diagonalForce);
             motorBackLeft.setPower(0);
             motorFrontRight.setPower(0);
-            motorBackRight.setPower(-diagnonalForce);
+            motorBackRight.setPower(-diagonalForce);
 
         }else { // move right
             motorFrontLeft.setPower(gamepad1.left_stick_x);
