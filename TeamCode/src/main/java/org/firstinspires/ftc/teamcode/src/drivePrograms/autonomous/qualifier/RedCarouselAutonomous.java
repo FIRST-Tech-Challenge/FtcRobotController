@@ -59,7 +59,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(260, .5);
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(23, 82, 1, 2, 500);
+                driveSystem.moveToPositionWithDistanceTimeOut(22, 82.5, 1, .5, 500);
             } catch (OdometryMovementException ignored) {
             }
             driveSystem.turnTo(272, .3);
@@ -127,7 +127,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
             driveSystem.strafeAtAngle(15, .5);
 
-            Thread.sleep(1250);
+            Thread.sleep(1350);
             driveSystem.stopAll();
             spinner.spinOffRedDuck();
             driveSystem.strafeAtAngle(270, 1);
@@ -190,7 +190,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 driveSystem.turnTo(180, .2);
                 podServos.raise();
                 driveSystem.strafeAtAngle(0, 1);
-                Thread.sleep(1900);
+                Thread.sleep(2500);
                 this.stop();
             }
         }

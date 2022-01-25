@@ -54,7 +54,12 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.strafeAtAngle(270, .6);
             Thread.sleep(1000);
             driveSystem.turnTo(260, .5);
-            driveSystem.moveToPosition(23, 85, 1);
+
+            try {
+                driveSystem.moveToPositionWithDistanceTimeOut(25, 85, 1, 1, 1000);
+            } catch (OdometryMovementException ignored) {
+            }
+            driveSystem.turnTo(270, .2);
 
             //TODO Add Raises and lowers
             switch (Pos) {

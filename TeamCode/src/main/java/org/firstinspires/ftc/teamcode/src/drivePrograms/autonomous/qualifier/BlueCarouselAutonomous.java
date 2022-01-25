@@ -182,6 +182,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
 
             } else if (overBarrier) {
+                slide.end();
                 try {
                     driveSystem.moveToPositionWithDistanceTimeOut(115, 70, 1, 1, 1000);
                 } catch (OdometryMovementException ignored) {
@@ -190,7 +191,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 driveSystem.turnTo(180, .2);
                 podServos.raise();
                 driveSystem.strafeAtAngle(0, 1);
-                Thread.sleep(1900);
+                Thread.sleep(2500);
                 driveSystem.stopAll();
                 this.stop();
 
