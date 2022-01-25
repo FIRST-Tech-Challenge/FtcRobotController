@@ -3,6 +3,8 @@ package org.firstinspires.ftc.blackswan;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class IMUstorage {
     public static BNO055IMU imu;
 
@@ -20,7 +22,7 @@ public class IMUstorage {
         imu.initialize(parameters);
     }
 
-    static public BNO055IMU getImu(HardwareMap hardwareMap){
+    static public BNO055IMU getImu(HardwareMap hardwareMap, Telemetry telemetry){
         if (imu==null){
             new IMUstorage(hardwareMap);
 
