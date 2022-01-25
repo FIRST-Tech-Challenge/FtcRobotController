@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.DetectShippingElement;
 import org.firstinspires.ftc.teamcode.cv.ContourPipeline;
+import org.firstinspires.ftc.teamcode.cv.ContourPipeline320w240h;
 import org.firstinspires.ftc.teamcode.cv.OpenCvShippingElementDetector;
 import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.subsystems.leds.blinkin.LEDSubsystem;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 public class DetectTSEPosition extends CommandBase {
 
     private final WebCamSubsystem webCamSubsytem;
-    private final ContourPipeline detector;
+    private final ContourPipeline320w240h detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
     private Levels.TSELocation location;
@@ -22,7 +23,7 @@ public class DetectTSEPosition extends CommandBase {
 
     public DetectTSEPosition(WebCamSubsystem subsystem){
         webCamSubsytem = subsystem;
-        detector = (ContourPipeline) webCamSubsytem.getPipeline();
+        detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
 
         addRequirements(subsystem);
     }
@@ -30,7 +31,7 @@ public class DetectTSEPosition extends CommandBase {
     public DetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
         //telemetry.addData("DetectTSEPosition", level);
         webCamSubsytem = subsystem;
-        detector = (ContourPipeline) webCamSubsytem.getPipeline();
+        detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
