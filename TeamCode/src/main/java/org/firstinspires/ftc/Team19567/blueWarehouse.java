@@ -76,13 +76,13 @@ public class blueWarehouse extends LinearOpMode {
         });
 
         TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63,Math.toRadians(270)))
-                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(-150))
+                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(60))
                 .build();
         TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(0,45)).turn(Math.toRadians(-150))
+                .strafeTo(new Vector2d(0,45)).turn(Math.toRadians(60))
                 .build();
         TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(-150)).strafeTo(new Vector2d(-1,39)).build();
+                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(60)).strafeTo(new Vector2d(-1,39)).build();
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -133,7 +133,7 @@ public class blueWarehouse extends LinearOpMode {
         telemetry.addData("Freight Level", "3");
         telemetry.update();
 
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX, chosenTrajectoryY, Math.toRadians(120)))
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX, chosenTrajectoryY, Math.toRadians(330)))
                 .strafeTo(new Vector2d(6, -27))
                 .strafeTo(new Vector2d(-40,-27)).build();
 
