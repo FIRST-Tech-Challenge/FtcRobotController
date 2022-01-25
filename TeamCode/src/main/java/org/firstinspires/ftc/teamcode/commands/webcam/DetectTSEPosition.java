@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
 public class DetectTSEPosition extends CommandBase {
 
     private final WebCamSubsystem webCamSubsytem;
-    private final ContourPipeline320w240h detector;
+    //private final ContourPipeline320w240h detector;
     private Telemetry telemetry;
     private Boolean gotPosition = false;
     private Levels.TSELocation location;
@@ -23,7 +23,7 @@ public class DetectTSEPosition extends CommandBase {
 
     public DetectTSEPosition(WebCamSubsystem subsystem){
         webCamSubsytem = subsystem;
-        detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
+        //detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
 
         addRequirements(subsystem);
     }
@@ -31,7 +31,7 @@ public class DetectTSEPosition extends CommandBase {
     public DetectTSEPosition(WebCamSubsystem subsystem, Telemetry telemetry){
         //telemetry.addData("DetectTSEPosition", level);
         webCamSubsytem = subsystem;
-        detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
+        //detector = (ContourPipeline320w240h) webCamSubsytem.getPipeline();
         this.telemetry = telemetry;
 
         addRequirements(subsystem);
@@ -44,7 +44,7 @@ public class DetectTSEPosition extends CommandBase {
         //telemetry.addData("We are initialize", "detectPosition");
     }
 
-    @Override
+    /*@Override
     public void execute(){
 
         //telemetry.addData("We are executingt", "detectPosition");
@@ -54,7 +54,7 @@ public class DetectTSEPosition extends CommandBase {
         setLocation();
         setLevel();
 
-    }
+    }*/
 
     private void setLocation(){
         //telemetry.addData("We have a detect", location);

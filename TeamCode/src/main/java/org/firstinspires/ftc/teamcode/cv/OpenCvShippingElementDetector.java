@@ -37,7 +37,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     }
 
     //TSELocation location;
-    Map<Levels.TSELocation, Integer> levels = new HashMap<>();
+    //Map<Levels.TSELocation, Integer> levels = new HashMap<>();
 
 
     private int width = 224; // width of the image
@@ -91,13 +91,7 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         //this.height = height;
         this.telemetry = telemetry;
 
-        levels.put(Levels.TSELocation.NONE,0);
 
-        levels.put(Levels.TSELocation.LEVEL_1,1);
-        levels.put(Levels.TSELocation.LEVEL_2,2);
-        levels.put(Levels.TSELocation.LEVEL_3,3);
-
-        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
 
 
         try {
@@ -320,6 +314,6 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
     }
     public int getTSELevel(){
         //telemetry.addData("getTSELevel", location);
-        return levels.get(Levels.getInstance().getTSELocation());
+        return Levels.getInstance().getTSELevel();
     }
 }
