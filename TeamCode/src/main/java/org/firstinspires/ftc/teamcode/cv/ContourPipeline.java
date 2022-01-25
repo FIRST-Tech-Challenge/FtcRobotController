@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.cv;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.cv.sims.ContourPipelineSim;
+import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.globals.Levels;
+import org.firstinspires.ftc.teamcode.globals.Side;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -20,18 +24,17 @@ import java.util.List;
 import java.util.Map;
 
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
-
+@Config
 public class ContourPipeline extends OpenCvPipeline {
 
     Scalar GREEN = new Scalar(0, 0, 255);
 
     // Green                        Y      Cr     Cb    (Do not change Y)
     public static Scalar scalarLowerYCrCb = new Scalar(0.0, 0.50, 0.50);
-    public static Scalar scalarUpperYCrCb = new Scalar(150.0, 150.0, 130.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(220.0, 255.0, 90.0);
 
     Telemetry telemetry;
 
-    Map<Levels.TSELocation, Integer> levels = new HashMap<>();
     // Green                                             Y      Cr     Cb
     //public static Scalar scalarLowerYCrCb = new Scalar(  0.0, 0.0, 0.0);
     //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 120.0, 120.0);
@@ -52,7 +55,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
     private int loopCounter = 0;
     private int pLoopCounter = 0;
-    
+
 
     private Mat mat = new Mat();
     private Mat processed = new Mat();
@@ -66,6 +69,7 @@ public class ContourPipeline extends OpenCvPipeline {
 
     private final Object sync = new Object();
 
+
     public ContourPipeline(Telemetry t) {
 
         telemetry = t;
@@ -77,35 +81,32 @@ public class ContourPipeline extends OpenCvPipeline {
 
         // Green Range                                      Y      Cr     Cb
         Scalar initScalarLowerYCrCb = new Scalar(0.0, 0.0, 0.0);
-        Scalar initScalarUpperYCrCb = new Scalar(150.0, 150.0, 110.0);
+        Scalar initScalarUpperYCrCb = new Scalar(220.0, 255.0, 90.0);
         configureScalarLower(initScalarLowerYCrCb.val[0],initScalarLowerYCrCb.val[1],initScalarLowerYCrCb.val[2]);
         configureScalarUpper(initScalarUpperYCrCb.val[0],initScalarUpperYCrCb.val[1],initScalarUpperYCrCb.val[2]);
 
-        levels.put(Levels.TSELocation.NONE,0);
-
-        levels.put(Levels.TSELocation.LEVEL_1,1);
-        levels.put(Levels.TSELocation.LEVEL_2,2);
-        levels.put(Levels.TSELocation.LEVEL_3,3);
-
-        Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
     }
 
 
     public void configureScalarLower(double y, double cr, double cb) {
-        scalarLowerYCrCb = new Scalar(y, cr, cb);
+        //scalarLowerYCrCb = new Scalar(y, cr, cb);
     }
 
     public void configureScalarUpper(double y, double cr, double cb) {
-        scalarUpperYCrCb = new Scalar(y, cr, cb);
+        //scalarUpperYCrCb = new Scalar(y, cr, cb);
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        CAMERA_WIDTH = input.width();
-        CAMERA_HEIGHT = input.height();
+        CAMERA_WIDTH = 240;
+        CAMERA_HEIGHT = 240;
 
-        // Process Image, convert to YCrCb,
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2RGB);
+
+        // Process Image, convert to RGB, then processed to YCrCb,
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
+
         Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
 
         // Remove Noise
@@ -123,6 +124,13 @@ public class ContourPipeline extends OpenCvPipeline {
         Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
         telemetry.addLine("Drawing countours");
 
+        // Show the bounding area in which we will search -
+        Imgproc.rectangle(input, new Rect(50, 30, 180, 50), new Scalar(0, 0, 255), 2); // BLUE
+
+
+        // Set default maxRect to one pixel. Default will return as Level 3
+        maxRect = new Rect(0,0,1,1);
+
 
         // Loop Through Contours, find the counter with matching max and min area
         for (MatOfPoint contour : contours) {
@@ -132,26 +140,38 @@ public class ContourPipeline extends OpenCvPipeline {
             maxRect = new Rect(0,0,1,1);
 
             // Bound Rectangle if Contour is Large Enough
-            if (contourArray.length >= 15) {
+            if (contourArray.length >= 1) {
                 MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
                 Rect rect = Imgproc.boundingRect(areaPoints);
 
-                if (rect.area() > 1500 && rect.area() < 2300){
-                    Imgproc.rectangle(input, rect, new Scalar(0, 255, 0), 2); // GREEN
+                if (
+                        (rect.area() > 1300 && rect.area() < 2200)
+                                && rect.y > 30 && rect.y < 80
+                                && rect.x > 50
+                ){
                     maxRect = rect;
+                    Imgproc.rectangle(input, maxRect, new Scalar(255, 255, 255), 1); // GREEN
+
+                    telemetry.addData("maxrectX", maxRect.x);
+                    telemetry.addData("maxrectY", maxRect.y);
+                    telemetry.addData("maxrectArea", maxRect.area());
                 }
                 areaPoints.release();
             }
             contour.release();
         }
 
+        // Outline found rectangle in Green
+        Imgproc.rectangle(input, maxRect, new Scalar(0, 255, 0), 2); // GREEN
+
         // Check maxRect for midpoint value to determine which location the element is in
         if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
-            Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_1);
+            Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
         } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
             Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_2);
         } else {
-            Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_3);
+            Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
+
         }
 
         // Display Data
