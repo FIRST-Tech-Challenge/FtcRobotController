@@ -115,21 +115,21 @@ public class TeleopRed extends LinearOpMode {
                     frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                     backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                     backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    detection = "Down";
+                    detection = "Down O d";
                 }else if(GyroSensorVariable == 3){
                     //move down orientation left
-                    frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
-                    backRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
-                    frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
-                    backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
-                    detection = "Down";
+                    frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                    backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                    frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
+                    backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
+                    detection = "Down O l";
                 }else if(GyroSensorVariable == 4){
                     //move Down orientation right
-                    frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
-                    backRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
-                    frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
-                    backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
-                    detection = "Down";
+                    frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
+                    backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
+                    frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                    backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
+                    detection = "Down O r";
                 }
             } else if (gamepad1.left_stick_y < -0.1) {
                 if(GyroSensorVariable == 1) {
@@ -145,21 +145,21 @@ public class TeleopRed extends LinearOpMode {
                     frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                     backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                     backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    detection = "Up";
+                    detection = "Up O d";
                 }else if(GyroSensorVariable == 3){
                     //move Up orientation left
                     frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
                     backRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
                     frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                     backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    detection = "Up";
+                    detection = "Up O l";
                 }else if(GyroSensorVariable == 4){
                     //move Up orientation right
                     frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                     backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
                     frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED);
                     backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED);
-                    detection = "Up";
+                    detection = "Up O r";
                 }
             } else if (gamepad1.left_stick_x > 0.1) {
                 if (GyroSensorVariable == 2) {
@@ -168,7 +168,7 @@ public class TeleopRed extends LinearOpMode {
                     backRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
                     frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
                     backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
-                    detection = "Right";
+                    detection = "Right O d";
                 } else if (GyroSensorVariable == 1) {
                     //move Right (Normal)
                     frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
@@ -178,18 +178,18 @@ public class TeleopRed extends LinearOpMode {
                     detection = "Right";
                 }else if(GyroSensorVariable == 3){
                     //move Right orientation left
-                    frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    detection = "Right";
+                    frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    backRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    detection = "Right O l";
                 }else if(GyroSensorVariable == 4){
                     //move Right orientation right
-                    frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    detection = "Right";
+                    frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    backRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    detection = "Right O r";
                 }
 
             } else if (gamepad1.left_stick_x < -0.1) {
@@ -206,21 +206,21 @@ public class TeleopRed extends LinearOpMode {
                     backRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
                     frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
                     backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
-                    detection = "Left";
+                    detection = "Left O d";
                 }else if(GyroSensorVariable == 3){
                     //move Left orientation left
-                    frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    detection = "Left";
+                    frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    backRight.setPower(gamepad1.left_stick_x * MAX_SPEED);
+                    detection = "Left O l";
                 }else if(GyroSensorVariable == 4){
                     //move Left orientation right
-                    frontLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    frontRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backLeft.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    backRight.setPower(gamepad1.left_stick_y * MAX_SPEED * -1);
-                    detection = "Left";
+                    frontLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    frontRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    backLeft.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    backRight.setPower(gamepad1.left_stick_x * MAX_SPEED * -1);
+                    detection = "Left O r";
                 }
 
             } else {
