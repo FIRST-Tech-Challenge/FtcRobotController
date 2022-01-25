@@ -167,6 +167,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.b || gamepad2.b) {
             presetState = PRESETSTATE.GOING_DOWN;
         }
+        if(gamepad2.right_bumper) releaseServoPos = 0.3;
         if(presetState != PRESETSTATE.NO_PRESET) {
             armPower = 0.23;
             switch(presetState) {
