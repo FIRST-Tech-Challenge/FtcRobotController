@@ -4,14 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Disabled
-//@Autonomous(name = "Test Get Cube",group = "Test")
+import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
+
+//@Disabled
+@Autonomous(name = "Test Get Cube",group = "Test")
 public class TestGetCube extends LinearOpMode {
-    RobotClass robot;
+    SampleMecanumDrive robot;
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot = new RobotClass(hardwareMap,telemetry,this);
+        robot = new SampleMecanumDrive(hardwareMap,this, telemetry);
 
         waitForStart();
 

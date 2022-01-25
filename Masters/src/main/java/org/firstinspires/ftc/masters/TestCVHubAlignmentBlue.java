@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Disabled
-//@TeleOp(name = "Test CV Hub Alignment blue", group="test")
+
+@TeleOp(name = "Test CV Hub Alignment blue", group="test")
 public class TestCVHubAlignmentBlue extends LinearOpMode {
     RobotClass robot;
     @Override

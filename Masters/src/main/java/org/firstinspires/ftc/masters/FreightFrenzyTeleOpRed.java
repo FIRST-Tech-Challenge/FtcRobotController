@@ -29,7 +29,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
     Servo dumpServo = null;
 
-    DistanceSensor distanceSensorIntake;
+    DistanceSensor distanceSensorIntake, distanceSensorTop;
 
     DcMotor carouselMotor = null;
     // declare motor speed variables
@@ -100,6 +100,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
 
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+        distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
 
         // Set the drive motor direction:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -121,15 +122,17 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         // "RUN_USING_ENCODER" causes the motor to try to run at the specified fraction of full velocity
         // Note: We were not able to make this run mode work until we switched Channel A and B encoder wiring into
         // the motor controllers. (Neverest Channel A connects to MR Channel B input, and vice versa.)
+        linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         robot.lightSet();
         robot.redLED.setState(true);
         robot.redLED2.setState(true);
 
         boolean intakeOn = false;
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -137,8 +140,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-//            telemetry.addData("Status", "Run Time: " + runtime.toString());
-//            telemetry.update();
+            telemetry.addData("encode",  + linearSlideMotor.getCurrentPosition());
+            telemetry.update();
 
             double y = 0; //
             double x = 0;
@@ -184,6 +187,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             if(gamepad2.a) {
                 robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
                 intakeMotor.setPower(-.8);
+                intakeOn = true;
 
             } else if (gamepad2.b) {
                 intakeMotor.setPower(.8);
@@ -231,7 +235,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 if (linearSlideMotor.getCurrentPosition() >= 500) {
 //                    dump
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-                    sleep(1200);
+                    sleep(600);
 
                     dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
                     robot.pause(400);//200 enough for middle
@@ -241,7 +245,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     robot.redLED.setState(true);
                     robot.redLED2.setState(true);
                     linearSlideTarget = linearSlideTargets.BASE;
-                    linearSlideMotor.setTargetPosition(0);
+                    linearSlideMotor.setTargetPosition(20);
                     linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     linearSlideMotor.setPower(-.4);//-.4
                     //Wayne trying to go backwards for a while
@@ -251,13 +255,13 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
             linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            if (linearSlideTarget == linearSlideTargets.BASE) {
-                if (linearSlideMotor.getCurrentPosition() <= 10) {
-                    linearSlideMotor.setPower(0);
-                    linearSlidePos = linearSlidePositions.BASE;
-                    intakeOn = true;
-                }
-            }
+//            if (linearSlideTarget == linearSlideTargets.BASE) {
+//                if (linearSlideMotor.getCurrentPosition() <= 10) {
+//                    linearSlideMotor.setPower(0);
+//                    linearSlidePos = linearSlidePositions.BASE;
+//                    intakeOn = true;
+//                }
+//            }
 
             if (gamepad1.b) {
                 leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -284,7 +288,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 //            }
 
             double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            if (intakeDistance<7) {
+            if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
                 robot.pauseButInSecondsForThePlebeians(.1);
                 intakeMotor.setPower(0);
                 robot.redLED.setState(false);

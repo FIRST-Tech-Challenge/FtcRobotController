@@ -90,7 +90,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final DcMotorEx backRight;
     private final DcMotorEx frontRight;
     public DcMotor carousel, intakeMotor, linearSlideMotor;
-    public DistanceSensor distanceSensorLeft, distanceSensorRight, distanceSensorIntake;
+   // public DistanceSensor distanceSensorLeft, distanceSensorRight;
+   public DistanceSensor distanceSensorIntake, distanceSensorTop;
     public Servo linearSlideServo;
     public DigitalChannel redLED, greenLED, redLED2, greenLED2;
 
@@ -147,9 +148,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideServo = hardwareMap.servo.get("dumpServo");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
-        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
+//        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
+//        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+        distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
 
         redLED = (DigitalChannel) hardwareMap.get("red");
         greenLED = (DigitalChannel) hardwareMap.get("green");
@@ -226,13 +228,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         long startTime = new Date().getTime();
         long time = 0;
         double distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
+
         boolean foundFreight = false;
 
         intakeMotor.setPower(.8);
         setMotorPowers(-speed, -speed, -speed, -speed);
 
 
-        while (distanceSensorValue > 3 && time < secondaryStopConditionSeconds * 1000) {
+        while (distanceSensorValue > 3  && time < secondaryStopConditionSeconds * 1000) {
             //pause(50);
             time = new Date().getTime() - startTime;
             distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
@@ -260,18 +263,24 @@ public class SampleMecanumDrive extends MecanumDrive {
         backRight.setPower(-.3);
         intakeMotor.setPower(.8);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+        double bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while (intakeDistance>7 && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<1500) {
+        while ((intakeDistance>10 && bucketdistance>14) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<1600) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            telemetry.addData("time", elapsedTime);
+            bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
+            telemetry.addData("top distance", bucketdistance);
+            telemetry.addData("intake", intakeDistance);
             telemetry.update();
         }
-        if (intakeDistance<7){
-            stopMotors();
+        stopMotors();
+        telemetry.addData("top distance", distanceSensorTop.getDistance(DistanceUnit.CM));
+        telemetry.update();
+
+        if (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM)<13.5){
             pauseButInSecondsForThePlebeians(.3);
             intakeMotor.setPower(-.8);
-            pauseButInSecondsForThePlebeians(.3);
+            pauseButInSecondsForThePlebeians(.5);
             intakeMotor.setPower(0);
             redLED.setState(false);
             redLED2.setState(false);
@@ -284,70 +293,70 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
 
-    public void distanceSensorStrafeLeft(double speed) {
-
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
-
-        while (rightDistance - leftDistance > 1) {
-            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-        }
-        stopMotors();
-    }
-
-    public void distanceSensorStrafeRight(double speed) {
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(speed);
-
-        while (leftDistance - rightDistance > 1) {
-            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-        }
-        stopMotors();
-    }
-
-    public void distanceSensorForward(double speed) {
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-        frontLeft.setPower(-speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(-speed);
-
-        while (leftDistance > 15) {
-            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        }
-        stopMotors();
-    }
-
-    public void distanceSensorStuff() {
-
-        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
-        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
-
-
-        if (leftDistance - rightDistance > 1) {
-            distanceSensorStrafeRight(.3);
-        } else if (rightDistance - leftDistance > 1) {
-            distanceSensorStrafeLeft(.3);
-        }
-
-        if (leftDistance > 15) {
-            distanceSensorForward(.3);
-        }
-    }
+//    public void distanceSensorStrafeLeft(double speed) {
+//
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        frontLeft.setPower(-speed);
+//        frontRight.setPower(speed);
+//        backLeft.setPower(speed);
+//        backRight.setPower(-speed);
+//
+//        while (rightDistance - leftDistance > 1) {
+//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//        }
+//        stopMotors();
+//    }
+//
+//    public void distanceSensorStrafeRight(double speed) {
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        frontLeft.setPower(speed);
+//        frontRight.setPower(-speed);
+//        backLeft.setPower(-speed);
+//        backRight.setPower(speed);
+//
+//        while (leftDistance - rightDistance > 1) {
+//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//            rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//        }
+//        stopMotors();
+//    }
+//
+//    public void distanceSensorForward(double speed) {
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//        frontLeft.setPower(-speed);
+//        frontRight.setPower(-speed);
+//        backLeft.setPower(-speed);
+//        backRight.setPower(-speed);
+//
+//        while (leftDistance > 15) {
+//            leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        }
+//        stopMotors();
+//    }
+//
+//    public void distanceSensorStuff() {
+//
+//        double leftDistance = distanceSensorLeft.getDistance(DistanceUnit.CM);
+//        double rightDistance = distanceSensorRight.getDistance(DistanceUnit.CM);
+//
+//
+//        if (leftDistance - rightDistance > 1) {
+//            distanceSensorStrafeRight(.3);
+//        } else if (rightDistance - leftDistance > 1) {
+//            distanceSensorStrafeLeft(.3);
+//        }
+//
+//        if (leftDistance > 15) {
+//            distanceSensorForward(.3);
+//        }
+//    }
 
     public void dumpFreightBottom() {
         linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
