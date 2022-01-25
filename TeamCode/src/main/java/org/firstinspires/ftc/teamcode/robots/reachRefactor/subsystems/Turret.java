@@ -41,12 +41,12 @@ public class Turret implements Subsystem {
     }
 
     public void update(){
-        if(targetHeading > 90)
-            targetHeading = 90;
-        else if(targetHeading < -90)
-            targetHeading = -90;
+//        if(targetHeading > 90)
+//            targetHeading = 90;
+//        else if(targetHeading < -90)
+//            targetHeading = -90;
 
-        motor.setTargetPosition((int)(getTargetAngle() * ticksPerDegree));
+        motor.setTargetPosition((int)(targetHeading * ticksPerDegree));
     }
 
     @Override

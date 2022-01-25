@@ -24,6 +24,7 @@ public class Robot implements Subsystem {
     public DriveTrain driveTrain;
     public Crane crane;
     public Gripper gripper;
+    public Turret turret;
     public Subsystem[] subsystems;
 
     // sensors
@@ -44,9 +45,10 @@ public class Robot implements Subsystem {
     public Robot(HardwareMap hardwareMap) {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap);
-        crane = new Crane(hardwareMap);
+        turret = new Turret(hardwareMap);
+        crane = new Crane(hardwareMap, turret);
         gripper = new Gripper(hardwareMap);
-        subsystems = new Subsystem[] {driveTrain, crane, gripper};
+        subsystems = new Subsystem[] {driveTrain, crane, gripper, turret};
 
         articulation = Articulation.MANUAL;
 

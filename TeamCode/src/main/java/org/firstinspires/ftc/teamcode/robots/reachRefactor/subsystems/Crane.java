@@ -56,12 +56,12 @@ public class Crane implements Subsystem {
 
 
 
-    public Crane(HardwareMap hardwareMap) {
+    public Crane(HardwareMap hardwareMap, Turret turret) {
         shoulderServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
         elbowServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
         wristServo = hardwareMap.get(ServoImplEx.class, "bucketServo");
 
-        turret = new Turret(hardwareMap);
+        this.turret = turret;
         articulation = Articulation.MANUAL;
     }
 
