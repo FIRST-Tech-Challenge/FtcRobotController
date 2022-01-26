@@ -30,7 +30,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-14, 46))
+                .strafeTo(new Vector2d(-14, 43))
                 .build();
 
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
@@ -102,7 +102,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                     })
-                    .splineToSplineHeading(new Pose2d(-11, 50, Math.toRadians(270)), Math.toRadians(270))
+                    .splineToSplineHeading(new Pose2d(-9, 48, Math.toRadians(270)), Math.toRadians(270))
 //                    -14, 46
                     .build();
             drive.followTrajectorySequence(trajSeq3);
@@ -123,7 +123,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             drive.linearSlideMotor.setPower(.8);
                         })
-                        .splineToSplineHeading(new Pose2d(-11, 50, Math.toRadians(270)), Math.toRadians(270))
+                        .splineToSplineHeading(new Pose2d(-9, 48, Math.toRadians(270)), Math.toRadians(270))
                         .build();
                 drive.followTrajectorySequence(trajSeq3);
 

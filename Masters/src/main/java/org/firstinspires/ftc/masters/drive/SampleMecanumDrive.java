@@ -259,16 +259,16 @@ public class SampleMecanumDrive extends MecanumDrive {
     public boolean getCube () {
         ElapsedTime elapsedTime = new ElapsedTime();
         lightSet();
-        frontLeft.setPower(-.3);
-        frontRight.setPower(-.3);
-        backLeft.setPower(-.3);
-        backRight.setPower(-.3);
+        frontLeft.setPower(-.25);
+        frontRight.setPower(-.25);
+        backLeft.setPower(-.25);
+        backRight.setPower(-.25);
         intakeMotor.setPower(.8);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         double bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while ((intakeDistance>10 && bucketdistance>14) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<1600) {
+        while ((intakeDistance>10 && bucketdistance>14) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<2000) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
             bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
             telemetry.addData("top distance", bucketdistance);
