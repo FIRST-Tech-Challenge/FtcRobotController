@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.calibration;
 
-public class FreightFrenzyConfig {
+import java.io.Serializable;
+
+public class FreightFrenzyConfig implements Serializable {
     private int duckLoopCount;
     private int duckLoopDelayMs;
     private double duckLoopStartSpeed;

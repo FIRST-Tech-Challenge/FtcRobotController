@@ -4,14 +4,17 @@ import android.graphics.Color;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -33,6 +36,8 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx turret = null;
     private Servo dropperServo = null;
     private Servo intakeDropperServo = null;
+
+    private CRServo tapeMeasure = null;
 
     FreightFrenzyConfig frenzyConfig = null;
 
@@ -78,7 +83,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
-    private static double INTAKE_SPEED = -0.4;
+    private static double INTAKE_SPEED = -0.3;
     private static double INTAKE_SPEED_REVERSE = 0.3;
 
     private boolean intakeRunning = false;
@@ -162,14 +167,14 @@ public class FrenzyBot extends FrenzyBaseBot {
             Log.e(TAG, "Cannot initialize Intake Dropper", ex);
         }
 
-//        try {
-//            tower =  hwMap.get(Servo.class, "tower");
-//            initTower();
-//        } catch (Exception ex) {
-//            Log.e(TAG, "Cannot initialize tower servo", ex);
-//        }
-
+        try {
+            tapeMeasure =  hwMap.get(CRServo.class, "tapeMeasure");
+            tapeMeasure.setDirection(DcMotorSimple.Direction.FORWARD);
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize tape measure servo", ex);
+        }
     }
+
     public double getIntakeCurrent(){
         double curr = intake.getCurrent(CurrentUnit.AMPS);
         return curr;
@@ -212,6 +217,13 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void activateLift(double velocity) {
         if (lift != null) {
             lift.setVelocity(MAX_VELOCITY_REV*velocity);
+        }
+    }
+
+    public void activateTapeMeasure(double power) {
+        if (tapeMeasure != null) {
+            power = Range.clip(power, -1.0, 1.0);
+            tapeMeasure.setPower(power);
         }
     }
 
@@ -388,6 +400,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Intake Dropper Down", defaultReturn = "")
     public void intakeDropperDown(){
+        resetDropper();
         if (intakeDropperServo != null) {
             intakeDropperServo.setPosition(0);
         }

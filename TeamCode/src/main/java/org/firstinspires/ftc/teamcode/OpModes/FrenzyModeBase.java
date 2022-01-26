@@ -146,6 +146,7 @@ public class FrenzyModeBase extends LinearOpMode {
         if (isManualLiftMode()) {
             handleTower();
             handleLiftManual();
+            handleTapeMeasure();
         }
         else {
             depositToTeamHub();
@@ -201,7 +202,7 @@ public class FrenzyModeBase extends LinearOpMode {
 
     protected void handleTower() {
         if (isButtonPressable()) {
-            double turretValue = gamepad2.left_stick_x;
+            double turretValue = gamepad2.right_stick_x;
             robot.activateTurret(turretValue);
         }
     }
@@ -223,6 +224,13 @@ public class FrenzyModeBase extends LinearOpMode {
             double liftVal = -gamepad2.right_stick_y;
             robot.activateLift(liftVal);
 
+        }
+    }
+
+    protected void handleTapeMeasure() {
+        if (isButtonPressable()) {
+            double val = -gamepad2.left_stick_y;
+            robot.activateTapeMeasure(val);
         }
     }
 

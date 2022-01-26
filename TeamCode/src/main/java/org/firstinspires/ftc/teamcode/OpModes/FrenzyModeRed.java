@@ -28,7 +28,7 @@ public class FrenzyModeRed extends FrenzyModeBase{
     @Override
     protected void handleTurntable() {
         if (isButtonPressable()) {
-            if (gamepad2.b) {
+            if (gamepad1.b) {
                 startGamepadLockout();
                 robot.startTurntableRedGradual();
             }
