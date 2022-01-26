@@ -35,7 +35,6 @@ public class drive3_full_omnidirectional_movement extends LinearOpMode {
         return (Math.toRadians(Math.atan(joystickY / joystickX))) + (3 * 3.14159265 / 2);
         //this is for backwards movement
 
-
     }
 
     public void move(double direction) { //main move method
@@ -63,14 +62,13 @@ public class drive3_full_omnidirectional_movement extends LinearOpMode {
 
             /*the code below does not send anything to the sensors/record movement yet. */
 
-            while (gamepad1.left_stick_y > 0 || gamepad1.left_stick_x > 0) { //movement
+            if (gamepad1.left_stick_y > 0 || gamepad1.left_stick_x > 0) { //movement
 
                 move(angleOfJoystick(gamepad1.left_stick_y, gamepad1.left_stick_x));// main move method, gets angle from angleOfJoystic(k)
-            }
-            while (gamepad1.right_stick_y > 0 || gamepad1.right_stick_x > 0) { //turning. currently can't turn AND move
+
+            } else if (gamepad1.right_stick_y > 0 || gamepad1.right_stick_x > 0) { //turning. currently can't turn AND move
 
                 turn();
-
             }
             idle();
         }
