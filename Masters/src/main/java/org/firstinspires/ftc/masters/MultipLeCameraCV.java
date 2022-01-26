@@ -40,15 +40,15 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.ArrayList;
 
 
-public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV {
-    static OpenCvWebcam duckWebcam;
-    OpenCvWebcam webcam;
+public class MultipLeCameraCV {
+    public OpenCvWebcam duckWebcam;
+    public OpenCvWebcam webcam;
 
     public DuckDeterminationPipeline duckPipeline;
-    public SkystoneDeterminationPipeline pipeline;
+    public ShippingElementDeterminationPipeline pipeline;
 
 
-    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV(HardwareMap hardwareMap, Telemetry telemetry){
+    public MultipLeCameraCV(HardwareMap hardwareMap, Telemetry telemetry){
 
 //
 //        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
@@ -59,21 +59,21 @@ public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFr
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
+//
+//        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
+//                .splitLayoutForMultipleViewports(
+//                        cameraMonitorViewId, //The container we're splitting
+//                        2, //The number of sub-containers to create
+//                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
-        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
-                .splitLayoutForMultipleViewports(
-                        cameraMonitorViewId, //The container we're splitting
-                        2, //The number of sub-containers to create
-                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
-
-        duckWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamDuck"), viewportContainerIds[0]);
+        duckWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamDuck"));
         duckPipeline = new DuckDeterminationPipeline(telemetry);
-        duckWebcam.setPipeline(duckPipeline);
 
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), viewportContainerIds[1]);
-        pipeline = new TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline(telemetry);
-        webcam.setPipeline(pipeline);
+
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
+        pipeline = new ShippingElementDeterminationPipeline(telemetry);
+
 
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
@@ -82,6 +82,7 @@ public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFr
         // webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
         duckWebcam.setMillisecondsPermissionTimeout(2500);
+        webcam.setMillisecondsPermissionTimeout(2500);
 
         // Timeout for obtaining permission is configurable. Set before opening.
         duckWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -103,12 +104,15 @@ public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFr
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
+                telemetry.addData("duck webcam open", "yes");
+                duckWebcam.setPipeline(duckPipeline);
                 duckWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addData("duck webcam startStreaming", "yes");
             }
 
             @Override
             public void onError(int errorCode) {
-                telemetry.addLine("Can't open cameras");
+                telemetry.addLine("Can't open duck cameras");
                 telemetry.update();
                 /*
                  * This will be called if the camera could not be opened
@@ -135,12 +139,14 @@ public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFr
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
+                telemetry.addData("front webcam open", "yes");
+                webcam.setPipeline(pipeline);
                 webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode) {
-                telemetry.addLine("Can't open camera");
+                telemetry.addLine("Can't open front camera");
                 telemetry.update();
                 /*
                  * This will be called if the camera could not be opened
@@ -297,10 +303,10 @@ public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFr
     }
 
 
-    public static class SkystoneDeterminationPipeline extends OpenCvPipeline {
+    public static class ShippingElementDeterminationPipeline extends OpenCvPipeline {
         Telemetry telemetry;
 
-        public SkystoneDeterminationPipeline(Telemetry telemetry) {
+        public ShippingElementDeterminationPipeline(Telemetry telemetry) {
             this.telemetry = telemetry;
         }
 
@@ -388,9 +394,9 @@ public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFr
         int avg3 = 0;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile SkystoneDeterminationPipeline.FreightPosition position = SkystoneDeterminationPipeline.FreightPosition.LEFT;
+        public volatile ShippingElementDeterminationPipeline.FreightPosition position = ShippingElementDeterminationPipeline.FreightPosition.LEFT;
 
-        public volatile SkystoneDeterminationPipeline.HubPosition hub_position = SkystoneDeterminationPipeline.HubPosition.SHRUG_NOISES;
+//        public volatile SkystoneDeterminationPipeline.HubPosition hub_position = SkystoneDeterminationPipeline.HubPosition.SHRUG_NOISES;
 
         /*
          * This function takes the RGB frame, converts to LAB,
@@ -482,11 +488,11 @@ public class TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFr
             }
 
             if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
-                position = TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT;
+                position = ShippingElementDeterminationPipeline.FreightPosition.LEFT;
             } else if (avg2 < FREIGHT_PRESENT_THRESHOLD) {
-                position = TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.MIDDLE;
+                position = ShippingElementDeterminationPipeline.FreightPosition.MIDDLE;
             } else {
-                position = TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.RIGHT;
+                position = ShippingElementDeterminationPipeline.FreightPosition.RIGHT;
             }
             telemetry.addData("Analysis", avg1);
             telemetry.addData("Analysis2", avg2);

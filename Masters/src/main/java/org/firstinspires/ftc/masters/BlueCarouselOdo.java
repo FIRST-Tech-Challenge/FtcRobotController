@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
@@ -23,7 +22,8 @@ public class BlueCarouselOdo extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
-        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
+        drive.CV.duckWebcam.stopStreaming();
         freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(-35, 63), Math.toRadians(270));
@@ -72,7 +72,7 @@ public class BlueCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();
@@ -118,9 +118,7 @@ public class BlueCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT){
-            drive.pause(300);
-        }
+
         drive.retract();
 
         position = drive.getLocalizer().getPoseEstimate();

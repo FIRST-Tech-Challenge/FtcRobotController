@@ -23,23 +23,22 @@ public class BlueWarehouseOdo extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("blue");
-        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+        MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
+        drive.CV.duckWebcam.stopStreaming();
         freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(13.5, 63),Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-14, 43))
+                .strafeTo(new Vector2d(-13, 45))
                 .build();
 
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
-                .splineToLinearHeading(new Pose2d( new Vector2d(48, 66), Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
                 .build();
-
-
-
+        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
         waitForStart();
 
         long startTime = new Date().getTime();
@@ -76,7 +75,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();
@@ -102,7 +101,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                     })
-                    .splineToSplineHeading(new Pose2d(-9, 48, Math.toRadians(270)), Math.toRadians(270))
+                    .splineToSplineHeading(new Pose2d(-9, 47, Math.toRadians(270)), Math.toRadians(270))
 //                    -14, 46
                     .build();
             drive.followTrajectorySequence(trajSeq3);
