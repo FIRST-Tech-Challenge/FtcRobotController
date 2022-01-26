@@ -13,8 +13,8 @@ public class TestDuckRobot extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
-        drive.openDuckCVInit();
-        FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition duckPosition = drive.analyzeDuck();
+        drive.openCVDuckInit();
+        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition duckPosition = drive.analyzeDuck();
         waitForStart();
 
         drive.findDuckRed();
