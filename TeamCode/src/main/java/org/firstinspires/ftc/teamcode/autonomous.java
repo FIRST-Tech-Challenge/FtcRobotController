@@ -42,11 +42,7 @@ public class autonomous extends automethods {
         waitForStart();
 
 ////////////////////////////////////ROBOT  START////////////////////////////////////////////////////
-    encoderDrive(.5, 12, 3);
-    imuHold(1);
-    imuTurn(.3, 90);
-    imuHold(1);
-    strafeRight(0.5, 12, 3);
+    encoderDrive(0.7,60, 5);
         //  rpos = returnRingPosition(3);
 
 
