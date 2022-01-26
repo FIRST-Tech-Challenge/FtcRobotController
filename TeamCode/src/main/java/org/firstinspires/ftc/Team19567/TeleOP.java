@@ -131,10 +131,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         final double leftBackSpeed = (r * Math.cos(angleDC) - gamepad1.right_stick_x)*acc;
         final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x)*acc;
         //INTAKE
-        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.65*gamepad1.right_trigger);
+        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.68*gamepad1.right_trigger);
         else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.7);
         else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
-        else mechanisms.moveIntake(-0.065);
+        else mechanisms.moveIntake(0.1);
 
         if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
@@ -155,7 +155,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             presetState = PRESETSTATE.ALLIANCE_FIRST;
         }
         else if(gamepad2.y) {
-            presetState = PRESETSTATE.ALLIANCE_SECOND;
+            presetState = PRESETSTATE.ALLIANCE_THIRD;
         }
         else if(gamepad1.a || gamepad2.a) {
             presetState = PRESETSTATE.ALLIANCE_THIRD;
@@ -167,13 +167,13 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.b || gamepad2.b) {
             presetState = PRESETSTATE.GOING_DOWN;
         }
-        if(gamepad2.right_bumper) releaseServoPos = 0.3;
+        if(gamepad2.right_bumper) releaseServoPos = 0.83;
         if(presetState != PRESETSTATE.NO_PRESET) {
-            armPower = 0.23;
+            armPower = 0.18;
             switch(presetState) {
                 case ALLIANCE_FIRST: {
-                    armPower = 0.125;
-                    armPos = 870;
+                    armPower = 0.12;
+                    armPos = 875;
                     if(armDC.getCurrentPosition() >= 870) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
@@ -187,8 +187,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                     break;
                 }
                 case ALLIANCE_THIRD: {
-                    armPos = 610;
-                    if(armDC.getCurrentPosition() >= 610) {
+                    armPos = 595;
+                    if(armDC.getCurrentPosition() >= 595) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
                     break;
