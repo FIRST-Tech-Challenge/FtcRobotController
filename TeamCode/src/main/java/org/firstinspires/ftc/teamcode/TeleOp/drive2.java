@@ -24,26 +24,16 @@ public class drive2 extends LinearOpMode {
 
     public double angleOfJoystick(double joystickY, double joystickX){ //getting angle of left joystick
 
-        double theta;
-        if(joystickX==0 && joystickY>0){ //avoids tan90 error
+        if(joystickX==0 && joystickY>0)return  3.14159265/2; //avoids tan90 error
 
-            theta = 3.14159265/2;
+        if(joystickX==0 && joystickY<0) return 3*3.14159265/2; //avoids tan270 error
 
-        } else if(joystickX==0 && joystickY<0){ //avoids tan270 error
+        if (joystickY>0) return Math.toRadians(Math.atan(joystickY/joystickX)) + 3.14159265/2;
+        //forwards movement
 
-            theta = 3*3.14159265/2;
+        return (Math.toRadians(Math.atan(joystickY/joystickX))) + (3*3.14159265/2);
+        //this is for backwards movement
 
-        } else if(joystickY>0){ //forwards movement
-
-            theta = Math.toRadians(Math.atan(joystickY/joystickX)) + 3.14159265/2;
-
-        } else { //this is for backwards movement
-
-            theta = (Math.toRadians(Math.atan(joystickY/joystickX))) + (3*3.14159265/2);
-
-        }
-
-        return theta;
     }
 
     public double sidewaysForce(double joystickY, double joystickX){
@@ -142,6 +132,7 @@ public class drive2 extends LinearOpMode {
                 turn();
 
             }
+            idle();
         }
     }
 
