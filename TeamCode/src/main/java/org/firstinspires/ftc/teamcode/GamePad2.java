@@ -30,17 +30,13 @@ import java.util.concurrent.TimeUnit;
      int armTop;
      int armIntake;
 
-     int elbowStart;
-     int elbowTarget;
-     int elbowTop;
-     int elbowIntake;
+
 
      long lastPressed = 0;
      boolean motorOn = false;
      boolean squarePressed;
      int squareCount;
      int arm;
-     int elbow;
      double pmodify = .25;
 
      @Override
@@ -98,9 +94,6 @@ import java.util.concurrent.TimeUnit;
          } else {
              robot.arm.setPower(0);
          }
- ///////////////////////elbow//////////////////////////////
-
-
 
  ///////////////////////////intake//////////////////
 
@@ -109,7 +102,7 @@ import java.util.concurrent.TimeUnit;
              motorOn = !motorOn;
              if (robot.intakeLeft.getPower() == 0 && robot.intakeRight.getPower() == 0) {
                  robot.intakeLeft.setPower(1);
-                 robot.intakeLeft.setPower(1);
+                 robot.intakeRight.setPower(1);
                  // robot.topIntake.setPower(1);
                  //robot.windmill.setPower(1);
 
@@ -135,21 +128,32 @@ import java.util.concurrent.TimeUnit;
 
 
              }}
-/////////////////////////////
 
 
+/////////////////////////////doors/////////////////////////
+        if(gamepad1.right_bumper) {
+            robot.frontDoor.setPosition(0.5);
+        }
+        else{
+            robot.frontDoor.setPosition(0);
+         }
+
+         if(gamepad1.right_trigger > 0.5) {
+             robot.backDoor.setPosition(0.5);
+         }
+         else{
+             robot.backDoor.setPosition(0);
+         }
 
 
-/////////////////Controlled Arm and Elbow////////////
+/////////////////Controlled Arm////////////
 
          if (gamepad1.dpad_left) {
              armTarget = armTop;
-             elbowTarget = elbowTop;
          }
 
          if (gamepad1.dpad_right){
              armTarget= armIntake;
-             elbowTarget = elbowIntake;
          }
          if (gamepad1.circle) {
              robot.arm.setTargetPosition(armTarget);

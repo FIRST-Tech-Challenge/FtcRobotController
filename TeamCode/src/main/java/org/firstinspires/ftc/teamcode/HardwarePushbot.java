@@ -36,7 +36,6 @@ public class HardwarePushbot {
 
 
 
-
     ///////////////Servos
 
 //public static Servo testServo = null;
@@ -45,7 +44,8 @@ public class HardwarePushbot {
     //public static DigitalChannel CascadeTouch = null;  // Hardware Device Object
     public static TouchSensor armstop = null;
     public static CRServo turntable = null;
-
+    public static Servo frontDoor = null;
+    public static Servo backDoor = null;
     /*
 
         public static ColorSensor colorSensor;
@@ -82,7 +82,8 @@ public class HardwarePushbot {
 
         // Define and initialize Servos
         turntable =  hwMap.get(CRServo.class, "turntable");
-
+        backDoor = hwMap.get(Servo.class, "backDoor");
+        frontDoor = hwMap.get(Servo.class, "frontDoor");
 
         //Define and Initialize Sensors///////////////////
 
