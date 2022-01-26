@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Autonomous(name = "BlueBlockPlace", group = "Autonomous")
 public class BlueParkBlockPLaceLeague2 extends MasterOpMode{
 

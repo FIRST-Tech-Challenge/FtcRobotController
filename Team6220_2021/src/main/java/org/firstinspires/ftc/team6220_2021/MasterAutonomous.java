@@ -99,7 +99,7 @@ public abstract class MasterAutonomous extends MasterOpMode {
                         Math.max(angleLeft / 90, Constants.MIN_TURN_PWR));
             }
 
-            if (Math.abs(angleLeft) <= 0.5) {
+            if (Math.abs(angleLeft) <= 5) {
                 driveTank(0.0, 0.0);
                 angleReached = true;
             }

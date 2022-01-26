@@ -49,14 +49,14 @@ public class TeleOpComp extends MasterOpMode{
             //Use switch to declare values for each arm position
             switch (position) {
                 case -2:
-                    servoArm.setPosition(0.7);
+                    servoArm.setPosition(0.8);
                     motorArm.setPower(motorPower);
                     tickvalue = 555;
                     break;
                 case -1:
                     servoArm.setPosition(0.1);
                     motorArm.setPower(motorPower);
-                    tickvalue = 650;
+                    tickvalue = 730;
                     break;
                 case 0:
                     servoArm.setPosition(0.6);
@@ -159,7 +159,7 @@ public class TeleOpComp extends MasterOpMode{
                 if (position == 0){
                     servoGrabber.setPosition(0.6);
                 } else {
-                    servoGrabber.setPosition(0.34);
+                    servoGrabber.setPosition(0.5);
                 }
             } else if (gamepad2.a) {
                 servoGrabber.setPosition(0.0);
@@ -222,8 +222,8 @@ public class TeleOpComp extends MasterOpMode{
                 }
             }
             if (gamepad2.left_trigger > 0.5 && gamepad2.right_trigger > 0.5){
-                servoGrabber.setPosition(0.0);
-                servoArm.setPosition(0.81);
+                servoGrabber.setPosition(0.34);
+                servoArm.setPosition(0.8);
                 motorArm.setTargetPosition(-930);
                 pauseMillis(700);
                 motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

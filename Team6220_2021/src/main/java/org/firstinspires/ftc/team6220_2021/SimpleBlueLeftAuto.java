@@ -28,11 +28,15 @@ public class SimpleBlueLeftAuto extends MasterAutonomous {
         int barcode = 2;
 
         servoGrabber.setPosition(Constants.CLOSED_GRABBER_POSITION);
-        pauseMillis(1500);
+        servoArm.setPosition(0.9);
+
+        waitForStart();
+
         motorArm.setPower(0.5);
         motorArm.setTargetPosition(800);
-        pauseMillis(750);
         servoArm.setPosition(0.667);
+
+        pauseMillis(1000);
 
         if (tfod != null) {
             tfod.activate();
@@ -69,8 +73,6 @@ public class SimpleBlueLeftAuto extends MasterAutonomous {
             }
         }
 
-        waitForStart();
-
         if (tfod != null) {
             tfod.shutdown();
         }
@@ -82,7 +84,7 @@ public class SimpleBlueLeftAuto extends MasterAutonomous {
         pauseMillis(125);
         turnToAngle(-30);
         pauseMillis(125);
-        driveInches(48 / Math.sqrt(3), Constants.MIN_DRIVE_PWR, true);
+        driveInches(40 / Math.sqrt(3), Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         turnToAngle(0);
         pauseMillis(125);
@@ -91,17 +93,17 @@ public class SimpleBlueLeftAuto extends MasterAutonomous {
             case 0:
                 motorArm.setTargetPosition(300);
                 servoArm.setPosition(0.55);
-                driveInches(8, Constants.MIN_DRIVE_PWR, true);
+                driveInches(4, Constants.MIN_DRIVE_PWR, true);
                 break;
             case 1:
                 motorArm.setTargetPosition(550);
                 servoArm.setPosition(0.45);
-                driveInches(11, Constants.MIN_DRIVE_PWR, true);
+                driveInches(7, Constants.MIN_DRIVE_PWR, true);
                 break;
             case 2:
                 motorArm.setTargetPosition(900);
                 servoArm.setPosition(0.3);
-                driveInches(14, Constants.MIN_DRIVE_PWR, true);
+                driveInches(10, Constants.MIN_DRIVE_PWR, true);
                 break;
         }
 

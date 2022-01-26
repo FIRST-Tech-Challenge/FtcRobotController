@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.team6220_2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Autonomous(name = "RedParkBlockPlace", group = "Autonomous")
 public class RedParkBlockPLace extends MasterAutonomous {
 

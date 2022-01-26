@@ -28,11 +28,15 @@ public class SimpleRedRightAuto extends MasterAutonomous {
         int barcode = 2;
 
         servoGrabber.setPosition(Constants.CLOSED_GRABBER_POSITION);
-        pauseMillis(1500);
+        servoArm.setPosition(0.9);
+
+        waitForStart();
+
         motorArm.setPower(0.5);
         motorArm.setTargetPosition(800);
-        pauseMillis(750);
         servoArm.setPosition(0.667);
+
+        pauseMillis(1000);
 
         if (tfod != null) {
             tfod.activate();
@@ -69,64 +73,50 @@ public class SimpleRedRightAuto extends MasterAutonomous {
             }
         }
 
-        waitForStart();
-
-        if (tfod != null) {
-            tfod.shutdown();
-        }
-
         telemetry.addData("barcode: ", barcode);
         telemetry.update();
 
         driveInches(6, Constants.MIN_DRIVE_PWR, true);
-        pauseMillis(125);
-        turnToAngle(30);
-        pauseMillis(125);
-        driveInches(48 / Math.sqrt(3), Constants.MIN_DRIVE_PWR, true);
-        pauseMillis(125);
-        turnToAngle(0);
         pauseMillis(125);
 
         switch (barcode) {
             case 0:
                 motorArm.setTargetPosition(300);
                 servoArm.setPosition(0.55);
-                driveInches(8, Constants.MIN_DRIVE_PWR, true);
                 break;
             case 1:
                 motorArm.setTargetPosition(550);
                 servoArm.setPosition(0.45);
-                driveInches(11, Constants.MIN_DRIVE_PWR, true);
                 break;
             case 2:
                 motorArm.setTargetPosition(900);
                 servoArm.setPosition(0.3);
-                driveInches(14, Constants.MIN_DRIVE_PWR, true);
                 break;
         }
 
+        turnToAngle(25);
+        pauseMillis(125);
+        driveInches(42 / Math.sqrt(3), Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         servoGrabber.setPosition(Constants.OPEN_GRABBER_POSITION);
         pauseMillis(500);
-        servoGrabber.setPosition(Constants.CLOSED_GRABBER_POSITION);
-        pauseMillis(125);
 
         switch (barcode) {
             case 0:
-                driveInches(32, Constants.MIN_DRIVE_PWR, false);
+                driveInches(26, Constants.MIN_DRIVE_PWR, false);
                 break;
             case 1:
-                driveInches(35, Constants.MIN_DRIVE_PWR, false);
+                driveInches(29, Constants.MIN_DRIVE_PWR, false);
                 break;
             case 2:
-                driveInches(38, Constants.MIN_DRIVE_PWR, false);
+                driveInches(32, Constants.MIN_DRIVE_PWR, false);
                 break;
         }
 
         pauseMillis(125);
-        turnToAngle(-90);
+        turnToAngle(-80);
         pauseMillis(125);
-        driveInches(36, Constants.MIN_DRIVE_PWR, true);
+        driveInches(30, 0.8, true);
 
         servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
         motorArm.setTargetPosition(0);
