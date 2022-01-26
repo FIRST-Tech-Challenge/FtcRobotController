@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.mentor.samples.cv;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -64,7 +66,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
    *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
    *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
    */
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    private static final String TFOD_MODEL_ASSET = Environment.getExternalStorageDirectory().getPath() + "FIRST/Vuforia/models/ftc_ml_tse_g_o_20220124_234629.tflite";
     private static final String[] LABELS = {
       "TSE_Green",
       "TSE_Orange"
@@ -179,6 +181,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
        tfodParameters.isModelTensorFlow2 = true;
        tfodParameters.inputSize = 320;
        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-       tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+       tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
     }
 }
