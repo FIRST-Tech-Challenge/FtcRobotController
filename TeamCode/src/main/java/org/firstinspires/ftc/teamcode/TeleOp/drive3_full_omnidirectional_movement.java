@@ -45,14 +45,14 @@ public class drive3_full_omnidirectional_movement extends LinearOpMode {
 
         return theta;
     }
-    public void move(double direction){
-        double hypotenuse = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x);
+    public void move(double direction){ //main move method
+        double hypotenuse = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x); //magnitude of motion
 
         if(hypotenuse>1){ //keeps magnitude in bounds just in case
             hypotenuse = 1;
         }
 
-        motorFrontLeft.setPower((Math.sin(direction+(3.14159265/4))*hypotenuse));
+        motorFrontLeft.setPower((Math.sin(direction+(3.14159265/4))*hypotenuse)); //motor code
         motorBackLeft.setPower((Math.sin(direction-(3.14159265/4))*hypotenuse));
         motorFrontRight.setPower((Math.sin(direction-(3.14159265/4))*hypotenuse));
         motorBackRight.setPower((Math.sin(direction+(3.14159265/4))*hypotenuse));
