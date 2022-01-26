@@ -80,7 +80,7 @@ public class RedCarouselOdo extends LinearOpMode {
         Pose2d position = drive.getLocalizer().getPoseEstimate();
 
         TrajectorySequence toCarousel = drive.trajectorySequenceBuilder(position)
-                .lineToLinearHeading(new Pose2d(new Vector2d(-58.5, -58.5), Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-61.5, -56.5), Math.toRadians(90)))
                 .build();
         drive.followTrajectorySequence(toCarousel);
 
@@ -90,7 +90,7 @@ public class RedCarouselOdo extends LinearOpMode {
 
 
         TrajectorySequence getOffCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                .strafeRight(2, SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .strafeTo(new Vector2d(-59.5, -52.5), SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         drive.followTrajectorySequence(getOffCarousel);
 

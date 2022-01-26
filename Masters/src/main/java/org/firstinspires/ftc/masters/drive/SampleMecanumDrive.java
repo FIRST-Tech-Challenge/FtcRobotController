@@ -266,7 +266,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         double bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while ((intakeDistance>10 && bucketdistance>14) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<2000) {
+        while ((intakeDistance>10 && bucketdistance>14) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<2500) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
             bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
             telemetry.addData("top distance", bucketdistance);
@@ -531,7 +531,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void findDuckRed(){
 
         //strafe right
-        double speed = 0.35;
+        double speed = 0.25;
 
         ElapsedTime elapsedTime= new ElapsedTime();
 
@@ -545,7 +545,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         intakeMotor.setPower(0.8);
-        forward(0.4, -1.5);
+        forward(0.3, -1.5);
 
         stopMotors();
     }

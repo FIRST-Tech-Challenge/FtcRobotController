@@ -25,7 +25,7 @@ public class RedWarehouseOdo extends LinearOpMode {
 
         drive.openCVInnitShenanigans("red");
         MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
-        drive.CV.duckWebcam.stopStreaming();
+
         freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(13.5, -63),Math.toRadians(90));
@@ -42,6 +42,7 @@ public class RedWarehouseOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
+        drive.CV.duckWebcam.stopStreaming();
 
         long startTime = new Date().getTime();
         long time = 0;
