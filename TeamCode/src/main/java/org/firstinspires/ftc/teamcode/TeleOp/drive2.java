@@ -35,11 +35,11 @@ public class drive2 extends LinearOpMode {
 
         } else if(joystickY>0){ //forwards movement
 
-            theta = Math.toRadians(Math.tan(joystickY/joystickX));
+            theta = Math.toRadians(Math.tan(joystickY/joystickX)) + 3.14159265/2;
 
         } else { //this is for backwards movement
 
-            theta = (Math.toRadians(Math.tan(joystickY/joystickX))) + 3.14159265;
+            theta = (Math.toRadians(Math.tan(joystickY/joystickX))) + (3*3.14159265/2);
 
         }
 
