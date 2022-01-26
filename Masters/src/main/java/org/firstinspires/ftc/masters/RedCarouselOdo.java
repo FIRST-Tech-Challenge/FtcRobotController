@@ -23,10 +23,7 @@ public class RedCarouselOdo extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
-        drive.openCVDuckInit();
-        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
-        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition duckPosition = null;
-        freightLocation = drive.analyze();
+        MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(-35, -63), Math.toRadians(90));
 
@@ -62,7 +59,6 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.linearSlideMotor.setPower(.8);
 
         if (isStopRequested()) return;
-        duckPosition=drive.analyzeDuck();
 
 //      Deposit initial freight
         Pose2d hubPosition = new Pose2d(new Vector2d(-27.7, -37), Math.toRadians(45));
@@ -74,9 +70,10 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
+        drive.CV.webcam.stopStreaming();
         drive.retract();
 
 //        To spin duck
@@ -101,12 +98,12 @@ public class RedCarouselOdo extends LinearOpMode {
 
 
 
-        position = drive.getLocalizer().getPoseEstimate();
+        drive.findDuckRed();
 
-        TrajectorySequence acquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                .lineTo(new Vector2d(-55,-64))
-                .build();
-        drive.followTrajectorySequence(acquireDuck);
+//        TrajectorySequence acquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                .lineTo(new Vector2d(-55,-64))
+//                .build();
+//        drive.followTrajectorySequence(acquireDuck);
 
 //        boolean hasDuck = drive
 
@@ -125,7 +122,7 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();
