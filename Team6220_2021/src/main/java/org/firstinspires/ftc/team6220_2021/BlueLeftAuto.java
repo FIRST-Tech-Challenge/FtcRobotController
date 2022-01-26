@@ -13,8 +13,8 @@ import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 import java.util.List;
 
-@Autonomous(name = "SimpleBlueLeftAuto", group = "Competition")
-public class SimpleBlueLeftAuto extends MasterAutonomous {
+@Autonomous(name = "BlueLeftAuto", group = "Competition")
+public class BlueLeftAuto extends MasterAutonomous {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 

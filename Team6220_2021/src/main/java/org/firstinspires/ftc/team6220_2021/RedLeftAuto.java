@@ -13,8 +13,8 @@ import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 import java.util.List;
 
-@Autonomous(name = "SimpleBlueRightAuto", group = "Competition")
-public class SimpleBlueRightAuto extends MasterAutonomous {
+@Autonomous(name = "RedLeftAuto", group = "Competition")
+public class RedLeftAuto extends MasterAutonomous {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
@@ -82,7 +82,7 @@ public class SimpleBlueRightAuto extends MasterAutonomous {
 
         driveInches(6, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
-        turnToAngle(-90);
+        turnToAngle(90);
         pauseMillis(125);
         driveInches(16, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
@@ -128,7 +128,7 @@ public class SimpleBlueRightAuto extends MasterAutonomous {
         }
 
         pauseMillis(125);
-        turnToAngle(90);
+        turnToAngle(-90);
         pauseMillis(125);
         driveInches(36, Constants.MIN_DRIVE_PWR, true);
 

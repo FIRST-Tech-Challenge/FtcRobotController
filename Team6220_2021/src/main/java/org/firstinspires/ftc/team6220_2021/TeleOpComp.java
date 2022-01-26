@@ -61,7 +61,7 @@ public class TeleOpComp extends MasterOpMode{
                 case 0:
                     servoArm.setPosition(0.6);
                     motorArm.setPower(motorPower);
-                    tickvalue = 100;
+                    tickvalue = 120;
                     break;
                 case 1:
                     servoArm.setPosition(0.55);
@@ -82,21 +82,6 @@ public class TeleOpComp extends MasterOpMode{
                     servoArm.setPosition(0.25);
                     motorArm.setPower(motorPower);
                     tickvalue = 1000;
-                    break;
-                case 5:
-                    servoArm.setPosition(0.55);
-                    motorArm.setPower(motorPower);
-                    tickvalue = 1980;
-                    break;
-                case 6:
-                    servoArm.setPosition(0.4);
-                    motorArm.setPower(motorPower);
-                    tickvalue = 2310;
-                    break;
-                case 7:
-                    servoArm.setPosition(0.55);
-                    motorArm.setPower(motorPower);
-                    tickvalue = 2330;
                     break;
             }
 
@@ -120,8 +105,8 @@ public class TeleOpComp extends MasterOpMode{
                         increase = 1;
                     }
                     position += increase;
-                    if (position > 7){
-                        position = 7;
+                    if (position > 4){
+                        position = 4;
                     }
                 }
                 addingticks = 0;
