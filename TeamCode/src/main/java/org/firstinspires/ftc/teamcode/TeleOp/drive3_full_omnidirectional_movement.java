@@ -48,7 +48,7 @@ public class drive3_full_omnidirectional_movement extends LinearOpMode {
     public void move(double direction){
         double hypotenuse = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x);
 
-        if(hypotenuse>1){ //keeps magnitude in bounds
+        if(hypotenuse>1){ //keeps magnitude in bounds just in case
             hypotenuse = 1;
         }
 

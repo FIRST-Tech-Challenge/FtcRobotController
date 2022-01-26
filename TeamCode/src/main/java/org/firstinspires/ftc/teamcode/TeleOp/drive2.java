@@ -47,7 +47,7 @@ public class drive2 extends LinearOpMode {
     }
 
     public double sidewaysForce(double joystickY, double joystickX){
-        return (Math.sqrt((joystickX*joystickX)+(joystickY*joystickY)))/1.41421;
+        return (Math.sqrt((joystickX*joystickX)+(joystickY*joystickY)));
     }
 
     public void move (double nearest45, double diagonalForce){ //movement method
