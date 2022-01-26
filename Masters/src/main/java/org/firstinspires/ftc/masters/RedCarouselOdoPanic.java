@@ -9,13 +9,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 
 @Autonomous(name = "Red - Carousel (Park City) TWCA alt", group = "competition")
 public class RedCarouselOdoPanic extends LinearOpMode {
 
-    final int SERVO_DROP_PAUSE=900;
+    final int SERVO_DROP_PAUSE=700;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,7 +24,8 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
-        FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
+
+        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition freightLocation = null;
         freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(-35, -63), Math.toRadians(90));
@@ -32,6 +34,8 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
+        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.duckWebcam.stopStreaming();
+
 
         long startTime = new Date().getTime();
         long time = 0;
@@ -70,8 +74,9 @@ public class RedCarouselOdoPanic extends LinearOpMode {
 
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
+        TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.duckWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();
@@ -85,7 +90,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(.4, 4); //can we go faster?
+        drive.jevilTurnCarousel(.5, 4); //can we go faster?
 
 
 
@@ -95,12 +100,14 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         drive.followTrajectorySequence(getOffCarousel);
         position = drive.getLocalizer().getPoseEstimate();
 
-        TrajectorySequence acquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                .lineTo(new Vector2d(-55,-64))
-                .build();
-        drive.followTrajectorySequence(acquireDuck);
-
-        position = drive.getLocalizer().getPoseEstimate();
+        drive.findDuckRed();
+//
+//        TrajectorySequence acquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                .lineTo(new Vector2d(-55,-64))
+//                .build();
+//        drive.followTrajectorySequence(acquireDuck);
+//
+//        position = drive.getLocalizer().getPoseEstimate();
 
 //        boolean hasDuck = drive
 
@@ -119,7 +126,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();

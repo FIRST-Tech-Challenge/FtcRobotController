@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionFindDuck;
 import org.firstinspires.ftc.masters.FreightFrenzyComputerVisionShippingElementReversion;
 import org.firstinspires.ftc.masters.FreightFrenzyConstants;
+import org.firstinspires.ftc.masters.TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
@@ -101,8 +102,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final BNO055IMU imu;
     private final VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
-    FreightFrenzyComputerVisionShippingElementReversion CV;
-    FreightFrenzyComputerVisionFindDuck duckCV;
+    TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV CV;
+    TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV duckCV;
 
     HardwareMap hardwareMap;
     Telemetry telemetry;
@@ -535,9 +536,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         //strafe right
         double speed = 0.35;
 
-        while (this.opmode.opModeIsActive() && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
-                analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.LEFT1
-                && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.CENTER){
+        while (this.opmode.opModeIsActive() && analyzeDuck()!= TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
+                analyzeDuck()!= TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition.LEFT1
+                && analyzeDuck()!= TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition.CENTER){
             frontLeft.setPower(speed);
             frontRight.setPower(-speed);
             backLeft.setPower(-speed);
@@ -555,9 +556,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         //strafe right
         double speed = 0.35;
 
-        while (this.opmode.opModeIsActive() && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.RIGHT2 &&
-                analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.RIGHT1
-                && analyzeDuck()!= FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition.CENTER){
+        while (this.opmode.opModeIsActive() && analyzeDuck()!= TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition.RIGHT2 &&
+                analyzeDuck()!= TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition.RIGHT1
+                && analyzeDuck()!= TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition.CENTER){
             frontLeft.setPower(-speed);
             frontRight.setPower(speed);
             backLeft.setPower(speed);
@@ -571,30 +572,29 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void openCVInnitShenanigans(String color) {
-        CV = new FreightFrenzyComputerVisionShippingElementReversion(hardwareMap, telemetry);
-
+        CV = new TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV(hardwareMap, telemetry);
     }
 
-    public void openDuckCVInit(){
-        duckCV = new FreightFrenzyComputerVisionFindDuck(hardwareMap, telemetry);
+    public void openCVDuckInit(){
+        duckCV = new TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV(hardwareMap, telemetry);
     }
 
-    public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.FreightPosition analyze() {
+    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.FreightPosition analyze() {
         return CV.pipeline.position;
     }
 
-    public FreightFrenzyComputerVisionFindDuck.DuckDeterminationPipeline.DuckPosition analyzeDuck() {
-        return duckCV.pipeline.position;
+    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.DuckDeterminationPipeline.DuckPosition analyzeDuck() {
+        return duckCV.duckPipeline.position;
     }
 
 
-    public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
-        return CV.pipeline.hub_position;
-    }
-
-    public FreightFrenzyComputerVisionShippingElementReversion.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
-        return CV.pipeline.hub_position;
-    }
+//    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
+//        return CV.pipeline.hub_position;
+//    }
+//
+//    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
+//        return CV.pipeline.hub_position;
+//    }
 
 
     public void pause(int millis) {
