@@ -30,7 +30,7 @@ public class HardwarePushbot {
 
 
     public static DcMotor arm = null;
-    public static DcMotor elbow = null;
+
     public static DcMotor intake = null;
 
 
@@ -73,7 +73,6 @@ public class HardwarePushbot {
         frontRight = hwMap.get(DcMotor.class, "frontRight");
         backRight = hwMap.get(DcMotor.class, "backRight");
         arm = hwMap.get(DcMotor.class, "arm");
-        elbow = hwMap.get(DcMotor.class, "elbow");
         intake = hwMap.get(DcMotor.class, "intake");
 
 
@@ -100,7 +99,6 @@ public class HardwarePushbot {
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         arm.setDirection(DcMotor.Direction.REVERSE);
-        elbow.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.REVERSE);
 
 
@@ -114,7 +112,6 @@ public class HardwarePushbot {
         frontRight.setPower(0);
         backRight.setPower(0);
         arm.setPower(0);
-        elbow.setPower(0);
         intake.setPower(0);
 
 
@@ -129,7 +126,6 @@ public class HardwarePushbot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        elbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
@@ -144,7 +140,6 @@ public class HardwarePushbot {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
