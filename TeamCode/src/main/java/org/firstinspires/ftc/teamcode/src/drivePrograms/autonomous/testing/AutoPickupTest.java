@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 
@@ -20,7 +20,7 @@ public class AutoPickupTest extends AutonomousTemplate {
         this.initAll();
 
         slide.setTargetLevel(LinearSlide.HeightLevel.Down);
-        odometry.setPosition(FieldPoints.RedWareHouseInit);
+        odometry.setPos(FieldPoints.RedWareHouseInit);
 
         waitForStart();
 

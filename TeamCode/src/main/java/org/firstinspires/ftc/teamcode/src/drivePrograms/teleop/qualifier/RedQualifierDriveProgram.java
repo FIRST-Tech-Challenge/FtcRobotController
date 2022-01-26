@@ -12,20 +12,16 @@ import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
 @TeleOp(name = "Red Qualifier Drive Program")
 public class RedQualifierDriveProgram extends TeleOpTemplate {
+    final BlinkinPattern defaultColor = BlinkinPattern.RED;
+    private final ElapsedTime yTimer = new ElapsedTime();
     boolean x_depressed = true;
     boolean y_depressed2 = true;
-
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
     int posToGoTo = 0;
     boolean posOn = false;
-
-    final BlinkinPattern defaultColor = BlinkinPattern.RED;
     BlinkinPattern currentColor = defaultColor;
-
     TripWireDistanceSensor distanceSensor;
-
-    private final ElapsedTime yTimer = new ElapsedTime();
 
     private Void callBack() {
         this.leds.setPattern(BlinkinPattern.BLACK);

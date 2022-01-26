@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.odometry;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -127,9 +127,9 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
                     left_back.setPower(blPower);
                 }
                 //Display Global (x, y, theta) coordinates
-                telemetry.addData("X Position", (Math.round((globalPositionUpdate.returnRelativeXPosition()) * 100.0)) / 100.0);
-                telemetry.addData("Y Position", Math.round((globalPositionUpdate.returnRelativeYPosition()) * 100.0) / 100.0);
-                telemetry.addData("Orientation (Degrees, ODO)", Math.round(globalPositionUpdate.returnOrientation() * 100.0) / 100.0);
+                telemetry.addData("X Position", (Math.round((globalPositionUpdate.getX()) * 100.0)) / 100.0);
+                telemetry.addData("Y Position", Math.round((globalPositionUpdate.getY()) * 100.0) / 100.0);
+                telemetry.addData("Orientation (Degrees, ODO)", Math.round(globalPositionUpdate.getRot() * 100.0) / 100.0);
                 telemetry.addData("Orientation (Degrees, IMU)", getZAngle());
                 telemetry.addData("Thread Active", globalPositionUpdate.isAlive());
                 telemetry.update();

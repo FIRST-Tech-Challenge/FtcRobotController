@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryDrivetrain;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.NavigationalDrivetrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.OdometryGlobalCoordinatePosition;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.IMU;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 
@@ -19,11 +19,11 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
     /**
      * Provides methods to use Odometry and associated drive methods
      */
-    protected OdometryDrivetrain driveSystem;
+    protected NavigationalDrivetrain driveSystem;
 
 
     /**
-     * Provides Odometry Methods, Also held by OdometryDrivetrain driveSystem
+     * Provides Odometry Methods, Also held by NavigationalDrivetrain driveSystem
      */
     protected OdometryGlobalCoordinatePosition odometry;
 
@@ -101,7 +101,7 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
             this.initVoltageSensor();
         }
 
-        driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
+        driveSystem = new NavigationalDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
     }
 
 
@@ -159,7 +159,7 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
             this.initVoltageSensor();
         }
 
-        driveSystem = new OdometryDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
+        driveSystem = new NavigationalDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
     }
 
     /**

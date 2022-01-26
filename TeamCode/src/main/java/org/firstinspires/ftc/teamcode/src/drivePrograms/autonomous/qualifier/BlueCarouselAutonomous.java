@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
-import org.firstinspires.ftc.teamcode.src.utills.Executable;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
@@ -27,7 +27,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
-        odometry.setPosition(initialPos[0], initialPos[1], initialPos[2]);
+        odometry.setPos(initialPos[0], initialPos[1], initialPos[2]);
         distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
 
         telemetry.addData("GC", "Started");
@@ -109,8 +109,8 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             }
 
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(118, 144, 1, 1, 500);
-            } catch (OdometryMovementException ignored) {
+                driveSystem.moveToPosition(118, 144, 1, 1, new DistanceTimeoutError(500));
+            } catch (MovementException ignored) {
             }
             driveSystem.turnTo(90, .8);
             driveSystem.turnTo(90, .3);
@@ -119,8 +119,8 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.stopAll();
             spinner.spinOffBlueDuck();
             try {
-                driveSystem.moveToPositionWithDistanceTimeOut(120, 70, 1, 1, 1000);
-            } catch (OdometryMovementException stop) {
+                driveSystem.moveToPosition(120, 70, 1, 1, new DistanceTimeoutError(1000));
+            } catch (MovementException stop) {
                 this.stop();
             }
             if (!overBarrier) {
@@ -130,53 +130,21 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 driveSystem.turnTo(190, .5);
                 intake.setIntakeOn();
 
-                Executable<Boolean> q;
-
-                double millis = 500;
-                final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-                final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
-                final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
-                final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
-
-                Executable<Boolean> t = () -> {
-
-                    if (timer.milliseconds() >= millis) {
-                        positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                        positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 135, 7);
-                        double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
-                        if (traveledDistance < tooSmallOfDistance) {
-                            return true;
-                        }
-                        timer.reset();
-                    }
-                    return false;
-                };
-
-
-                Executable<Boolean> e = () -> {
-                    return !(distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested());
-                };
-
-                q = () -> {
-                    return (t.call() || e.call());
-                };
 
                 try {
+                    driveSystem.moveToPosition(135, 20, 1, 1, new NavigationError[]{new DistanceSensorError(distanceSensor), new DistanceTimeoutError(500)});
 
-
-                    driveSystem.moveToPosition(135, 20, 1, 1, q);
-
-                } catch (OdometryMovementException ignored) {
+                } catch (MovementException ignored) {
                 } finally {
                     intake.setIntakeOff();
                 }
-                while (!isStopRequested() && opModeIsActive() && (!q.call())) {
+                while (!isStopRequested() && opModeIsActive() && (distanceSensor.getDistance(DistanceUnit.CM) > 8)) {
                     driveSystem.strafeAtAngle(0, 0.5);
                 }
-                if (odometry.returnRelativeYPosition() < 20) {
+                if (odometry.getY() < 20) {
                     try {
-                        driveSystem.moveToPositionWithDistanceTimeOut(odometry.returnRelativeXPosition(), 15, 1, 1, 500);
-                    } catch (OdometryMovementException ignored) {
+                        driveSystem.moveToPosition(odometry.getX(), 15, 1, 1, new DistanceTimeoutError(500));
+                    } catch (MovementException ignored) {
                     }
                 }
 
@@ -184,8 +152,8 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             } else if (overBarrier) {
                 slide.end();
                 try {
-                    driveSystem.moveToPositionWithDistanceTimeOut(115, 70, 1, 1, 1000);
-                } catch (OdometryMovementException ignored) {
+                    driveSystem.moveToPosition(115, 70, 1, 1, new DistanceTimeoutError(500));
+                } catch (MovementException ignored) {
                 }
                 driveSystem.turnTo(180, 1);
                 driveSystem.turnTo(180, .2);

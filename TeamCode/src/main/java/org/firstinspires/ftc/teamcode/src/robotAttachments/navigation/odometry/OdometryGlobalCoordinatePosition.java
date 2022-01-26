@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.odometry;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemTemplate;
 
@@ -20,9 +21,9 @@ import java.io.File;
  * @author Sarthak
  * @since 6/1/2019
  */
-public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate {
+public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate implements LocalizationAlgorithm {
     /**
-     * A lock for thread safety, used to {@link #setImu(BNO055IMU)}, {@link #setPosition(FieldPoints)}, {@link #setPosition(double, double, double)}, and {@link #setOrientation(double)}.
+     * A lock for thread safety, used to {@link #setImu(BNO055IMU)}, {@link #setPos(FieldPoints)}, {@link #setPos(double, double, double)}, and {@link #setOrientation(double)}.
      */
     private static final Object lock = new Object();
     /**
@@ -139,9 +140,9 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param telemetry The OpMode telemetry
      */
     public void showPosition(Telemetry telemetry) {
-        telemetry.addData("X: ", this.returnRelativeXPosition());
-        telemetry.addData("Y: ", this.returnRelativeYPosition());
-        telemetry.addData("Rotation: ", this.returnOrientation());
+        telemetry.addData("X: ", this.getX());
+        telemetry.addData("Y: ", this.getY());
+        telemetry.addData("Rotation: ", this.getRot());
     }
 
     /**
@@ -211,15 +212,15 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     /**
      * Sets the position of the robot
      *
-     * @param x     The x-position in inches
-     * @param y     The y-position in inches
-     * @param angle The angle in degrees
+     * @param X   The X-position in inches
+     * @param Y   The Y-position in inches
+     * @param rot The rot in degrees
      */
-    public void setPosition(double x, double y, double angle) {
+    public void setPos(double X, double Y, double rot) {
         synchronized (lock) {
-            robotGlobalXCoordinatePosition = x * COUNTS_PER_INCH;
-            robotGlobalYCoordinatePosition = y * COUNTS_PER_INCH;
-            setOrientation(angle);
+            robotGlobalXCoordinatePosition = X * COUNTS_PER_INCH;
+            robotGlobalYCoordinatePosition = Y * COUNTS_PER_INCH;
+            setOrientation(rot);
         }
 
     }
@@ -229,7 +230,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      *
      * @param initPos the enum key of a three value array of an init position
      */
-    public void setPosition(FieldPoints initPos) {
+    public void setPos(FieldPoints initPos) {
         double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
         assert (tmp != null);
         synchronized (lock) {
@@ -329,7 +330,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      *
      * @return global orientation, in degrees
      */
-    public double returnOrientation() {
+    public double getRot() {
         return Math.toDegrees(robotOrientationRadians) % 360;
     }
 
@@ -338,7 +339,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      *
      * @return global X Position in inches
      */
-    public double returnRelativeXPosition() {
+    public double getX() {
 
         return robotGlobalXCoordinatePosition / COUNTS_PER_INCH;
     }
@@ -348,7 +349,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      *
      * @return global Y Position in inches
      */
-    public double returnRelativeYPosition() {
+    public double getY() {
 
         return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }

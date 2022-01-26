@@ -21,9 +21,9 @@ public class PushOdometryTest extends AutonomousTemplate {
         while (opModeIsActive() && !isStopRequested()) {
             dt.setPowerFromGamepad(gamepad1);
 
-            telemetry.addData("PosX", odometry.returnRelativeXPosition());
-            telemetry.addData("PosY", odometry.returnRelativeYPosition());
-            telemetry.addData("Rot", odometry.returnOrientation());
+            telemetry.addData("PosX", odometry.getX());
+            telemetry.addData("PosY", odometry.getY());
+            telemetry.addData("Rot", odometry.getRot());
             telemetry.update();
         }
     }

@@ -18,7 +18,7 @@ public class RedAutonomousNearWarehouse extends AutonomousTemplate {
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();
-        odometry.setPosition(7.5, 64, 180);
+        odometry.setPos(7.5, 64, 180);
         driveSystem.moveToPosition(29, 64, 1);
         podServos.raise();
         driveSystem.strafeAtAngle(180, 1);

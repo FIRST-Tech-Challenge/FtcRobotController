@@ -15,7 +15,7 @@ public class BlueAutonomousNearWarehouse extends AutonomousTemplate {
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
-        odometry.setPosition(133.5, 64, 180);
+        odometry.setPos(133.5, 64, 180);
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();

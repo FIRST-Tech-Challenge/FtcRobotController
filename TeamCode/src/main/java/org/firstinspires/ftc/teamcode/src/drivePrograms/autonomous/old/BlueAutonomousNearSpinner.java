@@ -15,7 +15,7 @@ public class BlueAutonomousNearSpinner extends AutonomousTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
         driveSystem.debugOn();
-        odometry.setPosition(133.5, 112, 180);
+        odometry.setPos(133.5, 112, 180);
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();

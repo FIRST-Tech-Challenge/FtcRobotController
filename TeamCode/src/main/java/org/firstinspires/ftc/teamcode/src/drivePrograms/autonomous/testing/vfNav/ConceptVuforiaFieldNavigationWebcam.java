@@ -140,25 +140,25 @@ public class ConceptVuforiaFieldNavigationWebcam extends LinearOpMode {
         targets = this.vuforia.loadTrackablesFromAsset("FreightFrenzy");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        List<VuforiaTrackable> allTrackables = new ArrayList<>();
         allTrackables.addAll(targets);
 
-        /**
-         * In order for localization to work, we need to tell the system where each target is on the field, and
-         * where the phone resides on the robot.  These specifications are in the form of <em>transformation matrices.</em>
-         * Transformation matrices are a central, important concept in the math here involved in localization.
-         * See <a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a>
-         * for detailed information. Commonly, you'll encounter transformation matrices as instances
-         * of the {@link OpenGLMatrix} class.
-         *
-         * If you are standing in the Red Alliance Station looking towards the center of the field,
-         *     - The X axis runs from your left to the right. (positive from the center to the right)
-         *     - The Y axis runs from the Red Alliance Station towards the other side of the field
-         *       where the Blue Alliance Station is. (Positive is from the center, towards the BlueAlliance station)
-         *     - The Z axis runs from the floor, upwards towards the ceiling.  (Positive is above the floor)
-         *
-         * Before being transformed, each target image is conceptually located at the origin of the field's
-         *  coordinate system (the center of the field), facing up.
+        /*
+          In order for localization to work, we need to tell the system where each target is on the field, and
+          where the phone resides on the robot.  These specifications are in the form of <em>transformation matrices.</em>
+          Transformation matrices are a central, important concept in the math here involved in localization.
+          See <a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a>
+          for detailed information. Commonly, you'll encounter transformation matrices as instances
+          of the {@link OpenGLMatrix} class.
+
+          If you are standing in the Red Alliance Station looking towards the center of the field,
+              - The X axis runs from your left to the right. (positive from the center to the right)
+              - The Y axis runs from the Red Alliance Station towards the other side of the field
+                where the Blue Alliance Station is. (Positive is from the center, towards the BlueAlliance station)
+              - The Z axis runs from the floor, upwards towards the ceiling.  (Positive is above the floor)
+
+          Before being transformed, each target image is conceptually located at the origin of the field's
+           coordinate system (the center of the field), facing up.
          */
 
         // Name and locate each trackable object
@@ -195,7 +195,7 @@ public class ConceptVuforiaFieldNavigationWebcam extends LinearOpMode {
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
 
-        /**  Let all the trackable listeners know where the camera is.  */
+        /*  Let all the trackable listeners know where the camera is.  */
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocationOnRobot);
         }

@@ -3,14 +3,13 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.OdometryMovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
-import org.firstinspires.ftc.teamcode.src.utills.Executable;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 /**
@@ -26,7 +25,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
-        odometry.setPosition(initialPos[0], initialPos[1], initialPos[2]);
+        odometry.setPos(initialPos[0], initialPos[1], initialPos[2]);
         distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
 
         telemetry.addData("GC", "Started");
@@ -103,49 +102,21 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         }
 
         try {
-            driveSystem.moveToPositionWithDistanceTimeOut(131, 65, 1, 1, 1000);
-        } catch (OdometryMovementException stop) {
+            driveSystem.moveToPosition(131, 65, 1, 1, new DistanceTimeoutError(1000));
+        } catch (MovementException stop) {
             this.stop();
         }
         driveSystem.turnTo(160, 1);
         try {
-            driveSystem.moveToPositionWithDistanceTimeOut(137, 65, 1, 1, 500);
-        } catch (OdometryMovementException ignored) {
+            driveSystem.moveToPosition(137, 65, 1, 1, new DistanceTimeoutError(500));
+        } catch (MovementException ignored) {
         }
         intake.setIntakeOn();
         try {
 
-            double millis = 500;
-            final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-            final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
-            final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
-            final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
+            driveSystem.moveToPosition(135, 7, 1, 1, new NavigationError[]{new DistanceSensorError(distanceSensor), new DistanceTimeoutError(500)});
 
-            Executable<Boolean> t = () -> {
-
-                if (timer.milliseconds() >= millis) {
-                    positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                    positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), 135, 7);
-                    double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
-                    if (traveledDistance < tooSmallOfDistance) {
-                        return true;
-                    }
-                    timer.reset();
-                }
-                return false;
-            };
-
-
-            Executable<Boolean> e = () -> {
-                return !(distanceSensor.getDistance(DistanceUnit.CM) > 8 && !isStopRequested());
-            };
-
-            Executable<Boolean> q = () -> {
-                return (t.call() || e.call());
-            };
-            driveSystem.moveToPosition(135, 7, 1, 1, q);
-
-        } catch (OdometryMovementException ignored) {
+        } catch (MovementException ignored) {
         } finally {
             intake.setIntakeOff();
         }

@@ -1,20 +1,20 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.OdometryGlobalCoordinatePosition;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.odometry.enums.FieldPoints;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 /**
- * Odometry Drivetrain Implements more advanced drive functions that can be inherited by other drive systems.
+ * NavigationalDrivetrain implements more advanced drive functions that can be inherited by other drive systems.
  */
-public class OdometryDrivetrain extends BasicDrivetrain {
+public class NavigationalDrivetrain extends BasicDrivetrain {
 
     /**
      * Internal Telemetry Object, allows debug information
@@ -24,7 +24,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     /**
      * Internal Odometry Global Coordinate Position Object, it runs the localization algorithm in a separate thread
      */
-    final OdometryGlobalCoordinatePosition odometry;
+    final LocalizationAlgorithm gps;
 
     /**
      * A Lambda object that allows this class to check the stop requested condition of the OpMode
@@ -71,15 +71,15 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @param back_right      A DcMotor object tied to the back right motor
      * @param back_left       A DcMotor object tied to the back left motor
      * @param telemetry       Telemetry object from the OpMode
-     * @param odometry        A Already Initialized OdometryGlobalCoordinatePosition object
+     * @param gps             A Already Initialized OdometryGlobalCoordinatePosition object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
      * @param voltageSensor   an already initialized voltage sensor
      */
-    public OdometryDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, OdometryGlobalCoordinatePosition odometry, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
+    public NavigationalDrivetrain(DcMotor front_right, DcMotor front_left, DcMotor back_right, DcMotor back_left, Telemetry telemetry, LocalizationAlgorithm gps, Executable<Boolean> isStopRequested, Executable<Boolean> opmodeIsActive, RobotVoltageSensor voltageSensor) {
         super(front_right, front_left, back_right, back_left);
         this.telemetry = telemetry;
-        this.odometry = odometry;
+        this.gps = gps;
         this._isStopRequested = isStopRequested;
         this._opModeIsActive = opmodeIsActive;
         this.voltageSensor = voltageSensor;
@@ -131,11 +131,11 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @throws InterruptedException This exception is thrown to stop the OpMode in response to the stop button
      */
     public void turnTo(double angle, double power) throws InterruptedException {
-        double startingAngle = odometry.returnOrientation();
+        double startingAngle = gps.getRot();
 
         // the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a counterclockwise rotation/left turn
         if (((360 - angle) + startingAngle) % 360 > 180) {
-            while (((360 - angle) + odometry.returnOrientation()) % 360 > 180) {
+            while (((360 - angle) + gps.getRot()) % 360 > 180) {
                 if (!isStopRequested() && opModeIsActive()) {
                     this.turnLeft(power);
                 } else {
@@ -144,7 +144,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
             }
         } else {
             // while the left turn angle value is less than or equal to 180, turn left
-            while (((360 - angle) + odometry.returnOrientation()) % 360 <= 180) {
+            while (((360 - angle) + gps.getRot()) % 360 <= 180) {
                 if (!isStopRequested() && opModeIsActive()) {
                     this.turnRight(power);
                 } else {
@@ -167,7 +167,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
     public void moveToPosition(FieldPoints position, double tolerance) throws InterruptedException {
         double[] pos = FieldPoints.positionsAndPoints.get(position);
         assert pos != null;
-        moveToPosition(pos[0], pos[1], odometry.returnOrientation(), tolerance);
+        moveToPosition(pos[0], pos[1], gps.getRot(), tolerance);
         this.stopAll();
     }
 
@@ -195,7 +195,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      * @throws InterruptedException Throws an exception if stop is requested during the move
      */
     public void moveToPosition(double x, double y, double tolerance) throws InterruptedException {
-        moveToPosition(x, y, odometry.returnOrientation(), tolerance);
+        moveToPosition(x, y, gps.getRot(), tolerance);
     }
 
     /**
@@ -209,29 +209,29 @@ public class OdometryDrivetrain extends BasicDrivetrain {
      */
     public void moveToPosition(double x, double y, double theta, double tolerance) throws InterruptedException {
         try {
-            moveToPosition(x, y, theta, tolerance, () -> false);
-        } catch (OdometryMovementException ignored) {
+            moveToPosition(x, y, theta, tolerance, (x1, y1, theta1, tolerance1, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor) -> {
+            });
+        } catch (MovementException ignored) {
         }
     }
 
     /**
-     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Errors out if callBack returns true
+     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Errors out if errorCB returns true
      *
      * @param x         The x coordinate to go to
      * @param y         The y coordinate to go to
      * @param tolerance The tolerance for how close it must get (in inches)
      * @param theta     The angle (relative to the field) to turn to during the movement
-     * @param callBack  A Lambda function, if it returns true, this throws a {@link OdometryMovementException}
-     * @throws InterruptedException      Throws if the OpMode ends during execution
-     * @throws OdometryMovementException Stops Motors and Throws if callBack returns true
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     * @throws MovementException    Stops Motors and Throws if errorCB returns true
      */
-    public void moveToPosition(double x, double y, double theta, double tolerance, Executable<Boolean> callBack) throws InterruptedException, OdometryMovementException {
+    public void moveToPosition(double x, double y, double theta, double tolerance, NavigationError[] errors) throws InterruptedException, MovementException {
         double power, odometry_angle = 0;
         final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
         final String coordinateString = x + " , " + y;
 
-        double odometry_x = odometry.returnRelativeXPosition();
-        double odometry_y = odometry.returnRelativeYPosition();
+        double odometry_x = gps.getX();
+        double odometry_y = gps.getY();
 
         double currentDistance = MiscUtils.distance(odometry_x, odometry_y, x, y);
 
@@ -261,17 +261,13 @@ public class OdometryDrivetrain extends BasicDrivetrain {
                 telemetry.update();
             }
 
-            odometry_x = odometry.returnRelativeXPosition(); //odometry x
-            odometry_y = odometry.returnRelativeYPosition(); //odometry y
+            odometry_x = gps.getX(); //odometry x
+            odometry_y = gps.getY(); //odometry y
             currentDistance = MiscUtils.distance(odometry_x, odometry_y, x, y); //currentDistance value
-            odometry_angle = MiscUtils.getAngle(odometry_x, odometry_y, x, y, odometry.returnOrientation()); //angle
+            odometry_angle = MiscUtils.getAngle(odometry_x, odometry_y, x, y, gps.getRot()); //angle
 
-            if (callBack.call()) {
-                if (this.debug) {
-                    RobotLog.addGlobalWarningMessage("Failed Odometry Movement: " + args);
-                }
-                stopAll();
-                throw new OdometryMovementException("Callback Returned True");
+            for (NavigationError e : errors) {
+                e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
             }
 
             strafeAtAngle(odometry_angle, power);
@@ -280,74 +276,9 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
-    //-Special Forms of MoveToPosition----------------------------------------------------------------------------------------------------------
-
-    /**
-     * Moves the robot to the given (x,y) position. Throws error if it is stopped for a time greater than millis.
-     *
-     * @param x         The x coordinate to go to
-     * @param y         The y coordinate to go to
-     * @param tolerance The tolerance for how close it must get
-     * @param millis    The time in milliseconds that the robot should attempt to move
-     * @param theta     The angle (relative to the field) to turn to during the movement
-     * @throws InterruptedException      Throws if the OpMode ends during execution
-     * @throws OdometryMovementException Stops Motors and Throws if the robot gets stuck and times out
-     */
-    public void moveToPositionWithDistanceTimeOut(double x, double y, double theta, double tolerance, long millis) throws InterruptedException, OdometryMovementException {
-        final ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        final double[] positionBeforeTimeLoop = {0}; //These are arrays to make the compiler happy. Treat them as a normal double
-        final double[] positionAfterTimeLoop = {Double.MAX_VALUE}; //These are arrays to make the compiler happy. Treat them as a normal double
-        final double tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
-
-        Executable<Boolean> e = () -> {
-
-            if (timer.milliseconds() >= millis) {
-                positionBeforeTimeLoop[0] = positionAfterTimeLoop[0];
-                positionAfterTimeLoop[0] = MiscUtils.distance(odometry.returnRelativeXPosition(), odometry.returnRelativeYPosition(), x, y);
-                double traveledDistance = Math.abs(positionBeforeTimeLoop[0] - positionAfterTimeLoop[0]);
-                if (traveledDistance < tooSmallOfDistance) {
-                    return true;
-                }
-                timer.reset();
-            }
-            return false;
-        };
-
-        moveToPosition(x, y, theta, tolerance, e);
-
-    }
-
-    /**
-     * Moves the robot to the given (x,y) position. Errors out if the time elapsed is greater than timeout.
-     *
-     * @param x         The x coordinate to go to.
-     * @param y         The y coordinate to go to.
-     * @param tolerance The tolerance for how close it must get (in inches).
-     * @param timeout   The time (in seconds) before the method errors out.
-     * @param theta     The angle (relative to the field) to turn to during the movement
-     * @throws InterruptedException      Throws if the OpMode ends during execution.
-     * @throws OdometryMovementException Stops Motors and Throws if the movement time exceeds the provided value of timeout.
-     */
-    public void moveToPositionWithTimeOut(double x, double y, double theta, double tolerance, double timeout) throws InterruptedException, OdometryMovementException {
-        ElapsedTime t = new ElapsedTime();
-        Executable<Boolean> e = () -> ((t.milliseconds() / 1000.0) > timeout);
-        moveToPosition(x, y, theta, tolerance, e);
-    }
-
-    /**
-     * Moves the robot to the given (x,y) position. Errors out if the voltage falls by 2V
-     *
-     * @param x         The x coordinate to go to
-     * @param y         The y coordinate to go to
-     * @param tolerance The tolerance for how close it must get
-     * @param theta     The angle (relative to the field) to turn to during the movement
-     * @throws InterruptedException      Throws if the OpMode ends during execution
-     * @throws OdometryMovementException Stops Motors and Throws if the voltage falls to 2 volts less than the starting voltage
-     */
-    public void moveToPositionWithVoltageDrop(double x, double y, double theta, double tolerance) throws InterruptedException, OdometryMovementException {
-        final double initialVoltage = voltageSensor.getVoltage();
-        Executable<Boolean> e = () -> voltageSensor.getVoltage() < (initialVoltage - 2);
-        moveToPosition(x, y, theta, tolerance, e);
+    public void moveToPosition(double x, double y, double theta, double tolerance, NavigationError error) throws MovementException, InterruptedException {
+        NavigationError[] errors = {error};
+        moveToPosition(x, y, theta, tolerance, errors);
     }
 
     /**
@@ -374,7 +305,7 @@ public class OdometryDrivetrain extends BasicDrivetrain {
         power1 = power * power1;
         power2 = power * power2;
 
-        double degreesOff = ((odometry.returnOrientation() - turnAngle) % 360);
+        double degreesOff = ((gps.getRot() - turnAngle) % 360);
         double tmp;
         if (degreesOff < 180) {
             tmp = MiscUtils.map(degreesOff, 0, 180, 0, 1);
