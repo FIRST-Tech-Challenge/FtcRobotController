@@ -254,7 +254,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     @BotAction(displayName = "Lift level 3 Auto", defaultReturn = "")
-    public void liftToLevel3Auto(boolean block){
+    public void liftToLevel3Auto(){
         liftToLevel3(true);
     }
 
@@ -629,6 +629,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         resetTurret();
     }
 
+    @BotAction(displayName = "Fold Auto", defaultReturn = "")
+    public void foldAuto() {
+        prepDropperToMove();
+        resetTurret();
+        liftToLower();
+    }
+
     @BotAction(displayName = "Score and Fold Async", defaultReturn = "")
     public void scoreAndFoldAsync() {
         FrenzyLift frenzyLift = new FrenzyLift(this,  true);
@@ -709,7 +716,7 @@ public class FrenzyBot extends FrenzyBaseBot {
                 gotIt = true;
                 break;
             }
-            if (runtime.milliseconds() > 1500){
+            if (runtime.milliseconds() > 3000){
                 Log.d(TAG, "Ran out of time");
                 break;
             }
@@ -720,7 +727,10 @@ public class FrenzyBot extends FrenzyBaseBot {
         stop();
         intakeRunning = false;
         intakeDropperUp();
-        delayWait(500);
+        delayWait(550);
+        activateIntake(0.05);
+        delayWait(200);
+        activateIntake(0);
 
         return gotIt;
     }
