@@ -24,28 +24,5 @@ public class park extends automethods {
         encoderDrive(0.7,60, 5);
 
 
-////////////////////////////////
-//
-      /*  if(rpos == RingPipeline.RingPosition.NONE){
-            encoderDrive(.55, 2, 5);
-
-
-
-        }
-        if(rpos == RingPipeline.RingPosition.ONE )
-
-        {
-            encoderDrive(.55, 10, 5);
-
-        }
-        if(rpos == RingPipeline.RingPosition.NONE)
-
-        {
-            encoderDrive(.55, 20, 5);
-
-
-
-        }*/
-
 
     }}
