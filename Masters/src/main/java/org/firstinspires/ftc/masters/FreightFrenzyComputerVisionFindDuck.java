@@ -44,7 +44,9 @@ public class FreightFrenzyComputerVisionFindDuck {
     OpenCvWebcam webcam;
     public DuckDeterminationPipeline pipeline;
 
+
     public FreightFrenzyComputerVisionFindDuck(HardwareMap hardwareMap, Telemetry telemetry){
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamDuck"), cameraMonitorViewId);
         pipeline = new DuckDeterminationPipeline(telemetry);
@@ -170,7 +172,7 @@ public class FreightFrenzyComputerVisionFindDuck {
             for (int i = 1; i < 33; i++) {
                 if (tempX == 520) {
                     tempX = 20;
-                    tempY += 100;
+                    tempY += REGION_HEIGHT;
                 } else {
                     tempX += 50;
                 }
