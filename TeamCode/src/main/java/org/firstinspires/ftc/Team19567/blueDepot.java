@@ -110,10 +110,19 @@ public class blueDepot extends LinearOpMode {
                 telemetry.update();
                 break;
             }
+            case NO_ALLIANCE: {
+                chosenTrajectorySequence = thirdLevelSequence;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.3;
+                chosenTrajectoryX = -20;
+                telemetry.addData("OpenCV","Basically Third Level");
+                telemetry.update();
+                break;
+            }
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = secondLevelSequence;
-                chosenArmPos = 750;
-                chosenArmSpeed = 0.2;
+                chosenArmPos = 770;
+                chosenArmSpeed = 0.15;
                 chosenTrajectoryX = -30;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
@@ -122,7 +131,7 @@ public class blueDepot extends LinearOpMode {
             case ALLIANCE_THIRD: {
                 chosenTrajectorySequence = firstLevelSequence;
                 chosenArmPos = 870;
-                chosenArmSpeed = 0.15;
+                chosenArmSpeed = 0.1;
                 chosenTrajectoryX = -32;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
@@ -139,17 +148,17 @@ public class blueDepot extends LinearOpMode {
                 .strafeTo(new Vector2d(-3,-2)).build();
 
         mechanisms.rotateArm(0);
-        mechanisms.releaseServoMove(1.0);
+        mechanisms.releaseServoMove(0.97);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
         mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
             mechanisms.maintainBalance();
         }
         sleep(1000);
-        mechanisms.releaseServoMove(0.75);
+        mechanisms.releaseServoMove(0.25);
         sleep(1000);
         mechanisms.rotateArm(0,0.1);
-        mechanisms.releaseServoMove(1.0);
+        mechanisms.releaseServoMove(0.97);
         mechanisms.balanceServoMove(0.0);
         chassis.followTrajectorySequence(secondTrajectory);
         mechanisms.rotateCarousel(0.4);

@@ -38,15 +38,18 @@ class tsePipeline extends OpenCvPipeline {
     public enum LOCATION {
         ALLIANCE_FIRST,
         ALLIANCE_SECOND,
-        ALLIANCE_THIRD
+        ALLIANCE_THIRD,
+        NO_ALLIANCE
     }
 
     private Scalar lowHSV = new Scalar(36, 50, 70);
     private Scalar highHSV = new Scalar(89, 255, 255);
     private double firstConf = 0.0;
     private double secondConf = 0.0;
+    private double thirdConf = 0.0;
     private boolean tseFirst = false;
     private boolean tseSecond = false;
+    private boolean tseThird = false;
     Scalar detectedColor = new Scalar(0,255,0);
     Scalar none = new Scalar(255,0,0);
 
@@ -62,10 +65,12 @@ class tsePipeline extends OpenCvPipeline {
 
         Mat first = output.submat(LEFT_SQUARE);
         Mat second = output.submat(RIGHT_SQUARE);
+        Mat third = output.submat(RIGHTEST_SQUARE);
         telemetry.addData("Pipeline Status","Submats Computed");
 
         firstConf = Core.sumElems(first).val[0] / LEFT_SQUARE.area()/255;
         secondConf = Core.sumElems(second).val[0] / RIGHT_SQUARE.area()/255;
+        thirdConf = Core.sumElems(third).val[0] / RIGHTEST_SQUARE.area()/255;
 
         telemetry.addData("Pipeline Status","Confidences Ascertained");
 
@@ -80,9 +85,11 @@ class tsePipeline extends OpenCvPipeline {
 
         tseFirst = firstConf > THRESHOLD;
         tseSecond = secondConf > THRESHOLD;
+        tseThird = thirdConf > THRESHOLD;
 
         telemetry.addData("Yop?",tseFirst);
         telemetry.addData("Yop2?",tseSecond);
+        telemetry.addData("Yop3?",tseThird);
 
         if(tseFirst) {
             location = LOCATION.ALLIANCE_FIRST;
@@ -92,8 +99,11 @@ class tsePipeline extends OpenCvPipeline {
             location = LOCATION.ALLIANCE_SECOND;
             telemetry.addData("Level","Second");
         }
-        else {
+        else if(tseThird) {
             location = LOCATION.ALLIANCE_THIRD;
+        }
+        else {
+            location = LOCATION.NO_ALLIANCE;
             telemetry.addData("Level","Third");
         }
         telemetry.addData("OpenCV Status","Location Decided");
@@ -106,7 +116,7 @@ class tsePipeline extends OpenCvPipeline {
 
         Imgproc.rectangle(output,LEFT_SQUARE,location==LOCATION.ALLIANCE_FIRST? detectedColor:none);
         Imgproc.rectangle(output,RIGHT_SQUARE,location==LOCATION.ALLIANCE_SECOND? detectedColor:none);
-        Imgproc.rectangle(output,RIGHTEST_SQUARE,(location==LOCATION.ALLIANCE_THIRD)? detectedColor:none);
+        Imgproc.rectangle(output,RIGHTEST_SQUARE,(location==LOCATION.ALLIANCE_THIRD || location==LOCATION.NO_ALLIANCE)? detectedColor:none);
         telemetry.addData("OpenCV Status","Rectangles Drawn");
         System.gc();
         telemetry.addData("Input Frame Size",input.rows()+" x "+input.cols());

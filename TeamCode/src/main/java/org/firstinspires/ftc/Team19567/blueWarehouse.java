@@ -42,6 +42,7 @@ public class blueWarehouse extends LinearOpMode {
         armDC = hardwareMap.get(DcMotor.class, "armDC");
         carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
         carouselRight = hardwareMap.get(DcMotor.class, "carouselRight");
+        intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
@@ -75,14 +76,14 @@ public class blueWarehouse extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63,Math.toRadians(270)))
-                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(60))
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(1, 63,Math.toRadians(90)))
+                .strafeTo(new Vector2d(0,43)).turn(Math.toRadians(-135))
                 .build();
-        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(0,45)).turn(Math.toRadians(60))
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(1,63, Math.toRadians(90)))
+                .strafeTo(new Vector2d(-1,39)).turn(Math.toRadians(-135))
                 .build();
-        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, 63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(2,50)).turn(Math.toRadians(60)).strafeTo(new Vector2d(-1,39)).build();
+        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(1, 63, Math.toRadians(90)))
+                .strafeTo(new Vector2d(-5,35)).turn(Math.toRadians(-135)).build();
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -97,30 +98,40 @@ public class blueWarehouse extends LinearOpMode {
         switch(location) {
             case ALLIANCE_FIRST: {
                 chosenTrajectorySequence = thirdLevelSequence;
-                chosenTrajectoryX = -1;
-                chosenTrajectoryY = -39;
+                chosenTrajectoryX = -5;
+                chosenTrajectoryY = 43;
                 chosenArmPos = 600;
                 chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
+            case NO_ALLIANCE: {
+                chosenTrajectorySequence = thirdLevelSequence;
+                chosenTrajectoryX = -5;
+                chosenTrajectoryY = 43;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.25;
+                telemetry.addData("OpenCV","Basically Third Level");
+                telemetry.update();
+                break;
+            }
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = secondLevelSequence;
-                chosenTrajectoryX = 0;
-                chosenTrajectoryY = -45;
-                chosenArmPos = 600;
-                chosenArmSpeed = 0.3;
+                chosenTrajectoryX = -1;
+                chosenTrajectoryY = 39;
+                chosenArmPos = 760;
+                chosenArmSpeed = 0.15;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
                 chosenTrajectorySequence = firstLevelSequence;
-                chosenTrajectoryX = 2;
-                chosenTrajectoryY = -50;
-                chosenArmPos = 750;
-                chosenArmSpeed = 0.2;
+                chosenTrajectoryX = 0;
+                chosenTrajectoryY = 39;
+                chosenArmPos = 880;
+                chosenArmSpeed = 0.1;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -133,12 +144,19 @@ public class blueWarehouse extends LinearOpMode {
         telemetry.addData("Freight Level", "3");
         telemetry.update();
 
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX, chosenTrajectoryY, Math.toRadians(330)))
-                .strafeTo(new Vector2d(6, -27))
-                .strafeTo(new Vector2d(-40,-27)).build();
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX, chosenTrajectoryY, Math.toRadians(-45)))
+                .turn(Math.toRadians(50))
+                .strafeTo(new Vector2d(chosenTrajectoryX, 5))
+                .addDisplacementMarker(() -> {
+                    mechanisms.moveIntake(0.5);
+                })
+                .strafeTo(new Vector2d(-50+(chosenTrajectoryX),5))
+                .addDisplacementMarker(() -> {
+                    mechanisms.moveIntake(0.0);
+                }).build();
 
         mechanisms.rotateArm(0);
-        mechanisms.releaseServoMove(1.0);
+        mechanisms.releaseServoMove(0.97);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
         mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
@@ -148,7 +166,8 @@ public class blueWarehouse extends LinearOpMode {
         mechanisms.releaseServoMove(0.25);
         sleep(1500);
         mechanisms.rotateArm(0,0.1);
-        mechanisms.releaseServoMove(1.0);
+        mechanisms.balanceServoMove(0.0);
+        mechanisms.releaseServoMove(0.97);
         chassis.followTrajectorySequence(secondTrajectory);
 
         telemetry.addData("Status", "Path Complete");

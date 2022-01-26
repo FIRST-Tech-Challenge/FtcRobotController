@@ -103,7 +103,7 @@ public class redWarehouse extends LinearOpMode {
         switch(location) {
             case ALLIANCE_FIRST: {
                 chosenTrajectorySequence = secondLevelSequence;
-                chosenArmPos = 750;
+                chosenArmPos = 770;
                 chosenArmSpeed = 0.15;
                 chosenTrajectoryX = -1;
                 chosenTrajectoryY = -39;
@@ -114,14 +114,14 @@ public class redWarehouse extends LinearOpMode {
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = firstLevelSequence;
                 chosenTrajectoryX = 0;
-                chosenTrajectoryY = -41.5;
+                chosenTrajectoryY = -39;
                 chosenArmPos = 880;
                 chosenArmSpeed = 0.1;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
-            case ALLIANCE_THIRD: {
+            case NO_ALLIANCE: {
                 chosenTrajectorySequence = thirdLevelSequence;
                 chosenTrajectoryX = -5;
                 chosenTrajectoryY = -43;
@@ -154,7 +154,7 @@ public class redWarehouse extends LinearOpMode {
         sleep(1500);
         mechanisms.balanceServoMove(0.0);
         mechanisms.rotateArm(0,0.1);
-        mechanisms.releaseServoMove(1.0);
+        mechanisms.releaseServoMove(0.97);
         chassis.followTrajectorySequence(secondTrajectory);
 
         telemetry.addData("Status", "Path Complete");

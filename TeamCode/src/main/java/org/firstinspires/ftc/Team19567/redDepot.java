@@ -110,10 +110,19 @@ public class redDepot extends LinearOpMode {
                 telemetry.update();
                 break;
             }
+            case NO_ALLIANCE: {
+                chosenTrajectorySequence = thirdLevelSequence;
+                chosenArmPos = 600;
+                chosenArmSpeed = 0.3;
+                chosenTrajectoryX = -20;
+                telemetry.addData("OpenCV","Basically Third Level");
+                telemetry.update();
+                break;
+            }
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = secondLevelSequence;
                 chosenArmPos = 770;
-                chosenArmSpeed = 0.2;
+                chosenArmSpeed = 0.15;
                 chosenTrajectoryX = -30;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
@@ -122,7 +131,7 @@ public class redDepot extends LinearOpMode {
             case ALLIANCE_THIRD: {
                 chosenTrajectorySequence = firstLevelSequence;
                 chosenArmPos = 900;
-                chosenArmSpeed = 0.15;
+                chosenArmSpeed = 0.1;
                 chosenTrajectoryX = -32;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
@@ -141,7 +150,7 @@ public class redDepot extends LinearOpMode {
                 .strafeTo(new Vector2d(-3,-12)).build();
 
         mechanisms.rotateArm(0);
-        mechanisms.releaseServoMove(1.0);
+        mechanisms.releaseServoMove(0.97);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
         mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
@@ -151,7 +160,7 @@ public class redDepot extends LinearOpMode {
         mechanisms.releaseServoMove(0.25);
         sleep(1500);
         mechanisms.rotateArm(0,0.1);
-        mechanisms.releaseServoMove(1.0);
+        mechanisms.releaseServoMove(0.97);
         mechanisms.balanceServoMove(0.0);
         chassis.followTrajectorySequence(secondTrajectory);
         mechanisms.rotateCarousel(0.5);
