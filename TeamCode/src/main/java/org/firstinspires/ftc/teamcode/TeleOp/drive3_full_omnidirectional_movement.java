@@ -66,7 +66,7 @@ public class drive3_full_omnidirectional_movement extends LinearOpMode {
 
                 move(angleOfJoystick(gamepad1.left_stick_y, gamepad1.left_stick_x));// main move method, gets angle from angleOfJoystic(k)
 
-            } else if (gamepad1.right_stick_y > 0 || gamepad1.right_stick_x > 0) { //turning. currently can't turn AND move
+            } else { //turning. currently can't turn AND move
 
                 turn();
             }
