@@ -25,7 +25,7 @@ public class FrenzyLift implements Runnable {
     @Override
     public void run() {
         if (score) {
-            frenzyBot.scoreAndFold();
+            frenzyBot.scoreAndFoldDyno();
         } else {
             if (liftMode.equals(FrenzyLiftMode.SharedHub)) {
                 switch (opModeSide) {

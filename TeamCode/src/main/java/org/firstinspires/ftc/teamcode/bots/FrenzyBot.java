@@ -410,6 +410,11 @@ public class FrenzyBot extends FrenzyBaseBot {
             intakeDropperServo.setPosition(0);
         }
     }
+    private void dropIntakeSimple() {
+        if (intakeDropperServo != null) {
+            intakeDropperServo.setPosition(0);
+        }
+    }
 
     public void intakeDropperHalfWay(){
         if (intakeDropperServo != null) {
@@ -464,6 +469,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Reset tower", defaultReturn = "")
     public void resetTurret(){
         if (turret != null) {
+            int pos = this.turret.getCurrentPosition();
+            if (Math.abs(pos) <= positionToleranceTurret){
+                //do nothing;
+                return;
+            }
             this.turret.setTargetPosition(TURRET_POS_CENTER);
             this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED_LOW);
@@ -630,16 +640,17 @@ public class FrenzyBot extends FrenzyBaseBot {
         dropElement();
         delayWait(700);
         prepDropperToMove();
-        resetLift();
-//        resetTurret();
+        resetLift(false);
     }
 
-    @BotAction(displayName = "Fold Auto", defaultReturn = "")
-    public void foldAuto() {
+    public void scoreAndFoldDyno() {
+        dropElement();
+        delayWait(700);
         prepDropperToMove();
-        resetTurret();
-        liftToLower();
+        dropIntakeSimple();
+        resetLift(true);
     }
+
 
     @BotAction(displayName = "Score and Fold Async", defaultReturn = "")
     public void scoreAndFoldAsync() {
@@ -677,9 +688,12 @@ public class FrenzyBot extends FrenzyBaseBot {
         thread.start();
     }
 
-    public void resetLift() {
+    public void resetLift(boolean waitForLift) {
 //        liftToLevelMin(true, true);
         liftToLower();
+        if (waitForLift) {
+            delayWait(300);
+        }
         resetTurret();
     }
 
@@ -733,7 +747,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         intakeRunning = false;
         intakeDropperUp();
         delayWait(500);
-        activateIntake(0.15); //to avoid stuck balls
+        activateIntake(-0.15); //to avoid stuck balls
         delayWait(500);
         activateIntake(0);
 
