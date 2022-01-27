@@ -10,7 +10,6 @@ public class CloseDetectTSEPosition extends CommandBase {
 
     private final WebCamSubsystem webCamSubsytem;
     private Telemetry telemetry;
-    private OpenCvShippingElementDetector.TSELocation location;
     private int level = 0;
 
     public CloseDetectTSEPosition(WebCamSubsystem subsystem){
