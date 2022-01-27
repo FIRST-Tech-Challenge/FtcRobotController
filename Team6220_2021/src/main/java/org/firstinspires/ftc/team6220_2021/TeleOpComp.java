@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "TeleOp Comp", group = "TeleOp")
-public class TeleOpComp extends MasterOpMode{
+public class TeleOpComp extends MasterOpMode {
 
     int tickvalue = 97;
     double x = 0.7;
@@ -34,7 +34,7 @@ public class TeleOpComp extends MasterOpMode{
         boolean isPressed = false;
         double motorPower = 0.9;
         double increase = 1;
-        double speed =1;
+        double speed = 1;
         int motorBeltTargetPosition = 0;
 
         waitForStart();
@@ -86,26 +86,25 @@ public class TeleOpComp extends MasterOpMode{
             }
 
             motorBelt.setPower(-(gamepad2.left_stick_y));
-            if (gamepad1.left_trigger>0){
+            if (gamepad1.left_trigger > 0) {
                 speed = 0.25;
             } else {
                 speed = 1;
             }
             telemetry.addData("Motor Ticks: ", motorArm.getCurrentPosition());
-            telemetry.addData("ServoArmPosition",servoArm.getPosition());
+            telemetry.addData("ServoArmPosition", servoArm.getPosition());
             telemetry.update();
 
             // checks old position of arm, right when it goes over top of robot from front to back, it reduces speed
-            if (gamepad2.dpad_up){
+            if (gamepad2.dpad_up) {
                 if (!isPressed) {
-                    if (position == -2){
+                    if (position == -2) {
                         increase = 4;
-                    }
-                    else {
+                    } else {
                         increase = 1;
                     }
                     position += increase;
-                    if (position > 4){
+                    if (position > 4) {
                         position = 4;
                     }
                 }
@@ -115,12 +114,12 @@ public class TeleOpComp extends MasterOpMode{
             }
 
             // checks old arm position, when it goes over the top of the robot from back to front, it reduces speed
-            if (!gamepad2.dpad_up && !gamepad2.dpad_down){
+            if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
                 isPressed = false;
-            } else if (gamepad2.dpad_down){
+            } else if (gamepad2.dpad_down) {
                 if (!isPressed) {
                     position -= increase;
-                    if (position < 0){
+                    if (position < 0) {
                         position = 0;
                     }
                 }
@@ -141,7 +140,7 @@ public class TeleOpComp extends MasterOpMode{
             motorArm.setPower(0.9);
 
             if (gamepad2.x) {
-                if (position == 0){
+                if (position == 0) {
                     servoGrabber.setPosition(0.6);
                 } else {
                     servoGrabber.setPosition(0.5);
@@ -150,10 +149,9 @@ public class TeleOpComp extends MasterOpMode{
                 servoGrabber.setPosition(0.0);
             }
 
-            if (gamepad2.y){
+            if (gamepad2.y) {
                 position = -1;
-            }
-            else if (gamepad2.b){
+            } else if (gamepad2.b) {
                 position = -2;
             }
 
@@ -170,14 +168,14 @@ public class TeleOpComp extends MasterOpMode{
                     x += 0.05;
                     telemetry.addData("duckPower", motorRightDuck.getPower());
                     telemetry.update();
-                    if (x >= 0.85){
+                    if (x >= 0.85) {
                         pauseMillis(1500);
                         motorRightDuck.setPower(-.1);
                         motorLeftDuck.setPower(-.1);
                         pauseMillis(30);
                         motorRightDuck.setPower(0);
                         motorLeftDuck.setPower(0);
-                        x=0.7;
+                        x = 0.7;
                         break;
                     }
                 }
@@ -194,19 +192,20 @@ public class TeleOpComp extends MasterOpMode{
                     x -= 0.05;
                     telemetry.addData("duckPower", motorRightDuck.getPower());
                     telemetry.update();
-                    if (x <= -0.85){
+                    if (x <= -0.85) {
                         pauseMillis(1500);
                         motorRightDuck.setPower(.1);
                         motorLeftDuck.setPower(.1);
                         pauseMillis(30);
                         motorRightDuck.setPower(0);
                         motorLeftDuck.setPower(0);
-                        x=0.7;
+                        x = 0.7;
                         break;
                     }
                 }
             }
-            if (gamepad2.left_trigger > 0.5 && gamepad2.right_trigger > 0.5){
+
+            if (gamepad2.left_trigger > 0.5 && gamepad2.right_trigger > 0.5) {
                 servoGrabber.setPosition(0.34);
                 servoArm.setPosition(0.8);
                 motorArm.setTargetPosition(-930);

@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.UnusedClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.firstinspires.ftc.team6220_2021.MasterAutonomous;
 
 @Disabled
 @Autonomous(name = "RedParkBlockPlace", group = "Autonomous")

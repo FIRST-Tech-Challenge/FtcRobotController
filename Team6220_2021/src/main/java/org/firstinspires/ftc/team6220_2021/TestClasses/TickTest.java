@@ -1,10 +1,13 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.TestClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.team6220_2021.MasterOpMode;
+
 @Disabled
 @TeleOp(name = "TickTest", group = "TeleOp")
-public class TickTest extends MasterOpMode{
+public class TickTest extends MasterOpMode {
 
     @Override
     public void runOpMode() {

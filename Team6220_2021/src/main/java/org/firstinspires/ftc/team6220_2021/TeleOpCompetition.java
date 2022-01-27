@@ -30,6 +30,3 @@ public class TeleOpCompetition extends MasterTeleOp {
         }
     }
 }
-
-// actually fix servo and screw it in this time !!!!
-// actually fix the left grabber paddle this time !!!!

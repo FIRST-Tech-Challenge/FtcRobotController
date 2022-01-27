@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.UnusedClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.team6220_2021.MasterOpMode;
+
 @Autonomous(name = "Park", group = "Autonomous")
-public class Park extends MasterOpMode{
+public class Park extends MasterOpMode {
 
     @Override
     public void runOpMode() {

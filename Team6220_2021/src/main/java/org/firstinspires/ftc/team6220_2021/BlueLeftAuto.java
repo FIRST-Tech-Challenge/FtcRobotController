@@ -4,19 +4,13 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 import java.util.List;
 
 @Autonomous(name = "BlueLeftAuto", group = "Competition")
 public class BlueLeftAuto extends MasterAutonomous {
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -60,11 +54,11 @@ public class BlueLeftAuto extends MasterAutonomous {
                     if (recognition.getLabel().equals("TSE")) {
                         double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
 
-                        if (TSELocation > 0.0 && TSELocation <= 267.0) {
+                        if (TSELocation > Constants.TSE_START && TSELocation <= Constants.TSE_CENTER1) {
                             barcode = 0;
-                        } else if (TSELocation > 267.0 && TSELocation <= 533.0) {
+                        } else if (TSELocation > Constants.TSE_CENTER1 && TSELocation <= Constants.TSE_CENTER2) {
                             barcode = 1;
-                        } else if (TSELocation > 533.0 && TSELocation <= 800.0) {
+                        } else if (TSELocation > Constants.TSE_CENTER2 && TSELocation <= Constants.TSE_END) {
                             barcode = 2;
                         }
                     }
@@ -132,24 +126,5 @@ public class BlueLeftAuto extends MasterAutonomous {
 
         servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
         motorArm.setTargetPosition(0);
-    }
-
-    private void initVuforia() {
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
-
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 320;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
     }
 }

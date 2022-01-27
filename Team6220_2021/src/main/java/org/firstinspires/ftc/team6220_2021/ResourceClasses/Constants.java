@@ -57,4 +57,10 @@ public class Constants {
             "8Kaaqnu3DABLRXRjSJ1QRSHmE8mIur5Dk3OcqMv3fwTNt5CnhC2J/D5biVGixUQ+dveylNEVNmp0k";
     public static final String[] TENSORFLOW_LABELS = {"TSE, Cube, Sphere, Duck"};
     public static final String TENSORFLOW_MODEL_ASSET = "model_20220108_181014.tflite";
+
+    // TensorFlow Object Detection
+    public static final double TSE_START = 0.0;
+    public static final double TSE_CENTER1 = 267.0;
+    public static final double TSE_CENTER2 = 533.0;
+    public static final double TSE_END = 800.0;
 }

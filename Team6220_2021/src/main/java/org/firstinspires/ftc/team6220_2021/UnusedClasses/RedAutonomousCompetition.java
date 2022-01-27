@@ -1,15 +1,12 @@
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.UnusedClasses;
 
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.team6220_2021.MasterAutonomous;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.Constants;
 
 import java.util.List;
@@ -17,8 +14,6 @@ import java.util.List;
 @Disabled
 @Autonomous(name = "Red Autonomous Competition", group = "Competition")
 public class RedAutonomousCompetition extends MasterAutonomous {
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -58,11 +53,11 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                     if (recognition.getLabel().equals("TSE")) {
                         double TSELocation = (recognition.getLeft() + recognition.getRight()) / 2.0;
 
-                        if (TSELocation > 0.0 && TSELocation <= 267.0) {
+                        if (TSELocation > Constants.TSE_START && TSELocation <= Constants.TSE_CENTER1) {
                             barcode = 0;
-                        } else if (TSELocation > 267.0 && TSELocation <= 533.0) {
+                        } else if (TSELocation > Constants.TSE_CENTER1 && TSELocation <= Constants.TSE_CENTER2) {
                             barcode = 1;
-                        } else if (TSELocation > 533.0 && TSELocation <= 800.0) {
+                        } else if (TSELocation > Constants.TSE_CENTER2 && TSELocation <= Constants.TSE_END) {
                             barcode = 2;
                         }
                     }
@@ -84,7 +79,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         pauseMillis(125);
         turnToAngle(90);
         pauseMillis(125);
-        // todo - distance to carousel
         driveInches(16, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         motorLeftDuck.setPower(-0.4);
@@ -94,7 +88,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         pauseMillis(125);
         turnToAngle(10);
         pauseMillis(125);
-        // todo - distance before turning to the shipping hub
         driveInches(36, Constants.MIN_DRIVE_PWR, true);
         pauseMillis(125);
         turnToAngle(-80);
@@ -105,7 +98,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                 motorArm.setTargetPosition(300);
                 pauseMillis(750);
                 servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
-                // todo - distance to the shipping hub
                 driveInches(10, Constants.MIN_DRIVE_PWR, true);
                 break;
 
@@ -113,7 +105,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                 motorArm.setTargetPosition(550);
                 pauseMillis(750);
                 servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
-                // todo - distance to the shipping hub
                 driveInches(12, Constants.MIN_DRIVE_PWR, true);
                 break;
 
@@ -121,7 +112,6 @@ public class RedAutonomousCompetition extends MasterAutonomous {
                 motorArm.setTargetPosition(800);
                 pauseMillis(750);
                 servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION - motorArm.getCurrentPosition() / 2400.0);
-                // todo - distance to the shipping hub
                 driveInches(14, Constants.MIN_DRIVE_PWR, true);
                 break;
         }
@@ -132,17 +122,14 @@ public class RedAutonomousCompetition extends MasterAutonomous {
 
         switch (barcode) {
             case 0:
-                // todo - distance backing up from the shipping hub
                 driveInches(6, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 1:
-                // todo - distance backing up from the shipping hub
                 driveInches(8, Constants.MIN_DRIVE_PWR, false);
                 break;
 
             case 2:
-                // todo - distance backing up from the shipping hub
                 driveInches(10, Constants.MIN_DRIVE_PWR, false);
                 break;
         }
@@ -157,24 +144,5 @@ public class RedAutonomousCompetition extends MasterAutonomous {
         pauseMillis(750);
         servoArm.setPosition(Constants.SERVO_ARM_RESET_POSITION);
         motorArm.setTargetPosition(0);
-    }
-
-    private void initVuforia() {
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-    }
-
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfodParameters.isModelTensorFlow2 = true;
-        tfodParameters.inputSize = 320;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(Constants.TENSORFLOW_MODEL_ASSET, Constants.TENSORFLOW_LABELS);
     }
 }

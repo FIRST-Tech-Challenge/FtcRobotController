@@ -2,14 +2,17 @@
 //  You can install this program to the rev control hub without any edits.
 //  Using the logitech controller, you can move the robot in tank drive.
 
-package org.firstinspires.ftc.team6220_2021;
+package org.firstinspires.ftc.team6220_2021.TestClasses;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.team6220_2021.MasterOpMode;
+
 @Disabled
 @TeleOp(name = "New Hardware AutonomousTest", group = "TeleOp")
-public class NewHardwareTest extends MasterOpMode{
+public class NewHardwareTest extends MasterOpMode {
 
     int tickvalue = -70;
     double x = 0.7;

@@ -100,17 +100,19 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBL.setPower(power);
         motorFR.setPower(power);
         motorBR.setPower(power);
-        while(motorBR.isBusy() || motorBL.isBusy() || motorFL.isBusy() || motorFR.isBusy()) {
+        while (motorBR.isBusy() || motorBL.isBusy() || motorFL.isBusy() || motorFR.isBusy()) {
             telemetry.addData("Currently Running", motorFL.getCurrentPosition());
         }
         pauseMillis(100);
     }
+
     public void stopBase() {
         motorFL.setPower(0);
         motorBL.setPower(0);
         motorFR.setPower(0);
         motorBR.setPower(0);
     }
+
     public void blueDuck() {
         motorLeftDuck = hardwareMap.dcMotor.get("motorDuck");
         double x = -0.7;
@@ -120,20 +122,21 @@ public abstract class MasterOpMode extends LinearOpMode {
             x -= 0.05;
             telemetry.addData("duckPower", motorLeftDuck.getPower());
             telemetry.update();
-            if (x <= -0.85){
+            if (x <= -0.85) {
                 pauseMillis(1500);
                 motorLeftDuck.setPower(-.1);
                 pauseMillis(30);
                 motorLeftDuck.setPower(0);
-                x=0.7;
+                x = 0.7;
                 break;
             }
         }
     }
+
     public void turnAngle(double turnDegree) {
         Initialize();
 
-        double TotalTicks = 537.6 * 20/4 * (turnDegree/360);
+        double TotalTicks = 537.6 * 20 / 4 * (turnDegree / 360);
         int targetticks = (int) TotalTicks;
         motorFL.setTargetPosition(targetticks);
         motorBL.setTargetPosition(targetticks);
@@ -143,7 +146,7 @@ public abstract class MasterOpMode extends LinearOpMode {
         motorBL.setPower(0.9);
         motorFR.setPower(0.9);
         motorBR.setPower(0.9);
-        while(motorBR.isBusy() || motorBL.isBusy() || motorFL.isBusy() || motorFR.isBusy()) {
+        while (motorBR.isBusy() || motorBL.isBusy() || motorFL.isBusy() || motorFR.isBusy()) {
             telemetry.addData("Currently Running", motorFL.getCurrentPosition());
         }
         pauseMillis(100);
