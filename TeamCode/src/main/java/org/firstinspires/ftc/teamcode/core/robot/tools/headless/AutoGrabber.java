@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 public class AutoGrabber {
     private final Servo leftServo;
     private final Servo rightServo;
-    private boolean open = false;
+    private boolean open = true;
     public AutoGrabber (@NonNull HardwareMap hardwareMap) {
         leftServo = hardwareMap.get(Servo.class, "leftTse");
         leftServo.resetDeviceConfigurationForOpMode();
