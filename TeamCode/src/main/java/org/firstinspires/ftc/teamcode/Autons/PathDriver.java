@@ -23,46 +23,58 @@ public class PathDriver extends LinearOpMode {
         r.init(hardwareMap,true, telemetry,"red");
         // This below is the code strip
 
-        // X19.928426758476544 Y20.905225899631912 R252.79479713144605-O
-        r.gyroTurn(252.79479713144605-Math.abs(r.imu.getHeading()),0.5,4000);
-        telemetry.addData("heading:",r.imu.getHeading());
-        telemetry.update();
-        telemetry.addData("turn:",252.79479713144605-r.imu.getHeading());
+		// X35.39382967329208 Y9.790647485576445 R204.1082421322776-O
+		r.gyroTurn(204.1082421322776-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",204.1082421322776-r.imu.getHeading());
 
-        r.AEncDrive(9.848163303095076,0,0.5,0,4000);
-        r.gyroTurn(302.21305697141713-Math.abs(r.imu.getHeading()),0.5,4000);
-        telemetry.addData("heading:",r.imu.getHeading());
-        telemetry.update();
-        telemetry.addData("turn:",302.21305697141713-r.imu.getHeading());
+		r.AEncDrive(13.908677957757437,0,0.5,0,4000);
+		r.gyroTurn(151.57057572909414-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",151.57057572909414-r.imu.getHeading());
 
-        r.AEncDrive(7.493650021472955,0,0.5,0,4000);
-        r.gyroTurn(151.84360698428017-Math.abs(r.imu.getHeading()),0.5,4000);
-        telemetry.addData("heading:",r.imu.getHeading());
-        telemetry.update();
-        telemetry.addData("turn:",151.84360698428017-r.imu.getHeading());
+		r.AEncDrive(6.506858730947473,0,0.5,0,4000);
+		r.gyroTurn(125.19366133070609-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",125.19366133070609-r.imu.getHeading());
 
-        r.AEncDrive(4.562076075258563,0,0.5,0,4000);
-        r.gyroTurn(178.24268641556685-Math.abs(r.imu.getHeading()),0.5,4000);
-        telemetry.addData("heading:",r.imu.getHeading());
-        telemetry.update();
-        telemetry.addData("turn:",178.24268641556685-r.imu.getHeading());
+		r.AEncDrive(2.852488837462371,0,0.5,0,4000);
+		r.gyroTurn(63.47077427380685-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",63.47077427380685-r.imu.getHeading());
 
-        r.AEncDrive(5.928052888868543,0,0.5,0,4000);
-        r.gyroTurn(198.62021159159042-Math.abs(r.imu.getHeading()),0.5,4000);
-        telemetry.addData("heading:",r.imu.getHeading());
-        telemetry.update();
-        telemetry.addData("turn:",198.62021159159042-r.imu.getHeading());
+		r.AEncDrive(3.1906836500166906,0,0.5,0,4000);
+		r.gyroTurn(359.97467738627694-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",359.97467738627694-r.imu.getHeading());
 
-        r.AEncDrive(7.434563829179642,0,0.5,0,4000);
-        r.gyroTurn(222.31083110781117-Math.abs(r.imu.getHeading()),0.5,4000);
-        telemetry.addData("heading:",r.imu.getHeading());
-        telemetry.update();
-        telemetry.addData("turn:",222.31083110781117-r.imu.getHeading());
+		r.AEncDrive(2.9914087697246408,0,0.5,0,4000);
+		r.gyroTurn(332.0386949341282-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",332.0386949341282-r.imu.getHeading());
 
-        r.AEncDrive(9.789666777307179,0,0.5,0,4000);
-        r.gyroTurn(252.79479713144605-Math.abs(r.imu.getHeading()),0.5,4000);
-        telemetry.addData("heading:",r.imu.getHeading());
-        telemetry.update();
-        telemetry.addData("turn:",252.79479713144605-r.imu.getHeading());
-    }
+		r.AEncDrive(1.9066502730986372,0,0.5,0,4000);
+		r.gyroTurn(289.63633625664016-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",289.63633625664016-r.imu.getHeading());
+
+		r.AEncDrive(17.54247463320425,0,0.5,0,4000);
+		r.gyroTurn(231.78938024270388-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",231.78938024270388-r.imu.getHeading());
+
+		r.AEncDrive(17.867514586078556,0,0.5,0,4000);
+		r.gyroTurn(204.1082421322776-Math.abs(r.imu.getHeading()),0.5,4000);
+		telemetry.addData("heading:",r.imu.getHeading());		
+		telemetry.update();
+		telemetry.addData("turn:",204.1082421322776-r.imu.getHeading());
+	} 
 }
