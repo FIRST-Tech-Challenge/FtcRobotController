@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.Localizati
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 public class VoltageDropError implements NavigationError {
 
@@ -24,7 +25,7 @@ public class VoltageDropError implements NavigationError {
 
         if (voltageSensor.getVoltage() < (initialVoltage - dropAmount)) {
             final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
-            final String errorMsg = "In function call " + args + this.getClass().toString() + " Error.";
+            final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Error.\n";
             throw new MovementException(errorMsg);
         }
     }

@@ -32,7 +32,7 @@ public class DistanceTimeoutError implements NavigationError {
             double traveledDistance = Math.abs(positionBeforeTimeLoop - positionAfterTimeLoop);
             if (traveledDistance < tooSmallOfDistance) {
                 final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
-                final String errorMsg = "In function call " + args + this.getClass().toString() + " Error.";
+                final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Error.\n";
                 throw new MovementException(errorMsg);
             }
             timer.reset();

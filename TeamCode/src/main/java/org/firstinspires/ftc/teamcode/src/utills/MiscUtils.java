@@ -108,4 +108,11 @@ public class MiscUtils {
         angle = Math.toDegrees(Math.atan2(x, y));
         return ((angle - robotRot) % 360);
     }
+
+    public static String getRelativeClassName(Object o) {
+        String cName = o.getClass().toString();
+        String[] cNameSplit = cName.split("\\.");
+        cName = cNameSplit[cNameSplit.length - 1];
+        return cName;
+    }
 }
