@@ -628,7 +628,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Score and Fold", defaultReturn = "")
     public void scoreAndFold() {
         dropElement();
-        delayWait(800);
+        delayWait(700);
         prepDropperToMove();
         resetLift();
 //        resetTurret();
@@ -732,9 +732,9 @@ public class FrenzyBot extends FrenzyBaseBot {
         stop();
         intakeRunning = false;
         intakeDropperUp();
-        delayWait(550);
-        activateIntake(0.05); //to avoid stuck balls
-        delayWait(200);
+        delayWait(500);
+        activateIntake(0.15); //to avoid stuck balls
+        delayWait(500);
         activateIntake(0);
 
         return gotIt;
