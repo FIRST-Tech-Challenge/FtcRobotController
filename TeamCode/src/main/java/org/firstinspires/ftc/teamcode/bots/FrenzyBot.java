@@ -53,9 +53,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     protected static int TURRET_POS_MAX_LEFT = 840;  //red side team hub
     protected static int TURRET_POS_MAX_RIGHT = -728; //blue side team hub
     protected static int TURRET_POS_TEAMHUB_RED = 610;  //red side team hub
-    protected static int TURRET_POS_TEAMHUB_BLUE = -620;  //red side team hub
+    protected static int TURRET_POS_TEAMHUB_BLUE = -661;  //red side team hub
     protected static int TURRET_POS_SHAREDHUB_RED = -634;  //red side team hub
-    protected static int TURRET_POS_SHAREDHUB_BLUE = 700;  //red side team hub
+    protected static int TURRET_POS_SHAREDHUB_BLUE = 578;  //red side team hub
     private static double TURRET_SPEED = 0.95;
     private static double TURRET_SPEED_LOW = 0.8;
 
