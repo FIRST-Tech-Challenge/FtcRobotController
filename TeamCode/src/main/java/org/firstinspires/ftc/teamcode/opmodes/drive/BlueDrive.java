@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * This sample utilizes the SampleMecanumDriveCancelable.java class.
  */
-@TeleOp(group = "advanced")
+@TeleOp
 public class BlueDrive extends LinearOpMode {
     protected double power = 1;
     private final EventThread eventThread = new EventThread(() -> !isStopRequested());
