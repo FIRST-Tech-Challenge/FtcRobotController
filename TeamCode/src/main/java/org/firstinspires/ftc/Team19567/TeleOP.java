@@ -30,7 +30,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private Servo releaseServo = null;
     private Servo balanceServo = null;
     private TouchSensor limitSwitch = null;
-    //private DistanceSensor distanceSensor = null;
+    private DistanceSensor distanceSensor = null;
     private double carouselLeftPower = 0.0;
     private double carouselRightPower = 0.0;
     private double armPos = 0;
@@ -71,7 +71,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
         //blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        //distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
 
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
 
@@ -83,7 +83,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setDirection(DcMotor.Direction.REVERSE);
         balanceServo.setDirection(Servo.Direction.REVERSE);
 
-        releaseServoPos = 0.97;
+        releaseServoPos = 1.0;
         balanceServoPos = balanceServo.MIN_POSITION;
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
 
@@ -132,7 +132,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x)*acc;
         //INTAKE
         if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.68*gamepad1.right_trigger);
-        else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.7);
+        else if(gamepad1.right_bumper) mechanisms.moveIntake(0.6);
         else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
         else mechanisms.moveIntake(0.1);
 
@@ -162,12 +162,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
 //SERVOS
-        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.006,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
+        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
+        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
         if(gamepad1.b || gamepad2.b) {
             presetState = PRESETSTATE.GOING_DOWN;
         }
-        if(gamepad2.right_bumper) releaseServoPos = 0.83;
+        if(gamepad2.right_bumper) releaseServoPos = 0.3;
         if(presetState != PRESETSTATE.NO_PRESET) {
             armPower = 0.18;
             switch(presetState) {
@@ -196,7 +196,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 case GOING_DOWN: {
                     armPower = 0.125;
                     armPos = 0;
-                    releaseServoPos = 0.9;
+                    releaseServoPos = 1.0;
                     if(armDC.getCurrentPosition() <= 5) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
@@ -219,6 +219,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
         else blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE;
         blinkin.setPattern(blinkinPattern); */
+        if(distanceSensor.getDistance(DistanceUnit.MM) <= 80 && !(releaseServoPos >= 0.88 && releaseServoPos <= 0.98)) {
+            telemetry.addData("Distance Sensor","Freight Detected");
+        }
 
 //MOTOR SET POWER
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
