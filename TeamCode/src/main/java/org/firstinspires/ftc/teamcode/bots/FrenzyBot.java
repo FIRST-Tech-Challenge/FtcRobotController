@@ -60,6 +60,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private static double TURRET_SPEED_LOW = 0.8;
 
     private boolean liftEmergencyMode = false; //if the lift is broken, operate with the intake
+    private boolean isTeleOp = false;
 
 
     private int liftLocation = LIFT_UNDER_EXTENTION;
@@ -162,7 +163,9 @@ public class FrenzyBot extends FrenzyBaseBot {
 
         try {
             intakeDropperServo =  hwMap.get(Servo.class, "intakeDropper");
-            intakeDropperUp();
+            if (isTeleOp() == false) {
+                intakeDropperUp();
+            }
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize Intake Dropper", ex);
         }
@@ -782,5 +785,13 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public void setLiftEmergencyMode(boolean liftEmergencyMode) {
         this.liftEmergencyMode = liftEmergencyMode;
+    }
+
+    public boolean isTeleOp() {
+        return isTeleOp;
+    }
+
+    public void setTeleOp(boolean teleOp) {
+        isTeleOp = teleOp;
     }
 }

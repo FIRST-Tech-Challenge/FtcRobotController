@@ -43,6 +43,7 @@ public class FrenzyModeBase extends LinearOpMode {
         try {
             try{
                 gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT_TIME_MS, TimeUnit.MILLISECONDS);
+                robot.setTeleOp(true);
 
                 robot.init(this, this.hardwareMap, telemetry);
 
