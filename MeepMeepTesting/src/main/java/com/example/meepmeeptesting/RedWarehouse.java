@@ -19,8 +19,7 @@ public class RedWarehouse {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
                                 .strafeTo(new Vector2d(0,-45)).turn(Math.toRadians(-150))
-                                .addDisplacementMarker(() -> {})
-                                .waitSeconds(2).addDisplacementMarker(() -> {})
+                                .splineToConstantHeading(new Vector2d(6,27),Math.toRadians(120))
                                 .strafeTo(new Vector2d(6, 27))
                                 .strafeTo(new Vector2d(-40,27))
                                 .build())

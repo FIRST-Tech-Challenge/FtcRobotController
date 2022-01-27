@@ -5,12 +5,14 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -27,6 +29,7 @@ public class blueWarehouse extends LinearOpMode {
     private DcMotor intakeDC = null;
     private Servo releaseServo = null;
     private Servo balanceServo = null;
+    private DistanceSensor distanceSensor = null;
     private tsePipeline.LOCATION location = tsePipeline.LOCATION.ALLIANCE_THIRD;
     private TrajectorySequence chosenTrajectorySequence;
     private int chosenArmPos = 600;
@@ -45,6 +48,7 @@ public class blueWarehouse extends LinearOpMode {
         intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
+        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
 
         armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -83,7 +87,16 @@ public class blueWarehouse extends LinearOpMode {
                 .strafeTo(new Vector2d(-1,39)).turn(Math.toRadians(-135))
                 .build();
         TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(1, 63, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-5,35)).turn(Math.toRadians(-135)).build();
+                .strafeTo(new Vector2d(-5,35)).turn(Math.toRadians(-135))
+                .build();
+        /* TrajectorySequence intakeSequence = chassis.trajectorySequenceBuilder(new Pose2d(0,0,0))
+                .addTemporalMarker(15000,() -> {
+                    while(distanceSensor.getDistance(DistanceUnit.MM) >= 80 && opModeIsActive()) {
+                        mechanisms.moveIntake(0.5);
+                    }
+                    mechanisms.moveIntake(0.0);
+                })
+                .build(); */
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -151,12 +164,14 @@ public class blueWarehouse extends LinearOpMode {
                     mechanisms.moveIntake(0.5);
                 })
                 .strafeTo(new Vector2d(-50+(chosenTrajectoryX),5))
+                .forward(5).back(5).forward(5).back(5)
                 .addDisplacementMarker(() -> {
                     mechanisms.moveIntake(0.0);
-                }).build();
+                })
+                .build();
 
         mechanisms.rotateArm(0);
-        mechanisms.releaseServoMove(0.97);
+        mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
         mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
@@ -167,8 +182,9 @@ public class blueWarehouse extends LinearOpMode {
         sleep(1500);
         mechanisms.rotateArm(0,0.1);
         mechanisms.balanceServoMove(0.0);
-        mechanisms.releaseServoMove(0.97);
+        mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(secondTrajectory);
+        //chassis.followTrajectorySequenceAsync(intakeSequence);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();

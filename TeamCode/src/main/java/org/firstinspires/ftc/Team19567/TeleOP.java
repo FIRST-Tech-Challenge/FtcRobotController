@@ -132,9 +132,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x)*acc;
         //INTAKE
         if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.68*gamepad1.right_trigger);
-        else if(gamepad1.right_bumper) mechanisms.moveIntake(0.6);
+        else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.8);
         else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
-        else mechanisms.moveIntake(0.1);
+        else mechanisms.moveIntake(-0.06);
 
         if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
@@ -142,7 +142,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             mechanisms.rotateCarousel(0.5);
         }
         else if(gamepad1.dpad_left || gamepad2.dpad_left) {
-            mechanisms.rotateCarousel(-0.5);
+            mechanisms.rotateCarousel(0.5);
         }
         else {
             mechanisms.rotateCarousel(0.0);

@@ -143,7 +143,7 @@ public class redWarehouse extends LinearOpMode {
 
         mechanisms.rotateArm(0);
         mechanisms.balanceServoMove(0.0);
-        mechanisms.releaseServoMove(0.97);
+        mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
         mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
@@ -154,7 +154,7 @@ public class redWarehouse extends LinearOpMode {
         sleep(1500);
         mechanisms.balanceServoMove(0.0);
         mechanisms.rotateArm(0,0.1);
-        mechanisms.releaseServoMove(0.97);
+        mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(secondTrajectory);
 
         telemetry.addData("Status", "Path Complete");
