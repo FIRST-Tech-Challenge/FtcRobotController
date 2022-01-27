@@ -16,11 +16,8 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
-    androidResources {
-        noCompress 'tflite'
-    }
+    buildToolsVersion '32.0.0'
 }
-
 
 dependencies {
     implementation project(':FtcRobotController')
