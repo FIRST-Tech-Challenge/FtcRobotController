@@ -46,18 +46,18 @@ public class AutoStorage extends LinearOpMode {
         builder.waitSeconds(0.1);
         // 9.35 seconds long
         builder.lineTo(new Vector2d(-40, 55 * multiplier));
-        builder.splineToLinearHeading(new Pose2d(-21, 42 * multiplier, Math.toRadians(100)),
-                Math.toRadians(-110));
+        builder.splineToLinearHeading(new Pose2d(-21, 42 * multiplier, Math.toRadians(100 * multiplier)),
+                Math.toRadians(-110 * multiplier));
         builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
         builder.waitSeconds(4);
         builder.addTemporalMarker(() -> lift.setPosition(AutoLift.Positions.INTAKING));
 //        builder.waitSeconds(1);
         builder.lineTo(new Vector2d(-19, 50 * multiplier));
-        builder.lineToLinearHeading(new Pose2d(-60, 58, Math.toRadians(240)));
+        builder.lineToLinearHeading(new Pose2d(-60, 58 * multiplier, Math.toRadians(240)));
         builder.addTemporalMarker(carousel::on);
         builder.waitSeconds(4);
         builder.addTemporalMarker(carousel::off);
-        builder.lineToLinearHeading(new Pose2d(-60, 35, Math.toRadians(90)));
+        builder.lineToLinearHeading(new Pose2d(-60, 35 * multiplier, Math.toRadians(90)));
 //        builder.waitSeconds(10);
 //        builder.addTemporalMarker(() -> {
 //            // TODO FIRE TAPE MEASURE
