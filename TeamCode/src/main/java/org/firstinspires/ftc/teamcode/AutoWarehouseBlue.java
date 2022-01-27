@@ -128,29 +128,29 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0.75);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(400); //Go backwards
+            sleep(300); //Go backwards
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(-0.5);
+            lf.setPower(-0.75);
+            rf.setPower(0.75);
+            lb.setPower(-0.75);
+            rb.setPower(0.75);
+            clawservo.setPosition(0.75);
+            duckspinnerL.setPower(0);
+            duckspinnerR.setPower(0);
+            sleep(975); //turn right
+
+            tower1.setPower(0);
+            tower2.setPower(0);
+            lf.setPower(0.5);
             rf.setPower(0.5);
-            lb.setPower(-0.5);
+            lb.setPower(0.5);
             rb.setPower(0.5);
             clawservo.setPosition(0.75);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1250);
-
-            //tower1.setPower(0);
-            //tower2.setPower(0);
-            //lf.setPower(-0.5);
-            //rf.setPower(0.5);
-            //lb.setPower(-0.5);
-            //rb.setPower(0.5);
-            //clawservo.setPosition(0.75);
-            //duckspinnerL.setPower(0);
-            //duckspinnerR.setPower(0);
-            //ssleep(225);
+            sleep(980); //go forward
 
             tower1.setPower(0);
             tower2.setPower(0);
