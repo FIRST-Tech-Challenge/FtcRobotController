@@ -479,21 +479,21 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Tower to hub from blue warehouse", defaultReturn = "")
     public void towerToTeamHubFromAutoWarehouseBlue(){
-        this.turret.setTargetPosition(-500);
+        this.turret.setTargetPosition(277);
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from red ducks", defaultReturn = "")
     public void towerToTeamHubFromAutoRedDucks(){
-        this.turret.setTargetPosition(-500);
+        this.turret.setTargetPosition(-293);
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from blue ducks", defaultReturn = "")
     public void towerToTeamHubFromAutoBlueDucks(){
-        this.turret.setTargetPosition(-500);
+        this.turret.setTargetPosition(-325);
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
