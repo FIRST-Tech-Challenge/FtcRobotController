@@ -29,19 +29,6 @@ import java.util.Random;
 
 public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
-
-
-    public enum TSELocation {
-        DUCKSIDE_BLUE_LEVEL_3,
-        DUCKSIDE_BLUE_LEVEL_2,
-        DUCKSIDE_BLUE_LEVEL_1,
-        NONE
-    }
-
-    //TSELocation location;
-    //Map<Levels.TSELocation, Integer> levels = new HashMap<>();
-
-
     private int width = 224; // width of the image
     private int height = 240;
     private double inScaleFactor = 0.0278;
@@ -92,9 +79,6 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
         //this.width = width;
         //this.height = height;
         this.telemetry = telemetry;
-
-
-
 
         try {
             JSONObject dsb = new JSONObject();
