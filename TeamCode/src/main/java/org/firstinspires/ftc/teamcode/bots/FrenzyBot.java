@@ -339,6 +339,7 @@ public class FrenzyBot extends FrenzyBaseBot {
             stopLift();
         }
     }
+
     @BotAction(displayName = "Lift to lower", defaultReturn = "")
     public void liftToLower() {
         if (liftLocation != LIFT_UNDER_EXTENTION){
@@ -401,6 +402,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Intake Dropper Down", defaultReturn = "")
     public void intakeDropperDown(){
         resetDropper();
+        resetTurret();
         if (intakeDropperServo != null) {
             intakeDropperServo.setPosition(0);
         }
@@ -626,7 +628,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         delayWait(800);
         prepDropperToMove();
         resetLift();
-        resetTurret();
+//        resetTurret();
     }
 
     @BotAction(displayName = "Fold Auto", defaultReturn = "")
@@ -645,19 +647,19 @@ public class FrenzyBot extends FrenzyBaseBot {
 
 
     public void extendToSharedHubRed() {
-//        liftToLevelMin(true, false);
         intakeDropperNeutral();
         dropperTransportPosition();
         towerToSharedHubRed(false);
         liftSharedHub(true);
+        intakeDropperUp();
     }
 
     public void extendToSharedHubBlue(){
-//        liftToLevelMin(true, false);
         intakeDropperNeutral();
         dropperTransportPosition();
         towerToSharedHubBlue(false);
         liftSharedHub(true);
+        intakeDropperUp();
     }
 
     public void extendToSharedHubRedAsync(){
@@ -673,9 +675,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public void resetLift() {
-        liftToLevelMin(true, true);
-        resetTurret();
+//        liftToLevelMin(true, true);
         liftToLower();
+        resetTurret();
     }
 
     public float detectColor(Telemetry telemetry, float timeout) {
@@ -728,7 +730,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         intakeRunning = false;
         intakeDropperUp();
         delayWait(550);
-        activateIntake(0.05);
+        activateIntake(0.05); //to avoid stuck balls
         delayWait(200);
         activateIntake(0);
 

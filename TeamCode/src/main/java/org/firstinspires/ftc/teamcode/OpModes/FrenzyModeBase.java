@@ -124,6 +124,9 @@ public class FrenzyModeBase extends LinearOpMode {
         double strafe = gamepad1.right_stick_x;
 
         if (Math.abs(strafe) > 0) {
+            if (isManualDriveMode()) {
+                strafe = strafe * 0.8;
+            }
             if (strafe > 0) { // if want to invert change sign
                 robot.strafeRight(Math.abs(strafe));
             } else {
@@ -217,7 +220,6 @@ public class FrenzyModeBase extends LinearOpMode {
             }
         }
     }
-
 
     protected void handleLiftManual() {
         if (isButtonPressable()) {
