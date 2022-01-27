@@ -167,10 +167,6 @@ public class HardwarePushbot {
             imu.initialize(parameters);
 
 
-            frontLeft.setDirection(DcMotor.Direction.REVERSE);
-            frontRight.setDirection(DcMotor.Direction.FORWARD);
-            backLeft.setDirection(DcMotor.Direction.REVERSE);
-            backRight.setDirection(DcMotor.Direction.FORWARD);
 
             //////close claw
             //
