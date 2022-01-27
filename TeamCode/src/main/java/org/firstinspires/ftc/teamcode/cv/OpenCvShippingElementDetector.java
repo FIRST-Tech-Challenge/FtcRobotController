@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.cv;
 
+import android.os.Environment;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.globals.Alliance;
 import org.firstinspires.ftc.teamcode.globals.Levels;
@@ -27,8 +29,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class OpenCvShippingElementDetector extends OpenCvPipeline {
-
-
 
     private int width = 224; // width of the image
     private int height = 240;
@@ -201,8 +201,8 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
         }
 
-        cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow(modelPath);
+
+        net = Dnn.readNetFromTensorflow(modelPath);
 
 
     }

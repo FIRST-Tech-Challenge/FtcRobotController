@@ -81,7 +81,7 @@ public class ContourPipeline320w240h extends OpenCvPipeline {
         CAMERA_HEIGHT = input.height();
 
         // Process Image, convert to RGB, then processed to YCrCb,
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
+        //Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
         Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
 
@@ -101,7 +101,7 @@ public class ContourPipeline320w240h extends OpenCvPipeline {
         telemetry.addLine("Drawing countours");
 
         // Show the bounding area in which we will search for countours
-        Imgproc.rectangle(input, new Rect(96, 26, 175, 58), new Scalar(0, 0, 255), 2); // GREEN
+        Imgproc.rectangle(input, new Rect(40, 26, 200, 80), new Scalar(0, 0, 255), 2); // BLUE
 
         // Set default maxRect to one pixel. Default will return as Level 3
         maxRect = new Rect(0,0,1,1);
@@ -116,9 +116,8 @@ public class ContourPipeline320w240h extends OpenCvPipeline {
                 Rect rect = Imgproc.boundingRect(areaPoints);
 
                 if (
-                        (rect.area() > 1300 && rect.area() < 2200)
-                                && rect.y > 30 && rect.y < 80
-                                && rect.x > 95 && rect.x < 270
+                        (rect.area() > 1100 && rect.area() < 3000)
+                                && rect.x > 40 && rect.x < 270
                 ){
                     maxRect = rect;
                     Imgproc.rectangle(input, maxRect, new Scalar(255, 255, 255), 1); // GREEN
@@ -137,29 +136,18 @@ public class ContourPipeline320w240h extends OpenCvPipeline {
 
         // Show target locations for midpoint
 
-        Imgproc.rectangle(input, new Rect(100, 30, 60, 50), new Scalar(255, 255, 255), 2); // GREEN
-        Imgproc.rectangle(input, new Rect(160, 30, 60, 50), new Scalar(255, 255, 255), 2); // GREEN
+        Imgproc.rectangle(input, new Rect(40, 30, 98, 78), new Scalar(255, 255, 255), 2); // WHITE BOX Level 1
+        Imgproc.rectangle(input, new Rect(140, 30, 78, 78), new Scalar(255, 255, 255), 2); // WHITE BOX Level 2
 
 
         // Check maxRect for midpoint value to determine which location the element is in
-        if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
-            if(Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE) {
+        if( getRectMidpointXY().x > 40 &&  getRectMidpointXY().x < 139 ) {
                 Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
-            }
-            else
-            {
-                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
-            }
-        } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
+
+        } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 220 ) {
             Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_2);
         } else {
-            if(Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE) {
                 Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
-            }
-            else
-            {
-                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
-            }
         }
 
         // Display Data
@@ -169,7 +157,7 @@ public class ContourPipeline320w240h extends OpenCvPipeline {
         telemetry.addData("level", Levels.getInstance().getTSELevel());
         telemetry.update();
 
-        return processed;
+        return input;
     }
 
     public int getRectHeight() {

@@ -81,10 +81,6 @@ public class WarehouseSideRedPath1 {
         createWebCam.createAuto();
         WebCamSubsystem webCamSubsystem = createWebCam.getWebCamSubsystem();
 
-
-        //MockDetectTSEPosition mockDetectTSEPosition = createWebCam.getMockDetectTSEPositionCommand();
-        //mockDetectTSEPosition.schedule();
-
         DetectTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
         closeDetectTSEPosition = createWebCam.getCloseDetectTSEPosition();
         detectTSEPosition.schedule();
@@ -109,11 +105,11 @@ public class WarehouseSideRedPath1 {
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeTo(new Vector2d(-15, -41))
+                .strafeTo(new Vector2d(-12, -41))
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .strafeTo(new Vector2d(-15, -67))
+                .strafeTo(new Vector2d(-12, -67))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())

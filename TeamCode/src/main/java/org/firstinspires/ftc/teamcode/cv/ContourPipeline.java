@@ -101,10 +101,9 @@ public class ContourPipeline extends OpenCvPipeline {
         CAMERA_WIDTH = 240;
         CAMERA_HEIGHT = 240;
 
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_BGR2RGB);
-
         // Process Image, convert to RGB, then processed to YCrCb,
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
+        //Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
+
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2YCrCb);
 
         Core.inRange(mat, scalarLowerYCrCb, scalarUpperYCrCb, processed);
@@ -166,23 +165,12 @@ public class ContourPipeline extends OpenCvPipeline {
 
         // Check maxRect for midpoint value to determine which location the element is in
         if( getRectMidpointXY().x > 70 &&  getRectMidpointXY().x < 90 ) {
-            if(Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE) {
-                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
-            }
-            else
-            {
-                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
-            }
+            Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
         } else if( getRectMidpointXY().x > 140 &&  getRectMidpointXY().x < 155 ) {
             Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_2);
         } else {
-            if(Side.getInstance().getPositionSide() == Side.PositionSide.DUCKSIDE) {
-                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
-            }
-            else
-            {
-                Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
-            }
+            Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
+
         }
 
         // Display Data

@@ -109,11 +109,11 @@ public class WarehouseSideBluePath1 {
 
 
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
-                .strafeTo(new Vector2d(-15, 42))
+                .strafeTo(new Vector2d(-12, 42))
                 .build();
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .strafeTo(new Vector2d(-15, 67))
+                .strafeTo(new Vector2d(-12, 67))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
