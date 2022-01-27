@@ -19,7 +19,7 @@ import java.util.List;
 
 public class TFShippingElementDetector {
 
-    private static final String TFOD_MODEL_ASSET = Environment.getExternalStorageDirectory().getPath() + "FIRST/Vuforia/models/ftc_ml_tse_g_o_20220124_234629.tflite";;
+    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/Vuforia/models/ftc_ml_tse_g_o_20220124_234629.tflite";
     private static final String[] LABELS = {
             "TSE_Green",
             "TSE_Orange"
@@ -63,7 +63,7 @@ public class TFShippingElementDetector {
         tfodParameters.isModelTensorFlow2 = IS_MODEL_TF2;
         tfodParameters.inputSize = FRAME_SIZE;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
 
         vuforia = vf;
     }
@@ -117,16 +117,20 @@ public class TFShippingElementDetector {
                             new Point(recognition.getRight(),recognition.getBottom()));
 
                     if( getRectMidpointXY().x > 80 &&  getRectMidpointXY().x < 159 ) {
+                        telemetry.addData("Found Level","Level One found");
                         Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_1);
 
                     } else if( getRectMidpointXY().x > 160 &&  getRectMidpointXY().x < 220 ) {
+                        telemetry.addData("Found Level","Level Two found");
                         Levels.getInstance().setTSELocation( Levels.TSELocation.LEVEL_2);
                     } else {
+                        telemetry.addData("Found Level","Level Three found");
                         Levels.getInstance().setTSELocation(Levels.TSELocation.LEVEL_3);
 
                     }
 
                 }
+                telemetry.update();
 
                 i++;
             }

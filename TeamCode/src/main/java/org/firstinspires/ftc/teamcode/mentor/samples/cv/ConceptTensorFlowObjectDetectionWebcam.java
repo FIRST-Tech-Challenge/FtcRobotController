@@ -66,7 +66,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
    *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
    *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
    */
-    private static final String TFOD_MODEL_ASSET = Environment.getExternalStorageDirectory().getPath() + "FIRST/Vuforia/models/ftc_ml_tse_g_o_20220124_234629.tflite";
+    private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/Vuforia/models/ftc_ml_tse_g_o_20220124_234629.tflite";
     private static final String[] LABELS = {
       "TSE_Green",
       "TSE_Orange"

@@ -69,10 +69,10 @@ public class OpenCvShippingElementDetector extends OpenCvPipeline {
 
     private String[] classNames;
 
-    private final String modelPathDuckSideBlue = Environment.getExternalStorageDirectory().getPath() + "FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_blue_graph.pb";
-    private final String modelPathDuckSideRed = Environment.getExternalStorageDirectory().getPath() + "FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_red_graph.pb";
-    private final String modelPathWarehouseSideBlue = Environment.getExternalStorageDirectory().getPath() + "FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_blue_graph.pb";
-    private final String modelPathWarehouseSideRed = Environment.getExternalStorageDirectory().getPath() + "FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_blue_graph.pb";
+    private final String modelPathDuckSideBlue = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelPathDuckSideRed = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_duckside_red_graph.pb";
+    private final String modelPathWarehouseSideBlue = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_blue_graph.pb";
+    private final String modelPathWarehouseSideRed = "/sdcard/FIRST/EasyOpenCV/models/freight_frenzy_barcodes_warehouseside_blue_graph.pb";
 
     private String modelPath = modelPathDuckSideBlue;
     private String modelPathConfig = modelPathDuckSideBlue + "txt";
