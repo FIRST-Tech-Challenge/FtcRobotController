@@ -39,6 +39,8 @@ public class ControllerIntake extends AutoIntake {
         } else {
             if (toolGamepad.getButton(GamepadKeys.Button.Y)) {
                 this.forward();
+            } else if (toolGamepad.getButton(GamepadKeys.Button.A)) {
+                this.backward();
             } else {
                 this.stop();
             }
