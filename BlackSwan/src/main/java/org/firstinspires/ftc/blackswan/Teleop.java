@@ -250,7 +250,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.dpad_down) {
-                arm.setTargetPosition(75);
+                arm.setTargetPosition(25);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.3);
 //                while (arm.isBusy() && opModeIsActive()) {
