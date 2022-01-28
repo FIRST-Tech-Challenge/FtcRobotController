@@ -22,6 +22,7 @@ public class AutoReplayBaseCam extends AutoBase {
     protected void act() {
         super.act();
         if (opModeIsActive()) {
+            getOpModeTimer().reset(); //start the timer for the whole opmode
             runRoute(false);
         }
     }

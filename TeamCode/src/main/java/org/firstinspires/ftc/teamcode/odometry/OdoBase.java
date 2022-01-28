@@ -105,11 +105,17 @@ public class OdoBase extends LinearOpMode {
                     locator.init(selectedRoute.getStart(), initHead);
                 }
                 for (AutoStep s : selectedRoute.getSteps()) {
-                    this.goTo(s, false, selectedRoute.getName());
+                    boolean terminate =  this.goTo(s, false, selectedRoute.getName());
                     telemetry.addData("X: ", locator.getCurrentX());
                     telemetry.addData("Y: ", locator.getCurrentY());
                     telemetry.addData("Heading: ", locator.getAdjustedCurrentHeading());
+                    if (terminate){
+                        telemetry.addData("Auto Mode: ", "Terminating");
+                    }
                     telemetry.update();
+                    if (terminate){
+                        break;
+                    }
                 }
             }
         }
@@ -120,9 +126,9 @@ public class OdoBase extends LinearOpMode {
         }
     }
 
-    protected void goTo(AutoStep instruction, boolean dryRun, String opMode){
+    protected boolean goTo(AutoStep instruction, boolean dryRun, String opMode){
         if (!qualifies(instruction)){
-            return;
+            return false;
         }
 
         Log.d(TAG, String.format("Goto Step: %s", instruction.toString()));
@@ -155,6 +161,11 @@ public class OdoBase extends LinearOpMode {
                                 booleanFunctions.put(action.getName(), (Boolean) result);
                             }
                         }
+
+                        BotAction annotation = action.getAnnotation(BotAction.class);
+                        if (annotation != null && annotation.isTerminator() && Boolean.TRUE.equals(result)){
+                            return true;
+                        }
                     }
                     else{
                         if (isMethodOpModeSpecific(action)) {
@@ -181,6 +192,7 @@ public class OdoBase extends LinearOpMode {
         catch (Exception ex){
             Log.e(TAG, "Error in execute step", ex);
         }
+        return false;
     }
 
     protected boolean qualifies(AutoStep step){

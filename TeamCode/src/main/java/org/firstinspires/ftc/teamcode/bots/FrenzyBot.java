@@ -25,6 +25,7 @@ import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.GameElement;
+import org.firstinspires.ftc.teamcode.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.calibration.FreightFrenzyConfig;
@@ -195,6 +196,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         try {
             tapeUp =  hwMap.get(Servo.class, "tapeUp");
 
+            if (isTeleOp() == true) {
+                initTapeMeasure();
+            }
+            else{
+                tapeUp.setPosition(0); // for auto it must be up
+            }
+
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize tape measure servo", ex);
         }
@@ -215,7 +223,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Get Detection Result", defaultReturn = "C")
+    @BotAction(displayName = "Get Detection Result", defaultReturn = "C", isTerminator = false)
     @Override
     public AutoDot getDetectionResult() {
         AutoDot level = detector.getLevel();
@@ -262,6 +270,42 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
+    @BotAction(displayName = "InitTapeMeasure", defaultReturn = "", isTerminator = false)
+    public void initTapeMeasure(){
+        if (tapeUp != null){
+            tapeUp.setPosition(0.43);
+        }
+    }
+
+    public void moveTapeMeasureUpDown(double power) {
+        if (tapeUp != null) {
+            if (Math.abs(power) <= 0.2){
+                return;
+            }
+            else {
+                double MIN = 0;
+                double MAX = 0.5;
+                double increment = 0.025;
+                double pos = tapeUp.getPosition();
+                if (power < 0) {
+                    double next = pos + increment;
+                    if (next >= MAX){
+                        next = MAX;
+                    }
+                    tapeUp.setPosition(next);
+                }
+                else
+                {
+                    double next = pos - increment;
+                    if (next <= MIN){
+                        next = MIN;
+                    }
+                    tapeUp.setPosition(next);
+                }
+            }
+        }
+    }
+
     public void activateTurret(double velocity) {
         if (turret != null){
             //check for max range
@@ -288,7 +332,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         return this.turret.getCurrentPosition();
     }
 
-    @BotAction(displayName = "Lift level 3 Auto", defaultReturn = "")
+    @BotAction(displayName = "Lift level 3 Auto", defaultReturn = "", isTerminator = false)
     public void liftToLevel3Auto(){
         liftToLevel3(true);
     }
@@ -326,7 +370,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
 
-    @BotAction(displayName = "Lift level 2 Auto", defaultReturn = "")
+    @BotAction(displayName = "Lift level 2 Auto", defaultReturn = "", isTerminator = false)
     public void liftToLevel2Auto(){
         liftToLevel2(true);
     }
@@ -344,7 +388,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Lift level 1 Auto", defaultReturn = "")
+    @BotAction(displayName = "Lift level 1 Auto", defaultReturn = "", isTerminator = false)
     public void liftToLevel1Auto(){
         liftToLevel1(true);
     }
@@ -375,7 +419,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Lift to lower", defaultReturn = "")
+    @BotAction(displayName = "Lift to lower", defaultReturn = "", isTerminator = false)
     public void liftToLower() {
         if (liftLocation != LIFT_UNDER_EXTENTION){
             liftLocation = LIFT_UNDER_EXTENTION;
@@ -406,7 +450,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         return liftLocation;
     }
 
-    @BotAction(displayName = "Drop element", defaultReturn = "")
+    @BotAction(displayName = "Drop element", defaultReturn = "", isTerminator = false)
     public void dropElement(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_DROP);
@@ -414,12 +458,12 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Reset dropper", defaultReturn = "")
+    @BotAction(displayName = "Reset dropper", defaultReturn = "", isTerminator = false)
     public void resetDropper(){
         prepDropperToMove();
     }
 
-    @BotAction(displayName = "Prep dropper", defaultReturn = "")
+    @BotAction(displayName = "Prep dropper", defaultReturn = "", isTerminator = false)
     public void prepDropperToMove(){
         if (dropperServo != null) {
             dropperServo.setPosition(DROPPER_SERVO_POS_START);
@@ -427,14 +471,14 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Intake Dropper Up", defaultReturn = "")
+    @BotAction(displayName = "Intake Dropper Up", defaultReturn = "", isTerminator = false)
     public void intakeDropperUp(){
         if (intakeDropperServo != null) {
             intakeDropperServo.setPosition(1);
         }
     }
 
-    @BotAction(displayName = "Intake Dropper Down", defaultReturn = "")
+    @BotAction(displayName = "Intake Dropper Down", defaultReturn = "", isTerminator = false)
     public void intakeDropperDown(){
         resetDropper();
         resetTurret();
@@ -454,7 +498,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Intake Dropper Neutral", defaultReturn = "")
+    @BotAction(displayName = "Intake Dropper Neutral", defaultReturn = "", isTerminator = false)
     public void intakeDropperNeutral(){
         if (intakeDropperServo != null) {
             intakeDropperServo.setPosition(0.7);
@@ -462,14 +506,14 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
 
-    @BotAction(displayName = "Main Tower to RED team hub", defaultReturn = "")
+    @BotAction(displayName = "Main Tower to RED team hub", defaultReturn = "", isTerminator = false)
     public void turretToTeamHubRed(){
         this.turret.setTargetPosition(TURRET_POS_TEAMHUB_RED + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
-    @BotAction(displayName = "Main Tower to BLUE team hub", defaultReturn = "")
+    @BotAction(displayName = "Main Tower to BLUE team hub", defaultReturn = "", isTerminator = false)
     public void towerToTeamHubBlue(){
         this.turret.setTargetPosition(TURRET_POS_TEAMHUB_BLUE + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -498,7 +542,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Reset tower", defaultReturn = "")
+    @BotAction(displayName = "Reset tower", defaultReturn = "", isTerminator = false)
     public void resetTurret(){
         if (turret != null) {
             int pos = this.turret.getCurrentPosition();
@@ -517,28 +561,28 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Tower to hub from red warehouse", defaultReturn = "")
+    @BotAction(displayName = "Tower to hub from red warehouse", defaultReturn = "", isTerminator = false)
     public void towerToTeamHubFromAuto(){
         this.turret.setTargetPosition(-360 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
-    @BotAction(displayName = "Tower to hub from blue warehouse", defaultReturn = "")
+    @BotAction(displayName = "Tower to hub from blue warehouse", defaultReturn = "", isTerminator = false)
     public void towerToTeamHubFromAutoWarehouseBlue(){
         this.turret.setTargetPosition(277 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
-    @BotAction(displayName = "Tower to hub from red ducks", defaultReturn = "")
+    @BotAction(displayName = "Tower to hub from red ducks", defaultReturn = "", isTerminator = false)
     public void towerToTeamHubFromAutoRedDucks(){
         this.turret.setTargetPosition(-293 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
-    @BotAction(displayName = "Tower to hub from blue ducks", defaultReturn = "")
+    @BotAction(displayName = "Tower to hub from blue ducks", defaultReturn = "", isTerminator = false)
     public void towerToTeamHubFromAutoBlueDucks(){
         this.turret.setTargetPosition(-325 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -552,7 +596,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Start intake", defaultReturn = "")
+    @BotAction(displayName = "Start intake", defaultReturn = "", isTerminator = false)
     public void startIntake() {
         resetDropper();
         activateIntake(INTAKE_SPEED);
@@ -561,7 +605,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         intakeDropperDown();
     }
 
-    @BotAction(displayName = "Reverse intake", defaultReturn = "")
+    @BotAction(displayName = "Reverse intake", defaultReturn = "", isTerminator = false)
     public void reverseIntake() {
         activateIntake(INTAKE_SPEED_REVERSE);
         // TODO: activateIntake(frenzyConfig.getIntakeSpeedOut());
@@ -583,16 +627,16 @@ public class FrenzyBot extends FrenzyBaseBot {
         intakeThread.start();
     }
 
-    @BotAction(displayName = "Stop intake", defaultReturn = "")
+    @BotAction(displayName = "Stop intake", defaultReturn = "", isTerminator = false)
     public void stopIntake() {
         activateIntake(0);
     }
 
-    @BotAction(displayName = "Start turntable blue", defaultReturn = "")
+    @BotAction(displayName = "Start turntable blue", defaultReturn = "", isTerminator = false)
     public void startTurntableBlue() {
         activateRotatorLeft(0.35);
     }
-    @BotAction(displayName = "Start turntable red", defaultReturn = "")
+    @BotAction(displayName = "Start turntable red", defaultReturn = "", isTerminator = false)
     public void startTurntableRed() {
         activateRotatorLeft(-0.35);
     }
@@ -605,25 +649,25 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Start turntable blue gradual", defaultReturn = "")
+    @BotAction(displayName = "Start turntable blue gradual", defaultReturn = "", isTerminator = false)
     public void startTurntableBlueGradual() {
         duckLoop(false, false);
     }
-    @BotAction(displayName = "Start turntable red gradual", defaultReturn = "")
+    @BotAction(displayName = "Start turntable red gradual", defaultReturn = "", isTerminator = false)
     public void startTurntableRedGradual() {
         duckLoop(true, false);
     }
 
-    @BotAction(displayName = "Start turntable blue auto gradual", defaultReturn = "")
+    @BotAction(displayName = "Start turntable blue auto gradual", defaultReturn = "", isTerminator = false)
     public void startTurntableBlueAutoGradual() {
         duckLoop(false, true);
     }
-    @BotAction(displayName = "Start turntable red auto gradual", defaultReturn = "")
+    @BotAction(displayName = "Start turntable red auto gradual", defaultReturn = "", isTerminator = false)
     public void startTurntableRedAutoGradual() {
         duckLoop(true, true);
     }
 
-    @BotAction(displayName = "Stop turntable", defaultReturn = "")
+    @BotAction(displayName = "Stop turntable", defaultReturn = "", isTerminator = false)
     public void stopTurntable() {
         activateRotatorLeft(0.0);
     }
@@ -633,14 +677,14 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    @BotAction(displayName = "Extend to Team Hub Red Async", defaultReturn = "")
+    @BotAction(displayName = "Extend to Team Hub Red Async", defaultReturn = "", isTerminator = false)
     public void extendToTeamHubRedAsync(){
         FrenzyLift frenzyLift = new FrenzyLift(this, AutoRoute.NAME_RED, FrenzyLiftMode.TeamHub, false);
         Thread thread = new Thread(frenzyLift);
         thread.start();
     }
 
-    @BotAction(displayName = "Extend to Team Hub Blue Async", defaultReturn = "")
+    @BotAction(displayName = "Extend to Team Hub Blue Async", defaultReturn = "", isTerminator = false)
     public void extendToTeamHubBlueAsync(){
         FrenzyLift frenzyLift = new FrenzyLift(this, AutoRoute.NAME_BLUE, FrenzyLiftMode.TeamHub, false);
         Thread thread = new Thread(frenzyLift);
@@ -648,7 +692,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
 
-    @BotAction(displayName = "Extend to Team Hub Red", defaultReturn = "")
+    @BotAction(displayName = "Extend to Team Hub Red", defaultReturn = "", isTerminator = false)
     public void extendToTeamHubRed() {
 //        liftToLevelMin(false, false);
         intakeDropperNeutral();
@@ -658,7 +702,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
 
-    @BotAction(displayName = "Extend to Team Hub Blue", defaultReturn = "")
+    @BotAction(displayName = "Extend to Team Hub Blue", defaultReturn = "", isTerminator = false)
     public void extendToTeamHubBlue() {
 //        liftToLevelMin(false, false);
         intakeDropperNeutral();
@@ -667,7 +711,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         liftToLevel3(true);
     }
 
-    @BotAction(displayName = "Score and Fold", defaultReturn = "")
+    @BotAction(displayName = "Score and Fold", defaultReturn = "", isTerminator = false)
     public void scoreAndFold() {
         dropElement();
         delayWait(700);
@@ -684,7 +728,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
 
-    @BotAction(displayName = "Score and Fold Async", defaultReturn = "")
+    @BotAction(displayName = "Score and Fold Async", defaultReturn = "", isTerminator = false)
     public void scoreAndFoldAsync() {
         FrenzyLift frenzyLift = new FrenzyLift(this,  true);
         Thread thread = new Thread(frenzyLift);
@@ -787,7 +831,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     }
 
-    @BotAction(displayName = "Grab Element", defaultReturn = "")
+    @BotAction(displayName = "Grab Element", defaultReturn = "", isTerminator = false)
     public Boolean grabElement(){
         Boolean gotIt = false;
         ElapsedTime runtime = new ElapsedTime();
@@ -819,6 +863,16 @@ public class FrenzyBot extends FrenzyBaseBot {
         activateIntake(0);
 
         return gotIt;
+    }
+
+    @BotAction(displayName = "Time Check", defaultReturn = "", isTerminator = true)
+    public Boolean timeCheckAuto(){
+        if (this.owner instanceof AutoBase){
+            double elapsedSeconds = ((AutoBase)this.owner).getOpModeElapsedTime();
+            Log.d(TAG, String.format("shouldStopAuto called. %.2f seconds left", elapsedSeconds));
+            return elapsedSeconds > 23; //time before the end of the cycle should not exceed 7 secs
+        }
+        return Boolean.FALSE;
     }
 
     public void goDucks(boolean red){

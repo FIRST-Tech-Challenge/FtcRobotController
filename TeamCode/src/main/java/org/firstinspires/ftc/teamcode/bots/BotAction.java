@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface BotAction {
     String displayName();
     String defaultReturn();
+    boolean isTerminator();
 }

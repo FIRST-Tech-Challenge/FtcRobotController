@@ -144,7 +144,7 @@ public class UltimateBot extends YellowBot {
 
 
     // INTAKE FUNCTIONS
-    @BotAction(displayName = "Move Intake", defaultReturn = "")
+    @BotAction(displayName = "Move Intake", defaultReturn = "", isTerminator = false)
     public void intake() {
         DcMotorEx intake = getIntakeMotor();
 //        DcMotorEx intakecurve = getIntakeCMotor();
@@ -154,7 +154,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Move Intake Reverse", defaultReturn = "")
+    @BotAction(displayName = "Move Intake Reverse", defaultReturn = "", isTerminator = false)
     public void intakeReverse() {
         DcMotorEx intake = getIntakeMotor();
 //        DcMotorEx intakecurve = getIntakeCMotor();
@@ -164,7 +164,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Stop Intake", defaultReturn = "")
+    @BotAction(displayName = "Stop Intake", defaultReturn = "", isTerminator = false)
     public void stopintake() {
         DcMotorEx intake = getIntakeMotor();
 //        DcMotorEx intakecurve = getIntakeCMotor();
@@ -176,49 +176,49 @@ public class UltimateBot extends YellowBot {
 
 
     // MOVE SHOOTER FUNCTIONS
-    @BotAction(displayName = "Move Shooter", defaultReturn = "")
+    @BotAction(displayName = "Move Shooter", defaultReturn = "", isTerminator = false)
     public void shooter() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.8);
         }
     }
 
-    @BotAction(displayName = "Move Shooter High", defaultReturn = "")
+    @BotAction(displayName = "Move Shooter High", defaultReturn = "", isTerminator = false)
     public void shooterhigh() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.75);
         }
     }
 
-    @BotAction(displayName = "Move Shooter Med", defaultReturn = "")
+    @BotAction(displayName = "Move Shooter Med", defaultReturn = "", isTerminator = false)
     public void shootermed() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.73);
         }
     }
 
-    @BotAction(displayName = "Move Shooter Low", defaultReturn = "")
+    @BotAction(displayName = "Move Shooter Low", defaultReturn = "", isTerminator = false)
     public void shooterlow() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.69);
         }
     }
 
-    @BotAction(displayName = "Move Shooter Lower", defaultReturn = "")
+    @BotAction(displayName = "Move Shooter Lower", defaultReturn = "", isTerminator = false)
     public void shooterlower() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.65);
         }
     }
 
-    @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
+    @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "", isTerminator = false)
     public void shooterpeglow() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.65);
         }
     }
 
-    @BotAction(displayName = "Stop Shooter", defaultReturn = "")
+    @BotAction(displayName = "Stop Shooter", defaultReturn = "", isTerminator = false)
     public void stopshooter() {
         if (shooter != null) {
             shooter.setPower(0);
@@ -226,7 +226,7 @@ public class UltimateBot extends YellowBot {
     }
 
     // SHOOT SERVO
-    @BotAction(displayName = "Shoot", defaultReturn = "")
+    @BotAction(displayName = "Shoot", defaultReturn = "", isTerminator = false)
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
@@ -240,23 +240,23 @@ public class UltimateBot extends YellowBot {
     }
 
     // GUARD WALL FUNCTIONS
-    @BotAction(displayName = "Guard Down", defaultReturn =  "")
+    @BotAction(displayName = "Guard Down", defaultReturn =  "", isTerminator = false)
     public void guardDown() {
         ringGuard.setPosition(0.03);
     }
 
-    @BotAction(displayName = "Guard Up", defaultReturn =  "")
+    @BotAction(displayName = "Guard Up", defaultReturn =  "", isTerminator = false)
     public void guardUp() {
         ringGuard.setPosition(0.7);
     }
 
-    @BotAction(displayName = "Guard Middle", defaultReturn =  "")
+    @BotAction(displayName = "Guard Middle", defaultReturn =  "", isTerminator = false)
     public void guardMiddle() {
         ringGuard.setPosition(0.5);
     }
 
     // CLAW FUNCTIONS
-    @BotAction(displayName = "Close Claw", defaultReturn = "")
+    @BotAction(displayName = "Close Claw", defaultReturn = "", isTerminator = false)
     public void closeWobbleClaw() {
         if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
             wobbleClaw1.setPosition(0);
@@ -264,7 +264,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Open Claw", defaultReturn = "")
+    @BotAction(displayName = "Open Claw", defaultReturn = "", isTerminator = false)
     public void openWobbleClaw() {
         if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
             wobbleClaw1.setPosition(1);
@@ -274,7 +274,7 @@ public class UltimateBot extends YellowBot {
 
 
     // WOBLLE FUNCTIONS
-    @BotAction(displayName = "Wobble Little Up", defaultReturn = "")
+    @BotAction(displayName = "Wobble Little Up", defaultReturn = "", isTerminator = false)
     public void wobbleLittleUp() {
         if (wobbleSwing != null) {
             double currposition = wobbleSwing.getPosition();
@@ -283,7 +283,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Wobble Little Down", defaultReturn = "")
+    @BotAction(displayName = "Wobble Little Down", defaultReturn = "", isTerminator = false)
     public void wobbleLittleDown() {
         if (wobbleSwing != null) {
             double currposition = wobbleSwing.getPosition();
@@ -292,28 +292,28 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Init WobbleSwing", defaultReturn = "")
+    @BotAction(displayName = "Init WobbleSwing", defaultReturn = "", isTerminator = false)
     public void backWobbleSwing() {
         if (wobbleSwing != null) {
             wobbleSwing.setPosition(SWING_BACK_POS);
         }
     }
 
-    @BotAction(displayName = "Place Wobble", defaultReturn = "")
+    @BotAction(displayName = "Place Wobble", defaultReturn = "", isTerminator = false)
     public void forwardWobbleSwing() {
         if (wobbleSwing != null) {
             wobbleSwing.setPosition(SWING_PLACE_POS);
         }
     }
 
-    @BotAction(displayName = "Lift Wobble Up Hold", defaultReturn = "")
+    @BotAction(displayName = "Lift Wobble Up Hold", defaultReturn = "", isTerminator = false)
     public void liftAndHoldWobbleSwing() {
         if (wobbleSwing != null) {
             wobbleSwing.setPosition(SWING_LIFT_AND_HOLD);
         }
     }
 
-    @BotAction(displayName = "Lift Wobble Wall", defaultReturn = "")
+    @BotAction(displayName = "Lift Wobble Wall", defaultReturn = "", isTerminator = false)
     public void liftWobbleWall() {
         if (wobbleSwing != null) {
             wobbleSwing.setPosition(SWING_LIFT_WALL);
@@ -321,7 +321,7 @@ public class UltimateBot extends YellowBot {
     }
 
     // compound claw up for wall
-    @BotAction(displayName = "Lift Wall and Grab", defaultReturn = "")
+    @BotAction(displayName = "Lift Wall and Grab", defaultReturn = "", isTerminator = false)
     public void liftWallGrab() {
         ElapsedTime runtime = new ElapsedTime();
         closeWobbleClaw();
@@ -332,14 +332,14 @@ public class UltimateBot extends YellowBot {
 
     // CAMERA POSITIONING
     double cameraPos = 0;
-    @BotAction(displayName = "Camera Init", defaultReturn = "")
+    @BotAction(displayName = "Camera Init", defaultReturn = "", isTerminator = false)
     public void cameraInit() {
         if (camera != null) {
             camera.setPosition(0.5);
         }
     }
 
-    @BotAction(displayName = "Camera Init Auto", defaultReturn = "")
+    @BotAction(displayName = "Camera Init Auto", defaultReturn = "", isTerminator = false)
     public void cameraInitAuto() {
         if (camera != null) {
             camera.setPosition(0.44);
@@ -364,7 +364,7 @@ public class UltimateBot extends YellowBot {
 
     // TURRET FUNCTIONS
     double turretPos = 0;
-    @BotAction(displayName = "Turret Little Right", defaultReturn = "")
+    @BotAction(displayName = "Turret Little Right", defaultReturn = "", isTerminator = false)
     public void turretLittleRight() {
         if (turretServo != null) {
             turretPos = turretServo.getPosition();
@@ -373,7 +373,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Turret Little Left", defaultReturn = "")
+    @BotAction(displayName = "Turret Little Left", defaultReturn = "", isTerminator = false)
     public void turretLittleLeft() {
         if (turretServo != null) {
             turretPos = turretServo.getPosition();
@@ -382,14 +382,14 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Turret Init", defaultReturn = "")
+    @BotAction(displayName = "Turret Init", defaultReturn = "", isTerminator = false)
     public void turretInit() {
         if (turretServo != null) {
             turretServo.setPosition(0.5 + TURRET_OFFSET);
         }
     }
 
-    @BotAction(displayName = "Turret to Camera", defaultReturn = "")
+    @BotAction(displayName = "Turret to Camera", defaultReturn = "", isTerminator = false)
     public void turretCamera() {
         if (turretServo != null) {
             if (cameraPos > 0.85 || cameraPos < 0.15) {
@@ -405,7 +405,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Shoot Pegs", defaultReturn = "")
+    @BotAction(displayName = "Shoot Pegs", defaultReturn = "", isTerminator = false)
     public void shootPegsAuto() {
         // start shooter
         if (shooter != null) {
@@ -460,7 +460,7 @@ public class UltimateBot extends YellowBot {
     int cameramove = 0;
     boolean turretrunning = true;
 
-    @BotAction(displayName = "Change Turret Sync", defaultReturn = "")
+    @BotAction(displayName = "Change Turret Sync", defaultReturn = "", isTerminator = false)
     public void changeTurretSync() {
         syncturretcamera = !syncturretcamera;
     }
@@ -563,7 +563,7 @@ public class UltimateBot extends YellowBot {
 
 
     ///get results of detection on the thread
-    @BotAction(displayName = "Get Detection Result", defaultReturn = "B")
+    @BotAction(displayName = "Get Detection Result", defaultReturn = "B", isTerminator = false)
     public AutoDot getDetectionResult() {
         AutoDot target = null;
         if (rf != null) {

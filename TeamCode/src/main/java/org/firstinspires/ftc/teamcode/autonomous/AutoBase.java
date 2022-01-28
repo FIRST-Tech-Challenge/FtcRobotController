@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.odometry.OdoBase;
 
 public abstract class AutoBase extends OdoBase {
-    protected ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime opModeTimer = new ElapsedTime();
     private String opModeSide = AutoRoute.NAME_RED;
 
     @Override
@@ -62,5 +62,13 @@ public abstract class AutoBase extends OdoBase {
             return fullName;
         }
         return "";
+    }
+
+    public ElapsedTime getOpModeTimer() {
+        return opModeTimer;
+    }
+
+    public double getOpModeElapsedTime() {
+        return opModeTimer.seconds();
     }
 }
