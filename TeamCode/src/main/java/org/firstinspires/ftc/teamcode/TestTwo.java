@@ -1,25 +1,36 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Autonomous
 public class TestTwo extends LinearOpMode {
-    DcMotorEx frontL, frontR, backL, backR, duckWheel, extender, arm = null;
+    DcMotorEx frontL, frontR, backL, backR, duckWheel, arm = null;
+    DcMotor extender;
+    DistanceSensor dSensor;
+    CRServo intakeL, intakeR = null;
 
-    public void drive(double directionInDegrees, double distanceInCm){
+    boolean readingDuck = true;
+    final double oneCmInPPR = 7.9;
+    final double armVelocity = 20000;
+
+    public void drive(double directionInDegrees, double distanceInCm, double wheelVelocity){
 //      384.5(PPR) = ~50cm = ~20in
 //      7.9(PPR) = 1cm
 //        4.27(PPR) = 1 Degree
-        final double oneCmInPPR = 7.9;
         final double oneDegreeInPPR = 4.27;
-        final double velocity = 500;
         double pprForward = distanceInCm * oneCmInPPR;
         double pprTurn = directionInDegrees * oneDegreeInPPR;
 
@@ -38,15 +49,15 @@ public class TestTwo extends LinearOpMode {
                 backR.setTargetPosition(-(int) pprTurn + backR.getCurrentPosition());
             }
 
-            frontL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontL.setMode(RUN_TO_POSITION);
+            frontR.setMode(RUN_TO_POSITION);
+            backL.setMode(RUN_TO_POSITION);
+            backR.setMode(RUN_TO_POSITION);
 
-            frontL.setVelocity(velocity);
-            frontR.setVelocity(velocity);
-            backR.setVelocity(velocity);
-            backL.setVelocity(velocity);
+            frontL.setVelocity(wheelVelocity);
+            frontR.setVelocity(wheelVelocity);
+            backR.setVelocity(wheelVelocity);
+            backL.setVelocity(wheelVelocity);
 
             while (frontL.isBusy() || frontR.isBusy() || backL.isBusy() || backR.isBusy()) {
                 telemetry.addData("Status", "Waiting for Motors to Finish Turning");
@@ -64,15 +75,15 @@ public class TestTwo extends LinearOpMode {
             backL.setTargetPosition((int) pprForward + backL.getCurrentPosition());
             backR.setTargetPosition((int) pprForward + backR.getCurrentPosition());
 
-            frontL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontL.setMode(RUN_TO_POSITION);
+            frontR.setMode(RUN_TO_POSITION);
+            backL.setMode(RUN_TO_POSITION);
+            backR.setMode(RUN_TO_POSITION);
 
-            frontL.setVelocity(velocity);
-            frontR.setVelocity(velocity);
-            backR.setVelocity(velocity);
-            backL.setVelocity(velocity);
+            frontL.setVelocity(wheelVelocity);
+            frontR.setVelocity(wheelVelocity);
+            backR.setVelocity(wheelVelocity);
+            backL.setVelocity(wheelVelocity);
 
             while (frontL.isBusy() || frontR.isBusy() || backL.isBusy() || backR.isBusy()) {
                 telemetry.addData("Status", "Waiting for Motors to Finish Moving");
@@ -85,9 +96,80 @@ public class TestTwo extends LinearOpMode {
         }
     }
 
-    public void arm(double height, double extension){
-        // HEIGHT:
+    public void armTopLayer(){
+        double extenderPower = 0.5;
+
+        arm.setTargetPosition(-17400);
+        arm.setMode(RUN_TO_POSITION);
+        arm.setVelocity(armVelocity);
+        while (arm.isBusy()) {
+            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
+            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
+            telemetry.update();
+        }
+
+        extender.setPower(extenderPower);
+        sleep(1200);
+        extender.setPower(0);
+
+        intakeR.setPower(1);
+        intakeL.setPower(1);
     }
+
+    public void armReset(){
+        sleep(1200);
+        intakeR.setPower(0);
+        intakeL.setPower(0);
+        extender.setPower(-0.6);
+        sleep(500);
+        extender.setPower(-0.2);
+        sleep(500);
+        extender.setPower(0);
+        arm.setTargetPosition(0);
+        arm.setMode(RUN_TO_POSITION);
+        arm.setVelocity(armVelocity);
+        while (arm.isBusy()) {
+            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
+            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
+            telemetry.update();
+        }
+    }
+//
+//    public void armMiddleLayer(){
+//        arm.setTargetPosition(-12000);
+//        arm.setMode(RUN_TO_POSITION);
+//        arm.setVelocity(armVelocity);
+//        while (arm.isBusy()) {
+//            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
+//            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
+//            telemetry.update();
+//        }
+//    }
+//
+//    public void armBottomLayer(){
+//        arm.setTargetPosition(-7486);
+//        arm.setMode(RUN_TO_POSITION);
+//        arm.setVelocity(armVelocity);
+//        while (arm.isBusy()) {
+//            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
+//            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
+//            telemetry.update();
+//        }
+//    }
+//I expect the distance sensor to be able to detect which position the duck is in by using the distance between the duck and the robot.
+//    public void findDuck(){
+//
+//        double cmToDucky = 0.0;
+//        final double distanceToShippingHubPPR = 5.0;
+//
+//        while(readingDuck){
+//            drive(2, 0);
+//            if(dSensor.getDistance(DistanceUnit.INCH) <= 40){
+//                cmToDucky = frontL.getCurrentPosition() / oneCmInPPR;
+//                readingDuck = false;
+//            }
+//        }
+//    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -99,26 +181,40 @@ public class TestTwo extends LinearOpMode {
         frontR = hardwareMap.get(DcMotorEx.class, "rightFront");
         backL  = hardwareMap.get(DcMotorEx.class, "leftRear");
         backR = hardwareMap.get(DcMotorEx.class, "rightRear");
-        extender = hardwareMap.get(DcMotorEx.class, "extender");
+        extender = hardwareMap.get(DcMotor.class, "extender");
         arm = hardwareMap.get(DcMotorEx.class, "arm");
+        intakeL = hardwareMap.get(CRServo.class, "intakeL");
+        intakeR = hardwareMap.get(CRServo.class, "intakeR");
+//        dSensor = hardwareMap.get(DistanceSensor.class, "dSensor");
 
         // Reset Encoder
         frontL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         frontR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        extender.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        extender.setMode(RUN_WITHOUT_ENCODER);
 
         frontL.setDirection(DcMotorEx.Direction.FORWARD);
         backL.setDirection(DcMotorEx.Direction.FORWARD);
         frontR.setDirection(DcMotorEx.Direction.REVERSE);
         backR.setDirection(DcMotorEx.Direction.REVERSE);
-        extender.setDirection(DcMotorEx.Direction.FORWARD); //TODO: Find correct direction
-        arm.setDirection(DcMotorEx.Direction.FORWARD); //TODO: Find correct direction
+        extender.setDirection(DcMotorEx.Direction.REVERSE);
+        arm.setDirection(DcMotorEx.Direction.FORWARD);
+        intakeL.setDirection(CRServo.Direction.REVERSE);
+        intakeR.setDirection(CRServo.Direction.FORWARD);
 
         waitForStart();
-        drive(90, 0);
 
+        drive(0, 54, 500);
+        drive(90, 0, 500);
+        drive(0, 25, 500);
+        armTopLayer();
+        armReset();
+        sleep(500);
+        drive(0, -25, 500);
+        drive(-90, 0, 500);
+        sleep(500);
+        drive(0, 150, 1000);
     }
 }

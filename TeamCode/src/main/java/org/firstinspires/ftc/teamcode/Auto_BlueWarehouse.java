@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @Autonomous
-@Disabled
 public class Auto_BlueWarehouse extends LinearOpMode {
     DcMotorEx frontL, frontR, backL, backR, duckWheel, extender, arm = null;
 
@@ -85,7 +83,13 @@ public class Auto_BlueWarehouse extends LinearOpMode {
     }
 
     public void arm(double height, double extension){
+        // 5,281.1 PPR for 1 rotation
         // HEIGHT:
+        final double armVelocity = 500;
+        arm.setTargetPosition(5281);
+
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setVelocity(armVelocity);
     }
 
     @Override
@@ -117,7 +121,7 @@ public class Auto_BlueWarehouse extends LinearOpMode {
         arm.setDirection(DcMotorEx.Direction.FORWARD); //TODO: Find correct direction
 
         waitForStart();
-        drive(90, 0);
+//        drive(0, 50);
 
     }
 }

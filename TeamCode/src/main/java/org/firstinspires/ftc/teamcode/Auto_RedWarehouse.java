@@ -17,7 +17,7 @@ public class Auto_RedWarehouse extends LinearOpMode {
 //        4.27(PPR) = 1 Degree
         final double oneCmInPPR = 7.9;
         final double oneDegreeInPPR = 4.27;
-        final double velocity = 500;
+        final double driveVelocity = 500;
         double pprForward = distanceInCm * oneCmInPPR;
         double pprTurn = directionInDegrees * oneDegreeInPPR;
 
@@ -41,10 +41,10 @@ public class Auto_RedWarehouse extends LinearOpMode {
             backL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            frontL.setVelocity(velocity);
-            frontR.setVelocity(velocity);
-            backR.setVelocity(velocity);
-            backL.setVelocity(velocity);
+            frontL.setVelocity(driveVelocity);
+            frontR.setVelocity(driveVelocity);
+            backR.setVelocity(driveVelocity);
+            backL.setVelocity(driveVelocity);
 
             while (frontL.isBusy() || frontR.isBusy() || backL.isBusy() || backR.isBusy()) {
                 telemetry.addData("Status", "Waiting for Motors to Finish Turning");
@@ -67,10 +67,10 @@ public class Auto_RedWarehouse extends LinearOpMode {
             backL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            frontL.setVelocity(velocity);
-            frontR.setVelocity(velocity);
-            backR.setVelocity(velocity);
-            backL.setVelocity(velocity);
+            frontL.setVelocity(driveVelocity);
+            frontR.setVelocity(driveVelocity);
+            backR.setVelocity(driveVelocity);
+            backL.setVelocity(driveVelocity);
 
             while (frontL.isBusy() || frontR.isBusy() || backL.isBusy() || backR.isBusy()) {
                 telemetry.addData("Status", "Waiting for Motors to Finish Moving");
@@ -81,10 +81,6 @@ public class Auto_RedWarehouse extends LinearOpMode {
                 telemetry.update();
             }
         }
-    }
-
-    public void arm(double height, double extension){
-        // HEIGHT:
     }
 
     @Override
@@ -116,7 +112,7 @@ public class Auto_RedWarehouse extends LinearOpMode {
         arm.setDirection(DcMotorEx.Direction.FORWARD); //TODO: Find correct direction
 
         waitForStart();
-        drive(90, 0);
+        drive(0, 152.4);
 
     }
 }
