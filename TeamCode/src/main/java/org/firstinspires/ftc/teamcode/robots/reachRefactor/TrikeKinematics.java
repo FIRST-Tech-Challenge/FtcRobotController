@@ -9,6 +9,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TrikeKinematics {
+
+    /**
+     * Computes the wheel velocities corresponding to [robotVel] given [trackWidth] and [chassisLength].
+     *
+     * @param robotVel velocity of the robot in its reference frame
+     * @param trackWidth lateral distance between the differential wheel pair
+     */
     public static List<Double> robotToWheelVelocities(Pose2d robotVel, double trackWidth, double chassisLength) {
         assert UtilMethods.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for trike drives";
 
@@ -19,16 +26,37 @@ public class TrikeKinematics {
         );
     }
 
-    public static double robotToSwivelAngle(Pose2d robotVel, double chassisLength) {
-        assert UtilMethods.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for trike drives";
-
-        return UtilMethods.wrapAngle(Math.PI / 4 + Math.atan2(chassisLength * robotVel.getHeading(), robotVel.getX()));
-    }
-
+    /**
+     * Computes the wheel accelerations corresponding to [robotAccel] given the provided [trackWidth] and
+     * [chassisLength].
+     *
+     * @param robotAccel velocity of the robot in its reference frame
+     * @param trackWidth lateral distance between the differential wheel pair
+     * @param chassisLength distance between the front (differential) and back (swerve) wheels
+     */
     public static List<Double> robotToWheelAccelerations(Pose2d robotAccel, double trackWidth, double chassisLength) {
         return robotToWheelVelocities(robotAccel, trackWidth, chassisLength);
     }
 
+    /**
+     * Computes the swivel module orientation (in radians) corresponding to [robotVel] given the provided
+     * [chassisLength].
+     *
+     * @param robotVel velocity of the robot in its reference frame
+     * @param chassisLength distance between the front (differential) and back (swerve) wheels
+     */
+    public static double robotToSwivelAngle(Pose2d robotVel, double chassisLength) {
+        assert UtilMethods.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for trike drives";
+
+        return UtilMethods.wrapAngleRad(Math.PI / 4 + Math.atan2(chassisLength * robotVel.getHeading(), robotVel.getX()));
+    }
+
+    /**
+     * Computes the robot velocities corresponding to [wheelVelocities] and the given drive parameters.
+     *
+     * @param wheelVelocities wheel velocities (or wheel position deltas)
+     * @param trackWidth lateral distance between the differential wheel pair
+     */
     public static Pose2d wheelToRobotVelocities(List<Double> wheelVelocities, double trackWidth) {
         double left = wheelVelocities.get(0);
         double right = wheelVelocities.get(1);

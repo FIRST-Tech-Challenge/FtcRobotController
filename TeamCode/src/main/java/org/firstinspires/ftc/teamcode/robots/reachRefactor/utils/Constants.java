@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
-import org.ejml.simple.SimpleMatrix;
-
-import java.util.Arrays;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config(value = "FFConstants")
 public class Constants {
@@ -17,16 +12,16 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
 
     // distance measurements
-    public static double MIN_CHASSIS_LENGTH = 0.314;
-    public static double MAX_CHASSIS_LENGTH = 0.9;
-    public static double WHEEL_RADIUS = 0.1016;
-    public static double TRACK_WIDTH = 0.308162;
-    public static double GEAR_RATIO = 1;
+    public static double MIN_CHASSIS_LENGTH = 12.362205;
+    public static double MAX_CHASSIS_LENGTH = 35.4331;
+    public static double WHEEL_RADIUS = 4;
+    public static double TRACK_WIDTH = 12.132362205;
+    public static double GEAR_RATIO = 18;
 
     // constraints
-    public static double SWERVE_TICKS_PER_REVOLUTION = 1740;
-    public static final double TICKS_PER_REV = 1120;
-    public static final double MAX_RPM = 150;
+    public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
+    public static final double TICKS_PER_REV = 537.6;
+    public static final double MAX_RPM = 312.5;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants
@@ -39,12 +34,13 @@ public class Constants {
     public static double kA = 0;
     public static double kStatic = 0;
 
-    public static double MAX_VEL = 30;
-    public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(60);
-    public static double MAX_ANG_ACCEL = Math.toRadians(60);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
-    // gear ratio: 4 * 3 * 3 : 1,
+    public static double MAX_VEL = 90;
+    public static double MAX_ACCEL = 90;
+    public static double MAX_ANG_VEL = Math.toRadians(360);
+    public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
     //----------------------------------------------------------------------------------------------
     // Simulation
@@ -70,28 +66,24 @@ public class Constants {
     }
 
     public enum Position {
-        START_RED_UP(new double[] {0, 0, 0}),
-        START_RED_DOWN(new double[] {0, 0, 0}),
-        START_BLUE_UP(new double[] {0, 0, 0}),
-        START_BLUE_DOWN(new double[] {0, 0, 0});
+        START_RED_UP(new Pose2d(0, 0, Math.toRadians(0))),
+        START_RED_DOWN(new Pose2d(0, 0, Math.toRadians(0))),
+        START_BLUE_UP(new Pose2d(0, 0, Math.toRadians(0))),
+        START_BLUE_DOWN(new Pose2d(0, 0, Math.toRadians(0)));
 
-        private final double[] pose;
+        private final Pose2d pose;
 
-        Position(double[] pose) {
+        Position(Pose2d pose) {
             this.pose = pose;
         }
 
-        public double[] getPose() {
+        public Pose2d getPose() {
             return pose;
         }
     }
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
-    }
-
-    public static double inchesToEncoderTicks(double inches) {
-        return (inches * TICKS_PER_REV) / (WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO);
     }
 
     public static double rpmToVelocity(double rpm) {

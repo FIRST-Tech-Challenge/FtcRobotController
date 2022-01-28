@@ -41,13 +41,6 @@ public class Autonomous {
                     () -> true,
                     () -> true
             )
-            .addState(() -> robot.driveTrain.driveAbsoluteDistance(1,0,true,1,.2))
-            .addTimedState(.5f, () -> {}, () -> {})
-            .addState(() -> robot.driveTrain.rotateIMU(90,2))
-            .addTimedState(2f, () -> {}, () -> {})
-            .addTimedState(2f, () -> {
-                robot.driveTrain.handleDuckSpinnerToggle(Constants.Alliance.RED.getMod());
-            }, () -> {})
             .build();
 
     private Stage autonomousBlueStage = new Stage();

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
 
 @Config
@@ -202,7 +203,7 @@ public class DcMotorExSim implements DcMotorEx {
 
     @Override
     public void setPower(double power) {
-
+        velocity = power * Constants.MAX_RPM / 60 * Constants.TICKS_PER_REV;
     }
 
     @Override

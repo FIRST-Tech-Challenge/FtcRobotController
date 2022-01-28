@@ -6,6 +6,8 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.drive.Drive;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -29,7 +31,6 @@ import java.util.function.IntSupplier;
  * Pregame
  * x - set alliance to blue
  * b - set alliance to red
- * y - toggle desmos drive
  * a - toggle drivetrain smoothing
  *
  * dpad up - initialize / shutdown vision provider
@@ -91,7 +92,6 @@ public class FF_6832 extends OpMode {
     private boolean visionProviderFinalized;
 
     // tele-op state
-    private boolean usingDesmosDrive;
     private int chassisDistanceLevelIndex;
     private double forward, rotate;
 
@@ -113,7 +113,7 @@ public class FF_6832 extends OpMode {
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
     public static double FORWARD_SCALING_FACTOR = 0.1; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             Constants.MIN_CHASSIS_LENGTH,
             Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
@@ -158,7 +158,6 @@ public class FF_6832 extends OpMode {
         initializing = true;
         debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
         gameState = GameState.TELE_OP;
-        usingDesmosDrive = false;
 
         // timing
         lastLoopClockTime = System.nanoTime();
@@ -168,9 +167,10 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, false);
+        robot = new Robot(hardwareMap, true);
         alliance = Constants.Alliance.BLUE;
         startingPosition = Constants.Position.START_BLUE_UP;
+        robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         auto = new Autonomous(robot);
 
         // vision
@@ -181,8 +181,9 @@ public class FF_6832 extends OpMode {
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
+        telemetry.setMsTransmissionInterval(25);
 
-        robot.articulate(Robot.Articulation.SELFTEST);
+        robot.articulate(Robot.Articulation.INIT);
     }
 
     private void handleStateSwitch() {
@@ -224,13 +225,6 @@ public class FF_6832 extends OpMode {
     }
 
     private void handlePregameControls() {
-        if (active) {
-            if (stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
-                robot.articulate(Robot.Articulation.SELFTEST);
-            if (stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
-                robot.articulate(Robot.Articulation.LEGALSTARTPOS);
-        }
-
         if(stickyGamepad1.x || stickyGamepad2.x) {
             alliance = Constants.Alliance.BLUE;
             startingPosition = Constants.Position.START_RED_UP;
@@ -254,8 +248,6 @@ public class FF_6832 extends OpMode {
             robot.driveTrain.setSmoothingEnabled(!robot.driveTrain.isSmoothingEnabled());
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             debugTelemetryEnabled = !debugTelemetryEnabled;
-        if(stickyGamepad1.a || stickyGamepad2.a)
-            usingDesmosDrive = !usingDesmosDrive;
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -276,7 +268,7 @@ public class FF_6832 extends OpMode {
         robot.articulate(Robot.Articulation.START);
         robot.driveTrain.setMaintainChassisLengthEnabled(true);
         robot.driveTrain.setAntiTippingEnabled(false);
-        robot.driveTrain.setTargetLength(CHASSIS_LENGTH_LEVELS[0]);
+        robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
         auto.visionProvider.shutdownVision();
     }
 
@@ -298,7 +290,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
-        robot.driveTrain.setDrivePower(new Pose2d(forward, 0, rotate));
+        robot.driveTrain.setDriveSignal(new DriveSignal(new Pose2d(forward, 0, rotate), new Pose2d(0, 0, 0)));
     }
 
     private void handleTeleOp() { // apple
@@ -366,7 +358,7 @@ public class FF_6832 extends OpMode {
             chassisDistanceLevelIndex--;
 
         chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_LENGTH_LEVELS.length);
-        robot.driveTrain.setTargetLength(CHASSIS_LENGTH_LEVELS[chassisDistanceLevelIndex]);
+        robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[chassisDistanceLevelIndex]);
 
         if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
             handleTankDrive();
@@ -523,6 +515,7 @@ public class FF_6832 extends OpMode {
     private void update() {
         if(initializing) {
             auto.visionProvider.update();
+            robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         }
 
         gamepad1JoysticksActive = joysticksActive(gamepad1);
@@ -538,7 +531,6 @@ public class FF_6832 extends OpMode {
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);
             opModeTelemetryMap.put("Debug Telemetry Enabled", debugTelemetryEnabled);
-            opModeTelemetryMap.put("Using Desmos Drive", usingDesmosDrive);
             opModeTelemetryMap.put("Smoothing Enabled", robot.driveTrain.isSmoothingEnabled());
         }
         opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));

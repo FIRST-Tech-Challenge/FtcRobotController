@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.EPSILON;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.Range;
 
-import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
@@ -60,16 +58,6 @@ public class UtilMethods {
                 .stateEndAction(() -> {})
                 .stage(stage);
     }
-
-    public static SimpleMatrix rotateVector(SimpleMatrix vector, double theta) {
-        theta = Math.toRadians(theta);
-        SimpleMatrix rotationMatrix = new SimpleMatrix(new double[][] {
-                {Math.cos(theta), -Math.sin(theta)},
-                {Math.sin(theta), Math.cos(theta)}
-        });
-        return rotationMatrix.mult(vector.transpose()).transpose();
-    }
-
 
     public static double deadZone(double x, double threshold) {
         return Math.abs(x) < threshold ? 0 : x;
