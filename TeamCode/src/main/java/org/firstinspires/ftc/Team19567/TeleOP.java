@@ -187,8 +187,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                     break;
                 }
                 case ALLIANCE_THIRD: {
-                    armPos = 595;
-                    if(armDC.getCurrentPosition() >= 595) {
+                    armPos = 590;
+                    if(armDC.getCurrentPosition() >= 590) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
                     break;
@@ -210,7 +210,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             armPower = 0.5;
         }
 // BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE
-        balanceServoPos = Range.clip((armDC.getCurrentPosition()-50)/1050.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
+        balanceServoPos = Range.clip((armDC.getCurrentPosition()-100)/1050.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
         /* if(runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
         else if(presetState != PRESETSTATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
         else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
