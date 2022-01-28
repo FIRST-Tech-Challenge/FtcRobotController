@@ -42,6 +42,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DistanceSensor sensorRange;
 
     private CRServo tapeMeasure = null;
+    private Servo tapeUp = null;
 
     FreightFrenzyConfig frenzyConfig = null;
 
@@ -72,6 +73,9 @@ public class FrenzyBot extends FrenzyBaseBot {
     private static double LIFT_SPEED_LOW = 0.7;
     protected static int positionToleranceLift = 15;
     protected static int positionToleranceTurret = 12;
+
+    private int turretOffset = 0;
+    private boolean turretOffsetDefined = false;
 
     NormalizedColorSensor colorSensor;
 
@@ -187,6 +191,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize tape measure servo", ex);
         }
+
+        try {
+            tapeUp =  hwMap.get(Servo.class, "tapeUp");
+
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize tape measure servo", ex);
+        }
     }
 
     public double getIntakeCurrent(){
@@ -236,8 +247,18 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     public void activateTapeMeasure(double power) {
         if (tapeMeasure != null) {
-            power = Range.clip(power, -1.0, 1.0);
-            tapeMeasure.setPower(power);
+            if (Math.abs(power) <= 0.2){
+                tapeMeasure.setPower(0);
+            }
+            else {
+                if (power < 0) {
+                    tapeMeasure.setPower(-1);
+                }
+                else
+                {
+                    tapeMeasure.setPower(1);
+                }
+            }
         }
     }
 
@@ -443,20 +464,20 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Main Tower to RED team hub", defaultReturn = "")
     public void turretToTeamHubRed(){
-        this.turret.setTargetPosition(TURRET_POS_TEAMHUB_RED);
+        this.turret.setTargetPosition(TURRET_POS_TEAMHUB_RED + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Main Tower to BLUE team hub", defaultReturn = "")
     public void towerToTeamHubBlue(){
-        this.turret.setTargetPosition(TURRET_POS_TEAMHUB_BLUE);
+        this.turret.setTargetPosition(TURRET_POS_TEAMHUB_BLUE + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     public void towerToSharedHubRed(boolean block){
-        this.turret.setTargetPosition(TURRET_POS_SHAREDHUB_RED);
+        this.turret.setTargetPosition(TURRET_POS_SHAREDHUB_RED + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
         if (block){
@@ -467,7 +488,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public void towerToSharedHubBlue(boolean block){
-        this.turret.setTargetPosition(TURRET_POS_SHAREDHUB_BLUE);
+        this.turret.setTargetPosition(TURRET_POS_SHAREDHUB_BLUE + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
         if (block){
@@ -485,7 +506,7 @@ public class FrenzyBot extends FrenzyBaseBot {
                 //do nothing;
                 return;
             }
-            this.turret.setTargetPosition(TURRET_POS_CENTER);
+            this.turret.setTargetPosition(TURRET_POS_CENTER + getTurretOffset());
             this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED_LOW);
             while (owner.opModeIsActive() && this.turret.isBusy()){
@@ -498,28 +519,28 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Tower to hub from red warehouse", defaultReturn = "")
     public void towerToTeamHubFromAuto(){
-        this.turret.setTargetPosition(-360);
+        this.turret.setTargetPosition(-360 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from blue warehouse", defaultReturn = "")
     public void towerToTeamHubFromAutoWarehouseBlue(){
-        this.turret.setTargetPosition(277);
+        this.turret.setTargetPosition(277 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from red ducks", defaultReturn = "")
     public void towerToTeamHubFromAutoRedDucks(){
-        this.turret.setTargetPosition(-293);
+        this.turret.setTargetPosition(-293 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
 
     @BotAction(displayName = "Tower to hub from blue ducks", defaultReturn = "")
     public void towerToTeamHubFromAutoBlueDucks(){
-        this.turret.setTargetPosition(-325);
+        this.turret.setTargetPosition(-325 + getTurretOffset());
         this.turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.turret.setVelocity(MAX_VELOCITY_REV*TURRET_SPEED);
     }
@@ -854,4 +875,20 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void setTeleOp(boolean teleOp) {
         isTeleOp = teleOp;
     }
+
+    public int getTurretOffset() {
+        return turretOffset;
+    }
+
+    public void defineTurretOffset() {
+        if (!turretOffsetDefined) {
+            this.turretOffset = this.turret.getCurrentPosition();
+            turretOffsetDefined = true;
+        }
+    }
+
+    public boolean isTurretOffsetDefined() {
+        return turretOffsetDefined;
+    }
+
 }
