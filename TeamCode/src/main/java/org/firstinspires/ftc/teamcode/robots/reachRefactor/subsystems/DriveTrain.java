@@ -10,6 +10,8 @@ import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.kinematics.Kinematics;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
@@ -33,6 +35,8 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSe
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.VoltageSensorSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
@@ -46,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import kotlin._Assertions;
+
+ // 1900 up, 900 down, 2100 open 900 close
 
 @Config
 public class DriveTrain extends TrikeDrive implements Subsystem {
@@ -63,6 +69,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static double MAX_ANGULAR_ACCELERATION = 1000;
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
+
+    public static String TELEMETRY_NAME = "Drive Train";
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectoryFollower follower;
@@ -140,24 +148,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         lastLoopTime = System.nanoTime();
     }
 
-    @Override
-    public void setDriveSignal(@NonNull DriveSignal driveSignal) {
-        List<Double> velocities = TrikeKinematics.robotToWheelVelocities(driveSignal.getVel(), TRACK_WIDTH, getChassisLength());
-        List<Double> accelerations = TrikeKinematics.robotToWheelAccelerations(driveSignal.getAccel(), TRACK_WIDTH, getChassisLength());
-        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
-
-        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
-        setSwivelAngle(TrikeKinematics.robotToSwivelAngle(driveSignal.getVel(), getChassisLength()));
-
-        driveVelocity = driveSignal.getVel();
-    }
-
-    @Override
-    public void setDrivePower(@NonNull Pose2d drivePower) {
-        List<Double> powers = TrikeKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH, getChassisLength());
-        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
-    }
-
+    //----------------------------------------------------------------------------------------------
+    // Path Following
+    //----------------------------------------------------------------------------------------------
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
         return new MinVelocityConstraint(Arrays.asList(
@@ -168,61 +161,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
-    }
-
-    @Override
-    public double getRawExternalHeading() {
-        return heading;
-    }
-
-    @Override
-    public Double getExternalHeadingVelocity() {
-        return angularVelocity;
-    }
-
-
-    @Override
-    public double getChassisLength() {
-        return chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH);
-    }
-
-    @Override
-    public List<Double> getWheelPositions() {
-        return Arrays.asList(
-                leftPosition,
-                rightPosition,
-                swervePosition
-        );
-    }
-
-    @Override
-    public List<Double> getWheelVelocities() {
-        return Arrays.asList(
-                leftVelocity,
-                rightVelocity,
-                swerveVelocity
-        );
-    }
-
-    public void setDuckSpinnerPower(double duckSpinnerPower) {
-        this.duckSpinnerPower = duckSpinnerPower;
-    }
-
-    @Override
-    public double getSwivelAngle() {
-        return swivelAngle;
-    }
-
-    @Override
-    public void setSwivelAngle(double targetSwivelAngle) {
-        this.targetSwivelAngle = targetSwivelAngle;
-    }
-
-    @Override
-    public void setMotorPowers(double leftPower, double rightPower, double swervePower) {
-        this.leftPower = leftPower;
-        this.rightPower = rightPower;
-        this.swervePower = swervePower;
     }
 
     private double getMaintainChassisLengthCorrection() {
@@ -316,10 +254,72 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     @Override
     public String getTelemetryName() {
-        return null;
+        return TELEMETRY_NAME;
     }
 
-    // getters and setters
+    // trajectory following
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
+        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+    }
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
+        return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+    }
+
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
+        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+    }
+
+    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
+        return new TrajectorySequenceBuilder(
+                startPose,
+                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
+                MAX_ANG_VEL, MAX_ANG_ACCEL
+        );
+    }
+
+    public void turnAsync(double angle) {
+        trajectorySequenceRunner.followTrajectorySequenceAsync(
+                trajectorySequenceBuilder(getPoseEstimate())
+                        .turn(angle)
+                        .build()
+        );
+    }
+
+    public void followTrajectoryAsync(Trajectory trajectory) {
+        trajectorySequenceRunner.followTrajectorySequenceAsync(
+                trajectorySequenceBuilder(trajectory.start())
+                        .addTrajectory(trajectory)
+                        .build()
+        );
+    }
+
+    public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+        trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // Getters And Setters
+    //----------------------------------------------------------------------------------------------
+
+    @Override
+    public void setDriveSignal(@NonNull DriveSignal driveSignal) {
+        List<Double> velocities = TrikeKinematics.robotToWheelVelocities(driveSignal.getVel(), TRACK_WIDTH, getChassisLength());
+        List<Double> accelerations = TrikeKinematics.robotToWheelAccelerations(driveSignal.getAccel(), TRACK_WIDTH, getChassisLength());
+        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
+
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
+        setSwivelAngle(TrikeKinematics.robotToSwivelAngle(driveSignal.getVel(), getChassisLength()));
+
+        driveVelocity = driveSignal.getVel();
+    }
+
+    @Override
+    public void setDrivePower(@NonNull Pose2d drivePower) {
+        List<Double> powers = TrikeKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH, getChassisLength());
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
+    }
 
     public void setTargetLength(double targetChassisLength) {
         this.targetChassisLength = targetChassisLength;
@@ -358,6 +358,65 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     public void setSwervePower(double swervePower) {
+        this.swervePower = swervePower;
+    }
+
+    public Pose2d getLastError() {
+        return trajectorySequenceRunner.getLastPoseError();
+    }
+
+    @Override
+    public double getRawExternalHeading() {
+        return heading;
+    }
+
+    @Override
+    public Double getExternalHeadingVelocity() {
+        return angularVelocity;
+    }
+
+
+    @Override
+    public double getChassisLength() {
+        return chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH);
+    }
+
+    @Override
+    public List<Double> getWheelPositions() {
+        return Arrays.asList(
+                leftPosition,
+                rightPosition,
+                swervePosition
+        );
+    }
+
+    @Override
+    public List<Double> getWheelVelocities() {
+        return Arrays.asList(
+                leftVelocity,
+                rightVelocity,
+                swerveVelocity
+        );
+    }
+
+    public void setDuckSpinnerPower(double duckSpinnerPower) {
+        this.duckSpinnerPower = duckSpinnerPower;
+    }
+
+    @Override
+    public double getSwivelAngle() {
+        return swivelAngle;
+    }
+
+    @Override
+    public void setSwivelAngle(double targetSwivelAngle) {
+        this.targetSwivelAngle = targetSwivelAngle;
+    }
+
+    @Override
+    public void setMotorPowers(double leftPower, double rightPower, double swervePower) {
+        this.leftPower = leftPower;
+        this.rightPower = rightPower;
         this.swervePower = swervePower;
     }
 }
