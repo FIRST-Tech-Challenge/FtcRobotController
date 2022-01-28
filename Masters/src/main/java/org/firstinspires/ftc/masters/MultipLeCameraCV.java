@@ -155,6 +155,24 @@ public class MultipLeCameraCV {
         });
     }
 
+    public void stopDuckCamera(){
+
+        duckWebcam.stopStreaming();
+        duckWebcam.setPipeline(new DoNothingPipeline());
+    }
+
+    public void stopShippingElementCamera(){
+        webcam.stopStreaming();
+        webcam.setPipeline(new DoNothingPipeline());
+    }
+
+    public static class DoNothingPipeline extends OpenCvPipeline{
+
+        @Override
+        public Mat processFrame(Mat input) {
+            return null;
+        }
+    }
 
 
     public static class DuckDeterminationPipeline extends OpenCvPipeline {

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name="Red - Warehouse (Park City)", group = "competition")
+@Autonomous(name="Red - Warehouse (STATE)", group = "competition")
 public class RedWarehouseOdo extends LinearOpMode {
 
     final int SERVO_DROP_PAUSE=800;
@@ -39,10 +39,12 @@ public class RedWarehouseOdo extends LinearOpMode {
                 .addTemporalMarker(1,()->{drive.retract();})
                 .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
                 .build();
+        drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
-        drive.CV.duckWebcam.stopStreaming();
+
+        drive.stopDuckCamera();
 
         long startTime = new Date().getTime();
         long time = 0;
@@ -105,7 +107,11 @@ public class RedWarehouseOdo extends LinearOpMode {
                     .splineToSplineHeading(new Pose2d(-10, -47, Math.toRadians(90)), Math.toRadians(90))
                     .build();
             drive.followTrajectorySequence(trajSeq3);
-
+            fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
+                    .addTemporalMarker(1,()->{drive.retract();})
+                    .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+                    .build();
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
             drive.pause(SERVO_DROP_PAUSE);
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
@@ -128,7 +134,11 @@ public class RedWarehouseOdo extends LinearOpMode {
 
                          .build();
                  drive.followTrajectorySequence(trajSeq3);
-
+                 fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                         .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
+                         .addTemporalMarker(1,()->{drive.retract();})
+                         .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+                         .build();
                  drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
                  drive.pause(SERVO_DROP_PAUSE);
                  drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Red - Carousel (Park City)", group = "competition")
+@Autonomous(name = "Red - Carousel (STATE)", group = "competition")
 public class RedCarouselOdo extends LinearOpMode {
 
     final int SERVO_DROP_PAUSE=900;
@@ -28,6 +28,7 @@ public class RedCarouselOdo extends LinearOpMode {
         Pose2d startPose = new Pose2d(new Vector2d(-35, -63), Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
+        drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
@@ -73,7 +74,7 @@ public class RedCarouselOdo extends LinearOpMode {
         if (freightLocation== MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
-        drive.CV.webcam.stopStreaming();
+        drive.stopShippingElementCamera();
         drive.retract();
 
 //        To spin duck
@@ -108,6 +109,7 @@ drive.CV.duckWebcam.stopStreaming();
 
         drive.pause(250);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+        drive.pause(200);
         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         drive.linearSlideMotor.setPower(.8);
