@@ -24,19 +24,19 @@ public class drive4_final extends LinearOpMode {
 
     public double angleOfJoystick(double joystickY, double joystickX) { //getting angle of left joystick
 
-        if (joystickY < 0 && joystickX == 0) return 3*3.14159265/2;
+        if (joystickY < 0 && joystickX == 0) return 3*3.14159265/2; //back
 
-        if (joystickY == 0 && joystickX <= 0) return 3.14159265;
+        if (joystickY == 0 && joystickX <= 0) return 3.14159265; //left
 
-        if (joystickY >= 0 && joystickX > 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX));
+        if (joystickY >= 0 && joystickX > 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)); //quadrant 1
 
-        if (joystickY >= 0 && joystickX < 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265/2;
+        if (joystickY >= 0 && joystickX < 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265/2; //quadrant 2
 
-        if (joystickY <= 0 && joystickX < 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265);
+        if (joystickY <= 0 && joystickX < 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265); //quadrant 3
 
-        if (joystickY <= 0 && joystickX > 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3*3.14159265/2);
+        if (joystickY <= 0 && joystickX > 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3*3.14159265/2); //quadrant 4
 
-        return 3.14159265/2;
+        return 3.14159265/2; //forwards
 
     }
 
@@ -71,9 +71,8 @@ public class drive4_final extends LinearOpMode {
             /*the code below does not send anything to the sensors/record movement yet. */
 
             if (Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.left_stick_x) > 0) { //movement
-                double trueAngle = angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-                System.out.println(trueAngle);
-                move(trueAngle);// main move method, gets angle from angleOfJoystic(k)
+
+                move(angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x));// main move method, gets angle from angleOfJoystick
 
             } else { //turning. currently can't turn AND move
 
