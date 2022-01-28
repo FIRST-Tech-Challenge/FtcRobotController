@@ -156,7 +156,7 @@ public class TestTwo extends LinearOpMode {
 //            telemetry.update();
 //        }
 //    }
-//I expect the distance sensor to be able to detect which position the duck is in by using the distance between the duck and the robot.
+
 //    public void findDuck(){
 //
 //        double cmToDucky = 0.0;
@@ -215,6 +215,6 @@ public class TestTwo extends LinearOpMode {
         drive(0, -25, 500);
         drive(-90, 0, 500);
         sleep(500);
-        drive(0, 150, 1000);
+        drive(0, 175, 1200);
     }
 }
