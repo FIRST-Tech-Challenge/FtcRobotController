@@ -177,7 +177,8 @@ public class MultipLeCameraCV {
             RIGHT2,
             RIGHT3,
             RIGHT4,
-            RIGHT5
+            RIGHT5,
+            SHRUG_NOISES
         }
 
         /*
@@ -198,7 +199,7 @@ public class MultipLeCameraCV {
         ArrayList<Point> bottomRightPoints = new ArrayList<Point>();
 
 
-        final int DUCK_PRESENT_THRESHOLD = 150;
+        final int DUCK_PRESENT_THRESHOLD = 140;
 
 
 
@@ -285,17 +286,22 @@ public class MultipLeCameraCV {
             telemetry.addData("B Averages", regionAvgs);
             telemetry.addData("Index of highest likelihood.", indexOfMaximumBAvg);
 
-
-            if (indexOfMaximumBAvg > 21) {
-                indexOfMaximumBAvg -= 22;
-            } else if (indexOfMaximumBAvg > 10) {
-                indexOfMaximumBAvg -= 11;
+            if (regionAvgs.get(indexOfMaximumBAvg) >= DUCK_PRESENT_THRESHOLD) {
+                if (indexOfMaximumBAvg > 21) {
+                    indexOfMaximumBAvg -= 22;
+                } else if (indexOfMaximumBAvg > 10) {
+                    indexOfMaximumBAvg -= 11;
+                }
+                position = DuckPosition.values()[indexOfMaximumBAvg];
+            } else {
+                position = DuckPosition.SHRUG_NOISES;
             }
 
-            position = DuckPosition.values()[indexOfMaximumBAvg];
 
-            telemetry.addData("Position",position);
-            telemetry.update();
+
+
+            telemetry.addData("Position", position);
+
 
             return input;
         }

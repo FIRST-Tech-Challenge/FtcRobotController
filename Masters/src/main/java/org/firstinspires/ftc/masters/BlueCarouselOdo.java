@@ -89,16 +89,18 @@ public class BlueCarouselOdo extends LinearOpMode {
         drive.jevilTurnCarousel(-.4, 4);
 
         TrajectorySequence leaveCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                .lineTo(new Vector2d(-55, 55))
+                .lineTo(new Vector2d(-55, 47))
                 .build();
         drive.followTrajectorySequence(leaveCarousel);
 
         drive.turn(Math.toRadians(-90));
 
-        TrajectorySequence AcquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                .lineTo(new Vector2d(-55, 63))
-                .build();
-        drive.followTrajectorySequence(AcquireDuck);
+//        TrajectorySequence AcquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                .lineTo(new Vector2d(-55, 63))
+//                .build();
+//        drive.followTrajectorySequence(AcquireDuck);
+
+        drive.findDuckBlue();
 
 
         position = drive.getLocalizer().getPoseEstimate();
@@ -111,7 +113,7 @@ public class BlueCarouselOdo extends LinearOpMode {
 
         TrajectorySequence depositDuck = drive.trajectorySequenceBuilder(position)
                 .lineTo(new Vector2d(-50, 55))
-                .splineToLinearHeading(new Pose2d(-12.5, 42, Math.toRadians(270)), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-12, 42, Math.toRadians(270)), Math.toRadians(270))
                 .build();
         drive.followTrajectorySequence(depositDuck);
 

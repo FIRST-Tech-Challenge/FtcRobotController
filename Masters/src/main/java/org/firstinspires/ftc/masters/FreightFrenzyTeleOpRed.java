@@ -287,15 +287,18 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 //                intakeOn = false;
 //            }
 
+
             double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
-                robot.pauseButInSecondsForThePlebeians(.1);
-                intakeMotor.setPower(0);
-                robot.redLED.setState(false);
-                robot.greenLED.setState(true);
-                robot.redLED2.setState(false);
-                robot.greenLED2.setState(true);
-                robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+            if (linearSlideTarget != linearSlideTargets.BASE) {
+                if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
+                    robot.pauseButInSecondsForThePlebeians(.1);
+                    intakeMotor.setPower(0);
+                    robot.redLED.setState(false);
+                    robot.greenLED.setState(true);
+                    robot.redLED2.setState(false);
+                    robot.greenLED2.setState(true);
+                    robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+                }
             }
 
 //            if (gamepad2.dpad_right) {

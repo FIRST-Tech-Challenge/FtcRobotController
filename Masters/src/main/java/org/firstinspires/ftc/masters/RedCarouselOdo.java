@@ -61,7 +61,7 @@ public class RedCarouselOdo extends LinearOpMode {
         if (isStopRequested()) return;
 
 //      Deposit initial freight
-        Pose2d hubPosition = new Pose2d(new Vector2d(-27.7, -37), Math.toRadians(45));
+        Pose2d hubPosition = new Pose2d(new Vector2d(-23, -38), Math.toRadians(45));
         TrajectorySequence toHub = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(hubPosition)
                 .build();
@@ -85,17 +85,14 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(.4, 4); //can we go faster?
+        drive.jevilTurnCarousel(.6, 4); //can we go faster?
 
 
 
         TrajectorySequence getOffCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                .strafeTo(new Vector2d(-59.5, -52.5), SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .strafeTo(new Vector2d(-59.5, -50), SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
         drive.followTrajectorySequence(getOffCarousel);
-
-        //find duck
-
 
 
         drive.findDuckRed();
@@ -106,6 +103,8 @@ public class RedCarouselOdo extends LinearOpMode {
 //        drive.followTrajectorySequence(acquireDuck);
 
 //        boolean hasDuck = drive
+
+drive.CV.duckWebcam.stopStreaming();
 
         drive.pause(250);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
