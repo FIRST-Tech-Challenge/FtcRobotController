@@ -19,7 +19,7 @@ public class PosFourVAR extends LinearOpMode {
 
 
 
-        /*
+        /* hi
         AutonomousDC.resetTicks();
         AutonomousDC.moveRobot(telemetry, -925, -925, -925, -925, 0.25, 0.25, 0.25, 0.25);
 
