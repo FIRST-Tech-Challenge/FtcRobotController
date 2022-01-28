@@ -9,7 +9,7 @@ public class AutoGrabber {
     private final Servo leftServo;
     private final Servo rightServo;
     private boolean open = true;
-    public AutoGrabber (@NonNull HardwareMap hardwareMap) {
+    public AutoGrabber(@NonNull HardwareMap hardwareMap) {
         leftServo = hardwareMap.get(Servo.class, "leftTse");
         leftServo.resetDeviceConfigurationForOpMode();
         rightServo = hardwareMap.get(Servo.class, "rightTse");
