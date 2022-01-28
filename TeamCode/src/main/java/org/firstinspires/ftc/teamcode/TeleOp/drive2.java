@@ -10,10 +10,10 @@ public class drive2 extends LinearOpMode {
 
     //there is no servo code in this program
 
-    private DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft"); //motors declared
-    private DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-    private DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-    private DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+    private DcMotor motorFrontLeft;  //motors declared
+    private DcMotor motorBackLeft;
+    private DcMotor motorFrontRight;
+    private DcMotor motorBackRight;
 
     public void turn(){ //turning method
         motorFrontLeft.setPower(gamepad1.right_stick_x);
@@ -112,6 +112,11 @@ public class drive2 extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()){
+
+            motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft"); //motors declared
+            motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+            motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+            motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
             /*currently, there is no code for moving at angles other than 90 and 45 deg.
             Planning to add that after I understand how the math behind that works. Also,

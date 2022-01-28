@@ -16,7 +16,10 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
-    buildToolsVersion '32.0.0'
+    buildToolsVersion '32.1.0 rc1'
+    androidResources {
+        noCompress 'tflite'
+    }
 }
 
 dependencies {
