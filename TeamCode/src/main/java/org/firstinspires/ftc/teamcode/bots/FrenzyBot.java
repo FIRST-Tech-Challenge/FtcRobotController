@@ -716,8 +716,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public boolean isIntakeBoxEmpty(){
-        float HValue = detectColor(telemetry, 0);
-        return HValue < 5;
+//        float HValue = detectColor(telemetry, 0);
+//        return HValue < 5;
+        double val = getIntakeCurrent();
+        return val <= 0.9;
+
     }
 
     @BotAction(displayName = "Grab Element", defaultReturn = "")
