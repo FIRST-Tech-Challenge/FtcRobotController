@@ -531,7 +531,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void findDuckRed(){
 
         //strafe right
-        double speed = 0.25;
+        double speed = 0.35;
 
         ElapsedTime elapsedTime= new ElapsedTime();
 
@@ -545,7 +545,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         intakeMotor.setPower(0.8);
-        forward(0.3, -1.5);
+        forward(0.4, -1);
 
         stopMotors();
     }
@@ -566,7 +566,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         intakeMotor.setPower(0.8);
-        forward(0.4, -1.5);
+        forward(0.4, -1);
 
         stopMotors();
     }

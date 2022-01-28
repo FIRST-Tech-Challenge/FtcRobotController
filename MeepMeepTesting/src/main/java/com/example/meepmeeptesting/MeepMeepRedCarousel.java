@@ -16,12 +16,27 @@ public class MeepMeepRedCarousel {
 
                 .setConstraints(45, 60, Math.toRadians(60), Math.toRadians(60), 16.4)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-41.5, -63),Math.toRadians(90)))
-                                .lineToLinearHeading(hubPosition)
-                                .lineToLinearHeading(new Pose2d(new Vector2d(-59.25, -59.25), Math.toRadians(90)))
-                                .strafeRight(2)
-                                .lineToLinearHeading(hubPosition)
-                                .lineToLinearHeading(parkPosition)
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35, -63),Math.toRadians(270)))
+//                                .lineToLinearHeading(hubPosition)
+//                                .lineToLinearHeading(new Pose2d(new Vector2d(-59.25, -59.25), Math.toRadians(90)))
+//                                .strafeRight(2)
+//                                .lineToLinearHeading(hubPosition)
+//                                .lineToLinearHeading(parkPosition)
+//
+//                                .build()
+
+                                .lineToSplineHeading(new Pose2d(new Vector2d(-12.5, -42), Math.toRadians(90)))
+                                .back(13)
+//                                .lineToLinearHeading(new Pose2d( Vector2d(-24, 52), Math.toRadians(315)))
+                                .splineToLinearHeading(new Pose2d( new Vector2d (-60, -60), Math.toRadians(0)), Math.toRadians(180))
+                                .lineTo(new Vector2d(-55, -55))
+                                .lineToLinearHeading(new Pose2d(-55, -54, Math.toRadians(270)))
+                                .lineTo(new Vector2d(-55, -63))
+                                .lineTo(new Vector2d(-50, -55))
+                                .splineToLinearHeading(new Pose2d(-12.5, -43.4, Math.toRadians(270)), Math.toRadians(270))
+//                                .strafeRight(20)
+                                .splineToLinearHeading(new Pose2d(new Vector2d(-22, -44), Math.toRadians(270)), Math.toRadians(180))
+                                .splineToLinearHeading (new Pose2d(new Vector2d(-62, -35),Math.toRadians(270)), Math.toRadians(180))
 
                                 .build()
                 )
