@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Carousel.Carousel;
+import org.firstinspires.ftc.teamcode.Chassis.Drivechain;
 
 @Autonomous
 public class PosFourVAR extends LinearOpMode {
@@ -13,7 +14,7 @@ public class PosFourVAR extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Carousel AutonomousCarousel = new Carousel(hardwareMap);
-        DriveChain AutonomousDC = new DriveChain(hardwareMap);
+        Drivechain AutonomousDC = new Drivechain(hardwareMap);
 
         waitForStart();
 
