@@ -155,6 +155,38 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+
+    public void newTurnToPrototype(double angle, double powerMult) throws InterruptedException {
+        double startingAngle = gps.getRot();
+        double degreesOff = ((360 - angle) + gps.getRot()) % 360;
+        double pow;
+        double minimumPower = .1;
+
+        //the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a counterclockwise rotation/left turn
+        while (degreesOff > 0) {
+
+            if (degreesOff < 180 && !isStopRequested() && opModeIsActive()) {
+
+                degreesOff = ((360 - angle) + gps.getRot()) % 360;
+
+                pow = MiscUtils.map(degreesOff, 0, 180, 0, 1) + minimumPower;
+
+                this.turnLeft(MiscUtils.boundNumber(pow * powerMult));
+
+            } else {
+
+                degreesOff = ((360 - angle) + gps.getRot()) % 360;
+
+                pow = MiscUtils.map(degreesOff, 180, 360, 0, 1) + minimumPower;
+
+                this.turnRight(MiscUtils.boundNumber(pow * powerMult));
+
+            }
+        }
+
+        stopAll();
+    }
+
     //-Move To Position Methods----------------------------------------------------------------------------------------------
 
     /**
