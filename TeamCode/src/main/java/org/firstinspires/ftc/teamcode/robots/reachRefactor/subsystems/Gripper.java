@@ -27,13 +27,15 @@ public class Gripper implements Subsystem{
     // Constants
     private static final String TELEMETRY_NAME = "Gripper";
 
+    // 1900 up, 1860 vertical, 900 down, 2100 open 900 close
+
     public static int CLOSED = 900;
     public static int RELEASE = 1300;
-    public static int OPEN = 1300;
+    public static int OPEN = 2100;
     public static int PITCH_TRANSFER = 2250;
-    public static int PITCH_DOWN = 1154;
+    public static int PITCH_DOWN = 900;
     public static int PITCH_INIT = 1854;
-    public static int PITCH_VERTICAL = 2037;
+    public static int PITCH_VERTICAL = 1860;
     private Articulation articulation;
     private Map<Gripper.Articulation, StateMachine> articulationMap;
 
