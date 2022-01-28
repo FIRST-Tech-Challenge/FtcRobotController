@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
@@ -106,7 +107,7 @@ public class FrenzyModeBase extends LinearOpMode {
         telemetry.addData("Heading Adjusted", "%.3f", odometry.getAdjustedCurrentHeading());
         telemetry.addData("Lift position", "%d", robot.getLiftPosition());
         telemetry.addData("Turret position", "%d", robot.getTurretPosition());
-        telemetry.addData("Intake Current: ", robot.getIntakeCurrent());
+        telemetry.addData("range", String.format("%.01f in", robot.getDistance()));
         telemetry.update();
     }
 

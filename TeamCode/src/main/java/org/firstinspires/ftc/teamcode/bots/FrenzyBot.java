@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -18,6 +20,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
@@ -36,6 +39,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx turret = null;
     private Servo dropperServo = null;
     private Servo intakeDropperServo = null;
+    private DistanceSensor sensorRange;
 
     private CRServo tapeMeasure = null;
 
@@ -84,11 +88,12 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     //Intake
     private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
-    private static double INTAKE_SPEED = -0.3;
-    private static double INTAKE_SPEED_REVERSE = 0.3;
+    private static double INTAKE_SPEED = -0.2;
+    private static double INTAKE_SPEED_REVERSE = 0.2;
     private boolean isGrabInProgress = false;
 
     private boolean intakeRunning = false;
+    ElapsedTime spikeOccurredAt = new ElapsedTime();
 
 
     /* Constructor */
@@ -160,6 +165,11 @@ public class FrenzyBot extends FrenzyBaseBot {
             colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize colorSensor", ex);
+        }
+        try {
+            sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
+        } catch(Exception ex) {
+            Log.e(TAG, "Cannot initialize distanceSensor", ex);
         }
 
         try {
@@ -716,24 +726,41 @@ public class FrenzyBot extends FrenzyBaseBot {
         return hsvValues[0];
     }
 
+    public double getDistance() {
+        return sensorRange.getDistance(DistanceUnit.INCH);
+    }
+
     public boolean isIntakeBoxEmpty(){
-//        float HValue = detectColor(telemetry, 0);
+//        float HValue = detectColor(telemetry, 0); // color method
 //        return HValue < 5;
-        double val = getIntakeCurrent();
-        boolean spike = val>0.9;
 
-        if (isGrabInProgress) {
-            if(!spike){
-                isGrabInProgress = false;
-                return false;
-            }
-        } else{
-            if(spike){
-                isGrabInProgress = true;
-            }
-        }
-        return true;
 
+
+//        double val = getIntakeCurrent(); // Current Method
+//        boolean spike = val>0.9;
+//
+//        if (isGrabInProgress) {
+//            if(!spike){
+//                if(spikeOccurredAt.milliseconds()>125){
+//                    Log.d(TAG, "Spike ended properly");
+//                    isGrabInProgress = false;
+//                    return false;
+//                } else{
+//                    Log.d(TAG, "Spike ended early");
+//                    isGrabInProgress = false;
+//                    spikeOccurredAt.reset();
+//                }
+//            }
+//        } else{
+//            if(spike){
+//                Log.d(TAG, "Spike started");
+//                isGrabInProgress = true;
+//                spikeOccurredAt.reset();
+//            }
+//        }
+//        return true;
+
+        return false;
 
 
     }
