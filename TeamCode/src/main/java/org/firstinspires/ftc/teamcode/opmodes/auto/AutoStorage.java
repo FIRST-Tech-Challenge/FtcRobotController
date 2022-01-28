@@ -51,7 +51,7 @@ public class AutoStorage extends LinearOpMode {
         builder.addTemporalMarker(() -> lift.setPosition(getPosition(height[0])));
         builder.waitSeconds(4);
         builder.lineTo(new Vector2d(-19, 50 * multiplier));
-        builder.lineToLinearHeading(new Pose2d(-60, 58 * multiplier, Math.toRadians(240 * multiplier)));
+        builder.lineToLinearHeading(new Pose2d(-60, 58 * multiplier, Math.toRadians(multiplier == 1 ? 240 : 330)));
         builder.addTemporalMarker(carousel::on);
         builder.waitSeconds(4);
         builder.addTemporalMarker(carousel::off);
