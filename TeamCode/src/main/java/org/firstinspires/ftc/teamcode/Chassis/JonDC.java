@@ -38,10 +38,10 @@ public class JonDC extends LinearOpMode{
 
             power = ch.mecanumDr(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y,this.gamepad1.right_stick_x,this.gamepad1.right_stick_y);
             //assigning speeds
-            fl.setPower(-power[0]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
-            fr.setPower(power[1]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
-            bl.setPower(-power[2]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
-            br.setPower(power[3]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
+            fl.setPower(-power[0]);
+            fr.setPower(power[1]);
+            bl.setPower(-power[2]);
+            br.setPower(power[3]);
 
             /* --------------------------------------
             Telemetry Stuff
