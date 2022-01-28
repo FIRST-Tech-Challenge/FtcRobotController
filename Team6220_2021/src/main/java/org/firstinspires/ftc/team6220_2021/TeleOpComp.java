@@ -161,48 +161,42 @@ public class TeleOpComp extends MasterOpMode {
                 motorFL.setPower(0);
                 motorFR.setPower(0);
                 x = 0.7;
-                while (true) {
+                while (x < 0.85) {
                     motorRightDuck.setPower(x);
                     motorLeftDuck.setPower(x);
                     pauseMillis(150);
                     x += 0.05;
                     telemetry.addData("duckPower", motorRightDuck.getPower());
                     telemetry.update();
-                    if (x >= 0.85) {
-                        pauseMillis(1500);
-                        motorRightDuck.setPower(-.1);
-                        motorLeftDuck.setPower(-.1);
-                        pauseMillis(30);
-                        motorRightDuck.setPower(0);
-                        motorLeftDuck.setPower(0);
-                        x = 0.7;
-                        break;
-                    }
                 }
+                pauseMillis(1500);
+                motorRightDuck.setPower(-.1);
+                motorLeftDuck.setPower(-.1);
+                pauseMillis(30);
+                motorRightDuck.setPower(0);
+                motorLeftDuck.setPower(0);
+                x = 0.7;
             } else if (gamepad2.left_bumper) {
                 motorBR.setPower(0);
                 motorBL.setPower(0);
                 motorFL.setPower(0);
                 motorFR.setPower(0);
                 x = -0.7;
-                while (true) {
+                while (x > -0.85) {
                     motorRightDuck.setPower(x);
                     motorLeftDuck.setPower(x);
                     pauseMillis(150);
                     x -= 0.05;
                     telemetry.addData("duckPower", motorRightDuck.getPower());
                     telemetry.update();
-                    if (x <= -0.85) {
-                        pauseMillis(1500);
-                        motorRightDuck.setPower(.1);
-                        motorLeftDuck.setPower(.1);
-                        pauseMillis(30);
-                        motorRightDuck.setPower(0);
-                        motorLeftDuck.setPower(0);
-                        x = 0.7;
-                        break;
-                    }
                 }
+                pauseMillis(1500);
+                motorRightDuck.setPower(.1);
+                motorLeftDuck.setPower(.1);
+                pauseMillis(30);
+                motorRightDuck.setPower(0);
+                motorLeftDuck.setPower(0);
+                x = 0.7;
             }
 
             if (gamepad2.left_trigger > 0.5 && gamepad2.right_trigger > 0.5) {
