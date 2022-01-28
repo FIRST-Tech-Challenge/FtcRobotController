@@ -50,6 +50,7 @@ public abstract class Teleop extends LinearOpMode {
 
     int       freightArmTarget   = 0;         // Which arm position (encoder counts) to target
     double    freightArmPower    = 0.0;       // Which power to use for the movement
+    double    freightArmServoPos = 0.0;       // Which servo setting to target once movement starts
 
     final int FREIGHT_CYCLECOUNT_START = 20;  // Freight Arm just started moving (1st cycle)
     final int FREIGHT_CYCLECOUNT_SERVO = 10;  // Freight Arm off the floor (safe to rotate box servo)
@@ -104,7 +105,7 @@ public abstract class Teleop extends LinearOpMode {
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
-    boolean   rangeSensorPingPong = true;   // only send a new ping out every other control cycle
+    int       rangeSensorIndex = 1;         // only send a new ping out every other control cycle, and rotate sensors
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
@@ -155,14 +156,20 @@ public abstract class Teleop extends LinearOpMode {
 
             // If enabled, process ultrasonic range sensors
             if( rangeSensorsEnabled ) {
-                if( rangeSensorPingPong ) {
-                    processRangeSensors();
-                    rangeSensorPingPong = false;
+                // measure the next sensor
+                switch( rangeSensorIndex ) {
+                    case 1 : processRangeSensors(rangeSensorIndex); break;
+                    case 2 : break;  // nothing (skip this control cycle)
+                    case 3 : processRangeSensors(rangeSensorIndex); break;
+                    case 4 : break;  // nothing (skip this control cycle)
+                    case 5 : processRangeSensors(rangeSensorIndex); break;
+                    case 6 : break;  // nothing (skip this control cycle)
+                    case 7 : processRangeSensors(rangeSensorIndex); break;
+                    case 8 : break;  // nothing (skip this control cycle)
                 }
-                else {
-                    // skip this cycle
-                    rangeSensorPingPong = true;
-                }
+                // increment to next index
+                if( ++rangeSensorIndex > 8 )
+                    rangeSensorIndex = 1;
             } // rangeSensorsEnabled
 
             // Process all the driver/operator inputs
@@ -466,8 +473,9 @@ public abstract class Teleop extends LinearOpMode {
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_TRANSPORT1;
             freightArmPower      = 0.80;
+            freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            // rotate the box so the freight can't fall out
+            // rotate box so freight doesn't fall out (but dumps any DOUBLE-FREIGHT!)
             robot.boxServo.setPosition( robot.BOX_SERVO_STORED );
             // automatically turn OFF the sweeper
             robot.sweepMotor.setPower( 0.0 );  // OFF
@@ -480,8 +488,8 @@ public abstract class Teleop extends LinearOpMode {
             needCollectorLowered = true; // at the END! (AFTER freight-arm is in place)
             freightArmTarget     = robot.FREIGHT_ARM_POS_COLLECT;
             freightArmPower      = 0.20;
+            freightArmServoPos   = robot.BOX_SERVO_COLLECT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
         }
 
         //===================================================================
@@ -491,8 +499,8 @@ public abstract class Teleop extends LinearOpMode {
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;
             freightArmPower      = 0.95;
+            freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
@@ -500,8 +508,8 @@ public abstract class Teleop extends LinearOpMode {
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_MIDDLE;
             freightArmPower      = 0.95;
+            freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
@@ -509,8 +517,8 @@ public abstract class Teleop extends LinearOpMode {
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_SHARED;
             freightArmPower      = 0.50;
+            freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
@@ -518,8 +526,8 @@ public abstract class Teleop extends LinearOpMode {
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_BOTTOM;
             freightArmPower      = 0.95;
+            freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
 
         //===================================================================
@@ -538,7 +546,7 @@ public abstract class Teleop extends LinearOpMode {
             freightArmCycleCount--;
         }
         else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SERVO ) {
-            // we can eliminate this phase now...
+            robot.boxServo.setPosition( freightArmServoPos );
             freightArmCycleCount--;
         }
         else if( freightArmCycleCount > FREIGHT_CYCLECOUNT_CHECK ) {
@@ -1021,11 +1029,15 @@ public abstract class Teleop extends LinearOpMode {
     /*  extra 50/100 msec (ie, 1 or 2 sensors) in the loop time will create problems.  */
     /*  If getDistanceAsync() is used, then this warning doesn't apply.                */
     /*---------------------------------------------------------------------------------*/
-    void processRangeSensors() {
-        sonarRangeL = robot.updateSonarRangeL();
-        sonarRangeR = robot.updateSonarRangeR();
-        sonarRangeF = robot.updateSonarRangeF();
-        sonarRangeB = robot.updateSonarRangeB();
+    void processRangeSensors( int sensorNum ) {
+        // only send one ping per control cycle (left, right, front, or back)
+        switch( sensorNum ) {
+            case 1 : sonarRangeL = robot.updateSonarRangeL(); break;
+            case 3 : sonarRangeR = robot.updateSonarRangeR(); break;
+            case 5 : sonarRangeF = robot.updateSonarRangeF(); break;
+            case 7 : sonarRangeB = robot.updateSonarRangeB(); break;
+            default : break;
+        } // switch()
     } // processRangeSensors
 
     /*---------------------------------------------------------------------------------*/

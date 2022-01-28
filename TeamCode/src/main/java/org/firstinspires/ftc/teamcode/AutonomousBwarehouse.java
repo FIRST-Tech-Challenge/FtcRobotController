@@ -46,7 +46,7 @@ import java.lang.Math;
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
 @Autonomous(name="Autonomous Blue (warehouse)", group="7592", preselectTeleOp = "Teleop-Blue")
-@Disabled
+//@Disabled
 public class AutonomousBwarehouse extends AutonomousBase {
 
     // These constants define the desired driving/control characteristics
@@ -117,9 +117,9 @@ public class AutonomousBwarehouse extends AutonomousBase {
             telemetry.addData("Block Level", "%d", blockLevel );
             telemetry.addData("Sonar Range", "%.1f inches (52.8)", sonarRangeR/2.54 );
             telemetry.addData("Start delay", "%.1f seconds (dpad up/down)", collisionDelay );
-            telemetry.addData("Left Blue Alignment", "%.2f %b", FreightFrenzyPipeline.leftBlueAverage, FreightFrenzyPipeline.alignedBlueLeft);
-            telemetry.addData("Center Blue Alignment", "%.2f %b", FreightFrenzyPipeline.centerBlueAverage, FreightFrenzyPipeline.alignedBlueCenter);
-            telemetry.addData("Right Blue Alignment", "%.2f %b", FreightFrenzyPipeline.rightBlueAverage, FreightFrenzyPipeline.alignedBlueRight);
+            telemetry.addData("Left Blue Alignment", "%d %b", FreightFrenzyPipeline.leftBlueAverage, FreightFrenzyPipeline.alignedBlueLeft);
+            telemetry.addData("Center Blue Alignment", "%d %b", FreightFrenzyPipeline.centerBlueAverage, FreightFrenzyPipeline.alignedBlueCenter);
+            telemetry.addData("Right Blue Alignment", "%d %b", FreightFrenzyPipeline.rightBlueAverage, FreightFrenzyPipeline.alignedBlueRight);
             redAlignedCount = (FreightFrenzyPipeline.alignedRedLeft ? 1 : 0);
             redAlignedCount += (FreightFrenzyPipeline.alignedRedCenter ? 1 : 0);
             redAlignedCount += (FreightFrenzyPipeline.alignedRedRight ? 1 : 0);
@@ -142,7 +142,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
         blockLevel = FreightFrenzyPipeline.blockLevel;
-        FreightFrenzyPipeline.saveLastAutoImage();
+//      FreightFrenzyPipeline.saveLastAutoImage();
         webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------

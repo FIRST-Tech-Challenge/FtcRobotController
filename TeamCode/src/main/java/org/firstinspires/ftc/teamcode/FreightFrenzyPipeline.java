@@ -185,7 +185,7 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         // Extract the Cb channel from the image frame
         Core.extractChannel(YCrCb, Cb, 2);
         // Extract the Cr channel from the image frame
-        Core.extractChannel(YCrCb, Cr, 3);
+        Core.extractChannel(YCrCb, Cr, 1);
         // Pull data for the three sample zones from the Cb channel
         subMat1 = Cb.submat(new Rect(sub1PointA,sub1PointB) );
         subMat2 = Cb.submat(new Rect(sub2PointA,sub2PointB) );
