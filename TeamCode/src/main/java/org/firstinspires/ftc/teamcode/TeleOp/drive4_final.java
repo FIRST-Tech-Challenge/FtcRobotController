@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="driveChain3", group="Linear Opmode")
-public class drive3_full_omnidirectional_movement extends LinearOpMode {
+@TeleOp(name="driveChain4", group="Linear Opmode")
+public class drive4_final extends LinearOpMode {
 
     //there is no servo code in this program
 
@@ -25,6 +25,8 @@ public class drive3_full_omnidirectional_movement extends LinearOpMode {
     public double angleOfJoystick(double joystickY, double joystickX) { //getting angle of left joystick
 
         if (joystickY < 0 && joystickX == 0) return 3*3.14159265/2;
+
+        if (joystickY == 0 && joystickX <= 0) return 3.14159265;
 
         if (joystickY >= 0 && joystickX > 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX));
 
