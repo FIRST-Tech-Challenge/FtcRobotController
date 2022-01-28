@@ -49,7 +49,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     private static final String TAG = "FrenzyBot";
     public static int LIFT_LEVEL_THREE = 1820;
-    public static int LIFT_LEVEL_TWO = 1490;
+    public static int LIFT_LEVEL_TWO = 1500;
     public static int LIFT_LEVEL_ONE = 1380;
     public static int LIFT_SHARED_HUB = 400;
     public static int LIFT_MIN_EXTENSION = 450;
@@ -81,7 +81,8 @@ public class FrenzyBot extends FrenzyBaseBot {
     NormalizedColorSensor colorSensor;
 
     // Dropper Servo positions
-    private static double DROPPER_SERVO_POS_TRANSPORT = 0.45; // this is only to pick-up elements
+    private static double DROPPER_SERVO_POS_TRANSPORT = 0.5; // this is only to pick-up elements
+    private static double DROPPER_SERVO_POS_TRANSPORT_DOWN = 0.65;
     private static double DROPPER_SERVO_POS_START = 0.3;  //default pos to start and transport
     private static double DROPPER_SERVO_POS_DROP = 1;
 
@@ -596,6 +597,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
+    public void dropperTransportPositionDown(){
+        if (dropperServo != null) {
+            dropperServo.setPosition(DROPPER_SERVO_POS_TRANSPORT_DOWN);
+            // TODO: dropperServo.setPosition(frenzyConfig.getDropperPositionTransport());
+        }
+    }
+
     @BotAction(displayName = "Start intake", defaultReturn = "", isTerminator = false)
     public void startIntake() {
         resetDropper();
@@ -715,15 +723,14 @@ public class FrenzyBot extends FrenzyBaseBot {
     public void scoreAndFold() {
         dropElement();
         delayWait(700);
-        prepDropperToMove();
+        dropperTransportPositionDown();
         resetLift(false);
     }
 
     public void scoreAndFoldDyno() {
         dropElement();
         delayWait(700);
-        prepDropperToMove();
-        dropIntakeSimple();
+        dropperTransportPositionDown();
         resetLift(true);
     }
 

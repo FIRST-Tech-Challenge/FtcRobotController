@@ -258,7 +258,8 @@ public class FrenzyModeBase extends LinearOpMode {
     protected void handleTapeMeasureUpDown() {
         if (isButtonPressable()) {
             double val = gamepad2.left_stick_y;
-            robot.moveTapeMeasureUpDown(val);
+            startGamepadLockout();
+            robot.moveTapeMeasureUpDown(-val);
         }
     }
 
@@ -323,7 +324,7 @@ public class FrenzyModeBase extends LinearOpMode {
             if (gamepad2.start) {
                 startGamepadLockout();
                 setManualLiftMode(!manualLiftMode);
-                robot.intakeDropperHalfWay();
+                robot.intakeDropperNeutral();
             }
         }
     }
