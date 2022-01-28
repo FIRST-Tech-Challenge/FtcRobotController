@@ -1,39 +1,42 @@
-package org.firstinspires.ftc.teamcode.Chassis;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
 public class Drivechain {
+
+    DcMotorEx fl, fr, bl, br;
     public Drivechain(HardwareMap hardwareMap) {
-        fl = hardwareMap.get(DcMotor.class, "fl");
-        fl.resetDeviceConfigurationForOpMode();
-        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fl = hardwareMap.get(DcMotorEx.class, "fl");
+        // fl.resetDeviceConfigurationForOpMode();
+        // fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        // fl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        fr = hardwareMap.get(DcMotor.class, "fr");
-        fr.resetDeviceConfigurationForOpMode();
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr = hardwareMap.get(DcMotorEx.class, "fr");
+        // fr.resetDeviceConfigurationForOpMode();
+        // fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        // fr.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        bl = hardwareMap.get(DcMotor.class, "bl");
-        bl.resetDeviceConfigurationForOpMode();
-        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl = hardwareMap.get(DcMotorEx.class, "bl");
+        // bl.resetDeviceConfigurationForOpMode();
+        // bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        // bl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        br = hardwareMap.get(DcMotor.class, "br");
-        br.resetDeviceConfigurationForOpMode();
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br = hardwareMap.get(DcMotorEx.class, "br");
+        // br.resetDeviceConfigurationForOpMode();
+        // br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        // br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
     /*
    public static int FRONT_LEFT = 0;
@@ -47,53 +50,53 @@ public class Drivechain {
     /*private static double DRIVE_SPEED = 0.4;
     private static double ROTATE_SPEED = 0.3;*/
 
-    private DcMotor fl, fr, bl, br;
+
 
 
     /*
 
     double[] power = new double[4];
-    fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    fl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    fl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    fr.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    fr.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    bl.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    bl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    br.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 */
 
     public void init(Telemetry telemetry, HardwareMap hardwareMap) {
 
-//        fl = hardwareMap.get(DcMotor.class, "fl");
+//        fl = hardwareMap.get(DcMotorEx.class, "fl");
 //        fl.resetDeviceConfigurationForOpMode();
-//        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        fl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        fr = hardwareMap.get(DcMotor.class, "fr");
+//        fr = hardwareMap.get(DcMotorEx.class, "fr");
 //        fr.resetDeviceConfigurationForOpMode();
-//        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        fr.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        bl = hardwareMap.get(DcMotor.class, "bl");
+//        bl = hardwareMap.get(DcMotorEx.class, "bl");
 //        bl.resetDeviceConfigurationForOpMode();
-//        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        bl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        br = hardwareMap.get(DcMotor.class, "br");
+//        br = hardwareMap.get(DcMotorEx.class, "br");
 //        br.resetDeviceConfigurationForOpMode();
-//        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
+//        leftMotor = hardwareMap.get(DcMotorEx.class, "leftMotor");
 //        leftMotor.resetDeviceConfigurationForOpMode();
-//        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        leftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        leftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+//        rightMotor = hardwareMap.get(DcMotorEx.class, "rightMotor");
 //        rightMotor.resetDeviceConfigurationForOpMode();
-//        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        rightMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        rightMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         reset();
     }
@@ -120,11 +123,11 @@ public class Drivechain {
         //  }
 //
 //        leftMotor.setTargetPosition(100000);
-//        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        leftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 //        leftMotor.setPower(-0.8);
 //
 //        rightMotor.setTargetPosition(100000);
-//        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        rightMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 //        rightMotor.setPower(0.8);
 //
 
@@ -139,41 +142,45 @@ public class Drivechain {
     }
 
     public void resetTicks() {
-        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        // fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        // fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        // bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        // br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        leftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        leftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        rightMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        rightMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+    }
+    public void showTicks(Telemetry telemetry){
+        telemetry.addData("fl",fl.getCurrentPosition());
+        telemetry.addData("fr",fr.getCurrentPosition());
+        telemetry.addData("bl",bl.getCurrentPosition());
+        telemetry.addData("br",br.getCurrentPosition());
+        telemetry.update();
     }
 
-
-    public void moveRobot(Telemetry telemetry, int flposition, int frposition, int blposition, int brposition, double flpower, double frpower, double blpower, double brpower){
+    public void moveRobot(int flposition, int frposition, int blposition, int brposition, double flpower, double frpower, double blpower, double brpower){
 
         fl.setTargetPosition(flposition);
-        fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         fl.setPower(flpower);
 
         fr.setTargetPosition(frposition);
-        fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         fr.setPower(frpower);
 
         bl.setTargetPosition(blposition);
-        bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         bl.setPower(blpower);
 
         br.setTargetPosition(brposition);
-        br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         br.setPower(brpower);
 
-        telemetry.addData("",fl.getCurrentPosition());
-        telemetry.update();
 
         // fl.setPower(flpower);
         // fr.setPower(frpower);
@@ -190,7 +197,7 @@ public class Drivechain {
         move(JEWEL, 700, -0.2);
     }*/
 
-    public int getPos(DcMotor motor) {
+    public int getPos(DcMotorEx motor) {
         return motor.getCurrentPosition();
     }
 
@@ -242,42 +249,42 @@ public class Drivechain {
             }
         }*/
 
-//    public void runOpMode() throws InterruptedException {
+    //    public void runOpMode() throws InterruptedException {
 //
-//        fl = hardwareMap.get(DcMotor.class, "fl");
+//        fl = hardwareMap.get(DcMotorEx.class, "fl");
 //        // fl.resetDeviceConfigurationForOpMode();
-//        // fl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        // fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        // fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        // fl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        fr = hardwareMap.get(DcMotor.class, "fr");
+//        fr = hardwareMap.get(DcMotorEx.class, "fr");
 //        // fr.resetDeviceConfigurationForOpMode();
-//        // fr.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        // fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        // fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        // fr.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        bl = hardwareMap.get(DcMotor.class, "bl");
+//        bl = hardwareMap.get(DcMotorEx.class, "bl");
 //        // bl.resetDeviceConfigurationForOpMode();
-//        // bl.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        // bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        // bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        // bl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        br = hardwareMap.get(DcMotor.class, "br");
+//        br = hardwareMap.get(DcMotorEx.class, "br");
 //        // br.resetDeviceConfigurationForOpMode();
-//        // br.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        // br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        // br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        // br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        // leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
+//        // leftMotor = hardwareMap.get(DcMotorEx.class, "leftMotor");
 //        // leftMotor.resetDeviceConfigurationForOpMode();
-//        // leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        // leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        // leftMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        // leftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
-//        // rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+//        // rightMotor = hardwareMap.get(DcMotorEx.class, "rightMotor");
 //        // rightMotor.resetDeviceConfigurationForOpMode();
-//        // rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        // rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        // rightMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        // rightMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 //
 //
-//        // leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
+//        // leftMotor = hardwareMap.get(DcMotorEx.class, "leftMotor");
 //
-//        // rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+//        // rightMotor = hardwareMap.get(DcMotorEx.class, "rightMotor");
 //
 //        waitForStart();
 //

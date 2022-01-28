@@ -1,117 +1,105 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OnBotJava;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-public class Carousel {
-    private DcMotor carouselTurningMotor;
-    private DistanceSensor distance_sensor;
-    // private DigitalChannel touchSensor;
-    int time = 0;
-    // Constructor
-    public Carousel(HardwareMap hardwareMap) {
-        carouselTurningMotor = hardwareMap.dcMotor.get("carouselTurningMotor");
-        distance_sensor = hardwareMap.get(DistanceSensor.class, "carouselDistanceSensor");
-        // touchSensor = hardwareMap.digitalChannel.get("carouselTouchSensor");
+import org.firstinspires.ftc.teamcode.Chassis.Chassis;
+import org.firstinspires.ftc.teamcode.Carousel;
 
-        // Sets the touch sensor mode to an input so we can call getState()
-        // touchSensor.setMode(DigitalChannel.Mode.INPUT);
-    }
+@Autonomous
+public class PosFourVAR extends LinearOpMode {
 
-    public void CarouselHandler() {
-        // if the state of touch sensor is true, turn on motor. if not then set power to 0
-        // // if (touchSensor.getState()) {
-        //     carouselTurningMotor.setPower(0.2);
-        // } else {
-        //     carouselTurningMotor.setPower(0);
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+        Carousel AutonomousCarousel = new Carousel(hardwareMap);
+        DriveChain AutonomousDC = new DriveChain(hardwareMap);
+
+        waitForStart();
+
+
+
+        /*
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(telemetry, -925, -925, -925, -925, 0.25, 0.25, 0.25, 0.25);
+
+        sleep(3000);
+
+        AutonomousCarousel.reset();
+        AutonomousCarousel.CarouselAutonomous(1600, 0.3);
+
+        sleep(3000);
+
+        //AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(telemetry, 0, 0, 0, 0, 0.25, 0.25, 0.25, 0.25);
+        */
+
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(-700, 700, -700, 700, 0.5, 0.5, -0.5, -0.5); //forward
+        while(AutonomousDC.isbusy()){
+            sleep(100);
+        }
+        sleep(1000);
+
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(1000, 1000, 1000, 1000, 0.8, 0.5, 0.5, 0.5); //rotate c
+        while(AutonomousDC.isbusy()){
+            sleep(100);
+        }
+        sleep(2000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(1200, 1200, -1200, 1200, 0.5, 0.5, -0.5, -0.5); //forward
+        while(AutonomousDC.isbusy()){
+            sleep(100);
+        }
+        sleep(1000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(1000, 1000, 1000, 1000, 0.8, 0.5, 0.5, 0.5);  //forward
+        while(AutonomousDC.isbusy()){
+            sleep(100);
+        }
+        sleep(1000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(1200, 1200, -1200, 1200, 0.5, 0.5, -0.5, -0.5); //forward
+        while(AutonomousDC.isbusy()){
+            sleep(100);
+        }
+        // AutonomousDC.resetTicks();
+        // AutonomousDC.moveRobot(1000, 1000, 1000, 1000, 0.5, 0.5, 0.5, 0.5); //forward
+        // while(AutonomousDC.isbusy()){
+        //     sleep(100);
         // }
+        // sleep(1000);
+        //  AutonomousDC.resetTicks();
+        // AutonomousDC.moveRobot(-800, 800, -800, 800, 0.5, 0.5, -0.5, -0.5); //forward
+        // while(AutonomousDC.isbusy()){
+        //     sleep(100);
+        // }
+        // sleep(1000);
+        // sleep(30);
+
+        // AutonomousDC.resetTicks();
+        // AutonomousDC.moveRobot(0, 3900, 0, 3900, 0.6, 0.6, 0.6, 0.6);
+        //  sleep(4500);
+        // AutonomousDC.showTicks(telemetry);
+
+
+        // AutonomousDC.resetTicks();
+        // AutonomousDC.moveRobot(-60, 60, -60, 60, 0.07, 0.07, 0.07, 0.07);
+
+        // AutonomousCarousel.CarouselAutonomous(-2000, 0.3);
+
+        // sleep(3000);
+
+        // //AutonomousDC.resetTicks();
+        // //AutonomousDC.moveRobot(telemetry, 0, 0, 0, 0, 0.25, 0.25, 0.25, 0.25);
+
+
+        // sleep(5000);
+
+        // AutonomousCarousel.reset();
+
+
+
     }
-
-
-
-    public void CarouselAutonomous(int time, double power) throws InterruptedException {
-        // while (carouselTurningMotor.getCurrentPosition() < time){
-        //     if (distance_sensor.getDistance(DistanceUnit.INCH) < 10){
-        carouselTurningMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        carouselTurningMotor.setTargetPosition(time);
-        carouselTurningMotor.setPower(power);
-        //      }
-        //   }
-
-    }
-    public void stopCarousel(){
-        carouselTurningMotor.setPower(0.0);
-
-    }
-
-    public void reset(){
-        carouselTurningMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    int mp = 1;
-    boolean pI;
-    boolean toggle;
-    public void toggleDirection(boolean bt){
-        if (bt && !pI){
-            //toggle = !toggle;
-            mp *= -1;
-            pI = true;
-        }
-
-        pI = bt;
-
-            /*
-            if(toggle){
-                mp = 1
-            } else {
-
-            }*/
-
-            /*else if (clockwise == false){
-
-                carouselTurningMotor.setPower(0.35);
-
-
-            }*/
-    }
-
-    boolean prevInput;
-    boolean tg;
-    public void toggleCarousel(boolean button){
-        if (button && !prevInput){
-            tg = !tg;
-            prevInput = true;
-        }
-        prevInput = button;
-
-        if(tg){
-            carouselTurningMotor.setPower(.3*mp);
-
-        } else {
-            carouselTurningMotor.setPower(0);
-        }
-
-            /*else if (clockwise == false){
-
-                carouselTurningMotor.setPower(0.35);
-
-
-            }*/
-    }
-
-
-
-
-    //mod = true for positive power
-    public void carouselBoolean(boolean button, boolean mod){
-        int mpl;
-        if(mod){mpl=1;}else{mpl = -1;}
-        if(button){carouselTurningMotor.setPower(.35*mpl);}else{carouselTurningMotor.setPower(0*mpl);}
-    }
-
 }
