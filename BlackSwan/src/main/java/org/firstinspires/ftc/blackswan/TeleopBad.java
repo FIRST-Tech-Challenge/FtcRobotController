@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name="TeleopNoOptimisation")
 
-public class TeleopNoOptimisation extends LinearOpMode {
+public class TeleopBad extends LinearOpMode {
 
     double MAX_SPEED = 0.9;
 
