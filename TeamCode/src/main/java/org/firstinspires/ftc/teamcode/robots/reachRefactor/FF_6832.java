@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -113,7 +114,7 @@ public class FF_6832 extends OpMode {
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
     public static double FORWARD_SCALING_FACTOR = 0.1; // scales the target linear robot velocity from tele-op controls
     public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * Math.toDegrees(1) * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
-    public static double[] CHASSIS_DISTANCE_LEVELS = new double[] {
+    public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             Constants.MIN_CHASSIS_LENGTH,
             Constants.MIN_CHASSIS_LENGTH + (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
             Constants.MIN_CHASSIS_LENGTH + 2 * (Constants.MAX_CHASSIS_LENGTH - Constants.MIN_CHASSIS_LENGTH) / 3,
@@ -167,7 +168,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, false);
         alliance = Constants.Alliance.BLUE;
         startingPosition = Constants.Position.START_BLUE_UP;
         auto = new Autonomous(robot);
@@ -179,6 +180,7 @@ public class FF_6832 extends OpMode {
         visionProviderFinalized = true;
 
         dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25);
 
         robot.articulate(Robot.Articulation.SELFTEST);
     }
@@ -272,9 +274,9 @@ public class FF_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         initializing = false;
         robot.articulate(Robot.Articulation.START);
-        robot.driveTrain.setMaintainChassisDistanceEnabled(true);
+        robot.driveTrain.setMaintainChassisLengthEnabled(true);
         robot.driveTrain.setAntiTippingEnabled(false);
-        robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[0]);
+        robot.driveTrain.setTargetLength(CHASSIS_LENGTH_LEVELS[0]);
         auto.visionProvider.shutdownVision();
     }
 
@@ -296,10 +298,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
-        if(usingDesmosDrive)
-            robot.driveTrain.driveDesmos(forward, rotate, loopTime / 1e9);
-        else
-            robot.driveTrain.drive(forward, rotate);
+        robot.driveTrain.setDrivePower(new Pose2d(forward, 0, rotate));
     }
 
     private void handleTeleOp() { // apple
@@ -324,7 +323,7 @@ public class FF_6832 extends OpMode {
             robot.articulate(Robot.Articulation.TRANSFER);
 
         if(stickyGamepad1.a)
-            robot.driveTrain.handleDuckSpinnerToggle(alliance.getMod());
+            robot.driveTrain.setDuckSpinnerPower(alliance.getMod());
 
         // gamepad 2
 
@@ -335,7 +334,7 @@ public class FF_6832 extends OpMode {
             robot.crane.Dump();
 
         if(stickyGamepad2.a) //spin carousel
-            robot.driveTrain.handleDuckSpinnerToggle(alliance.getMod());
+            robot.driveTrain.setDuckSpinnerPower(alliance.getMod());
 
         if(stickyGamepad2.dpad_left) //set for shared shipping hub
             //todo "Home" is temporary - need to create a field-centric shared-shipping
@@ -366,8 +365,8 @@ public class FF_6832 extends OpMode {
         else if(stickyGamepad2.left_bumper)
             chassisDistanceLevelIndex--;
 
-        chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_DISTANCE_LEVELS.length);
-        robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
+        chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_LENGTH_LEVELS.length);
+        robot.driveTrain.setTargetLength(CHASSIS_LENGTH_LEVELS[chassisDistanceLevelIndex]);
 
         if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
             handleTankDrive();
@@ -421,17 +420,16 @@ public class FF_6832 extends OpMode {
 
         switch(diagnosticStep) {
             case DRIVETRAIN_LEFT_MOTOR:
-                handleDiagnosticMotorControls(robot.driveTrain::setFrontLeftTargetVelocity);
+                handleDiagnosticMotorControls(robot.driveTrain::setLeftPower);
                 break;
             case DRIVETRAIN_RIGHT_MOTOR:
-                handleDiagnosticMotorControls(robot.driveTrain::setFrontRightTargetVelocity);
+                handleDiagnosticMotorControls(robot.driveTrain::setRightPower);
                 break;
             case DRIVETRAIN_MIDDLE_MOTOR:
-                handleDiagnosticMotorControls(robot.driveTrain::setMiddleTargetVelocity);
+                handleDiagnosticMotorControls(robot.driveTrain::setSwervePower);
                 break;
             case DRIVETRAIN_MIDDLE_SWIVEL_MOTOR:
-                robot.driveTrain.setMaintainSwivelAngleEnabled(false);
-                robot.driveTrain.setMaintainSwivelAngleCorrection(-gamepad1.right_stick_y);
+                robot.driveTrain.setSwivelAngle(-gamepad1.right_stick_y);
                 break;
             case CRANE_SHOULDER_SERVO:
                 handleDiagnosticServoControls(robot.crane::getShoulderTargetPos, robot.crane::setShoulderTargetPosRaw);
@@ -452,7 +450,7 @@ public class FF_6832 extends OpMode {
                 handleDiagnosticServoControls(robot.gripper::getPitchTargetPos, robot.gripper::setPitchTargetPosDiag);
                 break;
             case DUCK_SPINNER:
-                robot.driveTrain.duckSpinner.setPower(-gamepad1.right_stick_y);
+                robot.driveTrain.setDuckSpinnerPower(-gamepad1.right_stick_y);
                 break;
         }
     }
@@ -505,7 +503,7 @@ public class FF_6832 extends OpMode {
         telemetry.addLine(telemetryName);
         packet.addLine(telemetryName);
 
-        for(Map.Entry<String, Object> entry: telemetryMap.entrySet()) {
+        for (Map.Entry<String, Object> entry : telemetryMap.entrySet()) {
             String line = String.format("%s: %s", entry.getKey(), entry.getValue());
             telemetry.addLine(line);
             packet.addLine(line);
@@ -515,7 +513,24 @@ public class FF_6832 extends OpMode {
         packet.addLine("");
     }
 
-    private void updateTelemetry() {
+    private boolean joysticksActive(Gamepad gamepad) {
+        return  UtilMethods.notDeadZone(gamepad.left_stick_x, JOYSTICK_DEADZONE_THRESHOLD) ||
+                UtilMethods.notDeadZone(gamepad.left_stick_y, JOYSTICK_DEADZONE_THRESHOLD) ||
+                UtilMethods.notDeadZone(gamepad.right_stick_x, JOYSTICK_DEADZONE_THRESHOLD) ||
+                UtilMethods.notDeadZone(gamepad.right_stick_y, JOYSTICK_DEADZONE_THRESHOLD);
+    }
+
+    private void update() {
+        if(initializing) {
+            auto.visionProvider.update();
+        }
+
+        gamepad1JoysticksActive = joysticksActive(gamepad1);
+        gamepad2JoysticksActive = joysticksActive(gamepad2);
+
+        stickyGamepad1.update();
+        stickyGamepad2.update();
+
         TelemetryPacket packet = new TelemetryPacket();
         Map<String, Object> opModeTelemetryMap = new HashMap<>();
 
@@ -530,7 +545,7 @@ public class FF_6832 extends OpMode {
         opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         opModeTelemetryMap.put("Active", active);
         opModeTelemetryMap.put("State", String.format("(%d): %s", gameStateIndex, gameState.getName()));
-        opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_DISTANCE_LEVELS.length));
+        opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_LENGTH_LEVELS.length));
         opModeTelemetryMap.put("forward", forward);
         opModeTelemetryMap.put("rotate", rotate);
         opModeTelemetryMap.put("a_c", forward * Math.toRadians(rotate));
@@ -558,35 +573,11 @@ public class FF_6832 extends OpMode {
         // handling vision telemetry
         handleTelemetry(auto.visionProvider.getTelemetry(debugTelemetryEnabled), auto.visionProvider.getTelemetryName(), packet);
 
-        robot.drawFieldOverlay(packet);
+        robot.update(packet.fieldOverlay());
+
         dashboard.sendTelemetryPacket(packet);
-
         telemetry.update();
-    }
-
-    private boolean joysticksActive(Gamepad gamepad) {
-        return  UtilMethods.notDeadZone(gamepad.left_stick_x, JOYSTICK_DEADZONE_THRESHOLD) ||
-                UtilMethods.notDeadZone(gamepad.left_stick_y, JOYSTICK_DEADZONE_THRESHOLD) ||
-                UtilMethods.notDeadZone(gamepad.right_stick_x, JOYSTICK_DEADZONE_THRESHOLD) ||
-                UtilMethods.notDeadZone(gamepad.right_stick_y, JOYSTICK_DEADZONE_THRESHOLD);
-    }
-
-    private void update() {
-        if(initializing) {
-            auto.visionProvider.update();
-            robot.driveTrain.setPose(startingPosition);
-        }
-
-        gamepad1JoysticksActive = joysticksActive(gamepad1);
-        gamepad2JoysticksActive = joysticksActive(gamepad2);
-
-        updateTelemetry();
 
         updateTiming();
-
-        stickyGamepad1.update();
-        stickyGamepad2.update();
-
-        robot.update();
     }
 }

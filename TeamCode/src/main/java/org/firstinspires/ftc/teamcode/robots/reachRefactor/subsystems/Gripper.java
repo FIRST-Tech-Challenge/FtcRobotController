@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -37,7 +38,7 @@ public class Gripper implements Subsystem{
     private Articulation articulation;
     private Map<Gripper.Articulation, StateMachine> articulationMap;
 
-    public Gripper(HardwareMap hardwareMap){
+    public Gripper(HardwareMap hardwareMap, boolean simulated){
         servo = hardwareMap.get(Servo.class, "gripperServo");
         pitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
 
@@ -70,7 +71,7 @@ public class Gripper implements Subsystem{
     }
 
     @Override
-    public void update() {
+    public void update(Canvas fieldOverlay) {
         articulate(articulation);
         servo.setPosition(servoNormalize(targetPos));
         pitchServo.setPosition(servoNormalize(pitchTargetPos));

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -40,7 +41,7 @@ public class Turret implements Subsystem {
         motor.setPower(1);
     }
 
-    public void update(){
+    public void update(Canvas fieldOverlay){
         if(targetHeading > 90)
             targetHeading = 90;
         else if(targetHeading < -90)

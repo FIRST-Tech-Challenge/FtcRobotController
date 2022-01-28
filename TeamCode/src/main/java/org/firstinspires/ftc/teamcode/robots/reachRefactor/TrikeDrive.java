@@ -20,13 +20,13 @@ public abstract class TrikeDrive extends Drive {
     private double trackWidth;
     private Localizer localizer;
 
-    public TrikeDrive(double kV, double kA, double kStatic, double trackWidth) {
+    public TrikeDrive(double kV, double kA, double kStatic, double trackWidth, boolean simulated) {
         this.kV = kV;
         this.kA = kA;
         this.kStatic = kStatic;
         this.trackWidth = trackWidth;
 
-        localizer = new TrikeLocalizer(this);
+        localizer = simulated ? new TrikeLocalizer(this, false) : new TrikeLocalizer(this, true);
     }
 
     class TrikeLocalizer implements Localizer {
@@ -42,10 +42,6 @@ public abstract class TrikeDrive extends Drive {
             this.drive = drive;
             this.useExternalHeading = useExternalHeading;
             lastWheelPositions = new ArrayList<>();
-        }
-
-        public TrikeLocalizer(TrikeDrive drive) {
-            this(drive, true);
         }
 
         @Override
@@ -95,21 +91,6 @@ public abstract class TrikeDrive extends Drive {
         }
     }
 
-    @Override
-    public void setDriveSignal(@NonNull DriveSignal driveSignal) {
-        List<Double> velocities = TrikeKinematics.robotToWheelVelocities(driveSignal.getVel(), trackWidth, getChassisLength());
-        List<Double> accelerations = TrikeKinematics.robotToWheelAccelerations(driveSignal.getAccel(), trackWidth, getChassisLength());
-        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
-
-        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
-    }
-
-    @Override
-    public void setDrivePower(@NonNull Pose2d drivePower) {
-        List<Double> powers = TrikeKinematics.robotToWheelVelocities(drivePower, trackWidth, getChassisLength());
-        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
-    }
-
     @NonNull
     @Override
     public Localizer getLocalizer() {
@@ -131,9 +112,9 @@ public abstract class TrikeDrive extends Drive {
 
     public abstract List<Double> getWheelVelocities();
 
-    public abstract List<Double> getModuleOrientations();
+    public abstract double getSwivelAngle();
 
-    public abstract void setModuleOrientations(double swerve);
+    public abstract void setSwivelAngle(double swivelAngle);
 
     public abstract void setMotorPowers(double left, double right, double swerve);
 }

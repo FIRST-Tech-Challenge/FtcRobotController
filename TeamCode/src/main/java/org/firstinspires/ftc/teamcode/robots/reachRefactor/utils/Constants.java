@@ -24,6 +24,7 @@ public class Constants {
     public static double GEAR_RATIO = 1;
 
     // constraints
+    public static double SWERVE_TICKS_PER_REVOLUTION = 1740;
     public static final double TICKS_PER_REV = 1120;
     public static final double MAX_RPM = 150;
 
@@ -42,6 +43,14 @@ public class Constants {
     public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = Math.toRadians(60);
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
+
+    // gear ratio: 4 * 3 * 3 : 1,
+
+    //----------------------------------------------------------------------------------------------
+    // Simulation
+    //----------------------------------------------------------------------------------------------
+
+    public static boolean USE_MOTOR_SMOOTHING = true;
 
     //----------------------------------------------------------------------------------------------
     // Enums
@@ -79,6 +88,10 @@ public class Constants {
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+    }
+
+    public static double inchesToEncoderTicks(double inches) {
+        return (inches * TICKS_PER_REV) / (WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO);
     }
 
     public static double rpmToVelocity(double rpm) {

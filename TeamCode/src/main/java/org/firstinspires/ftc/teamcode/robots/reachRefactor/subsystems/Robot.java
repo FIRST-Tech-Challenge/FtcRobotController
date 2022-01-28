@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -16,19 +17,21 @@ import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Config
 public class Robot implements Subsystem {
     // subsystems
     public DriveTrain driveTrain;
+    public Turret turret;
     public Crane crane;
     public Gripper gripper;
     public Subsystem[] subsystems;
 
     // sensors
-    public DigitalChannel freightSensor;
-
+    private DigitalChannel freightSensor;
+    private List<LynxModule> hubs;
 
     // state
     private Articulation articulation;
@@ -41,67 +44,71 @@ public class Robot implements Subsystem {
 
     private Map<Articulation, StateMachine> articulationMap;
 
-    public Robot(HardwareMap hardwareMap) {
+    public Robot(HardwareMap hardwareMap, boolean simulated) {
+        hubs = hardwareMap.getAll(LynxModule.class);
+        for(LynxModule module : hubs) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
         // initializing subsystems
-        driveTrain = new DriveTrain(hardwareMap);
-        crane = new Crane(hardwareMap);
-        gripper = new Gripper(hardwareMap);
+        driveTrain = new DriveTrain(hardwareMap, simulated);
+        turret = new Turret(hardwareMap);
+        crane = new Crane(hardwareMap, turret, simulated);
+        gripper = new Gripper(hardwareMap, simulated);
         subsystems = new Subsystem[] {driveTrain, crane, gripper};
 
         articulation = Articulation.MANUAL;
 
         articulationMap = new HashMap<>();
-        articulationMap.put(Articulation.SELFTEST, selftest);
         articulationMap.put(Articulation.START, start);
-        articulationMap.put(Articulation.LEGALSTARTPOS, startpos);
         articulationMap.put(Articulation.DIAGNOSTIC, diagnostic);
         articulationMap.put(Articulation.TRANSFER, transfer);
     }
 
-    public void drawFieldOverlay(TelemetryPacket packet) {
-        Canvas fieldOverlay = packet.fieldOverlay();
-
-        double[] pose = driveTrain.getPose();
-
-        SimpleMatrix position = new SimpleMatrix(new double[][] {{ pose[0], pose[1] }});
-        double heading = pose[2];
-
-        // calculating wheel positions
-        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
-        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
-        SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
-
-        leftWheel = position.plus(UtilMethods.rotateVector(leftWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
-        rightWheel = position.plus(UtilMethods.rotateVector(rightWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
-        swerveWheel = position.plus(UtilMethods.rotateVector(swerveWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
-
-        // drawing axles
-        CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, AXLE_STROKE_COLOR);
-        CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, AXLE_STROKE_COLOR);
-
-        // drawing wheel vectors
-        SimpleMatrix genericWheelVector = new SimpleMatrix(new double[][]
-                {{ 0, Constants.WHEEL_RADIUS * 2 * INCHES_PER_METER }}
-        );
-        CanvasUtils.drawLine(fieldOverlay, leftWheel, leftWheel.plus(
-            UtilMethods.rotateVector(
-                genericWheelVector, Math.toRadians(heading)
-            )
-        ), WHEEL_STROKE_COLOR);
-        CanvasUtils.drawLine(fieldOverlay, rightWheel, rightWheel.plus(
-            UtilMethods.rotateVector(
-                genericWheelVector, Math.toRadians(heading)
-            )
-        ), WHEEL_STROKE_COLOR);
-        CanvasUtils.drawLine(fieldOverlay, swerveWheel, swerveWheel.plus(
-            UtilMethods.rotateVector(
-                UtilMethods.rotateVector(
-                    genericWheelVector,
-                        Math.toRadians(heading)
-                ), Math.toRadians(driveTrain.getSwivelAngle())
-            )
-        ), WHEEL_STROKE_COLOR);
-    }
+//    public void drawFieldOverlay(TelemetryPacket packet) {
+//        Canvas fieldOverlay = packet.fieldOverlay();
+//
+//        double[] pose = driveTrain.getPose();
+//
+//        SimpleMatrix position = new SimpleMatrix(new double[][] {{ pose[0], pose[1] }});
+//        double heading = pose[2];
+//
+//        // calculating wheel positions
+//        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
+//        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
+//        SimpleMatrix swerveWheel = new SimpleMatrix(new double[][] {{ 0, -driveTrain.getChassisDistance() }});
+//
+//        leftWheel = position.plus(UtilMethods.rotateVector(leftWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
+//        rightWheel = position.plus(UtilMethods.rotateVector(rightWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
+//        swerveWheel = position.plus(UtilMethods.rotateVector(swerveWheel, Math.toRadians(heading))).scale(INCHES_PER_METER);
+//
+//        // drawing axles
+//        CanvasUtils.drawLine(fieldOverlay, leftWheel, rightWheel, AXLE_STROKE_COLOR);
+//        CanvasUtils.drawLine(fieldOverlay, leftWheel.plus(rightWheel).divide(2), swerveWheel, AXLE_STROKE_COLOR);
+//
+//        // drawing wheel vectors
+//        SimpleMatrix genericWheelVector = new SimpleMatrix(new double[][]
+//                {{ 0, Constants.WHEEL_RADIUS * 2 * INCHES_PER_METER }}
+//        );
+//        CanvasUtils.drawLine(fieldOverlay, leftWheel, leftWheel.plus(
+//            UtilMethods.rotateVector(
+//                genericWheelVector, Math.toRadians(heading)
+//            )
+//        ), WHEEL_STROKE_COLOR);
+//        CanvasUtils.drawLine(fieldOverlay, rightWheel, rightWheel.plus(
+//            UtilMethods.rotateVector(
+//                genericWheelVector, Math.toRadians(heading)
+//            )
+//        ), WHEEL_STROKE_COLOR);
+//        CanvasUtils.drawLine(fieldOverlay, swerveWheel, swerveWheel.plus(
+//            UtilMethods.rotateVector(
+//                UtilMethods.rotateVector(
+//                    genericWheelVector,
+//                        Math.toRadians(heading)
+//                ), Math.toRadians(driveTrain.getSwivelAngle())
+//            )
+//        ), WHEEL_STROKE_COLOR);
+//    }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
@@ -118,9 +125,12 @@ public class Robot implements Subsystem {
     }
 
     @Override
-    public void update() {
+    public void update(Canvas fieldOverlay) {
+        for (LynxModule module : hubs) {
+            module.clearBulkCache();
+        }
         for(Subsystem subsystem: subsystems)
-            subsystem.update();
+            subsystem.update(fieldOverlay);
 
         articulate(articulation);
     }
@@ -149,31 +159,16 @@ public class Robot implements Subsystem {
     }
 
     // Misc. Articulations
-    private Stage selfTest = new Stage();
-    private StateMachine selftest = UtilMethods.getStateMachine(selfTest)
-            .addSingleState(() -> gripper.Set())
-            .addState(() -> crane.articulate(Crane.Articulation.INIT))
-            .build();
-
-    private Stage legalStartPos = new Stage();
-    private StateMachine startpos = UtilMethods.getStateMachine(legalStartPos)
-            //todo - move deploy duckspinner to end of auton:
-            // .addTimedState(.75f, () -> driveTrain.handleDuckSpinner(-0.5), () -> driveTrain.handleDuckSpinner(0))
-            .addState(() -> crane.articulate(Crane.Articulation.SIZING)) //fold the crane
-            .addSingleState(()-> gripper.Lift()) //lift the gripper to vertical
-//            .addSingleState(() -> driveTrain.setTargetChassisDistance(DEFAULT_TARGET_DISTANCE))
-            .addSingleState(() -> driveTrain.setMaintainChassisDistanceEnabled(false)) //todo-make this false when ready to fix maintainChassisDistance
-            .build();
-
     private Stage diagnosticStage = new Stage();
     private StateMachine diagnostic = UtilMethods.getStateMachine(diagnosticStage)
             // testing drivetrain
-            .addTimedState(3f, () -> {
-                driveTrain.drive(0.25, 0);
-            }, () -> {})
-            .addTimedState(3f, () -> {
-                driveTrain.drive(0, Math.PI / 2);
-            }, () -> {})
+            // TODO: change driveTrain.drive to use trajectory sequence runner
+//            .addTimedState(3f, () -> {
+//                driveTrain.drive(0.25, 0);
+//            }, () -> {})
+//            .addTimedState(3f, () -> {
+//                driveTrain.drive(0, Math.PI / 2);
+//            }, () -> {})
 
             // testing crane
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
@@ -224,7 +219,7 @@ public class Robot implements Subsystem {
 
     private Stage startStage = new Stage();
     private StateMachine start = UtilMethods.getStateMachine(startStage)
-            .addTimedState(2, () -> driveTrain.handleDuckSpinner(0.5), () -> driveTrain.handleDuckSpinner(0))
+            .addTimedState(2, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
             .build();
 
     public boolean articulate(Articulation articulation) {

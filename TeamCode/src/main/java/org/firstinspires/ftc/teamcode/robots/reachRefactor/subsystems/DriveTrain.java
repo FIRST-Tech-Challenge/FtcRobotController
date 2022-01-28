@@ -1,574 +1,344 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
+import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
-import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
-import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
-import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.Range;
 
-import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.TrikeDrive;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.TrikeKinematics;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.VoltageSensorSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.MAX_CHASSIS_LENGTH;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.MIN_CHASSIS_LENGTH;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.WHEEL_RADIUS;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.wrap360;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.*;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import kotlin._Assertions;
 
 @Config
-public class DriveTrain implements Subsystem {
-
-    // motors
-    public DcMotorEx motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner;
-    private DcMotorEx[] motors;
-
-    // sensors
-    private BNO055IMU imu;
-    private DistanceSensor sensorChassisDistance;
-
-    // state
-    private double targetFrontLeftVelocity, targetFrontRightVelocity, targetMiddleVelocity, targetSwivelAngle;
-    private double targetLinearVelocity, targetAngularVelocity, lastTargetAngularVelocity;
-
-    private double swivelAngle;
-    private double chassisDistance, targetChassisDistance;
-
-    private boolean middleReversed, smoothingEnabled, antiTippingEnabled;
-    private long lastLoopTime, loopTime;
-
-    private double[] offsetAngles;
-
-    private TrajectorySequenceRunner trajectorySequenceRunner;
-
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(Constants.MAX_VEL, Constants.MAX_ANG_VEL, Constants.TRACK_WIDTH);
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(Constants.MAX_ACCEL);
-
-    private TrajectoryFollower follower;
-
-
-    // PID
-    private PIDController turnPID, swivelPID, chassisDistancePID;
-    private double maintainSwivelAngleCorrection, maintainChassisDistanceCorrection;
-    private boolean maintainChassisDistanceEnabled, maintainSwivelAngleEnabled;
-
-    // smoothers
-    private ExponentialSmoother linearSmoother;
-    private ExponentialSmoother angularSmoother;
-
-    // constants
-    public static final String TELEMETRY_NAME = "Drive Train";
-
-    public static PIDCoefficients DRIVE_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients ROTATE_PID_COEFFICIENTS = new PIDCoefficients(0.005, 0, .13);
-    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
-    public static PIDCoefficients DIST_PID_COEFFICIENTS = new PIDCoefficients(2.0, 0, 0.5);
-    public static PIDCoefficients CHASSIS_DISTANCE_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0,  0.3);
-
-    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
+public class DriveTrain extends TrikeDrive implements Subsystem {
+    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0.01, 0, 0.01);
     public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.01, 0, 0);
+
+    public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
+    public static PIDCoefficients CHASSIS_LENGTH_PID_COEFFICIENTS = new PIDCoefficients(0.2, 0,  0.3);
+    public static double SWIVEL_PID_TOLERANCE = 10;
 
     public static double VX_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
     public static double MAX_ANGULAR_ACCELERATION = 1000;
-    public static double SWIVEL_PID_TOLERANCE = 10;
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    public static double LINEAR_SMOOTHING_FACTOR = 0.2;
-    public static double ANGULAR_SMOOTHING_FACTOR = 0.2;
+    private TrajectorySequenceRunner trajectorySequenceRunner;
+    private TrajectoryFollower follower;
 
-    public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 0.07;
-    public static double DISTANCE_TARGET_TO_BACK_WHEEL = 0.18;
+    private List<DcMotorEx> motors;
+    private DcMotorEx leftMotor, rightMotor, swerveMotor, swivelMotor; // swerveMotor drives the module, swivelMotor rotates the module
+    private DcMotorEx duckSpinner;
+    private BNO055IMU imu;
 
-    public static double SWERVE_TICKS_PER_REVOLUTION = 1740;
-    public static double TICKS_PER_REVOLUTION = MotorConfigurationType.getMotorType(RevRobotics40HdHexMotor.class).getTicksPerRev();
-    public static double TICKS_PER_METER = TICKS_PER_REVOLUTION / (2 * Math.PI * Constants.WHEEL_RADIUS); // TODO: use TPM_CALIBRATION game state to calibrate TPM
+    private DistanceSensor chassisLengthDistanceSensor;
+    private VoltageSensor batteryVoltageSensor;
 
-    // threshold to buffer from max chassis length when attempting to fully extend chassis
-    // (to not put excessive strain on linear slide)
-    public static double CHASSIS_LENGTH_THRESHOLD = 0.1;
+    private PIDController swivelPID, chassisLengthPID;
 
-    public DriveTrain(HardwareMap hardwareMap) {
-        ZeroPowerBehavior[] ZERO_POWER_BEHAVIORS = new ZeroPowerBehavior[]{ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.FLOAT, ZeroPowerBehavior.BRAKE, ZeroPowerBehavior.BRAKE};
-        boolean[] REVERSED = {true, false, true, false, false};
+    // state
+    private double leftPosition, rightPosition, swervePosition;
+    private double swivelAngle, targetSwivelAngle;
+    private double leftVelocity, rightVelocity, swerveVelocity, leftPower, rightPower, swervePower, duckSpinnerPower;
+    private double chassisLength, targetChassisLength;
+    private double heading, angularVelocity;
+    private double angularAcceleration;
+    private Pose2d driveVelocity, lastDriveVelocity;
 
-        // Motors
-        motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
-        motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
-        motorMiddle= hardwareMap.get(DcMotorEx.class, "motorMiddle");
-        motorMiddleSwivel = hardwareMap.get(DcMotorEx.class, "motorMiddleSwivel");
-        duckSpinner = hardwareMap.get(DcMotorEx.class,"duckSpinner");
-        motors = new DcMotorEx[] {motorFrontLeft, motorFrontRight, motorMiddle, motorMiddleSwivel, duckSpinner};
+    private long lastLoopTime, loopTime;
 
-        for (int i = 0; i < ZERO_POWER_BEHAVIORS.length; i++) {
-            motors[i].setMode(RunMode.STOP_AND_RESET_ENCODER);
-            motors[i].setMode(RunMode.RUN_USING_ENCODER);
-            motors[i].setZeroPowerBehavior(ZERO_POWER_BEHAVIORS[i]);
-            if (REVERSED[i])
-                motors[i].setDirection(Direction.REVERSE);
+    private boolean maintainChassisLengthEnabled, antiTippingEnabled, smoothingEnabled;
+
+    public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
+        super(kV, kA, kStatic, TRACK_WIDTH, simulated);
+        follower = new TankPIDVAFollower(AXIAL_PID, CROSS_TRACK_PID, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+
+        if(simulated) {
+            chassisLengthDistanceSensor = new DistanceSensorSim(MIN_CHASSIS_LENGTH);
+            batteryVoltageSensor = new VoltageSensorSim();
+
+            leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            swerveMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            swivelMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            duckSpinner = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+            motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor, duckSpinner);
+        } else {
+            chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distLength");
+            batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+
+            leftMotor = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
+            rightMotor = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
+            swerveMotor = hardwareMap.get(DcMotorEx.class, "motorMiddle");
+            swivelMotor = hardwareMap.get(DcMotorEx.class, "motorMiddleSwivel");
+            duckSpinner = hardwareMap.get(DcMotorEx.class,"duckSpinner");
+            motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor, duckSpinner);
+
+            for (DcMotorEx motor : motors) {
+                MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+                motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+                motor.setMotorType(motorConfigurationType);
+
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
+
+            leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            swivelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
-        motorMiddleSwivel.setMode(RunMode.RUN_WITHOUT_ENCODER);
-
-        // Sensors
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        initializeIMU();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
 
-        sensorChassisDistance = hardwareMap.get(DistanceSensor.class, "distLength");
-
-        // PID
-        turnPID = new PIDController(ROTATE_PID_COEFFICIENTS);
         swivelPID = new PIDController(SWIVEL_PID_COEFFICIENTS);
-        chassisDistancePID = new PIDController(CHASSIS_DISTANCE_PID_COEFFICIENTS);
+        chassisLengthPID = new PIDController(CHASSIS_LENGTH_PID_COEFFICIENTS);
 
-        // Smoother
-        linearSmoother = new ExponentialSmoother(LINEAR_SMOOTHING_FACTOR);
-        angularSmoother = new ExponentialSmoother(ANGULAR_SMOOTHING_FACTOR);
-
-        // Miscellaneous
-        maintainSwivelAngleEnabled = true;
         lastLoopTime = System.nanoTime();
     }
 
-    private void initializeIMU() {
-        BNO055IMU.Parameters parametersIMU = new BNO055IMU.Parameters();
-        parametersIMU.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parametersIMU.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parametersIMU.loggingEnabled = true;
-        parametersIMU.loggingTag = "baseIMU";
+    @Override
+    public void setDriveSignal(@NonNull DriveSignal driveSignal) {
+        List<Double> velocities = TrikeKinematics.robotToWheelVelocities(driveSignal.getVel(), TRACK_WIDTH, getChassisLength());
+        List<Double> accelerations = TrikeKinematics.robotToWheelAccelerations(driveSignal.getAccel(), TRACK_WIDTH, getChassisLength());
+        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
 
-        imu.initialize(parametersIMU);
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
+        setSwivelAngle(TrikeKinematics.robotToSwivelAngle(driveSignal.getVel(), getChassisLength()));
 
-        // storing first absolute orientation values as offsets
-        Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-
-        offsetAngles[0] = 360 - UtilMethods.wrapAngle(imuAngles.firstAngle);
-        offsetAngles[1] = UtilMethods.wrapAngle(imuAngles.secondAngle);
-        offsetAngles[2] = UtilMethods.wrapAngle(imuAngles.thirdAngle);
-    }
-
-    private double getMaintainSwivelAngleCorrection() {
-        //initialization of the PID calculator's output range, target value and multipliers
-        swivelPID.setOutputRange(-1.0, 1.0);
-        swivelPID.setPID(SWIVEL_PID_COEFFICIENTS);
-        swivelPID.setSetpoint(targetSwivelAngle);
-        swivelPID.setTolerance(SWIVEL_PID_TOLERANCE);
-        swivelPID.enable();
-
-        //initialization of the PID calculator's input range and current value
-        swivelPID.setInputRange(0, 360);
-        swivelPID.setContinuous(true);
-        swivelPID.setInput(swivelAngle);
-
-        //calculates the angular correction to apply
-        return swivelPID.performPID();
-    }
-
-    private double getMaintainChassisDistanceCorrection() {
-        // returning 0 if distance sensor is likely blocked
-        if(chassisDistance < MIN_CHASSIS_LENGTH - 0.2)
-            return 0;
-
-        // initialization of the PID calculator's output range, target value and multipliers
-        chassisDistancePID.setOutputRange(-5.0, 5.0);
-        chassisDistancePID.setPID(CHASSIS_DISTANCE_PID_COEFFICIENTS);
-        chassisDistancePID.setSetpoint(targetChassisDistance);
-        chassisDistancePID.enable();
-
-        // initialization of the PID calculator's input range and current value
-        chassisDistancePID.setInputRange(Constants.MIN_CHASSIS_LENGTH, Constants.MAX_CHASSIS_LENGTH);
-        chassisDistancePID.setInput(chassisDistance);
-
-        // calculating correction
-        return chassisDistancePID.performPID();
-    }
-
-    /**
-     * updates the robot's pose ((x,y) position and heading) using the encoder ticks traveled by each wheel motor
-     */
-    private void updatePose() {
-        // calculating wheel displacements
-        double[] wheelTicks = getWheelTicks();
-        double[] wheelDisplacementTicks = new double[] {
-                wheelTicks[0] - previousWheelTicks[0],
-                wheelTicks[1] - previousWheelTicks[1],
-                wheelTicks[2] - previousWheelTicks[2]
-        };
-
-        // calculating average average wheel displacement
-        double averageDisplacementMeters = (wheelDisplacementTicks[0] + wheelDisplacementTicks[1]) / 2 / TICKS_PER_METER;
-
-        // rotating displacement by heading, updating pose [x, y, heading]
-        double heading = angles[0];
-        pose[0] = pose[0] + averageDisplacementMeters * Math.cos(Math.toRadians(heading));
-        pose[1] = pose[1] + averageDisplacementMeters * Math.sin(Math.toRadians(heading));
-        pose[2] = heading;
-
-        previousWheelTicks = wheelTicks;
+        driveVelocity = driveSignal.getVel();
     }
 
     @Override
-    public void update() {
-        // state
-        chassisDistance = sensorChassisDistance.getDistance(DistanceUnit.MM) / 1000 + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
-        swivelAngle = UtilMethods.wrapAngle(motorMiddleSwivel.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 360);
+    public void setDrivePower(@NonNull Pose2d drivePower) {
+        List<Double> powers = TrikeKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH, getChassisLength());
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
+    }
+
+
+    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
+        return new MinVelocityConstraint(Arrays.asList(
+                new AngularVelocityConstraint(maxAngularVel),
+                new TankVelocityConstraint(maxVel, trackWidth)
+        ));
+    }
+
+    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
+        return new ProfileAccelerationConstraint(maxAccel);
+    }
+
+    @Override
+    public double getRawExternalHeading() {
+        return heading;
+    }
+
+    @Override
+    public Double getExternalHeadingVelocity() {
+        return angularVelocity;
+    }
+
+
+    @Override
+    public double getChassisLength() {
+        return chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH);
+    }
+
+    @Override
+    public List<Double> getWheelPositions() {
+        return Arrays.asList(
+                leftPosition,
+                rightPosition,
+                swervePosition
+        );
+    }
+
+    @Override
+    public List<Double> getWheelVelocities() {
+        return Arrays.asList(
+                leftVelocity,
+                rightVelocity,
+                swerveVelocity
+        );
+    }
+
+    public void setDuckSpinnerPower(double duckSpinnerPower) {
+        this.duckSpinnerPower = duckSpinnerPower;
+    }
+
+    @Override
+    public double getSwivelAngle() {
+        return swivelAngle;
+    }
+
+    @Override
+    public void setSwivelAngle(double targetSwivelAngle) {
+        this.targetSwivelAngle = targetSwivelAngle;
+    }
+
+    @Override
+    public void setMotorPowers(double leftPower, double rightPower, double swervePower) {
+        this.leftPower = leftPower;
+        this.rightPower = rightPower;
+        this.swervePower = swervePower;
+    }
+
+    private double getMaintainChassisLengthCorrection() {
+        // returning 0 if distance sensor is likely blocked
+        if(chassisLength < MIN_CHASSIS_LENGTH)
+            return 0;
+
+        // initialization of the PID calculator's output range, target value and multipliers
+        chassisLengthPID.setOutputRange(-5.0, 5.0);
+        chassisLengthPID.setPID(CHASSIS_LENGTH_PID_COEFFICIENTS);
+        chassisLengthPID.setSetpoint(targetChassisLength);
+        chassisLengthPID.enable();
+
+        // initialization of the PID calculator's input range and current value
+        chassisLengthPID.setInputRange(Constants.MIN_CHASSIS_LENGTH, Constants.MAX_CHASSIS_LENGTH);
+        chassisLengthPID.setInput(chassisLength);
+
+        // calculating correction
+        return chassisLengthPID.performPID();
+    }
+
+    @Override
+    public void update(Canvas fieldOverlay) {
+        updatePoseEstimate();
+
+        if(antiTippingEnabled) {
+            angularAcceleration = (driveVelocity.getHeading() - lastDriveVelocity.getHeading()) / (loopTime * 1e-9);
+            if(Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION) {
+                double newAngularVelocity = lastDriveVelocity.getHeading() + Math.signum(angularAcceleration) * (loopTime * 1e-9);
+                double newLinearVelocity = (driveVelocity.getHeading() / angularVelocity) * driveVelocity.getX();
+                setDriveSignal(new DriveSignal(new Pose2d(new Vector2d(newLinearVelocity, 0), newAngularVelocity)));
+            }
+        }
+
+        if(trajectorySequenceRunner.isBusy()) {
+            DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity(), fieldOverlay);
+            if (signal != null) setDriveSignal(signal);
+        }
+
+        leftPosition = encoderTicksToInches(leftMotor.getCurrentPosition());
+        rightPosition = encoderTicksToInches(rightMotor.getCurrentPosition());
+        swervePosition = encoderTicksToInches(swerveMotor.getCurrentPosition());
+
+        leftVelocity = encoderTicksToInches(leftMotor.getVelocity());
+        rightVelocity = encoderTicksToInches(rightMotor.getVelocity());
+        swerveVelocity = encoderTicksToInches(swerveMotor.getVelocity());
+
+        swivelAngle = UtilMethods.wrapAngleRad(swivelMotor.getCurrentPosition() / SWERVE_TICKS_PER_REVOLUTION * 2 * Math.PI);
+
+        heading = imu.getAngularOrientation().firstAngle;
+        angularVelocity = -imu.getAngularVelocity().xRotationRate;
+
+        chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH);
+
+        if(maintainChassisLengthEnabled) {
+            double chassisLengthCorrection = getMaintainChassisLengthCorrection();
+            leftPower += chassisLengthCorrection;
+            rightPower += chassisLengthCorrection;
+        }
+
+        leftMotor.setPower(leftPower);
+        rightMotor.setPower(rightPower);
+        swerveMotor.setPower(swervePower);
+        duckSpinner.setPower(duckSpinnerPower);
+
         long loopClockTime = System.nanoTime();
         loopTime = loopClockTime - lastLoopTime;
-
-        // PID corrections
-        if (maintainSwivelAngleEnabled)
-            maintainSwivelAngleCorrection = getMaintainSwivelAngleCorrection();
-        motorMiddleSwivel.setPower(maintainSwivelAngleCorrection);
-
-//        updateTargetChassisDistance();
-        if (maintainChassisDistanceEnabled) {
-            maintainChassisDistanceCorrection = getMaintainChassisDistanceCorrection();
-            targetFrontLeftVelocity += maintainChassisDistanceCorrection;
-            targetFrontRightVelocity += maintainChassisDistanceCorrection;
-        }
-
-        // Motor controls
-        motorFrontLeft.setVelocity(targetFrontLeftVelocity * TICKS_PER_METER / WHEEL_RADIUS);
-        motorFrontRight.setVelocity(targetFrontRightVelocity * TICKS_PER_METER / WHEEL_RADIUS);
-        motorMiddle.setVelocity(targetMiddleVelocity * TICKS_PER_METER / WHEEL_RADIUS);
-
-        // sensors
-        Orientation imuAngles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-        angles = new double[]{
-                360 - UtilMethods.wrapAngleMinus(imuAngles.firstAngle, offsetAngles[0]),
-                UtilMethods.wrapAngleMinus(imuAngles.thirdAngle, offsetAngles[1]),
-                UtilMethods.wrapAngleMinus(imuAngles.secondAngle, offsetAngles[2])
-        };
-
-        linearSmoother.setSmoothingFactor(LINEAR_SMOOTHING_FACTOR);
-        angularSmoother.setSmoothingFactor(ANGULAR_SMOOTHING_FACTOR);
-
-        updatePose();
     }
 
-    /**
-     * Drives the robot with the specified linear and angular velocities
-     * @param linearVelocity the velocity, in m/s, to drive the robot
-     * @param angularVelocity the angular velocity, in degrees/s, to drive the robot
-     */
-    public void drive(double linearVelocity, double angularVelocity) {
-        angularVelocity = Math.toRadians(angularVelocity);
-
-        targetLinearVelocity = linearVelocity;
-        targetAngularVelocity = angularVelocity;
-//
-//        if(smoothingEnabled) {
-//            targetLinearVelocity = linearSmoother.update(linearVelocity);
-//            targetAngularVelocity = angularSmoother.update(angularVelocity);
-//        }
-
-//        if(antiTippingEnabled) {
-//            angularAcceleration = (targetAngularVelocity - lastTargetAngularVelocity) / (loopTime * 1e-9);
-//            if(Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION) {
-//                targetAngularVelocity = lastTargetAngularVelocity + Math.signum(angularAcceleration) * (loopTime * 1e-9);
-//                targetLinearVelocity = (targetAngularVelocity / angularVelocity) * linearVelocity;
-//            }
-//        }
-
-        // calculating target velocities and angles
-        targetFrontLeftVelocity = targetLinearVelocity - targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
-        targetFrontRightVelocity = targetLinearVelocity + targetAngularVelocity * (Constants.TRACK_WIDTH / 2);
-        targetMiddleVelocity = Math.hypot(targetLinearVelocity, chassisDistance * targetAngularVelocity);
-
-        if(linearVelocity != 0 || angularVelocity != 0)
-            targetSwivelAngle = UtilMethods.wrapAngle(90 + Math.toDegrees(
-                    Math.atan2(chassisDistance * angularVelocity, linearVelocity)
-            ));
-
-        // reversing the middle wheel if needing to rotate >90 degrees to target angle
-        if(middleReversed)
-            swivelAngle = UtilMethods.wrapAngle(swivelAngle + 180);
-        double diff = UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle);
-        double minDiff = diff > 180 ? 360 - diff : diff;
-        if(minDiff > 90)
-            middleReversed = !middleReversed;
-        if(middleReversed) {
-            if(linearVelocity != 0 || angularVelocity != 0)
-                targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + 180);
-            targetMiddleVelocity *= -1;
-        }
-
-        lastTargetAngularVelocity = targetAngularVelocity;
-    }
-
-    public void driveDesmos(double linearVelocity, double angularVelocity, double dt) {
-        targetLinearVelocity = linearVelocity;
-        targetAngularVelocity = angularVelocity;
-
-        SimpleMatrix leftWheel = new SimpleMatrix(new double[][] {{ -Constants.TRACK_WIDTH / 2 , 0 }});
-        SimpleMatrix rightWheel = new SimpleMatrix(new double[][] {{ Constants.TRACK_WIDTH / 2, 0 }});
-        SimpleMatrix middleWheel = new SimpleMatrix(new double[][] {{ 0, -getChassisDistance() }});
-
-        SimpleMatrix translation = new SimpleMatrix(new double[][] {{ 0, linearVelocity * dt }});
-
-        SimpleMatrix leftWheelPrime = UtilMethods.rotateVector(leftWheel.plus(translation), angularVelocity * dt);
-        SimpleMatrix rightWheelPrime = UtilMethods.rotateVector(rightWheel.plus(translation), angularVelocity * dt);
-        SimpleMatrix middleWheelPrime = UtilMethods.rotateVector(middleWheel.plus(translation), angularVelocity * dt);
-
-        targetFrontLeftVelocity = Math.signum(leftWheelPrime.get(1)) * leftWheelPrime.minus(leftWheel).normF() / dt;
-        targetFrontRightVelocity = Math.signum(rightWheelPrime.get(1)) * rightWheelPrime.minus(rightWheel).normF() / dt;
-        targetMiddleVelocity = Math.signum(middleWheelPrime.get(1) - middleWheel.get(1)) * middleWheelPrime.minus(middleWheel).normF() / dt;
-
-        targetSwivelAngle = UtilMethods.wrapAngle(Math.toDegrees(Math.atan2(middleWheelPrime.get(1) - middleWheel.get(1), middleWheelPrime.get(0) - middleWheel.get(0))));
-
-        if(UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle) > 90) {
-            middleReversed = true;
-            targetMiddleVelocity = -1 * targetMiddleVelocity;
-            targetSwivelAngle = UtilMethods.wrapAngle(180 - targetSwivelAngle);
-        } else
-            middleReversed = false;
-    }
-
-    public void movePID(double maxPwrFwd, boolean forward, double dist, double currentAngle, double targetAngle) {
-        // setup turnPID
-        turnPID.setOutputRange(-.5, .5);
-        turnPID.setIntegralCutIn(1);
-        turnPID.setSetpoint(targetAngle);
-        turnPID.setInputRange(0, 360);
-        turnPID.setContinuous();
-        turnPID.setInput(currentAngle);
-        turnPID.enable();
-
-        // setup distPID
-        distPID.setOutputRange(-maxPwrFwd, maxPwrFwd);
-        distPID.setIntegralCutIn(1);
-        distPID.setSetpoint(dist); //trying to get to a zero distance
-        distPID.setInput(0);
-        distPID.enable();
-
-        // calculate the angular correction to apply
-        double turnCorrection = turnPID.performPID();
-        // calculate chassis power
-        double basePwr = distPID.performPID();
-        if (!forward) basePwr *=-1;
-
-        // performs the drive with the correction applied
-
-        drive(basePwr, turnCorrection);
-    }
-
-    public boolean driveAbsoluteDistance(double pwr, double targetAngle, boolean forward, double targetMeters, double closeEnoughDist) {
-        targetAngle= wrap360(targetAngle);  //this was probably already done but repeated as a safety
-
-        if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
-            movePID(pwr, forward, targetMeters,getHeading(),targetAngle);
-            return false;
-        } // destination achieved
-        else {
-            stop(); //todo: maybe this should be optional when you are stringing moves together
-            return true;
-        }
-    }
-
-    private long turnTimer = 0;
-    private boolean turnTimerInit = false;
-    private double minTurnError = 2.0;
-    public boolean rotateIMU(double targetAngle, double maxTime) {
-        if (!turnTimerInit) { // intiate the timer that the robot will use to cut of the sequence if it takes
-            // too long; only happens on the first cycle
-            turnTimer = System.nanoTime() + (long) (maxTime * (long) 1e9);
-            turnTimerInit = true;
-        }
-        movePID(1,true,0, getHeading(), targetAngle);
-        // threshold of the target
-        if(Math.abs(getHeading() - targetAngle) < minTurnError) {
-            turnTimerInit = false;
-            stop();
-            return true;
-        }
-
-        if (turnTimer < System.nanoTime()) { // check to see if the robot takes too long to turn within a threshold of
-            // the target (e.g. it gets stuck)
-            turnTimerInit = false;
-            stop();
-            return true;
-        }
-        return false;
-    }
-
-    public boolean handleDuckSpinner(double power){
-        duckSpinner.setPower(power);
-        return true;
-    }
-
-    boolean duckSpinnerIsOn = false;
-    public boolean handleDuckSpinnerToggle(int mod) {
-        if(duckSpinnerIsOn) {
-            handleDuckSpinner(0);
-            duckSpinnerIsOn = false;
-        }
-        else{
-            handleDuckSpinner(mod * .5);
-            duckSpinnerIsOn = true;
-        }
-
-        return true;
+    @Override
+    public void stop() {
+        leftPower = 0;
+        rightPower = 0;
+        swervePower = 0;
+        swivelPID.disable();
     }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<>();
-        if(debug) {
-            telemetryMap.put("fl position", motorFrontLeft.getCurrentPosition());
-            telemetryMap.put("fr position", motorFrontRight.getCurrentPosition());
-            telemetryMap.put("middle position", motorMiddle.getCurrentPosition());
-            telemetryMap.put("swivel position", motorMiddleSwivel.getCurrentPosition());
+        telemetryMap.put("x", getPoseEstimate().getX());
+        telemetryMap.put("y", getPoseEstimate().getY());
+        telemetryMap.put("heading", Math.toDegrees(getPoseEstimate().getHeading()));
 
-            telemetryMap.put("fl velocity", ticksToMeters(motorFrontLeft.getVelocity()));
-            telemetryMap.put("fr velocity", ticksToMeters(motorFrontRight.getVelocity()));
-            telemetryMap.put("middle velocity", ticksToMeters(motorMiddle.getVelocity()));
-
-            telemetryMap.put("target linear velocity", targetLinearVelocity);
-            telemetryMap.put("target angular velocity", targetAngularVelocity);
-
-            telemetryMap.put("fl target velocity", targetFrontLeftVelocity);
-            telemetryMap.put("fr target velocity", targetFrontRightVelocity);
-            telemetryMap.put("middle target velocity", targetMiddleVelocity);
-            telemetryMap.put("swivel target power", maintainSwivelAngleCorrection);
-            telemetryMap.put("duck power", duckSpinner.getPower());
-            telemetryMap.put("duck position", duckSpinner.getCurrentPosition());
-
-            telemetryMap.put("fl amps", motorFrontLeft.getCurrent(CurrentUnit.AMPS));
-            telemetryMap.put("fr amps", motorFrontRight.getCurrent(CurrentUnit.AMPS));
-            telemetryMap.put("middle amps", motorMiddle.getCurrent(CurrentUnit.AMPS));
-            telemetryMap.put("swivel amps", motorMiddleSwivel.getCurrent(CurrentUnit.AMPS));
-            telemetryMap.put("duck amps", duckSpinner.getCurrent(CurrentUnit.AMPS));
-
-            telemetryMap.put("swivel angle", swivelAngle);
-            telemetryMap.put("target swivel angle", targetSwivelAngle);
-            telemetryMap.put("swivel PID on target", swivelPID.onTarget());
-
-            telemetryMap.put("chassis distance", chassisDistance);
-            telemetryMap.put("target chassis distance", targetChassisDistance);
-            telemetryMap.put("maintain chassis distance enabled", maintainChassisDistanceEnabled);
-            telemetryMap.put("maintain chassis distance correction", maintainChassisDistanceCorrection);
-
-            telemetryMap.put("pose (x)", pose[0]);
-            telemetryMap.put("pose (y)", pose[1]);
-            telemetryMap.put("pose (heading)", Math.toDegrees(pose[2]));
-
-            telemetryMap.put("middle wheel reversed", middleReversed);
-            telemetryMap.put("angular acceleration", angularAcceleration);
-            telemetryMap.put("anti tip engaged", Math.abs(angularAcceleration) > MAX_ANGULAR_ACCELERATION);
-        }
+        telemetryMap.put("xError", trajectorySequenceRunner.getLastPoseError().getX());
+        telemetryMap.put("yError", trajectorySequenceRunner.getLastPoseError().getY());
+        telemetryMap.put("headingError", Math.toDegrees(trajectorySequenceRunner.getLastPoseError().getHeading()));
 
         return telemetryMap;
     }
 
-
     @Override
     public String getTelemetryName() {
-        return TELEMETRY_NAME;
+        return null;
     }
 
-    @Override
-    public void stop() {
-        for (DcMotorEx motor : motors) {
-            motor.setPower(0);
-        }
+    // getters and setters
+
+    public void setTargetLength(double targetChassisLength) {
+        this.targetChassisLength = targetChassisLength;
     }
 
-    //----------------------------------------------------------------------------------------------
-    // Getters And Setters
-    //----------------------------------------------------------------------------------------------
-
-    public double getSwivelAngle() {
-        return swivelAngle;
+    public boolean isMaintainChassisLengthEnabled() {
+        return maintainChassisLengthEnabled;
     }
 
-    public double getChassisDistance() {
-        return chassisDistance;
+    public void setMaintainChassisLengthEnabled(boolean maintainChassisLengthEnabled) {
+        this.maintainChassisLengthEnabled = maintainChassisLengthEnabled;
     }
 
-    public double[] getPose() {
-        return pose;
-    }
-
-    public double getHeading(){
-        return Math.toDegrees(pose[2]);
-    }
-
-    public double[] getWheelTicks() {
-        return new double[] {
-                motorFrontLeft.getCurrentPosition(),
-                motorFrontRight.getCurrentPosition(),
-                motorMiddle.getCurrentPosition()
-        };
-    }
-
-    public void setMaintainChassisDistanceEnabled(boolean maintainChassisDistanceEnabled) {
-        this.maintainChassisDistanceEnabled = maintainChassisDistanceEnabled;
+    public boolean isAntiTippingEnabled() {
+        return antiTippingEnabled;
     }
 
     public void setAntiTippingEnabled(boolean antiTippingEnabled) {
         this.antiTippingEnabled = antiTippingEnabled;
-    }
-
-    public void setTargetChassisDistance(double targetChassisDistance) {
-        this.targetChassisDistance = Range.clip(targetChassisDistance, MIN_CHASSIS_LENGTH + CHASSIS_LENGTH_THRESHOLD, MAX_CHASSIS_LENGTH - CHASSIS_LENGTH_THRESHOLD);
-    }
-
-    public static double ticksToMeters(double ticks) {
-        double revolutions = ticks / TICKS_PER_REVOLUTION;
-        double circumference = 2 * Math.PI * WHEEL_RADIUS;
-        return revolutions * circumference;
-    }
-
-    public void setFrontLeftTargetVelocity(double velocity) {
-        targetFrontLeftVelocity = velocity;
-    }
-    public void setFrontRightTargetVelocity(double velocity) {
-        targetFrontRightVelocity = velocity;
-    }
-    public void setMiddleTargetVelocity(double velocity) {
-        targetMiddleVelocity = velocity;
-    }
-
-    public void setMaintainSwivelAngleEnabled(boolean maintainSwivelAngleEnabled) {
-        this.maintainSwivelAngleEnabled = maintainSwivelAngleEnabled;
-    }
-
-    public void setMaintainSwivelAngleCorrection(double maintainSwivelAngleCorrection) {
-        this.maintainSwivelAngleCorrection = maintainSwivelAngleCorrection;
     }
 
     public boolean isSmoothingEnabled() {
@@ -579,22 +349,15 @@ public class DriveTrain implements Subsystem {
         this.smoothingEnabled = smoothingEnabled;
     }
 
-    public void setPose(Constants.Position position) {
-        pose = position.getPose();
+    public void setLeftPower(double leftPower) {
+        this.leftPower = leftPower;
     }
 
-    public boolean chassisDistanceOnTarget() {
-        return chassisDistancePID.onTarget();
+    public void setRightPower(double rightPower) {
+        this.rightPower = rightPower;
     }
 
-    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
-        return new MinVelocityConstraint(Arrays.asList(
-                new AngularVelocityConstraint(maxAngularVel),
-
-        ));
-    }
-
-    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
-        return new ProfileAccelerationConstraint(maxAccel);
+    public void setSwervePower(double swervePower) {
+        this.swervePower = swervePower;
     }
 }

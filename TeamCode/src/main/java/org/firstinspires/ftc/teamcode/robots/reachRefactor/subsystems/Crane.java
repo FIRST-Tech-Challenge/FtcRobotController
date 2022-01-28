@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -49,12 +50,12 @@ public class Crane implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
 
 
-    public Crane(HardwareMap hardwareMap) {
+    public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
         shoulderServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
         elbowServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
         wristServo = hardwareMap.get(ServoImplEx.class, "bucketServo");
 
-        turret = new Turret(hardwareMap);
+        this.turret = turret;
         articulation = Articulation.MANUAL;
     }
 
@@ -129,7 +130,7 @@ public class Crane implements Subsystem {
     }
 
     @Override
-    public void update(){
+    public void update(Canvas fieldOverlay){
         articulate(articulation);
 
         shoulderServo.setPosition(UtilMethods.servoNormalize(shoulderTargetPos));

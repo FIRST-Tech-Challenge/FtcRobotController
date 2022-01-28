@@ -19,12 +19,10 @@ public class TrikeKinematics {
         );
     }
 
-    public static List<Double> robotToModuleOrientations(Pose2d robotVel, double chassisLength) {
+    public static double robotToSwivelAngle(Pose2d robotVel, double chassisLength) {
         assert UtilMethods.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for trike drives";
 
-        return Arrays.asList(
-                UtilMethods.wrapAngle(Math.PI / 4 + Math.atan2(chassisLength * robotVel.getHeading(), robotVel.getX()))
-        );
+        return UtilMethods.wrapAngle(Math.PI / 4 + Math.atan2(chassisLength * robotVel.getHeading(), robotVel.getX()));
     }
 
     public static List<Double> robotToWheelAccelerations(Pose2d robotAccel, double trackWidth, double chassisLength) {
