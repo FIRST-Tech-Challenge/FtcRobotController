@@ -86,6 +86,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private static double INTAKE_ELEMENT_MOVE_SPEED = 0.2;
     private static double INTAKE_SPEED = -0.3;
     private static double INTAKE_SPEED_REVERSE = 0.3;
+    private boolean isGrabInProgress = false;
 
     private boolean intakeRunning = false;
 
@@ -719,7 +720,20 @@ public class FrenzyBot extends FrenzyBaseBot {
 //        float HValue = detectColor(telemetry, 0);
 //        return HValue < 5;
         double val = getIntakeCurrent();
-        return val <= 0.9;
+
+        if (isGrabInProgress) {
+            if(val<0.9){
+                isGrabInProgress = false;
+                return false;
+            }
+        } else{
+            if(val>0.9){
+                isGrabInProgress = true;
+            }
+        }
+        return true;
+
+
 
     }
 
