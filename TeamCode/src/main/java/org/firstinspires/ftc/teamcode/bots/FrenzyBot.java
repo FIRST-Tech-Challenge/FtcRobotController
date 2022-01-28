@@ -161,13 +161,13 @@ public class FrenzyBot extends FrenzyBaseBot {
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize dropperServo", ex);
         }
+//        try {
+//            colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+//        } catch (Exception ex) {
+//            Log.e(TAG, "Cannot initialize colorSensor", ex);
+//        }
         try {
-            colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
-        } catch (Exception ex) {
-            Log.e(TAG, "Cannot initialize colorSensor", ex);
-        }
-        try {
-            sensorRange = hwMap.get(DistanceSensor.class, "sensor_range");
+            sensorRange = hwMap.get(DistanceSensor.class, "sensorRange");
         } catch(Exception ex) {
             Log.e(TAG, "Cannot initialize distanceSensor", ex);
         }
@@ -760,7 +760,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 //        }
 //        return true;
 
-        return false;
+        double dVal = getDistance();
+        return dVal >= 2.5;
 
 
     }
