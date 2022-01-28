@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Chassis.Chassis;
-import org.firstinspires.ftc.teamcode.Carousel;
+import org.firstinspires.ftc.teamcode.Carousel.Carousel;
 
 @Autonomous
 public class PosFourVAR extends LinearOpMode {
