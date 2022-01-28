@@ -720,14 +720,15 @@ public class FrenzyBot extends FrenzyBaseBot {
 //        float HValue = detectColor(telemetry, 0);
 //        return HValue < 5;
         double val = getIntakeCurrent();
+        boolean spike = val>0.9;
 
         if (isGrabInProgress) {
-            if(val<0.9){
+            if(!spike){
                 isGrabInProgress = false;
                 return false;
             }
         } else{
-            if(val>0.9){
+            if(spike){
                 isGrabInProgress = true;
             }
         }
