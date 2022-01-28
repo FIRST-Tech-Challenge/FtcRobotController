@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.examples;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.ThreeWheelOdometry;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 
@@ -83,7 +84,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         initHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
 
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions\
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, 75, this::opModeIsActive, this::isStopRequested);
+        ThreeWheelOdometry globalPositionUpdate = new ThreeWheelOdometry(verticalLeft, verticalRight, horizontal, 75, this::opModeIsActive, this::isStopRequested);
         globalPositionUpdate.start();
 
 

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 
 /**
@@ -19,7 +19,7 @@ public class AutoPickupTest extends AutonomousTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
 
-        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+        slide.setTargetLevel(HeightLevel.Down);
         odometry.setPos(FieldPoints.RedWareHouseInit);
 
         waitForStart();

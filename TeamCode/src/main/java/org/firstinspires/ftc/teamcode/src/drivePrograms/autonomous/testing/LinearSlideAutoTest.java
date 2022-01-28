@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
 
 /**
@@ -15,7 +15,6 @@ public class LinearSlideAutoTest extends AutonomousTemplate {
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
-        slide.start();
 
         telemetry.addData("Initialization Status", "Initialized");
         telemetry.update();
@@ -34,20 +33,20 @@ public class LinearSlideAutoTest extends AutonomousTemplate {
             }
             switch (pos) {
                 case 0:
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    slide.setTargetLevel(HeightLevel.Down);
                     Thread.sleep(1000);
                     break;
                 case 1:
-                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                    slide.setTargetLevel(HeightLevel.BottomLevel);
                     Thread.sleep(1000);
                     break;
                 case 2:
-                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                    slide.setTargetLevel(HeightLevel.MiddleLevel);
                     Thread.sleep(1000);
                     break;
 
                 case 3:
-                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
+                    slide.setTargetLevel(HeightLevel.TopLevel);
                     Thread.sleep(1000);
                     break;
                 case 4:

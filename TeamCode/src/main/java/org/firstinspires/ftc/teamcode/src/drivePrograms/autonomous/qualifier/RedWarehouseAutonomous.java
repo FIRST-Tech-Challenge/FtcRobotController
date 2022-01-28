@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementEx
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorError;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutError;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -42,7 +42,6 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
         } while (!isStarted() && !isStopRequested());
 
         waitForStart();
-        slide.start();
 
         if (opModeIsActive() && !isStopRequested()) {
             tfod.shutdown();
@@ -64,7 +63,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                 case NotSeen:
                 case Right:
                     // got to the top level when right
-                    slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
+                    slide.setTargetLevel(HeightLevel.TopLevel);
                     Thread.sleep(1000);
                     driveSystem.strafeAtAngle(180, .2);
                     Thread.sleep(500);
@@ -74,10 +73,10 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
                     driveSystem.stopAll();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    slide.setTargetLevel(HeightLevel.Down);
                     break;
                 case Center:
-                    slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                    slide.setTargetLevel(HeightLevel.MiddleLevel);
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .25);
                     Thread.sleep(725);
@@ -87,12 +86,12 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
                     driveSystem.stopAll();
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    slide.setTargetLevel(HeightLevel.Down);
                     Thread.sleep(500);
                     break;
                 case Left:
                     // go to bottom when left
-                    slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                    slide.setTargetLevel(HeightLevel.BottomLevel);
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .2);
                     Thread.sleep(1000);
@@ -104,7 +103,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
                     driveSystem.stopAll();
 
-                    slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+                    slide.setTargetLevel(HeightLevel.Down);
                     Thread.sleep(500);
                     break;
             }
@@ -135,7 +134,6 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
 
         }
-        slide.end();
         odometry.end();
 
     }

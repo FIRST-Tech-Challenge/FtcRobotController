@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -21,11 +20,7 @@ import java.io.File;
  * @author Sarthak
  * @since 6/1/2019
  */
-public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate implements LocalizationAlgorithm {
-    /**
-     * A lock for thread safety, used to {@link #setImu(BNO055IMU)}, {@link #setPos(FieldPoints)}, {@link #setPos(double, double, double)}, and {@link #setOrientation(double)}.
-     */
-    private static final Object lock = new Object();
+public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements LocalizationAlgorithm {
     /**
      * The Vertical Left Odometry Encoder
      */
@@ -53,10 +48,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * An Algorithm constant
      */
     private final double horizontalEncoderTickPerDegreeOffset;
-    /**
-     * The IMU for greater angle precision
-     */
-    private BNO055IMU imu = null;
+
     /**
      * An Algorithm constant
      */
@@ -77,14 +69,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * An Algorithm constant
      */
     private int normalEncoderPositionMultiplier = 1;
-    /**
-     * A internal variable used to set orientation of the IMU. Rather than reset the IMU, we record the offset between the given angle and the desired angle and apply that when we get the IMU angle
-     */
-    private double angleOffset = 0;
 
-    private boolean reverseY = false;
-
-    private final boolean reverseX = false;
 
     /**
      * Constructor for GlobalCoordinatePosition Thread
@@ -93,10 +78,10 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
      * @param horizontalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
-     * @param _isStopRequested     A Executable object wrapped around {@link LinearOpMode#isStopRequested()}
      * @param _opModeIsActive      A Executable object wrapped around {@link LinearOpMode#opModeIsActive()}
+     * @param _isStopRequested     A Executable object wrapped around {@link LinearOpMode#isStopRequested()}
      */
-    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay, Executable<Boolean> _opModeIsActive, Executable<Boolean> _isStopRequested) {
+    public ThreeWheelOdometry(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, int threadSleepDelay, Executable<Boolean> _opModeIsActive, Executable<Boolean> _isStopRequested) {
         super(_opModeIsActive, _isStopRequested);
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
@@ -111,23 +96,14 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
 
     }
 
-    public void reverseY() {
-        reverseY = !reverseY;
-    }
-
-    @Override
-    protected void onEnd() {
-
-    }
-
 
     /**
      * Returns the ports the encoders are plugged into for debug purposes
      *
      * @return the ports in the form Vertical Right, Vertical Left, Horizontal
      */
-    public Integer[] getPorts() {
-        Integer[] ports = new Integer[3];
+    public int[] getPorts() {
+        int[] ports = new int[3];
         ports[0] = verticalEncoderRight.getPortNumber();
         ports[1] = verticalEncoderLeft.getPortNumber();
         ports[2] = horizontalEncoder.getPortNumber();
@@ -200,12 +176,10 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param angle the angle to be at
      */
     public void setOrientation(double angle) {
-        synchronized (lock) {
-            if (imu != null) {
-                angleOffset = Math.toRadians(angle);
-            } else {
-                robotOrientationRadians = Math.toRadians(angle);
-            }
+        synchronized (this) {
+
+            robotOrientationRadians = Math.toRadians(angle);
+
         }
     }
 
@@ -217,7 +191,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
      * @param rot The rot in degrees
      */
     public void setPos(double X, double Y, double rot) {
-        synchronized (lock) {
+        synchronized (this) {
             robotGlobalXCoordinatePosition = X * COUNTS_PER_INCH;
             robotGlobalYCoordinatePosition = Y * COUNTS_PER_INCH;
             setOrientation(rot);
@@ -233,7 +207,7 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     public void setPos(FieldPoints initPos) {
         double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
         assert (tmp != null);
-        synchronized (lock) {
+        synchronized (this) {
             robotGlobalXCoordinatePosition = tmp[0] * COUNTS_PER_INCH;
             robotGlobalYCoordinatePosition = tmp[1] * COUNTS_PER_INCH;
             setOrientation(tmp[2]);
@@ -242,42 +216,14 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
     }
 
 
-    /**
-     * Gets the current angle of the IMU
-     *
-     * @return The angle parallel to the floor in degrees
-     */
-    protected double getImuAngle() {
-        double returnVal;
-        if (imu.getAngularOrientation().firstAngle < 0) {
-            returnVal = Math.abs(imu.getAngularOrientation().firstAngle);
-        } else {
-            returnVal = Math.abs(imu.getAngularOrientation().firstAngle - 360);
-        }
-        return returnVal % 360;
 
-    }
-
-    /**
-     * Sets the IMU
-     *
-     * @param imu The imu to set to
-     */
-    public void setImu(BNO055IMU imu) {
-        synchronized (lock) {
-            this.imu = imu;
-        }
-    }
 
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
     public void threadMain() {
-        synchronized (lock) {
-            if (imu != null) {
-                robotOrientationRadians = Math.toRadians(getImuAngle()) + angleOffset;
-                robotOrientationRadians = robotOrientationRadians % 360;
-            }
+        synchronized (this) {
+
             //Get Current Positions
             double verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
             //Position variables used for storage and calculations
@@ -307,23 +253,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         }
     }
 
-    /**
-     * Returns the robot's global x coordinate
-     *
-     * @return global x coordinate
-     */
-    public double returnRawXCoordinate() {
-        return robotGlobalXCoordinatePosition;
-    }
-
-    /**
-     * Returns the robot's global y coordinate
-     *
-     * @return global y coordinate
-     */
-    public double returnRawYCoordinate() {
-        return robotGlobalYCoordinatePosition;
-    }
 
     /**
      * Returns the robot's global orientation
@@ -354,32 +283,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }
 
-    /**
-     * Returns the string name of the horizontal encoder
-     *
-     * @return string name of the horizontal encoder
-     */
-    protected String getHorizontalMotorName() {
-        return horizontalEncoder.getDeviceName();
-    }
-
-    /**
-     * Returns the string name of the Right encoder
-     *
-     * @return string name of the Right encoder
-     */
-    protected String getVerticalRightMotorName() {
-        return verticalEncoderRight.getDeviceName();
-    }
-
-    /**
-     * Returns the string name of the Left encoder
-     *
-     * @return string name of the Left encoder
-     */
-    protected String getVerticalLeftMotorName() {
-        return verticalEncoderLeft.getDeviceName();
-    }
 
     /**
      * Reverses the left encoder
@@ -414,4 +317,6 @@ public class OdometryGlobalCoordinatePosition extends ThreadedSubsystemTemplate 
         }
     }
 
+    @Override
+    protected void onEnd() {}
 }

@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.NavigationalDrivetrain;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.IMUOdometry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.IMU;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 
 /**
  * A template for Autonomous OpModes, allows for easy initialization
@@ -25,7 +25,7 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
     /**
      * Provides Odometry Methods, Also held by NavigationalDrivetrain driveSystem
      */
-    protected OdometryGlobalCoordinatePosition odometry;
+    protected IMUOdometry odometry;
 
 
     /**
@@ -86,12 +86,13 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
 
         // DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder
         //verticalEncoderLeft, verticalEncoderRight, horizontalEncoder
-        odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25, this::opModeIsActive, this::isStopRequested);
-        checkStop();
-        IMU imu = new IMU(hardwareMap, IMUName);
-        checkStop();
-        odometry.setImu(imu.getImu());
 
+        {
+            checkStop();
+            IMU imu = new IMU(hardwareMap, IMUName);
+            checkStop();
+            odometry = new IMUOdometry(front_left, front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
+        }
 
         odometry.reverseRightEncoder();
 
@@ -112,7 +113,7 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
      */
     protected void initSlide() throws InterruptedException {
         super.initLinearSlide();
-        slide.setTargetLevel(LinearSlide.HeightLevel.Down);
+        slide.setTargetLevel(HeightLevel.Down);
     }
 
     protected void initDriveSystemWithWheelDrift() throws InterruptedException {
@@ -144,11 +145,12 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
 
         // DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder
         //verticalEncoderLeft, verticalEncoderRight, horizontalEncoder
-        odometry = new OdometryGlobalCoordinatePosition(front_left, front_right, back_right, 25, this::opModeIsActive, this::isStopRequested);
-        checkStop();
-        IMU imu = new IMU(hardwareMap, IMUName);
-        checkStop();
-        odometry.setImu(imu.getImu());
+        {
+            checkStop();
+            IMU imu = new IMU(hardwareMap, IMUName);
+            checkStop();
+            odometry = new IMUOdometry(front_left, front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
+        }
 
 
         odometry.reverseRightEncoder();

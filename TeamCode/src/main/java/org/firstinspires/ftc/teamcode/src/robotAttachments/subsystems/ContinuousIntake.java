@@ -33,7 +33,7 @@ public class ContinuousIntake {
     /**
      * The item color sensor
      */
-    public final ColorRangeSensor colorSensor;
+    private final ColorRangeSensor colorSensor;
     /**
      * DcMotor Object
      */

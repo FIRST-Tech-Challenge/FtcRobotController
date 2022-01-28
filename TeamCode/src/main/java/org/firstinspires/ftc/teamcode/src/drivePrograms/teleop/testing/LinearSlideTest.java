@@ -26,13 +26,12 @@ public class LinearSlideTest extends TeleOpTemplate {
 
             driveTrain.setPowerFromGamepad(gamepad1);
 
-            slide.setTargetHeight((int) (slide.getTargetHeight() + (10 * -gamepad2.left_stick_y)));
-            slide.threadMain();
+            slide.setTargetPosition((int) (slide.getTargetHeight() + (10 * -gamepad2.left_stick_y)));
             if (slide.getTargetHeight() < 0) {
-                slide.setTargetHeight(0);
+                slide.setTargetPosition(0);
             }
             if (slide.getTargetHeight() > 720) {
-                slide.setTargetHeight(720);
+                slide.setTargetPosition(720);
             }
 
             //telemetry.addData("Power", );

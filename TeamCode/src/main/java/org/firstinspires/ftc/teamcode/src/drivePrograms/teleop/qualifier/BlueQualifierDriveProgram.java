@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDistanceSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 
 @TeleOp(name = "Blue Qualifier Drive Program")
@@ -50,13 +50,13 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
             if (posOn) {
                 switch (posToGoTo) {
                     case 0:
-                        telemetry.addData("Pos", LinearSlide.HeightLevel.BottomLevel);
+                        telemetry.addData("Pos", HeightLevel.BottomLevel);
                         break;
                     case 1:
-                        telemetry.addData("Pos", LinearSlide.HeightLevel.MiddleLevel);
+                        telemetry.addData("Pos", HeightLevel.MiddleLevel);
                         break;
                     case 2:
-                        telemetry.addData("Pos", LinearSlide.HeightLevel.TopLevel);
+                        telemetry.addData("Pos", HeightLevel.TopLevel);
                         break;
                 }
             } else {
@@ -94,16 +94,15 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                     if (posOn) {
                         switch (posToGoTo) {
                             case 0:
-                                slide.setTargetLevel(LinearSlide.HeightLevel.BottomLevel);
+                                slide.setTargetLevel(HeightLevel.BottomLevel);
                                 break;
                             case 1:
-                                slide.setTargetLevel(LinearSlide.HeightLevel.MiddleLevel);
+                                slide.setTargetLevel(HeightLevel.MiddleLevel);
                                 break;
                             case 2:
-                                slide.setTargetLevel(LinearSlide.HeightLevel.TopLevel);
+                                slide.setTargetLevel(HeightLevel.TopLevel);
                                 break;
                         }
-                        slide.threadMain();
                     }
 
 

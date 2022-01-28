@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.examples;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;

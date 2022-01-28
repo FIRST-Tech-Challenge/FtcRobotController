@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
 
 /**
  * A Abstract class that provides extra reusable functionality to our opModes <P>
@@ -207,7 +207,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         if (voltageSensor == null) {
             this.initVoltageSensor();
         }
-        slide = new LinearSlide(hardwareMap, linearSlideMotorName, voltageSensor, this::opModeIsActive, this::isStopRequested);
+        slide = new LinearSlide(hardwareMap, linearSlideMotorName);
     }
 
     /**

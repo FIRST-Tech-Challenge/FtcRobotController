@@ -71,7 +71,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param back_right      A DcMotor object tied to the back right motor
      * @param back_left       A DcMotor object tied to the back left motor
      * @param telemetry       Telemetry object from the OpMode
-     * @param gps             A Already Initialized OdometryGlobalCoordinatePosition object
+     * @param gps             A Already Initialized ThreeWheelOdometry object
      * @param isStopRequested A Executable object wrapped around OpMode.isStopRequested()
      * @param opmodeIsActive  A Executable object wrapped around OpMode.opModeIsActive()
      * @param voltageSensor   an already initialized voltage sensor
