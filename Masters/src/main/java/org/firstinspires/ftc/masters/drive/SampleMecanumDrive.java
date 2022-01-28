@@ -201,51 +201,51 @@ public class SampleMecanumDrive extends MecanumDrive {
         backRight.setPower(0);
     }
 
-    public boolean getDuck(){
-
-        int frontLeftInit= frontLeft.getCurrentPosition();
-        int backLeftInit = backLeft.getCurrentPosition();
-        int frontRightInit = frontRight.getCurrentPosition();
-        int backRightInit = backRight.getCurrentPosition();
-
-        while (distanceSensorIntake.getDistance(DistanceUnit.CM)<7 && DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit-frontLeft.getCurrentPosition()))<3
-                && DriveConstants.encoderTicksToInches(Math.abs(frontRightInit-frontRight.getCurrentPosition()))<3
-                && DriveConstants.encoderTicksToInches(Math.abs(backLeftInit-backLeft.getCurrentPosition()))<3
-                && DriveConstants.encoderTicksToInches(Math.abs(backRightInit-backRight.getCurrentPosition()))<3
-        ){
-            intakeMotor.setPower(0.8);
-            frontLeft.setPower(-0.2);
-            frontRight.setPower(-0.2);
-            backRight.setPower(-0.2);
-            backLeft.setPower(-0.2);
-        }
-
-        return DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit - frontLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(frontRightInit - frontRight.getCurrentPosition())) < 3
-                || DriveConstants.encoderTicksToInches(Math.abs(backLeftInit - backLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(backRightInit - backRight.getCurrentPosition())) < 3;
-    }
-
-    public void aquireDuckRed(double speed, double secondaryStopConditionSeconds) {
-        long startTime = new Date().getTime();
-        long time = 0;
-        double distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
-
-        boolean foundFreight = false;
-
-        intakeMotor.setPower(.8);
-        setMotorPowers(-speed, -speed, -speed, -speed);
-
-
-        while (distanceSensorValue > 3  && time < secondaryStopConditionSeconds * 1000) {
-            //pause(50);
-            time = new Date().getTime() - startTime;
-            distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            if (distanceSensorValue > 7) {
-                foundFreight = true;
-            }
-        }
-        stopMotors();
-        intakeMotor.setPower(0);
-    }
+//    public boolean getDuck(){
+//
+//        int frontLeftInit= frontLeft.getCurrentPosition();
+//        int backLeftInit = backLeft.getCurrentPosition();
+//        int frontRightInit = frontRight.getCurrentPosition();
+//        int backRightInit = backRight.getCurrentPosition();
+//
+//        while (distanceSensorIntake.getDistance(DistanceUnit.CM)<7 && DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit-frontLeft.getCurrentPosition()))<3
+//                && DriveConstants.encoderTicksToInches(Math.abs(frontRightInit-frontRight.getCurrentPosition()))<3
+//                && DriveConstants.encoderTicksToInches(Math.abs(backLeftInit-backLeft.getCurrentPosition()))<3
+//                && DriveConstants.encoderTicksToInches(Math.abs(backRightInit-backRight.getCurrentPosition()))<3
+//        ){
+//            intakeMotor.setPower(0.8);
+//            frontLeft.setPower(-0.2);
+//            frontRight.setPower(-0.2);
+//            backRight.setPower(-0.2);
+//            backLeft.setPower(-0.2);
+//        }
+//
+//        return DriveConstants.encoderTicksToInches(Math.abs(frontLeftInit - frontLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(frontRightInit - frontRight.getCurrentPosition())) < 3
+//                || DriveConstants.encoderTicksToInches(Math.abs(backLeftInit - backLeft.getCurrentPosition())) < 3 || DriveConstants.encoderTicksToInches(Math.abs(backRightInit - backRight.getCurrentPosition())) < 3;
+//    }
+//
+//    public void aquireDuckRed(double speed, double secondaryStopConditionSeconds) {
+//        long startTime = new Date().getTime();
+//        long time = 0;
+//        double distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//
+//        boolean foundFreight = false;
+//
+//        intakeMotor.setPower(.8);
+//        setMotorPowers(-speed, -speed, -speed, -speed);
+//
+//
+//        while (distanceSensorValue > 3  && time < secondaryStopConditionSeconds * 1000) {
+//            //pause(50);
+//            time = new Date().getTime() - startTime;
+//            distanceSensorValue = distanceSensorIntake.getDistance(DistanceUnit.CM);
+//            if (distanceSensorValue > 7) {
+//                foundFreight = true;
+//            }
+//        }
+//        stopMotors();
+//        intakeMotor.setPower(0);
+//    }
 
     public void lightSet () {
         redLED.setMode(DigitalChannel.Mode.OUTPUT);
@@ -261,7 +261,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontRight.setPower(-.25);
         backLeft.setPower(-.25);
         backRight.setPower(-.25);
-        intakeMotor.setPower(.8);
+        intakeMotor.setPower(.9);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         double bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
         redLED.setState(true);
@@ -556,8 +556,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         double speed = 0.35;
         ElapsedTime elapsedTime= new ElapsedTime();
 
-        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.RIGHT2 &&
-                analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.RIGHT1
+        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
+                analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
                 && analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
             frontLeft.setPower(-speed);
             frontRight.setPower(speed);
@@ -595,7 +595,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 //    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
 //        return CV.pipeline.hub_position;
 //    }
+    public void stopDuckCamera(){
+        CV.stopDuckCamera();
+    }
 
+    public void stopShippingElementCamera(){
+        CV.stopShippingElementCamera();
+    }
 
     public void pause(int millis) {
         long startTime = new Date().getTime();

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name="Blue - Warehouse (Park City)", group = "competition")
+@Autonomous(name="Blue - Warehouse (STATE)", group = "competition")
 public class BlueWarehouseOdo extends LinearOpMode {
 
     final int SERVO_DROP_PAUSE=900;
@@ -38,9 +38,11 @@ public class BlueWarehouseOdo extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
                 .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
                 .build();
+        drive.  linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
         waitForStart();
 
+        drive.stopDuckCamera();
         long startTime = new Date().getTime();
         long time = 0;
 
@@ -101,15 +103,19 @@ public class BlueWarehouseOdo extends LinearOpMode {
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                     })
-                    .splineToSplineHeading(new Pose2d(-9, 47, Math.toRadians(270)), Math.toRadians(270))
+                    .splineToSplineHeading(new Pose2d(-9, 48, Math.toRadians(270)), Math.toRadians(270))
 //                    -14, 46
                     .build();
             drive.followTrajectorySequence(trajSeq3);
-
+            fromHubToWarehouse= drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(new Vector2d(5, 61), Math.toRadians(180)))
+                    .splineToLinearHeading(new Pose2d( new Vector2d(48, 68), Math.toRadians(180)), Math.toRadians(0))
+                    .build();
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
             drive.pause(SERVO_DROP_PAUSE);
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
             drive.retract();
+
 
             drive.followTrajectorySequence(fromHubToWarehouse);
             if (drive.getCube()) {
@@ -122,10 +128,13 @@ public class BlueWarehouseOdo extends LinearOpMode {
                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             drive.linearSlideMotor.setPower(.8);
                         })
-                        .splineToSplineHeading(new Pose2d(-9, 48, Math.toRadians(270)), Math.toRadians(270))
+                        .splineToSplineHeading(new Pose2d(-9, 49, Math.toRadians(270)), Math.toRadians(270))
                         .build();
                 drive.followTrajectorySequence(trajSeq3);
-
+                fromHubToWarehouse= drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                        .lineToSplineHeading(new Pose2d(new Vector2d(5, 62), Math.toRadians(180)))
+                        .splineToLinearHeading(new Pose2d( new Vector2d(48, 69), Math.toRadians(180)), Math.toRadians(0))
+                        .build();
                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
                 drive.pause(SERVO_DROP_PAUSE);
                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
