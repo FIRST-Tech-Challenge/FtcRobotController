@@ -49,10 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kotlin._Assertions;
-
- // 1900 up, 900 down, 2100 open 900 close
-
 @Config
 public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0.01, 0, 0.01);
