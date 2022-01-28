@@ -84,7 +84,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
 
         /* Most robots need the motor on one side to be reversed to drive forward.
          * Reverse the motor that runs backwards when connected directly to the battery. */
-        frontL.setDirection(DcMotor.Direction.REVERSE);
+        frontL.setDirection(DcMotor.Direction.FORWARD);
         backL.setDirection(DcMotor.Direction.FORWARD);
         frontR.setDirection(DcMotor.Direction.REVERSE);
         backR.setDirection(DcMotor.Direction.REVERSE);
@@ -99,6 +99,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
 
         /* Tell the driver that initialization is complete. */
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
 
@@ -121,9 +122,6 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     int speed = 0;
     double slowSpeed = 0.25;
     double normalSpeed = 0.69;
-
-
-
 
 
     /** Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP. */

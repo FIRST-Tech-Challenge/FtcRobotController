@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+@Autonomous
+@Disabled
 public class Auto_BlueCarousel extends LinearOpMode {
-    DcMotorEx frontL, frontR, backL, backR, duckWheel = null;
+    DcMotorEx frontL, frontR, backL, backR, duckWheel, extender, arm = null;
 
     public void drive(double directionInDegrees, double distanceInCm){
 //      384.5(PPR) = ~50cm = ~20in
@@ -88,29 +92,31 @@ public class Auto_BlueCarousel extends LinearOpMode {
         telemetry.addData("Status", "Initializing");
         telemetry.update();
 
-        DcMotor duckWheel = hardwareMap.get(DcMotor.class, "duckWheel");
+        duckWheel = hardwareMap.get(DcMotorEx.class, "duckWheel");
         frontL  = hardwareMap.get(DcMotorEx.class, "leftFront");
         frontR = hardwareMap.get(DcMotorEx.class, "rightFront");
         backL  = hardwareMap.get(DcMotorEx.class, "leftRear");
         backR = hardwareMap.get(DcMotorEx.class, "rightRear");
-//        DcMotorEx extender = hardwareMap.get(DcMotorEx.class, "extender");
-//        DcMotorEx arm = hardwareMap.get(DcMotorEx.class, "arm");
+        extender = hardwareMap.get(DcMotorEx.class, "extender");
+        arm = hardwareMap.get(DcMotorEx.class, "arm");
 
         // Reset Encoder
         frontL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         frontR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        extender.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         frontL.setDirection(DcMotorEx.Direction.FORWARD);
         backL.setDirection(DcMotorEx.Direction.FORWARD);
         frontR.setDirection(DcMotorEx.Direction.REVERSE);
         backR.setDirection(DcMotorEx.Direction.REVERSE);
-//      Full revolution 384.5(PPR) = ~50cm = ~20in
-
+        extender.setDirection(DcMotorEx.Direction.FORWARD); //TODO: Find correct direction
+        arm.setDirection(DcMotorEx.Direction.FORWARD); //TODO: Find correct direction
 
         waitForStart();
-        // TODO: Movements
+        drive(90, 0);
 
     }
 }
