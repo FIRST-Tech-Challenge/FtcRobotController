@@ -10,7 +10,7 @@ public class drive2 extends LinearOpMode {
 
     //there is no servo code in this program
 
-    private DcMotor motorFrontLeft;  //motors declared
+    private DcMotor motorFrontLeft; //motors declared
     private DcMotor motorBackLeft;
     private DcMotor motorFrontRight;
     private DcMotor motorBackRight;
@@ -106,17 +106,17 @@ public class drive2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft"); //motors declared
+        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
         while(opModeIsActive()){
-
-            motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft"); //motors declared
-            motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-            motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-            motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
             /*currently, there is no code for moving at angles other than 90 and 45 deg.
             Planning to add that after I understand how the math behind that works. Also,
@@ -126,7 +126,7 @@ public class drive2 extends LinearOpMode {
 
             if(gamepad1.left_stick_y > 0 || gamepad1.left_stick_x > 0) { //movement - has priority
 
-                double trueAngle = angleOfJoystick(gamepad1.left_stick_y, gamepad1.left_stick_x); //gets ideal movement angle
+                double trueAngle = angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x); //gets ideal movement angle
                 double roundedAngle = (Math.round(trueAngle/(3.14159265/4)))*(3.14159265/4);
 
 
