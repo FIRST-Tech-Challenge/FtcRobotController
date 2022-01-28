@@ -30,13 +30,13 @@ public class SpeedTest extends MasterOpMode {
         //Set power of motors
         while (opModeIsActive()) {
             if (gamepad1.b) {
-                motorFrontRight.setPower(gamepad1.left_stick_y);
+                motorFR.setPower(gamepad1.left_stick_y);
             } else if (gamepad1.x) {
-                motorFrontLeft.setPower(gamepad1.left_stick_y);
+                motorFL.setPower(gamepad1.left_stick_y);
             } else if (gamepad1.a) {
-                motorBackRight.setPower(gamepad1.left_stick_y);
+                motorBR.setPower(gamepad1.left_stick_y);
             } else if (gamepad1.y) {
-                motorBackLeft.setPower(gamepad1.left_stick_y);
+                motorBL.setPower(gamepad1.left_stick_y);
             }
         }
     }

@@ -6,22 +6,25 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.team6220_2021.ResourceClasses.DriverInput;
 
 public abstract class MasterOpMode extends LinearOpMode {
     // Motors
-    public static DcMotor motorFrontLeft;
-    public static DcMotor motorFrontRight;
-    public static DcMotor motorBackLeft;
-    public static DcMotor motorBackRight;
-    public static DcMotor motorLeftDuck;
-    public static DcMotor motorDuck;
-    public static DcMotor motorArm;
+    public static DcMotor motorFL;
+    public static DcMotor motorFR;
+    public static DcMotor motorBL;
+    public static DcMotor motorBR;
     public static DcMotor motorBelt;
+    public static DcMotor motorArm;
+    public static DcMotor motorLeftDuck;
+    public static DcMotor motorRightDuck;
 
     // Other Devices
-    public static Servo servoGrabber;
     public static Servo servoArm;
+    public static Servo servoGrabber;
 
     // Create Drivers
     public DriverInput driver1;
@@ -33,36 +36,39 @@ public abstract class MasterOpMode extends LinearOpMode {
     // Initializes the motors, servos, IMUs, and drivers
     public void Initialize() {
         // Drive train motors
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-        motorArm = hardwareMap.dcMotor.get("motorArm");
-        motorDuck = hardwareMap.dcMotor.get("motorDuck");
+        motorFL = hardwareMap.dcMotor.get("motorFL");
+        motorFR = hardwareMap.dcMotor.get("motorFR");
+        motorBL = hardwareMap.dcMotor.get("motorBL");
+        motorBR = hardwareMap.dcMotor.get("motorBR");
+
         motorBelt = hardwareMap.dcMotor.get("motorBelt");
+        motorArm = hardwareMap.dcMotor.get("motorArm");
         motorLeftDuck = hardwareMap.dcMotor.get("motorLeftDuck");
-        servoGrabber = hardwareMap.servo.get("servoGrabber");
+        motorRightDuck = hardwareMap.dcMotor.get("motorRightDuck");
+
         servoArm = hardwareMap.servo.get("servoArm");
+        servoGrabber = hardwareMap.servo.get("servoGrabber");
 
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motorBelt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorLeftDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightDuck.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        motorArm.setTargetPosition(0);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorArm.setTargetPosition(0);
         motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         driver1 = new DriverInput(gamepad1);
@@ -72,11 +78,13 @@ public abstract class MasterOpMode extends LinearOpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     public void forward(double driveInches, double power) {
@@ -84,25 +92,27 @@ public abstract class MasterOpMode extends LinearOpMode {
 
         double TotalTicks = 537.6 * driveInches / 12.57;
         int targetticks = (int) TotalTicks;
-        motorFrontLeft.setTargetPosition(targetticks);
-        motorBackLeft.setTargetPosition(targetticks);
-        motorFrontRight.setTargetPosition(-targetticks);
-        motorBackRight.setTargetPosition(-targetticks);
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(power);
-        motorBackRight.setPower(power);
-        while(motorBackRight.isBusy() || motorBackLeft.isBusy() || motorFrontLeft.isBusy() || motorFrontRight.isBusy()) {
-            telemetry.addData("Currently Running",motorFrontLeft.getCurrentPosition());
+        motorFL.setTargetPosition(targetticks);
+        motorBL.setTargetPosition(targetticks);
+        motorFR.setTargetPosition(-targetticks);
+        motorBR.setTargetPosition(-targetticks);
+        motorFL.setPower(power);
+        motorBL.setPower(power);
+        motorFR.setPower(power);
+        motorBR.setPower(power);
+        while (motorBR.isBusy() || motorBL.isBusy() || motorFL.isBusy() || motorFR.isBusy()) {
+            telemetry.addData("Currently Running", motorFL.getCurrentPosition());
         }
         pauseMillis(100);
     }
+
     public void stopBase() {
-        motorFrontLeft.setPower(0);
-        motorBackLeft.setPower(0);
-        motorFrontRight.setPower(0);
-        motorBackRight.setPower(0);
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
     }
+
     public void blueDuck() {
         motorLeftDuck = hardwareMap.dcMotor.get("motorDuck");
         double x = -0.7;
@@ -112,31 +122,32 @@ public abstract class MasterOpMode extends LinearOpMode {
             x -= 0.05;
             telemetry.addData("duckPower", motorLeftDuck.getPower());
             telemetry.update();
-            if (x <= -0.85){
+            if (x <= -0.85) {
                 pauseMillis(1500);
                 motorLeftDuck.setPower(-.1);
                 pauseMillis(30);
                 motorLeftDuck.setPower(0);
-                x=0.7;
+                x = 0.7;
                 break;
             }
         }
     }
+
     public void turnAngle(double turnDegree) {
         Initialize();
 
-        double TotalTicks = 537.6 * 20/4 * (turnDegree/360);
+        double TotalTicks = 537.6 * 20 / 4 * (turnDegree / 360);
         int targetticks = (int) TotalTicks;
-        motorFrontLeft.setTargetPosition(targetticks);
-        motorBackLeft.setTargetPosition(targetticks);
-        motorFrontRight.setTargetPosition(targetticks);
-        motorBackRight.setTargetPosition(targetticks);
-        motorFrontLeft.setPower(0.9);
-        motorBackLeft.setPower(0.9);
-        motorFrontRight.setPower(0.9);
-        motorBackRight.setPower(0.9);
-        while(motorBackRight.isBusy() || motorBackLeft.isBusy() || motorFrontLeft.isBusy() || motorFrontRight.isBusy()) {
-            telemetry.addData("Currently Running",motorFrontLeft.getCurrentPosition());
+        motorFL.setTargetPosition(targetticks);
+        motorBL.setTargetPosition(targetticks);
+        motorFR.setTargetPosition(targetticks);
+        motorBR.setTargetPosition(targetticks);
+        motorFL.setPower(0.9);
+        motorBL.setPower(0.9);
+        motorFR.setPower(0.9);
+        motorBR.setPower(0.9);
+        while (motorBR.isBusy() || motorBL.isBusy() || motorFL.isBusy() || motorFR.isBusy()) {
+            telemetry.addData("Currently Running", motorFL.getCurrentPosition());
         }
         pauseMillis(100);
 

@@ -22,57 +22,57 @@ public class TicksPerRevolutionTest extends MasterOpMode {
             if (gamepad1.dpad_up) {
                 input = 537.6 * (18/4);
                 int value = (int)input;
-                motorFrontLeft.setTargetPosition(-value);
-                motorFrontRight.setTargetPosition(value);
-                motorBackRight.setTargetPosition(value);
-                motorBackLeft.setTargetPosition(-value);
+                motorFL.setTargetPosition(-value);
+                motorFR.setTargetPosition(value);
+                motorBR.setTargetPosition(value);
+                motorBL.setTargetPosition(-value);
 
-                motorFrontRight.setPower(0.7);
-                motorFrontLeft.setPower(0.7);
-                motorBackRight.setPower(0.7);
-                motorBackLeft.setPower(0.7);
+                motorFR.setPower(0.7);
+                motorFL.setPower(0.7);
+                motorBR.setPower(0.7);
+                motorBL.setPower(0.7);
             }
             else if (gamepad1.dpad_right) {
                 input = 537.6 * (18/16);
                 int value = (int)input;
-                while (motorFrontRight.getCurrentPosition()<value && opModeIsActive())
+                while (motorFR.getCurrentPosition()<value && opModeIsActive())
                 {
-                    motorFrontLeft.setTargetPosition(value);
-                    motorFrontRight.setTargetPosition(value);
-                    motorBackRight.setTargetPosition(value);
-                    motorBackLeft.setTargetPosition(value);
+                    motorFL.setTargetPosition(value);
+                    motorFR.setTargetPosition(value);
+                    motorBR.setTargetPosition(value);
+                    motorBL.setTargetPosition(value);
 
-                    motorFrontRight.setPower(-0.7);
-                    motorFrontLeft.setPower(0.7);
-                    motorBackRight.setPower(-0.7);
-                    motorBackLeft.setPower(0.7);
+                    motorFR.setPower(-0.7);
+                    motorFL.setPower(0.7);
+                    motorBR.setPower(-0.7);
+                    motorBL.setPower(0.7);
                 }
             }
             else if (gamepad1.dpad_down) {
                 input = 537.6 * (18/8);
                 int value = (int)input;
-                motorFrontLeft.setTargetPosition(value);
-                motorFrontRight.setTargetPosition(value);
-                motorBackRight.setTargetPosition(value);
-                motorBackLeft.setTargetPosition(value);
+                motorFL.setTargetPosition(value);
+                motorFR.setTargetPosition(value);
+                motorBR.setTargetPosition(value);
+                motorBL.setTargetPosition(value);
 
-                motorFrontRight.setPower(-0.7);
-                motorFrontLeft.setPower(0.7);
-                motorBackRight.setPower(-0.7);
-                motorBackLeft.setPower(0.7);
+                motorFR.setPower(-0.7);
+                motorFL.setPower(0.7);
+                motorBR.setPower(-0.7);
+                motorBL.setPower(0.7);
             }
             else if (gamepad1.dpad_left) {
                 input = 537.6 * (18/12);
                 int value = (int)input;
-                motorFrontLeft.setTargetPosition(value);
-                motorFrontRight.setTargetPosition(value);
-                motorBackRight.setTargetPosition(value);
-                motorBackLeft.setTargetPosition(value);
+                motorFL.setTargetPosition(value);
+                motorFR.setTargetPosition(value);
+                motorBR.setTargetPosition(value);
+                motorBL.setTargetPosition(value);
 
-                motorFrontRight.setPower(-0.7);
-                motorFrontLeft.setPower(0.7);
-                motorBackRight.setPower(-0.7);
-                motorBackLeft.setPower(0.7);
+                motorFR.setPower(-0.7);
+                motorFL.setPower(0.7);
+                motorBR.setPower(-0.7);
+                motorBL.setPower(0.7);
             }
         }
     }
