@@ -8,6 +8,9 @@ public class Chassis {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
+    float slw;
+    boolean btToggle= false;
+    boolean smInput=false;
 
     public Chassis(HardwareMap hardwareMap){
         fl = hardwareMap.dcMotor.get("fl");
@@ -15,6 +18,16 @@ public class Chassis {
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
 
+    }
+
+    public void slowMode(boolean bt){
+        if(bt && !smInput){
+            btToggle = !btToggle;
+            smInput=true;
+        }
+        smInput=bt;
+
+        if(btToggle){slw=0.5f;}else{slw=1.0f;}
     }
 
     public float[] mecanumDr(float lx, float ly, float rx, float ry){
@@ -26,9 +39,9 @@ public class Chassis {
         Protects from drift
         */
         lsDeadzone = (Math.abs(lx) < 0.1) &&
-            (Math.abs(ly) < 0.1);
+                (Math.abs(ly) < 0.1);
         rsDeadzone = (Math.abs(rx) < 0.1) &&
-            (Math.abs(ry) < 0.1);
+                (Math.abs(ry) < 0.1);
 
         //reset
         power[0]=0;
@@ -57,6 +70,11 @@ public class Chassis {
             power[3]+=rx;
         }
 
+        //modifications
+        power[0]*=slw;
+        power[1]*=slw;
+        power[2]*=slw;
+        power[3]*=slw;
 
         return power;
     }
