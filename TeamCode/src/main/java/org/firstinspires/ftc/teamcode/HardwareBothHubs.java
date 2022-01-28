@@ -118,20 +118,23 @@ public class HardwareBothHubs
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
 
     public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
+    public int          FREIGHT_ARM_POS_SAFE       = 60;    // Low enough that it's safe to raise/lower collector arm
     public int          FREIGHT_ARM_POS_SPIN       = 125;   // Raised enough for box to spin clearly
     public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 232;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level last
-    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1898;  // For dumping into hub middle level
-    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2002;  // For dumping into hub bottom level
-    public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15;
-    public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 24;
-    public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 75;
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
+    public int          FREIGHT_ARM_POS_MAX        = 2250;  // Maximum safe rotation without hitting field floor
+    public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 0; // 15
+    public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 0; // 24
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 0; // 75
 
     public Servo        boxServo                   = null;
     public double       BOX_SERVO_INIT             = 0.48;  // we init to the COLLECT position
     public double       BOX_SERVO_COLLECT          = 0.48;
+    public double       BOX_SERVO_STORED           = 0.39;  // less than TRANSPORT so we can't hold TWO
     public double       BOX_SERVO_TRANSPORT        = 0.28;
     public double       BOX_SERVO_DUMP_TOP         = 0.55;
     public double       BOX_SERVO_DUMP_MIDDLE      = 0.55;

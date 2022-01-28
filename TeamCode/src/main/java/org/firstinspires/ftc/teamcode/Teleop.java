@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
-//import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -40,16 +40,16 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Freight Arm (Hub-Bottom) 
     boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Freight Arm (Hub-Middle)
     boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Freight Arm (score FRONT)
-    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // sweeper (reverse)
+    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // (unused)
     boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // box servo (dump)
     boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // TEST MDOE: toggle link arm up/down
 
     boolean sweeperRunning  = false;  // Intake sweeper forward (fast/continuous - for collecting)
     boolean sweeperEjecting = false;  // Intake sweeper reverse (fast/continuous - eject extra freight)
-    boolean sweeperDumping  = false;  // Intake sweeper reverse (slow/button - while dumping)
     boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
 
-    double    freightArmServoPos = 0.48;      // Which servo setting to target once movement starts
+    int       freightArmTarget   = 0;         // Which arm position (encoder counts) to target
+    double    freightArmPower    = 0.0;       // Which power to use for the movement
 
     final int FREIGHT_CYCLECOUNT_START = 20;  // Freight Arm just started moving (1st cycle)
     final int FREIGHT_CYCLECOUNT_SERVO = 10;  // Freight Arm off the floor (safe to rotate box servo)
@@ -80,13 +80,18 @@ public abstract class Teleop extends LinearOpMode {
 
     boolean   duckMotorEnable = false;
 
-    boolean   linkArmUp = true;
-    int       sweepMotorState = 0; // 0=OFF, 1=ON-FORWARD, 2=ON-REVERSE
+    // collector arm variables
+    boolean     collectorArmRaised   = true;   // TRUE=fully raised; FALSE=fully lowered
+    boolean     needCollectorRaised  = false;  // request to raise collector arm (before freight arm raises)
+    boolean     needCollectorLowered = false;  // request to lower collector arm (after freight arm lowers)
+    boolean     collectorArmRaising  = false;  // commanded to rise, but still in process
+    boolean     collectorArmLowering = false;  // commanded to lower, but still in process
+    ElapsedTime collectorArmTimer    = new ElapsedTime();
 
     //freight detection section
-    boolean collectingFreight = false;
-    boolean freightPresent = false;
-    boolean freightIsCube = false;
+    boolean collectingFreight  = false;
+    boolean freightPresent     = false;
+    boolean freightIsCube      = false;
     int freightDetectionCounts = 0;
     Gamepad.RumbleEffect ballRumbleEffect1;    // Use to build a custom rumble sequence.
     Gamepad.RumbleEffect ballRumbleEffect2;    // Use to build a custom rumble sequence.
@@ -163,6 +168,7 @@ public abstract class Teleop extends LinearOpMode {
             // Process all the driver/operator inputs
             processDuckMotorControls();
             processFreightDetector();
+            processCollectorArmControl();
             processFreightArmControls();
             processSweeperControls();
             processCappingArmControls();
@@ -237,6 +243,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
 
             // Testing Color and Distance sensor
+            telemetry.addData("Collector Raised: ", collectorArmRaised);
             telemetry.addData("Collecting Freight: ", collectingFreight);
             telemetry.addData("Freight Present: ", freightPresent);
             telemetry.addData("Freight Is Cube: ", freightIsCube);
@@ -262,7 +269,7 @@ public abstract class Teleop extends LinearOpMode {
     private void processFreightDetector() {
         if(collectingFreight){
             if (robot.freightPresent()) {
-//              freightDetectionCounts++;  DISABLE FOR NOW!!!
+                freightDetectionCounts++;
                 // Set freightpresent if set number of detections occurred
                 if(freightDetectionCounts > 15) {
                     freightPresent = true;
@@ -315,47 +322,22 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processSweeperControls() {
-        // Check if gamepad2 LEFT BUMPER is pressed
-//      if( gamepad2_l_bumper_now ) {
-//          robot.sweepServo.setPower( -0.15 );  // ON (reverse)
-//          sweeperDumping = true;   // note that we need to turn it back OFF
-//      }
-        // Check if gamepad2 LEFT BUMPER is pressed
-        if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last ) {
-            if( sweepMotorState == 0 ) {
-                robot.sweepMotor.setPower( 1.00 );  // ON (forward)
-                sweepMotorState = 1;
-            }
-            else if( sweepMotorState == 1 ) {
-                robot.sweepMotor.setPower( -0.50 );  // ON (reverse)
-                sweepMotorState = 2;
-            }
-            else { // sweepMotorState == 2
-                robot.sweepMotor.setPower( 0.00 );  // OFF
-                sweepMotorState = 0;
-            }
-        }
-        // or not. but was PREVIOUSLY
-        else if( sweeperDumping ) {
-//          robot.sweepServo.setPower( 0.0 );  // OFF
-            sweeperDumping = false;   // only do this once!
-        }
         // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
         if( gamepad2_square_now && !gamepad2_square_last) {
           if( sweeperEjecting ) {  // already reverse; toggle back to forward
-//          robot.sweepServo.setPower( 1.0 );  // ON (forward)
+            robot.sweepMotor.setPower( 1.0 );  // ON (forward)
             sweeperRunning  = true;
             sweeperEjecting = false;
           }
           else {  // currently forward, so switch to reverse
-//          robot.sweepServo.setPower( -1.0 );  // ON (reverse)
+            robot.sweepMotor.setPower( -0.5 );  // ON (reverse)
             sweeperRunning  = true;
             sweeperEjecting = true;
           }
         } // square
         // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
         if( gamepad2_triangle_now && !gamepad2_triangle_last) {
-  //        robot.sweepServo.setPower( 0.0 );  // OFF
+            robot.sweepMotor.setPower( 0.0 );  // OFF
             sweeperRunning  = false;
             sweeperEjecting = false;
         } // triangle
@@ -400,12 +382,12 @@ public abstract class Teleop extends LinearOpMode {
     } // processDuckMotorControls
 
     /*---------------------------------------------------------------------------------*/
-    double determineFreightArmPos() {
+    double determineBoxServoDumpAngle() {
         double servoTarget   = robot.BOX_SERVO_DUMP_BOTTOM; // updated below...
         int    freightArmPos = robot.freightMotorPos;       // current encoder count
         int    midpoint1     = (robot.FREIGHT_ARM_POS_HUB_TOP    + robot.FREIGHT_ARM_POS_HUB_MIDDLE)/2;
         int    midpoint2     = (robot.FREIGHT_ARM_POS_HUB_MIDDLE + robot.FREIGHT_ARM_POS_HUB_BOTTOM)/2;
-        // Determine servo DUMP ANGLE based on  freight-arm location 
+        // Determine servo DUMP ANGLE based on freight-arm location
         if( freightArmPos < robot.FREIGHT_ARM_POS_VERTICAL )
             servoTarget = robot.BOX_SERVO_DUMP_FRONT;
         else if( freightArmPos < midpoint1 )
@@ -416,87 +398,147 @@ public abstract class Teleop extends LinearOpMode {
             servoTarget = robot.BOX_SERVO_DUMP_BOTTOM;
         
         return servoTarget;
-    } // determineFreightArmPos
+    } // determineBoxServoDumpAngle
+
+    /*---------------------------------------------------------------------------------*/
+    // The only time the collector arm should be LOWERED is when we're collecting.
+    // All other times it can/should be RAISED so the freight arm is free to move.
+    void processCollectorArmControl() {
+        
+        // Can we clear any requests? (we're in the desired state)
+        if( needCollectorLowered && (collectorArmRaised == false) ) {
+            // Already there; clear the request
+            needCollectorLowered = false;
+        }
+        if( needCollectorRaised && (collectorArmRaised == true) ) {
+            // Already there; clear the request
+            needCollectorRaised = false;
+        }
+
+        // We only raise/lower the collector-arm when the freight-arm is in the correct position
+        boolean safeToMoveCollectorArm = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_SAFE)? true:false;
+        
+        // Process request to lower (if not already underway)
+        if( safeToMoveCollectorArm && needCollectorLowered && !collectorArmLowering ) {
+             robot.linkServo.setPosition( robot.LINK_SERVO_LOWERED );
+             collectorArmTimer.reset(); // start our timer
+             collectorArmLowering = true;
+             // automatically turn ON the sweeper as the arm is lowered
+             robot.sweepMotor.setPower( 1.0 );  // ON (forward)
+             sweeperRunning = true;
+        } // lower
+
+        // Process request to raise (if not already underway)
+        if( safeToMoveCollectorArm && needCollectorRaised && !collectorArmRaising ) {
+             robot.linkServo.setPosition( robot.LINK_SERVO_RAISED );
+             collectorArmTimer.reset(); // start our timer
+             collectorArmRaising = true;
+        } // raise
+
+        // Have we finished lowering (takes 300 msec)?
+        if( collectorArmLowering && (collectorArmTimer.milliseconds() >= 300) ) {
+            collectorArmLowering = false;  // back to idle
+            collectorArmRaised   = false;  // LOWERED!
+        }
+
+        // Have we finished raising (takes 500 msec)?
+        if( collectorArmRaising && (collectorArmTimer.milliseconds() >= 500) ) {
+            collectorArmRaising = false;  // back to idle
+            collectorArmRaised  = true;   // RAISED!
+        }
+     
+    } // processCollectorArmControl
 
     /*---------------------------------------------------------------------------------*/
     void processFreightArmControls() {
-        // Check for an OFF-to-ON toggle of the gamepad2 TOUCHPAD
-        if( gamepad2_touchpad_now && !gamepad2_touchpad_last)
-        {
-            if( linkArmUp ) {
-                robot.linkServo.setPosition(robot.LINK_SERVO_LOWERED);
-                linkArmUp = false;
-            }
-            else {
-                robot.linkServo.setPosition(robot.LINK_SERVO_RAISED);
-                linkArmUp = true;
-            }
-        }
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
-        {
-            double boxServoTarget = determineFreightArmPos();
-            robot.boxServo.setPosition( boxServoTarget );   // DUMP!
+        {   // Ignore requests to dump if still in the COLLECT position
+            if( robot.freightMotorPos > robot.FREIGHT_ARM_POS_SPIN ) {
+              double boxServoTarget = determineBoxServoDumpAngle();
+              robot.boxServo.setPosition( boxServoTarget );   // DUMP!
+            }
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         if(( gamepad2_circle_now && !gamepad2_circle_last) || (freightPresent && collectingFreight))
         {
-            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.80 );
+            needCollectorRaised  = true;
+            freightArmTarget     = robot.FREIGHT_ARM_POS_TRANSPORT1;
+            freightArmPower      = 0.80;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+            // rotate the box so the freight can't fall out
+            robot.boxServo.setPosition( robot.BOX_SERVO_STORED );
             // automatically turn OFF the sweeper
-//          robot.sweepServo.setPower( 0.0 );  // OFF
+            robot.sweepMotor.setPower( 0.0 );  // OFF
+            sweeperRunning    = false;
             collectingFreight = false;
-            sweeperRunning = false;
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button ()
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {
-            freightArmServoPos =  robot.BOX_SERVO_COLLECT;
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.20 );
+            needCollectorLowered = true; // at the END! (AFTER freight-arm is in place)
+            freightArmTarget     = robot.FREIGHT_ARM_POS_COLLECT;
+            freightArmPower      = 0.20;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
-            // automatically turn ON the sweeper
-//          robot.sweepServo.setPower( 1.0 );  // ON
-            sweeperRunning = true;
+            robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
         }
 
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {
-            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_TOP, 0.85 );
+            needCollectorRaised  = true;
+            freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;
+            freightArmPower      = 0.95;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {
-            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_MIDDLE, 0.85 );
+            needCollectorRaised  = true;
+            freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_MIDDLE;
+            freightArmPower      = 0.95;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {
-            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_SHARED, 0.50 );
+            needCollectorRaised  = true;
+            freightArmTarget     = robot.FREIGHT_ARM_POS_SHARED;
+            freightArmPower      = 0.50;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {
-            freightArmServoPos =  robot.BOX_SERVO_TRANSPORT;
-            robot.freightArmPosition( robot.FREIGHT_ARM_POS_HUB_BOTTOM, 0.85 );
+            needCollectorRaised  = true;
+            freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_BOTTOM;
+            freightArmPower      = 0.95;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
+            robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
         }
+
         //===================================================================
-        if( freightArmCycleCount > FREIGHT_CYCLECOUNT_SERVO ) {
+        if( freightArmCycleCount >= FREIGHT_CYCLECOUNT_START ) {
+            // Collector arm must be raised before any freight arm motion is commanded
+            if( collectorArmRaised ) {
+               robot.freightArmPosition( freightArmTarget, freightArmPower );
+               freightArmCycleCount--;      // exit this state
+            }
+            else {
+               // wait for collector arm!
+            }
+        }
+        else if( freightArmCycleCount > FREIGHT_CYCLECOUNT_SERVO ) {
             // nothing to do yet (just started moving)
             freightArmCycleCount--;
         }
         else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SERVO ) {
-            robot.boxServo.setPosition( freightArmServoPos );
+            // we can eliminate this phase now...
             freightArmCycleCount--;
         }
         else if( freightArmCycleCount > FREIGHT_CYCLECOUNT_CHECK ) {
@@ -511,7 +553,9 @@ public abstract class Teleop extends LinearOpMode {
                 robot.freightMotor.setPower( 0.0 );
                 robot.freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
-                if(!collectingFreight && sweeperRunning) {
+                // If we stopped in COLLECT position then sweeper will be
+                // running so use that to restart our freight detection flags
+                if( !collectingFreight && sweeperRunning) {
                     collectingFreight = true;
                     freightPresent = false;
                     freightIsCube = false;
@@ -519,13 +563,15 @@ public abstract class Teleop extends LinearOpMode {
             }
         }
         else { // freightArmCycleCount == FREIGHT_CYCLECOUNT_DONE
-            // arm must be idle; check for manual arm control
+            // automatic arm movement is idle; check for manual arm control
             freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
-            if( gamepad2.left_stick_y > 0.05 ) {
+            boolean safeToManuallyLower = collectorArmRaised && (robot.freightMotorPos > robot.FREIGHT_ARM_POS_TRANSPORT1);
+            boolean safeToManuallyRaise = collectorArmRaised && (robot.freightMotorPos < robot.FREIGHT_ARM_POS_MAX);
+            if( safeToManuallyRaise && (gamepad2.left_stick_y > 0.05) ) {
                 robot.freightMotor.setPower( 0.20 );
                 freightArmTweaked = true;
             }
-            else if( gamepad2.left_stick_y < -0.05 ) {
+            else if( safeToManuallyLower && (gamepad2.left_stick_y < -0.05) ) {
                 robot.freightMotor.setPower( -0.20 );
                 freightArmTweaked = true;
             }
