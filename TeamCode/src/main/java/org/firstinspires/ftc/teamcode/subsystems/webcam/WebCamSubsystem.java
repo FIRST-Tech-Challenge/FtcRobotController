@@ -137,7 +137,7 @@ public class WebCamSubsystem extends SubsystemBase {
     }
 
     public int getLevel(){
-        return currrentLevel;
+        return Levels.getInstance().getTSELevel();
     }
 
     public void stopStreaming(){

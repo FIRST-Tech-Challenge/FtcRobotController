@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.commands.webcam.CloseDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
 import org.firstinspires.ftc.teamcode.commands.webcam.StopDetectTSEPosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.globals.Levels;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
 import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
@@ -101,7 +102,7 @@ public class WarehouseSideBluePath1 {
         Trajectory traj1 = drive.trajectoryBuilder(startPose)
                 .strafeTo(new Vector2d(-12, 53))
                 .addDisplacementMarker(()->{
-                    SetArmLevel setArmLevel = createArm.createSetArmLevel(webCamSubsystem.getLevel());
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(Levels.getInstance().getTSELevel());
                     setArmLevel.schedule();
                 })
                 .build();
