@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
@@ -39,6 +40,8 @@ public class FrenzyModeBase extends LinearOpMode {
 
     private static String TAG = "FrenzyModeBase";
 
+    private ElapsedTime opModeTime = new ElapsedTime();
+
     @Override
     public void runOpMode() {
         try {
@@ -66,7 +69,7 @@ public class FrenzyModeBase extends LinearOpMode {
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
-
+            opModeTime.reset();
             while (opModeIsActive()) {
                 handleDriveTrain();
                 handleSpecialActions();
@@ -217,7 +220,8 @@ public class FrenzyModeBase extends LinearOpMode {
         if (isButtonPressable()) {
             if (gamepad2.b){
                 startGamepadLockout();
-                if (!robot.isTurretOffsetDefined()) {
+                //turret can be reset only once within the first 10 seconds of the match
+                if (!robot.isTurretOffsetDefined() && opModeTime.seconds() < 10) {
                     robot.defineTurretOffset();
                 }
             }

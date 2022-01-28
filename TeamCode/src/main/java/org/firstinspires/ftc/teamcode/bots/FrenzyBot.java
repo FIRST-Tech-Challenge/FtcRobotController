@@ -48,7 +48,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     private static final String TAG = "FrenzyBot";
     public static int LIFT_LEVEL_THREE = 1820;
-    public static int LIFT_LEVEL_TWO = 1650;
+    public static int LIFT_LEVEL_TWO = 1490;
     public static int LIFT_LEVEL_ONE = 1380;
     public static int LIFT_SHARED_HUB = 400;
     public static int LIFT_MIN_EXTENSION = 450;
@@ -62,7 +62,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     protected static int TURRET_POS_SHAREDHUB_RED = -634;  //red side team hub
     protected static int TURRET_POS_SHAREDHUB_BLUE = 578;  //red side team hub
     private static double TURRET_SPEED = 0.95;
-    private static double TURRET_SPEED_LOW = 0.8;
+    private static double TURRET_SPEED_LOW = 0.5;
 
     private boolean liftEmergencyMode = false; //if the lift is broken, operate with the intake
     private boolean isTeleOp = false;
@@ -724,7 +724,7 @@ public class FrenzyBot extends FrenzyBaseBot {
 //        liftToLevelMin(true, true);
         liftToLower();
         if (waitForLift) {
-            delayWait(300);
+            delayWait(100);
         }
         resetTurret();
     }
