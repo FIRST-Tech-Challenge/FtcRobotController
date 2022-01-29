@@ -149,9 +149,9 @@ public class TsePipeline extends OpenCvPipeline {
             Scalar bottomMeanCr = Core.mean(matCbBottom1);
             Scalar bottomMeanCb = Core.mean(matCbBottom2);
 
-            topAverage = Math.abs(topMeanY.val[0] - 0.88) + Math.abs(topMeanCr.val[0] - 0.07) + Math.abs(topMeanCb.val[0] + 0.49);
-            middleAverage = Math.abs(middleMeanY.val[0] - 0.88) + Math.abs(middleMeanCr.val[0] - 0.07) + Math.abs(middleMeanCb.val[0] + 0.49);
-            bottomAverage = Math.abs(bottomMeanY.val[0] - 0.88) + Math.abs(bottomMeanCr.val[0] - 0.07) + Math.abs(bottomMeanCb.val[0] + 0.49);
+            topAverage = Math.abs(topMeanY.val[0] - 152.85) + Math.abs(topMeanCr.val[0] - 147.88) + Math.abs(topMeanCb.val[0] - 57);
+            middleAverage = Math.abs(middleMeanY.val[0] - 152.85) + Math.abs(middleMeanCr.val[0] - 147.88) + Math.abs(middleMeanCb.val[0] - 57);
+            bottomAverage = Math.abs(bottomMeanY.val[0] - 152.85) + Math.abs(bottomMeanCr.val[0] - 147.88) + Math.abs(bottomMeanCb.val[0] - 57);
             different = mostSmall(topAverage, middleAverage, bottomAverage);
             switch (different) {
                 case 1:
