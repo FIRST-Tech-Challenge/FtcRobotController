@@ -10,10 +10,10 @@ public class drive4_final extends LinearOpMode {
 
     //there is no servo code in this program
 
-    private DcMotor motorFrontLeft; //motors declared
-    private DcMotor motorBackLeft ;
-    private DcMotor motorFrontRight;
-    private DcMotor motorBackRight ;
+    public DcMotor motorFrontLeft; //motors declared
+    public DcMotor motorBackLeft ;
+    public DcMotor motorFrontRight;
+    public DcMotor motorBackRight;
 
     public void turn() { //turning method
         motorFrontLeft.setPower(gamepad1.right_stick_x);
@@ -26,7 +26,7 @@ public class drive4_final extends LinearOpMode {
 
         if (joystickY < 0 && joystickX == 0) return 3*3.14159265/2; //back
 
-        if (joystickY == 0 && joystickX <= 0) return 3.14159265; //left
+        if (joystickY == 0 && joystickX < 0) return 3.14159265; //left
 
         if (joystickY >= 0 && joystickX > 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)); //quadrant 1
 
@@ -40,17 +40,24 @@ public class drive4_final extends LinearOpMode {
 
     }
 
-    public void move(double direction) { //main move method
-        double hypotenuse = Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x); //magnitude of motion
+    public void move(double direction) { //move  method
+        double turnMoveMagnitude = 2; // larger values means less turning while moving
 
-        if (hypotenuse > 1) { //keeps magnitude in bounds just in case
-            hypotenuse = 1;
+        double hypotenuseLeft = Math.hypot(-gamepad1.left_stick_y, (gamepad1.left_stick_x + (gamepad1.right_stick_x/turnMoveMagnitude)) / (Math.ceil(gamepad1.right_stick_x)/turnMoveMagnitude)); //magnitude of left motion
+        double hypotenuseRight = Math.hypot(-gamepad1.left_stick_y, (gamepad1.left_stick_x - (gamepad1.right_stick_x/turnMoveMagnitude)) / (Math.ceil(gamepad1.right_stick_x)/turnMoveMagnitude)); //magnitude of right motion
+
+        if (hypotenuseRight > 1) { //keeps magnitude in bounds just in case
+            hypotenuseRight = 1;
         }
 
-        motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * hypotenuse)); //motor code
-        motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * hypotenuse));
-        motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * hypotenuse));
-        motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * hypotenuse));
+        if (hypotenuseLeft > 1) { //keeps magnitude in bounds just in case
+            hypotenuseLeft = 1;
+        }
+
+        motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * hypotenuseLeft)); //motor code
+        motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * hypotenuseLeft));
+        motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * hypotenuseRight));
+        motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * hypotenuseRight));
     }
 
     @Override
@@ -72,9 +79,9 @@ public class drive4_final extends LinearOpMode {
 
             if (Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.left_stick_x) > 0) { //movement
 
-                move(angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x));// main move method, gets angle from angleOfJoystick
+                move(angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x));// move method, gets angle from angleOfJoystick
 
-            } else { //turning. currently can't turn AND move
+            } else { //turning on spot
 
                 turn();
             }
