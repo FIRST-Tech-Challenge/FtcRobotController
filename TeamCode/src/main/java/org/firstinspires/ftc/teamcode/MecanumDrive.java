@@ -750,6 +750,54 @@ public class MecanumDrive {
 //        leftFront.setPower(0);
 //        resetAngle();
     }
+    public void oneSideRotateReverse(double degrees, double power){
+
+        double leftPower, rightPower;
+
+        // restart imu movement tracking.
+        resetAngle();
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        if (degrees > 0) {   // turn right.
+            leftPower = -power;
+            rightPower = power;
+            leftFront.setPower(leftPower);
+            leftBack.setPower(leftPower);
+        } else if (degrees < 0) {   // turn left.
+            leftPower = power;
+            rightPower = -power;
+            rightBack.setPower(rightPower);
+            rightFront.setPower(rightPower);
+
+        } else return;
+
+        // set power to rotate.
+//        leftBack.setPower(leftPower);
+//        rightBack.setPower(rightPower);
+//        leftFront.setPower(leftPower);
+//        rightFront.setPower(rightPower);
+
+        // rotate until turn is completed.
+        if (degrees < 0) {
+            // On right turn we have to get off zero first.
+            while (getAngle() == 0) {
+            }
+
+            while (getAngle() > degrees) {
+            }
+        } else    // left turn.
+            while (getAngle() < degrees) {
+            }
+
+        // turn the motors off.
+        rightBack.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        leftFront.setPower(0);
+        resetAngle();
+    }
 
     private void rotate(double degrees, double power) {
         double leftPower, rightPower;

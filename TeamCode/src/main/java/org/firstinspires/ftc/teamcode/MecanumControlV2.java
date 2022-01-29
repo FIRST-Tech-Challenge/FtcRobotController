@@ -20,6 +20,8 @@ public class MecanumControlV2 extends OpMode {
     Servos spinny = new Servos(); // Output servo - Reece's box
     MotorControl Motor = new MotorControl(); // Initializes all motors, attachment intake
     int servopos = 0;
+    int dis = 80;
+    int liftPos = 0;
     double intakePower = 1;
     boolean isPrimed = false;
     double driveSpeed;
@@ -57,7 +59,6 @@ public class MecanumControlV2 extends OpMode {
 
         msStuckDetectInit = 18000;
         msStuckDetectLoop = 18000;
-
         telemetry.addData("Hello","be ready");
         telemetry.addData("Loop_Timeout",msStuckDetectLoop);
         telemetry.update();
@@ -65,11 +66,11 @@ public class MecanumControlV2 extends OpMode {
     }
     @Override
     public void loop() {
-        telemetry.addData("isSpinnerOn", isSpinnerOn);
-        telemetry.addData("highGoalMode", highGoalMode);
-        telemetry.addData("Automatic Power", autoPower);
-        telemetry.addData("Spinner Power", Motor.rotaterPower());
-        telemetry.addData("Intake Power", Motor.intakeOnePower());
+//        telemetry.addData("isSpinnerOn", isSpinnerOn);
+//        telemetry.addData("highGoalMode", highGoalMode);
+//        telemetry.addData("Automatic Power", autoPower);
+//        telemetry.addData("Spinner Power", Motor.rotaterPower());
+//        telemetry.addData("Intake Power", Motor.intakeOnePower());
         //telemetry.addData("Drive Speed",driveSpeed);
         //telemetry.addData("Direction",direction);
         //telemetry.addData("Turn Speed", turnSpeed);
@@ -77,8 +78,8 @@ public class MecanumControlV2 extends OpMode {
         //telemetry.addData("RB",robot.getRBencoder());
         //telemetry.addData("LF",robot.getLFencoder());
         //telemetry.addData("RF",robot.getRFencoder());
-        telemetry.addData("isPrimed",isPrimed);
-        telemetry.addData("Position",servopos);
+//        telemetry.addData("isPrimed",isPrimed);
+        telemetry.addData("Servo Position",servopos+1);
         telemetry.update();
 
         //Speed control (turbo/slow mode) and direction of stick calculation
@@ -135,21 +136,58 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Turn Spinner on
-        if (gamepad2.x && !isSpinnerOn) {
+        if (gamepad2.right_bumper && !isSpinnerOn) {
             isSpinnerOn = true;
-        }else if (!gamepad2.x && isSpinnerOn) {
+        }else if (!gamepad2.right_bumper && isSpinnerOn) {
             isSpinnerOf = false;
         }
         //Turn Spinner off
-        if (gamepad2.x && !isSpinnerOf) {
+        if (gamepad2.right_bumper && !isSpinnerOf) {
             isSpinnerOn = false;
-        }else if (!gamepad2.x && !isSpinnerOn) {
+        }else if (!gamepad2.right_bumper && !isSpinnerOn) {
             isSpinnerOf = true;
         }
 
         // TOGGLE FOR DUCK SPINNER ^^^^
 
+        if(gamepad2.x){
+            switch(liftPos){
+                case 0:
+                    break;
+                case 1:
+                    Motor.verLiftPos(.6,-dis/2);
+                    break;
+                case 2:
+                    Motor.verLiftPos(.6,-dis);
+            }
+            liftPos = 0;
+        }
+        if(gamepad2.a){
+            switch(liftPos){
+                case 0:
+                    Motor.verLiftPos(.6,dis/2);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    Motor.verLiftPos(.6,-dis/2);
+            }
+            liftPos = 1;
+        }
+        if(gamepad2.b){
+            switch(liftPos){
+                case 0:
+                    Motor.verLiftPos(.6,dis);
+                    break;
+                case 1:
+                    Motor.verLiftPos(.6,dis/2);
+                    break;
+                case 2:
 
+            }
+            liftPos = 2;
+
+        }
 
 //        if (gamepad1.right_trigger>0.1 && !isIntakeOn) {
 //            isIntakeOn = true;
@@ -223,24 +261,33 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Change spinner power
-        if(gamepad2.guide&&spinpos){
-            shooterPower*=-1;
-        }
-
-
-
-        if(gamepad2.start&&isSpinnerOn){
-            Motor.rotaterPower(shooterPower*1.4);
-        }
-        if(gamepad2.back&&isSpinnerOn){
-            Motor.rotaterPower(shooterPower*8);
-        }
+//        if(gamepad2.guide&&spinpos){
+//            shooterPower*=-1;
+//        }
         if(isSpinnerOn){
-            Motor.rotaterPower(shooterPower);
+            if(Math.abs(gamepad2.left_stick_y)>.1)
+                Motor.rotaterPower(gamepad2.left_stick_y);
+            else
+                Motor.rotaterPower(.6);
         }
-        if(!isSpinnerOn){
+        else{
             Motor.rotaterPower(0);
         }
+
+
+
+//        if(gamepad2.start&&isSpinnerOn){
+//            Motor.rotaterPower(shooterPower*1.4);
+//        }
+//        if(gamepad2.back&&isSpinnerOn){
+//            Motor.rotaterPower(shooterPower*8);
+//        }
+//        if(isSpinnerOn){
+//            Motor.rotaterPower(shooterPower);
+//        }
+//        if(!isSpinnerOn){
+//            Motor.rotaterPower(0);
+//        }
 //        if (gamepad2.dpad_up) {
 //            wasPowerIncreased = true;
 //        }else if (!gamepad2.dpad_up && wasPowerIncreased) {
@@ -267,21 +314,21 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Vertical Lift Movement
-        if(gamepad2.left_stick_y>0.1){
-            Motor.VertLift.setPower(-.6);
+        if(gamepad2.dpad_down){
+            Motor.VertLift.setPower(-.9);
         }
-        else if(gamepad2.left_stick_y<-.1){
-            Motor.VertLift.setPower(.6);
+        else if(gamepad2.dpad_up){
+            Motor.VertLift.setPower(.9);
         }
        else {
             Motor.VertLift.setPower(0);
         }
         //Horizontal Slide Movement
-        if(gamepad2.left_stick_x>.1){
-            Motor.HorzLift.setPower(.4);
+        if(gamepad2.dpad_left){
+            Motor.HorzLift.setPower(.8);
         }
-        else if(gamepad2.left_stick_x<-.1){
-            Motor.HorzLift.setPower(-.4);
+        else if(gamepad2.dpad_right){
+            Motor.HorzLift.setPower(-.8);
         }
         else{
             Motor.HorzLift.setPower(0);
@@ -324,7 +371,7 @@ public class MecanumControlV2 extends OpMode {
                 spinny.changePos(0.18);
                 break;
             case 1:
-                spinny.changePos(.5);
+                spinny.changePos(.36);
                 break;
             case 2:
                 spinny.changePos(.8);

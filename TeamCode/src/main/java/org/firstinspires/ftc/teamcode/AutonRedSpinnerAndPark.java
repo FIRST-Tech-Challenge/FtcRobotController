@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-@Autonomous(name="Blue Right Spinner and Park", group="AB")
-
-public class AutonBlueSpinnerAndPark extends OpMode {
+@Autonomous(name="Red Left Spinner and Park", group="AB")
+public class AutonRedSpinnerAndPark extends OpMode {
     MecanumDrive robot = new MecanumDrive();
     //    Intake intake = new Intake();
     MotorControl motor = new MotorControl();
@@ -30,26 +29,16 @@ public class AutonBlueSpinnerAndPark extends OpMode {
     public void loop(){
         switch(stateMachineFlow) {
             case 0:
+                robot.frontLinearDrive(.8,-20);
                 waitTime = .2;
                 runtime.reset();
-                while (waitTime > runtime.time()){
-//                    robot.leftBack.setPower(-.2);
-//                    robot.leftFront.setPower(-.2);
-                }
-//                robot.leftBack.setPower(0);
-//                robot.leftFront.setPower(0);
-
+                while (waitTime > runtime.time()){}
                 telemetry.addData("GyroAngle", robot.getAngle());
                 telemetry.addData("Stage", 1);
                 telemetry.update();
-                robot.oneSideRotate(-45,.4);
+                robot.oneSideRotateReverse(45,-.4);
                 telemetry.addData("GyroAngle", robot.getAngle());
                 telemetry.update();
-//                robot.gStatTurn(.2,-6);
-//                waitTime = .2;
-//                runtime.reset();
-//                while (waitTime > runtime.time());
-//                robot.frontLinearDrive(.7,-22);
                 stateMachineFlow++;
                 break;
 
@@ -65,11 +54,7 @@ public class AutonBlueSpinnerAndPark extends OpMode {
                 stateMachineFlow++;
                 break;
             case 2:
-//                waitTime = .5;
-//                runtime.reset();
-//                while (waitTime > runtime.time());
-//                robot.gStatTurn(.4,15);
-//
+
                 telemetry.addData("Stage", 3);
                 telemetry.update();
                 waitTime = .2;
@@ -78,7 +63,7 @@ public class AutonBlueSpinnerAndPark extends OpMode {
 //                    robot.leftBack.setPower(.2);
 //                    robot.leftFront.setPower(.2);
                 }
-                robot.oneSideRotateReverse(65,-.4);
+                robot.oneSideRotate(-65,.4);
 
 //                robot.leftBack.setPower(0);
 //                robot.leftFront.setPower(0);
