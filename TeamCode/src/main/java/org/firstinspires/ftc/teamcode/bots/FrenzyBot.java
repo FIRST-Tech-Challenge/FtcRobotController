@@ -937,6 +937,7 @@ public class FrenzyBot extends FrenzyBaseBot {
         stopLift();
 
         dropperTransportPositionDown();
+        intakeDropperUp();
     }
 
     public double getTapePosition() {
