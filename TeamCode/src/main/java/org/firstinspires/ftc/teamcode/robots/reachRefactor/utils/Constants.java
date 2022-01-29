@@ -86,6 +86,10 @@ public class Constants {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
+    public static double inchesToEncoderTicks(double inches) {
+        return inches * TICKS_PER_REV / (2 * Math.PI * WHEEL_RADIUS * GEAR_RATIO);
+    }
+
     public static double rpmToVelocity(double rpm) {
         return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
     }

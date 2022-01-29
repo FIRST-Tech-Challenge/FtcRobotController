@@ -16,14 +16,10 @@ import java.util.List;
 
 public abstract class TrikeDrive extends Drive {
 
-    private double kV, kA, kStatic;
     private double trackWidth;
     private Localizer localizer;
 
-    public TrikeDrive(double kV, double kA, double kStatic, double trackWidth, boolean simulated) {
-        this.kV = kV;
-        this.kA = kA;
-        this.kStatic = kStatic;
+    public TrikeDrive(double trackWidth, boolean simulated) {
         this.trackWidth = trackWidth;
 
         localizer = simulated ? new TrikeLocalizer(this, false) : new TrikeLocalizer(this, true);
@@ -112,9 +108,7 @@ public abstract class TrikeDrive extends Drive {
 
     public abstract List<Double> getWheelVelocities();
 
-    public abstract double getSwivelAngle();
-
     public abstract void setSwivelAngle(double swivelAngle);
 
-    public abstract void setMotorPowers(double left, double right, double swerve);
+    public abstract void setMotorVelocities(double left, double right, double swerve);
 }

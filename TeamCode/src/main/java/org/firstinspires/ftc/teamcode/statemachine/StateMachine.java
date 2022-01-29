@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.statemachine;
 
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class StateMachine {
 
@@ -48,6 +50,12 @@ public class StateMachine {
 
         public Builder addSingleState(final SingleState singleState) {
             states.add(() -> {singleState.runState(); return true;});
+            return this;
+        }
+
+        public Builder addTrajectoryState(TrajectorySequenceRunner trajectorySequenceRunner, TrajectorySequence sequence) {
+            states.add(() -> {trajectorySequenceRunner.followTrajectorySequenceAsync(sequence); return true;});
+            states.add(() -> !trajectorySequenceRunner.isBusy());
             return this;
         }
 

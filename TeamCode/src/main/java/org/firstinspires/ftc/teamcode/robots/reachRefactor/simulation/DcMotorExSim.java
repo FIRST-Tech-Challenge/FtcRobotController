@@ -203,7 +203,6 @@ public class DcMotorExSim implements DcMotorEx {
 
     @Override
     public void setPower(double power) {
-        velocity = power * Constants.MAX_RPM / 60 * Constants.TICKS_PER_REV;
     }
 
     @Override

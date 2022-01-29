@@ -290,7 +290,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
-        robot.driveTrain.setDriveSignal(new DriveSignal(new Pose2d(forward, 0, rotate), new Pose2d(0, 0, 0)));
+        robot.driveTrain.setDrivePower(new Pose2d(forward, 0, rotate));
     }
 
     private void handleTeleOp() { // apple
@@ -412,13 +412,13 @@ public class FF_6832 extends OpMode {
 
         switch(diagnosticStep) {
             case DRIVETRAIN_LEFT_MOTOR:
-                handleDiagnosticMotorControls(robot.driveTrain::setLeftPower);
+                handleDiagnosticMotorControls(robot.driveTrain::setLeftVelocity);
                 break;
             case DRIVETRAIN_RIGHT_MOTOR:
-                handleDiagnosticMotorControls(robot.driveTrain::setRightPower);
+                handleDiagnosticMotorControls(robot.driveTrain::setRightVelocity);
                 break;
             case DRIVETRAIN_MIDDLE_MOTOR:
-                handleDiagnosticMotorControls(robot.driveTrain::setSwervePower);
+                handleDiagnosticMotorControls(robot.driveTrain::setSwerveVelocity);
                 break;
             case DRIVETRAIN_MIDDLE_SWIVEL_MOTOR:
                 robot.driveTrain.setSwivelAngle(-gamepad1.right_stick_y);

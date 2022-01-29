@@ -67,7 +67,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static String AXLE_STROKE_COLOR = "Black";
     public static String WHEEL_STROKE_COLOR = "SpringGreen";
 
-    private TrajectorySequenceRunner trajectorySequenceRunner;
+    public TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectoryFollower follower;
 
     private List<DcMotorEx> motors;
@@ -85,7 +85,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     // state
     private double leftPosition, rightPosition, swervePosition, swivelPosition;
     private double swivelAngle, targetSwivelAngle;
-    private double leftVelocity, rightVelocity, swerveVelocity, leftPower, rightPower, swervePower, swivelPower, duckSpinnerPower;
+    private double leftVelocity, rightVelocity, swerveVelocity;
+    private double targetLeftVelocity, targetRightVelocity, targetSwerveVelocity, swivelPower, duckSpinnerPower;
     private double chassisLength, targetChassisLength;
     private boolean chassisLengthOnTarget;
     private double heading, angularVelocity;
@@ -97,7 +98,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private boolean maintainChassisLengthEnabled, antiTippingEnabled, smoothingEnabled;
 
     public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
-        super(kV, kA, kStatic, TRACK_WIDTH, simulated);
+        super(TRACK_WIDTH, simulated);
         this.simulated = simulated;
         follower = new TankPIDVAFollower(AXIAL_PID, CROSS_TRACK_PID, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
@@ -147,17 +148,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
         lastLoopTime = System.nanoTime();
-    }
-
-    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
-        return new MinVelocityConstraint(Arrays.asList(
-                new AngularVelocityConstraint(maxAngularVel),
-                new TankVelocityConstraint(maxVel, trackWidth)
-        ));
-    }
-
-    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
-        return new ProfileAccelerationConstraint(maxAccel);
     }
 
     private double getSwivelAngleCorrection() {
@@ -269,14 +259,14 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH);
         if(maintainChassisLengthEnabled) {
             double chassisLengthCorrection = getChassisLengthCorrection();
-            leftPower += chassisLengthCorrection;
-            rightPower += chassisLengthCorrection;
+            targetLeftVelocity += chassisLengthCorrection;
+            targetRightVelocity += chassisLengthCorrection;
         }
         chassisLengthOnTarget = chassisLengthPID.onTarget();
 
-        leftMotor.setPower(leftPower);
-        rightMotor.setPower(rightPower);
-        swerveMotor.setPower(swervePower);
+        leftMotor.setVelocity(inchesToEncoderTicks(targetLeftVelocity));
+        rightMotor.setVelocity(inchesToEncoderTicks(targetRightVelocity));
+        swerveMotor.setVelocity(inchesToEncoderTicks(targetSwerveVelocity));
         swivelMotor.setPower(swivelPower);
         duckSpinner.setPower(duckSpinnerPower);
 
@@ -289,9 +279,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     @Override
     public void stop() {
-        leftPower = 0;
-        rightPower = 0;
-        swervePower = 0;
+        targetLeftVelocity = 0;
+        targetRightVelocity = 0;
+        targetSwerveVelocity = 0;
         swivelPID.disable();
     }
 
@@ -321,9 +311,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("right velocity",rightVelocity);
             telemetryMap.put("swerve velocity", swerveVelocity);
 
-            telemetryMap.put("left power", leftPower);
-            telemetryMap.put("right power", rightPower);
-            telemetryMap.put("swerve power", swervePower);
+            telemetryMap.put("target left velocity", targetLeftVelocity);
+            telemetryMap.put("target right velocity", targetRightVelocity);
+            telemetryMap.put("target swerve velocity", targetSwerveVelocity);
             telemetryMap.put("swivel power", swivelPower);
             telemetryMap.put("duck spinner power", duckSpinnerPower);
 
@@ -400,13 +390,22 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     // Getters And Setters
     //----------------------------------------------------------------------------------------------
 
+    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
+        return new MinVelocityConstraint(Arrays.asList(
+                new AngularVelocityConstraint(maxAngularVel),
+                new TankVelocityConstraint(maxVel, trackWidth)
+        ));
+    }
+
+    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
+        return new ProfileAccelerationConstraint(maxAccel);
+    }
+
     @Override
     public void setDriveSignal(@NonNull DriveSignal driveSignal) {
         List<Double> velocities = TrikeKinematics.robotToWheelVelocities(driveSignal.getVel(), TRACK_WIDTH, getChassisLength());
-        List<Double> accelerations = TrikeKinematics.robotToWheelAccelerations(driveSignal.getAccel(), TRACK_WIDTH, getChassisLength());
-        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
 
-        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
+        setMotorVelocities(velocities.get(0), velocities.get(1), velocities.get(2));
         setSwivelAngle(TrikeKinematics.robotToSwivelAngle(driveSignal.getVel(), getChassisLength()));
 
         driveVelocity = driveSignal.getVel();
@@ -414,28 +413,28 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     @Override
     public void setDrivePower(@NonNull Pose2d drivePower) {
-        List<Double> powers = TrikeKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH, getChassisLength());
-        setMotorPowers(powers.get(0), powers.get(1), powers.get(2));
+        List<Double> velocities = TrikeKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH, getChassisLength());
+        setMotorVelocities(velocities.get(0), velocities.get(1), velocities.get(2));
         setSwivelAngle(TrikeKinematics.robotToSwivelAngle(drivePower, getChassisLength()));
     }
 
-    @Override
-    public void setMotorPowers(double leftPower, double rightPower, double swervePower) {
-        this.leftPower = leftPower;
-        this.rightPower = rightPower;
-        this.swervePower = swervePower;
+
+    public void setMotorVelocities(double left, double right, double swerve) {
+        this.targetLeftVelocity = left;
+        this.targetRightVelocity = right;
+        this.targetSwerveVelocity = swerve;
     }
 
-    public void setLeftPower(double leftPower) {
-        this.leftPower = leftPower;
+    public void setLeftVelocity(double left) {
+        this.targetLeftVelocity = left;
     }
 
-    public void setRightPower(double rightPower) {
-        this.rightPower = rightPower;
+    public void setRightVelocity(double right) {
+        this.targetRightVelocity = right;
     }
 
-    public void setSwervePower(double swervePower) {
-        this.swervePower = swervePower;
+    public void setSwerveVelocity(double swerve) {
+        this.targetSwerveVelocity = swerve;
     }
 
     @Override
@@ -483,7 +482,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         this.duckSpinnerPower = duckSpinnerPower;
     }
 
-    @Override
     public double getSwivelAngle() {
         return swivelAngle;
     }
