@@ -48,7 +48,7 @@ public class TrikeKinematics {
     public static double robotToSwivelAngle(Pose2d robotVel, double chassisLength) {
         assert UtilMethods.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for trike drives";
 
-        return UtilMethods.wrapAngleRad(Math.PI / 4 + Math.atan2(chassisLength * robotVel.getHeading(), robotVel.getX()));
+        return UtilMethods.wrapAngleRad(Math.PI / 2 + Math.atan2(-chassisLength * robotVel.getHeading(), robotVel.getX()));
     }
 
     /**

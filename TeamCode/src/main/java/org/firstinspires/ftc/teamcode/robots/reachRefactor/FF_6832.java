@@ -112,7 +112,7 @@ public class FF_6832 extends OpMode {
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.3;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
-    public static double FORWARD_SCALING_FACTOR = 0.1; // scales the target linear robot velocity from tele-op controls
+    public static double FORWARD_SCALING_FACTOR = 24; // scales the target linear robot velocity from tele-op controls
     public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             Constants.MIN_CHASSIS_LENGTH,
@@ -227,11 +227,11 @@ public class FF_6832 extends OpMode {
     private void handlePregameControls() {
         if(stickyGamepad1.x || stickyGamepad2.x) {
             alliance = Constants.Alliance.BLUE;
-            startingPosition = Constants.Position.START_RED_UP;
+            startingPosition = Constants.Position.START_BLUE_UP;
         }
         if(stickyGamepad1.b || stickyGamepad2.b) {
             alliance = Constants.Alliance.RED;
-            startingPosition = Constants.Position.START_BLUE_UP;
+            startingPosition = Constants.Position.START_RED_UP;
         }
         if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
             startingPosition =

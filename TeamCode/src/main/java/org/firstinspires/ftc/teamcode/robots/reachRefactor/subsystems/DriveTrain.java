@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants.*;
@@ -52,7 +53,7 @@ import java.util.Map;
 @Config
 public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0.01, 0, 0.01);
-    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0.01, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.01, 0, 0);
 
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(0.03, 0, 0.08);
@@ -63,9 +64,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
     public static String TELEMETRY_NAME = "Drive Train";
-    public static double VELOCITY_SCALE = 3.0;
-    public static String AXLE_STROKE_COLOR = "Black";
-    public static String WHEEL_STROKE_COLOR = "SpringGreen";
 
     public TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectoryFollower follower;
@@ -88,7 +86,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private double leftVelocity, rightVelocity, swerveVelocity;
     private double targetLeftVelocity, targetRightVelocity, targetSwerveVelocity, swivelPower, duckSpinnerPower;
     private double chassisLength, targetChassisLength;
-    private boolean chassisLengthOnTarget;
+    private boolean chassisLengthOnTarget, middleReversed;
     private double heading, angularVelocity;
     private double angularAcceleration;
     private Pose2d driveVelocity, lastDriveVelocity;
@@ -186,43 +184,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         return chassisLengthPID.performPID();
     }
 
-    public void drawFieldOverlay(Canvas canvas) {
-        Pose2d pose = getPoseEstimate();
-
-        // calculating wheel positions
-        Vector2d position = pose.vec();
-        Vector2d leftWheel = new Vector2d(0, Constants.TRACK_WIDTH / 2);
-        Vector2d rightWheel = new Vector2d(0, -Constants.TRACK_WIDTH / 2);
-        Vector2d swerveWheel = new Vector2d(-chassisLength, 0);
-
-        // calculating wheel vectors
-        List<Double> wheelVelocities = getWheelVelocities();
-
-        Vector2d leftWheelEnd = leftWheel.plus(new Vector2d(VELOCITY_SCALE * wheelVelocities.get(0), 0));
-        Vector2d rightWheelEnd = rightWheel.plus(new Vector2d(VELOCITY_SCALE * wheelVelocities.get(1), 0));
-        Vector2d swerveWheelEnd = swerveWheel.plus(new Vector2d(VELOCITY_SCALE * wheelVelocities.get(2), 0).rotated(swivelAngle));
-
-        // rotating points by heading, translating by position
-        double heading = pose.getHeading();
-        leftWheel = position.plus(leftWheel).rotated(heading - Math.PI / 2);
-        rightWheel = position.plus(rightWheel).rotated(heading - Math.PI / 2);
-        swerveWheel = position.plus(swerveWheel).rotated(heading - Math.PI / 2);
-        leftWheelEnd = position.plus(leftWheelEnd).rotated(heading - Math.PI / 2);
-        rightWheelEnd = position.plus(rightWheelEnd).rotated(heading - Math.PI / 2);
-        swerveWheelEnd = position.plus(swerveWheelEnd).rotated(heading - Math.PI / 2);
-
-        // drawing axles
-        canvas.setStroke(AXLE_STROKE_COLOR);
-        CanvasUtils.drawLine(canvas, leftWheel, rightWheel); // front axle
-        CanvasUtils.drawLine(canvas, position, swerveWheel); // slinky
-
-        // drawing wheels
-        canvas.setStroke(WHEEL_STROKE_COLOR);
-        CanvasUtils.drawLine(canvas, leftWheel, leftWheelEnd);
-        CanvasUtils.drawLine(canvas, rightWheel, rightWheelEnd);
-        CanvasUtils.drawLine(canvas, swerveWheel, swerveWheelEnd);
-    }
-
     @Override
     public void update(Canvas fieldOverlay) {
         updatePoseEstimate();
@@ -253,7 +214,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         angularVelocity = -imu.getAngularVelocity().xRotationRate;
 
         // PIDs
-        swivelAngle = UtilMethods.wrapAngleRad(swivelMotor.getCurrentPosition() / SWIVEL_TICKS_PER_REVOLUTION * 2 * Math.PI);
         swivelPower = getSwivelAngleCorrection();
 
         chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH);
@@ -264,13 +224,31 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         }
         chassisLengthOnTarget = chassisLengthPID.onTarget();
 
+        // reversing the middle wheel if needing to rotate >90 degrees to target angle
+        if(middleReversed)
+            swivelAngle = UtilMethods.wrapAngleRad(swivelAngle + Math.toRadians(180));
+        double diff = UtilMethods.wrapAngle(targetSwivelAngle - swivelAngle);
+        double minDiff = diff > Math.toRadians(180) ? Math.toRadians(360) - diff : diff;
+        if(minDiff > Math.toRadians(90))
+            middleReversed = !middleReversed;
+        if(middleReversed) {
+            targetSwivelAngle = UtilMethods.wrapAngle(targetSwivelAngle + Math.toRadians(180));
+            targetSwerveVelocity *= -1;
+        }
+
+        if(simulated) {
+            swivelAngle = targetSwivelAngle;
+        } else {
+            swivelAngle = UtilMethods.wrapAngleRad(swivelMotor.getCurrentPosition() / SWIVEL_TICKS_PER_REVOLUTION * Math.toRadians(360));
+        }
+
         leftMotor.setVelocity(inchesToEncoderTicks(targetLeftVelocity));
         rightMotor.setVelocity(inchesToEncoderTicks(targetRightVelocity));
         swerveMotor.setVelocity(inchesToEncoderTicks(targetSwerveVelocity));
         swivelMotor.setPower(swivelPower);
         duckSpinner.setPower(duckSpinnerPower);
 
-        drawFieldOverlay(fieldOverlay);
+        DashboardUtil.drawRobot(fieldOverlay, getPoseEstimate(), chassisLength, swivelAngle, getWheelVelocities());
 
         long loopClockTime = System.nanoTime();
         loopTime = loopClockTime - lastLoopTime;
@@ -304,8 +282,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("right position", rightPosition);
             telemetryMap.put("swerve position", swervePosition);
 
-            telemetryMap.put("swivel angle", swivelAngle);
-            telemetryMap.put("target swivel angle", targetSwivelAngle);
+            telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
+            telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
 
             telemetryMap.put("left velocity", leftVelocity);
             telemetryMap.put("right velocity",rightVelocity);
@@ -332,6 +310,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("maintain chassis length enabled", maintainChassisLengthEnabled);
             telemetryMap.put("anti tipping enabled", antiTippingEnabled);
             telemetryMap.put("smoothing enabled", smoothingEnabled);
+            telemetryMap.put("middle reversed", middleReversed);
         }
 
         return telemetryMap;

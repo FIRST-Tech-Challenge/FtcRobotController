@@ -17,8 +17,46 @@ public class Autonomous {
     public VisionProvider visionProvider;
     private Robot robot;
 
+    // Autonomous trajectories
+    TrajectorySequence sequence;
+
+    // Autonomous articulations
+    private Stage autonomousRedStage = new Stage();
+    public StateMachine autonomousRed;
+
+    private Stage autonomousBlueStage = new Stage();
+    public StateMachine autonomousBlue;
+
     public Autonomous(Robot robot) {
         this.robot = robot;
+
+        // Autonomous trajectories
+        sequence = robot.driveTrain.trajectorySequenceBuilder(new Pose2d(0, 0))
+                .forward(24)
+                .turn(Math.toRadians(90))
+                .splineTo(new Vector2d(48, 48), Math.toRadians(90))
+                .build();;
+
+        // Autonomous articulations
+        autonomousRed = getStateMachine(autonomousRedStage)
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> true,
+                        () -> true,
+                        () -> true
+                )
+                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(sequence))
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
+                .build();
+
+        autonomousBlue = getStateMachine(autonomousBlueStage)
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> true,
+                        () -> true,
+                        () -> true
+                )
+                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(sequence))
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
+                .build();
     }
 
     private StateMachine.Builder getStateMachine(Stage stage) {
@@ -35,30 +73,4 @@ public class Autonomous {
             throw new RuntimeException("Error while instantiating vision provider");
         }
     }
-
-    // Autonomous trajectories
-    TrajectorySequence sequence =  robot.driveTrain.trajectorySequenceBuilder(new Pose2d(0, 0))
-            .lineTo(new Vector2d(10, 10))
-            .turn(Math.toRadians(90))
-            .build();
-
-    // Autonomous articulations
-    private Stage autonomousRedStage = new Stage();
-    public StateMachine autonomousRed = getStateMachine(autonomousRedStage)
-            .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                    () -> true,
-                    () -> true,
-                    () -> true
-            )
-            .addTrajectoryState(robot.driveTrain.trajectorySequenceRunner, sequence)
-            .build();
-
-    private Stage autonomousBlueStage = new Stage();
-    public StateMachine autonomousBlue = getStateMachine(autonomousBlueStage)
-            .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                    () -> true,
-                    () -> true,
-                    () -> true
-            )
-            .build();
 }

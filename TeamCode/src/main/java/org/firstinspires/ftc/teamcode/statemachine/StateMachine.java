@@ -53,12 +53,6 @@ public class StateMachine {
             return this;
         }
 
-        public Builder addTrajectoryState(TrajectorySequenceRunner trajectorySequenceRunner, TrajectorySequence sequence) {
-            states.add(() -> {trajectorySequenceRunner.followTrajectorySequenceAsync(sequence); return true;});
-            states.add(() -> !trajectorySequenceRunner.isBusy());
-            return this;
-        }
-
         public Builder addMineralState(final MineralStateProvider mineralStateProvider, State left, State middle, State right) {
             states.add(() -> {
                 switch (mineralStateProvider.getMineralState()) {
