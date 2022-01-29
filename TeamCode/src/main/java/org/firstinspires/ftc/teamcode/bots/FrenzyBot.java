@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoBase;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.calibration.FreightFrenzyConfig;
+import org.firstinspires.ftc.teamcode.skills.DuckLoop;
 import org.firstinspires.ftc.teamcode.skills.FrenzyIntake;
 import org.firstinspires.ftc.teamcode.skills.FrenzyLift;
 import org.firstinspires.ftc.teamcode.skills.FrenzyLiftMode;
@@ -54,6 +55,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     public static int LIFT_SHARED_HUB = 400;
     public static int LIFT_MIN_EXTENSION = 450;
     public static int LIFT_UNDER_EXTENTION = 0;
+    public static int LIFT_ENDGAME = 180;
 
     protected static int TURRET_POS_CENTER = 0;
     protected static int TURRET_POS_MAX_LEFT = 840;  //red side team hub
@@ -167,16 +169,16 @@ public class FrenzyBot extends FrenzyBaseBot {
         } catch (Exception ex) {
             Log.e(TAG, "Cannot initialize dropperServo", ex);
         }
-//        try {
-//            colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
-//        } catch (Exception ex) {
-//            Log.e(TAG, "Cannot initialize colorSensor", ex);
-//        }
         try {
-            sensorRange = hwMap.get(DistanceSensor.class, "sensorRange");
-        } catch(Exception ex) {
-            Log.e(TAG, "Cannot initialize distanceSensor", ex);
+            colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize colorSensor", ex);
         }
+//        try {
+//            sensorRange = hwMap.get(DistanceSensor.class, "sensorRange");
+//        } catch(Exception ex) {
+//            Log.e(TAG, "Cannot initialize distanceSensor", ex);
+//        }
 
         try {
             intakeDropperServo =  hwMap.get(Servo.class, "intakeDropper");
@@ -423,7 +425,6 @@ public class FrenzyBot extends FrenzyBaseBot {
     @BotAction(displayName = "Lift to lower", defaultReturn = "", isTerminator = false)
     public void liftToLower() {
         if (liftLocation != LIFT_UNDER_EXTENTION){
-            liftLocation = LIFT_UNDER_EXTENTION;
             this.lift.setTargetPosition(LIFT_UNDER_EXTENTION);
             this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             if (getLiftPosition() == LIFT_LEVEL_ONE) {
@@ -435,6 +436,8 @@ public class FrenzyBot extends FrenzyBaseBot {
 
             }
             stopLift();
+
+            liftLocation = LIFT_UNDER_EXTENTION;
         }
     }
 
@@ -659,11 +662,11 @@ public class FrenzyBot extends FrenzyBaseBot {
 
     @BotAction(displayName = "Start turntable blue gradual", defaultReturn = "", isTerminator = false)
     public void startTurntableBlueGradual() {
-        duckLoop(false, false);
+        duckLoopAsync(false, false);
     }
     @BotAction(displayName = "Start turntable red gradual", defaultReturn = "", isTerminator = false)
     public void startTurntableRedGradual() {
-        duckLoop(true, false);
+        duckLoopAsync(true, false);
     }
 
     @BotAction(displayName = "Start turntable blue auto gradual", defaultReturn = "", isTerminator = false)
@@ -803,11 +806,11 @@ public class FrenzyBot extends FrenzyBaseBot {
     }
 
     public boolean isIntakeBoxEmpty(){
-//        float HValue = detectColor(telemetry, 0); // color method
-//        return HValue < 5;
+        // Color based sensing
+        float HValue = detectColor(telemetry, 0); // color method
+        return HValue < 5;
 
-
-
+//        Current based sensing
 //        double val = getIntakeCurrent(); // Current Method
 //        boolean spike = val>0.9;
 //
@@ -832,8 +835,9 @@ public class FrenzyBot extends FrenzyBaseBot {
 //        }
 //        return true;
 
-        double dVal = getDistance();
-        return dVal >= 2.5;
+//        // Distance Sensor based detection
+//        double dVal = getDistance();
+//        return dVal >= 2.5;
 
 
     }
@@ -889,10 +893,16 @@ public class FrenzyBot extends FrenzyBaseBot {
         }
     }
 
-    private void duckLoop(boolean red, boolean auto){
+    public void duckLoopAsync(boolean red, boolean auto) {
+        DuckLoop duckLoop = new DuckLoop(this, red, auto);
+        Thread thread = new Thread(duckLoop);
+        thread.start();
+    }
+
+    public void duckLoop(boolean red, boolean auto){
         double startSpeed = -0.2;
         double speedIncrement = -0.05;
-        int maxLoops = 9;
+        int maxLoops = 11;
         int loopDelayMs = 140;
         double maxSpeed = 0.38;
         if (auto){
@@ -916,6 +926,28 @@ public class FrenzyBot extends FrenzyBaseBot {
 
         activateRotatorLeft(0.0);
     }
+
+    public void liftToLevelEndgame(){
+        this.lift.setTargetPosition(LIFT_ENDGAME);
+        this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setVelocity(MAX_VELOCITY_REV*LIFT_SPEED);
+        while (owner.opModeIsActive() && this.lift.isBusy()){
+
+        }
+        stopLift();
+
+        dropperTransportPositionDown();
+    }
+
+    public double getTapePosition() {
+        double pos = tapeUp.getPosition();
+        return pos;
+    }
+
+    public void liftTapeEndgame() {
+        tapeUp.setPosition(0.285);
+    }
+
 
     public boolean isIntakeRunning() {
         return intakeRunning;

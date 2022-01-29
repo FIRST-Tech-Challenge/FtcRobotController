@@ -110,7 +110,8 @@ public class FrenzyModeBase extends LinearOpMode {
         telemetry.addData("Heading Adjusted", "%.3f", odometry.getAdjustedCurrentHeading());
         telemetry.addData("Lift position", "%d", robot.getLiftPosition());
         telemetry.addData("Turret position", "%d", robot.getTurretPosition());
-        telemetry.addData("range", String.format("%.01f in", robot.getDistance()));
+//        telemetry.addData("range", String.format("%.01f in", robot.getDistance()));
+        telemetry.addData("Tape Position", String.format("%.01f in", robot.getTapePosition()));
         telemetry.update();
     }
 
@@ -152,6 +153,7 @@ public class FrenzyModeBase extends LinearOpMode {
         handleOuttake();
         handleTurntable();
         if (isManualLiftMode()) {
+            handleManualTape();
             handleTower();
             handleLiftManual();
             handleTapeMeasure();
@@ -211,10 +213,8 @@ public class FrenzyModeBase extends LinearOpMode {
 
 
     protected void handleTower() {
-        if (isButtonPressable()) {
-            double turretValue = gamepad2.right_stick_x;
-            robot.activateTurret(turretValue);
-        }
+        double turretValue = gamepad2.right_stick_x;
+        robot.activateTurret(turretValue);
     }
 
     protected void handleManualTurretOffset(){
@@ -235,30 +235,26 @@ public class FrenzyModeBase extends LinearOpMode {
                 startGamepadLockout();
                 robot.turretToTeamHubRed();
             } else if(gamepad1.dpad_right) {
+                startGamepadLockout();
                 robot.towerToTeamHubBlue();
             }
         }
     }
 
     protected void handleLiftManual() {
-        if (isButtonPressable()) {
-            double liftVal = -gamepad2.right_stick_y;
-            robot.activateLift(liftVal);
-
-        }
+        double liftVal = -gamepad2.right_stick_y;
+        robot.activateLift(liftVal);
     }
 
     protected void handleTapeMeasure() {
-        if (isButtonPressable()) {
-            double val = gamepad2.left_stick_x;
-            robot.activateTapeMeasure(val);
-        }
+        double val = gamepad2.left_stick_x;
+        robot.activateTapeMeasure(val);
     }
 
     protected void handleTapeMeasureUpDown() {
         if (isButtonPressable()) {
-            double val = gamepad2.left_stick_y;
             startGamepadLockout();
+            double val = gamepad2.left_stick_y;
             robot.moveTapeMeasureUpDown(-val);
         }
     }
@@ -266,11 +262,11 @@ public class FrenzyModeBase extends LinearOpMode {
     protected void handleDropper() {
         if (isButtonPressable()) {
             if (gamepad1.dpad_right) {
+                startGamepadLockout();
                 robot.dropElement();
-                startGamepadLockout();
             } else if (gamepad1.dpad_left) {
-                robot.resetDropper();
                 startGamepadLockout();
+                robot.resetDropper();
             }
         }
     }
@@ -278,16 +274,16 @@ public class FrenzyModeBase extends LinearOpMode {
     protected void handleIntakeDropper() {
         if (isButtonPressable()) {
             if (gamepad2.dpad_down) {
+                startGamepadLockout();
                 robot.intakeDropperUp();
 //                robot.smartStopIntake();
-                startGamepadLockout();
             } else if (gamepad2.dpad_up) {
-                robot.intakeDropperDown();
                 startGamepadLockout();
+                robot.intakeDropperDown();
             }
             else if (gamepad2.dpad_right || gamepad2.dpad_left){
-                robot.intakeDropperHalfWay();
                 startGamepadLockout();
+                robot.intakeDropperHalfWay();
             }
         }
     }
@@ -324,12 +320,19 @@ public class FrenzyModeBase extends LinearOpMode {
             if (gamepad2.start) {
                 startGamepadLockout();
                 setManualLiftMode(!manualLiftMode);
-                robot.intakeDropperNeutral();
+                robot.liftToLevelEndgame();
             }
         }
     }
 
-
+    protected void handleManualTape() {
+        if (isButtonPressable()) {
+            if (gamepad2.a) {
+                startGamepadLockout();
+                robot.liftTapeEndgame();
+            }
+        }
+    }
 
     protected void startGamepadLockout() {
         gamepadRateLimit.reset();
