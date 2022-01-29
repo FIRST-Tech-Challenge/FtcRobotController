@@ -32,7 +32,7 @@ public class RedWarehouseOdo extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-13, -45))
+                .strafeTo(new Vector2d(-15, -44))
                 .build();
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
@@ -43,6 +43,10 @@ public class RedWarehouseOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
+
+//        TWCA CHANGES! ALERT!
+        drive.pause(650);
+//
 
         drive.stopDuckCamera();
 
@@ -104,14 +108,14 @@ public class RedWarehouseOdo extends LinearOpMode {
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                     })
-                    .splineToSplineHeading(new Pose2d(-10, -47, Math.toRadians(90)), Math.toRadians(90))
+                    .splineToSplineHeading(new Pose2d(-9, -48, Math.toRadians(90)), Math.toRadians(90))
                     .build();
             drive.followTrajectorySequence(trajSeq3);
-            fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
-                    .addTemporalMarker(1,()->{drive.retract();})
-                    .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
-                    .build();
+//            fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                    .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
+//                    .addTemporalMarker(1,()->{drive.retract();})
+//                    .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+//                    .build();
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
             drive.pause(SERVO_DROP_PAUSE);
             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
@@ -130,15 +134,15 @@ public class RedWarehouseOdo extends LinearOpMode {
                              drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                              drive.linearSlideMotor.setPower(.8);
                          })
-                         .splineToSplineHeading(new Pose2d(-10, -47, Math.toRadians(90)), Math.toRadians(90))
+                         .splineToSplineHeading(new Pose2d(-9, -48, Math.toRadians(90)), Math.toRadians(90))
 
                          .build();
                  drive.followTrajectorySequence(trajSeq3);
-                 fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                         .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
-                         .addTemporalMarker(1,()->{drive.retract();})
-                         .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
-                         .build();
+//                 fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//                         .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
+//                         .addTemporalMarker(1,()->{drive.retract();})
+//                         .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+//                         .build();
                  drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
                  drive.pause(SERVO_DROP_PAUSE);
                  drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);

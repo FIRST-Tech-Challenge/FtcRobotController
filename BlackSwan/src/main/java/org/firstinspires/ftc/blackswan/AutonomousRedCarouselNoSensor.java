@@ -16,27 +16,28 @@ public class AutonomousRedCarouselNoSensor extends LinearOpMode {
         //setup for fieldcentric driving
         robot.forward(1,.5);
         robot.turnRight(90,.5);
-        robot.right(1,.5);
+        robot.right(1.25,.5);
         //movelift
         robot.liftForMovement();
         // turns to rotate carousel and rotates carousel
-        robot.left(.5,.5);
+        //robot.left(.5,.5);
         robot.turnLeft(45,.5);
         robot.left(.5,.5);
-        robot.back(.47,.5);
+        robot.back(.55,.5);
         robot.redCarousel(4000);
         robot.forward(.47,.5);
         robot.right(.5,.5);
-        robot.turnLeft(30,.5);
+        robot.turnLeft(40,.5);
         //scoring stuff
         robot.right(3,.5);
+        robot.forward(.5,.5); //adjust to make it work
         robot.armThing(3);
-        robot.forward(.9,.5); //adjust to make it work
+        robot.forward(0.4,0.5);
         robot.eject();
-        robot.back(.8,.5); //match the forward
-        robot.turnLeft(.20,.5);
-        robot.left(4.25,.5);
-        robot.forward(.8,.5); // adjust to make it work
+        robot.back(.1,.5); //match the forward
+        robot.left(4.5,.5);
+        robot.armThing(0);
+        robot.forward(0.5,0.2);
 
     }
 }
