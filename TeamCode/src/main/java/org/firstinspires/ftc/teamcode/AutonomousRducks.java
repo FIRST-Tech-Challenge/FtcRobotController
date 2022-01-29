@@ -102,6 +102,7 @@ public class AutonomousRducks extends AutonomousBase {
 
         int redAlignedCount;
         int blueAlignedCount;
+		
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
             sonarRangeR = robot.updateSonarRangeR();
@@ -119,12 +120,15 @@ public class AutonomousRducks extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(redAlignedCount >= 2) {
                 telemetry.addLine("Red aligned for red autonomous. Good job!");
+                blockLevel = FreightFrenzyPipeline.blockLevel;
             } else if (blueAlignedCount >= 2) {
-                telemetry.addLine("WARNING: Blue aligned for RED autonomous. Something is wrong, so so wrong!");
+                telemetry.addLine("****************************************************");
+                telemetry.addLine("* WARNING: Blue aligned for RED autonomous. *");
+                telemetry.addLine("*          Something is wrong, so so wrong!             *");
+                telemetry.addLine("****************************************************");
             } else {
                 telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
             }
-
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -132,8 +136,13 @@ public class AutonomousRducks extends AutonomousBase {
 
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
-        blockLevel = FreightFrenzyPipeline.blockLevel;
-//      FreightFrenzyPipeline.saveLastAutoImage();
+
+        // Only do these steps if we didn't hit STOP
+        if( opModeIsActive() ) {
+            blockLevel = FreightFrenzyPipeline.blockLevel;
+            FreightFrenzyPipeline.saveLastAutoImage();
+        }
+
         webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------
@@ -217,7 +226,7 @@ public class AutonomousRducks extends AutonomousBase {
         } // switch()
 
         // Move forward away from field wall so it's safe to raise the arms
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.0, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
         // Rotate the capping arm into the grabbing position
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );
@@ -251,17 +260,17 @@ public class AutonomousRducks extends AutonomousBase {
 
         switch( level ) {
             case 3 : angleToHub = 40.0;    // top
-                     distanceToHub = -8.2;
+                     distanceToHub = -9.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
             case 2 : angleToHub = 38.0;
-                     distanceToHub = -4.2;  // middle
+                     distanceToHub = -5.2;  // middle
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
-            case 1 : angleToHub = 35.0;
-                     distanceToHub = -5.4;  // bottom
+            case 1 : angleToHub = 38.0;
+                     distanceToHub = -6.7;  // bottom
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      armSleep = 1250;   // 1.25 sec
                      break;
@@ -300,10 +309,8 @@ public class AutonomousRducks extends AutonomousBase {
                      break;
         } // switch()
 
-//      robot.sweepServo.setPower( -0.25 );         // start sweeper in reverse
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
         sleep( 1500 );                    // let cube drop out
-//      robot.sweepServo.setPower( 0.0 );           // stop sweeper
         // back away and store arm
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );

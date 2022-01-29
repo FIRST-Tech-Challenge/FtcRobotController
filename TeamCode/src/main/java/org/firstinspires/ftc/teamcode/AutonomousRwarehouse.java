@@ -109,13 +109,14 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
         int redAlignedCount;
         int blueAlignedCount;
+		
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
             sonarRangeL = robot.updateSonarRangeL();
             checkForNewCollisionDelay();
             telemetry.addData("ALLIANCE", "%s", "RED (warehouse)");
             telemetry.addData("Block Level", "%d", blockLevel );
-            telemetry.addData("Sonar Range", "%.1f inches (50.0)", sonarRangeL/2.54 );
+            telemetry.addData("Sonar Range", "%.1f inches (50.4?)", sonarRangeL/2.54 );
             telemetry.addData("Start delay", "%.1f seconds (dpad up/down)", collisionDelay );
             telemetry.addData("Left Red Alignment", "%d %b", FreightFrenzyPipeline.leftRedAverage, FreightFrenzyPipeline.alignedRedLeft);
             telemetry.addData("Center Red Alignment", "%d %b", FreightFrenzyPipeline.centerRedAverage, FreightFrenzyPipeline.alignedRedCenter);
@@ -128,8 +129,12 @@ public class AutonomousRwarehouse extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(redAlignedCount >= 2) {
                 telemetry.addLine("Red aligned for red autonomous. Good job!");
+                blockLevel = FreightFrenzyPipeline.blockLevel;
             } else if (blueAlignedCount >= 2) {
-                telemetry.addLine("WARNING: Blue aligned for RED autonomous. Something is wrong, so so wrong!");
+                telemetry.addLine("****************************************************");
+                telemetry.addLine("* WARNING: Blue aligned for RED autonomous. *");
+                telemetry.addLine("*          Something is wrong, so so wrong!             *");
+                telemetry.addLine("****************************************************");
             } else {
                 telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
             }
@@ -140,8 +145,13 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
-        blockLevel = FreightFrenzyPipeline.blockLevel;
-//      FreightFrenzyPipeline.saveLastAutoImage();
+
+        // Only do these steps if we didn't hit STOP
+        if( opModeIsActive() ) {
+            blockLevel = FreightFrenzyPipeline.blockLevel;
+            FreightFrenzyPipeline.saveLastAutoImage();
+        }
+
         webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------
@@ -244,7 +254,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         } // switch()
 
         // Move forward away from field wall so it's safe to raise the arms
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.0, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
         // Rotate the capping arm into the grabbing position
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );

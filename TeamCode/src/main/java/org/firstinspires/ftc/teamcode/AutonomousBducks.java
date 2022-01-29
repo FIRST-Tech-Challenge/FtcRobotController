@@ -48,6 +48,7 @@ import java.lang.Math;
 @Autonomous(name="Autonomous Blue (ducks)", group="7592", preselectTeleOp = "Teleop-Blue")
 //@Disabled
 public class AutonomousBducks extends AutonomousBase {
+
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drivetrain.
     static final boolean DRIVE_Y              = true;    // Drive forward/backward
@@ -65,7 +66,7 @@ public class AutonomousBducks extends AutonomousBase {
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
-    public int blockLevel;
+    public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -99,16 +100,15 @@ public class AutonomousBducks extends AutonomousBase {
             }
         });
 
-        int blueAlignedCount;
         int redAlignedCount;
-
+        int blueAlignedCount;
+		
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
             sonarRangeL = robot.updateSonarRangeL();
             telemetry.addData("ALLIANCE", "%s", "BLUE (ducks)");
             telemetry.addData("Block Level", "%d", FreightFrenzyPipeline.blockLevel );
             telemetry.addData("Sonar Range", "%.1f inches (26.4)", sonarRangeL/2.54 );
-
             telemetry.addData("Left Blue Alignment", "%d %b", FreightFrenzyPipeline.leftBlueAverage, FreightFrenzyPipeline.alignedBlueLeft);
             telemetry.addData("Center Blue Alignment", "%d %b", FreightFrenzyPipeline.centerBlueAverage, FreightFrenzyPipeline.alignedBlueCenter);
             telemetry.addData("Right Blue Alignment", "%d %b", FreightFrenzyPipeline.rightBlueAverage, FreightFrenzyPipeline.alignedBlueRight);
@@ -120,12 +120,15 @@ public class AutonomousBducks extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(blueAlignedCount >= 2) {
                 telemetry.addLine("Blue aligned for blue autonomous. Good job!");
+                blockLevel = FreightFrenzyPipeline.blockLevel;
             } else if(redAlignedCount >= 2) {
-                telemetry.addLine("WARNING: Red aligned for BLUE autonomous. Something is wrong, so so wrong!");
+                telemetry.addLine("****************************************************");
+                telemetry.addLine("* WARNING: Red aligned for BLUE autonomous. *");
+                telemetry.addLine("*          Something is wrong, so so wrong!             *");
+                telemetry.addLine("****************************************************");
             } else {
                 telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
             }
-
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -133,8 +136,13 @@ public class AutonomousBducks extends AutonomousBase {
 
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
-        blockLevel = FreightFrenzyPipeline.blockLevel;
-//      FreightFrenzyPipeline.saveLastAutoImage();
+
+        // Only do these steps if we didn't hit STOP
+        if( opModeIsActive() ) {
+            blockLevel = FreightFrenzyPipeline.blockLevel;
+            FreightFrenzyPipeline.saveLastAutoImage();
+        }
+
         webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------
@@ -213,12 +221,12 @@ public class AutonomousBducks extends AutonomousBase {
                      distanceToGrab = -1.8;
                      break;
             case 1 : turnAngle = -42.0;
-                     distanceToGrab = -3.5; // left/bottom
+                     distanceToGrab = -4.8; // left/bottom
                      break;
         } // switch()
 
         // Move forward away from field wall so it's safe to raise the arms
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.0, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
         // Rotate the capping arm into the grabbing position
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );
@@ -252,17 +260,17 @@ public class AutonomousBducks extends AutonomousBase {
 
         switch( level ) {
             case 3 : angleToHub = -40.0;    // top
-                     distanceToHub = -9.0;
+                     distanceToHub = -10.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
             case 2 : angleToHub = -40.0;
-                     distanceToHub = -5.0;  // middle
+                     distanceToHub = -6.0;  // middle
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
-            case 1 : angleToHub = -35.0;
-                     distanceToHub = -4.0;  // bottom
+            case 1 : angleToHub = -38.0;
+                     distanceToHub = -5.0;  // bottom
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      armSleep = 1250;   // 1.25 sec
                      break;

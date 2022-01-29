@@ -90,6 +90,8 @@ public abstract class Teleop extends LinearOpMode {
     ElapsedTime collectorArmTimer    = new ElapsedTime();
 
     //freight detection section
+    boolean freightDetectionTelemetryEnabled = false;
+    boolean ballCubeDetectionTelemetryEnabled = false;
     boolean collectingFreight  = false;
     boolean freightPresent     = false;
     boolean freightIsCube      = false;
@@ -246,25 +248,30 @@ public abstract class Teleop extends LinearOpMode {
                telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
                telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
             }
-//          telemetry.addData("Gyro Angle", "%.1f deg", robot.headingIMU() );
+//          telemetry.addData("Gyro Angle", "%.1f deg (%.1f tilt)", robot.headingIMU(), robot.tiltAngle );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
 
             // Testing Color and Distance sensor
-            telemetry.addData("Collector Raised: ", collectorArmRaised);
-            telemetry.addData("Collecting Freight: ", collectingFreight);
-            telemetry.addData("Freight Present: ", freightPresent);
-            telemetry.addData("Freight Is Cube: ", freightIsCube);
- /*           telemetry.addLine()
+            if( freightDetectionTelemetryEnabled ) {
+                telemetry.addData("Collector Raised: ", collectorArmRaised);
+                telemetry.addData("Collecting Freight: ", collectingFreight);
+                telemetry.addData("Freight Distance (mm)", "%.3f", robot.freightDistance);
+                telemetry.addData("Freight Present: ", freightPresent);
+                telemetry.addData("Freight Is Cube: ", freightIsCube);
+            }
+            if( ballCubeDetectionTelemetryEnabled ) {
+                telemetry.addLine()
+                        .addData("Hue", "%.3f", robot.hsvValues[0])
+                        .addData("Saturation", "%.3f", robot.hsvValues[1])
+                        .addData("Value", "%.3f", robot.hsvValues[2]);
+/* COLOR SENSING IS BROKEN (crashes on PLAY)
+            telemetry.addData("Alpha", "%.3f", robot.colors.alpha);   // COLORS broken for now
+            telemetry.addLine()
                     .addData("Red", "%.3f", robot.colors.red)
                     .addData("Green", "%.3f", robot.colors.green)
                     .addData("Blue", "%.3f", robot.colors.blue);
-            telemetry.addLine()
-                    .addData("Hue", "%.3f", robot.hsvValues[0])
-                    .addData("Saturation", "%.3f", robot.hsvValues[1])
-                    .addData("Value", "%.3f", robot.hsvValues[2]);
-            telemetry.addData("Alpha", "%.3f", robot.colors.alpha);
-            telemetry.addData("Distance (mm)", "%.3f", robot.distance);
 */
+            }
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
@@ -278,7 +285,7 @@ public abstract class Teleop extends LinearOpMode {
             if (robot.freightPresent()) {
                 freightDetectionCounts++;
                 // Set freightpresent if set number of detections occurred
-                if(freightDetectionCounts > 15) {
+                if(freightDetectionCounts > 10) {
                     freightPresent = true;
                 }
             } else {

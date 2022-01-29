@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -160,9 +158,9 @@ public class HardwareBothHubs
 //  public DistanceSensor freightFinder = null;
     private NormalizedColorSensor freightFinder = null;
     private DistanceSensor freightDetector = null;
-    public final float[] hsvValues = new float[3];
+    public float[] hsvValues = new float[3];
     public NormalizedRGBA colors;
-    public double distance;
+    public double freightDistance;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;
@@ -637,8 +635,8 @@ public class HardwareBothHubs
     } // stdevSonarRangeB
 
     public boolean freightPresent() {
-        distance = freightDetector.getDistance(DistanceUnit.MM);
-        return distance < 75;
+        freightDistance = freightDetector.getDistance(DistanceUnit.MM);
+        return freightDistance < 64;
     }
 
     public boolean freightIsCube() {

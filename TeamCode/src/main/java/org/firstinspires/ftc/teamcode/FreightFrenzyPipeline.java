@@ -72,8 +72,8 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     private int alignRedAvg2;
     private int alignRedAvg3;
 
-    private Point alignment1RedPointA = new Point(47,212);
-    private Point alignment1RedPointB = new Point(57,222);
+    private Point alignment1RedPointA = new Point(45,212);
+    private Point alignment1RedPointB = new Point(55,222);
     private Point alignment2RedPointA = new Point(160,212);
     private Point alignment2RedPointB = new Point(170,222);
     private Point alignment3RedPointA = new Point(273,212);
@@ -115,17 +115,17 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         this.duckySide = duckySide;
         if(redAlliance) {
             if(duckySide) {
-                sub1PointA = new Point( 37,190); // 15x15 pixels on LEFT
-                sub1PointB = new Point( 52,205);
-                sub2PointA = new Point(156,190); // 15x15 pixels on CENTER
-                sub2PointB = new Point(171,205);
+                sub1PointA = new Point( 42,190); // 15x15 pixels on LEFT
+                sub1PointB = new Point( 57,205);
+                sub2PointA = new Point(158,190); // 15x15 pixels on CENTER
+                sub2PointB = new Point(173,205);
                 sub3PointA = new Point(277,190); // 15x15 pixels on RIGHT
                 sub3PointB = new Point(292,205);
             } else {
-                sub1PointA = new Point( 37,190); // 15x15 pixels on LEFT
-                sub1PointB = new Point( 52,205);
-                sub2PointA = new Point(156,190); // 15x15 pixels on CENTER
-                sub2PointB = new Point(171,205);
+                sub1PointA = new Point( 44,190); // 15x15 pixels on LEFT
+                sub1PointB = new Point( 59,205);
+                sub2PointA = new Point(160,190); // 15x15 pixels on CENTER
+                sub2PointB = new Point(175,205);
                 sub3PointA = new Point(265,190); // 15x15 pixels on RIGHT (limited by barrier!)
                 sub3PointB = new Point(280,205);
             }

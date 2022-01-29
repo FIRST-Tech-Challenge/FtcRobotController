@@ -69,7 +69,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
-    public int blockLevel;   // dynamic (gets updated every cycle during INIT)
+    public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
     public static double collisionDelay = 4.0;  // wait 4 seconds before moving (to avoid collision)
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
@@ -109,6 +109,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         int redAlignedCount;
         int blueAlignedCount;
+		
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
             sonarRangeR = robot.updateSonarRangeR();
@@ -128,12 +129,15 @@ public class AutonomousBwarehouse extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(blueAlignedCount >= 2) {
                 telemetry.addLine("Blue aligned for blue autonomous. Good job!");
+                blockLevel = FreightFrenzyPipeline.blockLevel;
             } else if(redAlignedCount >= 2) {
-                telemetry.addLine("WARNING: Red aligned for BLUE autonomous. Something is wrong, so so wrong!");
+                telemetry.addLine("****************************************************");
+                telemetry.addLine("* WARNING: Red aligned for BLUE autonomous. *");
+                telemetry.addLine("*          Something is wrong, so so wrong!             *");
+                telemetry.addLine("****************************************************");
             } else {
                 telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
             }
-
             telemetry.update();
             // Pause briefly before looping
             idle();
@@ -141,8 +145,13 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
-        blockLevel = FreightFrenzyPipeline.blockLevel;
-//      FreightFrenzyPipeline.saveLastAutoImage();
+
+        // Only do these steps if we didn't hit STOP
+        if( opModeIsActive() ) {
+            blockLevel = FreightFrenzyPipeline.blockLevel;
+            FreightFrenzyPipeline.saveLastAutoImage();
+        }
+
         webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------
@@ -249,7 +258,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         } // switch()
 
         // Move forward away from field wall so it's safe to raise the arms
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.0, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
         // Rotate the capping arm into the grabbing position
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );
