@@ -191,8 +191,8 @@ public class Auto_BlueWarehouse extends LinearOpMode {
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         extender.setMode(RUN_WITHOUT_ENCODER);
 
-        frontL.setDirection(DcMotorEx.Direction.FORWARD);
-        backL.setDirection(DcMotorEx.Direction.FORWARD);
+        frontL.setDirection(DcMotorEx.Direction.REVERSE);
+        backL.setDirection(DcMotorEx.Direction.REVERSE);
         frontR.setDirection(DcMotorEx.Direction.REVERSE);
         backR.setDirection(DcMotorEx.Direction.REVERSE);
         extender.setDirection(DcMotorEx.Direction.REVERSE);
@@ -209,7 +209,7 @@ public class Auto_BlueWarehouse extends LinearOpMode {
         armReset();
         sleep(500);
         drive(0, -25, 500);
-        drive(90, 0, 500);
+        drive( 90, 0, 500);
         sleep(500);
         drive(0, 175, 1200);
     }

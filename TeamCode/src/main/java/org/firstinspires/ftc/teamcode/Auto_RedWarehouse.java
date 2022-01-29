@@ -95,7 +95,7 @@ public class Auto_RedWarehouse extends LinearOpMode {
     public void armTopLayer(){
         double extenderPower = 0.5;
 
-        arm.setTargetPosition(-17400);
+        arm.setTargetPosition(-9000);
         arm.setMode(RUN_TO_POSITION);
         arm.setVelocity(armVelocity);
         while (arm.isBusy()) {
@@ -204,7 +204,7 @@ public class Auto_RedWarehouse extends LinearOpMode {
 
         drive(0, 54, 500);
         drive(90, 0, 500);
-        drive(0, 25, 500);
+        drive(0, 30, 500);
         armTopLayer();
         armReset();
         sleep(500);

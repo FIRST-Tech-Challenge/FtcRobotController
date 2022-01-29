@@ -6,27 +6,24 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODE
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 @Autonomous
 public class TestTwo extends LinearOpMode {
     DcMotorEx frontL, frontR, backL, backR, duckWheel, arm = null;
     DcMotor extender;
-    DistanceSensor dSensor;
+    DistanceSensor dSensorR, dSensorL;
     CRServo intakeL, intakeR = null;
 
     boolean readingDuck = true;
     final double oneCmInPPR = 7.9;
     final double armVelocity = 20000;
 
-    public void drive(double directionInDegrees, double distanceInCm, double wheelVelocity){
+    public void drive(double directionInDegrees, double distanceInCm, double wheelVelocity) {
 //      384.5(PPR) = ~50cm = ~20in
 //      7.9(PPR) = 1cm
 //        4.27(PPR) = 1 Degree
@@ -35,7 +32,7 @@ public class TestTwo extends LinearOpMode {
         double pprTurn = directionInDegrees * oneDegreeInPPR;
 
 
-        if(directionInDegrees != 0) {
+        if (directionInDegrees != 0) {
             if (directionInDegrees < 0) {
                 frontL.setTargetPosition(-(int) pprTurn + frontL.getCurrentPosition());
                 frontR.setTargetPosition((int) pprTurn + frontR.getCurrentPosition());
@@ -69,7 +66,7 @@ public class TestTwo extends LinearOpMode {
             }
         }
 
-        if(distanceInCm != 0) {
+        if (distanceInCm != 0) {
             frontL.setTargetPosition((int) pprForward + frontL.getCurrentPosition());
             frontR.setTargetPosition((int) pprForward + frontR.getCurrentPosition());
             backL.setTargetPosition((int) pprForward + backL.getCurrentPosition());
@@ -96,10 +93,10 @@ public class TestTwo extends LinearOpMode {
         }
     }
 
-    public void armTopLayer(){
+    public void armTopLayer() {
         double extenderPower = 0.5;
 
-        arm.setTargetPosition(-17400);
+        arm.setTargetPosition(-9000);
         arm.setMode(RUN_TO_POSITION);
         arm.setVelocity(armVelocity);
         while (arm.isBusy()) {
@@ -116,7 +113,7 @@ public class TestTwo extends LinearOpMode {
         intakeL.setPower(1);
     }
 
-    public void armReset(){
+    public void armReset() {
         sleep(1200);
         intakeR.setPower(0);
         intakeL.setPower(0);
@@ -161,13 +158,27 @@ public class TestTwo extends LinearOpMode {
 //
 //        double cmToDucky = 0.0;
 //        final double distanceToShippingHubPPR = 5.0;
+//        final double distanceBetweenBarcodes = 5; // CM | TODO: Change Later with exact value
+//        int duckSpot = 0;
 //
 //        while(readingDuck){
-//            drive(2, 0);
-//            if(dSensor.getDistance(DistanceUnit.INCH) <= 40){
-//                cmToDucky = frontL.getCurrentPosition() / oneCmInPPR;
+//            drive(2, 0, 500);
+//            if(dSensorR.getDistance(DistanceUnit.INCH) <= 40){ //TODO: Subtract Robot, Maybe 15?
+//                if(cmToDucky >= 9 && cmToDucky <= 18){ // Barcode1 means that it is the Bottom Layer and it will be within 2 cm each side
+//                    // You can check how far you moved by getting the value of the cmToDucky variable.
+//
+//                    // TODO: Check exact distances for these two if statements
+//                    readingDuck = false;
+//                    duckSpot = 2;
+//                } else if(cmToDucky > 18 && cmToDucky <= 27){
+//                    readingDuck = false;
+//                    duckSpot = 3;
+//                }
+//            } else if(cmToDucky > 27) { //TODO: Actual End of all Spots Length
+//                duckSpot = 1;
 //                readingDuck = false;
 //            }
+//            cmToDucky = frontL.getCurrentPosition() / oneCmInPPR;
 //        }
 //    }
 
@@ -185,7 +196,7 @@ public class TestTwo extends LinearOpMode {
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         intakeL = hardwareMap.get(CRServo.class, "intakeL");
         intakeR = hardwareMap.get(CRServo.class, "intakeR");
-//        dSensor = hardwareMap.get(DistanceSensor.class, "dSensor");
+//        dSensorR = hardwareMap.get(DistanceSensor.class, "dSensorR");
 
         // Reset Encoder
         frontL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -195,8 +206,8 @@ public class TestTwo extends LinearOpMode {
         arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         extender.setMode(RUN_WITHOUT_ENCODER);
 
-        frontL.setDirection(DcMotorEx.Direction.FORWARD);
-        backL.setDirection(DcMotorEx.Direction.FORWARD);
+        frontL.setDirection(DcMotorEx.Direction.FORWARD); // TODO: REVERSE Maybe?
+        backL.setDirection(DcMotorEx.Direction.FORWARD); // TODO: REVERSE Maybe?
         frontR.setDirection(DcMotorEx.Direction.REVERSE);
         backR.setDirection(DcMotorEx.Direction.REVERSE);
         extender.setDirection(DcMotorEx.Direction.REVERSE);
@@ -205,15 +216,18 @@ public class TestTwo extends LinearOpMode {
         intakeR.setDirection(CRServo.Direction.FORWARD);
 
         waitForStart();
-
+        // DUCK SIDE: ~16 Inches to shipping hub, turn 90 degrees. Forward 7 Inches. Deposit, Back 7 Inches. Turn -90 degrees forward 34 Inch, rotate ~25 Degrees. Forward 1 Inch to make sure in right position
         drive(0, 54, 500);
         drive(90, 0, 500);
-        drive(0, 25, 500);
+        drive(0, 30, 500);
+
         armTopLayer();
         armReset();
+
         sleep(500);
+
         drive(0, -25, 500);
-        drive(-90, 0, 500);
+        drive(90, 0, 500);
         sleep(500);
         drive(0, 175, 1200);
     }
