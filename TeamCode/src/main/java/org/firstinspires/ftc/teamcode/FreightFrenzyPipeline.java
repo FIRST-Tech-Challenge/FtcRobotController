@@ -151,7 +151,7 @@ class FreightFrenzyPipeline extends OpenCvPipeline
 
     public static void saveLastAutoImage() {
         final String BASE_FOLDER_NAME = "FIRST";
-        String dateTime = new SimpleDateFormat("yyyy-MM-ddThh-mm-ss", Locale.getDefault()).format(new Date());
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd'T'hh-mm-ss", Locale.getDefault()).format(new Date());
         String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME+
                 "/"+"AutoImage"+dateTime+".png";
 
