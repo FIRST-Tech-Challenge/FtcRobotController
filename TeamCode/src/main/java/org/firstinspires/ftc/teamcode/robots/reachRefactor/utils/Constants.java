@@ -29,6 +29,11 @@ public class Constants {
     public static double WHEEL_RADIUS = 0.1016;
     public static double TRACK_WIDTH = 0.308162;
 
+
+    public static int testBase = 1933;
+    public static int testElbow = 1879;
+    public static int testWrist = 1933;
+
     //----------------------------------------------------------------------------------------------
     // Enums
     //----------------------------------------------------------------------------------------------
