@@ -279,9 +279,9 @@ public class FF_6832 extends OpMode {
     }
 
 
-    private void handleArcadeDrive() {
-        forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
-        rotate = gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
+    private void handleArcadeDrive(Gamepad pad) {
+        forward = -pad.left_stick_y * FORWARD_SCALING_FACTOR;
+        rotate = pad.right_stick_x * ROTATE_SCALING_FACTOR;
     }
 
     private void handleTankDrive() {
@@ -326,6 +326,9 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.a)
             robot.driveTrain.handleDuckSpinnerToggle(alliance.getMod());
 
+        if(stickyGamepad1.dpad_right)
+            robot.crane.articulate(Crane.Articulation.HOME);
+
         // gamepad 2
 
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
@@ -363,9 +366,10 @@ public class FF_6832 extends OpMode {
         robot.driveTrain.setTargetChassisDistance(CHASSIS_DISTANCE_LEVELS[chassisDistanceLevelIndex]);
 
         if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
-            handleTankDrive();
+            //handleTankDrive();
+            handleArcadeDrive(gamepad1);
         else if (gamepad2JoysticksActive && !gamepad1JoysticksActive)
-            handleArcadeDrive();
+            handleArcadeDrive(gamepad2);
         else {
             forward = 0;
             rotate = 0;

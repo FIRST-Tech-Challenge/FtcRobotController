@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods.servoNormalize;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -16,6 +18,10 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 public class Gripper implements Subsystem{
     // Servos
     public Servo pitchServo, servo;
+
+    // Sensors
+    public RevColorSensorV3 freightSensor;
+
 
     // State
     boolean up = true;
@@ -31,9 +37,9 @@ public class Gripper implements Subsystem{
 
     public static int CLOSED = 900;
     public static int RELEASE = 1300;
-    public static int OPEN = 2100;
+    public static int OPEN = 1350;
     public static int PITCH_TRANSFER = 2250;
-    public static int PITCH_DOWN = 900;
+    public static int PITCH_DOWN = 830;
     public static int PITCH_INIT = 1854;
     public static int PITCH_VERTICAL = 1860;
     private Articulation articulation;
@@ -42,6 +48,7 @@ public class Gripper implements Subsystem{
     public Gripper(HardwareMap hardwareMap){
         servo = hardwareMap.get(Servo.class, "gripperServo");
         pitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
+        freightSensor= hardwareMap.get(RevColorSensorV3.class, "freightSensor");
 
         articulation = Gripper.Articulation.MANUAL;
 
@@ -73,6 +80,8 @@ public class Gripper implements Subsystem{
 
     @Override
     public void update() {
+        if (pitchServo.getPosition()<.5 && freightSensor.getDistance(DistanceUnit.MM)<25)
+            articulation=Articulation.LIFT;
         articulate(articulation);
         servo.setPosition(servoNormalize(targetPos));
         pitchServo.setPosition(servoNormalize(pitchTargetPos));
@@ -90,6 +99,7 @@ public class Gripper implements Subsystem{
         SET, //Set for Intaking - can be used as an emergency release
         LIFT //Grip and lift to vertical
     }
+
     public boolean articulate(Gripper.Articulation articulation) {
 
         this.articulation = articulation;
@@ -109,7 +119,7 @@ public class Gripper implements Subsystem{
     private final Stage Set = new Stage();
     private final StateMachine set = UtilMethods.getStateMachine(Set)
             .addSingleState(()->{setTargetPos(CLOSED);}) //close the gripper so it's less likely to catch something
-            .addTimedState(() -> .5f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
+            .addTimedState(() -> .25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
             .addSingleState(()->{setTargetPos(OPEN);})
             .build();
 
@@ -117,14 +127,14 @@ public class Gripper implements Subsystem{
     //Gripper remains closed - Transfer is separate
     private final Stage Lift = new Stage();
     private final StateMachine lift = UtilMethods.getStateMachine(Lift)
-            .addTimedState(() -> .25f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
+            .addTimedState(() -> .5f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
             .addTimedState(() -> .5f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
 
     private final Stage Transfer = new Stage();
     private final StateMachine transfer = UtilMethods.getStateMachine(Transfer)
             .addTimedState(() -> .1f, () -> setPitchTargetPos(PITCH_TRANSFER), () -> {})//give freight last-second momentum toward the bucket
-            .addTimedState(() -> .5f, () -> setTargetPos(RELEASE), () -> {})
+            .addTimedState(() -> .75f, () -> setTargetPos(RELEASE), () -> {})
             .addTimedState(() -> 0, () -> setTargetPos(CLOSED), () -> {})
             .addTimedState(() -> 0, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
@@ -145,6 +155,7 @@ public class Gripper implements Subsystem{
         Map<String, Object> telemetryMap = new HashMap<>();
 
         if(debug) {
+            telemetryMap.put("Freight Distance", freightSensor.getDistance(DistanceUnit.MM));
             telemetryMap.put("Servo Target Pos", targetPos);
             telemetryMap.put("Pitch Servo Target Pos", pitchTargetPos);
             telemetryMap.put("Open", open);

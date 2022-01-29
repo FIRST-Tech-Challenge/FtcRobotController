@@ -41,7 +41,7 @@ public class Crane implements Subsystem {
     public static double WRIST_PWM_PER_DEGREE = 750/180;
 
     public static double SHOULDER_DEG_MIN = -90; //negative angles are counter clockwise while looking at the left side of the robot
-    public static double ELBOW_DEG_MIN = -40;
+    public static double ELBOW_DEG_MIN = -60;
     public static double WRIST_DEG_MIN = -180;
 
     public static double SHOULDER_DEG_MAX = 90;
@@ -70,11 +70,15 @@ public class Crane implements Subsystem {
         MANUAL(0, 0, 0, 0, 0,0),
         SIZING(-90,0,70,0, 1.5f,0),
         HOME(0,0,0,0, 0,0),
-        LOWEST_TIER(1043,975,1556,0, 1.5f, 130, true),
-        MIDDLE_TIER(1273,1233,1621,0, 1, 150, true),
-        HIGH_TIER(1391, 1128,1751,0, 1, 170, true),
+        //LOWEST_TIER(1043,975,1556,0, 1.5f, 130, true),
+        //MIDDLE_TIER(1273,1233,1621,0, 1, 150, true),
+        //HIGH_TIER(1391, 1128,1751,0, 1, 170, true),
+        LOWEST_TIER(75,130,20,0, 1.5f, 130),
+        MIDDLE_TIER(60,130,40,0, 1, 150),
+        HIGH_TIER(40, 130,70,0, 1, 170),
+        TRANSFER(-75,-55,-20,0, 2,0),
         CAP(30, 140,0,0, 1, 170),
-        TRANSFER(1933,1879,1496,0, 2,0, true),
+        //TRANSFER(1933,1879,1496,0, 2,0, true),
         //these articulations are meant to observe the motions and angles to check for belt skips
         VALIDATE_ELBOW90(0,90,90,0, .5f,0),
         VALIDATE_SHOULDER90(90,15,-90+15,0, .5f,0),
