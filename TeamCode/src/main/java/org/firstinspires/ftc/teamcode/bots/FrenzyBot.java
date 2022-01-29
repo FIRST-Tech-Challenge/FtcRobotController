@@ -51,7 +51,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private static final String TAG = "FrenzyBot";
     public static int LIFT_LEVEL_THREE = 1820;
     public static int LIFT_LEVEL_TWO = 1500;
-    public static int LIFT_LEVEL_ONE = 1200;
+    public static int LIFT_LEVEL_ONE = 1275;
     public static int LIFT_SHARED_HUB = 400;
     public static int LIFT_MIN_EXTENSION = 450;
     public static int LIFT_UNDER_EXTENTION = 0;

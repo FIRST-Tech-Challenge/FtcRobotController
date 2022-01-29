@@ -224,7 +224,7 @@ public class FrenzyModeBase extends LinearOpMode {
             if (gamepad2.b){
                 lockGamepad2();
                 //turret can be reset only once within the first 10 seconds of the match
-                if (!robot.isTurretOffsetDefined() && opModeTime.seconds() < 10) {
+                if (!robot.isTurretOffsetDefined()) {
                     robot.defineTurretOffset();
                 }
             }
