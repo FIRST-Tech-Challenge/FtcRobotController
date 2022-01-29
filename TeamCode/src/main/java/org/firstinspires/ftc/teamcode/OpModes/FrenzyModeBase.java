@@ -25,8 +25,9 @@ public class FrenzyModeBase extends LinearOpMode {
     private boolean manualLiftMode = false;
 
     // Timing related variables
-    long GAMEPAD_LOCKOUT_TIME_MS = 200;
-    Deadline gamepadRateLimit;
+    long GAMEPAD_LOCKOUT_TIME_MS = 500;
+    Deadline gamepad1RateLimit;
+    Deadline gamepad2RateLimit;
 
     // Intake related variables
     boolean changedIntake = false;
@@ -46,7 +47,8 @@ public class FrenzyModeBase extends LinearOpMode {
     public void runOpMode() {
         try {
             try{
-                gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT_TIME_MS, TimeUnit.MILLISECONDS);
+                gamepad1RateLimit = new Deadline(GAMEPAD_LOCKOUT_TIME_MS, TimeUnit.MILLISECONDS);
+                gamepad2RateLimit = new Deadline(GAMEPAD_LOCKOUT_TIME_MS, TimeUnit.MILLISECONDS);
                 robot.setTeleOp(true);
 
                 robot.init(this, this.hardwareMap, telemetry);
@@ -178,9 +180,9 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleIntake() {
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.right_bumper){
-                startGamepadLockout();
+                lockGamepad2();
                 changedIntake = !changedIntake;
 
                 if (changedIntake){
@@ -193,9 +195,9 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleOuttake() {
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.left_bumper) {
-                startGamepadLockout();
+                lockGamepad2();
 
                 intakeReverse = !intakeReverse;
 
@@ -218,9 +220,9 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleManualTurretOffset(){
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.b){
-                startGamepadLockout();
+                lockGamepad2();
                 //turret can be reset only once within the first 10 seconds of the match
                 if (!robot.isTurretOffsetDefined() && opModeTime.seconds() < 10) {
                     robot.defineTurretOffset();
@@ -230,12 +232,12 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleTowerRemoveElement() {
-        if (isButtonPressable()) {
+        if (isGamepad1Pressable()) {
             if (gamepad1.dpad_left) {
-                startGamepadLockout();
+                lockGamepad1();
                 robot.turretToTeamHubRed();
             } else if(gamepad1.dpad_right) {
-                startGamepadLockout();
+                lockGamepad1();
                 robot.towerToTeamHubBlue();
             }
         }
@@ -252,93 +254,104 @@ public class FrenzyModeBase extends LinearOpMode {
     }
 
     protected void handleTapeMeasureUpDown() {
-        if (isButtonPressable()) {
-            startGamepadLockout();
+        if (isGamepad2Pressable()) {
+            lockGamepad2();
             double val = gamepad2.left_stick_y;
             robot.moveTapeMeasureUpDown(-val);
         }
     }
 
     protected void handleDropper() {
-        if (isButtonPressable()) {
+        if (isGamepad1Pressable()) {
             if (gamepad1.dpad_right) {
-                startGamepadLockout();
+                lockGamepad1();
                 robot.dropElement();
             } else if (gamepad1.dpad_left) {
-                startGamepadLockout();
+                lockGamepad1();
                 robot.resetDropper();
             }
         }
     }
 
     protected void handleIntakeDropper() {
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.dpad_down) {
-                startGamepadLockout();
+                lockGamepad2();
                 robot.intakeDropperUp();
 //                robot.smartStopIntake();
             } else if (gamepad2.dpad_up) {
-                startGamepadLockout();
+                lockGamepad2();
                 robot.intakeDropperDown();
             }
             else if (gamepad2.dpad_right || gamepad2.dpad_left){
-                startGamepadLockout();
+                lockGamepad2();
                 robot.intakeDropperHalfWay();
             }
         }
     }
 
     protected void handleEmergency() {
-        if (isButtonPressable()) {
+        if (isGamepad1Pressable()) {
             if (gamepad1.a) {
-                startGamepadLockout();
+                lockGamepad1();
                 setEmergencyMode(!emergencyMode);
             }
         }
     }
 
     protected void handleScoring() {
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.a) {
-                startGamepadLockout();
+                lockGamepad2();
                 robot.scoreAndFoldAsync();
             }
         }
     }
 
     protected void handleManualDrive() {
-        if (isButtonPressable()) {
+        if (isGamepad1Pressable()) {
             if (gamepad1.start) {
-                startGamepadLockout();
+                lockGamepad1();
                 setManualDriveMode(!manualDriveMode);
             }
         }
     }
 
     protected void handleManualLift() {
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.start) {
-                startGamepadLockout();
+                lockGamepad2();
                 setManualLiftMode(!manualLiftMode);
-                robot.liftToLevelEndgame();
+                if (isManualLiftMode()) {
+                    robot.liftToLevelEndgame();
+                }
             }
         }
     }
 
     protected void handleManualTape() {
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.a) {
-                startGamepadLockout();
+                lockGamepad2();
                 robot.liftTapeEndgame();
             }
         }
     }
 
-    protected void startGamepadLockout() {
-        gamepadRateLimit.reset();
+    protected void lockGamepad1() {
+        gamepad1RateLimit.reset();
     }
-    protected boolean isButtonPressable() {
-        return gamepadRateLimit.hasExpired();
+
+    protected void lockGamepad2() {
+        gamepad2RateLimit.reset();
+    }
+
+    protected boolean isGamepad1Pressable() {
+        return gamepad1RateLimit.hasExpired();
+    }
+
+    protected boolean isGamepad2Pressable() {
+        return gamepad2RateLimit.hasExpired();
     }
 
     public boolean isEmergencyMode() {

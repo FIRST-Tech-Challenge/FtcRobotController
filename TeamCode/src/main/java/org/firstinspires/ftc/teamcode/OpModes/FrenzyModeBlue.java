@@ -6,18 +6,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class FrenzyModeBlue extends FrenzyModeBase {
     @Override
     protected void depositToTeamHub() {
-    if (isButtonPressable()) {
+    if (isGamepad2Pressable()) {
         if (gamepad2.x) {
-            startGamepadLockout();
+            lockGamepad2();
             robot.extendToTeamHubBlueAsync();
         }
     }
 }
     @Override
     protected void depositToSharedHub() {
-        if (isButtonPressable()) {
+        if (isGamepad2Pressable()) {
             if (gamepad2.y) {
-                startGamepadLockout();
+                lockGamepad2();
                 robot.extendToSharedHubBlueAsync();
             }
         }
@@ -25,9 +25,9 @@ public class FrenzyModeBlue extends FrenzyModeBase {
 
     @Override
     protected void handleTurntable() {
-        if (isButtonPressable()) {
+        if (isGamepad1Pressable()) {
             if (gamepad1.b) {
-                startGamepadLockout();
+                lockGamepad1();
                 robot.startTurntableBlueGradual();
             }
         }
