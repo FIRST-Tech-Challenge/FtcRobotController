@@ -36,7 +36,7 @@ public class blueDepot extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private Mechanisms mechanisms = null;
     private TrajectorySequence chosenTrajectorySequence;
-    private int chosenArmPos = 600;
+    private int chosenArmPos = 650;
     private double chosenArmSpeed = 0.3;
     private double chosenTrajectoryX = -20;
 
@@ -103,8 +103,8 @@ public class blueDepot extends LinearOpMode {
         switch(location) {
             case ALLIANCE_FIRST: {
                 chosenTrajectorySequence = thirdLevelSequence;
-                chosenArmPos = 600;
-                chosenArmSpeed = 0.3;
+                chosenArmPos = 650;
+                chosenArmSpeed = 0.25;
                 chosenTrajectoryX = -20;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
@@ -112,8 +112,8 @@ public class blueDepot extends LinearOpMode {
             }
             case NO_ALLIANCE: {
                 chosenTrajectorySequence = thirdLevelSequence;
-                chosenArmPos = 600;
-                chosenArmSpeed = 0.3;
+                chosenArmPos = 650;
+                chosenArmSpeed = 0.25;
                 chosenTrajectoryX = -20;
                 telemetry.addData("OpenCV","Basically Third Level");
                 telemetry.update();
@@ -122,7 +122,7 @@ public class blueDepot extends LinearOpMode {
             case ALLIANCE_SECOND: {
                 chosenTrajectorySequence = secondLevelSequence;
                 chosenArmPos = 770;
-                chosenArmSpeed = 0.15;
+                chosenArmSpeed = 0.1;
                 chosenTrajectoryX = -30;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
@@ -130,7 +130,7 @@ public class blueDepot extends LinearOpMode {
             }
             case ALLIANCE_THIRD: {
                 chosenTrajectorySequence = firstLevelSequence;
-                chosenArmPos = 870;
+                chosenArmPos = 880;
                 chosenArmSpeed = 0.1;
                 chosenTrajectoryX = -32;
                 telemetry.addData("OpenCV","Third Level Detected");

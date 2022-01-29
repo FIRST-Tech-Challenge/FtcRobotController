@@ -38,7 +38,7 @@ public class redWarehouse extends LinearOpMode {
     private TrajectorySequence chosenTrajectorySequence;
     private double chosenTrajectoryX = -1;
     private double chosenTrajectoryY = -39;
-    private int chosenArmPos = 600;
+    private int chosenArmPos = 650;
     private double chosenArmSpeed = 0.3;
 
     @Override
@@ -125,7 +125,7 @@ public class redWarehouse extends LinearOpMode {
                 chosenTrajectorySequence = thirdLevelSequence;
                 chosenTrajectoryX = -5;
                 chosenTrajectoryY = -43;
-                chosenArmPos = 600;
+                chosenArmPos = 650;
                 chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();

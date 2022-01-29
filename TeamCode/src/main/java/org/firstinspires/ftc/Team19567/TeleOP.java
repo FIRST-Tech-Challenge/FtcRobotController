@@ -36,12 +36,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private double armPos = 0;
     private double armPower = 0.5;
     private double intakePower = 0.0;
-    private double releaseServoPos = 0.0;
+    private double releaseServoPos = 0.9;
     private double balanceServoPos = 0.0;
-    //private RevBlinkinLedDriver blinkin = null;
+    private RevBlinkinLedDriver blinkin = null;
     private boolean isSlowmode = false;
     private double acc = 1.0;
-    //private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE;
+    private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
     private Mechanisms mechanisms = null;
 
     public enum PRESETSTATE {
@@ -70,7 +70,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
-        //blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
 
         //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
@@ -83,7 +83,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setDirection(DcMotor.Direction.REVERSE);
         balanceServo.setDirection(Servo.Direction.REVERSE);
 
-        releaseServoPos = 1.0;
+        releaseServoPos = 0.9;
         balanceServoPos = balanceServo.MIN_POSITION;
         mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
 
@@ -126,19 +126,17 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.y) isSlowmode = !isSlowmode;
         if(isSlowmode) acc = 0.3;
         else acc = 1.0;
-        final double leftFrontSpeed = (r * Math.sin(angleDC) - gamepad1.right_stick_x)*acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
-        final double rightFrontSpeed = (r * Math.cos(angleDC) + gamepad1.right_stick_x)*acc;
-        final double leftBackSpeed = (r * Math.cos(angleDC) - gamepad1.right_stick_x)*acc;
-        final double rightBackSpeed = (r * Math.sin(angleDC) + gamepad1.right_stick_x)*acc;
+        final double leftFrontSpeed = (r * Math.sin(angleDC) - 0.7*gamepad1.right_stick_x)*acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
+        final double rightFrontSpeed = (r * Math.cos(angleDC) + 0.7*gamepad1.right_stick_x)*acc;
+        final double leftBackSpeed = (r * Math.cos(angleDC) - 0.7*gamepad1.right_stick_x)*acc;
+        final double rightBackSpeed = (r * Math.sin(angleDC) + 0.7*gamepad1.right_stick_x)*acc;
         //INTAKE
         if(gamepad1.right_trigger > 0) mechanisms.moveIntake(0.68*gamepad1.right_trigger);
         else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.8);
         else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
-        else mechanisms.moveIntake(-0.06);
+        else mechanisms.moveIntake(0.1);
 
-        if(gamepad1.right_bumper || gamepad2.right_bumper) intakePower = -1.0;
         //CAROUSEL
-        //t
         if(gamepad1.dpad_right || gamepad2.dpad_right) {
             mechanisms.rotateCarousel(0.5);
         }
@@ -163,8 +161,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
 //SERVOS
-        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
-        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,releaseServo.MAX_POSITION);
+        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.9);
+        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.9);
         if(gamepad1.b || gamepad2.b) {
             presetState = PRESETSTATE.GOING_DOWN;
         }
@@ -188,8 +186,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                     break;
                 }
                 case ALLIANCE_THIRD: {
-                    armPos = 590;
-                    if(armDC.getCurrentPosition() >= 590) {
+                    armPos = 595;
+                    if(armDC.getCurrentPosition() >= 595) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
                     break;
@@ -197,7 +195,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 case GOING_DOWN: {
                     armPower = 0.125;
                     armPos = 0;
-                    releaseServoPos = 1.0;
+                    releaseServoPos = 0.9;
                     if(armDC.getCurrentPosition() <= 5) {
                         presetState = PRESETSTATE.NO_PRESET;
                     }
@@ -208,21 +206,18 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
         }
         else {
-            armPower = 0.5;
+            armPower = 0.6;
         }
 // BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE
         balanceServoPos = Range.clip((armDC.getCurrentPosition()-100)/1050.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
-        /* if(runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
+        if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000)) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
         else if(presetState != PRESETSTATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
-            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
+        /* else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
             telemetry.addData("Distance Sensor","Freight Detected");
-        }
-        else blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE;
-        blinkin.setPattern(blinkinPattern); */
-        if(distanceSensor.getDistance(DistanceUnit.MM) <= 80 && !(releaseServoPos >= 0.88 && releaseServoPos <= 0.98)) {
-            telemetry.addData("Distance Sensor","Freight Detected");
-        }
+        } */
+        else blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+        blinkin.setPattern(blinkinPattern);
 
 //MOTOR SET POWER
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
@@ -230,12 +225,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         leftDCBack.setPower(leftBackSpeed);
         rightDCBack.setPower(rightBackSpeed);
         carouselLeft.setPower(carouselLeftPower);
-        //intakeDC.setPower(intakePower);
         armDC.setTargetPosition((int) armPos);
         armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
         balanceServo.setPosition(balanceServoPos);
-        //mechanisms.maintainBalance(); //TODO: SEE IF THIS ACTUALLY WORKS
 //TELEMETRY
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime

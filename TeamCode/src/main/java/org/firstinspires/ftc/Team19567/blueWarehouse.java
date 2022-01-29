@@ -113,7 +113,7 @@ public class blueWarehouse extends LinearOpMode {
                 chosenTrajectorySequence = thirdLevelSequence;
                 chosenTrajectoryX = -5;
                 chosenTrajectoryY = 43;
-                chosenArmPos = 600;
+                chosenArmPos = 650;
                 chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
@@ -123,7 +123,7 @@ public class blueWarehouse extends LinearOpMode {
                 chosenTrajectorySequence = thirdLevelSequence;
                 chosenTrajectoryX = -5;
                 chosenTrajectoryY = 43;
-                chosenArmPos = 600;
+                chosenArmPos = 650;
                 chosenArmSpeed = 0.25;
                 telemetry.addData("OpenCV","Basically Third Level");
                 telemetry.update();
@@ -133,7 +133,7 @@ public class blueWarehouse extends LinearOpMode {
                 chosenTrajectorySequence = secondLevelSequence;
                 chosenTrajectoryX = -1;
                 chosenTrajectoryY = 39;
-                chosenArmPos = 760;
+                chosenArmPos = 770;
                 chosenArmSpeed = 0.15;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
@@ -160,14 +160,14 @@ public class blueWarehouse extends LinearOpMode {
         TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX, chosenTrajectoryY, Math.toRadians(-45)))
                 .turn(Math.toRadians(50))
                 .strafeTo(new Vector2d(chosenTrajectoryX, 5))
-                .addDisplacementMarker(() -> {
+                /* .addDisplacementMarker(() -> {
                     mechanisms.moveIntake(0.5);
-                })
+                }) */
                 .strafeTo(new Vector2d(-50+(chosenTrajectoryX),5))
-                .forward(5).back(5).forward(5).back(5)
+                /* .forward(5).back(5).forward(5).back(5)
                 .addDisplacementMarker(() -> {
                     mechanisms.moveIntake(0.0);
-                })
+                }) */
                 .build();
 
         mechanisms.rotateArm(0);
