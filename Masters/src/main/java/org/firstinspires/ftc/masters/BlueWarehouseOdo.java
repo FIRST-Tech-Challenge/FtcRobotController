@@ -24,14 +24,13 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
         drive.openCVInnitShenanigans("blue");
         MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
-        drive.CV.duckWebcam.stopStreaming();
         freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(13.5, 63),Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-13, 45))
+                .strafeTo(new Vector2d(-13, 42))
                 .build();
 
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
@@ -103,7 +102,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                     })
-                    .splineToSplineHeading(new Pose2d(-9, 48, Math.toRadians(270)), Math.toRadians(270))
+                    .splineToSplineHeading(new Pose2d(-6, 45, Math.toRadians(270)), Math.toRadians(270))
 //                    -14, 46
                     .build();
             drive.followTrajectorySequence(trajSeq3);
@@ -128,7 +127,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             drive.linearSlideMotor.setPower(.8);
                         })
-                        .splineToSplineHeading(new Pose2d(-9, 49, Math.toRadians(270)), Math.toRadians(270))
+                        .splineToSplineHeading(new Pose2d(-6, 46, Math.toRadians(270)), Math.toRadians(270))
                         .build();
                 drive.followTrajectorySequence(trajSeq3);
                 fromHubToWarehouse= drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())

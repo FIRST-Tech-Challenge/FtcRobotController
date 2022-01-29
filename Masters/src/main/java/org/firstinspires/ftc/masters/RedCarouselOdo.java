@@ -86,7 +86,7 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(.6, 4); //can we go faster?
+        drive.jevilTurnCarousel(.5, 4); //can we go faster?
 
 
 
