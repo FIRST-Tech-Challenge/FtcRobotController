@@ -156,35 +156,62 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     }
 
 
-    public void newTurnToPrototype(double angle, double powerMult) throws InterruptedException {
-        double startingAngle = gps.getRot();
+    /**
+     * Turns to the provided angle
+     *
+     * @param angle The angle to turn to in degrees
+     * @throws InterruptedException Throws if the OpMode is killed
+     */
+    public void newTurnToPrototype(double angle, double maxPower, double minPower, double tolerance) throws InterruptedException {
+
+        angle = angle % 360;
+        //the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a clockwise rotation/right turn
+        double initialDegreesOff = ((360 - angle) + gps.getRot()) % 360;
         double degreesOff = ((360 - angle) + gps.getRot()) % 360;
         double pow;
-        double minimumPower = .1;
+        final double maximumPower = maxPower; //The minimum power the robot can turn at
+        final double minimumPower = minPower; //The minimum power the robot can turn at
 
-        //the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a counterclockwise rotation/left turn
-        while (degreesOff > 0) {
 
-            if (degreesOff < 180 && !isStopRequested() && opModeIsActive()) {
+        while (Math.abs(degreesOff) > tolerance && !isStopRequested() && opModeIsActive()) {
 
+            if (initialDegreesOff < 180) {
+                // this is the degreesOff in a right turning motion
                 degreesOff = ((360 - angle) + gps.getRot()) % 360;
+                pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maximumPower, minimumPower);
 
-                pow = MiscUtils.map(degreesOff, 0, 180, 0, 1) + minimumPower;
-
-                this.turnLeft(MiscUtils.boundNumber(pow * powerMult));
+                this.turnRight(MiscUtils.boundNumber(pow));
 
             } else {
+                // this is the degreesOff in a left turning motion
+                degreesOff = (angle + (360 - gps.getRot())) % 360;
+                pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maximumPower, minimumPower);
 
-                degreesOff = ((360 - angle) + gps.getRot()) % 360;
-
-                pow = MiscUtils.map(degreesOff, 180, 360, 0, 1) + minimumPower;
-
-                this.turnRight(MiscUtils.boundNumber(pow * powerMult));
+                this.turnLeft(MiscUtils.boundNumber(pow));
 
             }
+
+            Thread.sleep(20); //A sleep because we do not want this loop running at full speed. We don't need it to.
         }
 
         stopAll();
+    }
+
+    /**
+     * this calculates the ideal power for a movement based on the robots position in a short movement.
+     *
+     * @param maximumPower    the maximum power output of the robot during the movement
+     * @param minimumPower    the minimum power output of the robot during the movement
+     * @param currentDistance this is the distance from the current position of the movement to the desired position of the movement
+     *                        when this is near current distance, it is near maximum power
+     *                        when this reaches 0, it is near minimum power
+     * @param initialDistance this is the desired position of the movement as a double
+     * @return this returns the power value of the movement with the given parameters
+     */
+    public double shortMovementPowerCalculation(double initialDistance, double currentDistance, double maximumPower, double minimumPower) {
+        // currently this is only being used in turning related functions
+        double powerOutput = MiscUtils.boundNumber(Math.sin((Math.PI * currentDistance) / (2 * initialDistance)));
+        return MiscUtils.map(powerOutput, 0, 1, minimumPower, maximumPower);
     }
 
     //-Move To Position Methods----------------------------------------------------------------------------------------------
@@ -330,13 +357,14 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         double power4;
 
         angle = angle % 360;
-
+        //----strafing power calculation---------------------------------
         power1 = -Math.cos(Math.toRadians(angle + 45.0)); //power 1 is front right and back left
         power2 = -Math.cos(Math.toRadians(angle - 45)); // power 2 is front right and back left
 
         power1 = power * power1;
         power2 = power * power2;
 
+        //-----turning power calculation-------------------------------------
         double degreesOff = ((gps.getRot() - turnAngle) % 360);
         double tmp;
         if (degreesOff < 180) {
@@ -347,7 +375,52 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         power3 = -tmp;
         power4 = tmp;
 
+        //---setting motor powers--------------------------------------------
+        front_right.setPower(power1 + power3);
+        back_left.setPower(power1 + power4);
 
+        front_left.setPower(power2 + power4);
+        back_right.setPower(power2 + power3);
+
+    }
+
+    /**
+     * Strafes at the provided angle relative to the robot, and turns to the given turnAngle
+     *
+     * @param angle     The angle to strafe at
+     * @param turnAngle The angle to turn to
+     * @param power     The power to turn at
+     */
+    private void newStrafeAtAngleWhileTurnPrototype(double angle, double turnAngle, double power) {
+
+        final boolean factorInAngleTurn = false;
+        power = MiscUtils.boundNumber(power);
+        double power1;
+        double power2;
+        double power3;
+        double power4;
+
+        angle = angle % 360;
+
+        //----strafing power calculation---------------------------------
+        power1 = -Math.cos(Math.toRadians(angle + 45.0)); //power 1 is front right and back left
+        power2 = -Math.cos(Math.toRadians(angle - 45)); // power 2 is front right and back left
+
+        power1 = power * power1;
+        power2 = power * power2;
+
+        //-----turning power calculation-------------------------------------
+        double degreesOffClockwise = ((360 - turnAngle) + (gps.getRot())) % 360;
+        double tmp;
+        if (degreesOffClockwise < 180) {
+            tmp = MiscUtils.map(degreesOffClockwise, 0, 180, 0, 1);
+        } else {
+            tmp = MiscUtils.map(degreesOffClockwise, 180, 360, -1, 0);
+        }
+        power3 = -tmp;
+        power4 = tmp;
+
+        //---setting motor powers--------------------------------------------
         front_right.setPower(power1 + power3);
         back_left.setPower(power1 + power4);
 
