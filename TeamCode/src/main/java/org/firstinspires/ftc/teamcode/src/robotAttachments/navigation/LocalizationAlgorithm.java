@@ -37,6 +37,7 @@ public interface LocalizationAlgorithm {
      * @param X   The x coordinate the robot is at
      * @param Y   The Y coordinate the robot is at
      * @param rot The heading the robot is at
+     * @throws InterruptedException Throws if the thread is interrupted while setting position
      */
-    void setPos(double X, double Y, double rot);
+    void setPos(double X, double Y, double rot) throws InterruptedException;
 }

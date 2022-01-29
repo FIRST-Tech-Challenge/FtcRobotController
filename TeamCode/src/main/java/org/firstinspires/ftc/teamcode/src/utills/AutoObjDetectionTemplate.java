@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A template for all Autonomous opModes that use Vision, allows easy initialization
@@ -29,12 +31,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     /**
      * A object to lock on to for the thread safety, used in _initVuforia
      */
-    private static final Object VF_Lock = new Object();
+    private static final Lock VF_Lock = new ReentrantLock();
 
     /**
      * A object to lock on to for the thread safety, used in _initTfod
      */
-    private static final Object TFOD_Lock = new Object();
+    private static final Lock TFOD_Lock = new ReentrantLock();
 
     /**
      * vuforia object
@@ -81,8 +83,11 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         //Waits for mutex to be available
 
         checkStop();
-        synchronized (VF_Lock) {
+        VF_Lock.lockInterruptibly();
+        try {
             this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        } finally {
+            VF_Lock.unlock();
         }
         checkStop();
 
@@ -110,18 +115,24 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     /**
      * Does the initialization, provides synchronization for thread safety
      */
-    private void _initTfod() {
+    private void _initTfod() throws InterruptedException {
+
+        //Some pre-initialization
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.isModelTensorFlow2 = true;
+        tfodParameters.inputSize = 320;
+
         //Waits for mutex to be available
-        synchronized (TFOD_Lock) {
+        TFOD_Lock.lockInterruptibly();
+        try {
             //Runs initialization Code
-            int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                    "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-            tfodParameters.minResultConfidence = 0.8f;
-            tfodParameters.isModelTensorFlow2 = true;
-            tfodParameters.inputSize = 320;
             this.tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
             this.tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+        } finally {
+            TFOD_Lock.unlock();
         }
 
     }

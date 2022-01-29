@@ -7,8 +7,10 @@ public interface ThreadedSubsystemInterface extends Runnable {
 
     /**
      * It is the main function of the thread
+     *
+     * @throws InterruptedException Throws if the thread is interupted
      */
-    void threadMain();
+    void threadMain() throws InterruptedException;
 
     /**
      * Ends the life of this thread

@@ -79,10 +79,38 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      */
     public static final String linearSlideMotorName = "linear_slide";
 
+    public static final String LeftWebcamName = "Webcam_Left";
+
+    public static final String RightWebcamName = "Webcam_Right";
+
     /**
      * Name of the IMU
      */
     public static final String IMUName = "imu";
+    /**
+     * Allows the subsystems to look at voltage
+     */
+    protected RobotVoltageSensor voltageSensor;
+    /**
+     * Provides Carousel Spinner functionality
+     */
+    protected CarouselSpinner spinner;
+    /**
+     * Provides methods for lifting and lowering Odometry servos
+     */
+    protected OdometryPodServos podServos;
+    /**
+     * Provides methods for using the intake
+     */
+    protected ContinuousIntake intake;
+    /**
+     * Provides methods for using the robot LED's
+     */
+    protected RevBlinkinLedDriver leds;
+    /**
+     * Provides methods for using the linear slide
+     */
+    protected LinearSlide slide;
 
     /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}
@@ -104,36 +132,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
             RobotLog.setGlobalErrorMsg(MiscUtils.getStackTraceAsString(e)); //Appends more information to the error message
         }
     }
-
-    /**
-     * Allows the subsystems to look at voltage
-     */
-    protected RobotVoltageSensor voltageSensor;
-
-    /**
-     * Provides Carousel Spinner functionality
-     */
-    protected CarouselSpinner spinner;
-
-    /**
-     * Provides methods for lifting and lowering Odometry servos
-     */
-    protected OdometryPodServos podServos;
-
-    /**
-     * Provides methods for using the intake
-     */
-    protected ContinuousIntake intake;
-
-    /**
-     * Provides methods for using the robot LED's
-     */
-    protected RevBlinkinLedDriver leds;
-
-    /**
-     * Provides methods for using the linear slide
-     */
-    protected LinearSlide slide;
 
     /**
      * Initializes all fields provided by this class

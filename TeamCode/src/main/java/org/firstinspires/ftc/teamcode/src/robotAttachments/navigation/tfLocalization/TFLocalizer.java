@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.tfLocaliz
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
 
-public class tfLocalizer implements LocalizationAlgorithm {
+public class TFLocalizer implements LocalizationAlgorithm {
 
     @Override
     public double getX() {

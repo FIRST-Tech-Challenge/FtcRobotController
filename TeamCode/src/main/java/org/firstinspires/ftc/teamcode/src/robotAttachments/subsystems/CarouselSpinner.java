@@ -48,6 +48,7 @@ public class CarouselSpinner {
 
     /**
      * Spins off the blue duck
+     *
      * @throws InterruptedException raises exception if the OpMode is stopped
      */
     public void spinOffBlueDuck() throws InterruptedException {

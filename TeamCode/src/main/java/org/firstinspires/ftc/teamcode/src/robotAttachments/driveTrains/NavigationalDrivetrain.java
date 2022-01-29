@@ -17,30 +17,25 @@ import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 public class NavigationalDrivetrain extends BasicDrivetrain {
 
     /**
-     * Internal Telemetry Object, allows debug information
-     */
-    private final Telemetry telemetry;
-
-    /**
      * Internal Odometry Global Coordinate Position Object, it runs the localization algorithm in a separate thread
      */
     final LocalizationAlgorithm gps;
-
     /**
      * A Lambda object that allows this class to check the stop requested condition of the OpMode
      */
     final Executable<Boolean> _isStopRequested;
-
     /**
      * A Lambda object that allows this class to check that the OpMode is active
      */
     final Executable<Boolean> _opModeIsActive;
-
     /**
      * A voltage sensor to monitor the robot voltage
      */
     final RobotVoltageSensor voltageSensor;
-
+    /**
+     * Internal Telemetry Object, allows debug information
+     */
+    private final Telemetry telemetry;
     /**
      * accelerationDistance controls the distance (in inches) that the robot uses to accelerate to maximum speed
      */
@@ -281,6 +276,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param y         The y coordinate to go to
      * @param tolerance The tolerance for how close it must get (in inches)
      * @param theta     The angle (relative to the field) to turn to during the movement
+     * @param errors    A array of error conditions to check. Must be of type {@link NavigationError}
      * @throws InterruptedException Throws if the OpMode ends during execution
      * @throws MovementException    Stops Motors and Throws if errorCB returns true
      */

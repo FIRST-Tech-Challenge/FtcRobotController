@@ -8,24 +8,21 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public abstract class ThreadedSubsystemTemplate extends Thread implements ThreadedSubsystemInterface {
 
     /**
-     * A boolean that controls if the thread is running
-     */
-    protected volatile boolean isRunning = true;
-
-    /**
-     * The time in mills that the thread sleeps for after every call of {@link #threadMain()}
-     */
-    protected long sleepTime = 50;
-
-    /**
      * A Lambda object that allows this class to check that the OpMode is active
      */
     protected final Executable<Boolean> opModeIsActive;
-
     /**
      * A Lambda object that allows this class to check the stop requested condition of the OpMode
      */
     protected final Executable<Boolean> isStopRequested;
+    /**
+     * A boolean that controls if the thread is running
+     */
+    protected volatile boolean isRunning = true;
+    /**
+     * The time in mills that the thread sleeps for after every call of {@link #threadMain()}
+     */
+    protected long sleepTime = 50;
 
     /**
      * A constructor that instantiates the Executable Objects, they allow the thread to end with the OpMode

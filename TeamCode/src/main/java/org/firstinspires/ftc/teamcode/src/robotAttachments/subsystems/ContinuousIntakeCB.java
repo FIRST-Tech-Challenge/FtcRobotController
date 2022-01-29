@@ -20,10 +20,6 @@ public class ContinuousIntakeCB extends ContinuousIntake implements ThreadedSubs
      */
     protected final Executable<Boolean> isStopRequested;
     /**
-     * A boolean that controls if the thread is running
-     */
-    protected volatile boolean isRunning = true;
-    /**
      * The time in mills that the thread sleeps for after every call of threadMain
      */
     protected final long sleepTime = 50;
@@ -31,6 +27,10 @@ public class ContinuousIntakeCB extends ContinuousIntake implements ThreadedSubs
      * The function to be executed when the bucket detects a object in the bucket
      */
     final Executable<Void> callBack;
+    /**
+     * A boolean that controls if the thread is running
+     */
+    protected volatile boolean isRunning = true;
 
     /**
      * A constructor

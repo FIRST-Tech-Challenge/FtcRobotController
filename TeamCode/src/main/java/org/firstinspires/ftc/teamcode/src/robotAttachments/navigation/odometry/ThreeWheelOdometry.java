@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemTemplate;
 
 import java.io.File;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -48,7 +50,10 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Loc
      * An Algorithm constant
      */
     private final double horizontalEncoderTickPerDegreeOffset;
-
+    /**
+     * A lock for synchronous methods
+     */
+    private final Lock lock = new ReentrantLock();
     /**
      * An Algorithm constant
      */
@@ -174,12 +179,17 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Loc
      * Sets the orientation of the odometry calibration system
      *
      * @param angle the angle to be at
+     * @throws InterruptedException Throws if the Thread is interrupted while waiting for lock. If is interrupted, values are not changed
      */
-    public void setOrientation(double angle) {
-        synchronized (this) {
+    public void setOrientation(double angle) throws InterruptedException {
+
+        lock.lockInterruptibly();
+        try {
 
             robotOrientationRadians = Math.toRadians(angle);
 
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -190,11 +200,16 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Loc
      * @param Y   The Y-position in inches
      * @param rot The rot in degrees
      */
-    public void setPos(double X, double Y, double rot) {
-        synchronized (this) {
+    public void setPos(double X, double Y, double rot) throws InterruptedException {
+
+        lock.lockInterruptibly();
+        try {
             robotGlobalXCoordinatePosition = X * COUNTS_PER_INCH;
             robotGlobalYCoordinatePosition = Y * COUNTS_PER_INCH;
-            setOrientation(rot);
+            robotOrientationRadians = Math.toRadians(rot);
+
+        } finally {
+            lock.unlock();
         }
 
     }
@@ -203,26 +218,21 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Loc
      * Sets the position of the robot using an Enum key from FieldPoints
      *
      * @param initPos the enum key of a three value array of an init position
+     * @throws InterruptedException Throws if the Thread is interrupted while waiting for lock. If is interrupted, values are not changed
      */
-    public void setPos(FieldPoints initPos) {
+    public void setPos(FieldPoints initPos) throws InterruptedException {
         double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
         assert (tmp != null);
-        synchronized (this) {
-            robotGlobalXCoordinatePosition = tmp[0] * COUNTS_PER_INCH;
-            robotGlobalYCoordinatePosition = tmp[1] * COUNTS_PER_INCH;
-            setOrientation(tmp[2]);
-        }
-
+        this.setPos(tmp[0] * COUNTS_PER_INCH, tmp[1] * COUNTS_PER_INCH, tmp[2]);
     }
-
-
 
 
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
-    public void threadMain() {
-        synchronized (this) {
+    public void threadMain() throws InterruptedException {
+        lock.lockInterruptibly();
+        try {
 
             //Get Current Positions
             double verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
@@ -250,6 +260,8 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Loc
             previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
             previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
             prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -318,5 +330,6 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Loc
     }
 
     @Override
-    protected void onEnd() {}
+    protected void onEnd() {
+    }
 }

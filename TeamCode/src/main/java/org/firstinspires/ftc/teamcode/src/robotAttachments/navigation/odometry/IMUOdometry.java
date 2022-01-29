@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemTemplate;
 
 import java.io.File;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -54,6 +56,10 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
      */
     private final BNO055IMU imu;
     /**
+     * A lock for synchronous methods
+     */
+    private final Lock lock = new ReentrantLock();
+    /**
      * An Algorithm constant
      */
     private volatile double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
@@ -88,6 +94,7 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
      * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
      * @param _isStopRequested     A Executable object wrapped around {@link LinearOpMode#isStopRequested()}
      * @param _opModeIsActive      A Executable object wrapped around {@link LinearOpMode#opModeIsActive()}
+     * @param imu                  A reference to a BNO055IMU
      */
     public IMUOdometry(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, BNO055IMU imu, int threadSleepDelay, Executable<Boolean> _opModeIsActive, Executable<Boolean> _isStopRequested) {
         super(_opModeIsActive, _isStopRequested);
@@ -184,10 +191,14 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
      * Sets the orientation of the odometry calibration system
      *
      * @param angle the angle to be at
+     * @throws InterruptedException Throws if the thread is interrupted during execution
      */
-    public void setOrientation(double angle) {
-        synchronized (this) {
+    public void setOrientation(double angle) throws InterruptedException {
+        lock.lockInterruptibly();
+        try {
             angleOffset = Math.toRadians(angle);
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -197,12 +208,16 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
      * @param X   The X-position in inches
      * @param Y   The Y-position in inches
      * @param rot The rot in degrees
+     * @throws InterruptedException Throws if the Thread is interupted while waiting for lock. If is interrupted, values are not changed
      */
-    public void setPos(double X, double Y, double rot) {
-        synchronized (this) {
+    public void setPos(double X, double Y, double rot) throws InterruptedException {
+        lock.lockInterruptibly();
+        try {
             robotGlobalXCoordinatePosition = X * COUNTS_PER_INCH;
             robotGlobalYCoordinatePosition = Y * COUNTS_PER_INCH;
-            setOrientation(rot);
+            angleOffset = Math.toRadians(rot);
+        } finally {
+            lock.unlock();
         }
 
     }
@@ -211,15 +226,14 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
      * Sets the position of the robot using an Enum key from FieldPoints
      *
      * @param initPos the enum key of a three value array of an init position
+     * @throws InterruptedException Throws if the Thread is interupted while waiting for lock. If is interrupted, values are not changed
      */
-    public void setPos(FieldPoints initPos) {
+    public void setPos(FieldPoints initPos) throws InterruptedException {
         double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
         assert (tmp != null);
-        synchronized (this) {
-            robotGlobalXCoordinatePosition = tmp[0] * COUNTS_PER_INCH;
-            robotGlobalYCoordinatePosition = tmp[1] * COUNTS_PER_INCH;
-            setOrientation(tmp[2]);
-        }
+
+        this.setPos(tmp[0] * COUNTS_PER_INCH, tmp[1] * COUNTS_PER_INCH, tmp[2]);
+
 
     }
 
@@ -243,9 +257,12 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
 
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
+     *
+     * @throws InterruptedException Throws if the Thread is interrupted while waiting for lock. If is interrupted, values are not changed
      */
-    public void threadMain() {
-        synchronized (this) {
+    public void threadMain() throws InterruptedException {
+        lock.lockInterruptibly();
+        try {
 
             robotOrientationRadians = Math.toRadians(getImuAngle()) + angleOffset;
             robotOrientationRadians = robotOrientationRadians % 360;
@@ -276,6 +293,8 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
             previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
             previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
             prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
+        } finally {
+            lock.unlock();
         }
     }
 

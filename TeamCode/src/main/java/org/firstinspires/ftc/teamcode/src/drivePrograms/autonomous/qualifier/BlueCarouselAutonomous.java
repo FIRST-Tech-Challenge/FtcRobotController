@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
     static final double[] initialPos = {133.5, 103, 0};
-    public DistanceSensor distanceSensor;
     final boolean overBarrier = true;
+    public DistanceSensor distanceSensor;
 
     @Override
     public void opModeMain() throws InterruptedException {

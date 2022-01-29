@@ -28,8 +28,6 @@ public class ContinuousIntake {
      * The Position servo must be to keep and item in the intake compartment
      */
     private static final double closed = .7; // this position needs to be adjusted
-
-    private boolean isClosed;
     /**
      * The item color sensor
      */
@@ -42,6 +40,7 @@ public class ContinuousIntake {
      * The internal Servo Object
      */
     private final Servo itemRelease;
+    private boolean isClosed;
 
     /**
      * Initializes from hardware map and names
