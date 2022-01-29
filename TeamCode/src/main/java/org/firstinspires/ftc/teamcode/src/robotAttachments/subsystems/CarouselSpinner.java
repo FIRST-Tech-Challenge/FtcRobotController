@@ -40,7 +40,7 @@ public class CarouselSpinner {
         spinnerServo.setPower(-servoPower);
         ElapsedTime t = new ElapsedTime();
         while (t.milliseconds() < duckSleepTime) {
-            Thread.sleep(1);
+            Thread.sleep(20);
         }
         spinnerServo.setPower(0);
 
@@ -54,7 +54,7 @@ public class CarouselSpinner {
         spinnerServo.setPower(servoPower);
         ElapsedTime t = new ElapsedTime();
         while (t.milliseconds() < duckSleepTime) {
-            Thread.sleep(1);
+            Thread.sleep(20);
         }
         spinnerServo.setPower(0);
 

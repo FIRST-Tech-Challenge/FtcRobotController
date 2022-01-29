@@ -44,17 +44,10 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         // The Y axis of a joystick ranges from -1 in its topmost position
         // to +1 in its bottom most position. We negate this value so that
         // the topmost position corresponds to maximum forward power.
-        if (false) {
-            this.back_left.setPower(DrivePowerMult * ((gamepad.left_stick_y + gamepad.left_stick_x) - gamepad.right_stick_x));
-            this.front_left.setPower(DrivePowerMult * ((gamepad.left_stick_y - gamepad.left_stick_x) - gamepad.right_stick_x));
-            this.back_right.setPower(DrivePowerMult * ((gamepad.left_stick_y - gamepad.left_stick_x) + gamepad.right_stick_x));
-            this.front_right.setPower(DrivePowerMult * ((gamepad.left_stick_y + gamepad.left_stick_x) + gamepad.right_stick_x));
-        } else {
-            this.back_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) - gamepad.right_stick_x));
-            this.front_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) - gamepad.right_stick_x));
-            this.back_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) + gamepad.right_stick_x));
-            this.front_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) + gamepad.right_stick_x));
-        }
+        this.back_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) - gamepad.right_stick_x));
+        this.front_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) - gamepad.right_stick_x));
+        this.back_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) + gamepad.right_stick_x));
+        this.front_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) + gamepad.right_stick_x));
 
     }
 

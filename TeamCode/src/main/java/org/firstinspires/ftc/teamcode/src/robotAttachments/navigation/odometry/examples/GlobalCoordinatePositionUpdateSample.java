@@ -139,7 +139,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         } catch (Exception e) {
             telemetry.addData("Error", MiscUtils.getStackTraceAsString(e));
             telemetry.update();
-            while (opModeIsActive() && !isStopRequested()) ;
+            while (opModeIsActive() && !isStopRequested()) Thread.sleep(20);
         }
 
         //Stop the thread
