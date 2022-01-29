@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -107,9 +108,9 @@ public class AutonomousRducks extends AutonomousBase {
             telemetry.addData("ALLIANCE", "%s", "RED (ducks)");
             telemetry.addData("Block Level", "%d", blockLevel );
             telemetry.addData("Sonar Range", "%.1f inches (28.0)", sonarRangeR/2.54 );
-            telemetry.addData("Left Red Alignment", "%.2f %b", FreightFrenzyPipeline.leftRedAverage, FreightFrenzyPipeline.alignedRedLeft);
-            telemetry.addData("Center Red Alignment", "%.2f %b", FreightFrenzyPipeline.centerRedAverage, FreightFrenzyPipeline.alignedRedCenter);
-            telemetry.addData("Right Red Alignment", "%.2f %b", FreightFrenzyPipeline.rightRedAverage, FreightFrenzyPipeline.alignedRedRight);
+            telemetry.addData("Left Red Alignment", "%d %b", FreightFrenzyPipeline.leftRedAverage, FreightFrenzyPipeline.alignedRedLeft);
+            telemetry.addData("Center Red Alignment", "%d %b", FreightFrenzyPipeline.centerRedAverage, FreightFrenzyPipeline.alignedRedCenter);
+            telemetry.addData("Right Red Alignment", "%d %b", FreightFrenzyPipeline.rightRedAverage, FreightFrenzyPipeline.alignedRedRight);
             redAlignedCount = (FreightFrenzyPipeline.alignedRedLeft ? 1 : 0);
             redAlignedCount += (FreightFrenzyPipeline.alignedRedCenter ? 1 : 0);
             redAlignedCount += (FreightFrenzyPipeline.alignedRedRight ? 1 : 0);
@@ -132,7 +133,7 @@ public class AutonomousRducks extends AutonomousBase {
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
         blockLevel = FreightFrenzyPipeline.blockLevel;
-        FreightFrenzyPipeline.saveLastAutoImage();
+//      FreightFrenzyPipeline.saveLastAutoImage();
         webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------
