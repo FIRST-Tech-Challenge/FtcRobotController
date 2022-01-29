@@ -17,7 +17,13 @@ dependencies {
     implementation 'org.firstinspires.ftc:Hardware:7.1.0'
     implementation 'org.firstinspires.ftc:FtcCommon:7.1.0'
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
+
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
+
+    implementation 'org.openftc:easyopencv:1.5.1'
+    implementation 'org.jetbrains:annotations:16.0.2'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.3'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
 }
 
