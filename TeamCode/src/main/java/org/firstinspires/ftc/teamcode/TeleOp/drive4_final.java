@@ -43,8 +43,8 @@ public class drive4_final extends LinearOpMode {
     public void move(double direction) { //move  method
         double turnMoveMagnitude = 2; // larger values means less turning while moving, can be adjusted
 
-        double hypotenuseLeft = Math.hypot(-gamepad1.left_stick_y, ((gamepad1.left_stick_x + (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)))); //magnitude of left motion
-        double hypotenuseRight = Math.hypot(-gamepad1.left_stick_y, ((gamepad1.left_stick_x - (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)))); //magnitude of right motion
+        double hypotenuseLeft = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x ) + (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of left motion
+        double hypotenuseRight = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x) - (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of right motion
 
         if (hypotenuseRight > 1) { //keeps magnitude in bounds just in case
             hypotenuseRight = 1;
