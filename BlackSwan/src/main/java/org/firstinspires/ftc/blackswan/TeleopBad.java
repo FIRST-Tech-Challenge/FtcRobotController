@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="TeleopNoOptimisation")
+@TeleOp(name="TeleopBad")
 
 public class TeleopBad extends LinearOpMode {
 
