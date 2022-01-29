@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.src.utills;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.locks.Lock;
 
 /**
  * A class full of miscellaneous utilities
@@ -115,4 +116,49 @@ public class MiscUtils {
         cName = cNameSplit[cNameSplit.length - 1];
         return cName;
     }
+
+    /**
+     * Acquires all locks passed to it. Blocks until acquires all locks. Will not cause deadlock
+     *
+     * @param locks A array of lock objects
+     * @throws InterruptedException If the thread is interrupted during execution
+     */
+    public static void getLocks(Lock[] locks) throws InterruptedException {
+        boolean[] gotLocks = new boolean[locks.length];
+
+        boolean gotAllLocks;
+        while (true) {
+            try {
+                //Tries to lock each lock
+                for (int i = 0; i < locks.length; i++) {
+                    gotLocks[i] = locks[i].tryLock();
+                }
+            } finally {
+                //goes through the array of returned booleans. If one of them is false, we do not have all the locks
+                //If all of them are true, we do and can return
+                gotAllLocks = true;
+                for (boolean gotLock : gotLocks) {
+                    if (!gotLock) {
+                        gotAllLocks = false;
+                        break;
+                    }
+                }
+                //If we have all the locks, we can return
+                if (!gotAllLocks) {
+                    for (int i = 0; i < gotLocks.length; i++) {
+                        if (gotLocks[i]) {
+                            locks[i].unlock();
+                        }
+                    }
+                }
+
+            }
+            if (gotAllLocks) {
+                return;
+            }
+            Thread.sleep(20);
+
+        }
+    }
+
 }
