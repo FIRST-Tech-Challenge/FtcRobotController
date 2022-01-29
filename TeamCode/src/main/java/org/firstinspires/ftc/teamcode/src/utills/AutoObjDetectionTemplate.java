@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.utills;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -79,6 +80,8 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         parameters.vuforiaLicenseKey = VuforiaKey.VUFORIA_KEY;
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        WebcamName webcam1 = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.LeftWebcamName);
+        parameters.cameraName = webcam1;
 
         //Waits for mutex to be available
 
