@@ -109,7 +109,7 @@ public class AutoWarehouse extends LinearOpMode {
 
             drive.followTrajectorySequence(startSequence);
 
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 1; i++) {
                 // intake a block
                 intake.backward();
                 drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
