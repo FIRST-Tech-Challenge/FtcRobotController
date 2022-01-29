@@ -41,7 +41,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private DcMotorEx turret = null;
     private Servo dropperServo = null;
     private Servo intakeDropperServo = null;
-    private DistanceSensor sensorRange;
+//    private DistanceSensor sensorRange;
 
     private CRServo tapeMeasure = null;
     private Servo tapeUp = null;
@@ -51,7 +51,7 @@ public class FrenzyBot extends FrenzyBaseBot {
     private static final String TAG = "FrenzyBot";
     public static int LIFT_LEVEL_THREE = 1820;
     public static int LIFT_LEVEL_TWO = 1500;
-    public static int LIFT_LEVEL_ONE = 1275;
+    public static int LIFT_LEVEL_ONE = 1282;
     public static int LIFT_SHARED_HUB = 400;
     public static int LIFT_MIN_EXTENSION = 450;
     public static int LIFT_UNDER_EXTENTION = 0;
@@ -801,9 +801,9 @@ public class FrenzyBot extends FrenzyBaseBot {
         return hsvValues[0];
     }
 
-    public double getDistance() {
-        return sensorRange.getDistance(DistanceUnit.INCH);
-    }
+//    public double getDistance() {
+//        return sensorRange.getDistance(DistanceUnit.INCH);
+//    }
 
     public boolean isIntakeBoxEmpty(){
         // Color based sensing
