@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -48,6 +49,9 @@ public class Crane implements Subsystem {
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
 
+
+
+
     // transfer
     // shoulder: 1933,
     // elbow: 1879,
@@ -74,7 +78,7 @@ public class Crane implements Subsystem {
         MIDDLE_TIER(1273,1233,1621,0, 1, 150, true),
         HIGH_TIER(1391, 1128,1751,0, 1, 170, true),
         CAP(30, 140,0,0, 1, 170),
-        TRANSFER(1933,1879,1496,0, 2,0, true),
+        TRANSFER(Constants.testBase, Constants.testElbow, Constants.testWrist,0, 2,0, true),
         //these articulations are meant to observe the motions and angles to check for belt skips
         VALIDATE_ELBOW90(0,90,90,0, .5f,0),
         VALIDATE_SHOULDER90(90,15,-90+15,0, .5f,0),
