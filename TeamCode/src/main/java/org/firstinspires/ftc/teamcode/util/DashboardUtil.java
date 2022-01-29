@@ -18,10 +18,10 @@ import java.util.List;
 public class DashboardUtil {
     private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
     private static final double ROBOT_RADIUS = 9; // in
-    private static final double VELOCITY_SCALE = 0.25;
+    private static final double VELOCITY_SCALE = 0.1;
 
     private static final String ROBOT_COLOR = "Black";
-    private static final String WHEEL_COLOR = "Green";
+    private static final String WHEEL_COLOR = "Red";
 
 
     public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
@@ -53,7 +53,7 @@ public class DashboardUtil {
         drawSampledPath(canvas, path, DEFAULT_RESOLUTION);
     }
 
-    public static void drawTargetPose(Canvas canvas, Pose2d pose) {
+    public static void drawPose(Canvas canvas, Pose2d pose) {
         canvas.strokeCircle(pose.getX(), pose.getY(), ROBOT_RADIUS);
         Vector2d v = pose.headingVec().times(ROBOT_RADIUS);
         double x1 = pose.getX() + v.getX() / 2, y1 = pose.getY() + v.getY() / 2;

@@ -236,11 +236,14 @@ public class TrajectorySequenceRunner {
         if (targetPose != null) {
             fieldOverlay.setStrokeWidth(1);
             fieldOverlay.setStroke("#4CAF50");
-            DashboardUtil.drawTargetPose(fieldOverlay, targetPose);
+            DashboardUtil.drawPose(fieldOverlay, targetPose);
         }
 
         fieldOverlay.setStroke("#3F51B5");
         DashboardUtil.drawPoseHistory(fieldOverlay, poseHistory);
+
+        fieldOverlay.setStroke("#3F51B5");
+        DashboardUtil.drawPose(fieldOverlay, poseEstimate);
     }
 
     public Pose2d getLastPoseError() {
