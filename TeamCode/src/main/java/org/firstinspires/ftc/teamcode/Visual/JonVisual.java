@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.common.Position;
 import java.io.PrintWriter;
 
 @TeleOp
+
 //greg code
 public class JonVisual extends Visual {
     public PhoneManager cameraManager = new PhoneManager();
