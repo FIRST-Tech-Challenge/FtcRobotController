@@ -31,6 +31,7 @@ public class Gripper implements Subsystem{
     public Servo pitchServo, servo;
     public RevColorSensorV3 freightSensor;
 
+    // State
     boolean up = true;
     boolean open = true;
 
@@ -103,6 +104,7 @@ public class Gripper implements Subsystem{
         SET, //Set for Intaking - can be used as an emergency release
         LIFT //Grip and lift to vertical
     }
+
     public boolean articulate(Gripper.Articulation articulation) {
 
         this.articulation = articulation;
@@ -158,6 +160,7 @@ public class Gripper implements Subsystem{
         Map<String, Object> telemetryMap = new HashMap<>();
 
         if(debug) {
+            telemetryMap.put("Freight Distance", freightSensor.getDistance(DistanceUnit.MM));
             telemetryMap.put("Servo Target Pos", targetPos);
             telemetryMap.put("Pitch Servo Target Pos", pitchTargetPos);
             telemetryMap.put("Open", open);

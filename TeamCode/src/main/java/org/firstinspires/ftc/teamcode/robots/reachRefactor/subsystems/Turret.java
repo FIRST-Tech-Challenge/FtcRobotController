@@ -35,10 +35,10 @@ public class Turret implements Subsystem {
     }
 
     public void update(Canvas fieldOverlay){
-        if(targetHeading > 90)
-            targetHeading = 90;
-        else if(targetHeading < -90)
-            targetHeading = -90;
+//         if(targetHeading > 90)
+//             targetHeading = 90;
+//         else if(targetHeading < -90)
+//             targetHeading = -90;
 
         heading = motor.getCurrentPosition() / ticksPerDegree;
 
@@ -59,7 +59,7 @@ public class Turret implements Subsystem {
         return targetHeading;
     }
 
-    public double getHeading(){return heading;}
+    public double getHeading(){return motor.getCurrentPosition() / ticksPerDegree;}
 
     public boolean isTurretNearTarget(){
         return between360Clockwise(heading, targetHeading - TURRET_TOLERANCE, heading + TURRET_TOLERANCE);
@@ -77,6 +77,7 @@ public class Turret implements Subsystem {
             telemetryMap.put("motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turretTargetPos", getTargetAngle());
             telemetryMap.put("turretCurrentAngle", getHeading());
+            telemetryMap.put("turretCurrentTest", ticksPerDegree);
         }
 
 

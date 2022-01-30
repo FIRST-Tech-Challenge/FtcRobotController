@@ -164,7 +164,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             return 0;
 
         // initialization of the PID calculator's output range, target value and multipliers
-//        chassisLengthPID.setOutputRange(-5.0, 5.0);
         chassisLengthPID.setPID(CHASSIS_LENGTH_PID_COEFFICIENTS);
         chassisLengthPID.setSetpoint(targetChassisLength);
         chassisLengthPID.enable();

@@ -51,9 +51,9 @@ import java.util.function.IntSupplier;
  * gamepad 2: b - dump crane bucket
  * gamepad 2: a - toggle duck spinner
  * gamepad 2: y - transfer
- * gamepad 2: dpad left - rotate turret 90 degrees left
  * gamepad 2: dpad right - rotate turret 90 degrees right
- * gamepad 2: dpad up - articulate crane to home
+ * gamepad 2: dpad up - articulate crane to high tier
+ * gamepad 2: dpad left - articulate crane to middle tier
  * gamepad 2: dpad down - articulate crane to lowest tier
  * gamepad 2: left bumper - decrement chassis length stage
  * gamepad 2: right bumper - increment chassis length stage
@@ -281,7 +281,7 @@ public class FF_6832 extends OpMode {
         double right = -gamepad.right_stick_y;
 
         forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
-        rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
+        rotate = -(right - left) / 2 * ROTATE_SCALING_FACTOR;
 
         if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
             rotate = 0;
@@ -306,6 +306,9 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_right)
             robot.crane.articulate(Crane.Articulation.HOME);
 
+        if(stickyGamepad1.dpad_right)
+            robot.crane.articulate(Crane.Articulation.HOME);
+
         // gamepad 2
 
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
@@ -317,22 +320,14 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.a) //spin carousel
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
-        if(stickyGamepad2.dpad_left) //set for shared shipping hub
-            //todo "Home" is temporary - need to create a field-centric shared-shipping
-            //hub targeting method where the turret goes to the correct side based on the combination
-            //of alliance and which warehouse we are working
-            robot.crane.articulate(Crane.Articulation.VALIDATE_TURRET90L);
-//            robot.crane.articulate(Crane.Articulation.HOME);
-        if(stickyGamepad2.dpad_up)  //High Tier
-            robot.crane.articulate(Crane.Articulation.HOME);
-        //robot.crane.articulate(Crane.Articulation.HIGH_TIER);
         if(stickyGamepad2.dpad_right)
-            robot.crane.articulate(Crane.Articulation.VALIDATE_TURRET90R);
-            //robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+           robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.dpad_down)
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
         if(stickyGamepad2.dpad_left)
-                robot.crane.articulate(Crane.Articulation.HIGH_TIER);
+            robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+        if(stickyGamepad2.dpad_up)  //High Tier
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
         if(stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 
@@ -489,7 +484,7 @@ public class FF_6832 extends OpMode {
         for (Map.Entry<String, Object> entry : telemetryMap.entrySet()) {
             String line = String.format("%s: %s", entry.getKey(), entry.getValue());
             telemetry.addLine(line);
-            packet.addLine(line);
+            packet.put(entry.getKey(), entry.getValue());
         }
 
         telemetry.addLine();
