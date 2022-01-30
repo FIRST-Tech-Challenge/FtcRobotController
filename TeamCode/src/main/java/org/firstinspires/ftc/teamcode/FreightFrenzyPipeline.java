@@ -11,6 +11,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -109,12 +110,18 @@ class FreightFrenzyPipeline extends OpenCvPipeline
 
     private final boolean redAlliance;
     private final boolean duckySide;
+    private static String directory;
 
     FreightFrenzyPipeline(boolean redAlliance, boolean duckySide) {
+        final String BASE_FOLDER_NAME = "FIRST";
+        String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        directory = Environment.getExternalStorageDirectory().getPath() + "/" +
+                BASE_FOLDER_NAME + "/" + dateTime;
         this.redAlliance = redAlliance;
         this.duckySide = duckySide;
         if(redAlliance) {
             if(duckySide) {
+                directory += "/red_duck";
                 sub1PointA = new Point( 42,190); // 15x15 pixels on LEFT
                 sub1PointB = new Point( 57,205);
                 sub2PointA = new Point(158,190); // 15x15 pixels on CENTER
@@ -122,6 +129,7 @@ class FreightFrenzyPipeline extends OpenCvPipeline
                 sub3PointA = new Point(277,190); // 15x15 pixels on RIGHT
                 sub3PointB = new Point(292,205);
             } else {
+                directory += "/red_warehouse";
                 sub1PointA = new Point( 44,190); // 15x15 pixels on LEFT
                 sub1PointB = new Point( 59,205);
                 sub2PointA = new Point(160,190); // 15x15 pixels on CENTER
@@ -131,6 +139,7 @@ class FreightFrenzyPipeline extends OpenCvPipeline
             }
         } else {
             if(duckySide) {
+                directory += "/blue_duck";
                 sub1PointA = new Point( 30,190); // 15x15 pixels on LEFT
                 sub1PointB = new Point( 45,205);
                 sub2PointA = new Point(155,190); // 15x15 pixels on CENTER
@@ -139,6 +148,7 @@ class FreightFrenzyPipeline extends OpenCvPipeline
                 sub3PointB = new Point(287,205);
 
             } else {
+                directory += "/blue_warehouse";
                 sub1PointA = new Point( 50,190); // 15x15 pixels on LEFT  (limited by barrier!)
                 sub1PointB = new Point( 65,205);
                 sub2PointA = new Point(155,190); // 15x15 pixels on CENTER
@@ -147,13 +157,15 @@ class FreightFrenzyPipeline extends OpenCvPipeline
                 sub3PointB = new Point(287,205);
             }
         }
+
+        // Create the directory structure to store the autonomous image used to start auto.
+        File autonomousDir = new File(directory);
+        autonomousDir.mkdirs();
     }
 
     public static void saveLastAutoImage() {
-        final String BASE_FOLDER_NAME = "FIRST";
-        String dateTime = new SimpleDateFormat("yyyy-MM-dd'T'hh-mm-ss", Locale.getDefault()).format(new Date());
-        String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME+
-                "/"+"AutoImage"+dateTime+".png";
+        String dateTime = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String directoryPath = directory + "/" + "AutoImage_" + dateTime + ".png";
 
         new Thread(new Runnable()
         {
