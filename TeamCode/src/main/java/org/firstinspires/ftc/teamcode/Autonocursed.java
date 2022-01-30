@@ -114,9 +114,9 @@ public class Autonocursed extends LinearOpMode {
         */
 
         // spin duck +
-        this.robot.duck.setPower(-0.2);
+        this.robot.duck.setPower(-0.25);
         goToWayPoint(-0.5, 0.15, -53, 0.7, 30, 0.01, 1);
-        sleep(1500);
+        sleep(200);
         // spin duck -
 
 
@@ -127,7 +127,7 @@ public class Autonocursed extends LinearOpMode {
         } else if(duckPos == 2){
 
         } else {
-            goToWayPoint(0.4, 0.756, -53, 1, 30, 0.01, 1);
+            goToWayPoint(0.4, 0.756, -53, 1.5, 30, 0.01, 1);
         }
         // drive to team shipping hub -
 
@@ -151,12 +151,12 @@ public class Autonocursed extends LinearOpMode {
         this.robot.intakeUp.setPower(-1.0);
         lift(50,0.3);
         goToWayPoint(2.5, -0.18, -90,   0.7, 30, 0.03, 1);
-        sleep(1000);
+        sleep(500);
         // pick up new cube
 
 
         // drive to team shipping hub +
-        goToWayPoint(1.4, -0.13, -90,   1, 30, 0.02, 1);
+        goToWayPoint(1.4, -0.13, -90,   2.5, 30, 0.02, 1);
         lift(pos[duckPos-1],1);
         goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
         // drive to team shipping hub -
@@ -184,7 +184,7 @@ public class Autonocursed extends LinearOpMode {
 
 
         // drive to team shipping hub +
-        goToWayPoint(1.4, -0.18, -90,   1, 30, 0.02, 1);
+        goToWayPoint(1.4, -0.18, -90,   1.5, 30, 0.02, 1);
         lift(pos[duckPos-1],1);
         goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
         // drive to team shipping hub -
@@ -199,7 +199,7 @@ public class Autonocursed extends LinearOpMode {
         // park in warehouse +
         goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
         lift(-50,0.7);
-        goToWayPoint(2.45, -0.18, -90,   1, 30, 0.03, 1);
+        goToWayPoint(2.8, -0.18, -90,   1.5, 30, 0.03, 1);
         // park in warehouse -
 
 

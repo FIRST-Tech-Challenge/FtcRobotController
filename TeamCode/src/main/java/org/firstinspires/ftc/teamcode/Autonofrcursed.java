@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "cursedautono")
-public class Autonofrcursed extends LinearOpMode {
+@Autonomous(name = "yxorcursed")
+public class Autonofrcursed extends LinearOpMode implements Runnable {
     MecanumChassis robot = new MecanumChassis();
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -41,15 +41,12 @@ public class Autonofrcursed extends LinearOpMode {
 
     private final int[] pos = {-375, -775, -1100};
 
-    volatile double Tpower;
-    volatile int Tsleep;
-    volatile int Tsleep2;
-
+    Autonofrcursed obj = new Autonofrcursed();
+    Thread thread = new Thread(obj);
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-
         /*
         initVuforia();
         initTfod();
@@ -120,9 +117,9 @@ public class Autonofrcursed extends LinearOpMode {
         */
 
         // spin duck +
-        this.robot.duck.setPower(-0.2);
+        this.robot.duck.setPower(-0.25);
         goToWayPoint(-0.5, 0.15, -53, 0.7, 30, 0.01, 1);
-        sleep(1500);
+        sleep(200);
         // spin duck -
 
 
@@ -133,14 +130,13 @@ public class Autonofrcursed extends LinearOpMode {
         } else if(duckPos == 2){
 
         } else {
-            goToWayPoint(0.4, 0.756, -53, 1, 30, 0.01, 1);
+            thread.start();
+            goToWayPoint(0.4, 0.756, -53, 1.5, 30, 0.01, 1);
         }
         // drive to team shipping hub -
 
 
         // score preloaded cube +
-        this.robot.intakeUp.setPower(1.0);
-        sleep(1500);
         // score preloaded cube -
 
 
@@ -157,12 +153,12 @@ public class Autonofrcursed extends LinearOpMode {
         this.robot.intakeUp.setPower(-1.0);
         lift(50,0.3);
         goToWayPoint(2.5, -0.18, -90,   0.7, 30, 0.03, 1);
-        sleep(1000);
+        sleep(500);
         // pick up new cube
 
 
         // drive to team shipping hub +
-        goToWayPoint(1.4, -0.13, -90,   1, 30, 0.02, 1);
+        goToWayPoint(1.4, -0.13, -90,   2.5, 30, 0.02, 1);
         lift(pos[duckPos-1],1);
         goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
         // drive to team shipping hub -
@@ -190,7 +186,7 @@ public class Autonofrcursed extends LinearOpMode {
 
 
         // drive to team shipping hub +
-        goToWayPoint(1.4, -0.18, -90,   1, 30, 0.02, 1);
+        goToWayPoint(1.4, -0.18, -90,   1.5, 30, 0.02, 1);
         lift(pos[duckPos-1],1);
         goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
         // drive to team shipping hub -
@@ -205,12 +201,19 @@ public class Autonofrcursed extends LinearOpMode {
         // park in warehouse +
         goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
         lift(-50,0.7);
-        goToWayPoint(2.45, -0.18, -90,   1, 30, 0.03, 1);
+        goToWayPoint(2.45, -0.18, -90,   1.5, 30, 0.03, 1);
         // park in warehouse -
 
 
-
     }
+
+    public void run(){
+        sleep(1000);
+        this.robot.intakeUp.setPower(1.0);
+        sleep(1000);
+        this.robot.intakeUp.setPower(0);
+    }
+
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
         targetPos[0] = (y); // why.
         targetPos[1] = (-x);
@@ -230,26 +233,6 @@ public class Autonofrcursed extends LinearOpMode {
         }
         Thread.sleep(200);
 
-    }
-   public void intake(double power, int sleep, int sleep2){
-        Tpower = power;
-        Tsleep = sleep;
-        Tsleep2 = sleep2;
-        Autonofrcursed thread = new Autonofrcursed();
-        thread.start();
-   }
-
-   public void run(){
-        sleep(Tsleep);
-        this.robot.intakeUp.setPower(Tpower);
-        sleep(Tsleep2);
-   }
-
-    private void setPower(double frontLeft, double frontRight, double backLeft, double backRight){
-        this.robot.leftFrontDrive.setPower(frontLeft);
-        this.robot.rightFrontDrive.setPower(frontRight);
-        this.robot.leftRearDrive.setPower(backLeft);
-        this.robot.rightRearDrive.setPower(backRight);
     }
 
     private void lift(int target, double power){
@@ -279,4 +262,3 @@ public class Autonofrcursed extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
     }
 }
-
