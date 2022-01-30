@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -19,7 +20,7 @@ public class Crane implements Subsystem {
     public Turret turret;
 
     // Servos
-    public ServoImplEx shoulderServo, elbowServo, wristServo;
+    public Servo shoulderServo, elbowServo, wristServo;
 
     // State
     private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
@@ -37,12 +38,12 @@ public class Crane implements Subsystem {
     public static int ELBOW_HOME_PWM = 1550;
     public static int WRIST_HOME_PWM = 1500;
 
-    public static double SHOULDER_PWM_PER_DEGREE = -600/90;
+    public static double SHOULDER_PWM_PER_DEGREE = 600/90;
     public static double ELBOW_PWM_PER_DEGREE = -600/90;
     public static double WRIST_PWM_PER_DEGREE = 750/180;
 
     public static double SHOULDER_DEG_MIN = -90; //negative angles are counter clockwise while looking at the left side of the robot
-    public static double ELBOW_DEG_MIN = -40;
+    public static double ELBOW_DEG_MIN = -60;
     public static double WRIST_DEG_MIN = -180;
 
     public static double SHOULDER_DEG_MAX = 90;
@@ -51,9 +52,15 @@ public class Crane implements Subsystem {
 
 
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
-        shoulderServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
-        elbowServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
-        wristServo = hardwareMap.get(ServoImplEx.class, "bucketServo");
+        if(simulated) {
+            shoulderServo = new ServoSim();
+            elbowServo = new ServoSim();
+            wristServo = new ServoSim();
+        } else {
+            shoulderServo = hardwareMap.get(Servo.class, "firstLinkServo");
+            elbowServo = hardwareMap.get(Servo.class, "secondLinkServo");
+            wristServo = hardwareMap.get(Servo.class, "bucketServo");
+        }
 
         this.turret = turret;
         articulation = Articulation.MANUAL;
@@ -67,13 +74,13 @@ public class Crane implements Subsystem {
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
         MIDDLE_TIER(60,130,40,0, 1, 150),
         HIGH_TIER(40, 130,70,0, 1, 170),
+        TRANSFER(-75,-55,-20,0, 2,0),
         CAP(30, 140,0,0, 1, 170),
-        TRANSFER(-70,-60,-35,0, 2,0),
         //these articulations are meant to observe the motions and angles to check for belt skips
         VALIDATE_ELBOW90(0,90,90,0, .5f,0),
         VALIDATE_SHOULDER90(90,15,-90+15,0, .5f,0),
-        VALIDATE_TURRET90R(0,0,0,90,2.5f,0),
-        VALIDATE_TURRET90L(0,0,0,-90,2.5f,0);
+        VALIDATE_TURRET90R(0,0,0,45,2.5f,0),
+        VALIDATE_TURRET90L(0,0,0,-45,2.5f,0);
 
 
         public int shoulderPos, elbowPos, wristPos;

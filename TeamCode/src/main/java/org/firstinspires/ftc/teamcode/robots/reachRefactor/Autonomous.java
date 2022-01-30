@@ -18,7 +18,7 @@ public class Autonomous {
     private Robot robot;
 
     // Autonomous trajectories
-    TrajectorySequence sequence;
+    TrajectorySequence sequence, square;
 
     // Autonomous articulations
     private Stage autonomousRedStage = new Stage();
@@ -35,7 +35,18 @@ public class Autonomous {
                 .forward(24)
                 .turn(Math.toRadians(90))
                 .splineTo(new Vector2d(48, 48), Math.toRadians(90))
-                .build();;
+                .build();
+
+        square = robot.driveTrain.trajectorySequenceBuilder(new Pose2d(0, 0))
+                .forward(24)
+                .turn(Math.toRadians(90))
+                .forward(24)
+                .turn(Math.toRadians(90))
+                .forward(24)
+                .turn(Math.toRadians(90))
+                .forward(24)
+                .turn(Math.toRadians(90))
+                .build();
 
         // Autonomous articulations
         autonomousRed = getStateMachine(autonomousRedStage)
@@ -44,7 +55,7 @@ public class Autonomous {
                         () -> true,
                         () -> true
                 )
-                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(sequence))
+                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(square))
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .build();
 
@@ -54,7 +65,7 @@ public class Autonomous {
                         () -> true,
                         () -> true
                 )
-                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(sequence))
+                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(square))
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .build();
     }

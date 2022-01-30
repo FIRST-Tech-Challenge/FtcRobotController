@@ -12,7 +12,7 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
 
     // distance measurements
-    public static double MIN_CHASSIS_LENGTH = 12.362205;
+    public static double MIN_CHASSIS_LENGTH = 14.330708976377952;
     public static double MAX_CHASSIS_LENGTH = 35.4331;
     public static double WHEEL_RADIUS = 4;
     public static double TRACK_WIDTH = 12.132362205;
@@ -20,8 +20,7 @@ public class Constants {
 
     // constraints
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
-    public static final double TICKS_PER_REV = 537.6;
-    public static final double MAX_RPM = 312.5;
+    public static double TICKS_PER_INCH = 28.854166667;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants
@@ -29,13 +28,6 @@ public class Constants {
 
     public static double EPSILON = 1e-6; // small value used for the approximately equal calculation in MathUtils
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
-
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
-
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     public static double MAX_VEL = 90;
     public static double MAX_ACCEL = 90;
@@ -83,11 +75,11 @@ public class Constants {
     }
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return ticks / TICKS_PER_INCH;
     }
 
     public static double inchesToEncoderTicks(double inches) {
-        return inches * TICKS_PER_REV / (2 * Math.PI * WHEEL_RADIUS * GEAR_RATIO);
+        return inches * TICKS_PER_INCH;
     }
 
     public static double rpmToVelocity(double rpm) {

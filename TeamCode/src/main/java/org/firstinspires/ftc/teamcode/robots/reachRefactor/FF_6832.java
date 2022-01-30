@@ -6,8 +6,6 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.drive.Drive;
-import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -112,7 +110,7 @@ public class FF_6832 extends OpMode {
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.3;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
-    public static double FORWARD_SCALING_FACTOR = 24; // scales the target linear robot velocity from tele-op controls
+    public static double FORWARD_SCALING_FACTOR = 48; // scales the target linear robot velocity from tele-op controls
     public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * (2 / Constants.TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             Constants.MIN_CHASSIS_LENGTH,
@@ -167,7 +165,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, true);
+        robot = new Robot(hardwareMap, false);
         alliance = Constants.Alliance.BLUE;
         startingPosition = Constants.Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
@@ -263,24 +261,24 @@ public class FF_6832 extends OpMode {
     //Code that runs ONCE after the driver hits PLAY
     @Override
     public void start() {
-        lastLoopClockTime = System.nanoTime();
         initializing = false;
+        auto.visionProvider.shutdownVision();
         robot.articulate(Robot.Articulation.START);
         robot.driveTrain.setMaintainChassisLengthEnabled(true);
         robot.driveTrain.setAntiTippingEnabled(false);
         robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
-        auto.visionProvider.shutdownVision();
+        lastLoopClockTime = System.nanoTime();
     }
 
 
-    private void handleArcadeDrive() {
-        forward = -gamepad2.left_stick_y * FORWARD_SCALING_FACTOR;
-        rotate = -gamepad2.right_stick_x * ROTATE_SCALING_FACTOR;
+    private void handleArcadeDrive(Gamepad gamepad) {
+        forward = -gamepad.left_stick_y * FORWARD_SCALING_FACTOR;
+        rotate = -gamepad.right_stick_x * ROTATE_SCALING_FACTOR;
     }
 
-    private void handleTankDrive() {
-        double left = -gamepad1.left_stick_y;
-        double right = -gamepad1.right_stick_y;
+    private void handleTankDrive(Gamepad gamepad) {
+        double left = -gamepad.left_stick_y;
+        double right = -gamepad.right_stick_y;
 
         forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
         rotate = (right - left) / 2 * ROTATE_SCALING_FACTOR;
@@ -306,16 +304,19 @@ public class FF_6832 extends OpMode {
             robot.gripper.actuateGripper(true);
 
         if (stickyGamepad1.x)
-            robot.gripper.Set();
+            robot.gripper.set();
 
         if(stickyGamepad1.b)
-            robot.gripper.Lift();
+            robot.gripper.lift();
 
         if (stickyGamepad1.y)
             robot.articulate(Robot.Articulation.TRANSFER);
 
         if(stickyGamepad1.a)
-            robot.driveTrain.setDuckSpinnerPower(alliance.getMod());
+            robot.driveTrain.toggleDuckSpinner(alliance.getMod());
+
+        if(stickyGamepad1.dpad_right)
+            robot.crane.articulate(Crane.Articulation.HOME);
 
         // gamepad 2
 
@@ -361,9 +362,9 @@ public class FF_6832 extends OpMode {
         robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[chassisDistanceLevelIndex]);
 
         if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
-            handleTankDrive();
+            handleTankDrive(gamepad1);
         else if (gamepad2JoysticksActive && !gamepad1JoysticksActive)
-            handleArcadeDrive();
+            handleArcadeDrive(gamepad2);
         else {
             forward = 0;
             rotate = 0;

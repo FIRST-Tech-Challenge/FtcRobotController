@@ -2,16 +2,12 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -48,7 +44,7 @@ public class Robot implements Subsystem {
 
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap, simulated);
-        turret = new Turret(hardwareMap);
+        turret = new Turret(hardwareMap, simulated);
         crane = new Crane(hardwareMap, turret, simulated);
         gripper = new Gripper(hardwareMap, simulated);
         subsystems = new Subsystem[] {driveTrain, crane, gripper};
@@ -126,6 +122,8 @@ public class Robot implements Subsystem {
 
     private Stage initStage = new Stage();
     private StateMachine init = UtilMethods.getStateMachine(initStage)
+            .addSingleState(() -> gripper.set())
+            .addState(() -> crane.articulate(Crane.Articulation.INIT))
             .build();
 
     private Stage startStage = new Stage();

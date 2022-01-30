@@ -32,6 +32,19 @@ public class UtilMethods {
         return (((angle1 - angle2) % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
     }
 
+    public static double closestAngle(double a, double b)
+    {
+        // get direction
+        double dir = (b % Math.toRadians(360)) - (a % Math.toRadians(360));
+
+        // convert from -360 to 360 to -180 to 180
+        if (Math.abs(dir) > Math.toRadians(180))
+        {
+            dir = -(Math.signum(dir) * Math.toRadians(360)) + dir;
+        }
+        return dir;
+    }
+
     public static boolean notDeadZone(double value, double threshold){
         if (value> -threshold && value < threshold) return false;
         else return true;

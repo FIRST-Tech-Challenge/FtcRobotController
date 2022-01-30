@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.util.utilMethods.between360Clockwise;
@@ -32,8 +34,8 @@ public class Turret implements Subsystem {
 
     public static double TURRET_TOLERANCE = 2;
 
-    public Turret(HardwareMap hardwareMap) {
-        this.motor = hardwareMap.get(DcMotorEx.class, "turret");
+    public Turret(HardwareMap hardwareMap, boolean simulated) {
+        motor = simulated ? new DcMotorExSim(Constants.USE_MOTOR_SMOOTHING) : hardwareMap.get(DcMotorEx.class, "turret");
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setTargetPosition(motor.getCurrentPosition());
