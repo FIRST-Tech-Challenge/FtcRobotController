@@ -4,10 +4,9 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
@@ -54,7 +53,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(260, .5);
 
             try {
-                driveSystem.moveToPosition(25, 85, 1, 1, new DistanceTimeoutError(1000));
+                driveSystem.moveToPosition(25, 85, 1, 1, new DistanceTimeoutException(1000));
             } catch (MovementException ignored) {
             }
             driveSystem.turnTo(270, .2);
@@ -109,12 +108,12 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             }
 
             try {
-                driveSystem.moveToPosition(12, 70, 1, 1, new DistanceTimeoutError(500));
+                driveSystem.moveToPosition(12, 70, 1, 1, new DistanceTimeoutException(500));
             } catch (MovementException ignored) {
             }
             driveSystem.turnTo(200, .8);
             try {
-                driveSystem.moveToPosition(4, 70, 1, 2, new DistanceTimeoutError(1000));
+                driveSystem.moveToPosition(4, 70, 1, 2, new DistanceTimeoutException(1000));
                 driveSystem.strafeAtAngle(90, 1);
                 Thread.sleep(250);
             } catch (MovementException ignored) {
@@ -123,7 +122,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             intake.setIntakeOn();
             try {
-                driveSystem.moveToPosition(0, 8, 1, 1, new NavigationError[]{new DistanceSensorError(distanceSensor), new DistanceTimeoutError(500)});
+                driveSystem.moveToPosition(0, 8, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor), new DistanceTimeoutException(500)});
 
             } catch (MovementException ignored) {
             } finally {

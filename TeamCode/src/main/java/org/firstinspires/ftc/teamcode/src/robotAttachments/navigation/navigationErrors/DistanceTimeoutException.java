@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
-public class DistanceTimeoutError implements NavigationError {
+public class DistanceTimeoutException extends MovementException {
 
     private final ElapsedTime timer;
     private final double tooSmallOfDistance; // this travels ~2 inches for every 1000 millis
     private final double millis;
     private double positionAfterTimeLoop = Double.MAX_VALUE; //These are arrays to make the compiler happy. Treat them as a normal double
 
-    public DistanceTimeoutError(double millis) {
+
+    public DistanceTimeoutException(double millis) {
+        super();
         timer = new ElapsedTime();
         tooSmallOfDistance = millis / 500.0; // this travels ~2 inches for every 1000 millis
         this.millis = millis;
@@ -33,7 +35,8 @@ public class DistanceTimeoutError implements NavigationError {
             if (traveledDistance < tooSmallOfDistance) {
                 final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
                 final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Error.\n";
-                throw new MovementException(errorMsg);
+                RobotLog.addGlobalWarningMessage(errorMsg);
+                throw this;
             }
             timer.reset();
         }

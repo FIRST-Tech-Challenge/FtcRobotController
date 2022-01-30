@@ -180,6 +180,7 @@ public class ConceptTensorFlowObjectDetectionSwitchableCameras extends LinearOpM
 
         // Set the active camera to Webcam 1.
         switchableCamera = (SwitchableCamera) vuforia.getCamera();
+        assert switchableCamera != null;
         switchableCamera.setActiveCamera(webcam1);
 
         // Loading trackables is not necessary for the TensorFlow Object Detection engine.

@@ -5,10 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
@@ -108,7 +107,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             }
 
             try {
-                driveSystem.moveToPosition(118, 144, 1, 1, new DistanceTimeoutError(500));
+                driveSystem.moveToPosition(118, 144, 1, 1, new DistanceTimeoutException(500));
             } catch (MovementException ignored) {
             }
             driveSystem.turnTo(90, .8);
@@ -118,7 +117,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.stopAll();
             spinner.spinOffBlueDuck();
             try {
-                driveSystem.moveToPosition(120, 70, 1, 1, new DistanceTimeoutError(1000));
+                driveSystem.moveToPosition(120, 70, 1, 1, new DistanceTimeoutException(1000));
             } catch (MovementException stop) {
                 this.stop();
             }
@@ -131,7 +130,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
 
                 try {
-                    driveSystem.moveToPosition(135, 20, 1, 1, new NavigationError[]{new DistanceSensorError(distanceSensor), new DistanceTimeoutError(500)});
+                    driveSystem.moveToPosition(135, 20, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor), new DistanceTimeoutException(500)});
 
                 } catch (MovementException ignored) {
                 } finally {
@@ -142,7 +141,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 }
                 if (odometry.getY() < 20) {
                     try {
-                        driveSystem.moveToPosition(odometry.getX(), 15, 1, 1, new DistanceTimeoutError(500));
+                        driveSystem.moveToPosition(odometry.getX(), 15, 1, 1, new DistanceTimeoutException(500));
                     } catch (MovementException ignored) {
                     }
                 }
@@ -150,7 +149,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
             } else if (overBarrier) {
                 try {
-                    driveSystem.moveToPosition(115, 70, 1, 1, new DistanceTimeoutError(500));
+                    driveSystem.moveToPosition(115, 70, 1, 1, new DistanceTimeoutException(500));
                 } catch (MovementException ignored) {
                 }
                 driveSystem.turnTo(180, 1);

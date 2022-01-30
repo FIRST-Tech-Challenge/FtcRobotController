@@ -196,6 +196,7 @@ public class ConceptVuforiaFieldNavigationWebcam extends LinearOpMode {
 
         /*  Let all the trackable listeners know where the camera is.  */
         for (VuforiaTrackable trackable : allTrackables) {
+            assert parameters.cameraName != null;
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocationOnRobot);
         }
 

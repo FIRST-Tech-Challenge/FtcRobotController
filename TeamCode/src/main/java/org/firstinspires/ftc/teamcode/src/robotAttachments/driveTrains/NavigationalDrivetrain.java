@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
@@ -263,8 +262,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      */
     public void moveToPosition(double x, double y, double theta, double tolerance) throws InterruptedException {
         try {
-            moveToPosition(x, y, theta, tolerance, (x1, y1, theta1, tolerance1, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor) -> {
-            });
+            moveToPosition(x, y, theta, tolerance, new MovementException());
         } catch (MovementException ignored) {
         }
     }
@@ -276,11 +274,11 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param y         The y coordinate to go to
      * @param tolerance The tolerance for how close it must get (in inches)
      * @param theta     The angle (relative to the field) to turn to during the movement
-     * @param errors    A array of error conditions to check. Must be of type {@link NavigationError}
+     * @param errors    A array of error conditions to check. Must be of type {@link MovementException}
      * @throws InterruptedException Throws if the OpMode ends during execution
      * @throws MovementException    Stops Motors and Throws if errorCB returns true
      */
-    public void moveToPosition(double x, double y, double theta, double tolerance, NavigationError[] errors) throws InterruptedException, MovementException {
+    public void moveToPosition(double x, double y, double theta, double tolerance, MovementException[] errors) throws InterruptedException, MovementException {
         double power, odometry_angle = 0;
         final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
         final String coordinateString = x + " , " + y;
@@ -321,7 +319,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
             currentDistance = MiscUtils.distance(odometry_x, odometry_y, x, y); //currentDistance value
             odometry_angle = MiscUtils.getAngle(odometry_x, odometry_y, x, y, gps.getRot()); //angle
 
-            for (NavigationError e : errors) {
+            for (MovementException e : errors) {
                 e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
             }
 
@@ -331,8 +329,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
-    public void moveToPosition(double x, double y, double theta, double tolerance, NavigationError error) throws MovementException, InterruptedException {
-        NavigationError[] errors = {error};
+    public void moveToPosition(double x, double y, double theta, double tolerance, MovementException error) throws MovementException, InterruptedException {
+        MovementException[] errors = {error};
         moveToPosition(x, y, theta, tolerance, errors);
     }
 

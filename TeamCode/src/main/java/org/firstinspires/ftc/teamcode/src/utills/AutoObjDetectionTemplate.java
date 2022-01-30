@@ -80,8 +80,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
         parameters.vuforiaLicenseKey = VuforiaKey.VUFORIA_KEY;
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        WebcamName webcam1 = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.LeftWebcamName);
-        parameters.cameraName = webcam1;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.LeftWebcamName);
 
         //Waits for mutex to be available
 

@@ -4,10 +4,9 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
@@ -57,7 +56,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(260, .5);
 
             try {
-                driveSystem.moveToPosition(22, 82.5, 1, .5, new DistanceTimeoutError(500));
+                driveSystem.moveToPosition(22, 82.5, 1, .5, new DistanceTimeoutException(500));
             } catch (MovementException ignored) {
             }
             driveSystem.turnTo(272, .3);
@@ -117,7 +116,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
 
             try {
-                driveSystem.moveToPosition(20, 150, 1, 1, new DistanceTimeoutError(500));
+                driveSystem.moveToPosition(20, 150, 1, 1, new DistanceTimeoutException(500));
             } catch (MovementException ignored) {
             }
 
@@ -132,20 +131,20 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             Thread.sleep(1000);
             if (!overBarrier) {
                 try {
-                    driveSystem.moveToPosition(17, 80, 1, 2, new DistanceTimeoutError(1000));
+                    driveSystem.moveToPosition(17, 80, 1, 2, new DistanceTimeoutException(1000));
                 } catch (MovementException stopOnStuck) {
                     this.stop();
                 }
                 driveSystem.turnTo(180, .5);
                 try {
-                    driveSystem.moveToPosition(0, 80, 0, 2, new DistanceTimeoutError(750));
+                    driveSystem.moveToPosition(0, 80, 0, 2, new DistanceTimeoutException(750));
                 } catch (MovementException ignored) {
                 }
 
                 intake.setIntakeOn();
                 try {
 
-                    driveSystem.moveToPosition(0, 10, 1, 1, new NavigationError[]{new DistanceSensorError(distanceSensor), new DistanceTimeoutError(500)});
+                    driveSystem.moveToPosition(0, 10, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor), new DistanceTimeoutException(500)});
 
                 } catch (MovementException ignored) {
                 } finally {
@@ -153,7 +152,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 }
             } else if (overBarrier) {
                 try {
-                    driveSystem.moveToPosition(33, 77, 1, 2, new DistanceTimeoutError(1000));
+                    driveSystem.moveToPosition(33, 77, 1, 2, new DistanceTimeoutException(1000));
                 } catch (MovementException ignored) {
                 }
                 driveSystem.turnTo(180, .8);

@@ -4,10 +4,9 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.MovementException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutError;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.NavigationError;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
@@ -101,19 +100,19 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         }
 
         try {
-            driveSystem.moveToPosition(131, 65, 1, 1, new DistanceTimeoutError(1000));
+            driveSystem.moveToPosition(131, 65, 1, 1, new DistanceTimeoutException(1000));
         } catch (MovementException stop) {
             this.stop();
         }
         driveSystem.turnTo(160, 1);
         try {
-            driveSystem.moveToPosition(137, 65, 1, 1, new DistanceTimeoutError(500));
+            driveSystem.moveToPosition(137, 65, 1, 1, new DistanceTimeoutException(500));
         } catch (MovementException ignored) {
         }
         intake.setIntakeOn();
         try {
 
-            driveSystem.moveToPosition(135, 7, 1, 1, new NavigationError[]{new DistanceSensorError(distanceSensor), new DistanceTimeoutError(500)});
+            driveSystem.moveToPosition(135, 7, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor), new DistanceTimeoutException(500)});
 
         } catch (MovementException ignored) {
         } finally {
