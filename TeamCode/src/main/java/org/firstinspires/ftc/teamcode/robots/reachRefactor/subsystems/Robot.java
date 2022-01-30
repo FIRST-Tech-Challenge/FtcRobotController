@@ -24,7 +24,6 @@ public class Robot implements Subsystem {
     public Turret turret;
     public Crane crane;
     public Gripper gripper;
-    public Turret turret;
     public Subsystem[] subsystems;
 
     private List<LynxModule> hubs;
