@@ -26,17 +26,15 @@ public class drive4_final extends LinearOpMode {
 
         if (joystickY < 0 && joystickX == 0) return 3*3.14159265/2; //back
 
-        if (joystickY == 0 && joystickX < 0) return 3.14159265; //left
-
         if (joystickY >= 0 && joystickX > 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)); //quadrant 1
 
-        if (joystickY >= 0 && joystickX < 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265/2; //quadrant 2
+        if (joystickY > 0 && joystickX < 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265/2; //quadrant 2
 
         if (joystickY <= 0 && joystickX < 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265); //quadrant 3
 
-        if (joystickY <= 0 && joystickX > 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3*3.14159265/2); //quadrant 4
+        if (joystickY < 0 && joystickX > 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3*3.14159265/2); //quadrant 4
 
-        return 3.14159265/2; //forwards
+        return 3.14159265/2; //forward
 
     }
 
