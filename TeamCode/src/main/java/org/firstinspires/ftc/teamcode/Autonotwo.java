@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 @Autonomous(name = "yxorauto2")
+@Disabled
 public class Autonotwo extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 

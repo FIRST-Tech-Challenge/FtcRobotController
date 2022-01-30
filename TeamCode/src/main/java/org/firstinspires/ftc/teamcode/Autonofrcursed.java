@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.List;
 
 @Autonomous(name = "yxorcursed")
-public class Autonofrcursed extends LinearOpMode implements Runnable {
+public class Autonofrcursed extends LinearOpMode {
     MecanumChassis robot = new MecanumChassis();
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -40,9 +40,6 @@ public class Autonofrcursed extends LinearOpMode implements Runnable {
     private TFObjectDetector tfod;
 
     private final int[] pos = {-375, -775, -1100};
-
-    Autonofrcursed obj = new Autonofrcursed();
-    Thread thread = new Thread(obj);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -94,7 +91,14 @@ public class Autonofrcursed extends LinearOpMode implements Runnable {
         telemetry.addData("IMU Mode", "IMU calibrating done");
         telemetry.update();
 
+        ThreadT obj = new ThreadT();
+        Thread thread = new Thread(obj);
+
+        obj.waitTime = 0;
+        obj.power = 0;
+
         waitForStart();
+
         int duckPos = 3;
         /*
         // TensorFlow find duck
@@ -130,14 +134,15 @@ public class Autonofrcursed extends LinearOpMode implements Runnable {
         } else if(duckPos == 2){
 
         } else {
+            // score preloaded cube +
+            obj.waitTime = 1000;
+            obj.power = 1.0;
             thread.start();
+            // score preloaded cube -
             goToWayPoint(0.4, 0.756, -53, 1.5, 30, 0.01, 1);
         }
         // drive to team shipping hub -
 
-
-        // score preloaded cube +
-        // score preloaded cube -
 
 
         // drive to warehouse +
@@ -204,15 +209,9 @@ public class Autonofrcursed extends LinearOpMode implements Runnable {
         goToWayPoint(2.45, -0.18, -90,   1.5, 30, 0.03, 1);
         // park in warehouse -
 
-
+        obj.killT();
     }
 
-    public void run(){
-        sleep(1000);
-        this.robot.intakeUp.setPower(1.0);
-        sleep(1000);
-        this.robot.intakeUp.setPower(0);
-    }
 
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
         targetPos[0] = (y); // why.

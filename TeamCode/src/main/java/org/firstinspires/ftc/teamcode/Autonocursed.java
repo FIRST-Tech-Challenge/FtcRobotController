@@ -226,21 +226,6 @@ public class Autonocursed extends LinearOpMode {
 
     }
 
-    private void forwardGTWP(double x, double y, double angle, double distance, double vel, double vw, double disRes, double angleRes) throws InterruptedException{
-        
-    }
-
-    private void lateralGTWP(){
-
-    }
-
-    private void setPower(double frontLeft, double frontRight, double backLeft, double backRight){
-        this.robot.leftFrontDrive.setPower(frontLeft);
-        this.robot.rightFrontDrive.setPower(frontRight);
-        this.robot.leftRearDrive.setPower(backLeft);
-        this.robot.rightRearDrive.setPower(backRight);
-    }
-
     private void lift(int target, double power){
         this.robot.lift.setTargetPosition(target);
         this.robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
