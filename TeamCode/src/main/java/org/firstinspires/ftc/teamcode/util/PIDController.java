@@ -92,6 +92,13 @@ public class PIDController {
         m_prevTime=System.nanoTime();
     }
 
+    public PIDController(com.acmerobotics.roadrunner.control.PIDCoefficients coefficients) {
+        m_P = coefficients.kP;
+        m_I = coefficients.kI;
+        m_D = coefficients.kD;
+        m_prevTime=System.nanoTime();
+    }
+
 
     /**
      * Read the input, calculate the output accordingly, and write to the output.
@@ -193,6 +200,12 @@ public class PIDController {
         m_P = pidCoefficients.p;
         m_I = pidCoefficients.i;
         m_D = pidCoefficients.d;
+    }
+
+    public void setPID(com.acmerobotics.roadrunner.control.PIDCoefficients pidCoefficients) {
+        m_P = pidCoefficients.kP;
+        m_I = pidCoefficients.kI;
+        m_D = pidCoefficients.kD;
     }
 
     /**

@@ -1,33 +1,21 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @Config
 public class Crane implements Subsystem {
-
-    public Turret turret;
-
-    // Servos
-    public ServoImplEx shoulderServo, elbowServo, wristServo;
-
-    // State
-    private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
-    private double turretTargetPos;
-
-    private Articulation articulation;
-
-    // Constants
     private static final String TELEMETRY_NAME = "Crane";
 
     public static int BUCKET_UP_POS = 900;
@@ -37,7 +25,7 @@ public class Crane implements Subsystem {
     public static int ELBOW_HOME_PWM = 1550;
     public static int WRIST_HOME_PWM = 1500;
 
-    public static double SHOULDER_PWM_PER_DEGREE = -600/90;
+    public static double SHOULDER_PWM_PER_DEGREE = 600/90;
     public static double ELBOW_PWM_PER_DEGREE = -600/90;
     public static double WRIST_PWM_PER_DEGREE = 750/180;
 
@@ -49,21 +37,25 @@ public class Crane implements Subsystem {
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
 
+    public Turret turret;
 
+    public Servo shoulderServo, elbowServo, wristServo;
 
+    private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
+    private double turretTargetPos;
 
-    // transfer
-    // shoulder: 1933,
-    // elbow: 1879,
-    // wrist: 1496,
-
-
-
-
-    public Crane(HardwareMap hardwareMap, Turret turret) {
-        shoulderServo = hardwareMap.get(ServoImplEx.class, "firstLinkServo");
-        elbowServo = hardwareMap.get(ServoImplEx.class, "secondLinkServo");
-        wristServo = hardwareMap.get(ServoImplEx.class, "bucketServo");
+    private Articulation articulation;
+  
+    public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
+        if(simulated) {
+            shoulderServo = new ServoSim();
+            elbowServo = new ServoSim();
+            wristServo = new ServoSim();
+        } else {
+            shoulderServo = hardwareMap.get(Servo.class, "firstLinkServo");
+            elbowServo = hardwareMap.get(Servo.class, "secondLinkServo");
+            wristServo = hardwareMap.get(Servo.class, "bucketServo");
+        }
 
         this.turret = turret;
         articulation = Articulation.MANUAL;
@@ -74,15 +66,13 @@ public class Crane implements Subsystem {
         MANUAL(0, 0, 0, 0, 0,0),
         SIZING(-90,0,70,0, 1.5f,0),
         HOME(0,0,0,0, 0,0),
-        //LOWEST_TIER(1043,975,1556,0, 1.5f, 130, true),
-        //MIDDLE_TIER(1273,1233,1621,0, 1, 150, true),
-        //HIGH_TIER(1391, 1128,1751,0, 1, 170, true),
+      
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
         MIDDLE_TIER(60,130,40,0, 1, 150),
         HIGH_TIER(40, 130,70,0, 1, 170),
         TRANSFER(-75,-55,-20,0, 2,0),
         CAP(30, 140,0,0, 1, 170),
-        //TRANSFER(1933,1879,1496,0, 2,0, true),
+      
         //these articulations are meant to observe the motions and angles to check for belt skips
         VALIDATE_ELBOW90(0,90,90,0, .5f,0),
         VALIDATE_SHOULDER90(90,15,-90+15,0, .5f,0),
@@ -116,11 +106,12 @@ public class Crane implements Subsystem {
     private final Stage mainStage = new Stage();
     private final StateMachine main = UtilMethods.getStateMachine(mainStage)
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
-            .addTimedState(() -> 0, () -> setTargetPositions(articulation),
+            .addTimedState(() -> 0,
+                    () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
                         if(articulation.dumpPos!=0) currentDumpPos= articulation.dumpPos;}
-                        )
+                    )
 
             .build();
 
@@ -150,7 +141,7 @@ public class Crane implements Subsystem {
     }
 
     @Override
-    public void update(){
+    public void update(Canvas fieldOverlay){
         articulate(articulation);
 
         shoulderServo.setPosition(UtilMethods.servoNormalize(shoulderTargetPos));
@@ -215,7 +206,7 @@ public class Crane implements Subsystem {
         return TELEMETRY_NAME;
     }
 
-    public void Dump(){
+    public void dump(){
         setWristTargetPos(currentDumpPos);
     }
 

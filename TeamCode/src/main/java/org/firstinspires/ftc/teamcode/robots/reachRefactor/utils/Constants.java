@@ -1,38 +1,45 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.motors.RevRobotics40HdHexMotor;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
-import org.ejml.simple.SimpleMatrix;
-
-import java.util.Arrays;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 @Config(value = "FFConstants")
 public class Constants {
-
-    //----------------------------------------------------------------------------------------------
-    // Control Constants
-    //----------------------------------------------------------------------------------------------
-
-    public static double EPSILON = 0.001; // small value used for the approximately equal calculation in MathUtils
-    public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
 
     //----------------------------------------------------------------------------------------------
     // Physical Constants
     //----------------------------------------------------------------------------------------------
 
     // distance measurements
-    public static double MIN_CHASSIS_LENGTH = 0.314;
-    public static double MAX_CHASSIS_LENGTH = 0.9;
-    public static double WHEEL_RADIUS = 0.1016;
-    public static double TRACK_WIDTH = 0.308162;
+    public static double MIN_CHASSIS_LENGTH = 14.330708976377952;
+    public static double MAX_CHASSIS_LENGTH = 35.4331;
+    public static double WHEEL_RADIUS = 4;
+    public static double TRACK_WIDTH = 12.132362205;
+    public static double GEAR_RATIO = 18;
+    public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
+    public static double DISTANCE_TARGET_TO_BACK_WHEEL = 7.086614;
 
+    // constraints
+    public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
+    public static double TICKS_PER_INCH = 28.854166667;
 
-    public static int testBase = 1933;
-    public static int testElbow = 1879;
-    public static int testWrist = 1933;
+    //----------------------------------------------------------------------------------------------
+    // Control Constants
+    //----------------------------------------------------------------------------------------------
+
+    public static double EPSILON = 1e-6; // small value used for the approximately equal calculation in MathUtils
+    public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
+    public static double JOYSTICK_DEADZONE = 0.05;
+
+    public static double MAX_VEL = 90;
+    public static double MAX_ACCEL = 90;
+    public static double MAX_ANG_VEL = Math.toRadians(360);
+    public static double MAX_ANG_ACCEL = Math.toRadians(360);
+
+    //----------------------------------------------------------------------------------------------
+    // Simulation
+    //----------------------------------------------------------------------------------------------
+    public static boolean USE_MOTOR_SMOOTHING = true;
 
     //----------------------------------------------------------------------------------------------
     // Enums
@@ -52,19 +59,35 @@ public class Constants {
     }
 
     public enum Position {
-        START_RED_UP(new double[] {0, 0, 0}),
-        START_RED_DOWN(new double[] {0, 0, 0}),
-        START_BLUE_UP(new double[] {0, 0, 0}),
-        START_BLUE_DOWN(new double[] {0, 0, 0});
+        START_RED_UP(new Pose2d(12, -60, Math.toRadians(90))),
+        START_RED_DOWN(new Pose2d(-36, -60, Math.toRadians(90))),
+        START_BLUE_UP(new Pose2d(12, 60, Math.toRadians(270))),
+        START_BLUE_DOWN(new Pose2d(-36, 60, Math.toRadians(270)));
 
-        private final double[] pose;
+        private final Pose2d pose;
 
-        Position(double[] pose) {
+        Position(Pose2d pose) {
             this.pose = pose;
         }
 
-        public double[] getPose() {
+        public Pose2d getPose() {
             return pose;
         }
+    }
+
+    public static double encoderTicksToInches(double ticks) {
+        return ticks / TICKS_PER_INCH;
+    }
+
+    public static double inchesToEncoderTicks(double inches) {
+        return inches * TICKS_PER_INCH;
+    }
+
+    public static double rpmToVelocity(double rpm) {
+        return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
+    }
+
+    public static double getMotorVelocityF(double ticksPerSecond) {
+        return 32767 / ticksPerSecond;
     }
 }
