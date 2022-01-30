@@ -147,7 +147,7 @@ public class StickyGamepad {
             right_bumper_down = false;
         }
 
-        if (UtilMethods.deadZone(gamepad.left_trigger, TRIGGER_DEADZONE) > 0) {
+        if (UtilMethods.notTriggerDeadZone(gamepad.left_trigger)) {
             if (left_trigger_down) {
                 left_trigger = false;
             } else {
@@ -159,7 +159,7 @@ public class StickyGamepad {
             left_trigger_down = false;
         }
 
-        if (UtilMethods.deadZone(gamepad.right_trigger, TRIGGER_DEADZONE) > 0) {
+        if (UtilMethods.notTriggerDeadZone(gamepad.right_trigger)) {
             if (right_trigger_down) {
                 right_trigger = false;
             } else {

@@ -18,22 +18,6 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @Config
 public class Gripper implements Subsystem{
-    // Servos
-    public Servo pitchServo, servo;
-
-    // Sensors
-    public RevColorSensorV3 freightSensor;
-
-    // State
-    boolean up = true;
-    boolean open = true;
-
-    private int targetPos = 0;
-    private int pitchTargetPos = 0;
-
-    private double freightDistance;
-
-    // Constants
     private static final String TELEMETRY_NAME = "Gripper";
 
     public static int CLOSED = 900;
@@ -43,6 +27,18 @@ public class Gripper implements Subsystem{
     public static int PITCH_DOWN = 830;
     public static int PITCH_INIT = 1854;
     public static int PITCH_VERTICAL = 2100;
+
+    public Servo pitchServo, servo;
+    public RevColorSensorV3 freightSensor;
+
+    boolean up = true;
+    boolean open = true;
+
+    private int targetPos = 0;
+    private int pitchTargetPos = 0;
+
+    private double freightDistance;
+
     private Articulation articulation;
     private Map<Gripper.Articulation, StateMachine> articulationMap;
 

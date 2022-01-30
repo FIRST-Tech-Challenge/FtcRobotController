@@ -16,19 +16,6 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @Config
 public class Crane implements Subsystem {
-
-    public Turret turret;
-
-    // Servos
-    public Servo shoulderServo, elbowServo, wristServo;
-
-    // State
-    private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
-    private double turretTargetPos;
-
-    private Articulation articulation;
-
-    // Constants
     private static final String TELEMETRY_NAME = "Crane";
 
     public static int BUCKET_UP_POS = 900;
@@ -50,6 +37,14 @@ public class Crane implements Subsystem {
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
 
+    public Turret turret;
+
+    public Servo shoulderServo, elbowServo, wristServo;
+
+    private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
+    private double turretTargetPos;
+
+    private Articulation articulation;
 
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
         if(simulated) {
@@ -103,11 +98,12 @@ public class Crane implements Subsystem {
     private final Stage mainStage = new Stage();
     private final StateMachine main = UtilMethods.getStateMachine(mainStage)
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
-            .addTimedState(() -> 0, () -> setTargetPositions(articulation),
+            .addTimedState(() -> 0,
+                    () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
                         if(articulation.dumpPos!=0) currentDumpPos= articulation.dumpPos;}
-                        )
+                    )
 
             .build();
 
@@ -196,7 +192,7 @@ public class Crane implements Subsystem {
         return TELEMETRY_NAME;
     }
 
-    public void Dump(){
+    public void dump(){
         setWristTargetPos(currentDumpPos);
     }
 

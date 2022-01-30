@@ -18,22 +18,17 @@ import java.util.Map;
 
 @Config
 public class Robot implements Subsystem {
-    // subsystems
+    private static final String TELEMETRY_NAME = "Robot";
+
     public DriveTrain driveTrain;
     public Turret turret;
     public Crane crane;
     public Gripper gripper;
     public Subsystem[] subsystems;
 
-    // sensors
     private List<LynxModule> hubs;
 
-    // state
     private Articulation articulation;
-
-    // constants
-    private static final String TELEMETRY_NAME = "Robot";
-
     private Map<Articulation, StateMachine> articulationMap;
 
     public Robot(HardwareMap hardwareMap, boolean simulated) {

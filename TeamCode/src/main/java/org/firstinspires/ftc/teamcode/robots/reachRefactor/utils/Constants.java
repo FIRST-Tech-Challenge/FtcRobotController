@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config(value = "FFConstants")
 public class Constants {
@@ -17,6 +16,8 @@ public class Constants {
     public static double WHEEL_RADIUS = 4;
     public static double TRACK_WIDTH = 12.132362205;
     public static double GEAR_RATIO = 18;
+    public static double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
+    public static double DISTANCE_TARGET_TO_BACK_WHEEL = 7.086614;
 
     // constraints
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
@@ -28,6 +29,7 @@ public class Constants {
 
     public static double EPSILON = 1e-6; // small value used for the approximately equal calculation in MathUtils
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
+    public static double JOYSTICK_DEADZONE = 0.05;
 
     public static double MAX_VEL = 90;
     public static double MAX_ACCEL = 90;
@@ -58,10 +60,10 @@ public class Constants {
     }
 
     public enum Position {
-        START_RED_UP(new Pose2d(0, 0, Math.toRadians(0))),
-        START_RED_DOWN(new Pose2d(0, 0, Math.toRadians(0))),
-        START_BLUE_UP(new Pose2d(0, 0, Math.toRadians(0))),
-        START_BLUE_DOWN(new Pose2d(0, 0, Math.toRadians(0)));
+        START_RED_UP(new Pose2d(12, -60, Math.toRadians(90))),
+        START_RED_DOWN(new Pose2d(-36, -60, Math.toRadians(90))),
+        START_BLUE_UP(new Pose2d(12, 60, Math.toRadians(270))),
+        START_BLUE_DOWN(new Pose2d(-36, 60, Math.toRadians(270)));
 
         private final Pose2d pose;
 

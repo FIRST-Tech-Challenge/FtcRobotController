@@ -1,20 +1,12 @@
-
-
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor.utils;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.CanvasUtils;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
-
 import java.util.List;
 
-/**
- * Set of helper functions for drawing Road Runner paths and trajectories on dashboard canvases.
- */
 public class DashboardUtil {
     private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
     private static final double ROBOT_RADIUS = 9; // in
@@ -23,6 +15,14 @@ public class DashboardUtil {
     private static final String ROBOT_COLOR = "Black";
     private static final String WHEEL_COLOR = "Red";
 
+    public static void drawLine(Canvas canvas, Vector2d p1, Vector2d p2) {
+        canvas.strokeLine(
+                p1.getX(),
+                p1.getY(),
+                p2.getX(),
+                p2.getY()
+        );
+    }
 
     public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
         double[] xPoints = new double[poseHistory.size()];
@@ -84,13 +84,13 @@ public class DashboardUtil {
 
         // drawing axles
         canvas.setStroke(ROBOT_COLOR);
-        CanvasUtils.drawLine(canvas, leftWheel, rightWheel); // front axle
-        CanvasUtils.drawLine(canvas, position, swerveWheel); // linear slides
+        drawLine(canvas, leftWheel, rightWheel); // front axle
+        drawLine(canvas, position, swerveWheel); // linear slides
 
         // drawing wheels
         canvas.setStroke(WHEEL_COLOR);
-        CanvasUtils.drawLine(canvas, leftWheel, leftWheelEnd);
-        CanvasUtils.drawLine(canvas, rightWheel, rightWheelEnd);
-        CanvasUtils.drawLine(canvas, swerveWheel, swerveWheelEnd);
+        drawLine(canvas, leftWheel, leftWheelEnd);
+        drawLine(canvas, rightWheel, rightWheelEnd);
+        drawLine(canvas, swerveWheel, swerveWheelEnd);
     }
 }
