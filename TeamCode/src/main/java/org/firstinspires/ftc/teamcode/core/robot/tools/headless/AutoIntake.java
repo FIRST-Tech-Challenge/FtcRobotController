@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * Controller-less intake.
  */
 public class AutoIntake {
-    private final DcMotor motor;
+    protected final DcMotor motor;
     private final DistanceSensor distanceSensor;
 
     public AutoIntake(@NotNull HardwareMap map) {
