@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.utills;
+package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CarouselSp
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 /**
  * A Abstract class that provides extra reusable functionality to our opModes <P>

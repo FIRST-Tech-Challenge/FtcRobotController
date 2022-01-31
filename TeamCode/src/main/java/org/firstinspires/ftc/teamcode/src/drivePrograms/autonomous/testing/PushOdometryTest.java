@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.TeleopDriveTrain;
-import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
 
 //@Disabled
 @Autonomous(name = "ODTest")

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
-import org.firstinspires.ftc.teamcode.src.utills.AutonomousTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
 
 @Disabled
 @Autonomous(name = "OdTimeOut")

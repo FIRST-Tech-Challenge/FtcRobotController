@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
-import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 @TeleOp(name = "LS Test 2")
 public class MoveToPosTest extends TeleOpTemplate {

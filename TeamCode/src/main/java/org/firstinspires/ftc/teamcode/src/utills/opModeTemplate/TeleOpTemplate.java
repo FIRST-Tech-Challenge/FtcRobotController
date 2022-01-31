@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.utills;
+package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 

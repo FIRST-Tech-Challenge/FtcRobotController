@@ -7,8 +7,8 @@ import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Re
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.src.utills.TeleOpTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 /**
  * A Autonomous to test color sensor capabilities
