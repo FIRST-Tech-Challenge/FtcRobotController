@@ -8,7 +8,7 @@ import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 public class RedWarehouseAdvanced {
     public static void main(String args[]) {
         MeepMeep mm = new MeepMeep(800)
-                // Set field image
+                // Set field image.
                 .setBackground(MeepMeep.Background.FIELD_FREIGHT_FRENZY)
                 // Set theme
                 .setTheme(new ColorSchemeRedDark())
