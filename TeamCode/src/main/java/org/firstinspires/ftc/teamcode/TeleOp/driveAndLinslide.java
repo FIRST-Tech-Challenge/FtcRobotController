@@ -10,6 +10,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class driveAndLinslide extends LinearOpMode {
 
     private DcMotor motor = hardwareMap.dcMotor.get("motorFrontLeft");//hardware
+    public DcMotor motorFrontLeft; //motors declared
+    public DcMotor motorBackLeft ;
+    public DcMotor motorFrontRight;
+    public DcMotor motorBackRight;
     private ElapsedTime runtime;
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH};
     states state = states.LOW;
@@ -29,6 +33,49 @@ public class driveAndLinslide extends LinearOpMode {
         motor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
         runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time
         toggle=0;
+    }
+
+    public void turn() { //turning method
+        motorFrontLeft.setPower(gamepad1.right_stick_x);
+        motorBackLeft.setPower(gamepad1.right_stick_x);
+        motorFrontRight.setPower(-gamepad1.right_stick_x);
+        motorBackRight.setPower(-gamepad1.right_stick_x);
+    }
+
+    public void move(double direction) { //move  method
+        double turnMoveMagnitude = 2; // larger values means less turning while moving, can be adjusted
+
+        double hypotenuseLeft = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x ) + (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of left motion
+        double hypotenuseRight = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x) - (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of right motion
+
+        if (hypotenuseRight > 1) { //keeps magnitude in bounds just in case
+            hypotenuseRight = 1;
+        }
+
+        if (hypotenuseLeft > 1) { //keeps magnitude in bounds just in case
+            hypotenuseLeft = 1;
+        }
+
+        motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * hypotenuseLeft)); //motor code
+        motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * hypotenuseLeft));
+        motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * hypotenuseRight));
+        motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * hypotenuseRight));
+    }
+
+    public double angleOfJoystick(double joystickY, double joystickX) { //getting angle of left joystick
+
+        if (joystickY < 0 && joystickX == 0) return 3*3.14159265/2; //back
+
+        if (joystickY >= 0 && joystickX > 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)); //quadrant 1
+
+        if (joystickY > 0 && joystickX < 0) return Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265/2; //quadrant 2
+
+        if (joystickY <= 0 && joystickX < 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3.14159265); //quadrant 3
+
+        if (joystickY < 0 && joystickX > 0) return (Math.atan(Math.abs(joystickY)/ Math.abs(joystickX)) + 3*3.14159265/2); //quadrant 4
+
+        return 3.14159265/2; //forward
+
     }
 
     @Override
@@ -51,23 +98,18 @@ public class driveAndLinslide extends LinearOpMode {
 
         initialize();
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            /*the code below does not send anything to the sensors/record movement yet. */
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio, but only when
-            // at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            if (Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.left_stick_x) > 0) { //movement
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+                move(angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x));// move method, gets angle from angleOfJoystick
+
+            } else { //turning on spot
+
+                turn();
+            }
+            //idle();  this was in drive4.
+
 //LINSLIDE CODE STARTS HERE
             if(gamepad1.right_bumper&&(runtime.time()-CDtimer)>=modeCD){
                 if(toggle==2){
