@@ -108,7 +108,7 @@ public class driveAndLinslide extends LinearOpMode {
 
                 turn();
             }
-            //idle();  this was in drive4.
+            //idle();  this was in drive4. un comment it if removing it causes issue
 
 //LINSLIDE CODE STARTS HERE
             if(gamepad1.right_bumper&&(runtime.time()-CDtimer)>=modeCD){
