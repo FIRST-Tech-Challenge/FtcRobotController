@@ -40,7 +40,7 @@ public class tapeMeasure extends LinearOpMode {
 
     public void controlModeA(){
         if (gamepad1.left_bumper) {
-            if (Math.pow(gamepad1.right_stick_x, 2) + Math.pow(gamepad1.right_stick_y, 2) >= 0.1) {//controller deadzone is 0.1. just set that number to 0 if y
+            if (Math.pow(gamepad1.right_stick_x, 2) + Math.pow(gamepad1.right_stick_y, 2) >= 0.1) {//controller deadzone is 0.1. just set that number to 0 if you don't need it
                 altitude.setPower(-gamepad1.right_stick_y*ySpeed);
                 azimuth.setPower(gamepad1.right_stick_x*xSpeed);
             }
