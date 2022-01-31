@@ -37,19 +37,19 @@ top width = 0.08
 public class TsePipeline extends OpenCvPipeline {
     public TsePipeline(boolean isRed) {
         if (isRed) {
-            bottomRectHeightPercentage = 0.26;
-            bottomRectWidthPercentage = 0.795;
-            middleRectHeightPercentage = 0.345;
-            middleRectWidthPercentage = 0.54;
-            topRectHeightPercentage = 0.47;
-            topRectWidthPercentage = 0.2;
+            bottomRectHeightPercentage = 0.215D;
+            bottomRectWidthPercentage = 0.76D;
+            middleRectHeightPercentage = 0.313D;
+            middleRectWidthPercentage = 0.51D;
+            topRectHeightPercentage = 0.444D;
+            topRectWidthPercentage = 0.16D;
         } else {
-            bottomRectHeightPercentage = 0.458;
-            bottomRectWidthPercentage = 0.785;
-            middleRectHeightPercentage = 0.37;
-            middleRectWidthPercentage = 0.41;
-            topRectHeightPercentage = 0.3;
-            topRectWidthPercentage = 0.13;
+            bottomRectHeightPercentage = 0.416D;
+            bottomRectWidthPercentage = 0.7D;
+            middleRectHeightPercentage = 0.32D;
+            middleRectWidthPercentage = 0.39D;
+            topRectHeightPercentage = 0.24D;
+            topRectWidthPercentage = 0.1D;
         }
     }
     public TsePipeline() {}
@@ -149,9 +149,9 @@ public class TsePipeline extends OpenCvPipeline {
             Scalar bottomMeanCr = Core.mean(matCbBottom1);
             Scalar bottomMeanCb = Core.mean(matCbBottom2);
 
-            topAverage = Math.abs(topMeanY.val[0] - 0.88) + Math.abs(topMeanCr.val[0] - 0.07) + Math.abs(topMeanCb.val[0] + 0.49);
-            middleAverage = Math.abs(middleMeanY.val[0] - 0.88) + Math.abs(middleMeanCr.val[0] - 0.07) + Math.abs(middleMeanCb.val[0] + 0.49);
-            bottomAverage = Math.abs(bottomMeanY.val[0] - 0.88) + Math.abs(bottomMeanCr.val[0] - 0.07) + Math.abs(bottomMeanCb.val[0] + 0.49);
+            topAverage = Math.abs(topMeanY.val[0] - 152.85) + Math.abs(topMeanCr.val[0] - 147.88) + Math.abs(topMeanCb.val[0] - 57);
+            middleAverage = Math.abs(middleMeanY.val[0] - 152.85) + Math.abs(middleMeanCr.val[0] - 147.88) + Math.abs(middleMeanCb.val[0] - 57);
+            bottomAverage = Math.abs(bottomMeanY.val[0] - 152.85) + Math.abs(bottomMeanCr.val[0] - 147.88) + Math.abs(bottomMeanCb.val[0] - 57);
             different = mostSmall(topAverage, middleAverage, bottomAverage);
             switch (different) {
                 case 1:

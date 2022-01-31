@@ -18,12 +18,15 @@ import java.util.concurrent.TimeUnit;
 public class AutoLift {
     // 5 1/4 inch from back of robot to rim
     public enum Positions {
-        INTAKING(-0, 0.76D, false),
-        SAFE(-1375, 0.716D, false),
-        TOP(-2880, 0.3D, true),
-        MIDDLE(-1850, 0.3D, true),
-        BOTTOM(-1375, 0.25D, true),
-        TSE(-4500, 0.716D, true);
+        INTAKING(0, 0.76D, false),
+        SAFE(1375, 0.716D, false),
+        TOP(2880, 0.3D, true),
+        MIDDLE(1850, 0.3D, true),
+        BOTTOM(1375, 0.25D, true),
+        TSE(4426, 0.716D, false),
+        SAFETOP(TOP.motorPos, SAFE.armPos, false),
+        DUMPTSE(TSE.motorPos, TOP.armPos, true),
+        FUNNYDUMP(TSE.motorPos, 1, true);
 
         public final double armPos;
         public final int motorPos;
@@ -49,7 +52,7 @@ public class AutoLift {
     protected Positions position = Positions.INTAKING;
     protected Positions lastPosition = position;
     protected MovementStates state = MovementStates.NONE;
-    @Nullable @javax.annotation.Nullable @org.jetbrains.annotations.Nullable @org.checkerframework.checker.nullness.qual.Nullable protected AutoGrabber grabber;
+    protected AutoGrabber grabber;
     private final ElapsedTime timer = new ElapsedTime();
     // fix this later
     /**
@@ -112,11 +115,11 @@ public class AutoLift {
                 break;
             case LIFT_MOVEMENT:
                 if (!liftWaiting) {
-                    if (Math.abs(Math.abs(liftMotor.getCurrentPosition()) - position.motorPos) <= 18) {
+                    if (Math.abs(liftMotor.getCurrentPosition() - position.motorPos) <= 18) {
                         armServo.setPosition(position.armPos);
                         if (!position.dumper) state = MovementStates.NONE;
                         else {
-                            if (position == Positions.TSE && grabber != null) {
+                            if (position == Positions.TSE && Objects.nonNull(grabber)) {
                                 grabber.open();
                             }
                             timer.reset();
@@ -127,7 +130,7 @@ public class AutoLift {
                     eventThread.addEvent(new RunListenerOnceEvent(() -> armServo.setPosition(Positions.INTAKING.armPos)) {
                         @Override
                         public boolean shouldRun() {
-                            return Math.abs(liftMotor.getCurrentPosition()) <= 5;
+                            return liftMotor.getCurrentPosition() <= 5;
                         }
                     });
                     state = MovementStates.NONE;

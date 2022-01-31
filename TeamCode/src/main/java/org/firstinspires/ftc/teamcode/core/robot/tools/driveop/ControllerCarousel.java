@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
  * carousel spinner, extension of ControllerToggleableTool
  */
 public class ControllerCarousel extends ControllerToggleableTool<CRServo> {
-    public ControllerCarousel(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad) {
-        super(eventThread, map, toolGamepad, CRServo.class, "spinner", GamepadKeys.Button.B, -1);
+    public ControllerCarousel(EventThread eventThread, @NonNull HardwareMap map, GamepadEx toolGamepad, double power) {
+        super(eventThread, map, toolGamepad, CRServo.class, "spinner", GamepadKeys.Button.B, power);
     }
 }

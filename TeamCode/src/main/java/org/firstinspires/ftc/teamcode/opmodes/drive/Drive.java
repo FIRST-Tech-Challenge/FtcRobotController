@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedOnceEvent;
 
 @TeleOp
+@Disabled
 public class Drive extends LinearOpMode {
     private void waitTilDone() {
         //noinspection StatementWithEmptyBody
@@ -34,7 +35,7 @@ public class Drive extends LinearOpMode {
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
 
         // will automatically run update method
-        new ControllerCarousel(eventThread, hardwareMap, toolGamepad);
+        new ControllerCarousel(eventThread, hardwareMap, toolGamepad, 1);
         final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
 
         Thread thread = new Thread(() -> {
