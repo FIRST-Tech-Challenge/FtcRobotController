@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.reachRefactor;
+package org.firstinspires.ftc.teamcode.robots.reachRefactor.opmodes;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
@@ -10,12 +10,6 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class Autonomous {
     public VisionProvider visionProvider;
     private Robot robot;
-
-    // trajectories
-    TrajectorySequence backAndForthTrajectory, squareTrajectory;
-
-    // autonomous trajectories
-    // TODO: create autonomous trajectories using MeepMeep
 
     // autonomous articulations
     private Stage autonomousRedStage = new Stage();
@@ -36,34 +30,35 @@ public class Autonomous {
         this.robot = robot;
     }
 
+    private StateMachine trajectorySequenceToArticulation(Stage stage, TrajectorySequence trajectorySequence) {
+        return getStateMachine(stage)
+                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(trajectorySequence))
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
+                .build();
+    }
+
     public void build() {
-        // trajectories
-        backAndForthTrajectory = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                .forward(24)
-                .back(24)
-                .build();
-
-        squareTrajectory = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                .forward(24)
-                .turn(Math.toRadians(90))
-                .forward(24)
-                .turn(Math.toRadians(90))
-                .forward(24)
-                .turn(Math.toRadians(90))
-                .forward(24)
-                .turn(Math.toRadians(90))
-                .build();
-
         // trajectory articulations
-        backAndForth = getStateMachine(backAndForthStage)
-                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(backAndForthTrajectory))
-                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                .build();
-
-        square = getStateMachine(squareStage)
-                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(squareTrajectory))
-                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                .build();
+        backAndForth = trajectorySequenceToArticulation(
+                backAndForthStage,
+                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                    .forward(24)
+                    .back(24)
+                    .build()
+        );
+        square = trajectorySequenceToArticulation(
+                squareStage,
+                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+                    .build()
+        );
 
         // autonomous articulations
         autonomousRed = getStateMachine(autonomousRedStage)
@@ -72,8 +67,6 @@ public class Autonomous {
                         () -> true,
                         () -> true
                 )
-                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(squareTrajectory))
-                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .build();
 
         autonomousBlue = getStateMachine(autonomousBlueStage)
@@ -82,8 +75,6 @@ public class Autonomous {
                         () -> true,
                         () -> true
                 )
-                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(squareTrajectory))
-                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .build();
     }
 
