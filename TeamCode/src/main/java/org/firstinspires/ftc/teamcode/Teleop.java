@@ -2,6 +2,8 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HardwareBothHubs.FREIGHT_COLLECTED;
+
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -285,7 +287,7 @@ public abstract class Teleop extends LinearOpMode {
             if (robot.freightPresent()) {
                 freightDetectionCounts++;
                 // Set freightpresent if set number of detections occurred
-                if(freightDetectionCounts > 10) {
+                if(freightDetectionCounts > HardwareBothHubs.FREIGHT_COLLECTED) {
                     freightPresent = true;
                 }
             } else {
@@ -735,7 +737,7 @@ public abstract class Teleop extends LinearOpMode {
                 autoDrive = false;
             }
             // Do we need to break from autoDrive because we've reached the goal
-            else if(robot.tiltAngle < -2.0) {
+            else if(robot.tiltAngle < HardwareBothHubs.SHARED_HUB_TILT) {
                 robot.stopMotion();
                 autoDrive = false;
             }
