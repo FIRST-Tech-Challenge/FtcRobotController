@@ -43,7 +43,6 @@ public class AutoStorage extends LinearOpMode {
         drive.setPoseEstimate(initial);
         TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(initial);
 
-        builder.waitSeconds(0.1);
         // 9.35 seconds long
         builder.lineTo(new Vector2d(-40, multiplier == 1 ? 55 : -53));
         builder.splineToLinearHeading(new Pose2d(multiplier == 1 ? -21 : -20, multiplier == 1 ? 42 : -38, Math.toRadians(multiplier == 1 ? 100 : -95)),
