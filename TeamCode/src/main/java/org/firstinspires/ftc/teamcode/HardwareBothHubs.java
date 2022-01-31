@@ -161,8 +161,8 @@ public class HardwareBothHubs
     public float[] hsvValues = new float[3];
     public NormalizedRGBA colors;
     public double freightDistance;
-    public final static int FREIGHT_COLLECTED = 10;
-    public final static double SHARED_HUB_TILT = -2.0;
+    public final static int FREIGHT_DETECTED_THRESHOLD = 10;
+    public final static double BARRIER_NESTED_ROBOT_TILT = -2.0;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;

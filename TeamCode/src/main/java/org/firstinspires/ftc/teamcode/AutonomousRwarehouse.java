@@ -2,24 +2,12 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import java.lang.Math;
@@ -245,7 +233,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
         // Drive into freight pile to collect a second freight
         if( opModeIsActive() ) {
-            telemetry.addData("Skill", "collectFreight1 -55");
+            telemetry.addData("Skill", "collectFreight -55");
             telemetry.update();
             collectFreight( blockLevel, -55.0 );
         }
@@ -393,7 +381,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private boolean collectFreight(int level, double angle) {
-        boolean freightCollected = false;
+        boolean collected = false;
         double slowlyCollectMyPrecious = 0.12;
         int freightDetections = 0;
         ElapsedTime freightTimeout = new ElapsedTime();
@@ -409,7 +397,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
                                 slowlyCollectMyPrecious, slowlyCollectMyPrecious );
 
         freightTimeout.reset();
-        while((opModeIsActive()) && (freightTimeout.milliseconds() < 2500) && (freightDetections < HardwareBothHubs.FREIGHT_COLLECTED)) {
+        while((opModeIsActive()) && (freightTimeout.milliseconds() < 2500) && (freightDetections < HardwareBothHubs.FREIGHT_DETECTED_THRESHOLD)) {
             if(robot.freightPresent()) {
                 freightDetections++;
             } else {
@@ -419,7 +407,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.stopMotion();
         robot.sweepMotor.setPower(0.0);
         if(freightDetections >= 1) {
-            freightCollected = true;
+            collected = true;
             robot.linkServo.setPosition(robot.LINK_SERVO_RAISED);
             robot.boxServo.setPosition(robot.BOX_SERVO_TRANSPORT);
             sleep(300);
@@ -428,7 +416,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         }
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -5.0, 999.9, DRIVE_TO );
 
-        return freightCollected;
+        return collected;
     } // collectFreight
 
     void scoreFreightSharedHub(int level) {
@@ -436,10 +424,11 @@ public class AutonomousRwarehouse extends AutonomousBase {
         // Update our tilt angle information
         robot.driveTrainMotors( 0.4, 0.4, 0.4, 0.4);
         robot.headingIMU();
-        while(opModeIsActive() && (robot.tiltAngle > HardwareBothHubs.SHARED_HUB_TILT)) {
+        while(opModeIsActive() && (robot.tiltAngle > HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT)) {
             robot.headingIMU();
         }
         // We are nestled, dump freight
+        robot.stopMotion();
         if(opModeIsActive()) {
             robot.boxServo.setPosition(robot.BOX_SERVO_DUMP_FRONT);
             sleep(500);

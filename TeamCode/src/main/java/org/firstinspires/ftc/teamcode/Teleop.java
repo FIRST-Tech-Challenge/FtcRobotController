@@ -2,20 +2,10 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.HardwareBothHubs.FREIGHT_COLLECTED;
-
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * TeleOp Full Control.
@@ -287,7 +277,7 @@ public abstract class Teleop extends LinearOpMode {
             if (robot.freightPresent()) {
                 freightDetectionCounts++;
                 // Set freightpresent if set number of detections occurred
-                if(freightDetectionCounts > HardwareBothHubs.FREIGHT_COLLECTED) {
+                if(freightDetectionCounts > HardwareBothHubs.FREIGHT_DETECTED_THRESHOLD) {
                     freightPresent = true;
                 }
             } else {
@@ -737,7 +727,7 @@ public abstract class Teleop extends LinearOpMode {
                 autoDrive = false;
             }
             // Do we need to break from autoDrive because we've reached the goal
-            else if(robot.tiltAngle < HardwareBothHubs.SHARED_HUB_TILT) {
+            else if(robot.tiltAngle < HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT) {
                 robot.stopMotion();
                 autoDrive = false;
             }
