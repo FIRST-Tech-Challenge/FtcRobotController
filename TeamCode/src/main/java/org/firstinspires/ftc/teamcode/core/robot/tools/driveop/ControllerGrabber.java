@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 
 import androidx.annotation.NonNull;
 
+@Deprecated
 public class ControllerGrabber extends AutoGrabber {
     final Thread thread;
     public ControllerGrabber(@NonNull EventThread eventThread, @NonNull HardwareMap hardwareMap, GamepadEx gamepadEx) {

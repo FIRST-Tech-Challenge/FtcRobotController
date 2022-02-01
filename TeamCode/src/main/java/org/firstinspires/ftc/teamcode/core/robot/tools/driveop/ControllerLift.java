@@ -35,27 +35,22 @@ public class ControllerLift extends AutoLift {
         leftDPad = new ButtonReader(toolGamepad, GamepadKeys.Button.DPAD_LEFT);
     }
 
-    public void init() {
-        Thread thread = new Thread(() -> {
-            while (!eventThread.isInterrupted()) {
-                leftTrigger.readValue();
-                rightTrigger.readValue();
-                leftBumper.readValue();
-                downDPad.readValue();
-                rightDPad.readValue();
-                startButton.readValue();
-                leftDPad.readValue();
-                if (leftTrigger.wasJustReleased()) setPosition(Positions.TOP);
-                else if (rightTrigger.wasJustReleased()) setPosition(Positions.SAFE);
-                else if (leftBumper.wasJustReleased()) setPosition(Positions.TSE);
-                else if (downDPad.wasJustReleased()) setPosition(Positions.BOTTOM);
-                else if (rightDPad.wasJustReleased()) setPosition(Positions.DUMPTSE);
-                else if (startButton.wasJustReleased()) setPosition(Positions.SAFETOP);
-                else if (rightBumper.wasJustPressed()) setPosition(Positions.INTAKING);
-                else if (leftDPad.wasJustReleased()) setPosition(Positions.FUNNYDUMP);
-            }
-        });
-        thread.setPriority(5);
-        thread.start();
+    public void update() {
+        leftTrigger.readValue();
+        rightTrigger.readValue();
+        leftBumper.readValue();
+        downDPad.readValue();
+        rightDPad.readValue();
+        startButton.readValue();
+        leftDPad.readValue();
+        if (leftTrigger.wasJustReleased()) setPosition(Positions.TOP);
+        else if (rightTrigger.wasJustReleased()) setPosition(Positions.SAFE);
+        else if (leftBumper.wasJustReleased()) setPosition(Positions.TSE);
+        else if (downDPad.wasJustReleased()) setPosition(Positions.BOTTOM);
+        else if (rightDPad.wasJustReleased()) setPosition(Positions.DUMPTSE);
+        else if (startButton.wasJustReleased()) setPosition(Positions.SAFETOP);
+        else if (rightBumper.wasJustPressed()) setPosition(Positions.INTAKING);
+        else if (leftDPad.wasJustReleased()) setPosition(Positions.FUNNYDUMP);
+        super.update();
     }
 }
