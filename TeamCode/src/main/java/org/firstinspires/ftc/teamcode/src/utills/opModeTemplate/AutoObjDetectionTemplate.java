@@ -23,12 +23,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     /**
      * The file that is loaded to detect from
      */
-    private static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
+    public static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
 
     /**
      * The labels in the file
      */
-    private static final String[] LABELS = {"Pink Team Marker"};
+    public static final String[] LABELS = {"Pink Team Marker"};
 
     /**
      * A object to lock on to for the thread safety, used in _initVuforia
@@ -217,13 +217,30 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         }
     }
 
+    public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
+            Recognition rec = updatedRecognitions.get(0);
+            double xCenterLine = ((rec.getRight() + rec.getLeft()) / 2.0);
+
+            if (xCenterLine < 450) {
+                return BarcodePositions.Left;
+            } else if (xCenterLine < 820) {
+                return BarcodePositions.Center;
+            } else {
+                return BarcodePositions.Right;
+            }
+        } else {
+            return BarcodePositions.NotSeen;
+        }
+    }
+
     /**
      * Uses the camera to determine where the object is on screen
      *
      * @return Where the marker is
      */
     public BarcodePositions findPositionOfMarker() {
-        final int screenWidth = 1260;
 
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
         if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {

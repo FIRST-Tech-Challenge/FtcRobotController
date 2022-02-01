@@ -46,7 +46,7 @@ public class MiscUtils {
      * @param e this is any exception
      * @return It returns a string of the stack trace from the given exception
      */
-    public static String getStackTraceAsString(Exception e) {
+    public static String getStackTraceAsString(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
