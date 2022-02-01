@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Sarthak
  * @since 6/1/2019
  */
-public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements LocalizationAlgorithm {
+public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements LocalizationAlgorithm, Odometry {
     /**
      * The Vertical Left Odometry Encoder
      */
@@ -293,6 +293,10 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Loc
     public double getY() {
 
         return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
+    }
+
+    public double[] getPos() {
+        return new double[]{this.getX(), this.getY(), this.getRot()};
     }
 
 

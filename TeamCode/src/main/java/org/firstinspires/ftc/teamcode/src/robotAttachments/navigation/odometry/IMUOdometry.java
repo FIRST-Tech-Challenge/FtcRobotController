@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Sarthak
  * @since 6/1/2019
  */
-public class IMUOdometry extends ThreadedSubsystemTemplate implements LocalizationAlgorithm {
+public class IMUOdometry extends ThreadedSubsystemTemplate implements LocalizationAlgorithm, Odometry {
     /**
      * The Vertical Left Odometry Encoder
      */
@@ -243,7 +243,7 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
      *
      * @return The angle parallel to the floor in degrees
      */
-    protected double getImuAngle() {
+    private double getImuAngle() {
         double returnVal;
         if (imu.getAngularOrientation().firstAngle < 0) {
             returnVal = Math.abs(imu.getAngularOrientation().firstAngle);
@@ -328,6 +328,10 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
         return robotGlobalYCoordinatePosition / COUNTS_PER_INCH;
     }
 
+    public double[] getPos() {
+        return new double[]{this.getX(), this.getY(), this.getRot()};
+    }
+
 
     /**
      * Reverses the left encoder
@@ -365,4 +369,5 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Localizati
     @Override
     protected void onEnd() {
     }
+
 }
