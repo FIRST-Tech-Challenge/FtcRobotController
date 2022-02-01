@@ -19,16 +19,12 @@ public class EventThread extends Thread {
     }
 
     public EventThread(BooleanSupplier continueRunning) {
-        this.setPriority(3);
+        this.setPriority(5);
         this.continueRunning = continueRunning;
     }
 
     public void run() {
         while (!this.isInterrupted() || continueRunning.getAsBoolean()) {
-            if(queue.isEmpty()) {
-                Thread.yield();
-                continue;
-            }
             Iterator<Event> iterator = queue.iterator();
 
             while (iterator.hasNext()) {

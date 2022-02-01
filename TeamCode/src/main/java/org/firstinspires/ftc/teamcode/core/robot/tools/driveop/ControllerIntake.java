@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.driveop;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
@@ -20,15 +22,25 @@ public class ControllerIntake extends AutoIntake {
     private final GamepadEx toolGamepad;
     private final MyToggleButtonReader reader;
     private final BlinkinPattern normalColor;
-    public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad, boolean blue) {
+    @Nullable private final DcMotor liftMotor;
+    public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad, boolean blue, @Nullable AutoLift lift) {
         super(map);
         this.reader = new MyToggleButtonReader(toolGamepad, GamepadKeys.Button.X);
         this.toolGamepad = toolGamepad;
         this.normalColor = blue ? BLUE : RED;
+        if (lift != null) {
+            liftMotor = lift.liftMotor;
+        } else {
+            liftMotor = null;
+        }
     }
 
     public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad) {
-        this(map, toolGamepad, true);
+        this(map, toolGamepad, true, null);
+    }
+
+    public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad, boolean blue) {
+        this(map, toolGamepad, blue, null);
     }
 
     public void update(AutoLift.Positions liftPosition) {
@@ -53,6 +65,7 @@ public class ControllerIntake extends AutoIntake {
             }
             reader.currToggleState = false;
         }
-        setPattern(!noObject() ? GREEN : motor.getPower() != 0 ? YELLOW : normalColor);
+        if (liftMotor == null) //noinspection ConstantConditions
+            setPattern(!noObject() && (liftMotor == null || liftMotor.getCurrentPosition() <= 200) ? GREEN : motor.getPower() != 0 ? GOLD : normalColor);
     }
 }

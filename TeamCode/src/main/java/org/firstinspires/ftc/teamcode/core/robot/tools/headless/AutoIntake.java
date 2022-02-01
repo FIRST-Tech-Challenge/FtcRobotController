@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.jetbrains.annotations.NotNull;
-import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.*;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 /**
@@ -43,5 +43,13 @@ public class AutoIntake {
 
     protected void setPattern(BlinkinPattern pattern) {
         ledDriver.setPattern(pattern);
+    }
+
+    public void off() {
+        setPattern(WHITE);
+    }
+
+    public void on() {
+        setPattern(RAINBOW_RAINBOW_PALETTE);
     }
 }
