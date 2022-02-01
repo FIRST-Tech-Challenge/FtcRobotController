@@ -89,12 +89,10 @@ public class BlueDrive extends LinearOpMode {
 
         // will automatically run update method
         new ControllerCarousel(eventThread, hardwareMap, toolGamepad, power);
-        final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
-
         Thread thread = new Thread(() -> {
-            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, grabber);
+            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
             lift.init();
-            final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
+            final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad, power == 1);
             while (opModeIsActive()) {
                 lift.update();
                 intake.update(lift.getPosition());
@@ -112,7 +110,6 @@ public class BlueDrive extends LinearOpMode {
 
         waitForStart();
         thread.start();
-        grabber.init();
         eventThread.start();
         if (isStopRequested()) return;
 

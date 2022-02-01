@@ -97,7 +97,7 @@ public class TeleOpAugmentedDriving extends LinearOpMode {
         Thread thread = new Thread(() -> {
             final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, grabber);
             lift.init();
-            final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
+            final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad, true);
             while (opModeIsActive()) {
                 lift.update();
                 intake.update(lift.getPosition());
