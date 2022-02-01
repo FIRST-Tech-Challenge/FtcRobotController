@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
+import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.MyToggleButtonReader;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.*;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
@@ -23,8 +24,8 @@ public class ControllerIntake extends AutoIntake {
     private final MyToggleButtonReader reader;
     private final BlinkinPattern normalColor;
     @Nullable private final DcMotor liftMotor;
-    public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad, boolean blue, @Nullable AutoLift lift) {
-        super(map);
+    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad, boolean blue, @Nullable AutoLift lift) {
+        super(map, eventThread);
         this.reader = new MyToggleButtonReader(toolGamepad, GamepadKeys.Button.X);
         this.toolGamepad = toolGamepad;
         this.normalColor = blue ? BLUE : RED;
@@ -35,12 +36,12 @@ public class ControllerIntake extends AutoIntake {
         }
     }
 
-    public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad) {
-        this(map, toolGamepad, true, null);
+    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad) {
+        this(map, eventThread, toolGamepad, true, null);
     }
 
-    public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad, boolean blue) {
-        this(map, toolGamepad, blue, null);
+    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad, boolean blue) {
+        this(map, eventThread, toolGamepad, blue, null);
     }
 
     public void update(AutoLift.Positions liftPosition) {
