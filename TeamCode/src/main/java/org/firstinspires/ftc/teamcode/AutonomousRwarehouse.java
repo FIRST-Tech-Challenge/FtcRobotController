@@ -320,7 +320,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
                      distanceToHub = 0.0;  // bottom
                      finalDistanceToHub = -3.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
-                     armSleep = 1500;   // 2.0 sec
+                     armSleep = 1500;   // 1.5 sec
                      break;
         } // switch()
 

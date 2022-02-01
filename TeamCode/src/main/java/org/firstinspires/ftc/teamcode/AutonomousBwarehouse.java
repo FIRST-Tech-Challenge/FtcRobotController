@@ -2,24 +2,12 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import java.lang.Math;
@@ -70,7 +58,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
     OpenCvCamera webcam;
     public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
-    public static double collisionDelay = 4.0;  // wait 4 seconds before moving (to avoid collision)
+    public static double collisionDelay = 0.0;  // wait 0 seconds before moving (to avoid collision)
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
     boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;
@@ -196,6 +184,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous() {
 
+        boolean freightCollected = false;
         // Wait before moving to avoid collision with duck-side alliance partner
         // trying to dump a block in the alliance shipping hub
         sleep( (long)( collisionDelay * 1000 ) );
@@ -230,30 +219,44 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         // Drive into freight pile to collect
         if( opModeIsActive() ) {
-            telemetry.addData("Skill", "collectFreight1");
+            telemetry.addData("Skill", "collectFreight 65");
             telemetry.update();
-            collectFreight1( blockLevel );
+            freightCollected = collectFreight( blockLevel, 65.0, 350 );
+        }
+
+        // If we collected a freight, dump it in shared hub
+        if( opModeIsActive() && freightCollected) {
+            telemetry.addData("Skill", "scoreFreightSharedHub");
+            telemetry.update();
+            scoreFreightSharedHub( blockLevel );
+        }
+
+        // Drive into freight pile to collect a second freight
+        if( opModeIsActive() ) {
+            telemetry.addData("Skill", "collectFreight 40");
+            telemetry.update();
+            collectFreight( blockLevel, 40.0, 250 );
         }
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
     private void collectTeamElement( int level ) {
-        double strafeDist = 0.0;
-        double turnAngle = 0.0;
+        double strafeDist1 = 0.0;
         double distanceToGrab = 3.2;
+        double strafeDist2 = 0.0;
 
         switch( level ) {
-            case 3 : strafeDist = 0.0;      // right/top
-                     turnAngle = 0.0;
+            case 3 : strafeDist1 = 0.0;      // right/top
                      distanceToGrab = -2.0;
+                     strafeDist2 = 3.0;
                      break;
-            case 2 : strafeDist = -8.0;     // middle/middle
-                     turnAngle = -42.0;
-                     distanceToGrab = -2.2;
+            case 2 : strafeDist1 = 7.0;     // middle/middle
+                     distanceToGrab = -2.0;
+                     strafeDist2 = 0.0;
                      break;
-            case 1 : strafeDist = -8.0;
-                     turnAngle = -55.0;
-                     distanceToGrab = -7.0; // left/bottom
+            case 1 : strafeDist1 = 14.5;
+                     distanceToGrab = -2.5; // left/bottom
+                     strafeDist2 = 0.0;
                      break;
         } // switch()
 
@@ -270,11 +273,9 @@ public class AutonomousBwarehouse extends AutonomousBase {
         sleep( 2000);   // wait for arm to reach final position
 
         // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
-        if( Math.abs(strafeDist) > 0.10 ) {
-            gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist, 0.0, DRIVE_TO );
-        }
-        if( Math.abs(turnAngle) > 0.10 ) {
-            gyroTurn(TURN_SPEED_20, turnAngle );
+        if( Math.abs(strafeDist1) > 0.10 ) {
+            gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist1, 0.0, DRIVE_THRU );
+            robot.stopMotion();
         }
 
         // Drive forward to collect the element
@@ -285,6 +286,12 @@ public class AutonomousBwarehouse extends AutonomousBase {
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_LIBERTY, 0.40 );
         robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.40 );
+
+        // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
+        if( Math.abs(strafeDist2) > 0.10 ) {
+            gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist2, 0.0, DRIVE_THRU );
+            robot.stopMotion();
+        }
     } // collectTeamElement
 
     /*--------------------------------------------------------------------------------------------*/
@@ -297,23 +304,23 @@ public class AutonomousBwarehouse extends AutonomousBase {
         long   armSleep = 0;
 
         switch( level ) {
-            case 3 : angleToHub = 38.0;    // top
-                     distanceToHub = -8.2;
+            case 3 : angleToHub = 35.0;    // top
+                     distanceToHub = -6.2;
                      finalDistanceToHub = 0.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
-            case 2 : angleToHub = 33.0;
+            case 2 : angleToHub = 35.0;
                      distanceToHub = -3.0;  // middle
-                     finalDistanceToHub = -2.5;
+                     finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
-            case 1 : angleToHub = 30.0;
-                     distanceToHub = -1.0;  // bottom
-                     finalDistanceToHub = -4.5;
+            case 1 : angleToHub = 27.0;
+                     distanceToHub = 0.0;  // bottom
+                     finalDistanceToHub = -3.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
-                     armSleep = 2000;   // 2.0 sec
+                     armSleep = 1500;   // 1.5 sec
                      break;
         } // switch()
 
@@ -324,7 +331,9 @@ public class AutonomousBwarehouse extends AutonomousBase {
         if( Math.abs(angleToHub-currentAngle) > 2.0 )
             gyroTurn(TURN_SPEED_20, angleToHub );
 
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, distanceToHub, angleToHub, DRIVE_TO );
+        if( Math.abs(distanceToHub) > 0.0 ) {
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, distanceToHub, angleToHub, DRIVE_TO);
+        }
 
         if( armSleep > 0 ) {
             sleep( armSleep );
@@ -338,28 +347,21 @@ public class AutonomousBwarehouse extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void dumpBlock( int level ) {
         double servoPos = robot.BOX_SERVO_DUMP_TOP;
-        double backDistance = 3.0;
 
         switch( level ) {
             case 3 : servoPos = robot.BOX_SERVO_DUMP_TOP;
-                     backDistance = 4.5;
                      break;
             case 2 : servoPos = robot.BOX_SERVO_DUMP_MIDDLE;
-                     backDistance = 3.5;
                      break;
             case 1 : servoPos = robot.BOX_SERVO_DUMP_BOTTOM;
-                     backDistance = 3.5;
                      break;
         } // switch()
 
-//      robot.sweepServo.setPower( -0.25 );         // start sweeper in reverse
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
-        sleep( 1500 );                    // let cube drop out
-//      robot.sweepServo.setPower( 0.0 );           // stop sweeper
+        sleep( 500 );                    // let cube drop out
         // back away and store arm
-        if( level == 1 ){
-            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 2.0, 999.9, DRIVE_TO );
-        }
+
+        gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward the freight warehouse
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
 
@@ -371,31 +373,35 @@ public class AutonomousBwarehouse extends AutonomousBase {
     private void driveToWarehouse( int level  ) {
         double warehouseDistance = 0.0;
         switch( level ) {
-            case 3 : warehouseDistance = 50.0;  break; // top
-            case 2 : warehouseDistance = 52.0;  break; // middle
-            case 1 : warehouseDistance = 50.0;  break; // bottom
+            case 3 : warehouseDistance = 35.0;  break; // Top
+            case 2 : warehouseDistance = 39.0;  break; // Middle
+            case 1 : warehouseDistance = 45.0;  break; // Bottom
         } // switch()
 
-        gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward the freight warehouse
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, warehouseDistance, 999.9, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, warehouseDistance, 999.9, DRIVE_THRU );
+        robot.stopMotion();
     } // driveToWarehouse
 
 
     /*--------------------------------------------------------------------------------------------*/
-    private void collectFreight1(int level) {
-        double slowlyCollectMyPrecious = 0.10;
+    private boolean collectFreight(int level, double angle, int backupTime) {
+        boolean collected = false;
+        double slowlyCollectMyPrecious = 0.12;
         int freightDetections = 0;
         ElapsedTime freightTimeout = new ElapsedTime();
 
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.50 );
-//      robot.sweepServo.setPower(1.0);
-        gyroTurn(TURN_SPEED_20, 45.0 );   // Turn toward the freight
+        gyroTurn(TURN_SPEED_20, angle );   // Turn toward the freight
+        // Turning time should be plenty of time for arm to reach collect position so we
+        // can lower the intake.
+        robot.linkServo.setPosition(robot.LINK_SERVO_LOWERED);
+        robot.sweepMotor.setPower(1.0);
         robot.driveTrainMotors( slowlyCollectMyPrecious, slowlyCollectMyPrecious,
                                 slowlyCollectMyPrecious, slowlyCollectMyPrecious );
 
         freightTimeout.reset();
-        while((opModeIsActive()) && (freightTimeout.milliseconds() < 2500) && (freightDetections < 15)) {
+        while((opModeIsActive()) && (freightTimeout.milliseconds() < 2500) && (freightDetections < HardwareBothHubs.FREIGHT_DETECTED_THRESHOLD)) {
             if(robot.freightPresent()) {
                 freightDetections++;
             } else {
@@ -403,14 +409,45 @@ public class AutonomousBwarehouse extends AutonomousBase {
             }
         }
         robot.stopMotion();
+        robot.sweepMotor.setPower(0.0);
         if(freightDetections >= 1) {
+            collected = true;
+            robot.linkServo.setPosition(robot.LINK_SERVO_RAISED);
+            robot.boxServo.setPosition(robot.BOX_SERVO_STORED);
+            sleep(300);
             robot.freightArmPosition(robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50);
+            sleep(300);
             robot.boxServo.setPosition(robot.BOX_SERVO_TRANSPORT);
-            sleep(750);
+            sleep(450);
         }
-//      robot.sweepServo.setPower(0.0);
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -5.0, 999.9, DRIVE_TO );
-    } // collectFreight1
+
+        timeDriveStraight(-DRIVE_SPEED_30, backupTime);
+
+        return collected;
+    } // collectFreight
+
+    void scoreFreightSharedHub(int level) {
+        final double rammingSpeed = DRIVE_SPEED_30;
+        gyroTurn(TURN_SPEED_20, 165.0 );   // Turn toward the shared hub
+        // Update our tilt angle information
+        robot.driveTrainMotors( rammingSpeed, rammingSpeed, rammingSpeed, rammingSpeed);
+        robot.headingIMU();
+        while(opModeIsActive() && (robot.tiltAngle >= HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT)) {
+            robot.headingIMU();
+        }
+        // We are nestled, dump freight
+        robot.stopMotion();
+        if(opModeIsActive()) {
+            timeDriveStrafe(-DRIVE_SPEED_30, 1000);
+
+            robot.boxServo.setPosition(robot.BOX_SERVO_DUMP_FRONT);
+            sleep(500);
+
+            // Backup into warehouse
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -18.0, 999.9, DRIVE_THRU);
+            robot.stopMotion();
+        }
+    } // scoreFreightSharedHub
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Capture range-sensor data (one reading! call from main control loop)  */
