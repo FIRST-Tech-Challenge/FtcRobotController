@@ -241,28 +241,27 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void collectTeamElement( int level ) {
-        double strafeDist1 = 0.0;
+        double strafeDist = 0.0;
+        double turnAngle = 0.0;
         double distanceToGrab = 3.2;
-        double strafeDist2 = 0.0;
 
         switch( level ) {
-            case 3 : strafeDist1 = 0.0;      // right/top
-                     distanceToGrab = -2.0;
-                     strafeDist2 = 3.0;
-                     break;
-            case 2 : strafeDist1 = 7.0;     // middle/middle
-                     distanceToGrab = -2.0;
-                     strafeDist2 = 0.0;
-                     break;
-            case 1 : strafeDist1 = 14.5;
-                     distanceToGrab = -2.5; // left/bottom
-                     strafeDist2 = 0.0;
-                     break;
+            case 3 : strafeDist = 0.0;      // right/top
+                turnAngle = 0.0;
+                distanceToGrab = -2.0;
+                break;
+            case 2 : strafeDist = -8.0;     // middle/middle
+                turnAngle = -42.0;
+                distanceToGrab = -2.2;
+                break;
+            case 1 : strafeDist = -8.0;
+                turnAngle = -55.0;
+                distanceToGrab = -7.0; // left/bottom
+                break;
         } // switch()
 
         // Move forward away from field wall so it's safe to raise the arms
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
-
         // Rotate the capping arm into the grabbing position
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
@@ -273,25 +272,21 @@ public class AutonomousBwarehouse extends AutonomousBase {
         sleep( 2000);   // wait for arm to reach final position
 
         // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
-        if( Math.abs(strafeDist1) > 0.10 ) {
-            gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist1, 0.0, DRIVE_THRU );
+        if( Math.abs(strafeDist) > 0.10 ) {
+            gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist, 0.0, DRIVE_THRU );
             robot.stopMotion();
+        }
+        if( Math.abs(turnAngle) > 0.10 ) {
+            gyroTurn(TURN_SPEED_20, turnAngle );
         }
 
         // Drive forward to collect the element
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
-
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_LIBERTY, 0.40 );
         robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.40 );
-
-        // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
-        if( Math.abs(strafeDist2) > 0.10 ) {
-            gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist2, 0.0, DRIVE_THRU );
-            robot.stopMotion();
-        }
     } // collectTeamElement
 
     /*--------------------------------------------------------------------------------------------*/
