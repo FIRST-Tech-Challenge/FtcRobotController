@@ -162,7 +162,9 @@ public class HardwareBothHubs
     public NormalizedRGBA colors;
     public double freightDistance;
     public final static int FREIGHT_DETECTED_THRESHOLD = 10;
-    public final static double BARRIER_NESTED_ROBOT_TILT = -2.0;
+
+//    public final static double BARRIER_NESTED_ROBOT_TILT = -2.0;
+    public final static double BARRIER_NESTED_ROBOT_TILT = -3.5;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;

@@ -173,6 +173,32 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // onHeading()
 
     /*---------------------------------------------------------------------------------------------
+     * Method will drive straight for a specified time.
+     * @param speed  Speed to set all motors, positive forward, negative backward
+     * @param time   How long to drive
+     */
+    public void timeDriveStraight( double speed, int time ) {
+        if(opModeIsActive()) {
+            robot.driveTrainMotors(speed, speed, speed, speed);
+            sleep(time);
+            robot.stopMotion();
+        }
+    }
+
+    /*---------------------------------------------------------------------------------------------
+     * Method will drive straight for a specified time.
+     * @param speed  Speed to set all motors, postive strafe left, negative strafe right
+     * @param time   How long to drive
+     */
+    public void timeDriveStrafe( double speed, int time ) {
+        if(opModeIsActive()) {
+            robot.driveTrainMotors(-speed, speed, speed, -speed);
+            sleep(time);
+            robot.stopMotion();
+        }
+    }
+
+    /*---------------------------------------------------------------------------------------------
      *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
      *  Move will stop if either of these conditions occur:
      *  1) Move gets to the desired position
@@ -256,8 +282,8 @@ public abstract class AutonomousBase extends LinearOpMode {
                 if (distance < 0)
                     steer *= -1.0;
 
-                leftSpeed  = curSpeed + steer;
-                rightSpeed = curSpeed - steer;
+                leftSpeed  = curSpeed - steer;
+                rightSpeed = curSpeed + steer;
 
                 // Normalize speeds if any one exceeds +/- 1.0;
                 max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
