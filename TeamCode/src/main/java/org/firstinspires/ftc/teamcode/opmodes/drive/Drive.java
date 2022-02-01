@@ -23,7 +23,7 @@ public class Drive extends LinearOpMode {
         while (opModeIsActive() && eventThread.isAlive()) {}
     }
 
-    private final EventThread eventThread = new EventThread(this::opModeIsActive);
+    private final EventThread eventThread = new EventThread(() -> !isStopRequested());
 
 
 

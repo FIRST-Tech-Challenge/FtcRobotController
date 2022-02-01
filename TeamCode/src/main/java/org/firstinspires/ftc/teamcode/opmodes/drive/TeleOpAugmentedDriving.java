@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 @Disabled
 public class TeleOpAugmentedDriving extends LinearOpMode {
     protected double power = -1;
-    private final EventThread eventThread = new EventThread(this::opModeIsActive);
+    private final EventThread eventThread = new EventThread(() -> !isStopRequested());
     // Define 2 states, drive control or automatic control
     enum Mode {
         DRIVER_CONTROL,
