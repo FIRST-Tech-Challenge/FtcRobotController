@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -120,6 +121,7 @@ public class FF_6832 extends OpMode {
     public enum GameState {
         TELE_OP("Tele-Op"),
         AUTONOMOUS("Autonomous"),
+        LINEAR_AUTONOMOUS("Linear Autonomous"),
         AUTONOMOUS_DIAGNOSTIC("Autonomous Diagnostic"),
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
         BACK_AND_FORTH("Back And Forth"),
@@ -272,16 +274,16 @@ public class FF_6832 extends OpMode {
 
 
     private void handleArcadeDrive(Gamepad gamepad) {
-        forward = -gamepad.left_stick_y * FORWARD_SCALING_FACTOR;
-        rotate = -gamepad.right_stick_x * ROTATE_SCALING_FACTOR;
+        forward = Math.pow(-gamepad.left_stick_y, 3) * FORWARD_SCALING_FACTOR;
+        rotate = Math.pow(-gamepad.right_stick_x, 3) * ROTATE_SCALING_FACTOR;
     }
 
     private void handleTankDrive(Gamepad gamepad) {
-        double left = -gamepad.left_stick_y;
-        double right = -gamepad.right_stick_y;
+        double left = Math.pow(-gamepad.left_stick_y, 3);
+        double right = Math.pow(-gamepad.right_stick_y, 3);
 
-        forward = (right + left) / 2 * FORWARD_SCALING_FACTOR;
-        rotate = -(right - left) / 2 * ROTATE_SCALING_FACTOR;
+        forward = (right + left) / 2.0 * FORWARD_SCALING_FACTOR;
+        rotate = -(right - left) / 2.0 * ROTATE_SCALING_FACTOR;
 
         if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
             rotate = 0;
@@ -438,11 +440,16 @@ public class FF_6832 extends OpMode {
                     handleTeleOp();
                     break;
                 case AUTONOMOUS:
-                    if (alliance == Alliance.RED && auto.autonomousRed.execute()) {
+                    StateMachine autoStateMachine = auto.getStateMachine(startingPosition, true);
+                    if(autoStateMachine.execute()) {
                         active = false;
                         gameState = GameState.TELE_OP;
                         gameStateIndex = GameState.indexOf(GameState.TELE_OP);
-                    } else if (alliance == Alliance.BLUE && auto.autonomousBlue.execute()) {
+                    }
+                    break;
+                case LINEAR_AUTONOMOUS:
+                    StateMachine linearAutoStateMachine = auto.getStateMachine(startingPosition, false);
+                    if(linearAutoStateMachine.execute()) {
                         active = false;
                         gameState = GameState.TELE_OP;
                         gameStateIndex = GameState.indexOf(GameState.TELE_OP);

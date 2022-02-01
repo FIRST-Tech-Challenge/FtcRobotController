@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -11,6 +12,7 @@ import java.util.Map;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods.servoNormalize;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
@@ -29,7 +31,7 @@ public class Gripper implements Subsystem{
     public static int PITCH_VERTICAL = 2100;
 
     public Servo pitchServo, servo;
-    public RevColorSensorV3 freightSensor;
+    public DistanceSensor freightSensor;
 
     // State
     boolean up = true;
@@ -47,12 +49,12 @@ public class Gripper implements Subsystem{
         if(simulated) {
             servo = new ServoSim();
             pitchServo = new ServoSim();
+            freightSensor = new DistanceSensorSim(100);
         } else {
             servo = hardwareMap.get(Servo.class, "gripperServo");
             pitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
+            freightSensor = hardwareMap.get(RevColorSensorV3.class, "freightSensor");
         }
-
-        freightSensor = hardwareMap.get(RevColorSensorV3.class, "freightSensor");
 
         articulation = Gripper.Articulation.MANUAL;
 

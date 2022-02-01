@@ -170,13 +170,6 @@ public class Crane implements Subsystem {
         return newpos;
     }
 
-    private double shoulderPositionToAngle(double targetAngle) {
-        double newpos = Range.clip(targetAngle,SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
-        newpos = (newpos - SHOULDER_HOME_PWM) / SHOULDER_PWM_PER_DEGREE;
-        return newpos;
-    }
-
-
     @Override
     public void stop(){
         turret.stop();

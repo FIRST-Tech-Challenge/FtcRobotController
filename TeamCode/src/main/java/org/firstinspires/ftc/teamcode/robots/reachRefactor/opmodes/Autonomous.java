@@ -1,81 +1,42 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.opmodes;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Crane;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+
+import java.util.function.Function;
 
 public class Autonomous {
     public VisionProvider visionProvider;
     private Robot robot;
 
-    // autonomous articulations
-    private Stage autonomousRedStage = new Stage();
-    public StateMachine autonomousRed;
+    // autonomous routines
+    private Stage blueUpStage, redUpStage, blueDownStage, redDownStage, blueUpLinearStage, redUpLinearStage, blueDownLinearStage, redDownLinearStage;
+    private StateMachine blueUp, redUp, blueDown, redDown, blueUpLinear, redUpLinear, blueDownLinear, redDownLinear;
 
-    private Stage autonomousBlueStage = new Stage();
-    public StateMachine autonomousBlue;
-
-    // trajectory articulations
-    private Stage backAndForthStage = new Stage();
-    public StateMachine backAndForth;
-
-    private Stage squareStage = new Stage();
-    public StateMachine square;
-
+    // trajectories
+    public StateMachine backAndForth, square, turn;
 
     public Autonomous(Robot robot) {
+        blueUpStage = new Stage();
+        redUpStage = new Stage();
+        blueDownStage = new Stage();
+        redDownStage = new Stage();
+
+        blueUpLinearStage = new Stage();
+        redUpLinearStage = new Stage();
+        blueDownLinearStage = new Stage();
+        redDownLinearStage = new Stage();
+
         this.robot = robot;
-    }
-
-    private StateMachine trajectorySequenceToArticulation(Stage stage, TrajectorySequence trajectorySequence) {
-        return getStateMachine(stage)
-                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(trajectorySequence))
-                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                .build();
-    }
-
-    public void build() {
-        // trajectory articulations
-        backAndForth = trajectorySequenceToArticulation(
-                backAndForthStage,
-                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                    .forward(24)
-                    .back(24)
-                    .build()
-        );
-        square = trajectorySequenceToArticulation(
-                squareStage,
-                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-                    .build()
-        );
-
-        // autonomous articulations
-        autonomousRed = getStateMachine(autonomousRedStage)
-                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> true,
-                        () -> true,
-                        () -> true
-                )
-                .build();
-
-        autonomousBlue = getStateMachine(autonomousBlueStage)
-                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> true,
-                        () -> true,
-                        () -> true
-                )
-                .build();
     }
 
     private StateMachine.Builder getStateMachine(Stage stage) {
@@ -83,6 +44,311 @@ public class Autonomous {
                 .stateSwitchAction(() -> {})
                 .stateEndAction(() -> {})
                 .stage(stage);
+    }
+
+    public StateMachine getStateMachine(Constants.Position startingPosition, boolean spline) {
+        if(spline)
+            switch(startingPosition) {
+                case START_BLUE_UP:
+                    return blueUp;
+                case START_RED_UP:
+                    return redUp;
+                case START_BLUE_DOWN:
+                    return blueDown;
+                case START_RED_DOWN:
+                    return redDown;
+            }
+        else
+            switch(startingPosition) {
+                case START_BLUE_UP:
+                    return blueUpLinear;
+                case START_RED_UP:
+                    return redUpLinear;
+                case START_BLUE_DOWN:
+                    return blueDownLinear;
+                case START_RED_DOWN:
+                    return redDownLinear;
+            }
+        return null;
+    }
+
+    private StateMachine trajectorySequenceToStateMachine(Function<TrajectorySequenceBuilder, TrajectorySequenceBuilder> function) {
+        return getStateMachine(new Stage())
+                .addSingleState(() -> {
+                    robot.driveTrain.followTrajectorySequenceAsync(
+                        function.apply(
+                            robot.driveTrain.trajectorySequenceBuilder(
+                                    robot.driveTrain.getPoseEstimate()
+                            )
+                        )
+                        .build()
+                    );
+                })
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
+                .build();
+    }
+
+    public void build() {
+        // trajectory articulations
+        backAndForth = trajectorySequenceToStateMachine(builder ->
+                    builder
+                    .forward(24)
+                    .back(24)
+        );
+        square = trajectorySequenceToStateMachine(builder ->
+                    builder
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+                    .forward(24)
+                    .turn(Math.toRadians(90))
+        );
+
+        // autonomous articulations
+
+        //----------------------------------------------------------------------------------------------
+        // Spline Routines
+        //----------------------------------------------------------------------------------------------
+
+        blueUp = getStateMachine(blueUpStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                    builder
+                    .splineTo(new Vector2d(0, 43), Math.toRadians(235))
+                ))
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                    builder
+                    .turn(Math.toRadians(-75))
+                    .splineTo(new Vector2d(-60, 60), Math.toRadians(180))
+                ))
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                        builder
+                        .back(120)
+                ))
+                .build();
+        redUp = getStateMachine(redUpStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                    builder
+                    .splineTo(new Vector2d(0, -43), Math.toRadians(120))
+                ))
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                    builder
+                    .turn(Math.toRadians(75))
+                    .splineTo(new Vector2d(-60, -60), Math.toRadians(180))
+                ))
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                        builder
+                        .back(120)
+                    )
+                )
+                .build();
+
+        blueDown = getStateMachine(blueDownStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                        builder
+                        .splineTo(new Vector2d(-24, 40), Math.toRadians(315))
+                ))
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
+                        builder
+                        .turn(Math.toRadians(-135))
+                        .splineTo(new Vector2d(-60, 60), Math.toRadians(180))
+                ))
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .back(120)
+                        )
+                )
+                .build();
+        redDown = getStateMachine(blueDownStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .splineTo(new Vector2d(-24, -40), Math.toRadians(45))
+                        )
+                )
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(135))
+                                .splineTo(new Vector2d(-60, -60), Math.toRadians(180))
+                        )
+                )
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .back(120)
+                        )
+                )
+                .build();
+
+        //----------------------------------------------------------------------------------------------
+        // Linear Routines
+        //----------------------------------------------------------------------------------------------
+
+        blueUpLinear = getStateMachine(blueUpLinearStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(-35))
+                                .forward(20)
+                        )
+                )
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(-70))
+                                .forward(58)
+                                .turn(Math.toRadians(15))
+                                .forward(5)
+                        )
+                )
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .back(120)
+                        )
+                )
+                .build();
+        redUpLinear = getStateMachine(redUpLinearStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(35))
+                                .forward(20)
+                        )
+                )
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(70))
+                                .forward(58)
+                                .turn(Math.toRadians(-15))
+                                .forward(5)
+                        )
+                )
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .back(120)
+                        )
+                )
+                .build();
+
+        blueDownLinear = getStateMachine(blueDownLinearStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(35))
+                                .forward(23)
+                        )
+                )
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(-150))
+                                .forward(40)
+                                .turn(Math.toRadians(25))
+                                .forward(2)
+                        )
+                )
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .back(120)
+                        )
+                )
+                .build();
+        redDownLinear = getStateMachine(redDownLinearStage)
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(-35))
+                                .forward(23)
+                        )
+                )
+                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
+                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .turn(Math.toRadians(150))
+                                .forward(40)
+                                .turn(Math.toRadians(-25))
+                                .forward(2)
+                        )
+                )
+                .addTimedState(
+                        4,
+                        () -> robot.driveTrain.toggleDuckSpinner(1),
+                        () -> robot.driveTrain.toggleDuckSpinner(1)
+                )
+                .addNestedStateMachine(trajectorySequenceToStateMachine(
+                        builder -> builder
+                                .back(120)
+                        )
+                )
+                .build();
     }
 
     public void createVisionProvider(int visionProviderIndex) {
