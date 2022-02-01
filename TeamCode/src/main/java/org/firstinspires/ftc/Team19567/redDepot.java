@@ -51,7 +51,7 @@ public class redDepot extends LinearOpMode {
         intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
-        mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
+        mechanisms = new Mechanisms(hardwareMap,telemetry);
 
         armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

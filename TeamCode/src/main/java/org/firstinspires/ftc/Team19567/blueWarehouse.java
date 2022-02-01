@@ -50,7 +50,7 @@ public class blueWarehouse extends LinearOpMode {
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
-        mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
+        mechanisms = new Mechanisms(hardwareMap,telemetry);
 
         armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

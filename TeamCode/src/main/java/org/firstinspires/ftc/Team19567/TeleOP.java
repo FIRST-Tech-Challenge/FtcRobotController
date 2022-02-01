@@ -86,7 +86,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
         releaseServoPos = 0.9;
         balanceServoPos = balanceServo.MIN_POSITION;
-        mechanisms = new Mechanisms(armDC,carouselLeft,carouselRight,intakeDC,balanceServo,releaseServo,telemetry);
+        mechanisms = new Mechanisms(hardwareMap,telemetry);
 
         telemetry.update();
     }

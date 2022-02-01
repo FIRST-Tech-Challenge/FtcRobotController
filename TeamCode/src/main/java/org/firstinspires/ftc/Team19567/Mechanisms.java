@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.Team19567;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -15,14 +16,13 @@ public class Mechanisms {
     private Servo releaseServo = null;
     private Telemetry telemetry = null;
 
-    public Mechanisms(DcMotor arm, DcMotor left, DcMotor right,
-                              DcMotor intake, Servo balance, Servo release, Telemetry t) {
-        armDC = arm;
-        carouselLeft = left;
-        carouselRight = right;
-        intakeDC = intake;
-        balanceServo = balance;
-        releaseServo = release;
+    public Mechanisms(HardwareMap hardwareMap, Telemetry t) {
+        armDC = hardwareMap.get(DcMotor.class,"armDC");
+        carouselLeft = hardwareMap.get(DcMotor.class,"carouselLeft");
+        carouselRight = hardwareMap.get(DcMotor.class,"carouselRight");
+        intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
+        balanceServo = hardwareMap.get(Servo.class,"balanceServo");
+        releaseServo = hardwareMap.get(Servo.class,"releaseServo");
         telemetry = t;
     }
 

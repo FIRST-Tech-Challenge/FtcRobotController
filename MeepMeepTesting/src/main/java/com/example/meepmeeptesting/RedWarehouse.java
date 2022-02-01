@@ -15,13 +15,13 @@ public class RedWarehouse {
                 // Background opacity from 0-1
                 .setBackgroundAlpha(1f)
                 // Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(38.7, 30, 4.5836622, Math.toRadians(60), 14.2).setBotDimensions(13.2,16.603)
+                .setConstraints(38.7, 38.7, 4.5836622, Math.toRadians(60), 14.2).setBotDimensions(13.2,16.603)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
-                                .strafeTo(new Vector2d(0,-45)).turn(Math.toRadians(-150))
-                                .splineToConstantHeading(new Vector2d(6,27),Math.toRadians(120))
-                                .strafeTo(new Vector2d(6, 27))
-                                .strafeTo(new Vector2d(-40,27))
+                                .strafeTo(new Vector2d(0,-45)).turn(Math.toRadians(-150)).waitSeconds(0.5)
+                                .turn(Math.toRadians(60))
+                                .strafeTo(new Vector2d(6, -64))
+                                .strafeTo(new Vector2d(50,-64))
                                 .build())
                 .start();
     }
