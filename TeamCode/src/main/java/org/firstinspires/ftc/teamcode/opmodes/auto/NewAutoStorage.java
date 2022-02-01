@@ -24,7 +24,7 @@ public class NewAutoStorage extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MultipleTelemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        MultipleTelemetry goodTelemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         EventThread eventThread = new EventThread(() -> !isStopRequested());
 
@@ -32,7 +32,7 @@ public class NewAutoStorage extends LinearOpMode {
         AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true, isRed);
-        final int height = -1;
+        int height;
 
         final Pose2d initial = new Pose2d(-47, multiplier * (70 - inchesToCoordinate(9)),
                 Math.toRadians(90 * multiplier));
@@ -49,38 +49,44 @@ public class NewAutoStorage extends LinearOpMode {
         });
 
         // Part 1: go to shipping hub
-        final Pose2d p1Finish = new Pose2d(multiplier == 1 ? -21 : -20, multiplier == 1 ? 42 : -38, Math.toRadians(multiplier == 1 ? 100 : -95));
         final Trajectory part1;
         {
             TrajectoryBuilder builder = drive.trajectoryBuilder(initial);
             builder.lineTo(new Vector2d(-40, multiplier == 1 ? 55 : -53));
-            builder.splineToLinearHeading(p1Finish, Math.toRadians(-110 * multiplier));
+            builder.splineToLinearHeading(new Pose2d(multiplier == 1 ? -21 : -20,
+                    multiplier == 1 ? 42 : -38, Math.toRadians(multiplier == 1 ? 100 : -95)),
+                    Math.toRadians(-110 * multiplier));
             part1 = builder.build();
         }
 
         // Part 2: carousel
-        final Pose2d p2Finish = new Pose2d(multiplier == 1 ? -60 : -60.5, multiplier == 1 ? 58 : -58.5, Math.toRadians(multiplier == 1 ? 240 : 330));
         final Trajectory part2;
         {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(p1Finish);
+            TrajectoryBuilder builder = drive.trajectoryBuilder(part1.end());
             builder.lineTo(new Vector2d(-19, 50 * multiplier));
-            builder.lineToLinearHeading(p2Finish);
+            builder.lineToLinearHeading(new Pose2d(multiplier == 1 ? -60 : -60.5,
+                    multiplier == 1 ? 58 : -58.5, Math.toRadians(multiplier == 1 ? 240 : 330)));
             part2 = builder.build();
         }
 
         ElapsedTime carouselTimer = new ElapsedTime();
 
         // Part 3: Park in Alliance Storage Unit
-        final Pose2d p3Finish = new Pose2d(-60, 35 * multiplier, Math.toRadians(90 * multiplier));
         final Trajectory part3;
         {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(p2Finish);
-            builder.lineToLinearHeading(p3Finish);
+            TrajectoryBuilder builder = drive.trajectoryBuilder(part2.end());
+            builder.lineToLinearHeading(new Pose2d(-60, 35 * multiplier,
+                    Math.toRadians(90 * multiplier)));
             part3 = builder.build();
         }
 
         waitForStart();
         liftThread.start();
+        eventThread.start();
+
+        height = detector.run();
+        goodTelemetry.addData("height", height);
+        goodTelemetry.update();
 
         // Part 1
         drive.followTrajectoryAsync(part1);
@@ -89,7 +95,7 @@ public class NewAutoStorage extends LinearOpMode {
 
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
-        while (!isStopRequested() && !liftUpdated[0] && lift.getState() != AutoLift.MovementStates.NONE) {
+        while (!isStopRequested() && (!liftUpdated[0] || lift.getState() != AutoLift.MovementStates.NONE)) {
             drive.update();
         }
         if (isStopRequested()) return;
