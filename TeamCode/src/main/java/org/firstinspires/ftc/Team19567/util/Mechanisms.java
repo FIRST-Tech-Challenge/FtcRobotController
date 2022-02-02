@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -26,7 +26,12 @@ public class Mechanisms {
         telemetry = t;
     }
 
-    public Mechanisms() {}
+    public void setModes() {
+        armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armDC.setDirection(DcMotor.Direction.REVERSE);
+        balanceServo.setDirection(Servo.Direction.REVERSE);
+    }
 
     public void rotateArm(int pos, double speed) {
         armDC.setPower(speed);

@@ -1,15 +1,16 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.util.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.Team19567.pipeline.tsePipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
+import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
-@Autonomous(name="OpenCV Test",group="Linear Opmode")
+@Autonomous(name="OpenCV Test",group="Testing")
 public class OpenCVtest extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     @Override

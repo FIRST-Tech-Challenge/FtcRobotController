@@ -1,6 +1,7 @@
 
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.util.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,7 +9,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="motor_test", group="Iterative Opmode")
+@Disabled
+@TeleOp(name="motor_test", group="Testing")
 public class motortest extends OpMode
 {
     // Declare OpMode members.

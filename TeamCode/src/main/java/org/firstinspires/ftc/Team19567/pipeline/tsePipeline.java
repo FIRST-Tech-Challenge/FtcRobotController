@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.pipeline;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -9,7 +9,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-class tsePipeline extends OpenCvPipeline {
+public class tsePipeline extends OpenCvPipeline {
     private Mat output = new Mat();
     private static final double width = 544;
     private static final double height = 288;
@@ -33,13 +33,6 @@ class tsePipeline extends OpenCvPipeline {
 
     public tsePipeline(Telemetry t) {
         telemetry = t;
-    }
-
-    public enum LOCATION {
-        ALLIANCE_FIRST,
-        ALLIANCE_SECOND,
-        ALLIANCE_THIRD,
-        NO_ALLIANCE
     }
 
     private Scalar lowHSV = new Scalar(36, 50, 70);

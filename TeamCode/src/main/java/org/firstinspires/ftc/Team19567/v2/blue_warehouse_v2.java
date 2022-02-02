@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.v2;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -10,16 +10,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.Team19567.pipeline.tsePipeline;
+import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Blue Warehouse", group="Dababy")
+@Autonomous(name="Blue Warehouse", group="v2")
 
-public class blueWarehouse extends LinearOpMode {
+public class blue_warehouse_v2 extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
     private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
@@ -30,7 +32,7 @@ public class blueWarehouse extends LinearOpMode {
     private Servo releaseServo = null;
     private Servo balanceServo = null;
     private DistanceSensor distanceSensor = null;
-    private tsePipeline.LOCATION location = tsePipeline.LOCATION.ALLIANCE_THIRD;
+    private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private TrajectorySequence chosenTrajectorySequence;
     private int chosenArmPos = 600;
     private double chosenArmSpeed = 0.3;
@@ -151,7 +153,7 @@ public class blueWarehouse extends LinearOpMode {
                 break;
             }
             default: {
-                location = tsePipeline.LOCATION.ALLIANCE_THIRD;
+                location = LOCATION.ALLIANCE_THIRD;
             }
         }
 

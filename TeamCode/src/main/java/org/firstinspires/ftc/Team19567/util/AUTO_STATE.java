@@ -1,0 +1,12 @@
+package org.firstinspires.ftc.Team19567.util;
+
+public enum AUTO_STATE {
+    DETECTING_OPENCV,
+    MOVING_TO_HUB,
+    MOVING_TO_WAREHOUSE,
+    INTAKING_FREIGHT,
+    RETURNING_TO_HUB,
+    TURNING_CAROUSEL,
+    PARKING_UNIT,
+    PARING_WAREHOUSE
+}

@@ -21,7 +21,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -30,9 +29,9 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.Team19567.util.AxesSigns;
-import org.firstinspires.ftc.Team19567.util.BNO055IMUUtil;
-import org.firstinspires.ftc.Team19567.util.LynxModuleUtil;
+import org.firstinspires.ftc.Team19567.roadrunnerutil.AxesSigns;
+import org.firstinspires.ftc.Team19567.roadrunnerutil.BNO055IMUUtil;
+import org.firstinspires.ftc.Team19567.roadrunnerutil.LynxModuleUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 
 import java.util.ArrayList;

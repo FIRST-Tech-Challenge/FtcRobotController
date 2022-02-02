@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.v1;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,9 +11,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="OG Red Warehouse", group="Linear Opmode")
+@Disabled
+@Autonomous(name="OG Blue Warehouse", group="v1")
 
-public class og_red_warehouse extends LinearOpMode {
+public class blue_warehouse_v1 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
@@ -72,7 +74,7 @@ public class og_red_warehouse extends LinearOpMode {
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        carouselDC.setDirection(DcMotor.Direction.FORWARD);
+        carouselDC.setDirection(DcMotor.Direction.REVERSE);
 
         //Set DC motors to run with encoder
         resetEncoders();
@@ -89,13 +91,8 @@ public class og_red_warehouse extends LinearOpMode {
         if(!opModeIsActive()) return;
 
         mecanumStrafe(11,0,0.7);
-        sleep(1000);
-        changeDirection();
-        mecanumRotate(70,0.5);
-        sleep(2000);
-        changeDirection();
+        mecanumRotate(80,0.5);
         mecanumStrafe(30,0,0.7);
-        sleep(3000);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();

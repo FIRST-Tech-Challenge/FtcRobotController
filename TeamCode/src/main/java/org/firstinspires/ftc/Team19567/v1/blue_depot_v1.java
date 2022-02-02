@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.v1;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,9 +11,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="OG Red Depot", group="Linear Opmode")
+@Disabled
+@Autonomous(name="OG Blue Depot", group="v1")
 
-public class og_red_depot extends LinearOpMode {
+public class blue_depot_v1 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDCFront = null;
@@ -89,33 +91,31 @@ public class og_red_depot extends LinearOpMode {
         if(!opModeIsActive()) return;
 
         releaseServoMove(0.65);
-        mecanumStrafe(12.5, 0, 0.5);
+        mecanumStrafe(13, 0, 0.5);
         sleep(1000);
-        linearSlideMove(1750,0.8);
-        sleep(1000);
-        releaseServoMove(0.275);
-        sleep(1000);
+        linearSlideMove(1800,0.8);
+        sleep(2000);
+        releaseServoMove(0.30);
+        sleep(500);
         changeDirection();
         mecanumStrafe(3,0,0.7);
         sleep(500);
-        mecanumStrafe(35,90,0.7);
-        sleep(500);
+        changeDirection();
         linearSlideMove(0,1.0);
-        sleep(100);
         releaseServoMove(releaseServo.MAX_POSITION);
+        mecanumStrafe(32,90,0.7);
         sleep(500);
         changeDirection();
-        mecanumRotate(80,0.4);
+        mecanumRotate(153,0.2);
         sleep(500);
         changeDirection();
-        mecanumStrafe(7,90,0.8);
+        mecanumStrafe(5.5,0,0.4);
         sleep(500);
         changeDirection();
-        carouselMove(-0.5);
+        carouselMove(0.5);
         sleep(3000);
         carouselMove(0.0);
-        mecanumStrafe(17,75,0.6);
-
+        mecanumStrafe(12.5,20,0.6);
         sleep(3000);
 
         telemetry.addData("Status", "Path Complete");

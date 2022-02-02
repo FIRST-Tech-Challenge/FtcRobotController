@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.util.testing;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,17 +9,18 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.Team19567.pipeline.tsePipeline;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
+import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
-@Autonomous(name="Roadrunner Test", group="Dababy")
+@Autonomous(name="Roadrunner Test", group="Testing")
 
 public class RoadrunnerTest extends LinearOpMode {
 

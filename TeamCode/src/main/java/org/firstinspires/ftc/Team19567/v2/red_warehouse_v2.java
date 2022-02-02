@@ -1,29 +1,27 @@
-package org.firstinspires.ftc.Team19567;
+package org.firstinspires.ftc.Team19567.v2;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.Team19567.pipeline.tsePipeline;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import org.firstinspires.ftc.Team19567.tsePipeline.LOCATION;
+import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
-@Autonomous(name="Red Depot", group="Dababy")
+@Autonomous(name="Red Warehouse", group="v2")
 
-public class redDepot extends LinearOpMode {
+public class red_warehouse_v2 extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
     private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
@@ -36,9 +34,10 @@ public class redDepot extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private Mechanisms mechanisms = null;
     private TrajectorySequence chosenTrajectorySequence;
+    private double chosenTrajectoryX = -1;
+    private double chosenTrajectoryY = -39;
     private int chosenArmPos = 650;
     private double chosenArmSpeed = 0.3;
-    private double chosenTrajectoryX = -20;
 
     @Override
     public void runOpMode() {
@@ -48,7 +47,6 @@ public class redDepot extends LinearOpMode {
         armDC = hardwareMap.get(DcMotor.class, "armDC");
         carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
         carouselRight = hardwareMap.get(DcMotor.class, "carouselRight");
-        intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         mechanisms = new Mechanisms(hardwareMap,telemetry);
@@ -82,14 +80,14 @@ public class redDepot extends LinearOpMode {
             }
         });
 
-        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-32,-23)).turn(Math.toRadians(-96)).build();
-
-        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-30,-23)).turn(Math.toRadians(-96)).build();
-
-        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(-20, -63, Math.toRadians(270)))
-                .strafeTo(new Vector2d(-20,-23)).turn(Math.toRadians(-96)).build();
+        TrajectorySequence firstLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63,Math.toRadians(270)))
+                .strafeTo(new Vector2d(0,-43)).turn(Math.toRadians(135))
+                .build();
+        TrajectorySequence secondLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6,-63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-1,-39)).turn(Math.toRadians(135))
+                .build();
+        TrajectorySequence thirdLevelSequence = chassis.trajectorySequenceBuilder(new Pose2d(6, -63, Math.toRadians(270)))
+                .strafeTo(new Vector2d(-5,-35)).turn(Math.toRadians(135)).build();
 
         while(!opModeIsActive()) {
             location = pipeline.getLocation();
@@ -103,37 +101,31 @@ public class redDepot extends LinearOpMode {
 
         switch(location) {
             case ALLIANCE_FIRST: {
-                chosenTrajectorySequence = thirdLevelSequence;
-                chosenArmPos = 600;
-                chosenArmSpeed = 0.25;
-                chosenTrajectoryX = -20;
+                chosenTrajectorySequence = secondLevelSequence;
+                chosenArmPos = 770;
+                chosenArmSpeed = 0.15;
+                chosenTrajectoryX = -1;
+                chosenTrajectoryY = -39;
                 telemetry.addData("OpenCV","First Level Detected");
+                telemetry.update();
+                break;
+            }
+            case ALLIANCE_SECOND: {
+                chosenTrajectorySequence = firstLevelSequence;
+                chosenTrajectoryX = 0;
+                chosenTrajectoryY = -39;
+                chosenArmPos = 880;
+                chosenArmSpeed = 0.1;
+                telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case NO_ALLIANCE: {
                 chosenTrajectorySequence = thirdLevelSequence;
+                chosenTrajectoryX = -5;
+                chosenTrajectoryY = -43;
                 chosenArmPos = 650;
-                chosenArmSpeed = 0.25;
-                chosenTrajectoryX = -20;
-                telemetry.addData("OpenCV","Basically Third Level");
-                telemetry.update();
-                break;
-            }
-            case ALLIANCE_SECOND: {
-                chosenTrajectorySequence = secondLevelSequence;
-                chosenArmPos = 770;
-                chosenArmSpeed = 0.1;
-                chosenTrajectoryX = -30;
-                telemetry.addData("OpenCV","Second Level Detected");
-                telemetry.update();
-                break;
-            }
-            case ALLIANCE_THIRD: {
-                chosenTrajectorySequence = firstLevelSequence;
-                chosenArmPos = 880;
-                chosenArmSpeed = 0.1;
-                chosenTrajectoryX = -32;
+                chosenArmSpeed = 0.3;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -143,31 +135,26 @@ public class redDepot extends LinearOpMode {
             }
         }
 
-        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX-15.2, -23, Math.toRadians(174)))
-                .strafeTo(new Vector2d(-15+(34+chosenTrajectoryX),0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-8+(34+chosenTrajectoryX),16)).build();
-        //TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX-15.2, -23, Math.toRadians(174)))
-          //  .strafeTo(new Vector2d(-5,0)).turn(Math.toRadians(180)).strafeTo(new Vector2d(-15,19)).build();
-        TrajectorySequence thirdTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(-8, 16, Math.toRadians(354)))
-                .strafeTo(new Vector2d(-3,-12)).build();
+        TrajectorySequence secondTrajectory = chassis.trajectorySequenceBuilder(new Pose2d(chosenTrajectoryX, chosenTrajectoryY, Math.toRadians(45)))
+                .turn(Math.toRadians(-50))
+                .strafeTo(new Vector2d(chosenTrajectoryX, -5))
+                .strafeTo(new Vector2d(-40+(chosenTrajectoryX),-5)).build();
 
         mechanisms.rotateArm(0);
+        mechanisms.balanceServoMove(0.0);
         mechanisms.releaseServoMove(1.0);
         chassis.followTrajectorySequence(chosenTrajectorySequence);
         mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
         while(armDC.getCurrentPosition() <= chosenArmPos && opModeIsActive()) {
             mechanisms.maintainBalance();
         }
-        sleep(500);
-        mechanisms.releaseServoMove(0.25);
+        sleep(1000);
+        mechanisms.releaseServoMove(0.2);
         sleep(1500);
+        mechanisms.balanceServoMove(0.0);
         mechanisms.rotateArm(0,0.1);
         mechanisms.releaseServoMove(1.0);
-        mechanisms.balanceServoMove(0.0);
         chassis.followTrajectorySequence(secondTrajectory);
-        mechanisms.rotateCarousel(0.5);
-        sleep(3000);
-        mechanisms.rotateCarousel(0.0);
-        chassis.followTrajectorySequence(thirdTrajectory);
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();
