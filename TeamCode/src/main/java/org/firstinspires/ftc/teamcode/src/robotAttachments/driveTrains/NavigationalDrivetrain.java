@@ -156,7 +156,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param angle The angle to turn to in degrees
      * @throws InterruptedException Throws if the OpMode is killed
      */
-    public void newTurnToPrototype(double angle, double maxPower, double minPower, double tolerance) throws InterruptedException {
+    public void newTurnToPrototype(double angle, double maxPower, double minPower, double tolerance, boolean consoleOutput) throws InterruptedException {
 
         angle = angle % 360;
         //the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a clockwise rotation/right turn
@@ -166,27 +166,37 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         final double maximumPower = maxPower; //The minimum power the robot can turn at
         final double minimumPower = minPower; //The minimum power the robot can turn at
 
-
-        while (Math.abs(degreesOff) > tolerance && !isStopRequested() && opModeIsActive()) {
+        while (degreesOff > tolerance && !isStopRequested() && opModeIsActive()) {
 
             if (initialDegreesOff < 180) {
+
                 // this is the degreesOff in a right turning motion
                 degreesOff = ((360 - angle) + gps.getRot()) % 360;
                 pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maximumPower, minimumPower);
 
-                this.turnRight(MiscUtils.boundNumber(pow));
+                //this.turnLeft(MiscUtils.boundNumber(pow));
+                //Thread.sleep(20); //A sleep because we do not want this loop running at full speed. We don't need it to.
+                telemetry.addData("rotation", gps.getRot());
+                telemetry.addData("power", pow);
+                telemetry.update();
+
 
             } else {
+
+
                 // this is the degreesOff in a left turning motion
                 degreesOff = (angle + (360 - gps.getRot())) % 360;
                 pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maximumPower, minimumPower);
 
-                this.turnLeft(MiscUtils.boundNumber(pow));
-
+                //this.turnRight(MiscUtils.boundNumber(pow));
+                //Thread.sleep(20); //A sleep because we do not want this loop running at full speed. We don't need it to.
+                telemetry.addData("rotation", gps.getRot());
+                telemetry.addData("power", pow);
+                telemetry.update();
             }
 
-            Thread.sleep(20); //A sleep because we do not want this loop running at full speed. We don't need it to.
         }
+
 
         stopAll();
     }
@@ -300,7 +310,9 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
             if (currentDistance > zeroPoint) {
                 power = 1;
             } else {
-                power = ((0.9 / zeroPoint) * currentDistance) + 0.2;
+                //power = ((0.9 / zeroPoint) * currentDistance) + 0.2;
+                power = shortMovementPowerCalculation(zeroPoint, currentDistance, .9, .075);
+                // this power function has yet to be tested
             }
             if (this.debug) {
                 telemetry.addData("Function", args);

@@ -14,13 +14,17 @@ public class OdTurnTest extends AutonomousTemplate {
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
+        initOdometryServos();
         odometry.setPos(0, 0, 0);
         telemetry.addData("Initialization Status", "complete");
         telemetry.update();
 
+
         waitForStart();
 
-        driveSystem.newTurnToPrototype(20, 1, .1, 0);
+        driveSystem.newTurnToPrototype(60, 1, .2, 5, true);
+        telemetry.addData("done", "");
+        telemetry.update();
 
         //driveSystem.stopAll();
 
