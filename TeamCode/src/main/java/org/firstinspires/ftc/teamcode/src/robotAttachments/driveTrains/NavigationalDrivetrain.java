@@ -289,19 +289,22 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @throws MovementException    Stops Motors and Throws if errorCB returns true
      */
     public void moveToPosition(double x, double y, double theta, double tolerance, MovementException[] errors) throws InterruptedException, MovementException {
-        double power, odometry_angle = 0;
+        double power;
+
         final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
         final String coordinateString = x + " , " + y;
 
-        double odometry_x = gps.getX();
-        double odometry_y = gps.getY();
+        double[] currentPos = gps.getPos();
+        double currentX = currentPos[0];
+        double currentY = currentPos[1];
+        double currentAngle = currentPos[2];
 
-        double currentDistance = MiscUtils.distance(odometry_x, odometry_y, x, y);
+        double currentDistance = MiscUtils.distance(currentX, currentY, x, y);
 
         while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
 
             /*The next if-else block takes the distance from target and
-             sets the power variable to odometry_angle power following the function
+             sets the power variable to currentAngle power following the function
              @param zeroPoint is the point where the robot goes at 1
              power = 0.8/zeroPoint(distance) + 0.2
              if the distance is greater than 24 in or ~2 ft, robot moves at power of 1
@@ -318,24 +321,26 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 telemetry.addData("Function", args);
                 telemetry.addData("Moving to", coordinateString);
                 telemetry.addData("currentDistance", currentDistance);
-                telemetry.addData("angle", odometry_angle);
+                telemetry.addData("angle", currentAngle);
                 telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
-                telemetry.addData("X Pos", odometry_x);
-                telemetry.addData("Y Pos", odometry_y);
+                telemetry.addData("X Pos", currentX);
+                telemetry.addData("Y Pos", currentY);
                 telemetry.addData("Power", power);
                 telemetry.update();
             }
 
-            odometry_x = gps.getX(); //odometry x
-            odometry_y = gps.getY(); //odometry y
-            currentDistance = MiscUtils.distance(odometry_x, odometry_y, x, y); //currentDistance value
-            odometry_angle = MiscUtils.getAngle(odometry_x, odometry_y, x, y, gps.getRot()); //angle
+            currentPos = gps.getPos();
+            currentX = currentPos[0];
+            currentY = currentPos[1];
+            currentAngle = MiscUtils.getAngle(currentX, currentY, x, y, currentPos[2]); //angle;
+
+            currentDistance = MiscUtils.distance(currentX, currentY, x, y); //currentDistance value
 
             for (MovementException e : errors) {
                 e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
             }
 
-            strafeAtAngle(odometry_angle, power);
+            strafeAtAngle(currentAngle, power);
 
         }
         stopAll();

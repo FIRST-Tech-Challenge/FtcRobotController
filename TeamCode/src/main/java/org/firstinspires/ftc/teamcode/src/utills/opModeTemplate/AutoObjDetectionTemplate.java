@@ -161,9 +161,9 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      * @throws InterruptedException Throws if OpMode is stopped during execution
      */
     public void initAll() throws InterruptedException {
-        initVuforia();
-        initTfod();
-        activateTF();
+        this.initVuforia();
+        this.initTfod();
+        this.activateTF();
         super.initAll();
     }
 

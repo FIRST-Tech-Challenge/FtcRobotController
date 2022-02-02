@@ -99,8 +99,8 @@ public class MiscUtils {
      * @param ry       Robot Y Position
      * @param x        X Position to go to
      * @param y        Y position to go to
-     * @param robotRot The orientation of the robot
-     * @return The heading the point is from the robot
+     * @param robotRot The orientation of the robot in degrees
+     * @return The heading the point is from the robot in degrees
      */
     public static double getAngle(double rx, double ry, double x, double y, double robotRot) {
         double angle;
