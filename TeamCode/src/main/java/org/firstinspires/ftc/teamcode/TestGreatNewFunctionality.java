@@ -46,9 +46,11 @@ public class TestGreatNewFunctionality extends LinearOpMode {
     boolean autoDriveLast = false;
     FileWriter log;
     PIDFCoefficients newPIDF = new PIDFCoefficients( 10.0, 3.0, 0.0, 12.0 );
+    PIDFCoefficients oldPIDF;
 
     // Configure a motor
     public void configureMotor() {
+        oldPIDF = robot.cappingMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.cappingMotor.setDirection(DcMotor.Direction.FORWARD);
         robot.cappingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
@@ -326,7 +328,8 @@ public class TestGreatNewFunctionality extends LinearOpMode {
             processCappingArmControls();
             processPIDFAdjustControls();
             telemetry.addData("Current PIDF Adjust: ", currentPIDFAdjust);
-            telemetry.addData("Motor  PIDF: ", newPIDF.toString());
+            telemetry.addData("New PIDF: ", newPIDF.toString());
+            telemetry.addData("Old PIDF: ", oldPIDF.toString());
         }
     } // runOpMode
 
