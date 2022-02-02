@@ -32,8 +32,8 @@ public class Constants {
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
     public static double JOYSTICK_DEADZONE = 0.05;
 
-    public static double MAX_VEL = 30;
-    public static double MAX_ACCEL = 30;
+    public static double MAX_VEL = 90;
+    public static double MAX_ACCEL = 90;
     public static double MAX_ANG_VEL = Math.toRadians(360);
     public static double MAX_ANG_ACCEL = Math.toRadians(360);
 

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
@@ -33,6 +33,8 @@ public class Crane implements Subsystem {
     public static double SHOULDER_DEG_MAX = 90;
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
+
+    public static double DUMP_TIME = 2;
 
     public Turret turret;
 
@@ -98,13 +100,17 @@ public class Crane implements Subsystem {
     private final Stage mainStage = new Stage();
     private final StateMachine main = UtilMethods.getStateMachine(mainStage)
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
-            .addTimedState(() -> 0,
+            .addTimedState(() -> articulation.toHomeTime,
                     () -> setTargetPositions(articulation),
+                    () -> {})
+            .addTimedState(() -> (float) DUMP_TIME,
                     () -> {
+                        wristTargetPos = articulation.dumpPos;
                         currentToHomeTime = articulation.toHomeTime;
-                        if(articulation.dumpPos!=0) currentDumpPos= articulation.dumpPos;}
-                    )
-
+                        if(articulation.dumpPos!=0)
+                            currentDumpPos = articulation.dumpPos;
+                    },
+                    () -> {})
             .build();
 
     private final Stage initStage = new Stage();
@@ -142,29 +148,14 @@ public class Crane implements Subsystem {
         turret.setTargetAngle(turretTargetPos);
     }
 
-    //take the supplied relative-to-home target value in degrees
-    //and convert to servo setting
-    private double shoulderServoValue(double targetpos){
-        double newpos = Range.clip(targetpos,SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
-        newpos = newpos * SHOULDER_PWM_PER_DEGREE+SHOULDER_HOME_PWM;
-        return newpos;
-    }
-
-    private double elbowServoValue(double targetpos){
-        double newpos = Range.clip(targetpos,ELBOW_DEG_MIN, ELBOW_DEG_MAX);
-        newpos = newpos*ELBOW_PWM_PER_DEGREE+ELBOW_HOME_PWM;
-        return newpos;
-    }
-
-    private double wristServoValue(double targetpos){
-        double newpos = Range.clip(targetpos,WRIST_DEG_MIN, WRIST_DEG_MAX);
-        newpos = newpos*WRIST_PWM_PER_DEGREE+WRIST_HOME_PWM;
-        return newpos;
+    @Override
+    public String getTelemetryName() {
+        return TELEMETRY_NAME;
     }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<>();
+        Map<String, Object> telemetryMap = new LinkedHashMap<>();
 
         telemetryMap.put("Current Articulation", articulation);
 
@@ -179,11 +170,6 @@ public class Crane implements Subsystem {
         telemetryMap.putAll(turretTelemetryMap);
 
         return telemetryMap;
-    }
-
-    @Override
-    public String getTelemetryName() {
-        return TELEMETRY_NAME;
     }
 
     public void dump(){
@@ -210,6 +196,25 @@ public class Crane implements Subsystem {
     // Getters And Setters
     //----------------------------------------------------------------------------------------------
 
+    //take the supplied relative-to-home target value in degrees
+    //and convert to servo setting
+    private double shoulderServoValue(double targetpos){
+        double newpos = Range.clip(targetpos,SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
+        newpos = newpos * SHOULDER_PWM_PER_DEGREE+SHOULDER_HOME_PWM;
+        return newpos;
+    }
+
+    private double elbowServoValue(double targetpos){
+        double newpos = Range.clip(targetpos,ELBOW_DEG_MIN, ELBOW_DEG_MAX);
+        newpos = newpos*ELBOW_PWM_PER_DEGREE+ELBOW_HOME_PWM;
+        return newpos;
+    }
+
+    private double wristServoValue(double targetpos){
+        double newpos = Range.clip(targetpos,WRIST_DEG_MIN, WRIST_DEG_MAX);
+        newpos = newpos*WRIST_PWM_PER_DEGREE+WRIST_HOME_PWM;
+        return newpos;
+    }
 
     public void setShoulderTargetPos(int shoulderTargetPos) {
         this.shoulderTargetPos = (int) shoulderServoValue(shoulderTargetPos);
@@ -246,5 +251,7 @@ public class Crane implements Subsystem {
     public int getWristTargetPos() {
         return wristTargetPos;
     }
+
+    public Articulation getArticulation() { return articulation; }
 }
 

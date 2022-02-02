@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods.servoNormalize;
 
@@ -154,7 +155,7 @@ public class Gripper implements Subsystem{
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<>();
+        Map<String, Object> telemetryMap = new LinkedHashMap<>();
 
         if(debug) {
             telemetryMap.put("Freight Distance", freightSensor.getDistance(DistanceUnit.MM));

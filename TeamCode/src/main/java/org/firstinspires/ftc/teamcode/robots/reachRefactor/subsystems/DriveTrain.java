@@ -42,10 +42,9 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constant
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 @Config
 public class DriveTrain extends TrikeDrive implements Subsystem {
@@ -235,13 +234,13 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         double setpointAngleFlipped = UtilMethods.closestAngle(swivelAngle, targetSwivelAngle + Math.toRadians(180));
         if (Math.abs(setpointAngle) <= Math.abs(setpointAngleFlipped)) {
             // unflip the motor direction use the setpoint
-            targetSwivelAngle = UtilMethods.wrapAngle(swivelAngle + setpointAngle);
+            targetSwivelAngle = UtilMethods.wrapAngleRad(swivelAngle + setpointAngle);
         }
         // if the closest angle to setpoint + 180 is shorter
         else {
             // flip the motor direction and use the setpoint + 180
             targetSwerveVelocity *= -1;
-            targetSwivelAngle = UtilMethods.wrapAngle(swivelAngle + setpointAngleFlipped);
+            targetSwivelAngle = UtilMethods.wrapAngleRad(swivelAngle + setpointAngleFlipped);
         }
         if(simulated)
             swivelAngle = targetSwivelAngle;
@@ -272,14 +271,14 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<>();
+        Map<String, Object> telemetryMap = new LinkedHashMap<>();
 
         if(debug) {
             telemetryMap.put("x", getPoseEstimate().getX());
             telemetryMap.put("y", getPoseEstimate().getY());
             telemetryMap.put("heading", Math.toDegrees(getPoseEstimate().getHeading()));
 
-            if(trajectorySequenceRunner.isBusy()) {
+            if (trajectorySequenceRunner.isBusy()) {
                 telemetryMap.put("xError", trajectorySequenceRunner.getLastPoseError().getX());
                 telemetryMap.put("yError", trajectorySequenceRunner.getLastPoseError().getY());
                 telemetryMap.put("headingError", Math.toDegrees(trajectorySequenceRunner.getLastPoseError().getHeading()));
@@ -293,7 +292,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
 
             telemetryMap.put("left velocity", leftVelocity);
-            telemetryMap.put("right velocity",rightVelocity);
+            telemetryMap.put("right velocity", rightVelocity);
             telemetryMap.put("swerve velocity", swerveVelocity);
 
             telemetryMap.put("target left velocity", targetLeftVelocity);
@@ -312,11 +311,13 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("drive velocity", driveVelocity.toString());
             telemetryMap.put("last drive velocity", lastDriveVelocity.toString());
 
-            telemetryMap.put("loopTime", loopTime / 1e9);
+            telemetryMap.put("loop time", loopTime / 1e9);
 
             telemetryMap.put("maintain chassis length enabled", maintainChassisLengthEnabled);
-            PIDFCoefficients velocityCoefficients = leftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-            telemetryMap.put("measured drivetrain PID coeffs", String.format("(p: %f, i: %f, d: %f)", velocityCoefficients.p, velocityCoefficients.i, velocityCoefficients.d));
+            if (!simulated) {
+                PIDFCoefficients velocityCoefficients = leftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+                telemetryMap.put("measured drivetrain PID coeffs", String.format("(p: %f, i: %f, d: %f)", velocityCoefficients.p, velocityCoefficients.i, velocityCoefficients.d));
+            }
         }
 
         return telemetryMap;

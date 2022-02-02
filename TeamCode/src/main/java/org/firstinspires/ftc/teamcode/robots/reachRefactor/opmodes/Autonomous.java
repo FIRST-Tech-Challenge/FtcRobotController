@@ -126,10 +126,11 @@ public class Autonomous {
                     .splineTo(new Vector2d(0, 43), Math.toRadians(235))
                 ))
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
                     builder
                     .turn(Math.toRadians(-75))
@@ -151,10 +152,11 @@ public class Autonomous {
                     .splineTo(new Vector2d(0, -43), Math.toRadians(120))
                 ))
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
                     builder
                     .turn(Math.toRadians(75))
@@ -178,10 +180,11 @@ public class Autonomous {
                         .splineTo(new Vector2d(-24, 40), Math.toRadians(315))
                 ))
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
                         builder
                         .turn(Math.toRadians(-135))
@@ -205,10 +208,11 @@ public class Autonomous {
                         )
                 )
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(135))
@@ -239,10 +243,11 @@ public class Autonomous {
                         )
                 )
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(-70))
@@ -270,10 +275,11 @@ public class Autonomous {
                         )
                 )
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(70))
@@ -302,10 +308,11 @@ public class Autonomous {
                         )
                 )
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(-150))
@@ -333,10 +340,11 @@ public class Autonomous {
                         )
                 )
                 .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> robot.crane.articulate(Crane.Articulation.LOWEST_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.MIDDLE_TIER),
-                        () -> robot.crane.articulate(Crane.Articulation.HIGH_TIER)
+                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                 )
+                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(150))
