@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemTemplate;
@@ -23,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Sarthak
  * @since 6/1/2019
  */
-public class IMUOdometry extends ThreadedSubsystemTemplate implements LocalizationAlgorithm, Odometry {
+public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
     /**
      * The Vertical Left Odometry Encoder
      */
