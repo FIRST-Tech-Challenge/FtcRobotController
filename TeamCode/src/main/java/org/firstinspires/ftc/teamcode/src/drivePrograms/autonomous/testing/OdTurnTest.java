@@ -21,8 +21,11 @@ public class OdTurnTest extends AutonomousTemplate {
 
 
         waitForStart();
+        while (opModeIsActive()) {
 
-        driveSystem.newTurnToPrototype(60, 1, .2, 5, true);
+            driveSystem.newTurnToPrototype(270, .7, .05, true);
+        }
+
         telemetry.addData("done", "");
         telemetry.update();
 
