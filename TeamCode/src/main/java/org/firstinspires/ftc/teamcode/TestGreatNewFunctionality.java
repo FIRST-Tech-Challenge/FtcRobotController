@@ -7,6 +7,9 @@ import android.os.Environment;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -40,18 +43,176 @@ public class TestGreatNewFunctionality extends LinearOpMode {
     boolean autoDriveLast = false;
     FileWriter log;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    // Configure a motor
+    public void configureMotor() {
+        PIDFCoefficients newPIDF = new PIDFCoefficients(10.0,  3.0,   0.0,  12.0);
+
+        robot.cappingMotor.setDirection(DcMotor.Direction.FORWARD);
+        robot.cappingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
+    }
+
+
+    public void createLog() {
         final String BASE_FOLDER_NAME = "FIRST";
-        telemetry.addData("State", "Initializing (please wait)");
-        telemetry.update();
 
         String directoryPath = Environment.getExternalStorageDirectory().getPath()+"/"+BASE_FOLDER_NAME;
         File directory = new File(directoryPath);
         //noinspection ResultOfMethodCallIgnored
-        directory.mkdir();
+        directory.mkdirs();
+
+        try {
+            log = new FileWriter(directoryPath+"/"+"autopilotData.txt", false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    final int CAPPING_CYCLECOUNT_START = 30;  // Capping Arm just started moving (1st cycle)
+    final int CAPPING_CYCLECOUNT_SERVO = 20;  // Capping Arm off chassis (safe to rotate wrist servo)
+    final int CAPPING_CYCLECOUNT_CHECK = 1;   // Time to check if Capping Arm is still moving?
+    final int CAPPING_CYCLECOUNT_DONE  = 0;   // Movement is complete (cycle count is reset)
+    boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
+    double    wristServoPos = 0.950;          // Servo setting to target once arm movement starts (WRIST_SERVO_INIT)
+    int       cappingArmCycleCount     = CAPPING_CYCLECOUNT_DONE;
+    boolean   cappingArmTweaked        = false;  // Reminder to zero power when joystick released
+
+    /*---------------------------------------------------------------------------------*/
+    void processCappingArmControls() {
+        // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
+        if( gamepad1_cross_now && !gamepad1_cross_last)
+        {
+            if( clawServoOpen ) {
+                robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );
+            }
+            else {
+                robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );
+            }
+            clawServoOpen = !clawServoOpen;
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
+        if( gamepad1_triangle_now && !gamepad1_triangle_last)
+        {
+            // <MIN> STORE ... midpoint1 ... CAP ... midpoint2 ... GRAB <MAX>
+            int midpoint1 = (robot.CAPPING_ARM_POS_STORE + robot.CAPPING_ARM_POS_CAP)/2;
+            int midpoint2 = (robot.CAPPING_ARM_POS_CAP   + robot.CAPPING_ARM_POS_GRAB)/2;
+            // toggle into and out of CAP position (use current arm position to decide)
+            if( (robot.cappingMotorPos < midpoint1) ||   /* currently STORE */
+                    (robot.cappingMotorPos > midpoint2) )    /* currently GRAB  */
+            {  // switch to CAP
+                wristServoPos =  robot.WRIST_SERVO_CAP;
+                robot.cappingArmPosition( robot.CAPPING_ARM_POS_CAP, 0.70 );
+                cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
+            else
+            { // currently CAP; switch to STORE
+                wristServoPos = robot.WRIST_SERVO_STORE;
+                robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.70 );
+                cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
+        }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
+        else if( gamepad1_square_now && !gamepad1_square_last)
+        {
+            // toggle between GRAB and STORE positions
+            // (use current arm position to decide)
+            if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_CAP )
+            {  // currently STORE; switch to GRAB
+                wristServoPos = robot.WRIST_SERVO_GRAB;
+                robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
+                cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
+            else
+            { // currently GRAB; switch to STORE
+                wristServoPos = robot.WRIST_SERVO_STORE;
+                robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.70 );
+                cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
+            }
+        }
+        //===================================================================
+        if( cappingArmCycleCount > CAPPING_CYCLECOUNT_SERVO ) {
+            // nothing to do yet (just started moving)
+            cappingArmCycleCount--;
+        }
+        else if( cappingArmCycleCount == CAPPING_CYCLECOUNT_SERVO ) {
+            robot.wristServo.setPosition( wristServoPos );
+            cappingArmCycleCount--;
+        }
+        else if( cappingArmCycleCount > CAPPING_CYCLECOUNT_CHECK ) {
+            // nothing to do yet (too soon to check motor state)
+            cappingArmCycleCount--;
+        }
+        else if( cappingArmCycleCount == CAPPING_CYCLECOUNT_CHECK ) {
+            if( robot.cappingMotor.isBusy() ) {
+                // still moving; hold at this cycle count
+            }
+            else { // no longer busy; turn off motor power
+                robot.cappingMotor.setPower( 0.0 );
+                robot.cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;   // ensure we're reset
+            }
+        }
+        else { // cappingArmCycleCount == CAPPING_CYCLECOUNT_DONE
+            // arm must be idle; check for manual arm control
+            cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;   // ensure we're reset
+            double gamepad1_left_trigger  = gamepad1.left_trigger;
+            double gamepad1_right_trigger = gamepad1.right_trigger;
+            if( gamepad1_left_trigger > 0.05 ) {
+                // limit how far we can drive this direction
+                if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
+                    robot.cappingMotor.setPower( +0.10 * gamepad1_left_trigger );
+                    cappingArmTweaked = true;
+                }
+                else {
+                    robot.cappingMotor.setPower( 0.0 );
+                }
+            }
+            else if( gamepad1_right_trigger > 0.05 ) {
+                // limit how far we can drive this direction
+                if( robot.cappingMotorPos > 0 ) {
+                    robot.cappingMotor.setPower( -0.10 * gamepad1_right_trigger );
+                    cappingArmTweaked = true;
+                }
+                else {
+                    robot.cappingMotor.setPower( 0.0 );
+                }
+            }
+            else if( cappingArmTweaked ) {
+                robot.cappingMotor.setPower( 0.0 );
+                cappingArmTweaked = false;
+            }
+        }
+        //===================================================================
+        if( gamepad1.left_bumper ) {
+            // What was the last commanded position?
+            double curPos = robot.wristServo.getPosition();
+            if( curPos >  -0.95 ) {
+                double newPos = curPos - 0.005;
+                robot.wristServo.setPosition( newPos );
+            }
+        }
+        else if( gamepad1.right_bumper ) {
+            // What was the last commanded position?
+            double curPos = robot.wristServo.getPosition();
+            if( curPos <  0.95 ) {
+                double newPos = curPos + 0.005;
+                robot.wristServo.setPosition( newPos );
+            }
+        }
+    } // processCappingArmControls
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        telemetry.addData("State", "Initializing (please wait)");
+        telemetry.update();
+
         // Initialize robot hardware
         robot.init(hardwareMap,false);
+
+        // Set the PIDF on the capping motor
+        configureMotor();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -62,70 +223,20 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         telemetry.addData("State", "Running");
         telemetry.update();
 
-        try {
-            log = new FileWriter(directoryPath+"/"+"autopilotData.txt", false);
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+            // Refresh gamepad button status
+            captureGamepad1Buttons();
+            captureGamepad2Buttons();
 
-            // run until the end of the match (driver presses STOP)
-            while (opModeIsActive())
-            {
-                // Refresh gamepad button status
-                captureGamepad1Buttons();
-                captureGamepad2Buttons();
+            // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
+            robot.readBulkData();
+            robot.headingIMU();
 
-                // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
-                robot.readBulkData();
-                robot.headingIMU();
-
-                //===================================================================
-                // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
-                autoDriveLast = autoDrive;
-                if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last) {
-                    if(autoDrive) {
-                        autoDrive = false;
-                        robot.stopMotion();
-                        telemetry.addData("State", "Autopiloting Off");
-                        telemetry.update();
-                    } else {
-                        telemetry.addData("State", "Autopiloting On");
-                        telemetry.update();
-                        autoDrive = true;
-                        double driveSpeed = 0.4;
-                        robot.frontLeftMotor.setPower(driveSpeed);
-                        robot.frontRightMotor.setPower(driveSpeed);
-                        robot.rearLeftMotor.setPower(driveSpeed);
-                        robot.rearRightMotor.setPower(driveSpeed);
-                    }
-                }
-
-                if(autoDrive) {
-                    // First time through
-                    if(!autoDriveLast) {
-                        log.write("Starting autopilot session\r\n");
-                    }
-                    log.write("IMU Z: " + robot.headingAngle + " Y: " + robot.tiltAngle);
-                    log.write(" FL: " + robot.frontLeftMotorAmps + " FR: " + robot.frontLeftMotorAmps + " RL: " + robot.rearLeftMotorAmps + " RR: " + robot.rearRightMotorAmps);
-                    log.write("\r\n");
-                    if(robot.tiltAngle < -2.0) {
-                        log.write("AutoStopping\r\n");
-                        robot.stopMotion();
-                        autoDrive = false;
-                    }
-                } else {
-                    // Last time through
-                    if(autoDriveLast) {
-                        log.write("IMU Z: " + robot.headingAngle + " Y: " + robot.tiltAngle);
-                        log.write(" FL: " + robot.frontLeftMotorAmps + " FR: " + robot.frontLeftMotorAmps + " RL: " + robot.rearLeftMotorAmps + " RR: " + robot.rearRightMotorAmps);
-                        log.write("\r\n");
-                        log.write("Ending autopilot session\r\n");
-                    }
-                }
-            }
-            log.flush();
-            log.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            // Hopefully this does everything capping arm.
+            processCappingArmControls();        }
     } // runOpMode
+
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
         gamepad1_triangle_last   = gamepad1_triangle_now;    gamepad1_triangle_now   = gamepad1.triangle;
