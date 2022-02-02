@@ -16,9 +16,7 @@ public class Constants {
     // distance measurements
     public static final double MIN_CHASSIS_LENGTH = 14.330708976377952;
     public static final double MAX_CHASSIS_LENGTH = 35.4331;
-    public static final double WHEEL_RADIUS = 4;
     public static final double TRACK_WIDTH = 12.132362205;
-    public static final double GEAR_RATIO = 18;
     public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
     public static final double DISTANCE_TARGET_TO_BACK_WHEEL = 7.086614;
 
@@ -34,13 +32,14 @@ public class Constants {
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
     public static double JOYSTICK_DEADZONE = 0.05;
 
-    public static double MAX_VEL = 90;
-    public static double MAX_ACCEL = 90;
+    public static double MAX_VEL = 30;
+    public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = Math.toRadians(360);
     public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
     public static final double TICKS_PER_REV = 1120;
     public static final double MAX_RPM = 150;
+    public static boolean USE_CUSTOM_VELOCITY_PID = false;
     public static PIDFCoefficients MOTOR_VELOCITY_PID = new PIDFCoefficients(2.5, 0.1, 0.2,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 

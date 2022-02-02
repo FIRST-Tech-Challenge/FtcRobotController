@@ -6,5 +6,4 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.TelemetryProvid
 
 public interface Subsystem extends TelemetryProvider {
     void update(Canvas fieldOverlay);
-    void stop();
 }

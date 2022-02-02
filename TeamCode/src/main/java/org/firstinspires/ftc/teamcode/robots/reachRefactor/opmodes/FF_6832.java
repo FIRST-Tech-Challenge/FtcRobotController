@@ -60,8 +60,6 @@ import java.util.function.IntSupplier;
  * gamepad 2: right bumper - increment chassis length stage
  * gamepad 2: arcade drive
  *
- * guide - emergency stop
- *
  * --Manual Diagnostic--
  * gamepad 1: left bumper - decrement diagnostic index
  * gamepad 1: right bumper - increment diagnostic index
@@ -110,7 +108,6 @@ public class FF_6832 extends OpMode {
     // diagnostic state
     private DiagnosticStep diagnosticStep;
     private int diagnosticIndex;
-    private boolean diagnosticFinished;
     private int servoTargetPos;
 
     // timing
@@ -122,10 +119,10 @@ public class FF_6832 extends OpMode {
         TELE_OP("Tele-Op"),
         AUTONOMOUS("Autonomous"),
         LINEAR_AUTONOMOUS("Linear Autonomous"),
-        AUTONOMOUS_DIAGNOSTIC("Autonomous Diagnostic"),
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
         BACK_AND_FORTH("Back And Forth"),
-        SQUARE("Square");
+        SQUARE("Square"),
+        TURN("turn");
 
         private final String name;
 
@@ -266,9 +263,10 @@ public class FF_6832 extends OpMode {
         auto.visionProvider.shutdownVision();
 
         robot.articulate(Robot.Articulation.START);
-        robot.driveTrain.setMaintainChassisLengthEnabled(true);
-        robot.driveTrain.setAntiTippingEnabled(false);
-        robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
+        if(!gameState.equals(GameState.MANUAL_DIAGNOSTIC)) {
+            robot.driveTrain.setMaintainChassisLengthEnabled(true);
+            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
+        }
         lastLoopClockTime = System.nanoTime();
     }
 
@@ -350,9 +348,6 @@ public class FF_6832 extends OpMode {
             rotate = 0;
         }
         sendDriveCommands();
-
-        if(stickyGamepad1.guide || stickyGamepad2.guide)
-            robot.stop();
     }
 
     private enum DiagnosticStep {
@@ -455,10 +450,6 @@ public class FF_6832 extends OpMode {
                         gameStateIndex = GameState.indexOf(GameState.TELE_OP);
                     }
                     break;
-                case AUTONOMOUS_DIAGNOSTIC:
-                    if(!diagnosticFinished && robot.articulate(Robot.Articulation.DIAGNOSTIC))
-                            diagnosticFinished = true;
-                    break;
                 case MANUAL_DIAGNOSTIC:
                     handleManualDiagnostic();
                     break;
@@ -467,6 +458,9 @@ public class FF_6832 extends OpMode {
                     break;
                 case SQUARE:
                     auto.square.execute();
+                    break;
+                case TURN:
+                    auto.turn.execute();
                     break;
             }
         } else {
@@ -530,12 +524,6 @@ public class FF_6832 extends OpMode {
         opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_LENGTH_LEVELS.length));
 
         switch(gameState) {
-            case TELE_OP:
-                break;
-            case AUTONOMOUS:
-                break;
-            case AUTONOMOUS_DIAGNOSTIC:
-                break;
             case MANUAL_DIAGNOSTIC:
                 opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
                 opModeTelemetryMap.put("Servo Target Pos", servoTargetPos);

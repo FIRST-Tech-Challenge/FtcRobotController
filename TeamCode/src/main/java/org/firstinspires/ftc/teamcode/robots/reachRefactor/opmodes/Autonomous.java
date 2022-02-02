@@ -91,12 +91,12 @@ public class Autonomous {
     public void build() {
         // trajectory articulations
         backAndForth = trajectorySequenceToStateMachine(builder ->
-                    builder
+                builder
                     .forward(24)
                     .back(24)
         );
         square = trajectorySequenceToStateMachine(builder ->
-                    builder
+                builder
                     .forward(24)
                     .turn(Math.toRadians(90))
                     .forward(24)
@@ -104,6 +104,13 @@ public class Autonomous {
                     .forward(24)
                     .turn(Math.toRadians(90))
                     .forward(24)
+                    .turn(Math.toRadians(90))
+        );
+        turn = trajectorySequenceToStateMachine(builder ->
+                builder
+                    .turn(Math.toRadians(90))
+                    .turn(Math.toRadians(90))
+                    .turn(Math.toRadians(90))
                     .turn(Math.toRadians(90))
         );
 

@@ -7,8 +7,6 @@ import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
@@ -61,9 +59,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.01, 0, 0);
 
     public static PIDCoefficients SWIVEL_PID_COEFFICIENTS = new PIDCoefficients(1, 0, 0.08);
-    public static PIDCoefficients CHASSIS_LENGTH_PID_COEFFICIENTS = new PIDCoefficients(0, 0,  0);
-    public static double CHASSIS_LENGTH_PID_TOLERANCE = 1;
-    public static double SWIVEL_PID_TOLERANCE = 1;
+    public static PIDCoefficients CHASSIS_LENGTH_PID_COEFFICIENTS = new PIDCoefficients(4, 0,  0);
+    public static double CHASSIS_LENGTH_PID_TOLERANCE = 5;
+    public static double SWIVEL_PID_TOLERANCE = 5;
 
     public TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectoryFollower follower;
@@ -91,7 +89,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private long lastLoopTime, loopTime;
 
-    private boolean maintainChassisLengthEnabled, antiTippingEnabled;
+    private boolean maintainChassisLengthEnabled;
 
     public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
         super(TRACK_WIDTH, simulated);
@@ -130,16 +128,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                 motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
                 compensatedBatteryVoltage = batteryVoltageSensor.getVoltage();
-                PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-                        MOTOR_VELOCITY_PID.p, MOTOR_VELOCITY_PID.i, MOTOR_VELOCITY_PID.d,
-                        MOTOR_VELOCITY_PID.f * 12 / compensatedBatteryVoltage
-                );
-                motor.setVelocityPIDFCoefficients(
-                        compensatedCoefficients.p,
-                        compensatedCoefficients.i,
-                        compensatedCoefficients.d,
-                        compensatedCoefficients.f
-                );
+                updateVelocityCoefficients();
             }
 
             swivelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -192,6 +181,23 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         return chassisLengthPID.performPID();
     }
 
+    private void updateVelocityCoefficients() {
+        if(USE_CUSTOM_VELOCITY_PID) {
+            PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
+                    MOTOR_VELOCITY_PID.p, MOTOR_VELOCITY_PID.i, MOTOR_VELOCITY_PID.d,
+                    MOTOR_VELOCITY_PID.f * 12 / compensatedBatteryVoltage
+            );
+            for (DcMotorEx motor : motors) {
+                motor.setVelocityPIDFCoefficients(
+                        compensatedCoefficients.p,
+                        compensatedCoefficients.i,
+                        compensatedCoefficients.d,
+                        compensatedCoefficients.f
+                );
+            }
+        }
+    }
+
     @Override
     public void update(Canvas fieldOverlay) {
         updatePoseEstimate();
@@ -201,19 +207,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             if (signal != null) setDriveSignal(signal);
         }
 
-        // updating velocity PIDs from dashboard
-        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-                MOTOR_VELOCITY_PID.p, MOTOR_VELOCITY_PID.i, MOTOR_VELOCITY_PID.d,
-                MOTOR_VELOCITY_PID.f * 12 / compensatedBatteryVoltage
-        );
-        for(DcMotorEx motor: motors) {
-            motor.setVelocityPIDFCoefficients(
-                    compensatedCoefficients.p,
-                    compensatedCoefficients.i,
-                    compensatedCoefficients.d,
-                    compensatedCoefficients.f
-            );
-        }
+        updateVelocityCoefficients();
 
         // sensor readings
         leftVelocity = encoderTicksToInches(leftMotor.getVelocity());
@@ -277,17 +271,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     @Override
-    public void stop() {
-        targetLeftVelocity = 0;
-        targetRightVelocity = 0;
-        targetSwerveVelocity = 0;
-        swivelPower = 0;
-        duckSpinnerPower = 0;
-        chassisLengthPID.disable();
-        swivelPID.disable();
-    }
-
-    @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new HashMap<>();
 
@@ -332,7 +315,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("loopTime", loopTime / 1e9);
 
             telemetryMap.put("maintain chassis length enabled", maintainChassisLengthEnabled);
-            telemetryMap.put("anti tipping enabled", antiTippingEnabled);
+            PIDFCoefficients velocityCoefficients = leftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            telemetryMap.put("measured drivetrain PID coeffs", String.format("(p: %f, i: %f, d: %f)", velocityCoefficients.p, velocityCoefficients.i, velocityCoefficients.d));
         }
 
         return telemetryMap;
@@ -373,14 +357,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
-    }
-
-    public TrajectorySequenceBuilder trajectorySequenceBuilder(Supplier<Pose2d> poseProvider) {
-        return new TrajectorySequenceBuilder(
-                poseProvider.get(),
-                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-                MAX_ANG_VEL, MAX_ANG_ACCEL
-        );
     }
 
     public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
@@ -489,13 +465,5 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public void setMaintainChassisLengthEnabled(boolean maintainChassisLengthEnabled) {
         this.maintainChassisLengthEnabled = maintainChassisLengthEnabled;
-    }
-
-    public boolean isAntiTippingEnabled() {
-        return antiTippingEnabled;
-    }
-
-    public void setAntiTippingEnabled(boolean antiTippingEnabled) {
-        this.antiTippingEnabled = antiTippingEnabled;
     }
 }

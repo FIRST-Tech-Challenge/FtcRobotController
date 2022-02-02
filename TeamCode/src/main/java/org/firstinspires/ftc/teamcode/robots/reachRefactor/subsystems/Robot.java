@@ -49,7 +49,6 @@ public class Robot implements Subsystem {
         articulationMap = new HashMap<>();
         articulationMap.put(Articulation.INIT, init);
         articulationMap.put(Articulation.START, start);
-        articulationMap.put(Articulation.DIAGNOSTIC, diagnostic);
         articulationMap.put(Articulation.TRANSFER, transfer);
     }
 
@@ -78,12 +77,6 @@ public class Robot implements Subsystem {
         articulate(articulation);
     }
 
-    @Override
-    public void stop() {
-        for(Subsystem subsystem: subsystems)
-            subsystem.stop();
-    }
-
     //----------------------------------------------------------------------------------------------
     // Articulations
     //----------------------------------------------------------------------------------------------
@@ -94,16 +87,10 @@ public class Robot implements Subsystem {
         // misc. articulations
         INIT,
         START,
-        DIAGNOSTIC,
 
         // tele-op articulations
         TRANSFER,
     }
-
-    // Misc. Articulations
-    private Stage diagnosticStage = new Stage();
-    private StateMachine diagnostic = UtilMethods.getStateMachine(diagnosticStage)
-            .build();
 
     // Tele-Op articulations
     private Stage transferStage = new Stage();
@@ -127,11 +114,10 @@ public class Robot implements Subsystem {
             .build();
 
     public boolean articulate(Articulation articulation) {
-        this.articulation = articulation;
-
         if(articulation.equals(Articulation.MANUAL))
             return true;
-        else if(articulationMap.get(articulation).execute()) {
+        this.articulation = articulation;
+        if(articulationMap.get(articulation).execute()) {
             this.articulation = Articulation.MANUAL;
             return true;
         }

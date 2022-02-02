@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
-
-
 public class UtilMethods {
 
     public static double servoNormalize(double pulse) {

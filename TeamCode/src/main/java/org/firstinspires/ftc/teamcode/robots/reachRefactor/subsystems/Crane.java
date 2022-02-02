@@ -18,9 +18,6 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 public class Crane implements Subsystem {
     private static final String TELEMETRY_NAME = "Crane";
 
-    public static int BUCKET_UP_POS = 900;
-    public static int BUCKET_DOWN_POS = 1200;
-
     public static int SHOULDER_HOME_PWM = 1550;
     public static int ELBOW_HOME_PWM = 1550;
     public static int WRIST_HOME_PWM = 1500;
@@ -94,11 +91,6 @@ public class Crane implements Subsystem {
             this.toHomeTime = toHomeTime;
             this.dumpPos = dumpPos;
         }
-
-        Articulation(int shoulderPos, int elbowPos, int wristPos, double turretAngle, float toHomeTime, int dumpPos, boolean rawValues) {
-            this(shoulderPos, elbowPos, wristPos, turretAngle, toHomeTime, dumpPos);
-            this.rawValues = rawValues;
-        }
     }
 
     private float currentToHomeTime = Articulation.HOME.toHomeTime;
@@ -168,11 +160,6 @@ public class Crane implements Subsystem {
         double newpos = Range.clip(targetpos,WRIST_DEG_MIN, WRIST_DEG_MAX);
         newpos = newpos*WRIST_PWM_PER_DEGREE+WRIST_HOME_PWM;
         return newpos;
-    }
-
-    @Override
-    public void stop(){
-        turret.stop();
     }
 
     @Override

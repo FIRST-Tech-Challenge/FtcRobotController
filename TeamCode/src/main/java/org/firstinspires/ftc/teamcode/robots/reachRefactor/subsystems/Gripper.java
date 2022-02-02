@@ -94,11 +94,6 @@ public class Gripper implements Subsystem{
         pitchServo.setPosition(servoNormalize(pitchTargetPos));
     }
 
-    @Override
-    public void stop() {
-
-    }
-
     public enum Articulation {
         MANUAL,
         GRIP,
