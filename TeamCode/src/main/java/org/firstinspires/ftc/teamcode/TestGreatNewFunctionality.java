@@ -25,7 +25,10 @@ public class TestGreatNewFunctionality extends LinearOpMode {
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Duck motor control
     boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // Capping arm claw open/close
     boolean gamepad1_square_last,     gamepad1_square_now     = false;  // Capping arm collect/store positions
-    boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;  // Freight Arm (Hub-Top)
+    boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;  // gamepad1.dpad_up used live/realtime
+    boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;  //   (see processDpadDriveMode() below)
+    boolean gamepad1_dpad_left_last,  gamepad1_dpad_left_now  = false;
+    boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 
     boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  //
     boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport height)
@@ -42,11 +45,10 @@ public class TestGreatNewFunctionality extends LinearOpMode {
     boolean autoDrive = false;
     boolean autoDriveLast = false;
     FileWriter log;
+    PIDFCoefficients newPIDF = new PIDFCoefficients( 10.0, 3.0, 0.0, 12.0 );
 
     // Configure a motor
     public void configureMotor() {
-        PIDFCoefficients newPIDF = new PIDFCoefficients(10.0,  3.0,   0.0,  12.0);
-
         robot.cappingMotor.setDirection(DcMotor.Direction.FORWARD);
         robot.cappingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
@@ -203,6 +205,93 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         }
     } // processCappingArmControls
 
+    String currentPIDFAdjust = "P";
+    public void processPIDFAdjustControls() {
+        boolean PIDFUpdated = false;
+
+        if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last)
+        {
+            PIDFUpdated = true;
+            switch(currentPIDFAdjust) {
+                case "P":
+                    newPIDF.p = newPIDF.p + 1.0;
+                    break;
+                case "I":
+                    newPIDF.i = newPIDF.i + 1.0;
+                    break;
+                case "D":
+                    newPIDF.d = newPIDF.d + 1.0;
+                    break;
+                case "F":
+                    newPIDF.f = newPIDF.f + 1.0;
+                    break;
+            }
+        }
+        if( gamepad1_dpad_down_now && !gamepad1_dpad_down_last)
+        {
+            PIDFUpdated = true;
+            switch(currentPIDFAdjust) {
+                case "P":
+                    if(newPIDF.p > 0.0) {
+                        newPIDF.p = newPIDF.p - 1.0;
+                    }
+                    break;
+                case "I":
+                    if(newPIDF.i > 0.0) {
+                        newPIDF.i = newPIDF.i - 1.0;
+                    }
+                    break;
+                case "D":
+                    if(newPIDF.d > 0.0) {
+                        newPIDF.d = newPIDF.d - 1.0;
+                    }
+                    break;
+                case "F":
+                    if(newPIDF.f > 0.0) {
+                        newPIDF.f = newPIDF.f - 1.0;
+                    }
+                    break;
+            }
+        }
+        if( gamepad1_dpad_right_now && !gamepad1_dpad_right_last)
+        {
+            switch(currentPIDFAdjust) {
+                case "P":
+                    currentPIDFAdjust = "I";
+                    break;
+                case "I":
+                    currentPIDFAdjust = "D";
+                    break;
+                case "D":
+                    currentPIDFAdjust = "F";
+                    break;
+                case "F":
+                    currentPIDFAdjust = "P";
+                    break;
+            }
+        }
+        if( gamepad1_dpad_left_now && !gamepad1_dpad_left_last)
+        {
+            switch(currentPIDFAdjust) {
+                case "P":
+                    currentPIDFAdjust = "F";
+                    break;
+                case "I":
+                    currentPIDFAdjust = "P";
+                    break;
+                case "D":
+                    currentPIDFAdjust = "I";
+                    break;
+                case "F":
+                    currentPIDFAdjust = "D";
+                    break;
+            }
+        }
+        if(PIDFUpdated) {
+            configureMotor();
+        }
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addData("State", "Initializing (please wait)");
@@ -234,7 +323,11 @@ public class TestGreatNewFunctionality extends LinearOpMode {
             robot.headingIMU();
 
             // Hopefully this does everything capping arm.
-            processCappingArmControls();        }
+            processCappingArmControls();
+            processPIDFAdjustControls();
+            telemetry.addData("Current PIDF Adjust: ", currentPIDFAdjust);
+            telemetry.addData("Motor  PIDF: ", newPIDF.toString());
+        }
     } // runOpMode
 
     /*---------------------------------------------------------------------------------*/
@@ -244,6 +337,9 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         gamepad1_cross_last      = gamepad1_cross_now;       gamepad1_cross_now      = gamepad1.cross;
         gamepad1_square_last     = gamepad1_square_now;      gamepad1_square_now     = gamepad1.square;
         gamepad1_dpad_up_last    = gamepad1_dpad_up_now;     gamepad1_dpad_up_now    = gamepad1.dpad_up;
+        gamepad1_dpad_down_last  = gamepad1_dpad_down_now;   gamepad1_dpad_down_now  = gamepad1.dpad_down;
+        gamepad1_dpad_left_last  = gamepad1_dpad_left_now;   gamepad1_dpad_left_now  = gamepad1.dpad_left;
+        gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
