@@ -270,7 +270,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
-        sleep( 1250);   // wait for arm to reach final position
+        sleep( 1500);   // wait for arm to reach final position
 
         // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
         if( Math.abs(strafeDist1) > 0.10 ) {

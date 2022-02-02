@@ -209,7 +209,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             telemetry.update();
             dumpBlock( blockLevel );
         }
-/*
+
         // Drive to warehouse to park
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToWarehouse");
@@ -237,8 +237,6 @@ public class AutonomousBwarehouse extends AutonomousBase {
             telemetry.update();
             collectFreight( blockLevel, 40.0, 250 );
         }
-
- */
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
