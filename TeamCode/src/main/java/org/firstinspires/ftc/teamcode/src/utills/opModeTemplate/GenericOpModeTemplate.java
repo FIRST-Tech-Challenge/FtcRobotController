@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -112,6 +113,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Provides methods for using the linear slide
      */
     protected LinearSlide slide;
+
+    protected BNO055IMU imu;
 
     /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}

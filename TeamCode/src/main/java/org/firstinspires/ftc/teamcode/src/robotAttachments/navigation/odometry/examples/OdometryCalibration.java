@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 import java.io.File;
 
@@ -24,7 +23,7 @@ import java.io.File;
  */
 @Disabled
 @TeleOp(name = "Odometry System Calibration", group = "Calibration")
-public class OdometryCalibration extends LinearOpMode {
+public class OdometryCalibration extends GenericOpModeTemplate {
 
     private final static double PIVOT_SPEED = 0.15;
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
@@ -50,10 +49,10 @@ public class OdometryCalibration extends LinearOpMode {
     private BNO055IMU imu;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
         //Initialize hardware map values. PLEASE UPDATE THESE VALUES TO MATCH YOUR CONFIGURATION
         initHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
-        final OdometryPodServos podServos = new OdometryPodServos(hardwareMap, "vertical_right_odometry_servo", "vertical_left_odometry_servo", "horizontal_odometry_servo");
+        this.initOdometryServos();
         podServos.lower();
         //Initialize IMU hardware map value. PLEASE UPDATE THIS VALUE TO MATCH YOUR CONFIGURATION
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -68,7 +67,7 @@ public class OdometryCalibration extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
         telemetry.addData("Odometry System Calibration Status", "IMU Init Complete");
-        telemetry.clear();
+        telemetry.update();
 
         //Odometry System Calibration Init Complete
         telemetry.addData("Odometry System Calibration Status", "Init Complete");
@@ -85,7 +84,7 @@ public class OdometryCalibration extends LinearOpMode {
 
         //MUST TURN 90 DEGREES EXACTLY
         //PLAY WITH SPEED AND DEGREE OF TURN TO GET THE ROBOT TO END UP AS CLOSE TO 90 DEGREES AS POSSIBLE
-        while (getZAngle() < 87.5 && opModeIsActive()) {
+        while (getZAngle() < 89.5 && opModeIsActive()) {
             right_front.setPower(frPower);
             right_back.setPower(brPower);
             left_front.setPower(flPower);

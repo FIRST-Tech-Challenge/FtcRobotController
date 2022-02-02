@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing.vfNav;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing.vfNav;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoVFTrackingTemplate;
 
 import java.util.Locale;
 
+@Disabled
 @TeleOp(name = "-VFNavWithTFAndDualCamerasMK2")
 public class VFNavWithTFAndDualCamerasMk2 extends AutoVFTrackingTemplate {
 
