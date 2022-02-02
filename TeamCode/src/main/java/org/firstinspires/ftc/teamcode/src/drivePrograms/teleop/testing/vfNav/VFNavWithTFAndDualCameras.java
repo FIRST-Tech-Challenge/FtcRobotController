@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing.vfNav;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing.vfNav;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -25,7 +26,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Disabled
 @TeleOp(name = "-VFNavWithTFAndDualCameras")
 public class VFNavWithTFAndDualCameras extends GenericOpModeTemplate {
     private static final String VUFORIA_KEY = VuforiaKey.VUFORIA_KEY;

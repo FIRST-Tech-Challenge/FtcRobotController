@@ -27,13 +27,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing.vfNav;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing.vfNav;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -78,7 +79,7 @@ import java.util.List;
  */
 
 @TeleOp(name = "Vuforia Field Nav Webcam", group = "Concept")
-//@Disabled
+@Disabled
 public class ConceptVuforiaFieldNavigationWebcam extends GenericOpModeTemplate {
 
     /*
