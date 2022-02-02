@@ -14,6 +14,7 @@ public class AutonRedSpinnerAndPark extends OpMode {
     private double waitTime;
     private ElapsedTime runtime = new ElapsedTime();
     @Override
+    //outside edge lined up with straight line of the carousel
     public void init(){
         msStuckDetectInit = 11500;
         msStuckDetectLoop = 10000;
@@ -29,26 +30,31 @@ public class AutonRedSpinnerAndPark extends OpMode {
     public void loop(){
         switch(stateMachineFlow) {
             case 0:
-                robot.frontLinearDrive(.8,-20);
-                waitTime = .2;
-                runtime.reset();
-                while (waitTime > runtime.time()){}
-                telemetry.addData("GyroAngle", robot.getAngle());
+                robot.frontLinearDrive(.8,-10);
+//                waitTime = .2;
+//                runtime.reset();
+//                while (waitTime > runtime.time()){}
+//                telemetry.addData("GyroAngle", robot.getAngle());
                 telemetry.addData("Stage", 1);
                 telemetry.update();
-                robot.oneSideRotateReverse(45,-.4);
-                telemetry.addData("GyroAngle", robot.getAngle());
-                telemetry.update();
+//                robot.oneSideRotateReverse(65,-.4);
+//                telemetry.addData("GyroAngle", robot.getAngle());
+//                telemetry.update();
                 stateMachineFlow++;
                 break;
 
             case 1:
+//                robot.frontLinearDrive(.8,-15);
                 telemetry.addData("Stage", 2);
                 telemetry.update();
+
+//                motor.rotaterPower(0);
+                robot.gStatTurn(.8,145);
+                robot.frontLinearDrive(.3,-12);
                 waitTime = 2.8;
                 runtime.reset();
                 while (waitTime > runtime.time()) {
-                    motor.rotaterPower(-.85);
+                    motor.rotaterPower(.85);
                 }
                 motor.rotaterPower(0);
                 stateMachineFlow++;
@@ -63,7 +69,10 @@ public class AutonRedSpinnerAndPark extends OpMode {
 //                    robot.leftBack.setPower(.2);
 //                    robot.leftFront.setPower(.2);
                 }
-                robot.oneSideRotate(-65,.4);
+                robot.frontLinearDrive(.8,13);
+                robot.gStatTurn(.8,-56);
+
+//                robot.oneSideRotate(-65,.4);
 
 //                robot.leftBack.setPower(0);
 //                robot.leftFront.setPower(0);
@@ -74,7 +83,9 @@ public class AutonRedSpinnerAndPark extends OpMode {
                 waitTime = .5;
                 runtime.reset();
                 while (waitTime > runtime.time());
-                robot.frontLinearDrive(.8,-25);
+                robot.frontLinearDrive(.4,-20);
+
+//                robot.frontLinearDrive(.8,-25);
                 stateMachineFlow++;
                 break;
             default:

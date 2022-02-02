@@ -150,44 +150,44 @@ public class MecanumControlV2 extends OpMode {
 
         // TOGGLE FOR DUCK SPINNER ^^^^
 
-        if(gamepad2.x){
-            switch(liftPos){
-                case 0:
-                    break;
-                case 1:
-                    Motor.verLiftPos(.6,-dis/2);
-                    break;
-                case 2:
-                    Motor.verLiftPos(.6,-dis);
-            }
-            liftPos = 0;
-        }
-        if(gamepad2.a){
-            switch(liftPos){
-                case 0:
-                    Motor.verLiftPos(.6,dis/2);
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    Motor.verLiftPos(.6,-dis/2);
-            }
-            liftPos = 1;
-        }
-        if(gamepad2.b){
-            switch(liftPos){
-                case 0:
-                    Motor.verLiftPos(.6,dis);
-                    break;
-                case 1:
-                    Motor.verLiftPos(.6,dis/2);
-                    break;
-                case 2:
-
-            }
-            liftPos = 2;
-
-        }
+//        if(gamepad2.x){
+//            switch(liftPos){
+//                case 0:
+//                    break;
+//                case 1:
+//                    Motor.verLiftPos(.6,-dis/2);
+//                    break;
+//                case 2:
+//                    Motor.verLiftPos(.6,-dis);
+//            }
+//            liftPos = 0;
+//        }
+//        if(gamepad2.a){
+//            switch(liftPos){
+//                case 0:
+//                    Motor.verLiftPos(.6,dis/2);
+//                    break;
+//                case 1:
+//                    break;
+//                case 2:
+//                    Motor.verLiftPos(.6,-dis/2);
+//            }
+//            liftPos = 1;
+//        }
+//        if(gamepad2.b){
+//            switch(liftPos){
+//                case 0:
+//                    Motor.verLiftPos(.6,dis);
+//                    break;
+//                case 1:
+//                    Motor.verLiftPos(.6,dis/2);
+//                    break;
+//                case 2:
+//
+//            }
+//            liftPos = 2;
+//
+//        }
 
 //        if (gamepad1.right_trigger>0.1 && !isIntakeOn) {
 //            isIntakeOn = true;
@@ -324,10 +324,10 @@ public class MecanumControlV2 extends OpMode {
             Motor.VertLift.setPower(0);
         }
         //Horizontal Slide Movement
-        if(gamepad2.dpad_left){
+        if(gamepad2.dpad_right){
             Motor.HorzLift.setPower(.8);
         }
-        else if(gamepad2.dpad_right){
+        else if(gamepad2.dpad_left){
             Motor.HorzLift.setPower(-.8);
         }
         else{
