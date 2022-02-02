@@ -125,18 +125,18 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_MAX        = 2250;  // Maximum safe rotation without hitting field floor
-    public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 0; // 15
+    public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15; // 15
     public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 0; // 24
-    public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 0; // 75
+    public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 25; // 75
 
     public Servo        boxServo                   = null;
-    public double       BOX_SERVO_INIT             = 0.48;  // we init to the COLLECT position
+    public double       BOX_SERVO_INIT             = 0.28;  // we init to the TRANSPORT position
     public double       BOX_SERVO_COLLECT          = 0.48;
     public double       BOX_SERVO_STORED           = 0.39;  // less than TRANSPORT so we can't hold TWO
     public double       BOX_SERVO_TRANSPORT        = 0.28;
     public double       BOX_SERVO_DUMP_TOP         = 0.55;
     public double       BOX_SERVO_DUMP_MIDDLE      = 0.55;
-    public double       BOX_SERVO_DUMP_BOTTOM      = 0.55;
+    public double       BOX_SERVO_DUMP_BOTTOM      = 0.75;
     public double       BOX_SERVO_DUMP_FRONT       = 0.80;  // ??
 
 //  public CRServo      sweepServo                 = null;  // CONTINUOUS, so no need for fixed positions

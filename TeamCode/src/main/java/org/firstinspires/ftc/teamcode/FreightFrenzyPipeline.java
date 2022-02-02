@@ -81,12 +81,12 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     private Point alignment3RedPointB = new Point(285,222);
     private final static double colorRedThreshold = 140.0;
 
-    private Point alignment1BluePointA = new Point(40,212);
-    private Point alignment1BluePointB = new Point(50,222);
-    private Point alignment2BluePointA = new Point(158,212);
-    private Point alignment2BluePointB = new Point(168,222);
-    private Point alignment3BluePointA = new Point(277,212);
-    private Point alignment3BluePointB = new Point(287,222);
+    private Point alignment1BluePointA = new Point(47,209);
+    private Point alignment1BluePointB = new Point(57,219);
+    private Point alignment2BluePointA = new Point(158,209);
+    private Point alignment2BluePointB = new Point(168,219);
+    private Point alignment3BluePointA = new Point(274,209);
+    private Point alignment3BluePointB = new Point(284,219);
     private final static double colorBlueThreshold = 140.0;
 
     // Public statics to be used by opMode
@@ -140,8 +140,8 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         } else {
             if(duckySide) {
                 directory += "/blue_duck";
-                sub1PointA = new Point( 30,190); // 15x15 pixels on LEFT
-                sub1PointB = new Point( 45,205);
+                sub1PointA = new Point( 40,190); // 15x15 pixels on LEFT
+                sub1PointB = new Point( 55,205);
                 sub2PointA = new Point(155,190); // 15x15 pixels on CENTER
                 sub2PointB = new Point(170,205);
                 sub3PointA = new Point(272,190); // 15x15 pixels on RIGHT
@@ -149,8 +149,8 @@ class FreightFrenzyPipeline extends OpenCvPipeline
 
             } else {
                 directory += "/blue_warehouse";
-                sub1PointA = new Point( 50,190); // 15x15 pixels on LEFT  (limited by barrier!)
-                sub1PointB = new Point( 65,205);
+                sub1PointA = new Point( 57,190); // 15x15 pixels on LEFT  (limited by barrier!)
+                sub1PointB = new Point( 72,205);
                 sub2PointA = new Point(155,190); // 15x15 pixels on CENTER
                 sub2PointB = new Point(170,205);
                 sub3PointA = new Point(272,190); // 15x15 pixels on RIGHT
