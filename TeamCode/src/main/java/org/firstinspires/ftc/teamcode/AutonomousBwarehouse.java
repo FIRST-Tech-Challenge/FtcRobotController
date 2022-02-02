@@ -59,6 +59,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
     OpenCvCamera webcam;
     public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
     public static double collisionDelay = 0.0;  // wait 0 seconds before moving (to avoid collision)
+    private ElapsedTime autoTimer = new ElapsedTime();
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
     boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;
@@ -130,6 +131,9 @@ public class AutonomousBwarehouse extends AutonomousBase {
             // Pause briefly before looping
             idle();
         } // !isStarted
+
+        // Start our autonomous timer.
+        autoTimer.reset();
 
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
@@ -224,15 +228,18 @@ public class AutonomousBwarehouse extends AutonomousBase {
             freightCollected = collectFreight( blockLevel, 65.0, 350 );
         }
 
-        // If we collected a freight, dump it in shared hub
-        if( opModeIsActive() && freightCollected) {
+        // If we collected a freight, dump it in shared hub if there is enough time
+        // to drop and get back in warehouse
+        if( opModeIsActive() && freightCollected && (autoTimer.milliseconds() < SHARED_HUB_SCORE_TIME_THRESHOLD)) {
             telemetry.addData("Skill", "scoreFreightSharedHub");
             telemetry.update();
             scoreFreightSharedHub( blockLevel );
+            // Since we scored the freight, we don't have one collected anymore.
+            freightCollected = false;
         }
 
-        // Drive into freight pile to collect a second freight
-        if( opModeIsActive() ) {
+        // Drive into freight pile to collect a freight if we don't have one
+        if( opModeIsActive() && !freightCollected ) {
             telemetry.addData("Skill", "collectFreight 40");
             telemetry.update();
             collectFreight( blockLevel, 40.0, 250 );

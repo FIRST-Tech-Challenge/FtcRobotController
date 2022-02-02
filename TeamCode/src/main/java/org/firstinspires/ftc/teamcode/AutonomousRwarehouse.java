@@ -59,6 +59,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
     OpenCvCamera webcam;
     public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
     public static double collisionDelay = 0.0;  // wait 0 seconds before moving (to avoid collision)
+    private ElapsedTime autoTimer = new ElapsedTime();
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
     boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;
@@ -130,6 +131,9 @@ public class AutonomousRwarehouse extends AutonomousBase {
             // Pause briefly before looping
             idle();
         } // !isStarted
+
+        // Start our autonomous timer.
+        autoTimer.reset();
 
         // Sampling is completed during the INIT stage; No longer need camera active/streaming
         webcam.stopStreaming();
@@ -224,15 +228,18 @@ public class AutonomousRwarehouse extends AutonomousBase {
             freightCollected = collectFreight( blockLevel, -65.0, 350 );
         }
 
-        // If we collected a freight, dump it in shared hub
-        if( opModeIsActive() && freightCollected) {
+        // If we collected a freight, dump it in shared hub if there is enough time
+        // to drop and get back in warehouse
+        if( opModeIsActive() && freightCollected && (autoTimer.milliseconds() < SHARED_HUB_SCORE_TIME_THRESHOLD)) {
             telemetry.addData("Skill", "scoreFreightSharedHub");
             telemetry.update();
             scoreFreightSharedHub( blockLevel );
+            // Since we scored the freight, we don't have one collected anymore.
+            freightCollected = false;
         }
 
-        // Drive into freight pile to collect a second freight
-        if( opModeIsActive() ) {
+        // Drive into freight pile to collect a freight if we don't have one
+        if( opModeIsActive() && !freightCollected ) {
             telemetry.addData("Skill", "collectFreight -40");
             telemetry.update();
             collectFreight( blockLevel, -40.0, 250 );
@@ -244,19 +251,23 @@ public class AutonomousRwarehouse extends AutonomousBase {
         double strafeDist1 = 0.0;
         double distanceToGrab = 3.2;
         double strafeDist2 = 0.0;
+        long armSleep = 0;
 
         switch( level ) {
             case 3 : strafeDist1 = 0.0;      // right/top
                      distanceToGrab = -2.0;
                      strafeDist2 = 3.0;
+                     armSleep = 1500;
                      break;
             case 2 : strafeDist1 = 7.0;     // middle/middle
                      distanceToGrab = -2.0;
                      strafeDist2 = 0.0;
+                     armSleep = 0;
                      break;
             case 1 : strafeDist1 = 14.5;
                      distanceToGrab = -2.5; // left/bottom
                      strafeDist2 = 0.0;
+                     armSleep = 0;
                      break;
         } // switch()
 
@@ -270,13 +281,14 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
-        sleep( 1500);   // wait for arm to reach final position
 
         // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
         if( Math.abs(strafeDist1) > 0.10 ) {
             gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist1, 0.0, DRIVE_THRU );
             robot.stopMotion();
         }
+
+        sleep( armSleep);   // wait for arm to reach final position
 
         // Drive forward to collect the element
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
