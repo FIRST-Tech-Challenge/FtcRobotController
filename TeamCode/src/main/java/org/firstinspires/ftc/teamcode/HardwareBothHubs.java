@@ -97,7 +97,7 @@ public class HardwareBothHubs
 
     // CAPPING ARM WRIST SERVO
     public Servo   wristServo = null;
-    public static double wristServoAuto = 0.259;
+    public static double wristServoAuto = 0.800;
     public double  WRIST_SERVO_INIT    = 0.950;
     public double  WRIST_SERVO_GRAB    = 0.455;
     public double  WRIST_SERVO_LIBERTY = 0.500;  // status of liberty pose (end duck-autonomous here)
@@ -135,7 +135,7 @@ public class HardwareBothHubs
     public double       BOX_SERVO_STORED           = 0.39;  // less than TRANSPORT so we can't hold TWO
     public double       BOX_SERVO_TRANSPORT        = 0.28;
     public double       BOX_SERVO_DUMP_TOP         = 0.55;
-    public double       BOX_SERVO_DUMP_MIDDLE      = 0.55;
+    public double       BOX_SERVO_DUMP_MIDDLE      = 0.65;
     public double       BOX_SERVO_DUMP_BOTTOM      = 0.75;
     public double       BOX_SERVO_DUMP_FRONT       = 0.80;  // ??
 

@@ -330,6 +330,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
             telemetry.addData("Current PIDF Adjust: ", currentPIDFAdjust);
             telemetry.addData("New PIDF: ", newPIDF.toString());
             telemetry.addData("Old PIDF: ", oldPIDF.toString());
+            telemetry.update();
         }
     } // runOpMode
 

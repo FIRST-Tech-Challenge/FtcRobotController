@@ -218,14 +218,14 @@ public class AutonomousRwarehouse extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToWarehouse");
             telemetry.update();
-            driveToWarehouse( blockLevel );
+//          driveToWarehouse( blockLevel );
         }
 
         // Drive into freight pile to collect
         if( opModeIsActive() ) {
             telemetry.addData("Skill", "collectFreight -65");
             telemetry.update();
-            freightCollected = collectFreight( blockLevel, -65.0, 350 );
+//          freightCollected = collectFreight( blockLevel, -65.0, 350 );
         }
 
         // If we collected a freight, dump it in shared hub if there is enough time
@@ -233,7 +233,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         if( opModeIsActive() && freightCollected && (autoTimer.milliseconds() < SHARED_HUB_SCORE_TIME_THRESHOLD)) {
             telemetry.addData("Skill", "scoreFreightSharedHub");
             telemetry.update();
-            scoreFreightSharedHub( blockLevel );
+  //        scoreFreightSharedHub( blockLevel );
             // Since we scored the freight, we don't have one collected anymore.
             freightCollected = false;
         }
@@ -242,7 +242,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         if( opModeIsActive() && !freightCollected ) {
             telemetry.addData("Skill", "collectFreight -40");
             telemetry.update();
-            collectFreight( blockLevel, -40.0, 250 );
+//          collectFreight( blockLevel, -40.0, 250 );
         }
     } // mainAutonomous
 
@@ -262,7 +262,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
             case 2 : strafeDist1 = 7.0;     // middle/middle
                      distanceToGrab = -2.0;
                      strafeDist2 = 0.0;
-                     armSleep = 0;
+                     armSleep = 500;
                      break;
             case 1 : strafeDist1 = 14.5;
                      distanceToGrab = -2.5; // left/bottom
@@ -308,6 +308,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToHub( int level ) {
+
         double angleToHub = 0.0;
         double distanceToHub = 0.0;
         double finalDistanceToHub = 0.0;
@@ -330,7 +331,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
                      break;
             case 1 : angleToHub = -27.0;
                      distanceToHub = 0.0;  // bottom
-                     finalDistanceToHub = -3.5;
+                     finalDistanceToHub = -5.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      armSleep = 1500;   // 1.5 sec
                      break;
