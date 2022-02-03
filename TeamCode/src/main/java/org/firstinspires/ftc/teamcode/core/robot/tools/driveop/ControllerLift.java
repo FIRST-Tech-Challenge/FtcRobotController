@@ -34,7 +34,7 @@ public class ControllerLift extends AutoLift {
         startButton = new ButtonReader(toolGamepad, GamepadKeys.Button.START);
         leftDPad = new ButtonReader(toolGamepad, GamepadKeys.Button.DPAD_LEFT);
     }
-
+    @Override
     public void update() {
         leftTrigger.readValue();
         rightTrigger.readValue();
