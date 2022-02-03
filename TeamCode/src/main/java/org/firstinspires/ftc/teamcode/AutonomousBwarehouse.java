@@ -189,6 +189,8 @@ public class AutonomousBwarehouse extends AutonomousBase {
     private void mainAutonomous() {
 
         boolean freightCollected = false;
+        double freightCollectAngle = 65.0;
+
         // Wait before moving to avoid collision with duck-side alliance partner
         // trying to dump a block in the alliance shipping hub
         sleep( (long)( collisionDelay * 1000 ) );
@@ -221,28 +223,28 @@ public class AutonomousBwarehouse extends AutonomousBase {
             driveToWarehouse( blockLevel );
         }
 
-        // Drive into freight pile to collect
-        if( opModeIsActive() ) {
-            telemetry.addData("Skill", "collectFreight 65");
-            telemetry.update();
-            freightCollected = collectFreight( blockLevel, 65.0, 350 );
-        }
+        // Perform freight collecting and scoring until time runs out
+        while( opModeIsActive() ) {
+            // Drive into freight pile to collect
+            if( !freightCollected ) {
+                telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
+                telemetry.update();
+                freightCollected = collectFreight( blockLevel, freightCollectAngle, 350 );
+                freightCollectAngle -= 5.0;
+            }
 
-        // If we collected a freight, dump it in shared hub if there is enough time
-        // to drop and get back in warehouse
-        if( opModeIsActive() && freightCollected && (autoTimer.milliseconds() < SHARED_HUB_SCORE_TIME_THRESHOLD)) {
-            telemetry.addData("Skill", "scoreFreightSharedHub");
-            telemetry.update();
-            scoreFreightSharedHub( blockLevel );
-            // Since we scored the freight, we don't have one collected anymore.
-            freightCollected = false;
-        }
+            if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
+                telemetry.addData("Skill", "scoreFreightSharedHub");
+                telemetry.update();
+                scoreFreightSharedHub( blockLevel );
+                // Since we scored the freight, we don't have one collected anymore.
+                freightCollected = false;
+            }
 
-        // Drive into freight pile to collect a freight if we don't have one
-        if( opModeIsActive() && !freightCollected ) {
-            telemetry.addData("Skill", "collectFreight 40");
-            telemetry.update();
-            collectFreight( blockLevel, 40.0, 250 );
+            // We have collected a freight, and we don't have enough time to score it.
+            if(freightCollected && (autoTimer.milliseconds() > SHARED_HUB_SCORE_TIME_THRESHOLD)) {
+                break;
+            }
         }
     } // mainAutonomous
 
@@ -316,7 +318,6 @@ public class AutonomousBwarehouse extends AutonomousBase {
         double angleToHub = 0.0;
         double distanceToHub = 0.0;
         int timeToHub = 1000;
-        double finalDistanceToHub = 0.0;
 
         int    freightArmPos = 0;
         long   armSleep = 0;
@@ -324,21 +325,18 @@ public class AutonomousBwarehouse extends AutonomousBase {
         switch( level ) {
             case 3 : angleToHub = 35.0;    // top
                      distanceToHub = -6.2;
-                     finalDistanceToHub = 0.0;
                      timeToHub = 0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
             case 2 : angleToHub = 30.0;
                      distanceToHub = -3.0;  // middle
-                     finalDistanceToHub = -3.0;
                      timeToHub = 300;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
             case 1 : angleToHub = 32.0;
                      distanceToHub = 0.0;  // bottom
-                     finalDistanceToHub = -8.5;
                      timeToHub = 550;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      armSleep = 1500;   // 1.5 sec
@@ -359,9 +357,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         if( armSleep > 0 ) {
             sleep( armSleep );
         }
-//        if( Math.abs(finalDistanceToHub) > 0 ) {
-//            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, finalDistanceToHub, angleToHub, DRIVE_TO );
-//        }
+
         if(timeToHub > 0) {
             timeDriveStraight(-DRIVE_SPEED_30, timeToHub);
         }
@@ -453,13 +449,14 @@ public class AutonomousBwarehouse extends AutonomousBase {
         }
 
         timeDriveStraight(-DRIVE_SPEED_30, backupTime);
+        gyroTurn(TURN_SPEED_20, 165.0 );   // Turn toward the shared hub
 
         return collected;
     } // collectFreight
 
     void scoreFreightSharedHub(int level) {
         final double rammingSpeed = DRIVE_SPEED_30;
-        gyroTurn(TURN_SPEED_20, 165.0 );   // Turn toward the shared hub
+
         // Update our tilt angle information
         robot.driveTrainMotors( rammingSpeed, rammingSpeed, rammingSpeed, rammingSpeed);
         robot.headingIMU();

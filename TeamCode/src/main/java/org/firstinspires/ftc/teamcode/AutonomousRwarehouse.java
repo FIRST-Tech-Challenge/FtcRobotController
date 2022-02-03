@@ -189,6 +189,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
     private void mainAutonomous() {
 
         boolean freightCollected = false;
+        double freightCollectAngle = -65.0;
         // Wait before moving to avoid collision with duck-side alliance partner
         // trying to dump a block in the alliance shipping hub
         sleep( (long)( collisionDelay * 1000 ) );
@@ -218,31 +219,31 @@ public class AutonomousRwarehouse extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToWarehouse");
             telemetry.update();
-//          driveToWarehouse( blockLevel );
+            driveToWarehouse( blockLevel );
         }
 
-        // Drive into freight pile to collect
-        if( opModeIsActive() ) {
-            telemetry.addData("Skill", "collectFreight -65");
-            telemetry.update();
-//          freightCollected = collectFreight( blockLevel, -65.0, 350 );
-        }
+        // Perform freight collecting and scoring until time runs out
+        while( opModeIsActive() ) {
+            // Drive into freight pile to collect
+            if( !freightCollected ) {
+                telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
+                telemetry.update();
+                freightCollected = collectFreight( blockLevel, freightCollectAngle, 350 );
+                freightCollectAngle += 5.0;
+            }
 
-        // If we collected a freight, dump it in shared hub if there is enough time
-        // to drop and get back in warehouse
-        if( opModeIsActive() && freightCollected && (autoTimer.milliseconds() < SHARED_HUB_SCORE_TIME_THRESHOLD)) {
-            telemetry.addData("Skill", "scoreFreightSharedHub");
-            telemetry.update();
-  //        scoreFreightSharedHub( blockLevel );
-            // Since we scored the freight, we don't have one collected anymore.
-            freightCollected = false;
-        }
+            if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
+                telemetry.addData("Skill", "scoreFreightSharedHub");
+                telemetry.update();
+                scoreFreightSharedHub( blockLevel );
+                // Since we scored the freight, we don't have one collected anymore.
+                freightCollected = false;
+            }
 
-        // Drive into freight pile to collect a freight if we don't have one
-        if( opModeIsActive() && !freightCollected ) {
-            telemetry.addData("Skill", "collectFreight -40");
-            telemetry.update();
-//          collectFreight( blockLevel, -40.0, 250 );
+            // We have collected a freight, and we don't have enough time to score it.
+            if(freightCollected && (autoTimer.milliseconds() > SHARED_HUB_SCORE_TIME_THRESHOLD)) {
+                break;
+            }
         }
     } // mainAutonomous
 
@@ -435,13 +436,14 @@ public class AutonomousRwarehouse extends AutonomousBase {
         }
 
         timeDriveStraight(-DRIVE_SPEED_30, backupTime);
+        gyroTurn(TURN_SPEED_20, -165.0 );   // Turn toward the shared hub
 
         return collected;
     } // collectFreight
 
     void scoreFreightSharedHub(int level) {
         final double rammingSpeed = DRIVE_SPEED_30;
-        gyroTurn(TURN_SPEED_20, -165.0 );   // Turn toward the shared hub
+
         // Update our tilt angle information
         robot.driveTrainMotors( rammingSpeed, rammingSpeed, rammingSpeed, rammingSpeed);
         robot.headingIMU();
