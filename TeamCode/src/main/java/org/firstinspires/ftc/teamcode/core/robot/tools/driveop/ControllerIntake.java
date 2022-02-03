@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.driveop;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
+import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.MyToggleButtonReader;
+import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.*;
+import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 /**
  * intake, not an extension of ControllerToggleableTool
@@ -17,11 +22,26 @@ import org.firstinspires.ftc.teamcode.opmodes.util.MyToggleButtonReader;
 public class ControllerIntake extends AutoIntake {
     private final GamepadEx toolGamepad;
     private final MyToggleButtonReader reader;
-
-    public ControllerIntake(@NonNull HardwareMap map, GamepadEx toolGamepad) {
-        super(map);
+    private final BlinkinPattern normalColor;
+    @Nullable private final DcMotor liftMotor;
+    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad, boolean blue, @Nullable AutoLift lift) {
+        super(map, eventThread);
         this.reader = new MyToggleButtonReader(toolGamepad, GamepadKeys.Button.X);
         this.toolGamepad = toolGamepad;
+        this.normalColor = blue ? BLUE : RED;
+        if (lift != null) {
+            liftMotor = lift.liftMotor;
+        } else {
+            liftMotor = null;
+        }
+    }
+
+    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad) {
+        this(map, eventThread, toolGamepad, true, null);
+    }
+
+    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad, boolean blue) {
+        this(map, eventThread, toolGamepad, blue, null);
     }
 
     public void update(AutoLift.Positions liftPosition) {
@@ -46,5 +66,6 @@ public class ControllerIntake extends AutoIntake {
             }
             reader.currToggleState = false;
         }
+        setPattern(!noObject() && (liftMotor == null || liftMotor.getCurrentPosition() <= 200) ? GREEN : motor.getPower() != 0 ? GOLD : normalColor);
     }
 }

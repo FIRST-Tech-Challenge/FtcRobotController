@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
 import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerOnceEvent;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 
@@ -68,10 +69,17 @@ public class AutoLift {
         try { Thread.sleep(100); } catch (InterruptedException ignored) {}
         liftMotor.setTargetPosition(Math.abs(liftMotor.getCurrentPosition()));
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setPower(1);
+        liftMotor.setPower(1D);
         armServo = map.get(Servo.class,"armServo");
         this.eventThread = eventThread;
         this.grabber = grabber;
+        final Thread thread = new Thread(() -> {
+            while (eventThread.isAlive()) {
+                liftMotor.setPower(liftMotor.getTargetPosition() >= liftMotor.getCurrentPosition() ? 1D : 0.75D);
+            }
+        });
+        thread.setPriority(7);
+        thread.start();
     }
     /**
      * @param eventThread local eventThread instance

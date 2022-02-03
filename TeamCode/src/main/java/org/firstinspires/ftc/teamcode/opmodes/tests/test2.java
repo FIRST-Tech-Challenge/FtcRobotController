@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 @TeleOp
 @Config
 public class test2 extends LinearOpMode {
-    private final EventThread eventThread = new EventThread(this::opModeIsActive);
+    private final EventThread eventThread = new EventThread(() -> !isStopRequested());
 
     public static double liftMotorPower = 0.1;
     @Override

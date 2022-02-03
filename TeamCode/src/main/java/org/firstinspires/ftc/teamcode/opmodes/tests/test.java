@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 @TeleOp
 public class test extends LinearOpMode {
-    private final EventThread eventThread = new EventThread(this::opModeIsActive);
+    private final EventThread eventThread = new EventThread(() -> !isStopRequested());
     @Override
     public void runOpMode() {
         hardwareMap.get(DcMotor.class,"liftMotor").setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -1,23 +1,31 @@
 package org.firstinspires.ftc.teamcode.core.robot.tools.headless;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunEveryTimedEvent;
 import org.jetbrains.annotations.NotNull;
+import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.*;
+import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 /**
  * Controller-less intake.
  */
 public class AutoIntake {
-    private final DcMotor motor;
+    protected final DcMotor motor;
     private final DistanceSensor distanceSensor;
-
-    public AutoIntake(@NotNull HardwareMap map) {
+    private final RevBlinkinLedDriver ledDriver;
+    private double distance = 0;
+    public AutoIntake(@NotNull HardwareMap map, EventThread eventThread) {
         this.motor = map.get(DcMotor.class, "intake");
         this.distanceSensor = map.get(DistanceSensor.class, "intakeSensor");
+        this.ledDriver = map.get(RevBlinkinLedDriver.class, "blinkin");
+        setPattern(RAINBOW_RAINBOW_PALETTE);
+        eventThread.addEvent(new RunEveryTimedEvent(() -> distance = distanceSensor.getDistance(DistanceUnit.MM), 150));
     }
 
     public void forward() {
@@ -33,6 +41,18 @@ public class AutoIntake {
     }
 
     public boolean noObject() {
-        return !(distanceSensor.getDistance(DistanceUnit.MM) <= 210);
+        return distance >= 210;
+    }
+
+    protected void setPattern(BlinkinPattern pattern) {
+        ledDriver.setPattern(pattern);
+    }
+
+    public void off() {
+        setPattern(WHITE);
+    }
+
+    public void on() {
+        setPattern(RAINBOW_RAINBOW_PALETTE);
     }
 }

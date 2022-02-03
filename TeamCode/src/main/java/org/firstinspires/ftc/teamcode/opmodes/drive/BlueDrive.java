@@ -89,19 +89,6 @@ public class BlueDrive extends LinearOpMode {
 
         // will automatically run update method
         new ControllerCarousel(eventThread, hardwareMap, toolGamepad, power);
-        final ControllerGrabber grabber = new ControllerGrabber(eventThread, hardwareMap, toolGamepad);
-
-        Thread thread = new Thread(() -> {
-            final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, grabber);
-            lift.init();
-            final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
-            while (opModeIsActive()) {
-                lift.update();
-                intake.update(lift.getPosition());
-            }
-            lift.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        });
-        thread.setPriority(4);
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -111,14 +98,19 @@ public class BlueDrive extends LinearOpMode {
         drive.setPoseEstimate(PoseStorage.currentPose);
 
         waitForStart();
-        thread.start();
-        grabber.init();
         eventThread.start();
         if (isStopRequested()) return;
+
+        final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
+        final ControllerIntake intake = new ControllerIntake(hardwareMap, eventThread, toolGamepad, power == 1, lift);
 
         while (opModeIsActive() && !isStopRequested()) {
             // Update the drive class
             drive.update();
+            // update the lift
+            lift.update();
+            // update the intake
+            intake.update(lift.getPosition());
 
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
@@ -190,6 +182,7 @@ public class BlueDrive extends LinearOpMode {
                     break;
             }
         }
+        lift.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         eventThread.interrupt();
         requestOpModeStop();
     }

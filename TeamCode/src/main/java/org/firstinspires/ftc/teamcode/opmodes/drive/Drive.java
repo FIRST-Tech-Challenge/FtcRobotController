@@ -23,7 +23,7 @@ public class Drive extends LinearOpMode {
         while (opModeIsActive() && eventThread.isAlive()) {}
     }
 
-    private final EventThread eventThread = new EventThread(this::opModeIsActive);
+    private final EventThread eventThread = new EventThread(() -> !isStopRequested());
 
 
 
@@ -40,8 +40,7 @@ public class Drive extends LinearOpMode {
 
         Thread thread = new Thread(() -> {
             final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, grabber);
-            lift.init();
-            final ControllerIntake intake = new ControllerIntake(hardwareMap, toolGamepad);
+            final ControllerIntake intake = new ControllerIntake(hardwareMap, eventThread, toolGamepad, true, lift);
             final ControllerMovement move = new ControllerMovement(hardwareMap,moveGamepad);
             while (opModeIsActive()) {
                 move.update();

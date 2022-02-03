@@ -36,7 +36,7 @@ public class AutoWarehouse extends LinearOpMode {
 
         EventThread eventThread = new EventThread(() -> !isStopRequested());
 
-        AutoIntake intake = new AutoIntake(hardwareMap);
+        AutoIntake intake = new AutoIntake(hardwareMap, eventThread);
         AutoGrabber grabber = new AutoGrabber(hardwareMap);
         AutoLift lift = new AutoLift(eventThread, hardwareMap, grabber);
 
