@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.MovementWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
@@ -55,6 +56,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      */
     private boolean debug = false;
 
+    private boolean turnWhileStrafe = false;
+
     //-Utility Methods-------------------------------------------------------------------------------------------
 
     /**
@@ -77,6 +80,10 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         this._isStopRequested = isStopRequested;
         this._opModeIsActive = opmodeIsActive;
         this.voltageSensor = voltageSensor;
+    }
+
+    public void setTurnWhileStrafe(boolean value) {
+        this.turnWhileStrafe = value;
     }
 
     /**
@@ -342,14 +349,36 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
             currentDistance = MiscUtils.distance(currentX, currentY, x, y); //currentDistance value
 
+
             for (MovementException e : errors) {
                 e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
+
             }
 
-            strafeAtAngle(currentAngle, power);
+            if (turnWhileStrafe) {
+                strafeAtAngleWhileTurn(currentAngle, theta, power);
+            } else {
+                strafeAtAngle(currentAngle, power);
+            }
+
 
         }
         stopAll();
+    }
+
+    public void moveToPosition(double x, double y, double theta, double tolerance, MovementWarning warning) throws InterruptedException {
+        MovementException[] errors = {warning};
+        try {
+            moveToPosition(x, y, theta, tolerance, errors);
+        } catch (MovementException ignored) {
+        }
+    }
+
+    public void moveToPosition(double x, double y, double theta, double tolerance, MovementWarning[] warnings) throws InterruptedException {
+        try {
+            moveToPosition(x, y, theta, tolerance, (MovementException[]) warnings);
+        } catch (MovementException ignored) {
+        }
     }
 
     public void moveToPosition(double x, double y, double theta, double tolerance, MovementException error) throws MovementException, InterruptedException {

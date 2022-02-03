@@ -1,21 +1,21 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
-public class TimeoutException extends MovementException {
+public class TimeoutWarning extends MovementWarning {
 
     final ElapsedTime t;
     final double timeout;
 
 
-    public TimeoutException(double millis) {
+    public TimeoutWarning(double millis) {
         super();
         t = new ElapsedTime();
         t.reset();
@@ -27,7 +27,6 @@ public class TimeoutException extends MovementException {
         if (t.milliseconds() > timeout) {
             final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
             final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Error.\n";
-            RobotLog.addGlobalWarningMessage(errorMsg);
             throw this;
         }
     }
