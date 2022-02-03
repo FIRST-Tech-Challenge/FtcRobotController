@@ -3,7 +3,7 @@ package org.firstinspires.ftc.Team19567.util.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.Team19567.pipeline.tsePipeline;
+import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -22,7 +22,7 @@ public class OpenCVtest extends LinearOpMode {
         OpenCvCamera camera = OpenCvCameraFactory.getInstance()
                 .createWebcam(webcamName,cameraMonitorViewId);
 
-        tsePipeline pipeline = new tsePipeline(telemetry);
+        greenPipeline pipeline = new greenPipeline(telemetry);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

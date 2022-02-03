@@ -9,12 +9,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 //
 public class Mechanisms {
     public DcMotor armDC = null;
-    private DcMotor carouselLeft = null;
-    private DcMotor carouselRight = null;
-    private DcMotor intakeDC = null;
-    private Servo balanceServo = null;
-    private Servo releaseServo = null;
-    private Telemetry telemetry = null;
+    public DcMotor carouselLeft = null;
+    public DcMotor carouselRight = null;
+    public DcMotor intakeDC = null;
+    public Servo balanceServo = null;
+    public Servo releaseServo = null;
+    public Telemetry telemetry = null;
 
     public Mechanisms(HardwareMap hardwareMap, Telemetry t) {
         armDC = hardwareMap.get(DcMotor.class,"armDC");
@@ -68,16 +68,14 @@ public class Mechanisms {
     }
 
     public void reset() {
-        releaseServo.setPosition(0);
-        carouselLeft.setPower(0);
-        carouselRight.setPower(0);
-        intakeDC.setPower(0);
-        armDC.setTargetPosition(0);
-        balanceServo.setPosition(0);
+        releaseServoMove(0);
+        rotateCarousel(0);
+        rotateArm(0,0.15);
     }
 
+    @Deprecated
     public void sharedHub() {
-        telemetry.addData("Mechanoosism","uurbadusefirstlevel");
+        telemetry.addData("Mechanisms","Note: use firstLevel instead.");
         firstLevel();
     }
 

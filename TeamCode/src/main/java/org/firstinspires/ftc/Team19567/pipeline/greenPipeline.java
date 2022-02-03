@@ -9,7 +9,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class tsePipeline extends OpenCvPipeline {
+public class greenPipeline extends OpenCvPipeline {
     private Mat output = new Mat();
     private static final double width = 544;
     private static final double height = 288;
@@ -27,6 +27,14 @@ public class tsePipeline extends OpenCvPipeline {
             new Point(3*margin+2*one_square,margin), new Point( 3*(margin+one_square),height-margin)
     );
 
+    private static double THRESHOLD = 0.025;
+
+    Telemetry telemetry;
+
+    public greenPipeline(Telemetry t) {
+        telemetry = t;
+    }
+
     private Scalar lowHSV = new Scalar(36, 50, 70);
     private Scalar highHSV = new Scalar(89, 255, 255);
     private double firstConf = 0.0;
@@ -39,31 +47,6 @@ public class tsePipeline extends OpenCvPipeline {
     Scalar none = new Scalar(255,0,0);
 
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
-
-    private static double THRESHOLD = 0.025;
-
-    Telemetry telemetry;
-    COLOR color = COLOR.TSE;
-
-    public tsePipeline(COLOR color, Telemetry t) {
-        telemetry = t;
-        this.color = color;
-        switch(color) {
-            case RED: {
-                this.lowHSV = new Scalar(100, 150, 0);
-                this.highHSV = new Scalar(140, 255, 255);
-            }
-            case BLUE: {
-                this.lowHSV = new Scalar(100, 150, 0);
-                this.highHSV = new Scalar(140, 255, 255);
-            }
-            case TSE: {
-                this.lowHSV = new Scalar(36, 50, 70);
-                this.highHSV = new Scalar(89, 255, 255);
-            }
-        }
-    }
-
 
     @Override
     public Mat processFrame(Mat input) {
@@ -101,36 +84,20 @@ public class tsePipeline extends OpenCvPipeline {
         telemetry.addData("Yop2?",tseSecond);
         telemetry.addData("Yop3?",tseThird);
 
-        if(color == COLOR.TSE) {
-            if (tseFirst) {
-                location = LOCATION.ALLIANCE_FIRST;
-                telemetry.addData("Level", "First");
-            } else if (tseSecond) {
-                location = LOCATION.ALLIANCE_SECOND;
-                telemetry.addData("Level", "Second");
-            } else if (tseThird) {
-                location = LOCATION.ALLIANCE_THIRD;
-            } else {
-                location = LOCATION.NO_ALLIANCE;
-                telemetry.addData("Level", "Third");
-            }
+        if(tseFirst) {
+            location = LOCATION.ALLIANCE_FIRST;
+            telemetry.addData("Level","First");
+        }
+        else if(tseSecond) {
+            location = LOCATION.ALLIANCE_SECOND;
+            telemetry.addData("Level","Second");
+        }
+        else if(tseThird) {
+            location = LOCATION.ALLIANCE_THIRD;
         }
         else {
-            if(!tseFirst) {
-                location = LOCATION.ALLIANCE_FIRST;
-                telemetry.addData("Level","First");
-            }
-            else if(!tseSecond) {
-                location = LOCATION.ALLIANCE_SECOND;
-                telemetry.addData("Level","Second");
-            }
-            else if(!tseThird) {
-                location = LOCATION.ALLIANCE_THIRD;
-            }
-            else {
-                location = LOCATION.NO_ALLIANCE;
-                telemetry.addData("Level","Third");
-            }
+            location = LOCATION.NO_ALLIANCE;
+            telemetry.addData("Level","Third");
         }
         telemetry.addData("OpenCV Status","Location Decided");
 

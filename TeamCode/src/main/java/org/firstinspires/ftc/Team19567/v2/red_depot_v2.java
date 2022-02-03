@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.Team19567.pipeline.tsePipeline;
+import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,7 +24,7 @@ import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 public class red_depot_v2 extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
-    private tsePipeline pipeline = new tsePipeline(telemetry); //Team shipping element OpenCV Pipeline
+    private greenPipeline pipeline = new greenPipeline(telemetry); //Team shipping element OpenCV Pipeline
     private DcMotor armDC = null;
     private DcMotor carouselLeft = null;
     private DcMotor carouselRight = null;

@@ -30,11 +30,6 @@ public class bluePipeline extends OpenCvPipeline {
     private static double THRESHOLD = 0.05;
 
     Telemetry telemetry;
-
-    public bluePipeline(Telemetry t) {
-        telemetry = t;
-    }
-
     private Scalar lowHSV = new Scalar(100, 150, 0);
     private Scalar highHSV = new Scalar(140, 255, 255);
     private double firstConf = 0.0;
@@ -45,8 +40,11 @@ public class bluePipeline extends OpenCvPipeline {
     private boolean tseThird = false;
     Scalar detectedColor = new Scalar(0,255,0);
     Scalar none = new Scalar(255,0,0);
-
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
+
+    public bluePipeline(Telemetry t) {
+        telemetry = t;
+    }
 
     @Override
     public Mat processFrame(Mat input) {

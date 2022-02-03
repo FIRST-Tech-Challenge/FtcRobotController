@@ -6,7 +6,7 @@ import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 
 import java.util.Vector;
 
-public class RedDepot {
+public class RedDepotBasic {
    public static void main(String[] args) {
        MeepMeep mm = new MeepMeep(800)
                // Set field image
