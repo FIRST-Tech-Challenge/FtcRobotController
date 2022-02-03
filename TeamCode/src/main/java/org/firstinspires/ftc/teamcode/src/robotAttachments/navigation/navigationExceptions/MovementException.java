@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions;
 
 
-import android.annotation.SuppressLint;
+//import android.annotation.SuppressLint;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.src.utills.Executable;
 
 public class MovementException extends Exception {
 
-    @SuppressLint("NewApi")
+    //@SuppressLint("NewApi")
     public MovementException() {
         super("", null, true, false);
     }

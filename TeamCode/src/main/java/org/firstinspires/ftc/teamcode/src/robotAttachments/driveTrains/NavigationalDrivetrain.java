@@ -56,6 +56,11 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      */
     private boolean debug = false;
 
+    /**
+     * If this is true, the robot will turn while it strafes. If it is false, the robot will ignore theta and just strafe towards it's wanted point
+     * This is to keep backwards compatibility
+     * This can be toggled with NavigationalDrivetrain.setTurnWhileStrafe
+     */
     private boolean turnWhileStrafe = false;
 
     //-Utility Methods-------------------------------------------------------------------------------------------
@@ -82,6 +87,11 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         this.voltageSensor = voltageSensor;
     }
 
+    /**
+     * A setter method for the internal turnWhileStrafe variable
+     *
+     * @param value The value to set the internal turnWhileStrafe variable to
+     */
     public void setTurnWhileStrafe(boolean value) {
         this.turnWhileStrafe = value;
     }
@@ -160,7 +170,10 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     /**
      * Turns to the provided angle
      *
-     * @param angle The angle to turn to in degrees
+     * @param angle         The angle to turn to in degrees
+     * @param maxPower      The maximum power the robot will turn at
+     * @param minPower      The minimum power the robot will turn at
+     * @param consoleOutput If this is true, it will print extra information via telemetry
      * @throws InterruptedException Throws if the OpMode is killed
      */
     public void newTurnToPrototype(double angle, double maxPower, double minPower, boolean consoleOutput) throws InterruptedException {
@@ -234,7 +247,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     //-Move To Position Methods----------------------------------------------------------------------------------------------
 
     /**
-     * Moves the robot to the provided position Enum
+     * Moves the robot to the provided position Enum. Upon the end of the function call, the robot is stopped
      *
      * @param position  a hashmap value referencing the 2 value array of the position
      * @param tolerance The distance the robot can be off from the given position
@@ -248,7 +261,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves the robot to the provided position Enum
+     * Moves the robot to the provided position Enum. Upon the end of the function call, the robot is stopped
      *
      * @param position  a hashmap value referencing the 2 value array of the position
      * @param tolerance The distance the robot can be off from the given position
@@ -263,7 +276,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves the robot to the given (x,y) position
+     * Moves the robot to the given (x,y) position. Upon the end of the function call, the robot is stopped
      *
      * @param x         X Value to move to
      * @param y         Y Value to move to
@@ -275,7 +288,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves the robot to the given (x,y) position and turns to the angle (theta)
+     * Moves the robot to the given (x,y) position and turns to the angle (theta). Upon the end of the function call, the robot is stopped
      *
      * @param x         The x-coordinate to move to
      * @param y         The y-coordinate to move to
@@ -291,7 +304,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     }
 
     /**
-     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Errors out if errorCB returns true
+     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Stops robot and throws according to the error conditions provided
      *
      * @param x         The x coordinate to go to
      * @param y         The y coordinate to go to
@@ -351,7 +364,12 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
 
             for (MovementException e : errors) {
-                e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
+                try {
+                    e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
+                } catch (MovementException Me) {
+                    this.stopAll();
+                    throw Me;
+                }
             }
 
             if (turnWhileStrafe) {
@@ -365,6 +383,16 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         stopAll();
     }
 
+    /**
+     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Stops robot and returns according to the warning supplied
+     *
+     * @param x         The x coordinate to go to
+     * @param y         The y coordinate to go to
+     * @param tolerance The tolerance for how close it must get (in inches)
+     * @param theta     The angle (relative to the field) to turn to during the movement
+     * @param warning   A {@link MovementWarning} object. If it throws, the robot stops and this function returns
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     */
     public void moveToPosition(double x, double y, double theta, double tolerance, MovementWarning warning) throws InterruptedException {
         MovementException[] errors = {warning};
         try {
@@ -373,6 +401,16 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         }
     }
 
+    /**
+     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Stops robot and returns according to the warning supplied
+     *
+     * @param x         The x coordinate to go to
+     * @param y         The y coordinate to go to
+     * @param tolerance The tolerance for how close it must get (in inches)
+     * @param theta     The angle (relative to the field) to turn to during the movement
+     * @param warnings  A array of {@link MovementWarning} objects. If one of them throws, the robot stops and this function returns
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     */
     public void moveToPosition(double x, double y, double theta, double tolerance, MovementWarning[] warnings) throws InterruptedException {
         try {
             moveToPosition(x, y, theta, tolerance, (MovementException[]) warnings);
@@ -380,13 +418,35 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         }
     }
 
+    /**
+     * Moves the robot to the given (x,y) position and turns to the given angle (theta). Stops robot and returns according to the warning supplied
+     *
+     * @param x         The x coordinate to go to
+     * @param y         The y coordinate to go to
+     * @param tolerance The tolerance for how close it must get (in inches)
+     * @param theta     The angle (relative to the field) to turn to during the movement
+     * @param error     An ={@link MovementException} objects. If it, the robot stops and the exception is sent up the call stack
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     * @throws MovementException    Throws if the error condition throws
+     */
     public void moveToPosition(double x, double y, double theta, double tolerance, MovementException error) throws MovementException, InterruptedException {
         MovementException[] errors = {error};
         moveToPosition(x, y, theta, tolerance, errors);
     }
 
-    //-Move Toward Position Methods----------------------------------------------------------------------------------------------
+    //-Move Towards Position Methods----------------------------------------------------------------------------------------------
 
+    /**
+     * Moves towards the desired location. Upon the end of the function call, the robot is not stopped
+     *
+     * @param x         The x coordinate to move towards
+     * @param y         The y coordinate to move towards
+     * @param theta     The angle to turn to
+     * @param power     The power to move at
+     * @param tolerance The tolerance for how close the robot must get
+     * @param warning   A {@link MovementWarning} object. If it throws, the exception is swallowed, the robot does not stop and this function returns
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     */
     public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementWarning warning) throws InterruptedException {
         try {
             this.moveTowardsPosition(x, y, theta, power, tolerance, new MovementException[]{warning});
@@ -394,6 +454,17 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         }
     }
 
+    /**
+     * Moves towards the desired location. Upon the end of the function call, the robot is not stopped
+     *
+     * @param x         The x coordinate to move towards
+     * @param y         The y coordinate to move towards
+     * @param theta     The angle to turn to
+     * @param power     The power to move at
+     * @param tolerance The tolerance for how close the robot must get
+     * @param warnings  A array of {@link MovementWarning} objects. If it throws, the exception is swallowed, the robot does not stop and this function returns
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     */
     public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementWarning[] warnings) throws InterruptedException {
         try {
             this.moveTowardsPosition(x, y, theta, power, tolerance, (MovementException[]) warnings);
@@ -401,10 +472,34 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         }
     }
 
+    /**
+     * Moves towards the desired location. Upon the end of the function call, the robot is not stopped. Throws if error condition is met
+     *
+     * @param x         The x coordinate to move towards
+     * @param y         The y coordinate to move towards
+     * @param theta     The angle to turn to
+     * @param power     The power to move at
+     * @param tolerance The tolerance for how close the robot must get
+     * @param error     An {@link MovementException} object. If it throws, the robot does not stop and the exception is propagated up the stack
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     * @throws MovementException    Throws if error throws
+     */
     public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementException error) throws InterruptedException, MovementException {
         this.moveTowardsPosition(x, y, theta, power, tolerance, new MovementException[]{error});
     }
 
+    /**
+     * Moves towards the desired location. Upon the end of the function call, the robot is not stopped. Throws if an error condition is met
+     *
+     * @param x         The x coordinate to move towards
+     * @param y         The y coordinate to move towards
+     * @param theta     The angle to turn to
+     * @param power     The power to move at
+     * @param tolerance The tolerance for how close the robot must get
+     * @param errors    A array of error conditions to check. If it throws, the robot does not stop and the exception is propagated up the stack
+     * @throws InterruptedException Throws if the OpMode ends during execution
+     * @throws MovementException    Throws if error throws
+     */
     public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementException[] errors) throws InterruptedException, MovementException {
 
         final String args = "moveTowardsPosition(" + x + ", " + y + ", " + theta + ", " + power + ")\n";
