@@ -17,12 +17,10 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
  */
 @Autonomous(name = "Red State Carousel Autonomous")
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
-    static final boolean wareHousePark = true;
     static final BlinkinPattern def = BlinkinPattern.RED;
     private final boolean overBarrier = false;
     public DistanceSensor distanceSensor;
 
-    //static final double[] initialPos = {7, 101, 90};
 
     @Override
     public void opModeMain() throws InterruptedException {
@@ -60,8 +58,6 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.stopAll();
                     intake.setServoOpen();
                     Thread.sleep(750);
-                    //driveSystem.strafeAtAngle(0, .5);
-                    //Thread.sleep(500);
                     driveSystem.stopAll();
                     slide.setTargetLevel(HeightLevel.Down);
                     break;
@@ -106,11 +102,9 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             spinner.spinOffRedDuck();
 
             driveSystem.moveTowardsPosition(gps.getX() + 10, gps.getY() - 20, gps.getRot(), 1, 5, new DistanceTimeoutWarning(500));
-            //driveSystem.moveTowardsPosition(15,80,180,1,5,new DistanceTimeoutWarning(500));
 
-            //Through crack
             if (!overBarrier) {
-
+                //Through crack
                 driveSystem.moveTowardsPosition(0, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
 
                 intake.setIntakeOn();
@@ -125,8 +119,9 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
                 intake.setIntakeOff();
 
-                // Over Barrier
+
             } else {
+                // Over Barrier
                 driveSystem.moveToPosition(33, 77, 180, 2, new DistanceTimeoutWarning(100));
                 podServos.raise();
                 driveSystem.strafeAtAngle(0, 1);
