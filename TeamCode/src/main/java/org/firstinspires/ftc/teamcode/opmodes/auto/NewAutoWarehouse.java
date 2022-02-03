@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
@@ -18,6 +20,8 @@ import org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
+@Autonomous
+@Disabled
 public class NewAutoWarehouse extends LinearOpMode {
     public int multiplier = 1;
     public boolean isRed = false;
@@ -32,7 +36,7 @@ public class NewAutoWarehouse extends LinearOpMode {
 
         EventThread eventThread = new EventThread(() -> !isStopRequested());
 
-        AutoIntake intake = new AutoIntake(hardwareMap);
+        AutoIntake intake = new AutoIntake(hardwareMap, eventThread);
         AutoGrabber grabber = new AutoGrabber(hardwareMap);
         AutoLift lift = new AutoLift(eventThread, hardwareMap, grabber);
 
@@ -93,10 +97,18 @@ public class NewAutoWarehouse extends LinearOpMode {
         if (!isStopRequested()) return;
         liftUpdated[0] = false;
         lift.setPosition(VisionToLiftHeight.getPosition(height));
+        while (!liftUpdated[0] || lift.getState() != AutoLift.MovementStates.NONE) {
+            if (isStopRequested()) {
+                return;
+            }
+            drive.update();
+        }
 
         drive.followTrajectoryAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
+
+
 
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
@@ -104,7 +116,6 @@ public class NewAutoWarehouse extends LinearOpMode {
 
         drive.followTrajectoryAsync(part2);
         updateLoop(drive);
-        if (isStopRequested()) return;
     }
 
     public void updateLoop(SampleMecanumDrive drive) {

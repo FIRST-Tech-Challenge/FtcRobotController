@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
+@Autonomous
 public class NewAutoStorage extends LinearOpMode {
     public int multiplier = 1;
     public boolean isRed = false;
@@ -95,10 +97,12 @@ public class NewAutoStorage extends LinearOpMode {
 
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
-        while (!isStopRequested() && (!liftUpdated[0] || lift.getState() != AutoLift.MovementStates.NONE)) {
+        while (!liftUpdated[0] || lift.getState() != AutoLift.MovementStates.NONE) {
+            if (isStopRequested()) {
+                return;
+            }
             drive.update();
         }
-        if (isStopRequested()) return;
 
         // Part 2
         drive.followTrajectoryAsync(part2);
