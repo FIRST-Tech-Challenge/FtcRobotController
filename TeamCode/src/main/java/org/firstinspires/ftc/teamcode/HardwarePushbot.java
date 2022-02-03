@@ -6,7 +6,6 @@ package org.firstinspires.ftc.teamcode;
 import android.app.Activity;
 import android.view.View;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,7 +30,9 @@ public class HardwarePushbot {
 
     public static DcMotor arm = null;
 
-    public static DcMotor intake = null;
+    public static DcMotor intakeLeft = null;
+    public static DcMotor intakeRight = null;
+
 
 
 
@@ -44,8 +45,11 @@ public class HardwarePushbot {
     //public static DistanceSensor FrontDistance = null;
     //public static DigitalChannel CascadeTouch = null;  // Hardware Device Object
     public static TouchSensor armstop = null;
-    public static TouchSensor elbowstop = null;
     public static CRServo turntable = null;
+    public static Servo frontdoor = null;
+    public static Servo backdoor = null;
+
+
 
     /*
 
@@ -73,7 +77,10 @@ public class HardwarePushbot {
         frontRight = hwMap.get(DcMotor.class, "frontRight");
         backRight = hwMap.get(DcMotor.class, "backRight");
         arm = hwMap.get(DcMotor.class, "arm");
-        intake = hwMap.get(DcMotor.class, "intake");
+
+        intakeLeft = hwMap.get(DcMotor.class, "intakeLeft");
+        intakeRight = hwMap.get(DcMotor.class, "intakeRight");
+
 
 
 
@@ -82,24 +89,29 @@ public class HardwarePushbot {
 
         // Define and initialize Servos
         turntable =  hwMap.get(CRServo.class, "turntable");
+        frontdoor =  hwMap.get(Servo.class, "frontdoor");
+        backdoor =  hwMap.get(Servo.class, "backdoor");
+
+
 
 
         //Define and Initialize Sensors///////////////////
 
         armstop = hwMap.get(TouchSensor.class,"armstop");
-        elbowstop = hwMap.get(TouchSensor.class, "elbowstop");
 
 
 
         imu = hwMap.get(BNO055IMU.class, "imu");
 
         // Set
-        frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.FORWARD);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
         arm.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.REVERSE);
+        intakeLeft.setDirection(DcMotor.Direction.REVERSE);
+        intakeRight.setDirection(DcMotor.Direction.FORWARD);
+
 
 
 
@@ -112,7 +124,9 @@ public class HardwarePushbot {
         frontRight.setPower(0);
         backRight.setPower(0);
         arm.setPower(0);
-        intake.setPower(0);
+        intakeLeft.setPower(0);
+        intakeRight.setPower(0);
+
 
 
 
@@ -126,7 +140,9 @@ public class HardwarePushbot {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
 
 
@@ -140,7 +156,9 @@ public class HardwarePushbot {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
 
 
@@ -158,15 +176,11 @@ public class HardwarePushbot {
             parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
             parameters.loggingEnabled = true;
-            parameters.loggingTag = "IMU";
+            parameters.loggingTag = "imu";
             parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
             imu.initialize(parameters);
 
 
-            frontLeft.setDirection(DcMotor.Direction.REVERSE);
-            frontRight.setDirection(DcMotor.Direction.FORWARD);
-            backLeft.setDirection(DcMotor.Direction.REVERSE);
-            backRight.setDirection(DcMotor.Direction.FORWARD);
 
             //////close claw
             //
