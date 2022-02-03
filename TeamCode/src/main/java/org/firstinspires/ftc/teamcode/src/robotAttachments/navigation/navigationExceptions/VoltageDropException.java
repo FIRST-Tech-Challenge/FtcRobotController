@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
+
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,24 +9,26 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageS
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
-public class TimeoutException extends MovementException {
+public class VoltageDropException extends MovementException {
 
-    final ElapsedTime t;
-    final double timeout;
+    private final double dropAmount;
+    private Double initialVoltage = null;
 
 
-    public TimeoutException(double millis) {
+    public VoltageDropException(double dropAmmnt) {
         super();
-        t = new ElapsedTime();
-        t.reset();
-        this.timeout = millis;
+        this.dropAmount = Math.abs(dropAmmnt);
     }
 
     @Override
     public void call(double x, double y, double theta, double tolerance, Telemetry telemetry, LocalizationAlgorithm gps, Executable<Boolean> _isStopRequested, Executable<Boolean> _opModeIsActive, RobotVoltageSensor voltageSensor) throws MovementException {
-        if (t.milliseconds() > timeout) {
+        if (initialVoltage == null) {
+            initialVoltage = voltageSensor.getVoltage();
+        }
+
+        if (voltageSensor.getVoltage() < (initialVoltage - dropAmount)) {
             final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
-            final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Error.\n";
+            final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Exception.\n";
             RobotLog.addGlobalWarningMessage(errorMsg);
             throw this;
         }

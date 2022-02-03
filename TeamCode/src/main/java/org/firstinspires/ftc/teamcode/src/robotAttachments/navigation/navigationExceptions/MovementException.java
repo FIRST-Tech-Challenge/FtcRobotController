@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions;
 
 
 import android.annotation.SuppressLint;

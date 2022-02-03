@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -34,7 +34,7 @@ public class DistanceTimeoutException extends MovementException {
             double traveledDistance = Math.abs(positionBeforeTimeLoop - positionAfterTimeLoop);
             if (traveledDistance < tooSmallOfDistance) {
                 final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
-                final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Error.\n";
+                final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Exception.\n";
                 RobotLog.addGlobalWarningMessage(errorMsg);
                 throw this;
             }
