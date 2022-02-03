@@ -1,13 +1,14 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.old.qualifier;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceSensorException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceTimeoutException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
 /**
  * The Autonomous ran on Blue side near spinner for Qualifier
  */
+@Disabled
 @Autonomous(name = "Blue Carousel Autonomous")
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
@@ -26,7 +28,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
-        odometry.setPos(initialPos[0], initialPos[1], initialPos[2]);
+        gps.setPos(initialPos[0], initialPos[1], initialPos[2]);
         distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
 
         telemetry.addData("GC", "Started");
@@ -139,9 +141,9 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 while (!isStopRequested() && opModeIsActive() && (distanceSensor.getDistance(DistanceUnit.CM) > 8)) {
                     driveSystem.strafeAtAngle(0, 0.5);
                 }
-                if (odometry.getY() < 20) {
+                if (gps.getY() < 20) {
                     try {
-                        driveSystem.moveToPosition(odometry.getX(), 15, 1, 1, new DistanceTimeoutException(500));
+                        driveSystem.moveToPosition(gps.getX(), 15, 1, 1, new DistanceTimeoutException(500));
                     } catch (MovementException ignored) {
                     }
                 }
@@ -162,7 +164,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
             }
         }
-        odometry.end();
+
 
     }
 }

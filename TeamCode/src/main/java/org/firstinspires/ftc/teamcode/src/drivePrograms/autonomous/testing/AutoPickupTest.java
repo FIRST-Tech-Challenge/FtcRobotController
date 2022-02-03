@@ -20,7 +20,7 @@ public class AutoPickupTest extends AutonomousTemplate {
         this.initAll();
 
         slide.setTargetLevel(HeightLevel.Down);
-        odometry.setPos(FieldPoints.RedWareHouseInit);
+        gps.setPos(FieldPoints.RedWareHouseInit);
 
         waitForStart();
 

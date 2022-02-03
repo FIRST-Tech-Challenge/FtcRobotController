@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.old;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.old.meet3;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -15,7 +15,7 @@ public class BlueAutonomousNearSpinner extends AutonomousTemplate {
     public void opModeMain() throws InterruptedException {
         this.initAll();
         driveSystem.debugOn();
-        odometry.setPos(133.5, 112, 180);
+        gps.setPos(133.5, 112, 180);
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();

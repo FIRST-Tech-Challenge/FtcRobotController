@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.old;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.old.meet3;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -18,7 +18,7 @@ public class RedAutonomousNearSpinner extends AutonomousTemplate {
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();
-        odometry.setPos(7.5, 111, 90);
+        gps.setPos(7.5, 111, 90);
         driveSystem.moveToPosition(17.5, 111, 1);
         driveSystem.moveToPosition(17.5, 134, 1);
         driveSystem.strafeAtAngle(235, 0.5);

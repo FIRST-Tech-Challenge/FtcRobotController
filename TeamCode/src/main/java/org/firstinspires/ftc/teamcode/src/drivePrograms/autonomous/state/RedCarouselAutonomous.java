@@ -1,36 +1,35 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.qualifier;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.state;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceSensorException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.DistanceTimeoutException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceSensorException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceTimeoutException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
 
 /**
- * The Autonomous ran on Red side near Warehouse for Qualifier
+ * The Autonomous ran on Red side near spinner for Qualifier
  */
-@Autonomous(name = "Red Warehouse Autonomous")
-public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
+@Autonomous(name = "Red State Carousel Autonomous")
+public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
+    static final boolean wareHousePark = true;
     static final BlinkinPattern def = BlinkinPattern.RED;
+    private final boolean overBarrier = false;
     public DistanceSensor distanceSensor;
+
+    //static final double[] initialPos = {7, 101, 90};
 
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
-        odometry.setPos(6.5, 64, 180);
+        gps.setPos(6, 111, 180);
         distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
-
-        telemetry.addData("GC", "Started");
-        telemetry.update();
-        System.gc();
-        telemetry.addData("GC", "Finished");
-        telemetry.update();
 
         BarcodePositions Pos;
         do {
@@ -40,23 +39,15 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             Thread.sleep(200);
         } while (!isStarted() && !isStopRequested());
 
+        driveSystem.setTurnWhileStrafe(true);
         waitForStart();
 
         if (opModeIsActive() && !isStopRequested()) {
             tfod.shutdown();
             vuforia.close();
-
             driveSystem.debugOn();
 
-            driveSystem.strafeAtAngle(270, .6);
-            Thread.sleep(1000);
-            driveSystem.turnTo(260, .5);
-
-            try {
-                driveSystem.moveToPosition(25, 85, 1, 1, new DistanceTimeoutException(1000));
-            } catch (MovementException ignored) {
-            }
-            driveSystem.turnTo(270, .2);
+            driveSystem.moveToPosition(26, 82.5, 272, .5, new DistanceTimeoutWarning(500));
 
             switch (Pos) {
                 case NotSeen:
@@ -65,12 +56,12 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     slide.setTargetLevel(HeightLevel.TopLevel);
                     Thread.sleep(1000);
                     driveSystem.strafeAtAngle(180, .2);
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                     driveSystem.stopAll();
                     intake.setServoOpen();
                     Thread.sleep(750);
-                    driveSystem.strafeAtAngle(0, .5);
-                    Thread.sleep(500);
+                    //driveSystem.strafeAtAngle(0, .5);
+                    //Thread.sleep(500);
                     driveSystem.stopAll();
                     slide.setTargetLevel(HeightLevel.Down);
                     break;
@@ -107,35 +98,39 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                     break;
             }
 
-            try {
-                driveSystem.moveToPosition(12, 70, 1, 1, new DistanceTimeoutException(500));
-            } catch (MovementException ignored) {
-            }
-            driveSystem.turnTo(200, .8);
-            try {
-                driveSystem.moveToPosition(4, 70, 1, 2, new DistanceTimeoutException(1000));
-                driveSystem.strafeAtAngle(90, 1);
-                Thread.sleep(250);
-            } catch (MovementException ignored) {
-            }
+            driveSystem.moveToPosition(20, 150, gps.getRot(), 1, new DistanceTimeoutWarning(100));
+
+            //This moves into the wall for duck spinning
+            driveSystem.moveToPosition(0, gps.getY() + 5, gps.getRot(), 1, new DistanceTimeoutWarning(100));
+
+            driveSystem.stopAll();
+            spinner.spinOffRedDuck();
 
 
-            intake.setIntakeOn();
-            try {
-                driveSystem.moveToPosition(0, 8, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor), new DistanceTimeoutException(500)});
+            if (!overBarrier) {
+                //driveSystem.moveToPosition(17, 80, 180, 2, new DistanceTimeoutWarning(1000));
 
-            } catch (MovementException ignored) {
-            } finally {
+                driveSystem.moveToPosition(0, 80, 180, 0.01, new DistanceTimeoutWarning(100));
+
+                intake.setIntakeOn();
+
+                try {
+                    driveSystem.moveToPosition(0, 10, 180, 1, new MovementException[]{new DistanceSensorException(distanceSensor), new DistanceTimeoutException(500)});
+                } catch (MovementException e) {
+                    if (gps.getY() > 20) {
+                        driveSystem.moveToPosition(0, 10, gps.getRot(), 1, new DistanceTimeoutWarning(100));
+                    }
+                }
+
                 intake.setIntakeOff();
+
+            } else {
+                driveSystem.moveToPosition(33, 77, 180, 2, new DistanceTimeoutWarning(100));
+                podServos.raise();
+                driveSystem.strafeAtAngle(0, 1);
+                Thread.sleep(2500);
+                driveSystem.stopAll();
             }
-
-            intake.setIntakeOff();
-
-
         }
-        odometry.end();
-
     }
 }
-
-

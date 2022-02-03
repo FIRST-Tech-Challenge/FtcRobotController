@@ -352,7 +352,6 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
             for (MovementException e : errors) {
                 e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
-
             }
 
             if (turnWhileStrafe) {

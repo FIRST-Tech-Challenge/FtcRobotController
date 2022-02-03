@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.NavigationalDrivetrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.IMUOdometry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.IMU;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
@@ -25,7 +26,7 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
     /**
      * Provides Odometry Methods, Also held by NavigationalDrivetrain driveSystem
      */
-    protected IMUOdometry odometry;
+    protected LocalizationAlgorithm gps;
 
 
     /**
@@ -91,18 +92,20 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
             checkStop();
             IMU imu = new IMU(hardwareMap, IMUName);
             checkStop();
-            odometry = new IMUOdometry(front_left, front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
+            IMUOdometry o = new IMUOdometry(front_left, front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
+            o.reverseRightEncoder();
+
+            o.start();
+            gps = o;
         }
 
-        odometry.reverseRightEncoder();
 
-        odometry.start();
 
         if (voltageSensor == null) {
             this.initVoltageSensor();
         }
 
-        driveSystem = new NavigationalDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
+        driveSystem = new NavigationalDrivetrain(front_right, front_left, back_right, back_left, telemetry, gps, this::isStopRequested, this::opModeIsActive, voltageSensor);
     }
 
 
@@ -149,19 +152,18 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
             checkStop();
             IMU imu = new IMU(hardwareMap, IMUName);
             checkStop();
-            odometry = new IMUOdometry(front_left, front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
+            IMUOdometry o = new IMUOdometry(front_left, front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
+            o.reverseRightEncoder();
+
+            o.start();
+            gps = o;
         }
-
-
-        odometry.reverseRightEncoder();
-
-        odometry.start();
 
         if (voltageSensor == null) {
             this.initVoltageSensor();
         }
 
-        driveSystem = new NavigationalDrivetrain(front_right, front_left, back_right, back_left, telemetry, odometry, this::isStopRequested, this::opModeIsActive, voltageSensor);
+        driveSystem = new NavigationalDrivetrain(front_right, front_left, back_right, back_left, telemetry, gps, this::isStopRequested, this::opModeIsActive, voltageSensor);
     }
 
     /**

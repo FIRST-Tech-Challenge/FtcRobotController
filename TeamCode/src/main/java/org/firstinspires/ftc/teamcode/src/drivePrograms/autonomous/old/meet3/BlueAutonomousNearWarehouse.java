@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.old;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.old.meet3;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -6,20 +6,21 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
 
 /**
- * The Autonomous ran on Red side near warehouse for Meet 1
+ * The Autonomous ran on Blue side near warehouse for Meet 1
  */
-@Autonomous(name = "RedAutonomousNearWarehouse")
+@Autonomous(name = "BlueAutonomousNearWarehouse")
 @Disabled
-public class RedAutonomousNearWarehouse extends AutonomousTemplate {
+public class BlueAutonomousNearWarehouse extends AutonomousTemplate {
 
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
+        gps.setPos(133.5, 64, 180);
         telemetry.addData("Initialization Status: ", "Complete");
         telemetry.update();
         waitForStart();
-        odometry.setPos(7.5, 64, 180);
-        driveSystem.moveToPosition(29, 64, 1);
+
+        driveSystem.moveToPosition(106, 65, 2);
         podServos.raise();
         driveSystem.strafeAtAngle(180, 1);
         Thread.sleep(50);

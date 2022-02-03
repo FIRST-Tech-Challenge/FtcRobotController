@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
+import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemInterface;
 
-public interface Odometry extends LocalizationAlgorithm {
+public interface Odometry extends LocalizationAlgorithm, ThreadedSubsystemInterface {
 
 
     /**
