@@ -6,7 +6,10 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,7 +29,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private DcMotor carouselLeft = null;
     private DcMotor carouselRight = null;
     private DcMotor intakeDC = null;
-    private DcMotor armDC = null;
+    private DcMotorEx armDC = null;
     private Servo releaseServo = null;
     private Servo balanceServo = null;
     private TouchSensor limitSwitch = null;
@@ -43,6 +46,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private double acc = 1.0;
     private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
     private Mechanisms mechanisms = null;
+    private PIDFCoefficients armCoefficients = new PIDFCoefficients(8,0,1,0);
 
     public enum PRESETSTATE {
         SHARED_HUB,
@@ -66,7 +70,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
         carouselRight = hardwareMap.get(DcMotor.class,"carouselRight");
         intakeDC = hardwareMap.get(DcMotor.class, "intakeDC");
-        armDC = hardwareMap.get(DcMotor.class, "armDC");
+        armDC = hardwareMap.get(DcMotorEx.class, "armDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
@@ -101,6 +105,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armDC.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,armCoefficients);
         telemetry.addData("Status", "Started");
         telemetry.update();
         runtime.reset(); //Reset runtime
