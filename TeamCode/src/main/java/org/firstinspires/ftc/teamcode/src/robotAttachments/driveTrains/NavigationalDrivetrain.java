@@ -385,6 +385,75 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         moveToPosition(x, y, theta, tolerance, errors);
     }
 
+    //-Move Toward Position Methods----------------------------------------------------------------------------------------------
+
+    public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementWarning warning) throws InterruptedException {
+        try {
+            this.moveTowardsPosition(x, y, theta, power, tolerance, new MovementException[]{warning});
+        } catch (MovementException ignored) {
+        }
+    }
+
+    public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementWarning[] warnings) throws InterruptedException {
+        try {
+            this.moveTowardsPosition(x, y, theta, power, tolerance, (MovementException[]) warnings);
+        } catch (MovementException ignored) {
+        }
+    }
+
+    public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementException error) throws InterruptedException, MovementException {
+        this.moveTowardsPosition(x, y, theta, power, tolerance, new MovementException[]{error});
+    }
+
+    public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementException[] errors) throws InterruptedException, MovementException {
+
+        final String args = "moveTowardsPosition(" + x + ", " + y + ", " + theta + ", " + power + ")\n";
+        final String coordinateString = x + " , " + y;
+
+        double[] currentPos = gps.getPos();
+        double currentX = currentPos[0];
+        double currentY = currentPos[1];
+        double currentAngle = currentPos[2];
+
+        double currentDistance = MiscUtils.distance(currentX, currentY, x, y);
+
+        while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
+
+            if (this.debug) {
+                telemetry.addData("Function", args);
+                telemetry.addData("Moving to", coordinateString);
+                telemetry.addData("currentDistance", currentDistance);
+                telemetry.addData("angle", currentAngle);
+                telemetry.addData("Moving?", (currentDistance > tolerance && !isStopRequested() && opModeIsActive()));
+                telemetry.addData("X Pos", currentX);
+                telemetry.addData("Y Pos", currentY);
+                telemetry.addData("Power", power);
+                telemetry.update();
+            }
+
+            currentPos = gps.getPos();
+            currentX = currentPos[0];
+            currentY = currentPos[1];
+            currentAngle = MiscUtils.getAngle(currentX, currentY, x, y, currentPos[2]); //angle;
+
+            currentDistance = MiscUtils.distance(currentX, currentY, x, y); //currentDistance value
+
+
+            for (MovementException e : errors) {
+                e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
+            }
+
+            if (turnWhileStrafe) {
+                strafeAtAngleWhileTurn(currentAngle, theta, power);
+            } else {
+                strafeAtAngle(currentAngle, power);
+            }
+        }
+    }
+
+    //-Misc Methods----------------------------------------------------------------------------------------------
+
+
     /**
      * Strafes at the provided angle relative to the robot, and turns to the given turnAngle
      *
@@ -394,7 +463,6 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      */
     private void strafeAtAngleWhileTurn(double angle, double turnAngle, double power) {
 
-        final boolean factorInAngleTurn = false;
         power = MiscUtils.boundNumber(power);
         double power1;
         double power2;
