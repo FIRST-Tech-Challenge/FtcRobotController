@@ -98,19 +98,20 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     break;
             }
 
-            driveSystem.moveToPosition(20, 150, gps.getRot(), 1, new DistanceTimeoutWarning(100));
-
+            driveSystem.moveToPosition(10, 144, gps.getRot(), 1, new DistanceTimeoutWarning(100));
             //This moves into the wall for duck spinning
             driveSystem.moveToPosition(0, gps.getY() + 5, gps.getRot(), 1, new DistanceTimeoutWarning(100));
 
             driveSystem.stopAll();
             spinner.spinOffRedDuck();
 
+            driveSystem.moveTowardsPosition(gps.getX() + 10, gps.getY() - 20, gps.getRot(), 1, 5, new DistanceTimeoutWarning(500));
+            //driveSystem.moveTowardsPosition(15,80,180,1,5,new DistanceTimeoutWarning(500));
 
+            //Through crack
             if (!overBarrier) {
-                //driveSystem.moveToPosition(17, 80, 180, 2, new DistanceTimeoutWarning(1000));
 
-                driveSystem.moveToPosition(0, 80, 180, 0.01, new DistanceTimeoutWarning(100));
+                driveSystem.moveTowardsPosition(0, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
 
                 intake.setIntakeOn();
 
@@ -124,6 +125,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
                 intake.setIntakeOff();
 
+                // Over Barrier
             } else {
                 driveSystem.moveToPosition(33, 77, 180, 2, new DistanceTimeoutWarning(100));
                 podServos.raise();
