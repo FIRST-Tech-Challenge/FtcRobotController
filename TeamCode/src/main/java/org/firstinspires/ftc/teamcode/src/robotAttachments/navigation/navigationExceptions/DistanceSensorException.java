@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -24,7 +24,7 @@ public class DistanceSensorException extends MovementException {
     public void call(double x, double y, double theta, double tolerance, Telemetry telemetry, LocalizationAlgorithm gps, Executable<Boolean> _isStopRequested, Executable<Boolean> _opModeIsActive, RobotVoltageSensor voltageSensor) throws MovementException {
         if (this.distanceSensor.getDistance(DistanceUnit.CM) < 8) {
             final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
-            final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Error.\n";
+            final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Exception.\n";
             RobotLog.addGlobalWarningMessage(errorMsg);
             throw this;
         }

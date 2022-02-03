@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationErrors.MovementException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.MovementWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.enums.FieldPoints;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
