@@ -132,7 +132,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
 
                 try {
-                    driveSystem.moveToPosition(135, 20, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor), new DistanceTimeoutException(500)});
+                    driveSystem.moveToPosition(135, 20, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor, 8), new DistanceTimeoutException(500)});
 
                 } catch (MovementException ignored) {
                 } finally {

@@ -10,19 +10,40 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageS
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
+/**
+ * A object to test if the Distance Sensor reading falls below a certain threshold
+ */
 public class DistanceSensorException extends MovementException {
 
+    /**
+     * Internal DistanceSensor Object
+     */
     private final DistanceSensor distanceSensor;
 
+    /**
+     * The minimum value (in inches) that the distance sensor reading must stay above
+     */
+    private final double threshold;
 
-    public DistanceSensorException(DistanceSensor distanceSensor) {
+
+    /**
+     * A constructor
+     *
+     * @param distanceSensor A distance sensor object
+     * @param threshold      The minimum value (in inches) that the distance sensor reading must stay above
+     */
+    public DistanceSensorException(DistanceSensor distanceSensor, double threshold) {
         super();
         this.distanceSensor = distanceSensor;
+        this.threshold = threshold;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void call(double x, double y, double theta, double tolerance, Telemetry telemetry, LocalizationAlgorithm gps, Executable<Boolean> _isStopRequested, Executable<Boolean> _opModeIsActive, RobotVoltageSensor voltageSensor) throws MovementException {
-        if (this.distanceSensor.getDistance(DistanceUnit.CM) < 8) {
+        if (this.distanceSensor.getDistance(DistanceUnit.CM) < threshold) {
             final String args = "moveToPosition(" + x + ", " + y + ", " + theta + ", " + tolerance + ")\n";
             final String errorMsg = "In function call " + args + MiscUtils.getRelativeClassName(this) + " Exception.\n";
             RobotLog.addGlobalWarningMessage(errorMsg);
