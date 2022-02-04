@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="TeleopNoOptimisation")
+@TeleOp(name="TeleopBad")
 
 public class TeleopBad extends LinearOpMode {
 
@@ -131,7 +131,7 @@ public class TeleopBad extends LinearOpMode {
 
             }
             if (gamepad2.dpad_left) { //middle
-                arm.setTargetPosition(800);
+                arm.setTargetPosition(825);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
 
