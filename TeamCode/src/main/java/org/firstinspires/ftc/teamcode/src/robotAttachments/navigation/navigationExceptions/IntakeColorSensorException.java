@@ -7,10 +7,21 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.Continuous
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 
+/**
+ * Tests to see if the intake is not empty
+ */
 public class IntakeColorSensorException extends MovementException {
 
+    /**
+     * Internal intake to monitor
+     */
     private final ContinuousIntake intake;
 
+    /**
+     * A constructor
+     *
+     * @param intake
+     */
     public IntakeColorSensorException(ContinuousIntake intake) {
         super();
         this.intake = intake;

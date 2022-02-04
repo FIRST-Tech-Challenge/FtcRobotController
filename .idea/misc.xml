@@ -2,6 +2,7 @@
 <project version="4">
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Desktop/JavaDoc" />
+    <option name="OTHER_OPTIONS" value="-verbose" />
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="androidx.annotation.Nullable" />

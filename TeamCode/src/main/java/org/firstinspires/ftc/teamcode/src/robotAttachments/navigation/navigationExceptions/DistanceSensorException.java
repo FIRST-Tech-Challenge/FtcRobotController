@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 /**
- * A object to test if the Distance Sensor reading falls below a certain threshold
+ * A tests to see if the Distance Sensor reading falls below a certain threshold
  */
 public class DistanceSensorException extends MovementException {
 
@@ -21,7 +21,7 @@ public class DistanceSensorException extends MovementException {
     private final DistanceSensor distanceSensor;
 
     /**
-     * The minimum value (in inches) that the distance sensor reading must stay above
+     * The minimum value (in centimeters) that the distance sensor reading must stay above
      */
     private final double threshold;
 
@@ -30,7 +30,7 @@ public class DistanceSensorException extends MovementException {
      * A constructor
      *
      * @param distanceSensor A distance sensor object
-     * @param threshold      The minimum value (in inches) that the distance sensor reading must stay above
+     * @param threshold      The minimum value (in centimeters) that the distance sensor reading must stay above
      */
     public DistanceSensorException(DistanceSensor distanceSensor, double threshold) {
         super();

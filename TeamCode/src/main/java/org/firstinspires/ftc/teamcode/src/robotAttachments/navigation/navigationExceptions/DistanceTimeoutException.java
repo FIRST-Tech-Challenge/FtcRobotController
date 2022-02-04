@@ -9,14 +9,33 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageS
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
+/**
+ * Tests to see if the robot has remained stationary for too long
+ */
 public class DistanceTimeoutException extends MovementException {
 
+    /**
+     * Timer to keep track of idle time
+     */
     private final ElapsedTime timer;
+    /**
+     * The amount of acceptable distance to travel within the loop time frame
+     */
     private final double tooSmallOfDistance; // this travels ~2 inches for every 1000 millis
+    /**
+     * The length of each time frame
+     */
     private final double millis;
+    /**
+     * The position the robot is in after the loop
+     */
     private double positionAfterTimeLoop = Double.MAX_VALUE; //These are arrays to make the compiler happy. Treat them as a normal double
 
-
+    /**
+     * A constructor
+     *
+     * @param millis The length of each time frame that this is run in milliseconds
+     */
     public DistanceTimeoutException(double millis) {
         super();
         timer = new ElapsedTime();
@@ -25,6 +44,9 @@ public class DistanceTimeoutException extends MovementException {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void call(double x, double y, double theta, double tolerance, Telemetry telemetry, LocalizationAlgorithm gps, Executable<Boolean> _isStopRequested, Executable<Boolean> _opModeIsActive, RobotVoltageSensor voltageSensor) throws MovementException {
         if (timer.milliseconds() >= millis) {
