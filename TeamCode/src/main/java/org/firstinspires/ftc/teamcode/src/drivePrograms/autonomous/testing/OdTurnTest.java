@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
 
@@ -9,8 +8,8 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTempla
 /**
  * A OpMode to test Odometry turning capabilities
  */
-@Disabled
-@Autonomous(name = "OdTurn")
+//@Disabled
+@Autonomous(name = "OdMove")
 public class OdTurnTest extends AutonomousTemplate {
     @Override
     public void opModeMain() throws InterruptedException {
@@ -24,7 +23,8 @@ public class OdTurnTest extends AutonomousTemplate {
         waitForStart();
         while (opModeIsActive()) {
 
-            driveSystem.newTurnToPrototype(270, .7, .05, true);
+            driveSystem.move(10, 180, 1);
+            driveSystem.move(10, 270, 1);
         }
 
         telemetry.addData("done", "");

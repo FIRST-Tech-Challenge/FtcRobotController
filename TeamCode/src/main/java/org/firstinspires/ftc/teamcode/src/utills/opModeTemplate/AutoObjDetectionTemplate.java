@@ -258,7 +258,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 intake.setServoOpen();
                 Thread.sleep(750);
                 driveSystem.strafeAtAngle(0, .8);
-                Thread.sleep(500);
+                Thread.sleep(250);
                 slide.setTargetLevel(HeightLevel.Down);
                 break;
             case Center:
@@ -271,7 +271,8 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 Thread.sleep(500);
                 driveSystem.strafeAtAngle(0, .5);
                 Thread.sleep(500);
-                driveSystem.stopAll();
+                driveSystem.strafeAtAngle(0, .8);
+                Thread.sleep(250);
                 slide.setTargetLevel(HeightLevel.Down);
                 Thread.sleep(500);
                 break;
@@ -284,10 +285,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 driveSystem.stopAll();
                 intake.setServoOpen();
                 Thread.sleep(1000);
-                driveSystem.strafeAtAngle(0, .5);
-                Thread.sleep(500);
-
-                driveSystem.stopAll();
 
                 slide.setTargetLevel(HeightLevel.Down);
                 Thread.sleep(500);
