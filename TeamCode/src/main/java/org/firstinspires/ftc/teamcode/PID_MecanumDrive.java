@@ -52,6 +52,9 @@ public class PID_MecanumDrive extends LinearOpMode {
     public DcMotor carouselTurner;
     public DcMotor bucketTurner;
     
+    //RevBlinkinLedDriver lights;
+    //RevBlinkinLedDriver.BlinkinPattern pattern;
+    
     /*
         // UNCOMMENT IF DOING CUSTOM PID TUNING. F IS FEED-FORWARD WHICH ALLOWS THE MOTOR TO "HOLD POSITION".
         static double frontLeft_kP = 0.3;
@@ -130,8 +133,21 @@ public class PID_MecanumDrive extends LinearOpMode {
                 
             }
             
+            /*
+            if (freightDistance.getDistance(DistanceUnit.INCH) < 5) {
             
+                pattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
+                blinkinLedDriver.setPattern(pattern);
             
+            } else {
+            
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+                blinkinLedDriver.setPattern(pattern);
+            
+            }
+            */
+            
+            /*
             // rotation 
             double x_rotated = x * Math.cos(angle) - y * Math.sin(angle);
             double y_rotated = x * Math.sin(angle) + y * Math.cos(angle);
@@ -141,7 +157,7 @@ public class PID_MecanumDrive extends LinearOpMode {
             double backLeftPower = x_rotated - y_rotated + t;
             double frontRightPower = x_rotated - y_rotated - t;
             double backRightPower = x_rotated + y_rotated - t;
-            
+            */
             
             /*            
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -225,6 +241,10 @@ public class PID_MecanumDrive extends LinearOpMode {
 
         
         bucketTurner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        
+        //lights = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        //pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        //blinkinLedDriver.setPattern(pattern);
 
         /*
         // USE THIS TO CUSTOM TUNE YOUR PID COEFFICIENTS DEFINED ABOVE
