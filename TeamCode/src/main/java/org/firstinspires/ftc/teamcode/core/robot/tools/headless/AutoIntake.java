@@ -48,11 +48,11 @@ public class AutoIntake {
         ledDriver.setPattern(pattern);
     }
 
-    public void off() {
+    public void lightsOff() {
         setPattern(WHITE);
     }
 
-    public void on() {
+    public void lightsOn() {
         setPattern(RAINBOW_RAINBOW_PALETTE);
     }
 }
