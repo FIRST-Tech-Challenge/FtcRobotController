@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleConsumer;
 import java.util.function.IntConsumer;
@@ -35,11 +36,12 @@ import java.util.function.IntSupplier;
  * b - set alliance to red
  * a - set starting location to lower position
  * y - set starting location to upper position
- *
  * dpad up - initialize / shutdown vision provider
  * dpad left - increment vision provider index
  * dpad down - toggle debug telemetry
  * dpad right - save vision output to filesystem
+ * left bumper - toggle numerical dashboard
+ *
  *
  * --Tele-Op--
  * gamepad 1: x - set gripper for intake
@@ -83,13 +85,17 @@ public class FF_6832 extends OpMode {
     };
     public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW = 5;
     public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST = 15;
+    public static double DRIVE_VELOCITY_EXPONENT = 1;
+    public static double FORWARD_SMOOTHING_FACTOR = 0.3;
+    public static double ROTATE_SMOOTHING_FACTOR = 0.3;
 
     private Robot robot;
     private Autonomous auto;
     private FtcDashboard dashboard;
+    private ExponentialSmoother forwardSmoother, rotateSmoother;
 
     // global state
-    private boolean active, initializing, debugTelemetryEnabled;
+    private boolean active, initializing, debugTelemetryEnabled, numericalDashboardEnabled;
     private Alliance alliance;
     private Position startingPosition;
     private GameState gameState;
@@ -122,7 +128,7 @@ public class FF_6832 extends OpMode {
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
         BACK_AND_FORTH("Back And Forth"),
         SQUARE("Square"),
-        TURN("turn");
+        TURN("Turn");
 
         private final String name;
 
@@ -167,6 +173,9 @@ public class FF_6832 extends OpMode {
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         auto = new Autonomous(robot);
+
+        forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
+        rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
         // vision
         auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
@@ -242,6 +251,10 @@ public class FF_6832 extends OpMode {
 
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             debugTelemetryEnabled = !debugTelemetryEnabled;
+
+        if(stickyGamepad1.left_trigger || stickyGamepad2.left_trigger)
+            numericalDashboardEnabled = !numericalDashboardEnabled;
+
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -272,13 +285,13 @@ public class FF_6832 extends OpMode {
 
 
     private void handleArcadeDrive(Gamepad gamepad) {
-        forward = Math.pow(-gamepad.left_stick_y, 3) * FORWARD_SCALING_FACTOR;
-        rotate = Math.pow(-gamepad.right_stick_x, 3) * ROTATE_SCALING_FACTOR;
+        forward = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
+        rotate = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 
     private void handleTankDrive(Gamepad gamepad) {
-        double left = Math.pow(-gamepad.left_stick_y, 3);
-        double right = Math.pow(-gamepad.right_stick_y, 3);
+        double left = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT);
+        double right = Math.pow(-gamepad.right_stick_y, DRIVE_VELOCITY_EXPONENT);
 
         forward = (right + left) / 2.0 * FORWARD_SCALING_FACTOR;
         rotate = -(right - left) / 2.0 * ROTATE_SCALING_FACTOR;
@@ -288,7 +301,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
-        robot.driveTrain.setDrivePower(new Pose2d(forward, 0, rotate));
+        robot.driveTrain.setDrivePower(new Pose2d(forwardSmoother.update(forward), 0, rotateSmoother.update(rotate)));
     }
 
     private void handleTeleOp() { // apple
@@ -484,8 +497,11 @@ public class FF_6832 extends OpMode {
 
         for (Map.Entry<String, Object> entry : telemetryMap.entrySet()) {
             String line = String.format("%s: %s", entry.getKey(), entry.getValue());
+            if(numericalDashboardEnabled)
+                packet.put(entry.getKey(), entry.getValue());
+            else
+                packet.addLine(line);
             telemetry.addLine(line);
-            packet.put(entry.getKey(), entry.getValue());
         }
 
         telemetry.addLine();
@@ -512,16 +528,16 @@ public class FF_6832 extends OpMode {
         stickyGamepad2.update();
 
         TelemetryPacket packet = new TelemetryPacket();
-        Map<String, Object> opModeTelemetryMap = new HashMap<>();
+        Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
         // handling op mode telemetry
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);
         }
-        opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
-        opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         opModeTelemetryMap.put("Active", active);
         opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_LENGTH_LEVELS.length));
+        opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+        opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
 
         switch(gameState) {
             case MANUAL_DIAGNOSTIC:
@@ -540,9 +556,12 @@ public class FF_6832 extends OpMode {
         handleTelemetry(auto.visionProvider.getTelemetry(debugTelemetryEnabled), auto.visionProvider.getTelemetryName(), packet);
 
         robot.update(packet.fieldOverlay());
-
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
+
+        // handling dashboard changes
+        forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
+        rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
 
         updateTiming();
     }

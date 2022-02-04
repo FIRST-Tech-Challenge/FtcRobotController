@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class VisionProvider implements TelemetryProvider {
@@ -100,7 +101,7 @@ public abstract class VisionProvider implements TelemetryProvider {
     }
 
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<>();
+        Map<String, Object> telemetryMap = new LinkedHashMap<>();
 
         telemetryMap.put("Most Frequent Detected Position", mostFrequentPosition);
         telemetryMap.put("Detected Position", getPosition());

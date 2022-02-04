@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
 
 import static org.firstinspires.ftc.teamcode.util.utilMethods.between360Clockwise;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Config
@@ -66,7 +66,7 @@ public class Turret implements Subsystem {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        Map<String, Object> telemetryMap = new HashMap<>();
+        Map<String, Object> telemetryMap = new LinkedHashMap<>();
         if(debug) {
             telemetryMap.put("turretMotorPosition", motor.getCurrentPosition());
             telemetryMap.put("motor amps", motor.getCurrent(CurrentUnit.AMPS));
