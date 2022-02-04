@@ -8,17 +8,16 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigation
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceTimeoutException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
 
 /**
- * The Autonomous ran on Red side near spinner for Qualifier
+ * The Autonomous ran on Red side near spinner for State
  */
 @Autonomous(name = "Red State Carousel Autonomous")
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.RED;
-    private final boolean overBarrier = false;
+    private final boolean overBarrier = true;
     public DistanceSensor distanceSensor;
 
 
@@ -47,52 +46,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
             driveSystem.moveToPosition(26, 82.5, 272, .5, new DistanceTimeoutWarning(500));
 
-            switch (Pos) {
-                case NotSeen:
-                case Right:
-                    // got to the top level when right
-                    slide.setTargetLevel(HeightLevel.TopLevel);
-                    Thread.sleep(1000);
-                    driveSystem.strafeAtAngle(180, .2);
-                    Thread.sleep(1000);
-                    driveSystem.stopAll();
-                    intake.setServoOpen();
-                    Thread.sleep(750);
-                    driveSystem.stopAll();
-                    slide.setTargetLevel(HeightLevel.Down);
-                    break;
-                case Center:
-                    slide.setTargetLevel(HeightLevel.MiddleLevel);
-                    Thread.sleep(500);
-                    driveSystem.strafeAtAngle(180, .25);
-                    Thread.sleep(725);
-                    driveSystem.stopAll();
-                    intake.setServoOpen();
-                    Thread.sleep(500);
-                    driveSystem.strafeAtAngle(0, .5);
-                    Thread.sleep(500);
-                    driveSystem.stopAll();
-                    slide.setTargetLevel(HeightLevel.Down);
-                    Thread.sleep(500);
-                    break;
-                case Left:
-                    // go to bottom when left
-                    slide.setTargetLevel(HeightLevel.BottomLevel);
-                    Thread.sleep(500);
-                    driveSystem.strafeAtAngle(180, .2);
-                    Thread.sleep(1000);
-                    driveSystem.stopAll();
-                    intake.setServoOpen();
-                    Thread.sleep(1000);
-                    driveSystem.strafeAtAngle(0, .5);
-                    Thread.sleep(500);
-
-                    driveSystem.stopAll();
-
-                    slide.setTargetLevel(HeightLevel.Down);
-                    Thread.sleep(500);
-                    break;
-            }
+            dropOffFreight(Pos);
 
             driveSystem.moveToPosition(10, 144, gps.getRot(), 1, new DistanceTimeoutWarning(100));
             //This moves into the wall for duck spinning
@@ -122,10 +76,10 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
             } else {
                 // Over Barrier
-                driveSystem.moveToPosition(33, 77, 180, 2, new DistanceTimeoutWarning(100));
+                driveSystem.moveTowardsPosition(33, 77, 180, 1, 5, new DistanceTimeoutWarning(100));
                 podServos.raise();
                 driveSystem.strafeAtAngle(0, 1);
-                Thread.sleep(2500);
+                Thread.sleep(2000);
                 driveSystem.stopAll();
             }
         }

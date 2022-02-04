@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -241,21 +242,56 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      * @return Where the marker is
      */
     public BarcodePositions findPositionOfMarker() {
+        return AutoObjDetectionTemplate.findPositionOfMarker(this.tfod);
+    }
 
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-        if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
-            Recognition rec = updatedRecognitions.get(0);
-            double xCenterLine = ((rec.getRight() + rec.getLeft()) / 2.0);
+    public void dropOffFreight(BarcodePositions Pos) throws InterruptedException {
+        switch (Pos) {
+            case NotSeen:
+            case Right:
+                // got to the top level when right
+                slide.setTargetLevel(HeightLevel.TopLevel);
+                Thread.sleep(1000);
+                driveSystem.strafeAtAngle(180, .2);
+                Thread.sleep(1000);
+                driveSystem.stopAll();
+                intake.setServoOpen();
+                Thread.sleep(750);
+                driveSystem.strafeAtAngle(0, .8);
+                Thread.sleep(500);
+                slide.setTargetLevel(HeightLevel.Down);
+                break;
+            case Center:
+                slide.setTargetLevel(HeightLevel.MiddleLevel);
+                Thread.sleep(500);
+                driveSystem.strafeAtAngle(180, .25);
+                Thread.sleep(725);
+                driveSystem.stopAll();
+                intake.setServoOpen();
+                Thread.sleep(500);
+                driveSystem.strafeAtAngle(0, .5);
+                Thread.sleep(500);
+                driveSystem.stopAll();
+                slide.setTargetLevel(HeightLevel.Down);
+                Thread.sleep(500);
+                break;
+            case Left:
+                // go to bottom when left
+                slide.setTargetLevel(HeightLevel.BottomLevel);
+                Thread.sleep(500);
+                driveSystem.strafeAtAngle(180, .2);
+                Thread.sleep(1000);
+                driveSystem.stopAll();
+                intake.setServoOpen();
+                Thread.sleep(1000);
+                driveSystem.strafeAtAngle(0, .5);
+                Thread.sleep(500);
 
-            if (xCenterLine < 450) {
-                return BarcodePositions.Left;
-            } else if (xCenterLine < 820) {
-                return BarcodePositions.Center;
-            } else {
-                return BarcodePositions.Right;
-            }
-        } else {
-            return BarcodePositions.NotSeen;
+                driveSystem.stopAll();
+
+                slide.setTargetLevel(HeightLevel.Down);
+                Thread.sleep(500);
+                break;
         }
     }
 

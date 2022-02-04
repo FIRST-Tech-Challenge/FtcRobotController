@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 public class VoltageDropException extends MovementException {
 
     private final double dropAmount;
-    private Double initialVoltage = null;
+    private Double initialVoltage;
 
 
-    public VoltageDropException(double dropAmmnt) {
+    public VoltageDropException(double dropAmount) {
         super();
-        this.dropAmount = Math.abs(dropAmmnt);
+        this.dropAmount = Math.abs(dropAmount);
     }
 
     @Override

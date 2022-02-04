@@ -366,6 +366,9 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
             for (MovementException e : errors) {
                 try {
                     e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
+                } catch (MovementWarning ignored) {
+                    this.stopAll();
+                    return;
                 } catch (MovementException Me) {
                     this.stopAll();
                     throw Me;
@@ -394,11 +397,9 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @throws InterruptedException Throws if the OpMode ends during execution
      */
     public void moveToPosition(double x, double y, double theta, double tolerance, MovementWarning warning) throws InterruptedException {
-        MovementException[] errors = {warning};
-        try {
-            moveToPosition(x, y, theta, tolerance, errors);
-        } catch (MovementException ignored) {
-        }
+        MovementWarning[] errors = {warning};
+        moveToPosition(x, y, theta, tolerance, errors);
+
     }
 
     /**
@@ -415,6 +416,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         try {
             moveToPosition(x, y, theta, tolerance, (MovementException[]) warnings);
         } catch (MovementException ignored) {
+            this.stopAll();
         }
     }
 
