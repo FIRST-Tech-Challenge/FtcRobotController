@@ -474,7 +474,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         // Update our tilt angle information
         robot.driveTrainMotors( rammingSpeed, rammingSpeed, rammingSpeed, rammingSpeed);
         robot.headingIMU();
-        while(opModeIsActive() && (robot.tiltAngle >= HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT)) {
+        while(opModeIsActive() && (robot.tiltAngle >= HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_AUTO)) {
             robot.headingIMU();
         }
         // We are nestled, dump freight

@@ -164,7 +164,8 @@ public class HardwareBothHubs
     public final static int FREIGHT_DETECTED_THRESHOLD = 10;
 
 //    public final static double BARRIER_NESTED_ROBOT_TILT = -2.0;
-    public final static double BARRIER_NESTED_ROBOT_TILT = -3.5;
+    public final static double BARRIER_NESTED_ROBOT_TILT_AUTO = -3.5;
+    public final static double BARRIER_NESTED_ROBOT_TILT_TELE = -3.5;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;

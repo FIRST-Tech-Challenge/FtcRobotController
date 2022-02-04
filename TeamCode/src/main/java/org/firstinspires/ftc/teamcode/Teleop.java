@@ -727,7 +727,7 @@ public abstract class Teleop extends LinearOpMode {
                 autoDrive = false;
             }
             // Do we need to break from autoDrive because we've reached the goal
-            else if(robot.tiltAngle < HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT) {
+            else if(robot.tiltAngle < HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_TELE) {
                 robot.stopMotion();
                 autoDrive = false;
             }
