@@ -216,9 +216,9 @@ public class AutonomousBducks extends AutonomousBase {
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
         // Rotate the capping arm into the grabbing position
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );
+        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
-        sleep( 750);   // wait for capping arm to clear the field wall
+        sleep( 750 );  // wait for capping arm to clear the field wall before rotating wrist
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
@@ -229,7 +229,7 @@ public class AutonomousBducks extends AutonomousBase {
             gyroTurn(TURN_SPEED_20, turnAngle );
 
         // Drive forward to collect the element
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
 
@@ -316,8 +316,8 @@ public class AutonomousBducks extends AutonomousBase {
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, 90.0, DRIVE_TO );
         double wallDistance = backRangeSensor()/2.54 - 7.5;
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance, 90.0, DRIVE_TO );
-        gyroTurn(TURN_SPEED_20, 135.0 );  // Turn toward corner
-        robot.duckMotor.setPower( -0.48 );                // Enable the carousel motor
+        gyroTurn(TURN_SPEED_20, 135.0 );   // Turn toward corner
+        robot.duckMotor.setPower( -0.48 ); // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
             double barelyPressSpeed = 0.05;

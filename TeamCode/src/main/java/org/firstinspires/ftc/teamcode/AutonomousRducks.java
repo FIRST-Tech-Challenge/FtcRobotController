@@ -53,7 +53,7 @@ public class AutonomousRducks extends AutonomousBase {
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
-    public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
+    public int hubLevel = 0;   // dynamic (gets updated every cycle during INIT)
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -94,7 +94,7 @@ public class AutonomousRducks extends AutonomousBase {
         while (!isStarted()) {
             sonarRangeR = robot.updateSonarRangeR();
             telemetry.addData("ALLIANCE", "%s", "RED (ducks)");
-            telemetry.addData("Block Level", "%d", blockLevel );
+            telemetry.addData("Hub Level", "%d", hubLevel);
             telemetry.addData("Sonar Range", "%.1f inches (28.0)", sonarRangeR/2.54 );
             telemetry.addData("Left Red Alignment", "%d %b", FreightFrenzyPipeline.leftRedAverage, FreightFrenzyPipeline.alignedRedLeft);
             telemetry.addData("Center Red Alignment", "%d %b", FreightFrenzyPipeline.centerRedAverage, FreightFrenzyPipeline.alignedRedCenter);
@@ -107,7 +107,7 @@ public class AutonomousRducks extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(redAlignedCount >= 2) {
                 telemetry.addLine("Red aligned for red autonomous. Good job!");
-                blockLevel = FreightFrenzyPipeline.hubLevel;
+                hubLevel = FreightFrenzyPipeline.hubLevel;
             } else if (blueAlignedCount >= 2) {
                 telemetry.addLine("****************************************************");
                 telemetry.addLine("* WARNING: Blue aligned for RED autonomous. *");
@@ -126,7 +126,7 @@ public class AutonomousRducks extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            blockLevel = FreightFrenzyPipeline.hubLevel;
+            hubLevel = FreightFrenzyPipeline.hubLevel;
             FreightFrenzyPipeline.saveLastAutoImage();
         }
 
@@ -162,35 +162,35 @@ public class AutonomousRducks extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "collectTeamElement");
             telemetry.update();
-            collectTeamElement( blockLevel );
+            collectTeamElement( hubLevel );
         }
 
-        // Drive to the alliance hub to deposit block
+        // Drive to the alliance hub to deposit freight
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "moveToHub");
             telemetry.update();
-            moveToHub( blockLevel );
+            moveToHub( hubLevel );
         }
 
-        // Deposit block in top/middle/bottom
+        // Deposit freight in top/middle/bottom
         if( opModeIsActive() ) {
-            telemetry.addData("Skill", "dumpBlock");
+            telemetry.addData("Skill", "dumpFreight");
             telemetry.update();
-            dumpBlock( blockLevel );
+            dumpFreight( hubLevel );
         }
 
         // Drive to the duck carousel
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "spinDuckCarousel");
             telemetry.update();
-            spinDuckCarousel( blockLevel );
+            spinDuckCarousel( hubLevel );
         }
 
         // Drive to square to park
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToSquare");
             telemetry.update();
-            driveToSquare( blockLevel );
+            driveToSquare( hubLevel );
         }
 
     } // mainAutonomous
@@ -216,9 +216,9 @@ public class AutonomousRducks extends AutonomousBase {
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
         // Rotate the capping arm into the grabbing position
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );
+        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
-        sleep( 750);   // wait for capping arm to clear the field wall
+        sleep( 750 );  // wait for capping arm to clear the field wall before rotating wrist
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
@@ -229,7 +229,7 @@ public class AutonomousRducks extends AutonomousBase {
             gyroTurn(TURN_SPEED_20, turnAngle );
 
         // Drive forward to collect the element
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 0.0, DRIVE_TO );
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
 
@@ -251,13 +251,13 @@ public class AutonomousRducks extends AutonomousBase {
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
                      break;
-            case 2 : angleToHub = 38.0;
-                     distanceToHub = -5.2;  // middle
+            case 2 : angleToHub = 35.0;
+                     distanceToHub = -7.7;  // middle
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      armSleep = 750;  // 750 msec
                      break;
-            case 1 : angleToHub = 38.0;
-                     distanceToHub = -6.7;  // bottom
+            case 1 : angleToHub = 37.0;
+                     distanceToHub = -10.0;  // bottom
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      armSleep = 1250;   // 1.25 sec
                      break;
@@ -280,7 +280,7 @@ public class AutonomousRducks extends AutonomousBase {
   } // moveToHub
 
     /*--------------------------------------------------------------------------------------------*/
-    private void dumpBlock( int level ) {
+    private void dumpFreight(int level ) {
         double servoPos = robot.BOX_SERVO_DUMP_TOP;
         double backDistance = 3.0;
 
@@ -302,7 +302,7 @@ public class AutonomousRducks extends AutonomousBase {
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
-    } // dumpBlock
+    } // dumpFreight
 
     /*--------------------------------------------------------------------------------------------*/
     private void spinDuckCarousel( int level ) {
@@ -317,7 +317,7 @@ public class AutonomousRducks extends AutonomousBase {
         double wallDistance = backRangeSensor()/2.54 - 10.0;
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance, -90.0, DRIVE_TO );
         gyroTurn(TURN_SPEED_20, -135.0 );  // Turn toward corner
-        robot.duckMotor.setPower( 0.55 );                // Enable the carousel motor
+        robot.duckMotor.setPower( 0.48 );  // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
             double barelyPressSpeed = 0.06;

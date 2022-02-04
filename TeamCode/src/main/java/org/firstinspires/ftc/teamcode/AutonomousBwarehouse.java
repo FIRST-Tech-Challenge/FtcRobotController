@@ -105,7 +105,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             checkForNewCollisionDelay();
             telemetry.addData("ALLIANCE", "%s", "BLUE (warehouse)");
             telemetry.addData("Hub Level", "%d", hubLevel);
-            telemetry.addData("Sonar Range", "%.1f inches (52.8)", sonarRangeR/2.54 );
+            telemetry.addData("Sonar Range", "%.1f inches (52.8?)", sonarRangeR/2.54 );
             telemetry.addData("Start delay", "%.1f seconds (dpad up/down)", collisionDelay );
             telemetry.addData("Left Blue Alignment", "%d %b", FreightFrenzyPipeline.leftBlueAverage, FreightFrenzyPipeline.alignedBlueLeft);
             telemetry.addData("Center Blue Alignment", "%d %b", FreightFrenzyPipeline.centerBlueAverage, FreightFrenzyPipeline.alignedBlueCenter);
@@ -189,7 +189,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
     private void mainAutonomous() {
 
         boolean freightCollected = false;
-        double freightCollectAngle = 65.0;
+        double freightCollectAngle = 75.0;
 
         // Wait before moving to avoid collision with duck-side alliance partner
         // trying to dump a freight in the alliance shipping hub
@@ -216,20 +216,20 @@ public class AutonomousBwarehouse extends AutonomousBase {
             dumpFreight(hubLevel);
         }
 
-        // Drive to warehouse to park
+        // Drive into warehouse
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToWarehouse");
             telemetry.update();
             driveToWarehouse(hubLevel);
         }
 
-        // Perform freight collecting and scoring until time runs out
+        // Perform first freight collection
         while( opModeIsActive() && !freightCollected) {
             // Drive into freight pile to collect
             telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
             telemetry.update();
             freightCollected = collectFreight(hubLevel, freightCollectAngle, 350 );
-            freightCollectAngle -= 5.0;
+            freightCollectAngle -= 5.0;  // try again at a slightly different angle
         }
 
         // Score the freight if we have collected one, and we have enough time.
@@ -237,15 +237,16 @@ public class AutonomousBwarehouse extends AutonomousBase {
             telemetry.addData("Skill", "scoreFreightSharedHub");
             telemetry.update();
             freightCollected = !scoreFreightSharedHub(hubLevel);
+            freightCollectAngle = 35.0;
         }
 
-        // Collect a freight if we don't have one.
+        // Collect second freight if we're not still holding the first one
         while( opModeIsActive() && !freightCollected) {
             // Drive into freight pile to collect
             telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
             telemetry.update();
             freightCollected = collectFreight(hubLevel, freightCollectAngle, 250 );
-            freightCollectAngle -= 5.0;
+            freightCollectAngle -= 5.0;  // try again at a slightly different angle
         }
     } // mainAutonomous
 
@@ -260,7 +261,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         switch( level ) {
             case 3 : strafeDist1 = 0.0;      // right/top
                 turnAngle = 0.0;
-                distanceToGrab = -2.0;
+                distanceToGrab = -2.5;
                 strafeDist2 = -3.0;
                 armSleep = 1500;
                 break;
@@ -280,10 +281,11 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         // Move forward away from field wall so it's safe to raise the arms
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
+
         // Rotate the capping arm into the grabbing position
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.50 );
+        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
-        sleep( 750);   // wait for capping arm to clear the field wall before rotating wrist
+        sleep( 750 );  // wait for capping arm to clear the field wall before rotating wrist
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
@@ -303,6 +305,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
+
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_LIBERTY, 0.40 );
         robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.40 );
@@ -316,6 +319,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToHub( int level ) {
+
         double angleToHub = 0.0;
         double distanceToHub = 0.0;
         int timeToHub = 1000;
@@ -325,7 +329,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         switch( level ) {
             case 3 : angleToHub = 35.0;    // top
-                     distanceToHub = -6.2;
+                     distanceToHub = -6.8;
                      timeToHub = 0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      armSleep = 0;
@@ -372,13 +376,13 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         switch( level ) {
             case 3 : servoPos = robot.BOX_SERVO_DUMP_TOP;
-                moveAwayTime = 0;
+                     moveAwayTime = 0;
                      break;
             case 2 : servoPos = robot.BOX_SERVO_DUMP_MIDDLE;
-                moveAwayTime = 0;
+                     moveAwayTime = 0;
                      break;
             case 1 : servoPos = robot.BOX_SERVO_DUMP_BOTTOM;
-                moveAwayTime = 200;
+                     moveAwayTime = 200;
                      break;
         } // switch()
 
@@ -401,20 +405,19 @@ public class AutonomousBwarehouse extends AutonomousBase {
     private void driveToWarehouse( int level  ) {
         double warehouseDistance = 0.0;
         switch( level ) {
-            case 3 : warehouseDistance = 35.0;  break; // Top
-            case 2 : warehouseDistance = 39.0;  break; // Middle
+            case 3 : warehouseDistance = 38.0;  break; // Top
+            case 2 : warehouseDistance = 39.5;  break; // Middle
             case 1 : warehouseDistance = 45.0;  break; // Bottom
         } // switch()
 
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, warehouseDistance, 999.9, DRIVE_THRU );
+        gyroDrive(DRIVE_SPEED_40, DRIVE_Y, warehouseDistance, 999.9, DRIVE_THRU );
         robot.stopMotion();
     } // driveToWarehouse
-
 
     /*--------------------------------------------------------------------------------------------*/
     private boolean collectFreight(int level, double angle, int backupTime) {
         boolean collected = false;
-        double slowlyCollectMyPrecious = 0.15;
+        double slowlyCollectMyPrecious = 0.12;
         int freightDetections = 0;
         ElapsedTime freightTimeout = new ElapsedTime();
 
@@ -425,11 +428,11 @@ public class AutonomousBwarehouse extends AutonomousBase {
         // can lower the intake.
         robot.linkServo.setPosition(robot.LINK_SERVO_LOWERED);
         robot.sweepMotor.setPower(1.0);
-        robot.driveTrainMotors( slowlyCollectMyPrecious, slowlyCollectMyPrecious,
-                                slowlyCollectMyPrecious, slowlyCollectMyPrecious );
+        robot.driveTrainMotors( slowlyCollectMyPrecious, (slowlyCollectMyPrecious + 0.02),
+                                slowlyCollectMyPrecious, (slowlyCollectMyPrecious + 0.02) );
 
         freightTimeout.reset();
-        while((opModeIsActive()) && (freightTimeout.milliseconds() < 2500) && (freightDetections < HardwareBothHubs.FREIGHT_DETECTED_THRESHOLD)) {
+        while((opModeIsActive()) && (freightTimeout.milliseconds() < 2750) && (freightDetections < HardwareBothHubs.FREIGHT_DETECTED_THRESHOLD)) {
             if(robot.freightPresent()) {
                 freightDetections++;
             } else {
@@ -454,36 +457,47 @@ public class AutonomousBwarehouse extends AutonomousBase {
         return collected;
     } // collectFreight
 
+    /*--------------------------------------------------------------------------------------------*/
     boolean scoreFreightSharedHub(int level) {
-        boolean scored =  false;
+        boolean scored = false;
         final double RAMMING_SPEED = DRIVE_SPEED_30;
 
         // Not sure what value this should be. This is the minimum distance we want.
-        final double MIN_WALL_DISTANCE = 24.0;
+        final double MIN_WALL_DISTANCE = 10.0;  // 16", but we're at an angle and there's some error
 
-        gyroTurn(TURN_SPEED_20, 165.0 );   // Turn toward the shared hub
+        gyroTurn(TURN_SPEED_20, -175.0 );  // Turn toward shared hub (angled away from triangle)
 
-        double wallDistance = leftRangeSensor();
+        double wallDistance1 = leftRangeSensor()/2.54;
+        telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
+        telemetry.update();
 
-        if(wallDistance < MIN_WALL_DISTANCE) {
+        if(wallDistance1 < MIN_WALL_DISTANCE) {
             // This is the optimal distance we want. If we are moving, lets make it count.
-            double distanceToGo = (MIN_WALL_DISTANCE + 2.0) - wallDistance;
+            double distanceToGo = (MIN_WALL_DISTANCE + 2.0) - wallDistance1;
+            distanceToGo = Math.max( distanceToGo, 10.0 ); // don't go more than 10"
             // Need to verify which way to strafe.
-            gyroDrive(DRIVE_SPEED_30, DRIVE_X, -distanceToGo, 999.9, DRIVE_THRU);
+            gyroDrive(DRIVE_SPEED_40, DRIVE_X, distanceToGo, 999.9, DRIVE_THRU);
             robot.stopMotion();
         }
 
         // Make sure there isn't something wrong where the robot can't move properly.
-        wallDistance = leftRangeSensor();
-        if(wallDistance > MIN_WALL_DISTANCE) {
+        double wallDistance2 = leftRangeSensor()/2.54;
+        telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
+        telemetry.addData("wallDistance2", "%.1f  in", wallDistance2 );
+        telemetry.update();
+
+        if(wallDistance2 > MIN_WALL_DISTANCE) {
             // Update our tilt angle information
             robot.driveTrainMotors(RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED);
             robot.headingIMU();
             while (opModeIsActive() && (robot.tiltAngle >= HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_AUTO)) {
                 robot.headingIMU();
             }
-            // We are nestled, dump freight
+            // stop and wait for it to settle
             robot.stopMotion();
+            sleep(250);
+
+            // We should be nestled, strafe over and dump freight
             if (opModeIsActive()) {
                 timeDriveStrafe(DRIVE_SPEED_30, 1000);
 
@@ -492,10 +506,10 @@ public class AutonomousBwarehouse extends AutonomousBase {
                 scored = true;
 
                 // Backup into warehouse
-                gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -18.0, 999.9, DRIVE_THRU);
+                gyroDrive(DRIVE_SPEED_40, DRIVE_Y, -23.0, 999.9, DRIVE_THRU);
                 robot.stopMotion();
             }
-        }
+        } // walldistance2
 
         return scored;
     } // scoreFreightSharedHub

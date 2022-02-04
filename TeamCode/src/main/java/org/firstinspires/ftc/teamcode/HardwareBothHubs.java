@@ -125,7 +125,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_MAX        = 2250;  // Maximum safe rotation without hitting field floor
-    public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15; // 15
+    public int          FREIGHT_ARM_POS_HUB_TOP_AUTO    = FREIGHT_ARM_POS_HUB_TOP    + 15;
     public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 0; // 24
     public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 25; // 75
 
@@ -163,9 +163,9 @@ public class HardwareBothHubs
     public double freightDistance;
     public final static int FREIGHT_DETECTED_THRESHOLD = 10;
 
-//    public final static double BARRIER_NESTED_ROBOT_TILT = -2.0;
     public final static double BARRIER_NESTED_ROBOT_TILT_AUTO = -3.5;
     public final static double BARRIER_NESTED_ROBOT_TILT_TELE = -3.5;
+//  public final static double BARRIER_NESTED_ROBOT_TILT_TELE = -2.0;
 
 //  private DistanceSensor tofRangeL  = null;
 //  private DistanceSensor tofRangeR  = null;
