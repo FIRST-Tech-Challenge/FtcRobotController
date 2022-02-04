@@ -78,7 +78,12 @@ public class Autonomous {
     private Constants.Position targetPose;
 
 
-
+    public StateMachine redAuton = getStateMachine(autoStage)
+//            .addState(() -> robot.driveAbsoluteDistance())
+            .addTimedState(.5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))//
+            .addState(() -> robot.driveToFieldPosition(0,2,true,.5,.1,270))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .build();
 
 
 

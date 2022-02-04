@@ -74,8 +74,11 @@ public class Crane implements Subsystem {
         VALIDATE_ELBOW90(0,90,90,0, .5f,0),
         VALIDATE_SHOULDER90(90,15,-90+15,0, .5f,0),
         VALIDATE_TURRET90R(0,0,0,45,2.5f,0),
-        VALIDATE_TURRET90L(0,0,0,-45,2.5f,0);
+        VALIDATE_TURRET90L(0,0,0,-45,2.5f,0),
 
+        //auton articulations
+        AUTON_REACH_RIGHT(40, 130,70,30, 1, 170),
+        AUTON_REACH_LEFT(40, 130,70,-30, 1, 170);
 
         public int shoulderPos, elbowPos, wristPos;
         public double turretAngle;
