@@ -236,9 +236,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
             telemetry.addData("Skill", "scoreFreightSharedHub");
             telemetry.update();
-            scoreFreightSharedHub( blockLevel );
-            // Since we scored the freight, we don't have one collected anymore.
-            freightCollected = false;
+            freightCollected = !scoreFreightSharedHub( blockLevel );
         }
 
         // Collect a freight if we don't have one.
@@ -456,39 +454,50 @@ public class AutonomousBwarehouse extends AutonomousBase {
         return collected;
     } // collectFreight
 
-    void scoreFreightSharedHub(int level) {
-        final double rammingSpeed = DRIVE_SPEED_30;
+    boolean scoreFreightSharedHub(int level) {
+        boolean scored =  false;
+        final double RAMMING_SPEED = DRIVE_SPEED_30;
+
+        // Not sure what value this should be. This is the minimum distance we want.
+        final double MIN_WALL_DISTANCE = 24.0;
 
         gyroTurn(TURN_SPEED_20, 165.0 );   // Turn toward the shared hub
 
-        double wallDistance = robot.updateSonarRangeL();
+        double wallDistance = leftRangeSensor();
 
-        // Not sure what value this should be.
-        if(wallDistance < 24.0) {
-            double distanceToGo = 24.0 - wallDistance;
+        if(wallDistance < MIN_WALL_DISTANCE) {
+            // This is the optimal distance we want. If we are moving, lets make it count.
+            double distanceToGo = (MIN_WALL_DISTANCE + 2.0) - wallDistance;
             // Need to verify which way to strafe.
-            gyroDrive(DRIVE_SPEED_30, DRIVE_X, distanceToGo, 999.9, DRIVE_THRU);
+            gyroDrive(DRIVE_SPEED_30, DRIVE_X, -distanceToGo, 999.9, DRIVE_THRU);
             robot.stopMotion();
         }
 
-        // Update our tilt angle information
-        robot.driveTrainMotors( rammingSpeed, rammingSpeed, rammingSpeed, rammingSpeed);
-        robot.headingIMU();
-        while(opModeIsActive() && (robot.tiltAngle >= HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_AUTO)) {
+        // Make sure there isn't something wrong where the robot can't move properly.
+        wallDistance = leftRangeSensor();
+        if(wallDistance > MIN_WALL_DISTANCE) {
+            // Update our tilt angle information
+            robot.driveTrainMotors(RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED);
             robot.headingIMU();
-        }
-        // We are nestled, dump freight
-        robot.stopMotion();
-        if(opModeIsActive()) {
-            timeDriveStrafe(DRIVE_SPEED_30, 1000);
-
-            robot.boxServo.setPosition(robot.BOX_SERVO_DUMP_FRONT);
-            sleep(500);
-
-            // Backup into warehouse
-            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -18.0, 999.9, DRIVE_THRU);
+            while (opModeIsActive() && (robot.tiltAngle >= HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_AUTO)) {
+                robot.headingIMU();
+            }
+            // We are nestled, dump freight
             robot.stopMotion();
+            if (opModeIsActive()) {
+                timeDriveStrafe(DRIVE_SPEED_30, 1000);
+
+                robot.boxServo.setPosition(robot.BOX_SERVO_DUMP_FRONT);
+                sleep(500);
+                scored = true;
+
+                // Backup into warehouse
+                gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -18.0, 999.9, DRIVE_THRU);
+                robot.stopMotion();
+            }
         }
+
+        return scored;
     } // scoreFreightSharedHub
 
     /*---------------------------------------------------------------------------------*/
@@ -527,6 +536,15 @@ public class AutonomousBwarehouse extends AutonomousBase {
             sonarRangeB = robot.updateSonarRangeB();
         }
     } // averagedRangeSensors
+
+    /*---------------------------------------------------------------------------------*/
+    double leftRangeSensor() {
+        for( int i=0; i<5; i++ ) {
+            sonarRangeL = robot.updateSonarRangeL();
+            sleep(50);
+        }
+        return sonarRangeL;
+    } // leftRangeSensor
 
     /*---------------------------------------------------------------------------------*/
     double rightRangeSensor() {
