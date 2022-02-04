@@ -112,7 +112,6 @@ public class BlueDrive extends LinearOpMode {
         toolThread.start();
         if (isStopRequested()) return;
 
-
         while (!isStopRequested()) {
             // Update the drive class
             drive.update();
