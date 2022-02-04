@@ -133,7 +133,7 @@ public class BlueDrive extends LinearOpMode {
                     drive.setWeightedDrivePower(
                             new Pose2d(
                                     moveGamepad.getLeftY(),
-                                    moveGamepad.getLeftX(),
+                                    -moveGamepad.getLeftX(),
                                     moveGamepad.getRightX()
                             )
                     );
