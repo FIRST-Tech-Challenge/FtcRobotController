@@ -301,7 +301,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
-        robot.driveTrain.setDrivePower(new Pose2d(forwardSmoother.update(forward), 0, rotateSmoother.update(rotate)));
+        robot.driveTrain.setDrivePowerSafe(new Pose2d(forwardSmoother.update(forward), 0, rotateSmoother.update(rotate)));
     }
 
     private void handleTeleOp() { // apple

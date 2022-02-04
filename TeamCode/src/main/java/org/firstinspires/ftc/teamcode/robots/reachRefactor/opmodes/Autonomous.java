@@ -5,11 +5,11 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Crane;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.UtilMethods;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 import java.util.function.Function;
@@ -39,13 +39,6 @@ public class Autonomous {
         this.robot = robot;
     }
 
-    private StateMachine.Builder getStateMachine(Stage stage) {
-        return StateMachine.builder()
-                .stateSwitchAction(() -> {})
-                .stateEndAction(() -> {})
-                .stage(stage);
-    }
-
     public StateMachine getStateMachine(Constants.Position startingPosition, boolean spline) {
         if(spline)
             switch(startingPosition) {
@@ -73,7 +66,7 @@ public class Autonomous {
     }
 
     private StateMachine trajectorySequenceToStateMachine(Function<TrajectorySequenceBuilder, TrajectorySequenceBuilder> function) {
-        return getStateMachine(new Stage())
+        return UtilMethods.getStateMachine(new Stage())
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
                         function.apply(
@@ -120,7 +113,7 @@ public class Autonomous {
         // Spline Routines
         //----------------------------------------------------------------------------------------------
 
-        blueUp = getStateMachine(blueUpStage)
+        blueUp = UtilMethods.getStateMachine(blueUpStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
                     builder
                     .splineTo(new Vector2d(0, 43), Math.toRadians(235))
@@ -146,7 +139,7 @@ public class Autonomous {
                         .back(120)
                 ))
                 .build();
-        redUp = getStateMachine(redUpStage)
+        redUp = UtilMethods.getStateMachine(redUpStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
                     builder
                     .splineTo(new Vector2d(0, -43), Math.toRadians(120))
@@ -174,7 +167,7 @@ public class Autonomous {
                 )
                 .build();
 
-        blueDown = getStateMachine(blueDownStage)
+        blueDown = UtilMethods.getStateMachine(blueDownStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
                         builder
                         .splineTo(new Vector2d(-24, 40), Math.toRadians(315))
@@ -201,7 +194,7 @@ public class Autonomous {
                         )
                 )
                 .build();
-        redDown = getStateMachine(blueDownStage)
+        redDown = UtilMethods.getStateMachine(blueDownStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .splineTo(new Vector2d(-24, -40), Math.toRadians(45))
@@ -235,7 +228,7 @@ public class Autonomous {
         // Linear Routines
         //----------------------------------------------------------------------------------------------
 
-        blueUpLinear = getStateMachine(blueUpLinearStage)
+        blueUpLinear = UtilMethods.getStateMachine(blueUpLinearStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(-35))
@@ -267,7 +260,7 @@ public class Autonomous {
                         )
                 )
                 .build();
-        redUpLinear = getStateMachine(redUpLinearStage)
+        redUpLinear = UtilMethods.getStateMachine(redUpLinearStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(35))
@@ -300,7 +293,7 @@ public class Autonomous {
                 )
                 .build();
 
-        blueDownLinear = getStateMachine(blueDownLinearStage)
+        blueDownLinear = UtilMethods.getStateMachine(blueDownLinearStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(35))
@@ -332,7 +325,7 @@ public class Autonomous {
                         )
                 )
                 .build();
-        redDownLinear = getStateMachine(redDownLinearStage)
+        redDownLinear = UtilMethods.getStateMachine(redDownLinearStage)
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
                                 .turn(Math.toRadians(-35))
