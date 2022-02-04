@@ -252,13 +252,18 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 // got to the top level when right
                 slide.setTargetLevel(HeightLevel.TopLevel);
                 Thread.sleep(1000);
+
+                /*
                 driveSystem.strafeAtAngle(180, .2);
-                Thread.sleep(1000);
-                driveSystem.stopAll();
+                 Thread.sleep(1000);
+                 driveSystem.stopAll();
+                 */
+                driveSystem.move(180, 3, 1);
+
                 intake.setServoOpen();
                 Thread.sleep(750);
-                driveSystem.strafeAtAngle(0, .8);
-                Thread.sleep(250);
+                driveSystem.move(0, 4, 1);
+                //Thread.sleep(250);
                 slide.setTargetLevel(HeightLevel.Down);
                 break;
             case Center:

@@ -639,7 +639,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
     }
 
-    public void move(double distance, double angle, double tolerance) throws InterruptedException {
+    public void move(double angle, double distance, double tolerance) throws InterruptedException {
         angle += gps.getRot();
         angle = Math.toRadians(angle);
         double x = gps.getX() + distance * Math.sin(angle);
