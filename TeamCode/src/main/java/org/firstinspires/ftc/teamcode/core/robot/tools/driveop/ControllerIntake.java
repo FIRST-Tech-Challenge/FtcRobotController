@@ -66,7 +66,6 @@ public class ControllerIntake extends AutoIntake {
             }
             reader.currToggleState = false;
         }
-        if (liftMotor == null) //noinspection ConstantConditions
-            setPattern(!noObject() && (liftMotor == null || liftMotor.getCurrentPosition() <= 200) ? GREEN : motor.getPower() != 0 ? GOLD : normalColor);
+        setPattern(!noObject() && (liftMotor == null || liftMotor.getCurrentPosition() <= 200) ? GREEN : motor.getPower() != 0 ? GOLD : normalColor);
     }
 }
