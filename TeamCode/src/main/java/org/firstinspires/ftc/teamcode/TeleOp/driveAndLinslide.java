@@ -36,10 +36,10 @@ public class driveAndLinslide extends LinearOpMode {
     }
 
     public void turn() { //turning method
-        motorFrontLeft.setPower(gamepad1.right_stick_x);
-        motorBackLeft.setPower(gamepad1.right_stick_x);
-        motorFrontRight.setPower(-gamepad1.right_stick_x);
-        motorBackRight.setPower(-gamepad1.right_stick_x);
+        motorFrontLeft.setPower(gamepad1.right_stick_x * 0.5);
+        motorBackLeft.setPower(gamepad1.right_stick_x * 0.5);
+        motorFrontRight.setPower(-gamepad1.right_stick_x * 0.5);
+        motorBackRight.setPower(-gamepad1.right_stick_x * 0.5);
     }
 
     public void move(double direction) { //move  method
