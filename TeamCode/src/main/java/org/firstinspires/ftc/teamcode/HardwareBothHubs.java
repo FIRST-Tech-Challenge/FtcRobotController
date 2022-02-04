@@ -526,7 +526,7 @@ public class HardwareBothHubs
 
     // ULTRASONIC READINGS: The ultrasonic driver can be queried in two different update modes:
     // a) getDistanceSync()  sends a new ping and WAITS 50msec for the return
-    // b) getDistanceAsync() sends a new ping and RETURNS IMMEDIATELY with the most recent valiue
+    // b) getDistanceAsync() sends a new ping and RETURNS IMMEDIATELY with the most recent value
 
     public double updateSonarRangeL() {
         // Query the current range sensor reading as the next sample to our LEFT range dataset
