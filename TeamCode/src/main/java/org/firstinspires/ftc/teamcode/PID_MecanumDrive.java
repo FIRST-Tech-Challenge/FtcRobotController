@@ -138,12 +138,17 @@ public class PID_MecanumDrive extends LinearOpMode {
             
                 pattern = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
                 blinkinLedDriver.setPattern(pattern);
-            
+                
+                telemetry.addData("Freight Status: ", "In Possession");
+                telemetry.update();
+                
             } else {
             
                 pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
                 blinkinLedDriver.setPattern(pattern);
-            
+                
+                telemetry.addData("Freight Status: ", "No Freight In Possession");
+                telemetry.update();
             }
             */
             
