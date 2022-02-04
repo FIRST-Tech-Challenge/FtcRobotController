@@ -16,10 +16,10 @@ public class drive4_final extends LinearOpMode {
     public DcMotor motorBackRight;
 
     public void turn() { //turning method
-        motorFrontLeft.setPower(gamepad1.right_stick_x);
-        motorBackLeft.setPower(gamepad1.right_stick_x);
-        motorFrontRight.setPower(-gamepad1.right_stick_x);
-        motorBackRight.setPower(-gamepad1.right_stick_x);
+        motorFrontLeft.setPower(gamepad1.right_stick_x * 0.5);
+        motorBackLeft.setPower(gamepad1.right_stick_x * 0.5);
+        motorFrontRight.setPower(-gamepad1.right_stick_x * 0.5);
+        motorBackRight.setPower(-gamepad1.right_stick_x * 0.5);
     }
 
     public double angleOfJoystick(double joystickY, double joystickX) { //getting angle of left joystick
@@ -39,7 +39,7 @@ public class drive4_final extends LinearOpMode {
     }
 
     public void move(double direction) { //move  method
-        double turnMoveMagnitude = 2; // larger values means less turning while moving, can be adjusted
+        double turnMoveMagnitude = 1; // larger values means less turning while moving, can be adjusted
 
         double hypotenuseLeft = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x ) + (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of left motion
         double hypotenuseRight = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x) - (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of right motion
@@ -70,7 +70,6 @@ public class drive4_final extends LinearOpMode {
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
-
         while (opModeIsActive()) {  //left stick for movement, right stick for turning
 
             /*the code below does not send anything to the sensors/record movement yet. */
