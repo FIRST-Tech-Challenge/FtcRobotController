@@ -41,6 +41,8 @@ public class Autonofrcursed extends LinearOpMode {
 
     private final int[] pos = {-375, -775, -1100};
 
+    private static ThreadT obj;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -91,11 +93,7 @@ public class Autonofrcursed extends LinearOpMode {
         telemetry.addData("IMU Mode", "IMU calibrating done");
         telemetry.update();
 
-        ThreadT obj = new ThreadT();
-        Thread thread = new Thread(obj);
-
-        obj.waitTime = 0;
-        obj.power = 0;
+        obj = new ThreadT(robot);
 
         waitForStart();
 
@@ -134,11 +132,7 @@ public class Autonofrcursed extends LinearOpMode {
         } else if(duckPos == 2){
 
         } else {
-            // score preloaded cube +
-            obj.waitTime = 1000;
-            obj.power = 1.0;
-            thread.start();
-            // score preloaded cube -
+            intakeControl(500, 1000, 1.0);
             goToWayPoint(0.4, 0.756, -53, 1.5, 30, 0.01, 1);
         }
         // drive to team shipping hub -
@@ -212,6 +206,13 @@ public class Autonofrcursed extends LinearOpMode {
         obj.killT();
     }
 
+    public void intakeControl(int delayFirst, int delaySecond, double spinPower){
+        obj.waitFirst = delayFirst;
+        obj.waitSecond = delaySecond;
+        obj.power = spinPower;
+
+        obj.round();
+    }
 
     private void goToWayPoint(double x, double y, double angle, double vel, double vw, double disRes, double angleRes) throws InterruptedException {
         targetPos[0] = (y); // why.
@@ -230,7 +231,7 @@ public class Autonofrcursed extends LinearOpMode {
             }
             telemetry.update();
         }
-        Thread.sleep(200);
+        Thread.sleep(25);
 
     }
 

@@ -167,7 +167,7 @@ public class Autonocursed extends LinearOpMode {
         sleep(1500);
         // score new cube -
 
-
+        /*
         // drive to warehouse +
         this.robot.intakeUp.setPower(0);
         goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
@@ -194,7 +194,7 @@ public class Autonocursed extends LinearOpMode {
         this.robot.intakeUp.setPower(1.0);
         sleep(1500);
         // score new cube -
-
+        */
 
         // park in warehouse +
         goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
@@ -222,7 +222,7 @@ public class Autonocursed extends LinearOpMode {
             }
             telemetry.update();
         }
-        Thread.sleep(200);
+        Thread.sleep(10);
 
     }
 
