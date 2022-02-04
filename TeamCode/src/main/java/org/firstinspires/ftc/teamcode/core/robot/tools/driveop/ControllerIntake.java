@@ -23,25 +23,14 @@ public class ControllerIntake extends AutoIntake {
     private final GamepadEx toolGamepad;
     private final MyToggleButtonReader reader;
     private final BlinkinPattern normalColor;
-    @Nullable private final DcMotor liftMotor;
-    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad, boolean blue, @Nullable AutoLift lift) {
+    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad, boolean blue) {
         super(map, eventThread);
         this.reader = new MyToggleButtonReader(toolGamepad, GamepadKeys.Button.X);
         this.toolGamepad = toolGamepad;
         this.normalColor = blue ? BLUE : RED;
-        if (lift != null) {
-            liftMotor = lift.liftMotor;
-        } else {
-            liftMotor = null;
-        }
     }
-
     public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad) {
-        this(map, eventThread, toolGamepad, true, null);
-    }
-
-    public ControllerIntake(@NonNull HardwareMap map, EventThread eventThread, GamepadEx toolGamepad, boolean blue) {
-        this(map, eventThread, toolGamepad, blue, null);
+        this(map, eventThread, toolGamepad, true);
     }
 
     public void update(AutoLift.Positions liftPosition) {
@@ -66,6 +55,6 @@ public class ControllerIntake extends AutoIntake {
             }
             reader.currToggleState = false;
         }
-        setPattern(!noObject() && (liftMotor == null || liftMotor.getCurrentPosition() <= 200) ? GREEN : motor.getPower() != 0 ? GOLD : normalColor);
+        setPattern((!noObject() && liftPosition == AutoLift.Positions.INTAKING) ? GREEN : motor.getPower() != 0 ? GOLD : normalColor);
     }
 }
