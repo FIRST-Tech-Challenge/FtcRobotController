@@ -23,7 +23,7 @@ public class ContinuousIntake {
     /**
      * The Position servo must be to release an item
      */
-    private static final double open = .4; // this position needs to be adjusted!
+    private static final double open = .47; // this position needs to be adjusted!
     /**
      * The Position servo must be to keep and item in the intake compartment
      */

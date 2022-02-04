@@ -258,41 +258,51 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                  Thread.sleep(1000);
                  driveSystem.stopAll();
                  */
-                driveSystem.move(180, 3, 1);
+                driveSystem.move(180, 5, 1);
 
                 intake.setServoOpen();
                 Thread.sleep(750);
-                driveSystem.move(0, 4, 1);
+                driveSystem.move(0, 5, 1);
                 //Thread.sleep(250);
                 slide.setTargetLevel(HeightLevel.Down);
                 break;
             case Center:
                 slide.setTargetLevel(HeightLevel.MiddleLevel);
                 Thread.sleep(500);
+                /*
                 driveSystem.strafeAtAngle(180, .25);
                 Thread.sleep(725);
                 driveSystem.stopAll();
+                 */
+                driveSystem.move(180, 5, 1);
                 intake.setServoOpen();
-                Thread.sleep(500);
+                Thread.sleep(750);
+                driveSystem.move(0, 5, 1);
+                /*
                 driveSystem.strafeAtAngle(0, .5);
                 Thread.sleep(500);
                 driveSystem.strafeAtAngle(0, .8);
                 Thread.sleep(250);
+
+                 */
                 slide.setTargetLevel(HeightLevel.Down);
-                Thread.sleep(500);
+
                 break;
             case Left:
                 // go to bottom when left
                 slide.setTargetLevel(HeightLevel.BottomLevel);
-                Thread.sleep(500);
-                driveSystem.strafeAtAngle(180, .2);
+
+                /*driveSystem.strafeAtAngle(180, .2);
                 Thread.sleep(1000);
                 driveSystem.stopAll();
+                 */
+                driveSystem.move(180, 5, 1);
                 intake.setServoOpen();
-                Thread.sleep(1000);
+                Thread.sleep(750);
+                driveSystem.move(0, 5, 1);
 
                 slide.setTargetLevel(HeightLevel.Down);
-                Thread.sleep(500);
+
                 break;
         }
     }

@@ -23,15 +23,18 @@ public class odMove extends AutoObjDetectionTemplate {
         driveSystem.setTurnWhileStrafe(true);
         telemetry.addData("Initialization Status", "complete");
         telemetry.update();
-        BarcodePositions Pos = BarcodePositions.Right;
+        BarcodePositions Pos = BarcodePositions.Left;
 
 
         waitForStart();
         driveSystem.debugOn();
 
+
         driveSystem.moveToPosition(26, 82.5, 272, .5, new DistanceTimeoutWarning(500));
 
+
         dropOffFreight(Pos);
+
         Thread.sleep(2000);
 
 
