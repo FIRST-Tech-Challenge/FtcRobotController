@@ -104,6 +104,13 @@ public class BlueDrive extends LinearOpMode {
         final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
         final ControllerIntake intake = new ControllerIntake(hardwareMap, eventThread, toolGamepad, power == 1, lift);
 
+        Thread toolThread = new Thread(() -> {
+            while (!isStopRequested()) {
+                lift.update();
+                intake.update(lift.getPosition());
+            }
+        });
+
         while (opModeIsActive() && !isStopRequested()) {
             // Update the drive class
             drive.update();

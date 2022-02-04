@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 @Autonomous
 @Disabled
@@ -88,7 +87,9 @@ public class NewAutoWarehouse extends LinearOpMode {
 
         waitForStart();
         liftThread.start();
+        intake.lightsOff();
         height = detector.run();
+        intake.lightsOn();
         goodTelemetry.addData("height", height);
         goodTelemetry.update();
 

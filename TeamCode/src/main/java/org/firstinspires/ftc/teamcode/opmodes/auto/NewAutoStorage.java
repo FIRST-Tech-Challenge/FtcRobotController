@@ -50,37 +50,31 @@ public class NewAutoStorage extends LinearOpMode {
             }
         });
 
-        // Part 1: go to shipping hub
-        final Trajectory part1;
-        {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(initial);
-            builder.lineTo(new Vector2d(-40, multiplier == 1 ? 55 : -53));
-            builder.splineToLinearHeading(new Pose2d(multiplier == 1 ? -21 : -20,
-                    multiplier == 1 ? 42 : -38, Math.toRadians(multiplier == 1 ? 100 : -95)),
-                    Math.toRadians(-110 * multiplier));
-            part1 = builder.build();
-        }
+        // Part 1: MOVE AWAY FROM WALL
+        final Trajectory part1 = drive.trajectoryBuilder(initial)
+            .lineTo(new Vector2d(-21, multiplier == 1 ? 55 : -53))
+            .build();
 
-        // Part 2: carousel
-        final Trajectory part2;
-        {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(part1.end());
-            builder.lineTo(new Vector2d(-19, 50 * multiplier));
-            builder.lineToLinearHeading(new Pose2d(multiplier == 1 ? -60 : -60.5,
-                    multiplier == 1 ? 58 : -58.5, Math.toRadians(multiplier == 1 ? 240 : 330)));
-            part2 = builder.build();
-        }
+        // Part 2: go to shipping hub
+        final Trajectory part2 = drive.trajectoryBuilder(part1.end())
+                .lineToLinearHeading(new Pose2d(multiplier == 1 ? -21 : -20,
+                        multiplier == 1 ? 42 : -38, Math.toRadians(multiplier == 1 ? 100 : -95)))
+                .build();
+
+        // Part 3: carousel
+        final Trajectory part3 = drive.trajectoryBuilder(part2.end())
+            .lineTo(new Vector2d(-19, 50 * multiplier))
+            .lineToLinearHeading(new Pose2d(multiplier == 1 ? -60 : -60.5,
+                    multiplier == 1 ? 58 : -58.5, Math.toRadians(multiplier == 1 ? 240 : 330)))
+            .build();
 
         ElapsedTime carouselTimer = new ElapsedTime();
 
-        // Part 3: Park in Alliance Storage Unit
-        final Trajectory part3;
-        {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(part2.end());
-            builder.lineToLinearHeading(new Pose2d(-60, 35 * multiplier,
-                    Math.toRadians(90 * multiplier)));
-            part3 = builder.build();
-        }
+        // Part 4: Park in Alliance Storage Unit
+        final Trajectory part4 = drive.trajectoryBuilder(part3.end())
+                .lineToLinearHeading(new Pose2d(-60, 35 * multiplier,
+                        Math.toRadians(90 * multiplier)))
+                .build();
 
         waitForStart();
         liftThread.start();
@@ -104,11 +98,12 @@ public class NewAutoStorage extends LinearOpMode {
             drive.update();
         }
 
-        // Part 2
-        drive.followTrajectoryAsync(part2);
+        // Part 3
+        drive.followTrajectoryAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
 
+        // CAROUSEL GARBAG
         carousel.on();
         carouselTimer.reset();
         while (!isStopRequested() && carouselTimer.seconds() < 4) {
@@ -117,8 +112,8 @@ public class NewAutoStorage extends LinearOpMode {
         if (isStopRequested()) return;
         carousel.off();
 
-        // Part 3
-        drive.followTrajectoryAsync(part3);
+        // Part 4
+        drive.followTrajectoryAsync(part4);
         updateLoop(drive);
     }
 
