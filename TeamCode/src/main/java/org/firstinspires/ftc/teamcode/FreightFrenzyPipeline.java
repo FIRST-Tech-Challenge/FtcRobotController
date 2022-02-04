@@ -13,7 +13,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
@@ -90,7 +89,7 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     private final static double colorBlueThreshold = 140.0;
 
     // Public statics to be used by opMode
-    public static int blockLevel;
+    public static int hubLevel;
 
     public static int leftBlueAverage;
     public static boolean alignedBlueLeft;
@@ -239,19 +238,19 @@ class FreightFrenzyPipeline extends OpenCvPipeline
             marker.x = (sub1PointA.x + sub1PointB.x) / 2;
             marker.y = (sub1PointA.y + sub1PointB.y) / 2;
             Imgproc.circle(input, marker, 5, new Scalar(225, 52, 235), -1);
-            blockLevel = 1;
+            hubLevel = 1;
         } else if(max == avg2) {
             marker.x = (sub2PointA.x + sub2PointB.x) / 2;
             marker.y = (sub2PointA.y + sub2PointB.y) / 2;
             Imgproc.circle(input, marker, 5, new Scalar(225, 52, 235), -1);
-            blockLevel = 2;
+            hubLevel = 2;
         } else if(max == avg3) {
             marker.x = (sub3PointA.x + sub3PointB.x) / 2;
             marker.y = (sub3PointA.y + sub3PointB.y) / 2;
             Imgproc.circle(input, marker, 5, new Scalar(225, 52, 235), -1);
-            blockLevel = 3;
+            hubLevel = 3;
         } else {
-            blockLevel = 3;
+            hubLevel = 3;
         }
 
         leftBlueAverage = alignBlueAvg1;

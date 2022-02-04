@@ -2,24 +2,11 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import java.lang.Math;
@@ -120,7 +107,7 @@ public class AutonomousRducks extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(redAlignedCount >= 2) {
                 telemetry.addLine("Red aligned for red autonomous. Good job!");
-                blockLevel = FreightFrenzyPipeline.blockLevel;
+                blockLevel = FreightFrenzyPipeline.hubLevel;
             } else if (blueAlignedCount >= 2) {
                 telemetry.addLine("****************************************************");
                 telemetry.addLine("* WARNING: Blue aligned for RED autonomous. *");
@@ -139,7 +126,7 @@ public class AutonomousRducks extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            blockLevel = FreightFrenzyPipeline.blockLevel;
+            blockLevel = FreightFrenzyPipeline.hubLevel;
             FreightFrenzyPipeline.saveLastAutoImage();
         }
 

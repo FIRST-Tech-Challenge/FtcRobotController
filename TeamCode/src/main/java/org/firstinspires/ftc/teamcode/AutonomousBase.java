@@ -13,7 +13,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  P_DRIVE_COEFF        = 0.005;   // Larger is more responsive, but also less stable
     static final double  HEADING_THRESHOLD    = 2.0;     // Minimum of 1 degree for an integer gyro
     static final double  P_TURN_COEFF         = 0.050;   // Larger is more responsive, but also less stable
-    static final long    SHARED_HUB_SCORE_TIME_THRESHOLD = 23000; // Time elapsed in auto where we can still
+    static final long    SHARED_HUB_SCORE_TIME_THRESHOLD = 22000; // Time elapsed in auto where we can still
                                                                   // score in the shared hub and park
 
     /*---------------------------------------------------------------------------------------------

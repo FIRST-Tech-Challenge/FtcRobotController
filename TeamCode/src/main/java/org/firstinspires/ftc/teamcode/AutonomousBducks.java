@@ -2,24 +2,11 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import java.lang.Math;
@@ -66,7 +53,7 @@ public class AutonomousBducks extends AutonomousBase {
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
-    public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
+    public int hubLevel = 0;   // dynamic (gets updated every cycle during INIT)
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -107,7 +94,7 @@ public class AutonomousBducks extends AutonomousBase {
         while (!isStarted()) {
             sonarRangeL = robot.updateSonarRangeL();
             telemetry.addData("ALLIANCE", "%s", "BLUE (ducks)");
-            telemetry.addData("Block Level", "%d", FreightFrenzyPipeline.blockLevel );
+            telemetry.addData("Hub Level", "%d", FreightFrenzyPipeline.hubLevel);
             telemetry.addData("Sonar Range", "%.1f inches (26.4)", sonarRangeL/2.54 );
             telemetry.addData("Left Blue Alignment", "%d %b", FreightFrenzyPipeline.leftBlueAverage, FreightFrenzyPipeline.alignedBlueLeft);
             telemetry.addData("Center Blue Alignment", "%d %b", FreightFrenzyPipeline.centerBlueAverage, FreightFrenzyPipeline.alignedBlueCenter);
@@ -120,7 +107,7 @@ public class AutonomousBducks extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(blueAlignedCount >= 2) {
                 telemetry.addLine("Blue aligned for blue autonomous. Good job!");
-                blockLevel = FreightFrenzyPipeline.blockLevel;
+                hubLevel = FreightFrenzyPipeline.hubLevel;
             } else if(redAlignedCount >= 2) {
                 telemetry.addLine("****************************************************");
                 telemetry.addLine("* WARNING: Red aligned for BLUE autonomous. *");
@@ -139,7 +126,7 @@ public class AutonomousBducks extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            blockLevel = FreightFrenzyPipeline.blockLevel;
+            hubLevel = FreightFrenzyPipeline.hubLevel;
             FreightFrenzyPipeline.saveLastAutoImage();
         }
 
@@ -175,35 +162,35 @@ public class AutonomousBducks extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "collectTeamElement");
             telemetry.update();
-            collectTeamElement( blockLevel );
+            collectTeamElement( hubLevel );
         }
 
-        // Drive to the alliance hub to deposit block
+        // Drive to the alliance hub to deposit freight
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "moveToHub");
             telemetry.update();
-            moveToHub( blockLevel );
+            moveToHub( hubLevel );
         }
 
-        // Deposit block in top/middle/bottom
+        // Deposit freight in top/middle/bottom
         if( opModeIsActive() ) {
-            telemetry.addData("Skill", "dumpBlock");
+            telemetry.addData("Skill", "dumpFreight");
             telemetry.update();
-            dumpBlock( blockLevel );
+            dumpFreight( hubLevel );
         }
 
         // Drive to the duck carousel
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "spinDuckCarousel");
             telemetry.update();
-            spinDuckCarousel( blockLevel );
+            spinDuckCarousel( hubLevel );
         }
 
         // Drive to square to park
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToSquare");
             telemetry.update();
-            driveToSquare( blockLevel );
+            driveToSquare( hubLevel );
         }
 
     } // mainAutonomous
@@ -293,7 +280,7 @@ public class AutonomousBducks extends AutonomousBase {
   } // moveToHub
 
     /*--------------------------------------------------------------------------------------------*/
-    private void dumpBlock( int level ) {
+    private void dumpFreight(int level ) {
         double servoPos = robot.BOX_SERVO_DUMP_TOP;
         double backDistance = 3.0;
 
@@ -309,15 +296,13 @@ public class AutonomousBducks extends AutonomousBase {
                      break;
         } // switch()
 
-//      robot.sweepServo.setPower( -0.25 );         // start sweeper in reverse
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
         sleep( 1500 );                    // let cube drop out
-//      robot.sweepServo.setPower( 0.0 );           // stop sweeper
         // back away and store arm
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
         robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
-    } // dumpBlock
+    } // dumpFreight
 
     /*--------------------------------------------------------------------------------------------*/
     private void spinDuckCarousel( int level ) {

@@ -57,7 +57,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
-    public int blockLevel = 0;   // dynamic (gets updated every cycle during INIT)
+    public int hubLevel = 0;   // dynamic (gets updated every cycle during INIT)
     public static double collisionDelay = 0.0;  // wait 0 seconds before moving (to avoid collision)
     private ElapsedTime autoTimer = new ElapsedTime();
 
@@ -104,7 +104,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             sonarRangeR = robot.updateSonarRangeR();
             checkForNewCollisionDelay();
             telemetry.addData("ALLIANCE", "%s", "BLUE (warehouse)");
-            telemetry.addData("Block Level", "%d", blockLevel );
+            telemetry.addData("Hub Level", "%d", hubLevel);
             telemetry.addData("Sonar Range", "%.1f inches (52.8)", sonarRangeR/2.54 );
             telemetry.addData("Start delay", "%.1f seconds (dpad up/down)", collisionDelay );
             telemetry.addData("Left Blue Alignment", "%d %b", FreightFrenzyPipeline.leftBlueAverage, FreightFrenzyPipeline.alignedBlueLeft);
@@ -118,7 +118,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
             if(blueAlignedCount >= 2) {
                 telemetry.addLine("Blue aligned for blue autonomous. Good job!");
-                blockLevel = FreightFrenzyPipeline.blockLevel;
+                hubLevel = FreightFrenzyPipeline.hubLevel;
             } else if(redAlignedCount >= 2) {
                 telemetry.addLine("****************************************************");
                 telemetry.addLine("* WARNING: Red aligned for BLUE autonomous. *");
@@ -140,7 +140,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            blockLevel = FreightFrenzyPipeline.blockLevel;
+            hubLevel = FreightFrenzyPipeline.hubLevel;
             FreightFrenzyPipeline.saveLastAutoImage();
         }
 
@@ -192,35 +192,35 @@ public class AutonomousBwarehouse extends AutonomousBase {
         double freightCollectAngle = 65.0;
 
         // Wait before moving to avoid collision with duck-side alliance partner
-        // trying to dump a block in the alliance shipping hub
+        // trying to dump a freight in the alliance shipping hub
         sleep( (long)( collisionDelay * 1000 ) );
 
         // Drive forward and collect the team element off the floor
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "collectTeamElement");
             telemetry.update();
-            collectTeamElement( blockLevel );
+            collectTeamElement(hubLevel);
         }
 
-        // Drive to the alliance hub to deposit block
+        // Drive to the alliance hub to deposit freight
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "moveToHub");
             telemetry.update();
-            moveToHub( blockLevel );
+            moveToHub(hubLevel);
         }
 
-        // Deposit block in top/middle/bottom
+        // Deposit freight in top/middle/bottom
         if( opModeIsActive() ) {
-            telemetry.addData("Skill", "dumpBlock");
+            telemetry.addData("Skill", "dumpFreight");
             telemetry.update();
-            dumpBlock( blockLevel );
+            dumpFreight(hubLevel);
         }
 
         // Drive to warehouse to park
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToWarehouse");
             telemetry.update();
-            driveToWarehouse( blockLevel );
+            driveToWarehouse(hubLevel);
         }
 
         // Perform freight collecting and scoring until time runs out
@@ -228,7 +228,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             // Drive into freight pile to collect
             telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
             telemetry.update();
-            freightCollected = collectFreight( blockLevel, freightCollectAngle, 350 );
+            freightCollected = collectFreight(hubLevel, freightCollectAngle, 350 );
             freightCollectAngle -= 5.0;
         }
 
@@ -236,7 +236,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
             telemetry.addData("Skill", "scoreFreightSharedHub");
             telemetry.update();
-            freightCollected = !scoreFreightSharedHub( blockLevel );
+            freightCollected = !scoreFreightSharedHub(hubLevel);
         }
 
         // Collect a freight if we don't have one.
@@ -244,7 +244,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
             // Drive into freight pile to collect
             telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
             telemetry.update();
-            freightCollected = collectFreight( blockLevel, freightCollectAngle, 250 );
+            freightCollected = collectFreight(hubLevel, freightCollectAngle, 250 );
             freightCollectAngle -= 5.0;
         }
     } // mainAutonomous
@@ -366,7 +366,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
   } // moveToHub
 
     /*--------------------------------------------------------------------------------------------*/
-    private void dumpBlock( int level ) {
+    private void dumpFreight(int level ) {
         double servoPos = robot.BOX_SERVO_DUMP_TOP;
         int moveAwayTime = 200;
 
@@ -395,7 +395,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
 
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.40 );
         robot.wristPositionAuto( robot.WRIST_SERVO_STORE );  // store position (handles unpowered!)
-    } // dumpBlock
+    } // dumpFreight
 
     /*--------------------------------------------------------------------------------------------*/
     private void driveToWarehouse( int level  ) {
