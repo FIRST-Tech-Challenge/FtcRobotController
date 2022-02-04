@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 @Autonomous
-public class BlueAutonomous extends LinearOpMode {
+public class BlueAutonomousStorageUnit extends LinearOpMode {
   
   private DcMotor frontLeft;
   private DcMotor frontRight;
