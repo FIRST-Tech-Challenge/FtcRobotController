@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.qualifier;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDista
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
+@Disabled
 @TeleOp(name = "Blue Qualifier Drive Program")
 public class BlueQualifierDriveProgram extends TeleOpTemplate {
     final BlinkinPattern defaultColor = BlinkinPattern.BLUE;

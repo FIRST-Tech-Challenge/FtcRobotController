@@ -9,6 +9,9 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageS
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
+/**
+ * If the voltage falls from the starting voltage by more than drop amount, this throws
+ */
 public class VoltageDropException extends MovementException {
 
     private final double dropAmount;

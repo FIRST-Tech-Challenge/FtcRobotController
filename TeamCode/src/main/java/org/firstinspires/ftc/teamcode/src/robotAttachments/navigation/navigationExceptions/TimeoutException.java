@@ -9,6 +9,9 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageS
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
+/**
+ * If the total time elapsed for the movement is greater than timeout, it throws
+ */
 public class TimeoutException extends MovementException {
 
     final ElapsedTime t;
