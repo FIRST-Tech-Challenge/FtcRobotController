@@ -11,12 +11,20 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 public class Utils {
 
     /**
-     * convert mr servo controller pulse width to double on 0 - 1 scale
+     * convert servo controller pulse width to double on 0 - 1 scale
      * @param pulse pwm signal to be converted
      * @return
      */
     public static double servoNormalize(double pulse) {
+        //todo, these numbers go back to Modern Robotics Hardare
+        //todo, REV expansion hubs have a range of 500 to 2500ms
+        //todo, but we can't change this unless we're ready to re-calibrate all servo settings
         return (pulse - 750.0) / 1500.0;
+    }
+
+
+    public static int servoToPWM(double setting){
+        return (int)((setting * 2000)+500);
     }
 
     public static int servoClip(int position) {

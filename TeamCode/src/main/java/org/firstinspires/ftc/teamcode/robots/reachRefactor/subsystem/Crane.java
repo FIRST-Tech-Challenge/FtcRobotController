@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 public class Crane implements Subsystem {
     private static final String TELEMETRY_NAME = "Crane";
 
-    public static int SHOULDER_HOME_PWM = 1550;
+    public static int SHOULDER_HOME_PWM = 1500;
     public static int ELBOW_HOME_PWM = 1550;
     public static int WRIST_HOME_PWM = 1500;
 
@@ -69,7 +69,7 @@ public class Crane implements Subsystem {
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
         MIDDLE_TIER(60,130,40,0, 1, 150),
         HIGH_TIER(40, 130,70,0, 1, 170),
-        TRANSFER(-75,-55,-20,0, 2,0),
+        TRANSFER(-45,-50,-20,0, 2,0),
         CAP(30, 140,0,0, 1, 170),
       
         //these articulations are meant to observe the motions and angles to check for belt skips

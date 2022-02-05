@@ -169,7 +169,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, true);
+        robot = new Robot(hardwareMap, false);
         alliance = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
@@ -295,7 +295,7 @@ public class FF_6832 extends OpMode {
         double right = Math.pow(-gamepad.right_stick_y, DRIVE_VELOCITY_EXPONENT);
 
         forward = (right + left) / 2.0 * FORWARD_SCALING_FACTOR;
-        rotate = -(right - left) / 2.0 * ROTATE_SCALING_FACTOR;
+        rotate = (right - left) / 2.0 * ROTATE_SCALING_FACTOR * .4;
 
         if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
             rotate = 0;

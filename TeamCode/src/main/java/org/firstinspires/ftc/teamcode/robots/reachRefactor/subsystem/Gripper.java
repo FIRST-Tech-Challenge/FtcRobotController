@@ -23,13 +23,14 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 public class Gripper implements Subsystem{
     private static final String TELEMETRY_NAME = "Gripper";
 
-    public static int CLOSED = 900;
-    public static int RELEASE = 1300;
-    public static int OPEN = 1350;
-    public static int PITCH_TRANSFER = 2250;
-    public static int PITCH_DOWN = 830;
-    public static int PITCH_INIT = 1854;
-    public static int PITCH_VERTICAL = 2100;
+    public static int CLOSED = 1300;
+    public static int RELEASE = 1550;
+    public static int OPEN = 1650;
+    public static int PITCH_TRANSFER = 2100;
+    public static int PITCH_DOWN = 900;
+    public static int PITCH_INIT = 1800;
+    public static int PITCH_VERTICAL = 1800;
+    public static int FREIGHT_TRIGGER = 35; //mm distance to trigger Lift articulation
 
     public Servo pitchServo, servo;
     public DistanceSensor freightSensor;
@@ -88,7 +89,7 @@ public class Gripper implements Subsystem{
     public void update(Canvas fieldOverlay) {
         freightDistance = freightSensor.getDistance(DistanceUnit.MM);
 
-        if (pitchServo.getPosition() < 0.5 && freightDistance < 25)
+        if (pitchServo.getPosition() < 0.5 && freightDistance < FREIGHT_TRIGGER)
             articulation=Articulation.LIFT;
         articulate(articulation);
         servo.setPosition(servoNormalize(targetPos));
