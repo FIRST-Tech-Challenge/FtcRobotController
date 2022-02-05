@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceSensorException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceTimeoutException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
@@ -18,7 +19,8 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.RED;
     private final boolean overBarrier = true;
-    public DistanceSensor distanceSensor;
+    public DistanceSensor intakeDistanceSensor;
+    public DistanceSensor frontDistanceSensor;
 
 
     @Override
@@ -26,7 +28,8 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
         leds.setPattern(def);
         gps.setPos(6, 111, 180);
-        distanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
+        intakeDistanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
+        frontDistanceSensor = (DistanceSensor) hardwareMap.get("front_distance_sensor");
 
         BarcodePositions Pos;
         do {
@@ -55,7 +58,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.stopAll();
             spinner.spinOffRedDuck();
 
-            driveSystem.moveTowardsPosition(gps.getX() + 10, gps.getY() - 20, gps.getRot(), 1, 5, new DistanceTimeoutWarning(500));
+            driveSystem.moveTowardsPosition(gps.getX() + 7, gps.getY() - 20, gps.getRot(), 1, 5, new DistanceTimeoutWarning(500));
 
             if (!overBarrier) {
                 //Through crack
@@ -64,7 +67,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 intake.setIntakeOn();
 
                 try {
-                    driveSystem.moveToPosition(0, 10, 180, 1, new MovementException[]{new DistanceSensorException(distanceSensor, 8), new DistanceTimeoutException(500)});
+                    driveSystem.moveToPosition(0, 10, 180, 1, new MovementException[]{new DistanceSensorException(intakeDistanceSensor, 8), new DistanceTimeoutException(500)});
                 } catch (MovementException e) {
                     if (gps.getY() > 20) {
                         driveSystem.moveToPosition(0, 10, gps.getRot(), 1, new DistanceTimeoutWarning(100));
@@ -76,11 +79,23 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
             } else {
                 // Over Barrier
-                driveSystem.moveTowardsPosition(33, 77, 180, 1, 5, new DistanceTimeoutWarning(100));
+                //driveSystem.moveTowardsPosition(32, 77, 180, 1, 3, new DistanceTimeoutWarning(100));
+                driveSystem.moveToPosition(27, 77, 180, 1, new DistanceTimeoutWarning(500));
+                driveSystem.newTurnToPrototype(180, .2, 0, false);
                 podServos.raise();
-                driveSystem.strafeAtAngle(0, 1);
-                Thread.sleep(2000);
+                double tmp = frontDistanceSensor.getDistance(DistanceUnit.INCH);
+                double power;
+
+                while (frontDistanceSensor.getDistance(DistanceUnit.INCH) > 6 && opModeIsActive() && !isStopRequested()) {
+                    // power is calculated
+                    power = driveSystem.shortMovementPowerCalculation(tmp, frontDistanceSensor.getDistance(DistanceUnit.INCH), 2, .5);// the max power is set to 2 to steepen the power curve at the end of the movement
+                    driveSystem.strafeAtAngle(0, power);
+                    telemetry.addData("power: ", power);
+                    telemetry.update();
+                }
+                //Thread.sleep(2000);
                 driveSystem.stopAll();
+                Thread.sleep(200);// this is to keep the robot stopped and from possibly drifting into a wall or another robot
             }
         }
     }

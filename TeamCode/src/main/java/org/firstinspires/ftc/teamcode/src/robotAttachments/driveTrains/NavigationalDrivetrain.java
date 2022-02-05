@@ -202,7 +202,6 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 }
             }
 
-
         } else {
             //
             degreesOff = (angle + (360 - gps.getRot())) % 360;
@@ -222,8 +221,6 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 }
             }
         }
-
-
         stopAll();
     }
 
@@ -645,6 +642,14 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         double x = gps.getX() + distance * Math.sin(angle);
         double y = gps.getY() + distance * Math.cos(angle);
         moveToPosition(x, y, tolerance);
+    }
+
+    public void move(double angle, double distance, double tolerance, MovementException[] errors) throws InterruptedException, MovementException {
+        angle += gps.getRot();
+        angle = Math.toRadians(angle);
+        double x = gps.getX() + distance * Math.sin(angle);
+        double y = gps.getY() + distance * Math.cos(angle);
+        moveToPosition(x, y, gps.getRot(), tolerance, errors);
     }
 
 }

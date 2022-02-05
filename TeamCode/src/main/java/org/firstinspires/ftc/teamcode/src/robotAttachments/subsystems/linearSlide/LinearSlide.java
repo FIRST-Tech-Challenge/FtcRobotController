@@ -92,6 +92,7 @@ public class LinearSlide {
      */
     public void teleopMode() {
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlide.setPower(0);
     }
 
     /**

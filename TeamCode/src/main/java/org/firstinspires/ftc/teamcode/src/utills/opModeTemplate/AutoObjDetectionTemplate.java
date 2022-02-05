@@ -245,6 +245,10 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         return AutoObjDetectionTemplate.findPositionOfMarker(this.tfod);
     }
 
+    public void dropOffFreight() throws InterruptedException {
+        dropOffFreight(BarcodePositions.Right);
+    }
+
     public void dropOffFreight(BarcodePositions Pos) throws InterruptedException {
         switch (Pos) {
             case NotSeen:
@@ -263,6 +267,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 intake.setServoOpen();
                 Thread.sleep(750);
                 driveSystem.move(0, 5, 1);
+                intake.setServoClosed();
                 //Thread.sleep(250);
                 slide.setTargetLevel(HeightLevel.Down);
                 break;
@@ -278,6 +283,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 intake.setServoOpen();
                 Thread.sleep(750);
                 driveSystem.move(0, 5, 1);
+                intake.setServoClosed();
                 /*
                 driveSystem.strafeAtAngle(0, .5);
                 Thread.sleep(500);
@@ -300,6 +306,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 intake.setServoOpen();
                 Thread.sleep(750);
                 driveSystem.move(0, 5, 1);
+                intake.setServoClosed();
 
                 slide.setTargetLevel(HeightLevel.Down);
 
