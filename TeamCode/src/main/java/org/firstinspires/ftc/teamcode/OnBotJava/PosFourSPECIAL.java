@@ -32,10 +32,8 @@ public class PosFourSPECIAL extends LinearOpMode {
         sleep(3000);
 
         //Forward
-        AutonomousDC.moveRobot(300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
+        AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
         sleep(3000);
-
-
 
     }
 }
