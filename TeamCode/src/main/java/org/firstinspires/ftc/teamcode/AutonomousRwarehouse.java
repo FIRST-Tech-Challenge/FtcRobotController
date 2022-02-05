@@ -392,7 +392,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         double warehouseDistance = 0.0;
         switch( level ) {
             case 3 : warehouseDistance = 36.0;  break; // Top
-            case 2 : warehouseDistance = 40.0;  break; // Middle
+            case 2 : warehouseDistance = 41.0;  break; // Middle
             case 1 : warehouseDistance = 45.0;  break; // Bottom
         } // switch()
 
