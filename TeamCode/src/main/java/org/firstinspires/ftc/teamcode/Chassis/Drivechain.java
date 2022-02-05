@@ -8,9 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-
-
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -18,6 +23,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Drivechain {
 
     DcMotorEx fl, fr, bl, br;
+    ModernRoboticsI2cGyro modernRoboticsI2cGyro;
+    IntegratingGyroscope mrGyro;
     public Drivechain(HardwareMap hardwareMap) {
         fl = hardwareMap.get(DcMotorEx.class, "fl");
         // fl.resetDeviceConfigurationForOpMode();
@@ -38,6 +45,9 @@ public class Drivechain {
         // br.resetDeviceConfigurationForOpMode();
         // br.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         // br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        //mrGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "drivechainGyro");
+        modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "drivechainGyro");
+        mrGyro = (IntegratingGyroscope)modernRoboticsI2cGyro;
     }
     /*
    public static int FRONT_LEFT = 0;
@@ -142,7 +152,47 @@ public class Drivechain {
         br.setPower(0.0);
     }
 
+    public void resetGyro(){
+        modernRoboticsI2cGyro.resetZAxisIntegrator();
+    }
+    public void calibrateGyro(){
+        modernRoboticsI2cGyro.calibrate();
+    }
+    float orDeg,tarDeg,curDeg,curDiff,mlt;
+    boolean degSwitch;
+    //- = clockwise, + = counterclockwise for angle
+    //+ = clockwise for moving
+    public void turnDeg(float deg,Telemetry telemetry){
+        degSwitch = true;
+        if(deg>0){mlt=1;}else{mlt=-1;}
+        fl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        orDeg = mrGyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        tarDeg = orDeg - deg;
+        curDeg = mrGyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        while (degSwitch){
+            curDiff = tarDeg - curDeg;
+            telemetry.addData("diff: ",curDeg);
+            telemetry.update();
+            fl.setPower(mlt*Math.min((Math.abs(curDiff)/Math.abs(deg)) + .175, 0.7f));
+            fr.setPower(mlt*Math.min((Math.abs(curDiff)/Math.abs(deg)) + .175, 0.7f));
+            bl.setPower(mlt*Math.min((Math.abs(curDiff)/Math.abs(deg)) + .175, 0.7f));
+            br.setPower(mlt*Math.min((Math.abs(curDiff)/Math.abs(deg)) + .175, 0.7f));
+            curDeg = mrGyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            if(mlt==1 && curDeg<=tarDeg){degSwitch=false;}else if(mlt==-1 && curDeg>=tarDeg){degSwitch=false;}
+        }
+        fl.setPower(0.0);
+        fr.setPower(0.0);
+        bl.setPower(0.0);
+        br.setPower(0.0);
+    }
 
+    public void showAngle(Telemetry telemetry){
+        telemetry.addData("angle: ",mrGyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        telemetry.update();
+    }
 
 
 
@@ -188,6 +238,11 @@ public class Drivechain {
         // bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         br.setPower(0.5);
     }
+
+
+
+
+
 
 
 
@@ -351,8 +406,60 @@ public class Drivechain {
 //
 //        }
 //    }
-    public void reset() {}
+    public void reset() {
 
 
+    }
 
+    public void moveAutonomousRobotPOS1(String type){
+        if (type.equals("var1")){
+
+        }
+        else if (type.equals("var2")){
+
+        }
+
+        else if (type.equals("var3")){
+
+        }
+    }
+
+    public void moveAutonomousRobotPOS2(String type){
+        if (type.equals("var1")){
+
+        }
+        else if (type.equals("var2")){
+
+        }
+
+        else if (type.equals("var3")){
+
+        }
+    }
+
+    public void moveAutonomousRobotPOS3(String type){
+        if (type.equals("var1")){
+            //Code for movement here
+        }
+        else if (type.equals("var2")){
+            //Code for movement here
+        }
+
+        else if (type.equals("var3")){
+            //Code for movement here
+        }
+
+
+    }
+
+    public void moveAutonomousRobotPOS4(String type) {
+        if (type.equals("var1")) {
+            //Code for movement here
+        } else if (type.equals("var2")) {
+            //Code for movement here
+        } else if (type.equals("var3")) {
+            //Code for movement here
+        }
+
+    }
 }
