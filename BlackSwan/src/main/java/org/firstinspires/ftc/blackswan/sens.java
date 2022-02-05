@@ -13,7 +13,6 @@ public class sens extends LinearOpMode {
 
     Robot robot;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -23,10 +22,20 @@ public class sens extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            telemetry.addData("Left Light Level: ", robot.colorSensor.alpha());
-            telemetry.addData("Left Red", robot.colorSensor.red());
-            telemetry.addData("Left Blue", robot.colorSensor.blue());
-            telemetry.addData("Left Green", robot.colorSensor.green());
+//            telemetry.addData("Left Light Level: ", robot.colorSensorLeft.alpha());
+//            telemetry.addData("Left Red: ", robot.colorSensorLeft.red());
+//            telemetry.addData("Left Blue: ", robot.colorSensorLeft.blue());
+//            telemetry.addData("Left Green: ", robot.colorSensorLeft.green());
+//
+//            telemetry.addData("Right Light Level: ", robot.colorSensorRight.alpha());
+//            telemetry.addData("Right Red: ", robot.colorSensorRight.red());
+//            telemetry.addData("Right Blue: ", robot.colorSensorRight.blue());
+//            telemetry.addData("Right Green: ", robot.colorSensorRight.green());
+
+            telemetry.addData("Back Light Level: ", robot.colorSensorBack.alpha());
+            telemetry.addData("Back Red: ", robot.colorSensorBack.red());
+            telemetry.addData("Back Blue: ", robot.colorSensorBack.blue());
+            telemetry.addData("Back Green: ", robot.colorSensorBack.green());
 
             telemetry.update();
         }
