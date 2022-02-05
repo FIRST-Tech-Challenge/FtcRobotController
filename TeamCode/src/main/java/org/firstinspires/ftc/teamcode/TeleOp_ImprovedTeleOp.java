@@ -40,6 +40,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     private CRServo intakeR = null;
     private DcMotor extender = null;
     private DcMotor arm = null;
+    private DcMotor clawLift = null;
     //private CRServo lIntakeLift = null;
     //private CRServo rIntakeLift = null;
 
@@ -61,6 +62,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         intakeR = hardwareMap.get(CRServo.class, "intakeR");
         extender = hardwareMap.get(DcMotor.class, "extender");
         arm = hardwareMap.get(DcMotor.class, "arm");
+        clawLift = hardwareMap.get(DcMotor.class, " intakeLift");
        // lIntakeLift = hardwareMap.get(CRServo.class, "intakeLiftL");
         //rIntakeLift = hardwareMap.get(CRServo.class, "intakeLiftR");
 
@@ -72,6 +74,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         frontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        clawLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         /* makes the motors break on zero power */
         frontR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -80,6 +83,8 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         backR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        clawLift.setZeroPowerBehavior(DCMotor.ZeroPowerBehavior.BRAKE);
+
 
 
         /* Most robots need the motor on one side to be reversed to drive forward.
@@ -91,6 +96,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         intakeL.setDirection(CRServo.Direction.REVERSE);
         intakeR.setDirection(CRServo.Direction.FORWARD);
         duckWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        clawLift.setDirection(DcMotor.Direction.FORWARD);
       //  lIntakeLift.setDirection(CRServo.Direction.REVERSE);
         //rIntakeLift.setDirection(CRServo.Direction.FORWARD);
 
@@ -124,6 +130,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     double normalSpeed = 0.69;
 
 
+
     /** Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP. */
     @Override
     public void loop() {
@@ -152,8 +159,9 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         double armMove = gamepad2.left_stick_y;
         boolean toggleFastMode = gamepad1.dpad_up;
         boolean toggleSlowMode = gamepad1.dpad_down;
-       // boolean liftIntakeUp = gamepad2.dpad_up;
-        //boolean liftIntakeDown = gamepad2.dpad_down;
+        boolean liftIntakeUp = gamepad2.dpad_up;
+        boolean liftIntakeDown = gamepad2.dpad_down;
+
 
 
 
@@ -170,7 +178,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         else intakePow = 0;
 
 
-      /*  if (liftIntakeUp) {
+        if (liftIntakeUp) {
             liftPow = 1;
         }
         else if (liftIntakeDown) {
@@ -178,7 +186,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         }
 
         else liftPow = 0;
-*/
+
        /* if (extension == 0){
             armPow=0.001;
 
@@ -251,6 +259,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             duckWheel.setPower(duckPower);
             extender.setPower(extension);
             arm.setPower(armMove * 1);
+            clawLift.setPower(liftPow);
             //lIntakeLift.setPower(liftPow);
             //rIntakeLift.setPower(liftPow);
         }
@@ -265,6 +274,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             duckWheel.setPower(duckPower);
             extender.setPower(extension);
             arm.setPower(armMove * 1);
+            clawLift.setPower(liftPow);
         }
 
         else {
@@ -277,6 +287,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             duckWheel.setPower(duckPower);
             extender.setPower(extension);
             arm.setPower(armMove * 1);
+            clawLift.setPower(liftPow);
         }
 
 
@@ -284,14 +295,19 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "front left (%.2f), front right (%.2f), back left (%.2f), back right (%.2f)", leftFPower, rightFPower,leftBPower, rightBPower);
         telemetry.addData("Intake Power", intakePow );
-        telemetry.addData("Arm Power", arm.getPowerFloat());
-        telemetry.addData("Extension Power", extender.getPowerFloat());
+        telemetry.addData("Arm Power", armMove);
+        telemetry.addData("Extension Power", extension);
         telemetry.addData("Intake lift", liftPow);
 
         if (gamepad1.right_bumper && gamepad1.left_bumper && gamepad1.a && gamepad1.dpad_up) {
-            telemetry.addData("When the imposter is sus", armPow);
+            telemetry.addData("When the imposter is sus...", armPow);
         }
     }
+
+    if (gamepad2.right_bumper && gamepad2.left_bumper && gamepad2.a && gamepad2.dpad_up) {
+    telemetry.addData("Bum BUm Buh Buh Bum BUh Bum... Bum bum bum", armPow);
+}
+}
 
     /** Code to run ONCE after the driver hits STOP. */
     @Override
