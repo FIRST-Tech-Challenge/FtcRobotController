@@ -17,5 +17,6 @@ apply from: '../build.dependencies.gradle'
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'com.google.android.gms:play-services-nearby:17.0.0'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }

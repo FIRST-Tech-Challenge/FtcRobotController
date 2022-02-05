@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 @Autonomous
-public class Auto_BlueWarehouse extends LinearOpMode {
+public class Auto_straight extends LinearOpMode {
     DcMotorEx frontL, frontR, backL, backR, duckWheel, arm = null;
     DcMotor extender;
     DistanceSensor dSensor;
@@ -200,16 +200,6 @@ public class Auto_BlueWarehouse extends LinearOpMode {
         intakeR.setDirection(CRServo.Direction.FORWARD);
 
         waitForStart();
-
-        drive(0, 66, 500);
-        drive(280, 0, 500);
-        drive(0, 30, 500);
-        armTopLayer();
-        armReset();
-        sleep(500);
-        drive(0, -25, 500);
-        drive(250, 0, 500);
-        sleep(500);
         drive(0, 175, 1200);
     }
 }
