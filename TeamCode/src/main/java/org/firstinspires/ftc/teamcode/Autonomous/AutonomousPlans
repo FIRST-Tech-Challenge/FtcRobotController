@@ -72,8 +72,35 @@
 // ----
 //ticks
 
+PosOneVAR:
 
 
 
+P3Special
+
+Forward
+AutonomousDC.moveRobot(telemetry, -925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
+
+Clockwise 30 degrees
+AutonomousDC.moveRobot(telemetry, -300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25);
+
+Counterclockwise 30 degrees
+AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
+
+Forward
+AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
 
 
+P4Special
+
+Forward
+AutonomousDC.moveRobot(telemetry, -925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
+
+Counterclockwise 30 degrees
+AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
+
+Clockwise 30 degrees
+AutonomousDC.moveRobot(telemetry, -300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25);
+
+Forward
+AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
