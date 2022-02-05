@@ -312,11 +312,15 @@ public class FF_6832 extends OpMode {
 
         if (stickyGamepad1.y)
             robot.articulate(Robot.Articulation.TRANSFER);
-        if(stickyGamepad1.dpad_right)
-            robot.crane.articulate(Crane.Articulation.HOME);
 
         if(stickyGamepad1.dpad_right)
             robot.crane.articulate(Crane.Articulation.HOME);
+        if(stickyGamepad1.dpad_down)
+            robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
+        if(stickyGamepad1.dpad_left)
+            robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+        if(stickyGamepad1.dpad_up)
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
 
         // gamepad 2
 
