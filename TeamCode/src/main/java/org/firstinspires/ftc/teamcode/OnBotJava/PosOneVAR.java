@@ -17,8 +17,8 @@ public class PosOneVAR extends LinearOpMode {
 
         waitForStart();
 
-
         AutonomousDC.resetTicks();
+
         //Counterclockwise 90 degrees
         AutonomousDC.moveRobot(925, 925, 925, 925, 0.25, 0.25, 0.25, 0.25);
         sleep(3000);
