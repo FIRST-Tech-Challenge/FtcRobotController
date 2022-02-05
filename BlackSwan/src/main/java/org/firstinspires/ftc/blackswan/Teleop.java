@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name="TeleopRed")
+@TeleOp(name="Teleop")
 
 public class Teleop extends LinearOpMode {
     BNO055IMU imu;
@@ -237,7 +237,7 @@ public class Teleop extends LinearOpMode {
 
             }
             if (gamepad2.dpad_left) { //middle
-                arm.setTargetPosition(800);
+                arm.setTargetPosition(825);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
 
@@ -250,7 +250,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.dpad_down) {
-                arm.setTargetPosition(25);
+                arm.setTargetPosition(75);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.3);
 //                while (arm.isBusy() && opModeIsActive()) {
