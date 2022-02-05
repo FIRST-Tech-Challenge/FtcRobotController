@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.FreightFrenzyConstants;
-import org.firstinspires.ftc.masters.MultipLeCameraCV;
+import org.firstinspires.ftc.masters.MultipleCameraCV;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
@@ -99,7 +99,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final BNO055IMU imu;
     private final VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
-    public MultipLeCameraCV CV;
+    public MultipleCameraCV CV;
    // TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV duckCV;
 
     HardwareMap hardwareMap;
@@ -535,9 +535,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         ElapsedTime elapsedTime= new ElapsedTime();
 
-        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
-                analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
-                && analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
+        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
+                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
+                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
             frontLeft.setPower(speed);
             frontRight.setPower(-speed);
             backLeft.setPower(-speed);
@@ -556,9 +556,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         double speed = 0.35;
         ElapsedTime elapsedTime= new ElapsedTime();
 
-        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
-                analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
-                && analyzeDuck()!= MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
+        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
+                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
+                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
             frontLeft.setPower(-speed);
             frontRight.setPower(speed);
             backLeft.setPower(speed);
@@ -572,18 +572,18 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void openCVInnitShenanigans(String color) {
-        CV = new MultipLeCameraCV(hardwareMap, telemetry);
+        CV = new MultipleCameraCV(hardwareMap, telemetry);
     }
 
 //    public void openCVDuckInit(){
 //        duckCV = new TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV(hardwareMap, telemetry);
 //    }
 
-    public MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition analyze() {
+    public MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition analyze() {
         return CV.pipeline.position;
     }
 
-    public MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition analyzeDuck() {
+    public MultipleCameraCV.DuckDeterminationPipeline.DuckPosition analyzeDuck() {
         return CV.duckPipeline.position;
     }
 
