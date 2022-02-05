@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.statemachine;
 
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
-
 import java.util.ArrayList;
 import java.util.List;
 

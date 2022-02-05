@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.utils.ExponentialSmoother;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.ExponentialSmoother;
 
 @Config
 public class DcMotorExSim implements DcMotorEx {
