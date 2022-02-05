@@ -287,10 +287,17 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         if(simulated)
             swivelAngle = targetSwivelAngle;
 
-        // updating PID tolerances from dashboard
+        // updating PIDs from dashboard
+        swivelPID.setPID(SWIVEL_PID);
         swivelPID.setTolerance(SWIVEL_PID_TOLERANCE);
+
+        chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_PID_TOLERANCE);
+
+        rollAntiTipPID.setPID(ROLL_ANTI_TIP_PID);
         rollAntiTipPID.setTolerance(ROLL_ANTI_TIP_PID_TOLERANCE);
+
+        pitchAntiTipPID.setPID(PITCH_ANTI_TIP_PID);
         pitchAntiTipPID.setTolerance(PITCH_ANTI_TIP_PID_TOLERANCE);
 
         // PIDs

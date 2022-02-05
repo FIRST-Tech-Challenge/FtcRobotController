@@ -32,16 +32,17 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
  * left bumper - decrement state
  * right bumper - increment state
  * start - toggle active
- * x - set alliance to blue
- * b - set alliance to red
- * a - set starting location to lower position
- * y - set starting location to upper position
+ * x - set starting position to blue upper
+ * b - set starting position to red lower
+ * a - set starting position to blue lower
+ * y - set starting position to red upper
  * dpad up - initialize / shutdown vision provider
  * dpad left - increment vision provider index
  * dpad down - toggle debug telemetry
  * dpad right - save vision output to filesystem
- * left bumper - toggle numerical dashboard
- *
+ * left trigger - toggle numerical dashboard
+ * right trigger - toggle anti tipping
+ * right stick button - toggle smoothing
  *
  * --Tele-Op--
  * gamepad 1: x - set gripper for intake
@@ -95,7 +96,7 @@ public class FF_6832 extends OpMode {
     private ExponentialSmoother forwardSmoother, rotateSmoother;
 
     // global state
-    private boolean active, initializing, debugTelemetryEnabled, numericalDashboardEnabled;
+    private boolean active, initializing, debugTelemetryEnabled, numericalDashboardEnabled, smoothingEnabled, antiTippingEnabled;
     private Alliance alliance;
     private Position startingPosition;
     private GameState gameState;
@@ -251,6 +252,10 @@ public class FF_6832 extends OpMode {
             debugTelemetryEnabled = !debugTelemetryEnabled;
         if(stickyGamepad1.left_trigger || stickyGamepad2.left_trigger)
             numericalDashboardEnabled = !numericalDashboardEnabled;
+        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
+            antiTippingEnabled = !antiTippingEnabled;
+        if(stickyGamepad1.right_stick_button || stickyGamepad2.right_stick_button)
+            smoothingEnabled = !smoothingEnabled;
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -297,7 +302,14 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
-        robot.driveTrain.setDrivePowerSafe(new Pose2d(forwardSmoother.update(forward), 0, rotateSmoother.update(rotate)));
+        if(smoothingEnabled) {
+            forward = forwardSmoother.update(forward);
+            rotate = rotateSmoother.update(rotate);
+        }
+        if(antiTippingEnabled)
+            robot.driveTrain.setDrivePowerSafe(new Pose2d(forward, 0, rotate));
+        else
+            robot.driveTrain.setDrivePower(new Pose2d(forward, 0, rotate));
     }
 
     private void handleTeleOp() { // apple
@@ -306,50 +318,36 @@ public class FF_6832 extends OpMode {
             robot.gripper.set();
         if(stickyGamepad1.b)
             robot.gripper.lift();
-
         if(stickyGamepad1.a)
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
-        if (stickyGamepad1.y)
-            robot.articulate(Robot.Articulation.TRANSFER);
-
-        if(stickyGamepad1.dpad_right)
-            robot.crane.articulate(Crane.Articulation.HOME);
-        if(stickyGamepad1.dpad_down)
-            robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
-        if(stickyGamepad1.dpad_left)
-            robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
-        if(stickyGamepad1.dpad_up)
-            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
-
         // gamepad 2
-
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
-
         if(stickyGamepad2.b) //dump bucket - might be able to combine this with Cycle Complete
             robot.crane.dump();
-
         if(stickyGamepad2.a) //spin carousel
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
-        if(stickyGamepad2.dpad_right)
-           robot.crane.articulate(Crane.Articulation.HOME);
-        if(stickyGamepad2.dpad_down)
+        // joint gamepad controls
+        if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
+            robot.crane.articulate(Crane.Articulation.HOME);
+        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
-        if(stickyGamepad2.dpad_left)
+        if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
             robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
-        if(stickyGamepad2.dpad_up)
+        if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER);
-        if(stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
+        if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 
-        if(stickyGamepad2.right_bumper)
+        if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
             chassisDistanceLevelIndex++;
-        else if(stickyGamepad2.left_bumper)
+        else if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
             chassisDistanceLevelIndex--;
-
-        chassisDistanceLevelIndex = Math.abs(chassisDistanceLevelIndex % CHASSIS_LENGTH_LEVELS.length);
+        if(chassisDistanceLevelIndex < 0)
+            chassisDistanceLevelIndex = CHASSIS_LENGTH_LEVELS.length - 1;
+        chassisDistanceLevelIndex %= CHASSIS_LENGTH_LEVELS.length;
         robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[chassisDistanceLevelIndex]);
 
         if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
@@ -477,7 +475,6 @@ public class FF_6832 extends OpMode {
                     break;
             }
         } else {
-            handleStateSwitch();
             handlePregameControls();
         }
 
@@ -524,10 +521,12 @@ public class FF_6832 extends OpMode {
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
         // handling op mode telemetry
+        opModeTelemetryMap.put("Active", active);
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);
+            opModeTelemetryMap.put("Anti-Tipping Enabled", antiTippingEnabled);
+            opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
         }
-        opModeTelemetryMap.put("Active", active);
         opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_LENGTH_LEVELS.length));
         opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
         opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
