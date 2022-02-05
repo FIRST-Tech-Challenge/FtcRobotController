@@ -71,7 +71,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public static PIDCoefficients SWIVEL_PID = new PIDCoefficients(1, 0, 0.08);
     public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(4, 0,  0);
-    public static double CHASSIS_LENGTH_PID_TOLERANCE = 5;
+    public static double CHASSIS_LENGTH_PID_TOLERANCE = 15;
     public static double SWIVEL_PID_TOLERANCE = 5;
 
     public TrajectorySequenceRunner trajectorySequenceRunner;

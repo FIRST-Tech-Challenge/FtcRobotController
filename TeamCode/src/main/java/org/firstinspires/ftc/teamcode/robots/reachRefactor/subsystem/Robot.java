@@ -105,7 +105,9 @@ public class Robot implements Subsystem {
                         driveTrain.setChassisLength(Constants.MIN_CHASSIS_LENGTH);
                         return driveTrain.chassisLengthOnTarget();
             })
-            .addTimedState(1f, () -> crane.articulate(Crane.Articulation.TRANSFER), () -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addState(() -> crane.articulate(Crane.Articulation.HOME))
             .build();
 
     private Stage initStage = new Stage();

@@ -89,7 +89,7 @@ public class Gripper implements Subsystem{
     public void update(Canvas fieldOverlay) {
         freightDistance = freightSensor.getDistance(DistanceUnit.MM);
 
-        if (pitchServo.getPosition() < 0.5 && freightDistance < FREIGHT_TRIGGER)
+        if (pitchServo.getPosition() < 0.5 && freightDistance < FREIGHT_TRIGGER && articulation == Articulation.MANUAL)
             articulation=Articulation.LIFT;
         articulate(articulation);
         servo.setPosition(servoNormalize(targetPos));
@@ -120,23 +120,23 @@ public class Gripper implements Subsystem{
     //Set the gripper for intake - assume this is coming down from the released transfer position
     //Elevation is down and jaws are open wide to just prevent 2 boxes slipping in
     //Do not assume that we want to Set directly out of Transfer - there may be barriers to cross
-    private final Stage Set = new Stage();
-    private final StateMachine set = getStateMachine(Set)
+    private final Stage setStage = new Stage();
+    private final StateMachine set = getStateMachine(setStage)
             .addSingleState(()->{setTargetPos(CLOSED);}) //close the gripper so it's less likely to catch something
-            .addTimedState(() -> .25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
-            .addSingleState(()->{setTargetPos(OPEN);})
+            .addTimedState(.25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
+            .addTimedState(.5f, ()->{setTargetPos(OPEN);}, () -> {})
             .build();
 
     //Gripper closes and lifts to the Transfer-ready position
     //Gripper remains closed - Transfer is separate
-    private final Stage Lift = new Stage();
-    private final StateMachine lift = getStateMachine(Lift)
+    private final Stage liftStage = new Stage();
+    private final StateMachine lift = getStateMachine(liftStage)
             .addTimedState(() -> .5f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
             .addTimedState(() -> .5f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
 
-    private final Stage Transfer = new Stage();
-    private final StateMachine transfer = getStateMachine(Transfer)
+    private final Stage transferStage = new Stage();
+    private final StateMachine transfer = getStateMachine(transferStage)
             .addTimedState(() -> .1f, () -> setPitchTargetPos(PITCH_TRANSFER), () -> {})//give freight last-second momentum toward the bucket
             .addTimedState(() -> .75f, () -> setTargetPos(RELEASE), () -> {})
             .addTimedState(() -> 0, () -> setTargetPos(CLOSED), () -> {})
@@ -147,7 +147,8 @@ public class Gripper implements Subsystem{
     //public void Grip(){}
 
 
-    public void set() //Prepare for intake
+    public void
+    set() //Prepare for intake
     {articulation=Articulation.SET;}
     public void lift() //grip and lift into Transfer position - this might need timing
     {articulation=Articulation.LIFT;}
