@@ -41,32 +41,43 @@ import java.util.ArrayList;
 
 
 public class MultipleCameraCV {
+
+//    Declare webcams
     public OpenCvWebcam duckWebcam;
     public OpenCvWebcam webcam;
 
+//    Initial declaration of pipelines (One for each webcam we use)
     public DuckDeterminationPipeline duckPipeline;
     public ShippingElementDeterminationPipeline pipeline;
+
+//    Random useful tidbit of information, to access the camera stream, hit innit, then
+//    press the ellipsis button on the top right of the screen, then select "Camera Stream".
+//    Follow same path to turn it off
 
 
     public MultipleCameraCV(HardwareMap hardwareMap, Telemetry telemetry){
 
-//
+//          Ignore this
 //        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
 //                .splitLayoutForMultipleViewports(
 //                        cameraMonitorViewId, //The container we're splitting
 //                        2, //The number of sub-containers to create
 //                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
+
+//          This too
+//        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
+//                .splitLayoutForMultipleViewports(
+//                        cameraMonitorViewId, //The container we're splitting
+//                        2, //The number of sub-containers to create
+//                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
+
+
+//        Get and store camera monitor view id.
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-//
-//        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
-//                .splitLayoutForMultipleViewports(
-//                        cameraMonitorViewId, //The container we're splitting
-//                        2, //The number of sub-containers to create
-//                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
-
+//        Assign both webcams and pipelines properly
         duckWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "WebcamDuck"),cameraMonitorViewId);
         duckPipeline = new DuckDeterminationPipeline(telemetry);
 
@@ -84,7 +95,7 @@ public class MultipleCameraCV {
         duckWebcam.setMillisecondsPermissionTimeout(2500);
         webcam.setMillisecondsPermissionTimeout(2500);
 
-        // Timeout for obtaining permission is configurable. Set before opening.
+        // Open both camera streams. Closing unnecessary streams mid autonomous is possible and likely recommended.
         duckWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -104,7 +115,7 @@ public class MultipleCameraCV {
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                telemetry.addData("duck webcam open", "yes");
+                telemetry.addData("Duck Webcam Opened", "Yes");
                 duckWebcam.setPipeline(duckPipeline);
                 duckWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("duck webcam startStreaming", "yes");
@@ -155,6 +166,7 @@ public class MultipleCameraCV {
         });
     }
 
+//    Functions for stopping cameras and switching to a pipeline that don't burn cpu cycles.
     public void stopDuckCamera(){
 
         duckWebcam.stopStreaming();
@@ -166,6 +178,7 @@ public class MultipleCameraCV {
         webcam.setPipeline(new DoNothingPipeline());
     }
 
+//    The aforementioned pipeline. Aptly named.
     public static class DoNothingPipeline extends OpenCvPipeline{
 
         @Override
@@ -174,16 +187,14 @@ public class MultipleCameraCV {
         }
     }
 
-
-    public static class DuckDeterminationPipeline extends OpenCvPipeline {
+//Pipeline for finding duck
+    public static class DuckDeterminationPipeline extends OpenCvPipeline{
         Telemetry telemetry;
         public DuckDeterminationPipeline(Telemetry telemetry) {
             this.telemetry = telemetry;
         }
 
-        /*
-         * An enum to define the skystone position
-         */
+//    All possible regions to be detected in are stored in an enum
         public enum DuckPosition {
             LEFT5,
             LEFT4,
@@ -200,29 +211,33 @@ public class MultipleCameraCV {
         }
 
         /*
-         * Some color constants
+         * Some color constants used for displaying rectangles on the camera stream
          */
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
+
+//        Sizes for subregions of the camera from which our data is extracted
         static final int REGION_WIDTH = 100;
         static final int REGION_HEIGHT = 100;
 
         /*
-         * The core values which define the location and size of the sample regions
+         * List for the storage of points, if you're only dealing with a few regions declare them all seperately, the freight regions in the other pipeline
+         * are done like this.
          */
 
         ArrayList<Point> topLeftPoints = new ArrayList<Point>();
         ArrayList<Point> bottomRightPoints = new ArrayList<Point>();
 
 
+//        The threshold to which the averages are compared.
         final int DUCK_PRESENT_THRESHOLD = 140;
 
 
 
         /*
-         * Working variables
+         * Empty matrixes that data will be stored in
          */
 
         Mat LAB = new Mat();
@@ -234,8 +249,8 @@ public class MultipleCameraCV {
 
         /*
          * This function takes the RGB frame, converts to LAB,
-         * and extracts the A channel to the 'A' variable*/
-
+         * and extracts the A channel to the 'A' variable
+         */
         void inputToLAB(Mat input) {
 
             Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
@@ -243,6 +258,8 @@ public class MultipleCameraCV {
             Core.extractChannel(LAB, B, 2);
         }
 
+//        Done in innit, this was a more complicated formation of subregions for detecting the duck, but essentially
+//        just assign the top left and bottom right points for each region you desire.
         @Override
         public void init(Mat firstFrame) {
 
@@ -267,13 +284,16 @@ public class MultipleCameraCV {
 
         }
 
+//        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutly essential to CV functioning
         @Override
         public Mat processFrame(Mat input) {
             inputToLAB(input);
 
+//            Declare list of regions
             ArrayList<Mat> region = new ArrayList<Mat>();
 
 
+//            Put the necessary data from the frame to each region
             for (int i = 0; i<33; i++) {
                 region.add(B.submat(new Rect(topLeftPoints.get(i), bottomRightPoints.get(i))));
             }
@@ -284,7 +304,7 @@ public class MultipleCameraCV {
                 regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
             }
 
-
+//              This is what displays the rectangles to the camera stream on the drive hub
             for (int i = 0; i<33; i++) {
                 Imgproc.rectangle(
                         input, // Buffer to draw on
@@ -295,6 +315,7 @@ public class MultipleCameraCV {
 
             }
 
+//            The next several lines determine which region has the highest B average.
             int indexOfMaximumBAvg = 0;
 
             for (int i = 0; i<33; i++) {
@@ -303,9 +324,11 @@ public class MultipleCameraCV {
                 }
             }
 
+//            Display telemetry
             telemetry.addData("B Averages", regionAvgs);
             telemetry.addData("Index of highest likelihood.", indexOfMaximumBAvg);
 
+//            Fix indexes (Regions are stacked 11 to a row)
             if (regionAvgs.get(indexOfMaximumBAvg) >= DUCK_PRESENT_THRESHOLD) {
                 if (indexOfMaximumBAvg > 21) {
                     indexOfMaximumBAvg -= 22;
@@ -314,10 +337,8 @@ public class MultipleCameraCV {
                 }
                 position = DuckPosition.values()[indexOfMaximumBAvg];
             } else {
-                position = DuckPosition.SHRUG_NOISES;
+                position = DuckPosition.SHRUG_NOISES; // Default enum result. Aptly named
             }
-
-
 
 
             telemetry.addData("Position", position);
@@ -337,7 +358,7 @@ public class MultipleCameraCV {
         }
 
         /*
-         * An enum to define the skystone position
+         * Enums to hold the various positions possible.
          */
         public enum FreightPosition {
             LEFT,
@@ -353,24 +374,18 @@ public class MultipleCameraCV {
         }
 
         /*
-         * Some color constants
+         * Some color constants for display
          */
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
-
-        static final int HUB_REGION_DISTANCE_FROM_TOP = 33;
-
+//        Region sizes for freight submats
         static final int REGION_WIDTH = 30;
         static final int REGION_HEIGHT = 42;
 
-        static final int HUB_REGION_HEIGHT = 50;
-        static final int HUB_REGION_WIDTH = 20;
-
         /*
-         * The core values which define the location and size of the sample regions
-         */
+        * Top left anchor points for freight regions         */
         static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 180);
         static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(300, 180);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(575, 180);
@@ -378,11 +393,12 @@ public class MultipleCameraCV {
         ArrayList<Point> hubPositionArrayTopLeftPoint = new ArrayList<Point>();
         ArrayList<Point> hubPositionArrayBottomRightPoint = new ArrayList<Point>();
 
-
+//      Threshold for freight presence
         final int FREIGHT_PRESENT_THRESHOLD = 112;
 
         final int HUB_PRESENT_THRESHOLD = 129;
 
+//        Display rectangles to camera stream
         Point region1_pointA = new Point(
                 REGION1_TOP_LEFT_ANCHOR_POINT.x,
                 REGION1_TOP_LEFT_ANCHOR_POINT.y);
@@ -426,7 +442,7 @@ public class MultipleCameraCV {
 
         /*
          * This function takes the RGB frame, converts to LAB,
-         * and extracts the A channel to the 'A' variable*/
+         * and extracts both channels used.*/
 
         void inputToLAB(Mat input) {
 
