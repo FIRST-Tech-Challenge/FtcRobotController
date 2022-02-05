@@ -76,8 +76,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             Dpad up
             Dpad down
             Dpad Left
-            Left Trigger
             Dpad Right
+            Left Trigger
         */
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -229,6 +229,15 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_LOW);
                 linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linearSlideMotor.setPower(.8);//.4
+            }
+
+            if (gamepad2.dpad_left) {
+                //capping
+                intakeMotor.setPower(0);
+                intakeOn = false;
+                linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_CAP);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlideMotor.setPower(.8);
             }
 
             if (gamepad2.left_trigger >= .35) {
