@@ -70,12 +70,13 @@ public class Main {
 
         builder.waitSeconds(0.1);
         // 9.35 seconds long
-        builder.lineTo(new Vector2d(-40, red ? -55 : 55));
-        builder.splineToLinearHeading(new Pose2d(-20, red ? -42 : 42, Math.toRadians(100)),
-                Math.toRadians(-110));
+        builder.lineTo(new Vector2d(-25, !red ? 55 : -53));
+        builder.splineToSplineHeading(new Pose2d(!red ? -21 : -20,
+                !red ? 42 : -38, Math.toRadians(!red ? 100 : -95)), Math.toRadians(250));
         builder.waitSeconds(2);
         builder.lineTo(new Vector2d(-19, red ? -45 : 45));
-        builder.lineToLinearHeading(new Pose2d(-59, red ? -57.5 : 57.5, Math.toRadians(red ? 60 : 240)));
+        builder.splineToSplineHeading(new Pose2d(!red ? -60 : -60.5,
+                !red ? 58 : -58.5, Math.toRadians(!red ? 240 : 330)), Math.toRadians(180));
         builder.waitSeconds(3);
         builder.lineToLinearHeading(new Pose2d(-60, red ? -35 : 35, Math.toRadians(90)));
         builder.waitSeconds(43.85);

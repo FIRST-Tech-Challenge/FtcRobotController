@@ -8,7 +8,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +17,8 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+
+import static org.firstinspires.ftc.teamcode.opmodes.util.StayInPosition.stayInPose;
 
 @Autonomous
 public class NewAutoStorage extends LinearOpMode {
@@ -50,28 +51,25 @@ public class NewAutoStorage extends LinearOpMode {
             }
         });
 
-        // Part 1: MOVE AWAY FROM WALL
+        // Part 1: go to shipping hub
         final Trajectory part1 = drive.trajectoryBuilder(initial)
-            .lineTo(new Vector2d(-21, multiplier == 1 ? 55 : -53))
+            .lineTo(new Vector2d(-20, !isRed ? 55 : -53))
+            .splineToSplineHeading(new Pose2d(!isRed ? -21 : -20,
+                    !isRed ? 42 : -38, Math.toRadians(!isRed ? 100 : -95)),
+                        Math.toRadians(250 * multiplier))
             .build();
 
-        // Part 2: go to shipping hub
+        // Part 2: carousel
         final Trajectory part2 = drive.trajectoryBuilder(part1.end())
-                .lineToLinearHeading(new Pose2d(multiplier == 1 ? -21 : -20,
-                        multiplier == 1 ? 42 : -38, Math.toRadians(multiplier == 1 ? 100 : -95)))
-                .build();
-
-        // Part 3: carousel
-        final Trajectory part3 = drive.trajectoryBuilder(part2.end())
             .lineTo(new Vector2d(-19, 50 * multiplier))
-            .lineToLinearHeading(new Pose2d(multiplier == 1 ? -60 : -60.5,
-                    multiplier == 1 ? 58 : -58.5, Math.toRadians(multiplier == 1 ? 240 : 330)))
+            .splineToSplineHeading(new Pose2d(-60.5, 60 * multiplier,
+                    Math.toRadians(!isRed ? 240 : 330)), Math.toRadians(180 * multiplier))
             .build();
 
-        ElapsedTime carouselTimer = new ElapsedTime();
+        ElapsedTime timer = new ElapsedTime();
 
-        // Part 4: Park in Alliance Storage Unit
-        final Trajectory part4 = drive.trajectoryBuilder(part3.end())
+        // Part 3: Park in Alliance Storage Unit
+        final Trajectory part3 = drive.trajectoryBuilder(part2.end())
                 .lineToLinearHeading(new Pose2d(-60, 35 * multiplier,
                         Math.toRadians(90 * multiplier)))
                 .build();
@@ -91,29 +89,32 @@ public class NewAutoStorage extends LinearOpMode {
 
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
-        while (!liftUpdated[0] || lift.getState() != AutoLift.MovementStates.NONE) {
+        timer.reset();
+        while (timer.seconds() < 3) {
             if (isStopRequested()) {
                 return;
             }
+            stayInPose(drive, part1.end());
             drive.update();
         }
 
         // Part 3
-        drive.followTrajectoryAsync(part3);
+        drive.followTrajectoryAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
 
         // CAROUSEL GARBAG
         carousel.on();
-        carouselTimer.reset();
-        while (!isStopRequested() && carouselTimer.seconds() < 4) {
+        timer.reset();
+        while (!isStopRequested() && timer.seconds() < 4) {
+            stayInPose(drive, part2.end());
             drive.update();
         }
         if (isStopRequested()) return;
         carousel.off();
 
         // Part 4
-        drive.followTrajectoryAsync(part4);
+        drive.followTrajectoryAsync(part3);
         updateLoop(drive);
     }
 
