@@ -17,8 +17,8 @@ public class PosThreeSPECIAL extends LinearOpMode {
 
         waitForStart();
 
-
         AutonomousDC.resetTicks();
+
         //Forward
         AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
         sleep(3000);
