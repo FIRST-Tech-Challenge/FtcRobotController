@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Autonomous
 public class Auto_RedWarehouse extends LinearOpMode {
     DcMotorEx frontL, frontR, backL, backR, duckWheel, arm = null;
@@ -130,42 +132,42 @@ public class Auto_RedWarehouse extends LinearOpMode {
             telemetry.update();
         }
     }
-//
-//    public void armMiddleLayer(){
-//        arm.setTargetPosition(-12000);
-//        arm.setMode(RUN_TO_POSITION);
-//        arm.setVelocity(armVelocity);
-//        while (arm.isBusy()) {
-//            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
-//            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
-//            telemetry.update();
-//        }
-//    }
-//
-//    public void armBottomLayer(){
-//        arm.setTargetPosition(-7486);
-//        arm.setMode(RUN_TO_POSITION);
-//        arm.setVelocity(armVelocity);
-//        while (arm.isBusy()) {
-//            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
-//            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
-//            telemetry.update();
-//        }
-//    }
 
-//    public void findDuck(){
-//
-//        double cmToDucky = 0.0;
-//        final double distanceToShippingHubPPR = 5.0;
-//
-//        while(readingDuck){
-//            drive(2, 0);
-//            if(dSensor.getDistance(DistanceUnit.INCH) <= 40){
-//                cmToDucky = frontL.getCurrentPosition() / oneCmInPPR;
-//                readingDuck = false;
-//            }
-//        }
-//    }
+    public void armMiddleLayer(){
+        arm.setTargetPosition(-12000);
+        arm.setMode(RUN_TO_POSITION);
+        arm.setVelocity(armVelocity);
+        while (arm.isBusy()) {
+            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
+            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
+            telemetry.update();
+        }
+    }
+
+    public void armBottomLayer(){
+        arm.setTargetPosition(-7486);
+        arm.setMode(RUN_TO_POSITION);
+        arm.setVelocity(armVelocity);
+        while (arm.isBusy()) {
+            telemetry.addData("Status", "Waiting for Motors to Finish Turning");
+            telemetry.addData("Motors", "Arm Position: %d, %d", arm.getCurrentPosition(), arm.getTargetPosition());
+            telemetry.update();
+        }
+    }
+
+    public void findDuck(){
+
+        double cmToDucky = 0.0;
+        final double distanceToShippingHubPPR = 5.0;
+
+        while(readingDuck){
+            drive(2, 0, 500);
+            if(dSensor.getDistance(DistanceUnit.INCH) <= 40){
+                cmToDucky = frontL.getCurrentPosition() / oneCmInPPR;
+                readingDuck = false;
+            }
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -183,13 +185,6 @@ public class Auto_RedWarehouse extends LinearOpMode {
         intakeR = hardwareMap.get(CRServo.class, "intakeR");
 //        dSensor = hardwareMap.get(DistanceSensor.class, "dSensor");
 
-        // Reset Encoder
-        frontL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        frontR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        backL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        backR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        extender.setMode(RUN_WITHOUT_ENCODER);
 
         frontL.setDirection(DcMotorEx.Direction.FORWARD);
         backL.setDirection(DcMotorEx.Direction.FORWARD);
@@ -207,10 +202,10 @@ public class Auto_RedWarehouse extends LinearOpMode {
         drive(0, 30, 500);
         armTopLayer();
         armReset();
-        sleep(500);
+//        sleep(500);
         drive(0, -25, 500);
         drive(-90, 0, 500);
-        sleep(500);
+//        sleep(500);
         drive(0, 175, 1200);
     }
 }
