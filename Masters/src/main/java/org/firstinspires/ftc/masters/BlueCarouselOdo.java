@@ -22,7 +22,7 @@ public class BlueCarouselOdo extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
-        MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
+        MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
         drive.CV.duckWebcam.stopStreaming();
         freightLocation = drive.analyze();
 
@@ -72,7 +72,7 @@ public class BlueCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();
