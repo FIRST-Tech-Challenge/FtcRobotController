@@ -34,7 +34,8 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Freight Arm (score FRONT)
     boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // (unused)
     boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // box servo (dump)
-    boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // TEST MDOE: toggle link arm up/down
+    boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // UNUSED
+    boolean gamepad2_share_last,      gamepad2_share_now      = false;  // PROBLEM!! reset freight arm controls
 
     boolean sweeperRunning  = false;  // Intake sweeper forward (fast/continuous - for collecting)
     boolean sweeperEjecting = false;  // Intake sweeper reverse (fast/continuous - eject extra freight)
@@ -324,6 +325,7 @@ public abstract class Teleop extends LinearOpMode {
         gamepad2_l_bumper_last   = gamepad2_l_bumper_now;    gamepad2_l_bumper_now   = gamepad2.left_bumper;
         gamepad2_r_bumper_last   = gamepad2_r_bumper_now;    gamepad2_r_bumper_now   = gamepad2.right_bumper;
         gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
+        gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
     } // captureGamepad2Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -465,6 +467,25 @@ public abstract class Teleop extends LinearOpMode {
               robot.boxServo.setPosition( boxServoTarget );   // DUMP!
             }
         }
+        //===================================================================
+        // Check for an OFF-to-ON toggle of the gamepad2 SHARE button
+        if( gamepad2_share_now && !gamepad2_share_last )
+        {
+            robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.50 );
+            robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
+            robot.sweepMotor.setPower( 0.0 );  // OFF
+            sweeperRunning    = false;
+            collectingFreight = false;
+            freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;
+            // Also reset collector arm to raised position
+            robot.linkServo.setPosition( robot.LINK_SERVO_RAISED );
+            collectorArmRaised   = true;   // RAISED!
+            collectorArmRaising  = false;  // back to idle
+            collectorArmLowering = false;
+            needCollectorRaised  = false;
+            needCollectorLowered = false;
+        }
+
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         if(( gamepad2_circle_now && !gamepad2_circle_last) || (freightPresent && collectingFreight))

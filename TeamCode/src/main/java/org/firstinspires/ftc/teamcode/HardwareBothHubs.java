@@ -132,7 +132,7 @@ public class HardwareBothHubs
     public Servo        boxServo                   = null;
     public double       BOX_SERVO_INIT             = 0.28;  // we init to the TRANSPORT position
     public double       BOX_SERVO_COLLECT          = 0.48;
-    public double       BOX_SERVO_STORED           = 0.39;  // less than TRANSPORT so we can't hold TWO
+    public double       BOX_SERVO_STORED           = 0.40;  // less than TRANSPORT so we can't hold TWO
     public double       BOX_SERVO_TRANSPORT        = 0.28;
     public double       BOX_SERVO_DUMP_TOP         = 0.55;
     public double       BOX_SERVO_DUMP_MIDDLE      = 0.65;

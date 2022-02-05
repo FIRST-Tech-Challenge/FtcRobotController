@@ -58,7 +58,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
     OpenCvCamera webcam;
     public int hubLevel = 0;   // dynamic (gets updated every cycle during INIT)
-    public static double collisionDelay = 0.0;  // wait 0 seconds before moving (to avoid collision)
+    public static double collisionDelay = 4.0;  // wait 4 seconds before moving (to avoid collision)
     private ElapsedTime autoTimer = new ElapsedTime();
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
@@ -232,22 +232,24 @@ public class AutonomousRwarehouse extends AutonomousBase {
             freightCollectAngle += 5.0;  // try again at a slightly different angle
         }
 
+        //!!!!! ILLEGAL TO INTERACT WITH SHARED HUB DURING AUTONOMOUS !!!!!
+
         // Score the freight if we have collected one, and we have enough time.
-        if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
-            telemetry.addData("Skill", "scoreFreightSharedHub");
-            telemetry.update();
-            freightCollected = !scoreFreightSharedHub(hubLevel);
-            freightCollectAngle = -35.0;
-        }
+//      if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
+//         telemetry.addData("Skill", "scoreFreightSharedHub");
+//         telemetry.update();
+//         freightCollected = !scoreFreightSharedHub(hubLevel);
+//         freightCollectAngle = -35.0;
+//      }
 
         // Collect second freight if we're not still holding the first one
-        while( opModeIsActive() && !freightCollected) {
-            // Drive into freight pile to collect
-            telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
-            telemetry.update();
-            freightCollected = collectFreight(hubLevel, freightCollectAngle, 250 );
-            freightCollectAngle += 5.0;  // try again at a slightly different angle
-        }
+//      while( opModeIsActive() && !freightCollected) {
+//          // Drive into freight pile to collect
+//          telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
+//          telemetry.update();
+//          freightCollected = collectFreight(hubLevel, freightCollectAngle, 250 );
+//          freightCollectAngle += 5.0;  // try again at a slightly different angle
+//      }
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
