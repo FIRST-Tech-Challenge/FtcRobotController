@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Chassis;
 
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -141,6 +142,10 @@ public class Drivechain {
         br.setPower(0.0);
     }
 
+
+
+
+
     public void resetTicks() {
         fl.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         // fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -155,6 +160,37 @@ public class Drivechain {
 //        rightMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 //        rightMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
+
+    public void switchToPower(){
+        fl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        // fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        fr.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        // fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        bl.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        // bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        br.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void runRobot(int flpower, int frpower, int blpower, int brpower){
+        fl.setPower(flpower);
+        fr.setPower(frpower);
+        bl.setPower(blpower);
+        br.setPower(brpower);
+    }
+
+
+    public void runRobot(double v, double v1, double v2, double v3){
+        fl.setPower(0.5);
+        // fl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        fr.setPower(0.5);
+        // fr.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        bl.setPower(0.5);
+        // bl.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        br.setPower(0.5);
+    }
+
+
+
     public void showTicks(Telemetry telemetry){
         telemetry.addData("fl",fl.getCurrentPosition());
         telemetry.addData("fr",fr.getCurrentPosition());
