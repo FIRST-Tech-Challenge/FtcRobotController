@@ -89,7 +89,7 @@ public class redWarehouseFSM extends LinearOpMode {
         chassis.followTrajectorySequenceAsync(movingToHub);
 
         masterLoop: while (opModeIsActive() && !isStopRequested()) {
-            switch (currentState) {
+            switch(currentState) {
                 case MOVING_TO_HUB:
                 case RETURNING_TO_HUB: {
                     if (!chassis.isBusy()) {

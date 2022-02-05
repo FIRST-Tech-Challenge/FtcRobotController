@@ -17,21 +17,7 @@ public class RR_Freight_test {
                 // Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15).setBotDimensions(13.2,16.603)
                 .followTrajectorySequence(drive ->
-                    drive.trajectorySequenceBuilder(new Pose2d(-31.2, -61.603, Math.toRadians(270)))
-                        .addTemporalMarker(0,() -> {
-                            /*
-                            while(opModeisActive()) {mechanisms.maintainBalance}
-                             */
-                        })
-                        .lineToSplineHeading(new Pose2d(-31,-24,0))
-                        .addDisplacementMarker(() -> {
-                            /* mechanisms.rotateArm(0.3, 600); */
-                        }).waitSeconds(2).addDisplacementMarker(() -> {
-                            /*
-                            mechanisms.releaseServoMove(0.5);
-                             */
-                    }).waitSeconds(0.75)
-                .build())
+                    drive.trajectorySequenceBuilder(new Pose2d(50,-64,180)).splineTo(new Vector2d(-11.5,-41),Math.toRadians(90)).build())
                 .start();
     }
 }
