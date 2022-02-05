@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 
@@ -25,7 +24,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
 
         drive.openCVInnitShenanigans("red");
 
-        MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = drive.analyze();
+        MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(-35, -63), Math.toRadians(90));
 
@@ -74,7 +73,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== MultipLeCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();

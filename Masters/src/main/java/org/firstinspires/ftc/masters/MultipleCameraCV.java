@@ -40,7 +40,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.ArrayList;
 
 
-public class MultipLeCameraCV {
+public class MultipleCameraCV {
     public OpenCvWebcam duckWebcam;
     public OpenCvWebcam webcam;
 
@@ -48,7 +48,7 @@ public class MultipLeCameraCV {
     public ShippingElementDeterminationPipeline pipeline;
 
 
-    public MultipLeCameraCV(HardwareMap hardwareMap, Telemetry telemetry){
+    public MultipleCameraCV(HardwareMap hardwareMap, Telemetry telemetry){
 
 //
 //        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
@@ -263,6 +263,8 @@ public class MultipLeCameraCV {
             }
 
             inputToLAB(firstFrame);
+
+
         }
 
         @Override

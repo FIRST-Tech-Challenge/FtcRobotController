@@ -14,7 +14,7 @@ public class TestDuckRobot extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
         drive.openCVInnitShenanigans("blue");
-        MultipLeCameraCV.DuckDeterminationPipeline.DuckPosition duckPosition = drive.analyzeDuck();
+        MultipleCameraCV.DuckDeterminationPipeline.DuckPosition duckPosition = drive.analyzeDuck();
         waitForStart();
       //  drive.CV.webcam.stopStreaming();
 
