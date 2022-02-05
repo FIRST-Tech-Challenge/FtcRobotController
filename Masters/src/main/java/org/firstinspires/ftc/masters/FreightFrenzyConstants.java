@@ -2,10 +2,11 @@ package org.firstinspires.ftc.masters;
 
 public class FreightFrenzyConstants {
 
-    public static double DUMP_SERVO_DROP = 0.67;
-    public static double DUMP_SERVO_BOTTOM =0.34;
-    public static double DUMP_SERVO_LIFT = 0.39;
+    public static double DUMP_SERVO_DROP = 0.4;//0.67
+    public static double DUMP_SERVO_BOTTOM =0.04;//0.34
+    public static double DUMP_SERVO_LIFT = 0.08;//0.39
 
+    public static int SLIDE_CAP = 2150;
     public static int SLIDE_TOP = 1700;
     public static int SLIDE_MIDDLE = 1300;
     public static int SLIDE_LOW = 800;
