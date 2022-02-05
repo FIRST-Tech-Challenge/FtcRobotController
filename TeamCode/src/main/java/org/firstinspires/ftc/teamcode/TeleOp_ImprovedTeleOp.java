@@ -29,8 +29,9 @@ import com.qualcomm.robotcore.util.Range;
 // @Disabled
 public class TeleOp_ImprovedTeleOp extends OpMode
 {
+    HWC robot = new HWC(hardwareMap, telemetry);
     /** Declare OpMode members. */
-    private ElapsedTime runtime = new ElapsedTime();
+  /*  private ElapsedTime runtime = new ElapsedTime();
     private DcMotor duckWheel = null;
     private DcMotor frontL = null;
     private DcMotor frontR = null;
@@ -45,7 +46,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     //private CRServo rIntakeLift = null;
 
 
-    /** Code to run ONCE when the driver hits INIT. */
+   */ /** Code to run ONCE when the driver hits INIT. */
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");
@@ -53,7 +54,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         /** Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone). */
-        duckWheel = hardwareMap.get(DcMotor.class, "duckWheel");
+       /* duckWheel = hardwareMap.get(DcMotor.class, "duckWheel");
         frontL  = hardwareMap.get(DcMotor.class, "leftFront");
         frontR = hardwareMap.get(DcMotor.class, "rightFront");
         backL  = hardwareMap.get(DcMotor.class, "leftRear");
@@ -101,7 +102,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         //rIntakeLift.setDirection(CRServo.Direction.FORWARD);
 
 
-
+*/
 
         /* Tell the driver that initialization is complete. */
         telemetry.addData("Status", "Initialized");
@@ -250,44 +251,44 @@ public class TeleOp_ImprovedTeleOp extends OpMode
 
         if (speed == 1) {
 
-            frontL.setPower(leftFPower);
-            backL.setPower(leftBPower);
-            frontR.setPower(rightFPower);
-            backR.setPower(rightBPower);
-            intakeR.setPower(intakePow);
-            intakeL.setPower(intakePow);
-            duckWheel.setPower(duckPower);
-            extender.setPower(extension);
-            arm.setPower(armMove * 1);
-            clawLift.setPower(liftPow);
+            robot.frontL.setPower(leftFPower);
+            robot.backL.setPower(leftBPower);
+            robot.frontR.setPower(rightFPower);
+            robot.backR.setPower(rightBPower);
+            robot.intakeR.setPower(intakePow);
+            robot.intakeL.setPower(intakePow);
+            robot.duckWheel.setPower(duckPower);
+            robot.extender.setPower(extension);
+            robot.arm.setPower(armMove * 1);
+            robot.clawLift.setPower(liftPow);
             //lIntakeLift.setPower(liftPow);
             //rIntakeLift.setPower(liftPow);
         }
 
         else if (speed == -1) {
-            frontL.setPower(leftFPower * slowSpeed);
-            backL.setPower(leftBPower * slowSpeed);
-            frontR.setPower(rightFPower * slowSpeed);
-            backR.setPower(rightBPower * slowSpeed);
-            intakeR.setPower(intakePow);
-            intakeL.setPower(intakePow);
-            duckWheel.setPower(duckPower);
-            extender.setPower(extension);
-            arm.setPower(armMove * 1);
-            clawLift.setPower(liftPow);
+            robot.frontL.setPower(leftFPower * slowSpeed);
+            robot.backL.setPower(leftBPower * slowSpeed);
+            robot.frontR.setPower(rightFPower * slowSpeed);
+            robot.backR.setPower(rightBPower * slowSpeed);
+            robot.intakeR.setPower(intakePow);
+            robot.intakeL.setPower(intakePow);
+            robot.duckWheel.setPower(duckPower);
+            robot.extender.setPower(extension);
+            robot.arm.setPower(armMove * 1);
+            robot.clawLift.setPower(liftPow);
         }
 
         else {
-            frontL.setPower(leftFPower * normalSpeed);
-            backL.setPower(leftBPower * normalSpeed);
-            frontR.setPower(rightFPower * normalSpeed);
-            backR.setPower(rightBPower * normalSpeed);
-            intakeR.setPower(intakePow);
-            intakeL.setPower(intakePow);
-            duckWheel.setPower(duckPower);
-            extender.setPower(extension);
-            arm.setPower(armMove * 1);
-            clawLift.setPower(liftPow);
+            robot.frontL.setPower(leftFPower * normalSpeed);
+            robot.backL.setPower(leftBPower * normalSpeed);
+            robot.frontR.setPower(rightFPower * normalSpeed);
+            robot.backR.setPower(rightBPower * normalSpeed);
+            robot.intakeR.setPower(intakePow);
+            robot.intakeL.setPower(intakePow);
+            robot.duckWheel.setPower(duckPower);
+            robot.extender.setPower(extension);
+            robot.arm.setPower(armMove * 1);
+            robot.clawLift.setPower(liftPow);
         }
 
 

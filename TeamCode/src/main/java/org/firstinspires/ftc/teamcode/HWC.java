@@ -42,6 +42,8 @@ public class HWC {
         intakeL = hardwareMap.get(CRServo.class, "intakeL");
         intakeR = hardwareMap.get(CRServo.class, "intakeR");
         dSensorR = hardwareMap.get(DistanceSensor.class, "dSensorR");
+        clawLift = hardwareMap.get(DcMotor.class, " intakeLift");
+
 
         frontL.setDirection(DcMotorEx.Direction.FORWARD);
         backL.setDirection(DcMotorEx.Direction.FORWARD);
@@ -52,12 +54,21 @@ public class HWC {
         intakeL.setDirection(CRServo.Direction.REVERSE);
         intakeR.setDirection(CRServo.Direction.FORWARD);
 
+        frontR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        clawLift.setZeroPowerBehavior(DCMotor.ZeroPowerBehavior.BRAKE);
+
         frontL.setMode(RUN_USING_ENCODER);
         frontR.setMode(RUN_USING_ENCODER);
         backL.setMode(RUN_USING_ENCODER);
         backR.setMode(RUN_USING_ENCODER);
         arm.setMode(RUN_USING_ENCODER);
         extender.setMode(RUN_WITHOUT_ENCODER);
+        clawLift.setMode(RUN_USING_ENCODER);
     }
 
     public void drive(double directionInDegrees, double distanceInCm, double wheelPower){
