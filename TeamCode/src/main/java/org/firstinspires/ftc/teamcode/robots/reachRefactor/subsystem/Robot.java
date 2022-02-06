@@ -25,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 @Config
 public class Robot implements Subsystem {
     private static final String TELEMETRY_NAME = "Robot";
+    public static double HIGH_TIER_TRIGGER_PITCH_VELOCITY = 1000;
 
     public DriveTrain driveTrain;
     public Turret turret;
@@ -56,6 +57,7 @@ public class Robot implements Subsystem {
         articulationMap.put(Articulation.INIT, init);
         articulationMap.put(Articulation.START, start);
         articulationMap.put(Articulation.TRANSFER, transfer);
+        articulationMap.put(Articulation.TRANSFER_AND_HIGH_TIER, transferAndHighTier);
     }
 
     @Override
@@ -80,6 +82,9 @@ public class Robot implements Subsystem {
         for(Subsystem subsystem: subsystems)
             subsystem.update(fieldOverlay);
 
+        if(driveTrain.getPitchVelocity() > HIGH_TIER_TRIGGER_PITCH_VELOCITY && crane.getArticulation() == Crane.Articulation.MANUAL)
+            crane.articulate(Crane.Articulation.HIGH_TIER);
+
         articulate(articulation);
     }
 
@@ -96,9 +101,21 @@ public class Robot implements Subsystem {
 
         // tele-op articulations
         TRANSFER,
+        TRANSFER_AND_HIGH_TIER
     }
 
-    // Tele-Op articulations
+    // Tele-Op articulations`
+    private Stage transferAndHighTierStage = new Stage();
+    private StateMachine transferAndHighTier = getStateMachine(transferAndHighTierStage)
+            .addState(() -> {
+                driveTrain.setChassisLength(Constants.MIN_CHASSIS_LENGTH);
+                return driveTrain.chassisLengthOnTarget();
+            })
+            .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addState(() -> crane.articulate(Crane.Articulation.HIGH_TIER))
+            .build();
+
     private Stage transferStage = new Stage();
     private StateMachine transfer = getStateMachine(transferStage)
             .addState(() -> {
@@ -106,13 +123,13 @@ public class Robot implements Subsystem {
                         return driveTrain.chassisLengthOnTarget();
             })
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
-            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addTimedState(0.25f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
             .build();
 
     private Stage initStage = new Stage();
     private StateMachine init = getStateMachine(initStage)
-            .addSingleState(() -> gripper.set())
+            .addSingleState(() -> gripper.lift())
             .addState(() -> crane.articulate(Crane.Articulation.INIT))
             .build();
 

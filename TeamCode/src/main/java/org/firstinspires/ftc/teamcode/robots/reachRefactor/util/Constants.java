@@ -20,7 +20,7 @@ public class Constants {
 
     // constraints
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
-    public static double TICKS_PER_INCH = 28.854166667;
+    public static double TICKS_PER_INCH = 26.375;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants
@@ -38,7 +38,9 @@ public class Constants {
     public static final double TICKS_PER_REV = 1120;
     public static final double MAX_RPM = 150;
     public static boolean USE_CUSTOM_VELOCITY_PID = false;
-    public static PIDFCoefficients MOTOR_VELOCITY_PID = new PIDFCoefficients(2.5, 0.1, 0.2,
+    public static PIDFCoefficients MOTOR_VELOCITY_PID = new PIDFCoefficients(0, 0, 0,
+            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    public static PIDFCoefficients SWERVE_VELOCITY_PID = new PIDFCoefficients(0, 0, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     //----------------------------------------------------------------------------------------------

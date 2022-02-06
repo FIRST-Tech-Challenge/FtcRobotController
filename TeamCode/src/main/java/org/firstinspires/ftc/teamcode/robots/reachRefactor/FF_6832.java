@@ -43,6 +43,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
  * left trigger - toggle numerical dashboard
  * right trigger - toggle anti tipping
  * right stick button - toggle smoothing
+ * left stick button - "test" init, points the shoulder straight up to make sure servo positions are good
  *
  * --Tele-Op--
  * gamepad 1: x - set gripper for intake
@@ -70,14 +71,14 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
  * gamepad 1: left stick y - coarse adjustment
  */
 @Config
-@TeleOp(name = "refactored FF_6832")
+@TeleOp(name = "AAAArefactored FF_6832")
 public class FF_6832 extends OpMode {
     // constants
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.2;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
     public static double FORWARD_SCALING_FACTOR = 48; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = FORWARD_SCALING_FACTOR * (2 / TRACK_WIDTH); // scales the target angular robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 4; // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             MIN_CHASSIS_LENGTH,
             MIN_CHASSIS_LENGTH + (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,
@@ -256,6 +257,8 @@ public class FF_6832 extends OpMode {
             antiTippingEnabled = !antiTippingEnabled;
         if(stickyGamepad1.right_stick_button || stickyGamepad2.right_stick_button)
             smoothingEnabled = !smoothingEnabled;
+        if(stickyGamepad1.left_stick_button || stickyGamepad2.left_stick_button)
+            robot.crane.articulate(Crane.Articulation.TEST_INIT);
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -286,7 +289,7 @@ public class FF_6832 extends OpMode {
 
 
     private void handleArcadeDrive(Gamepad gamepad) {
-        forward = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
+        forward = Math.pow(gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
         rotate = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 

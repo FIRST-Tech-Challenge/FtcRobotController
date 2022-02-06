@@ -24,6 +24,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -64,8 +65,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static double ZETA = 0;
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
-    public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(0, 0, 0);
-    public static double ROLL_ANTI_TIP_PID_TOLERANCE = 5;
+    public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
+    public static double ROLL_ANTI_TIP_PID_TOLERANCE = 2;
     public static PIDCoefficients PITCH_ANTI_TIP_PID = new PIDCoefficients(0, 0, 0);
     public static double PITCH_ANTI_TIP_PID_TOLERANCE = 5;
 
@@ -93,7 +94,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private double targetLeftVelocity, targetRightVelocity, targetSwerveVelocity, swivelPower, duckSpinnerPower;
     private double chassisLength, targetChassisLength, chassisLengthCorrection;
     private boolean chassisLengthOnTarget, duckSpinnerToggled, simulated, imuOffsetsInitialized;
-    private double heading, roll, pitch, angularVelocity;
+    private double heading, roll, pitch, pitchVelocity, angularVelocity;
     private double headingOffset, rollOffset, pitchOffset;
     private double rollCorrection, pitchCorrection;
     private double compensatedBatteryVoltage;
@@ -221,6 +222,12 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                         compensatedCoefficients.f
                 );
             }
+            swerveMotor.setVelocityPIDFCoefficients(
+                    SWERVE_VELOCITY_PID.p,
+                    SWERVE_VELOCITY_PID.i,
+                    SWERVE_VELOCITY_PID.d,
+                    SWERVE_VELOCITY_PID.f
+            );
         }
     }
 
@@ -258,7 +265,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         heading = wrapAngleRad(orientation.firstAngle - headingOffset);
         roll = wrapAngleRad(orientation.secondAngle - rollOffset);
         pitch = wrapAngleRad(orientation.thirdAngle - pitchOffset);
-        angularVelocity = wrapAngleRad(-imu.getAngularVelocity().xRotationRate);
+
+        AngularVelocity angularVelocities = imu.getAngularVelocity();
+        pitchVelocity = wrapAngleRad(angularVelocities.yRotationRate);
+        angularVelocity = wrapAngleRad(-angularVelocities.xRotationRate);
 
         chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
 
@@ -352,6 +362,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("pitch", Math.toDegrees(pitch));
             telemetryMap.put("anti-tip roll correction", Math.toDegrees(rollCorrection));
             telemetryMap.put("anti-tip pitch correction", pitchCorrection);
+            telemetryMap.put("anti-tip roll on target", rollAntiTipPID.onTarget());
+            telemetryMap.put("anti-tip pitch on target", pitchAntiTipPID.onTarget());
 
             telemetryMap.put("left position", inchesToEncoderTicks(leftPosition));
             telemetryMap.put("right position", inchesToEncoderTicks(rightPosition));
@@ -376,6 +388,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("chassis length PID correction", chassisLengthCorrection);
 
             telemetryMap.put("angular velocity", Math.toDegrees(angularVelocity));
+            telemetryMap.put("pitch velocity", Math.toDegrees(pitchVelocity));
 
             telemetryMap.put("drive velocity", driveVelocity.toString());
             telemetryMap.put("last drive velocity", lastDriveVelocity.toString());
@@ -415,11 +428,19 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public void setDrivePower(@NonNull Pose2d drivePower) {
         List<Double> velocities = TrikeKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH, chassisLength);
         setMotorVelocities(velocities.get(0), velocities.get(1), velocities.get(2));
-        setSwivelAngle(TrikeKinematics.robotToSwivelAngle(drivePower, chassisLength));
+        if(
+            !approxEquals(velocities.get(0), 0) ||
+            !approxEquals(velocities.get(1), 0) ||
+            !approxEquals(velocities.get(2), 0)
+        )
+            setSwivelAngle(TrikeKinematics.robotToSwivelAngle(drivePower, chassisLength));
     }
 
     public void setDrivePowerSafe(Pose2d drivePower) {
-        setDrivePower(drivePower.plus(new Pose2d(pitchCorrection, 0, rollCorrection)));
+        if(!rollAntiTipPID.onTarget())
+            setDrivePower(new Pose2d(pitchCorrection, 0, rollCorrection));
+        else
+            setDrivePower(drivePower);
     }
 
     private static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
@@ -539,5 +560,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public void setMaintainChassisLengthEnabled(boolean maintainChassisLengthEnabled) {
         this.maintainChassisLengthEnabled = maintainChassisLengthEnabled;
+    }
+
+    public double getPitchVelocity() {
+        return pitchVelocity;
     }
 }
