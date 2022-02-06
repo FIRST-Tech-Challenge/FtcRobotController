@@ -144,10 +144,10 @@ public class driveAndLinslide extends LinearOpMode {
             hypotenuseLeft = 1;
         }
 
-        //motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * Math.pow(hypotenuseLeft, 2) * speedFactor)); //motor code
-      //  motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * Math.pow(hypotenuseLeft, 2) * speedFactor));
-       // motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * Math.pow(hypotenuseRight, 2) * speedFactor));
-       // motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * Math.pow(hypotenuseRight, 2) * speedFactor));
+        // motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * Math.pow(hypotenuseLeft, 2) * speedFactor)); //motor code
+        // motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * Math.pow(hypotenuseLeft, 2) * speedFactor));
+        // motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * Math.pow(hypotenuseRight, 2) * speedFactor));
+        // motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * Math.pow(hypotenuseRight, 2) * speedFactor));
 
         motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * (amps * Math.sin(hypotenuseLeft * 2 * Math.PI) + hypotenuseLeft * speedFactor))); //put the b value as 2 pi and add a linear realtionship to the sin function in order to make it work
         motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * (amps * Math.sin(hypotenuseLeft * 2 * Math.PI) + hypotenuseLeft * speedFactor)));
