@@ -145,7 +145,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
         //CAROUSEL
         if(gamepad1.dpad_right || gamepad2.dpad_right) {
+            long start = System.nanoTime();
             mechanisms.rotateCarousel(0.5);
+            long end = System.nanoTime();
+            long elapsedtime = end - start;
+            if (elapsedtime >= 10);
+            mechanisms.rotateCarousel(1);
         }
         else if(gamepad1.dpad_left || gamepad2.dpad_left) {
             mechanisms.rotateCarousel(0.5);
