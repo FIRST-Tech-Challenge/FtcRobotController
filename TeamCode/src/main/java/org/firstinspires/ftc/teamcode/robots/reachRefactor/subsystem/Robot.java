@@ -123,7 +123,7 @@ public class Robot implements Subsystem {
                         return driveTrain.chassisLengthOnTarget();
             })
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
-            .addTimedState(0.25f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
             .build();
 
