@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@Disabled
 @TeleOp(name="Potentiometer Test", group="Testing")
 public class PotentiometerTest extends OpMode
 {
