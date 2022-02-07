@@ -97,20 +97,24 @@ public class BlueDrive extends LinearOpMode {
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseStorage.currentPose);
 
+        final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
+        Thread toolThread = new Thread(() -> {
+            final ControllerIntake intake = new ControllerIntake(hardwareMap, eventThread, toolGamepad, power == 1);
+
+            while (!isStopRequested()) {
+                lift.update();
+                intake.update(lift.getPosition());
+            }
+        });
+
         waitForStart();
         eventThread.start();
+        toolThread.start();
         if (isStopRequested()) return;
 
-        final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
-        final ControllerIntake intake = new ControllerIntake(hardwareMap, eventThread, toolGamepad, power == 1);
-
-        while (opModeIsActive() && !isStopRequested()) {
+        while (!isStopRequested()) {
             // Update the drive class
             drive.update();
-            // update the lift
-            lift.update();
-            // update the intake
-            intake.update(lift.getPosition());
 
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
@@ -129,7 +133,7 @@ public class BlueDrive extends LinearOpMode {
                     drive.setWeightedDrivePower(
                             new Pose2d(
                                     moveGamepad.getLeftY(),
-                                    moveGamepad.getLeftX(),
+                                    -moveGamepad.getLeftX(),
                                     moveGamepad.getRightX()
                             )
                     );
