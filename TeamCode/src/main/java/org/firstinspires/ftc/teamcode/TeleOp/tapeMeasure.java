@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class tapeMeasure extends LinearOpMode {
-    private DcMotor altitude = hardwareMap.dcMotor.get("motorFrontLeft");//changes direction up or down
-    private DcMotor azimuth = hardwareMap.dcMotor.get("motorFrontLeft");//change direction left or right
-    private DcMotor extend = hardwareMap.dcMotor.get("motorFrontLeft");//extend or retract tape measure
+    private CRServo altitude = hardwareMap.crservo.get("motorFrontLeft");//changes direction up or down
+    private CRServo azimuth = hardwareMap.crservo.get("motorFrontLeft");//change direction left or right
+    private CRServo extend = hardwareMap.crservo.get("motorFrontLeft");//extend or retract tape measure
 
     private ElapsedTime runtime;
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH};
@@ -92,9 +93,9 @@ public class tapeMeasure extends LinearOpMode {
     }
 
     public void initialize(){
-        altitude.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        azimuth.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //altitude.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //azimuth.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         altitude.setDirection(DcMotorSimple.Direction.REVERSE);// inverted y axis controls; down on joystick makes it point up
         azimuth.setDirection(DcMotorSimple.Direction.FORWARD);
         extend.setDirection(DcMotorSimple.Direction.REVERSE);

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Disabled
 public class linSlide extends LinearOpMode {
-    private DcMotor motor = hardwareMap.dcMotor.get("motorFrontLeft");//hardware
+    private DcMotor linSlideMotor;
     private ElapsedTime runtime;
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH};
     states state = states.LOW;
@@ -53,7 +53,7 @@ public class linSlide extends LinearOpMode {
 
             switch (state) {
                 case LOW:
-                    if (motor.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
+                    if (linSlideMotor.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
                         state = states.toLOW;
                         break;
                     }
@@ -63,46 +63,46 @@ public class linSlide extends LinearOpMode {
                     break;
 
                 case MID:
-                    if (motor.getCurrentPosition() != mid) {
+                    if (linSlideMotor.getCurrentPosition() != mid) {
                         state = states.toMID;
                         break;
                     }
                     break;
 
                 case HIGH:
-                    if (motor.getCurrentPosition() != high) {
+                    if (linSlideMotor.getCurrentPosition() != high) {
                         state = states.toHIGH;
                         break;
                     }
                     break;
 
                 case toLOW:
-                    if (motor.getCurrentPosition() == low) {
+                    if (linSlideMotor.getCurrentPosition() == low) {
                         state = states.LOW;
                     } else {
-                        //motor.setPower(PID(low,prevPos,prevTime));
-                        motor.setTargetPosition(low);
-                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        //linSlideMotor.setPower(PID(low,prevPos,prevTime));
+                        linSlideMotor.setTargetPosition(low);
+                        linSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     }
                     break;
 
                 case toMID:
-                    if (motor.getCurrentPosition() == mid) {
+                    if (linSlideMotor.getCurrentPosition() == mid) {
                         state = states.MID;
                     } else {
-                        //motor.setPower(PID(mid,prevPos,prevTime));
-                        motor.setTargetPosition(mid);
-                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        //linSlideMotor.setPower(PID(mid,prevPos,prevTime));
+                        linSlideMotor.setTargetPosition(mid);
+                        linSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     }
                     break;
 
                 case toHIGH:
-                    if (motor.getCurrentPosition() == high) {
+                    if (linSlideMotor.getCurrentPosition() == high) {
                         state = states.HIGH;
                     } else {
-                        //motor.setPower(PID(high,prevPos,prevTime));
-                        motor.setTargetPosition(high);
-                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        //linSlideMotor.setPower(PID(high,prevPos,prevTime));
+                        linSlideMotor.setTargetPosition(high);
+                        linSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     }
                     break;
 
@@ -110,14 +110,15 @@ public class linSlide extends LinearOpMode {
             }
 
             //telemetry
-            telemetry.addData("motorPos ", motor.getCurrentPosition());
+            telemetry.addData("motorPos ", linSlideMotor.getCurrentPosition());
         }
     }
 
     public void initialize(){
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
+        linSlideMotor = hardwareMap.dcMotor.get("motorFrontLeft");//hardware
+        linSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //linSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
         runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time, used for PID
         toggle=0;
     }
@@ -138,7 +139,7 @@ public class linSlide extends LinearOpMode {
     final double high2 = 30;
 
     public double PID(int target){
-        double currentPOS = motor.getCurrentPosition()*tick2cm;
+        double currentPOS = linSlideMotor.getCurrentPosition()*tick2cm;
         double currentTime = runtime.time();
         double timePassed = currentTime-prevTime;
         double error = target-currentPOS;
