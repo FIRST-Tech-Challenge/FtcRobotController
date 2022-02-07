@@ -636,6 +636,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
     }
 
+    //move Methods -------------------------------------------------------------------------------------------
+
     public void move(double angle, double distance, double tolerance) throws InterruptedException {
         angle += gps.getRot();
         angle = Math.toRadians(angle);
@@ -651,5 +653,24 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         double y = gps.getY() + distance * Math.cos(angle);
         moveToPosition(x, y, gps.getRot(), tolerance, errors);
     }
+
+    public void move(double angle, double distance, double tolerance, MovementWarning[] warnings) throws InterruptedException {
+        try {
+            move(angle, distance, tolerance, (MovementException[]) warnings);
+        } catch (MovementException ignored) {
+        }
+    }
+
+    public void move(double angle, double distance, double tolerance, MovementException exception) throws MovementException, InterruptedException {
+        move(angle, distance, tolerance, new MovementException[]{exception});
+    }
+
+    public void move(double angle, double distance, double tolerance, MovementWarning warning) throws InterruptedException {
+        try {
+            move(angle, distance, tolerance, new MovementException[]{warning});
+        } catch (MovementException ignored) {
+        }
+    }
+
 
 }
