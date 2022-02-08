@@ -52,21 +52,21 @@ public class NewAutoStorage extends LinearOpMode {
             }
         });
 
+        ElapsedTime toolTimer = new ElapsedTime();
+
         // Part 1: go to shipping hub
         final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
-            .lineTo(new Vector2d(-20, !isRed ? 55 : -53))
-            .lineToLinearHeading(new Pose2d(!isRed ? -21 : -20,
-                    !isRed ? 42 : -38, Math.toRadians(!isRed ? 100 : -95)))
+            .lineTo(new Vector2d(-20, 55 * multiplier))
+            .lineToLinearHeading(new Pose2d(-21 * multiplier,
+                    42 * multiplier, Math.toRadians(95 * multiplier)))
             .build();
 
         // Part 2: carousel
         final Trajectory part2 = drive.trajectoryBuilder(part1.end())
-            .lineTo(new Vector2d(-19, 50 * multiplier))
             .splineToSplineHeading(new Pose2d(-60.5, 60 * multiplier,
                     Math.toRadians(!isRed ? 240 : 330)), Math.toRadians(180 * multiplier))
             .build();
 
-        ElapsedTime timer = new ElapsedTime();
 
         // Part 3: Park in Alliance Storage Unit
         final Trajectory part3 = drive.trajectoryBuilder(part2.end())
@@ -78,7 +78,7 @@ public class NewAutoStorage extends LinearOpMode {
         liftThread.start();
         eventThread.start();
 
-        height = detector.run();
+        height = 3; // detector.run();
         goodTelemetry.addData("height", height);
         goodTelemetry.update();
 
@@ -89,33 +89,36 @@ public class NewAutoStorage extends LinearOpMode {
 
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
-        timer.reset();
-        while (timer.seconds() < 3) {
+        toolTimer.reset();
+        while (toolTimer.seconds() < 3) {
             if (isStopRequested()) {
                 return;
             }
             stayInPose(drive, part1.end());
-            drive.update();
         }
 
-        // Part 3
+        // Part 2
         drive.followTrajectoryAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
+        Pose2d part2endPose = drive.getPoseEstimate();
 
         // CAROUSEL GARBAG
         carousel.on();
-        timer.reset();
-        while (!isStopRequested() && timer.seconds() < 4) {
-            stayInPose(drive, part2.end());
-            drive.update();
+        toolTimer.reset();
+        while (!isStopRequested() && toolTimer.seconds() < 4) {
+            stayInPose(drive, part2endPose);
         }
         if (isStopRequested()) return;
         carousel.off();
 
-        // Part 4
+        // Part 3
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
+        while (!isStopRequested()) {
+            stayInPose(drive, part3.end());
+            drive.update();
+        }
     }
 
     public void updateLoop(SampleMecanumDrive drive) {

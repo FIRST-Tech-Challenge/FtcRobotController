@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
+import static org.firstinspires.ftc.teamcode.opmodes.util.StayInPosition.stayInPose;
+import static org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight.getPosition;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
@@ -19,7 +21,6 @@ import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 @Autonomous
 @Disabled
@@ -45,39 +46,33 @@ public class NewAutoWarehouse extends LinearOpMode {
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-
         final Pose2d liftPosition = new Pose2d(-2, 43.5 * multiplier,
                 Math.toRadians(70 * multiplier));
+
+        ElapsedTime toolTimer = new ElapsedTime();
+
         // Part 1: drive to alliance shipping hub
-        final Trajectory part1;
-        {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(initial);
-            builder.lineTo(new Vector2d(-3, 58 * multiplier));
-            builder.lineToLinearHeading(liftPosition);
-            part1 = builder.build();
-        }
+        final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
+                .lineTo(new Vector2d(-3, 58 * multiplier))
+                .lineToLinearHeading(liftPosition)
+                .build();
 
-        // part 2: go to warehouse
-        final TrajectorySequence part2;
-        {
-            TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(liftPosition);
-            builder.lineToLinearHeading(new Pose2d(0, (nextToWall + 1) * multiplier));
-            builder.addDisplacementMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)));
-            builder.lineTo(new Vector2d(20, (nextToWall + 1) * multiplier));
-            part2 = builder.build();
-        }
-
-        // where the robot **should** be after you intake
         final Pose2d intakeReturnPoint = new Pose2d(40, nextToWall * multiplier,
                 Math.toRadians(0));
+
+        // part 2: go to warehouse
+        final TrajectorySequence part2 = drive.trajectorySequenceBuilder(liftPosition)
+                .lineToLinearHeading(new Pose2d(0, (nextToWall + 1) * multiplier))
+                .addDisplacementMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)))
+                .lineTo(intakeReturnPoint.vec())
+                .build();
+
+        // where the robot **should** be after you intake
         // part 3: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
-        final Trajectory part3;
-        {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(intakeReturnPoint);
-            builder.lineTo(new Vector2d(-3, nextToWall * multiplier));
-            builder.lineToLinearHeading(liftPosition);
-            part3 = builder.build();
-        }
+        final TrajectorySequence part3 = drive.trajectorySequenceBuilder(intakeReturnPoint)
+                .lineTo(new Vector2d(-3, nextToWall * multiplier))
+                .lineToLinearHeading(liftPosition)
+                .build();
 
         final boolean[] liftUpdated = {false};
         Thread liftThread = new Thread(() -> {
@@ -95,27 +90,36 @@ public class NewAutoWarehouse extends LinearOpMode {
         goodTelemetry.addData("height", height);
         goodTelemetry.update();
 
-        drive.followTrajectoryAsync(part1);
+        drive.followTrajectorySequenceAsync(part1);
         updateLoop(drive);
         if (!isStopRequested()) return;
         liftUpdated[0] = false;
-        lift.setPosition(VisionToLiftHeight.getPosition(height));
-        while (!liftUpdated[0] || lift.getState() != AutoLift.MovementStates.NONE) {
+        lift.setPosition(getPosition(height));
+        toolTimer.reset();
+        while (toolTimer.seconds() < 3) {
             if (isStopRequested()) {
                 return;
             }
-            drive.update();
+            stayInPose(drive, part1.end());
         }
 
         drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
 
-
-
-        drive.followTrajectoryAsync(part3);
+        drive.followTrajectorySequenceAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
+
+        lift.setPosition(getPosition(height));
+        toolTimer.reset();
+        while (toolTimer.seconds() < 3) {
+            if (isStopRequested()) {
+                return;
+            }
+            stayInPose(drive, part1.end());
+        }
+
 
         drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
