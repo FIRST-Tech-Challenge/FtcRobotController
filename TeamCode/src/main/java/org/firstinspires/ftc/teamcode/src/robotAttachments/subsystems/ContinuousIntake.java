@@ -69,21 +69,6 @@ public class ContinuousIntake {
     }
 
     /**
-     * It treats color as 3D space and returns the distance between the two points
-     *
-     * @param sight  The first set of RGB values
-     * @param object The second set of RGB values
-     * @return The distance between the two, smaller is closer
-     */
-    public static double getDifferenceOfColor(double[] sight, double[] object) {
-        double r = Math.abs(sight[0] - object[0]);
-        double g = Math.abs(sight[1] - object[1]);
-        double b = Math.abs(sight[2] - object[2]);
-        // this calculates the 3D distance between colors
-        return Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
-    }
-
-    /**
      * Identifies the contents in the bucket
      *
      * @return The {@link FreightFrenzyGameObject} inside the bucket
