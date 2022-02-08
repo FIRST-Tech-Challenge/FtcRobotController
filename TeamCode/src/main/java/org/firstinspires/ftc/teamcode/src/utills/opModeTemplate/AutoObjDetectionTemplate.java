@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 
@@ -271,16 +272,22 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         }
 
         //Waits for the slide to get to it's position
-        while (!slide.isAtPosition()) {
+        while (!slide.isAtPosition() && opModeIsActive() && !isStopRequested()) {
             Thread.sleep(40);
         }
 
         //Strafes forward while the distance from the wall is less than 24 in
         driveSystem.strafeAtAngle(180, 0.5);
+
+        double[] initialPos = {gps.getX(), gps.getY()};
+
         double currentWallDistance;
         do {
+            if (MiscUtils.distance(initialPos[0], initialPos[1], gps.getX(), gps.getY()) > 24) {
+                break;
+            }
             currentWallDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 270));
-        } while (currentWallDistance < 24);
+        } while (currentWallDistance < 23 && opModeIsActive() && !isStopRequested());
 
 
         driveSystem.stopAll();
