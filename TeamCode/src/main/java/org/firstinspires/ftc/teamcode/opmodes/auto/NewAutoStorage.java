@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 import static org.firstinspires.ftc.teamcode.opmodes.util.StayInPosition.stayInPose;
 
@@ -52,11 +53,10 @@ public class NewAutoStorage extends LinearOpMode {
         });
 
         // Part 1: go to shipping hub
-        final Trajectory part1 = drive.trajectoryBuilder(initial)
+        final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
             .lineTo(new Vector2d(-20, !isRed ? 55 : -53))
-            .splineToSplineHeading(new Pose2d(!isRed ? -21 : -20,
-                    !isRed ? 42 : -38, Math.toRadians(!isRed ? 100 : -95)),
-                        Math.toRadians(250 * multiplier))
+            .lineToLinearHeading(new Pose2d(!isRed ? -21 : -20,
+                    !isRed ? 42 : -38, Math.toRadians(!isRed ? 100 : -95)))
             .build();
 
         // Part 2: carousel
@@ -83,7 +83,7 @@ public class NewAutoStorage extends LinearOpMode {
         goodTelemetry.update();
 
         // Part 1
-        drive.followTrajectoryAsync(part1);
+        drive.followTrajectorySequenceAsync(part1);
         updateLoop(drive);
         if (isStopRequested()) return;
 
