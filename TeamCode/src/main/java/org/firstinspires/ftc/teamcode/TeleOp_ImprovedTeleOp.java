@@ -23,7 +23,9 @@ import com.qualcomm.robotcore.util.Range;
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list. */
 
-
+enum SpeedMode{
+    SLOW, MED, FAST
+}
 @TeleOp(name="Improved TeleOP TeleOp", group="Iterative Opmode")
 
 // @Disabled
@@ -41,8 +43,6 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     private DcMotor extender = null;
     private DcMotor arm = null;
     private DcMotor intakeLift = null;
-    //private CRServo lIntakeLift = null;
-    //private CRServo rIntakeLift = null;
 
 
     /** Code to run ONCE when the driver hits INIT. */
@@ -63,10 +63,6 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         extender = hardwareMap.get(DcMotor.class, "extender");
         arm = hardwareMap.get(DcMotor.class, "arm");
         intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
-       // lIntakeLift = hardwareMap.get(CRServo.class, "intakeLiftL");
-        //rIntakeLift = hardwareMap.get(CRServo.class, "intakeLiftR");
-
-
 
 
         /* Sets the motors to run using encoders. */
@@ -124,7 +120,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     boolean duckOn = false;
     double armPow = 0;
     double liftPow = 0;
-    int speed = 0;
+    SpeedMode speed = SpeedMode.MED;
     double slowSpeed = 0.25;
     double normalSpeed = 0.69;
     double intakeLiftPow = 0;
@@ -140,12 +136,6 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         double rightBPower;
         double intakePow;
 
-
-
-
-
-
-
         /* More variable setup*/
         double drive = -gamepad1.right_stick_y;
         double turn  =  gamepad1.left_stick_x * 0.3;
@@ -157,18 +147,14 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         double duckPower= 0;
         double extension = gamepad2.right_stick_y;
         double armMove = gamepad2.left_stick_y;
-        boolean toggleFastMode = gamepad1.dpad_up;
-        boolean toggleSlowMode = gamepad1.dpad_down;
-       // boolean liftIntakeUp = gamepad2.dpad_up;
-        //boolean liftIntakeDown = gamepad2.dpad_down;
         boolean liftIntakeUp = gamepad2.dpad_up;
         boolean liftIntakeDown = gamepad2.dpad_down;
 
+        if(gamepad1.dpad_up)
+            speed = SpeedMode.FAST;
+        if(gamepad1.dpad_down)
+            speed = SpeedMode.SLOW;
 
-
-    if (toggleFastMode) { speed = 1;} // I know the brackets are unnecessary but I like them.
-
-    if (toggleSlowMode) {speed = -1;}
 
         if (isIntakeA !=0) {
             intakePow = isIntakeA;
@@ -179,24 +165,6 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         else intakePow = 0;
 
 
-      /*  if (liftIntakeUp) {
-            liftPow = 1;
-        }
-        else if (liftIntakeDown) {
-            liftPow = -1;
-        }
-
-        else liftPow = 0;
-*/
-       /* if (extension == 0){
-            armPow=0.001;
-
-
-        }
-
-
-        else armPow= armMove * 0.5;
-        */
         if (isDuckR) {
             if (!duckOn){
                 duckPower = 0.5;
@@ -259,7 +227,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
 
 
 
-        if (speed == 1) {
+        if (speed == SpeedMode.FAST) {
 
             frontL.setPower(leftFPower);
             backL.setPower(leftBPower);
@@ -273,7 +241,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             intakeLift.setPower(intakeLiftPow);
         }
 
-        else if (speed == -1) {
+        else if (speed == SpeedMode.SLOW) {
             frontL.setPower(leftFPower * slowSpeed);
             backL.setPower(leftBPower * slowSpeed);
             frontR.setPower(rightFPower * slowSpeed);
@@ -285,7 +253,6 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             arm.setPower(armMove * 1);
             intakeLift.setPower(intakeLiftPow);
         }
-
         else {
             frontL.setPower(leftFPower * normalSpeed);
             backL.setPower(leftBPower * normalSpeed);
@@ -304,9 +271,9 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "front left (%.2f), front right (%.2f), back left (%.2f), back right (%.2f)", leftFPower, rightFPower,leftBPower, rightBPower);
         telemetry.addData("Intake Power", intakePow );
-        telemetry.addData("Arm Power", arm.getPowerFloat());
+        telemetry.addData("Arm Power","power %d encoder %d",arm.getPowerFloat(), arm.getCurrentPosition());
         telemetry.addData("Extension Power", extender.getPowerFloat());
-        telemetry.addData("Intake lift", intakePow);
+        telemetry.addData("Intake lift","power %d encoder %d", intakeLift.getPowerFloat(), intakeLift.getCurrentPosition());
 
 
     }
