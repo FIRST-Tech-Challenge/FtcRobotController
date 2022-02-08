@@ -381,6 +381,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
         }
         stopAll();
+        telemetry.clear();
+        telemetry.update();
     }
 
     /**

@@ -163,7 +163,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         }
     }
 
-    private void initDistanceSensors() {
+    public void initDistanceSensors() {
         intakeDistanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
         frontDistanceSensor = (DistanceSensor) hardwareMap.get("front_distance_sensor");
     }

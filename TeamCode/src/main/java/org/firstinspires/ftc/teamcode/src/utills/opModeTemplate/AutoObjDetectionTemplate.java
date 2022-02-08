@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -256,62 +257,38 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             case Right:
                 // got to the top level when right
                 slide.setTargetLevel(HeightLevel.TopLevel);
-                while (!slide.isAtPosition()) {
-                    Thread.sleep(40);
-                }
-                driveSystem.strafeAtAngle(180, 0.5);
-                //while ()
-                driveSystem.move(180, 5, 1, new DistanceTimeoutWarning(500));
-
-
-                intake.setServoOpen();
-                Thread.sleep(750);
-                driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
-                intake.setServoClosed();
-                //Thread.sleep(250);
-                slide.setTargetLevel(HeightLevel.Down);
                 break;
+
             case Center:
                 slide.setTargetLevel(HeightLevel.MiddleLevel);
-                Thread.sleep(500);
-                /*
-                driveSystem.strafeAtAngle(180, .25);
-                Thread.sleep(725);
-                driveSystem.stopAll();
-                 */
-                driveSystem.move(180, 5, 1, new DistanceTimeoutWarning(500));
-                intake.setServoOpen();
-                Thread.sleep(750);
-                driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
-                intake.setServoClosed();
-                /*
-                driveSystem.strafeAtAngle(0, .5);
-                Thread.sleep(500);
-                driveSystem.strafeAtAngle(0, .8);
-                Thread.sleep(250);
-
-                 */
-                slide.setTargetLevel(HeightLevel.Down);
-
                 break;
+
             case Left:
                 // go to bottom when left
                 slide.setTargetLevel(HeightLevel.BottomLevel);
-
-                /*driveSystem.strafeAtAngle(180, .2);
-                Thread.sleep(1000);
-                driveSystem.stopAll();
-                 */
-                driveSystem.move(180, 5, 1, new DistanceTimeoutWarning(500));
-                intake.setServoOpen();
-                Thread.sleep(750);
-                driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
-                intake.setServoClosed();
-
-                slide.setTargetLevel(HeightLevel.Down);
-
                 break;
+
         }
+
+        //Waits for the slide to get to it's position
+        while (!slide.isAtPosition()) {
+            Thread.sleep(40);
+        }
+
+        //Strafes forward while the distance from the wall is less than 24 in
+        driveSystem.strafeAtAngle(180, 0.5);
+        double currentWallDistance;
+        do {
+            currentWallDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 270));
+        } while (currentWallDistance < 24);
+
+
+        driveSystem.stopAll();
+        intake.setServoOpen();
+        Thread.sleep(750);
+        driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
+        intake.setServoClosed();
+        slide.setTargetLevel(HeightLevel.Down);
     }
 
 }

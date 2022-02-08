@@ -47,6 +47,8 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
 
         initLEDS();
 
+        initDistanceSensors();
+
         telemetry.addData("Default Initialization: ", "Finished");
         telemetry.update();
         checkStop();

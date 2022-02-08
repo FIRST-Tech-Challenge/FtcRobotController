@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.state;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
@@ -17,16 +15,13 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
 @Autonomous(name = "Red State Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.RED;
-    public DistanceSensor intakeDistanceSensor;
-    public DistanceSensor frontDistanceSensor;
 
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
         leds.setPattern(def);
         gps.setPos(6.5, 64, 180);
-        intakeDistanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
-        frontDistanceSensor = (DistanceSensor) hardwareMap.get("front_distance_sensor");
+
 
         BarcodePositions Pos;
         do {
@@ -51,91 +46,97 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.setTurnWhileStrafe(true);
             driveSystem.debugOn();
 
-            driveSystem.moveToPosition(26, 82.5, 272, .5, new DistanceTimeoutWarning(500));
-
-            dropOffFreight(Pos);
-
-
             while (opModeIsActive() && !isStopRequested()) {
+
+                driveSystem.moveToPosition(20, 82.5, 270, .5, new DistanceTimeoutWarning(1000));
+
+
+                driveSystem.stopAll();
+
+                {
+                    double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6) * Math.cos(Math.toRadians(gps.getRot() - 270));
+                    gps.setPos(xDistance, gps.getY(), gps.getRot());
+                }
+
+                dropOffFreight(Pos);
+
+                Pos = BarcodePositions.Right;
 
                 //Move against the wall
                 {
-                    driveSystem.moveTowardsPosition(12, 70, 180, 2, 1, new DistanceTimeoutWarning(100));
+                    driveSystem.moveTowardsPosition(12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
 
                     driveSystem.turnTo(180, 0.5);
 
-                    driveSystem.moveToPosition(-1, 70, 180, 2, new DistanceTimeoutWarning(100));
+                    driveSystem.moveToPosition(6, 70, 180, 2, new DistanceTimeoutWarning(500));
+                }
+
+
+                //Through Barrier
+                driveSystem.moveToPosition(gps.getX() + 0.1, 30, gps.getRot(), 1, new DistanceTimeoutWarning(1000));
+
+                //Update position with known coordinates 6 in is the distance from the distance sensor to the center of the robot
+                gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
+
+                //Move away from the wall
+                driveSystem.moveToPosition(12, 30, 180, 1, new DistanceTimeoutWarning(1000));
+
+
+                //Runtime Check
+
+                if (this.getRuntime() > 25) {
+                    return;
                 }
 
 
                 intake.setIntakeOn();
 
 
-                //Through Barrier
-                driveSystem.moveToPosition(1, 30, gps.getRot(), 1, new DistanceTimeoutWarning(500));
+                //Continue strafing while a item is not in the bucket
+                double startingDistanceFromWall = frontDistanceSensor.getDistance(DistanceUnit.INCH);
+                double distanceDriven = 0;
 
+                outer:
+                while (opModeIsActive() && !isStopRequested()) {
+                    distanceDriven += 4;
+                    driveSystem.strafeAtAngle(0, 0.3);
+                    while (opModeIsActive() && !isStopRequested()) {
+                        if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
+                            break;
+                        }
+                        if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
+                            break outer;
+                        }
+                    }
+                    driveSystem.stopAll();
+                    Thread.sleep(2000);
 
-                //Move away from the wall
-                driveSystem.moveToPosition(3, gps.getY(), 180, 1, new DistanceTimeoutWarning(100));
+                    if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
+                        break;
+                    }
+                }
 
+                driveSystem.stopAll();
+
+                intake.setIntakeReverse();
+
+                driveSystem.moveToPosition(gps.getX(), startingDistanceFromWall, 180, 1, new DistanceTimeoutWarning(1000));
+
+                driveSystem.turnTo(180, 0.5);
 
                 //Runtime Check
                 if (this.getRuntime() > 25) {
                     return;
                 }
 
+                //Move to white line and against the wall
+                driveSystem.moveToPosition(-1, 36, gps.getRot(), 1, new DistanceTimeoutWarning(1000));
 
-                //Turn to 180
-                driveSystem.turnTo(180, .4);
-
-
-                pickupLoop:
-                //See Java Labels
-                //Loops while it has not successfully picked an item up
-                while (opModeIsActive() && !isStopRequested()) {
-                    driveSystem.moveToPosition(12, 26, 180, 1, new DistanceTimeoutWarning(500));
-
-                    while (opModeIsActive() && !isStopRequested()) {
-                        //strafe at angle of 0 degrees
-                        driveSystem.strafeAtAngle(0, 0.5);
-
-                        //If the distance sensor sees something, move on to shutting the intake off
-                        if (intakeDistanceSensor.getDistance(DistanceUnit.CM) < 8) {
-                            break;
-                        }
-
-                        //turn right
-                        driveSystem.turnTo(gps.getRot() + 1, 0.5);
-                    }
-
-                    intake.setIntakeOff();
-
-                    // Move backwards
-                    driveSystem.move(180, 2, 1);
-
-
-                    ElapsedTime intakeTimer = new ElapsedTime();
-                    while (opModeIsActive() && !isStopRequested()) {
-                        if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
-                            break pickupLoop;
-                        }
-                        if (intakeTimer.seconds() > 5) {
-                            break;
-                        }
-                    }
-                }
-
-                //Move to white line
-                driveSystem.moveToPosition(-1, 30, gps.getRot(), 1, new DistanceTimeoutWarning(100));
-
+                //Update position with known coordinates
+                gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
 
                 //Move out of warehouse
-                driveSystem.moveToPosition(1, 70, 180, 2, new DistanceTimeoutWarning(100));
-
-                //Move to drop off location
-                driveSystem.moveToPosition(26, 82.5, 272, .5, new DistanceTimeoutWarning(100));
-
-                dropOffFreight();
+                driveSystem.moveToPosition(gps.getX() + 1, 70, 180, 2, new DistanceTimeoutWarning(500));
 
             }
 
