@@ -41,101 +41,117 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
         Pos = BarcodePositions.Left;
         // get rid of this once camera position working
         double yOffset = 0;
-        if (opModeIsActive() && !isStopRequested()) {
-            tfod.shutdown();
-            vuforia.close();
 
-            driveSystem.setTurnWhileStrafe(true);
-            driveSystem.debugOn();
+        tfod.shutdown();
+        vuforia.close();
 
-            while (opModeIsActive() && !isStopRequested()) {
+        driveSystem.setTurnWhileStrafe(true);
+        driveSystem.debugOn();
 
-                driveSystem.moveTowardsPosition(20, 82.5 + yOffset, 270, 1, 5, new MovementWarning());
-                driveSystem.moveToPosition(20, 82.5 + yOffset, 270, 1, new DistanceTimeoutWarning(500));
+        double distanceDriven = 0;
 
-                driveSystem.stopAll();
+        while (opModeIsActive() && !isStopRequested()) {
 
-                {
-                    double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6) * Math.cos(Math.toRadians(gps.getRot() - 270));
-                    gps.setPos(xDistance, gps.getY(), gps.getRot());
-                }
+            driveSystem.moveTowardsPosition(18, 80.5 + yOffset, 270, 1, 5, new MovementWarning());
 
-                dropOffFreight(Pos);
-
-                Pos = BarcodePositions.Right;
-
-                //Move against the wall
-                driveSystem.moveTowardsPosition(12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
-
-                //Through Barrier
-                driveSystem.moveToPosition(-1, 30, gps.getRot(), 1, new DistanceTimeoutWarning(500));
-
-                //Update position with known coordinates 6 in is the distance from the distance sensor to the center of the robot
-                gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
-
-                //Move away from the wall
-                driveSystem.strafeAtAngle(270, 0.5);
-                Thread.sleep(50);
-                driveSystem.stopAll();
-
-                intake.setIntakeOn();
-
-
-                //Continue strafing while a item is not in the bucket
-                double startingDistanceFromWall = frontDistanceSensor.getDistance(DistanceUnit.INCH);
-                double distanceDriven = 0;
-
-                outer:
-                while (opModeIsActive() && !isStopRequested()) {
-                    distanceDriven += 4;
-                    driveSystem.strafeAtAngle(0, 0.3);
-                    while (opModeIsActive() && !isStopRequested()) {
-                        if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
-                            break;
-                        }
-                        if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
-                            break outer;
-                        }
-                    }
-                    driveSystem.stopAll();
-                    ElapsedTime time = new ElapsedTime();
-                    while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
-                        if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
-                            break outer;
-                        }
-                    }
-                }
-
-                driveSystem.stopAll();
-
-                intake.setIntakeReverse();
-
-                driveSystem.moveToPosition(gps.getX(), startingDistanceFromWall, 180, 1, new DistanceTimeoutWarning(1000));
-
-                driveSystem.turnTo(180, 0.5);
-
-
-                //Move to white line and against the wall
-                driveSystem.moveToPosition(-1, 36, gps.getRot(), 1, new DistanceTimeoutWarning(1000));
-
-                //Update position with known coordinates
-                gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
-
-                intake.setIntakeOff();
-
-                //Runtime Check
-                if (this.getRuntime() > 25) {
-                    driveSystem.strafeAtAngle(0, 1);
-                    Thread.sleep(50);
-                    return;
-                }
-
-                //Move out of warehouse
-                driveSystem.moveToPosition(gps.getX() + 1, 70, 180, 2, new DistanceTimeoutWarning(500));
-                yOffset = -2;
+            driveSystem.moveToPosition(20, 82.5 + yOffset, 270, 1, new DistanceTimeoutWarning(100));
+            driveSystem.turnTo(270, 0.1);
+            {
+                double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6) * Math.cos(Math.toRadians(gps.getRot() - 270));
+                gps.setPos(xDistance, gps.getY(), gps.getRot());
             }
 
+
+            dropOffFreight(Pos);
+
+            Pos = BarcodePositions.Right;
+
+            //Move against the wall
+            driveSystem.moveTowardsPosition(12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
+
+            //Through Barrier
+            driveSystem.moveToPosition(gps.getX(), 30, 180, 1, new DistanceTimeoutWarning(500));
+
+            //To the last place it was grabbing from
+            driveSystem.moveToPosition(gps.getX(), 30 - distanceDriven, 180, 1, new DistanceTimeoutWarning(500));
+
+            //Update position with known coordinates 6 in is the distance from the distance sensor to the center of the robot
+            gps.setPos(gps.getX(), frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
+
+            intake.setIntakeOn();
+
+
+            //Continue strafing while a item is not in the bucket
+            double startingDistanceFromWall = frontDistanceSensor.getDistance(DistanceUnit.INCH);
+
+
+            outer:
+            while (opModeIsActive() && !isStopRequested()) {
+                distanceDriven += 4;
+                driveSystem.strafeAtAngle(0, 0.3);
+                while (opModeIsActive() && !isStopRequested()) {
+                    if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
+                        break;
+                    }
+
+                    if (intakeDistanceSensor.getDistance(DistanceUnit.CM) < 6) {
+                        break;
+                    }
+                    if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
+                        break outer;
+                    }
+                }
+                driveSystem.stopAll();
+                ElapsedTime time = new ElapsedTime();
+                while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
+                    if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
+                        break outer;
+                    }
+                }
+            }
+
+            driveSystem.stopAll();
+
+            intake.setIntakeReverse();
+
+            driveSystem.strafeAtAngle(180, 0.5);
+            double distanceFromWall;
+            do {
+                distanceFromWall = (frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot()));
+                distanceFromWall = Math.abs(distanceFromWall);
+            } while (distanceFromWall < 25 && (opModeIsActive() && !isStopRequested()));
+            driveSystem.stopAll();
+
+            //Move to white line and against the wall
+            driveSystem.moveToPosition(-1, 36, gps.getRot(), 1, new DistanceTimeoutWarning(500));
+            //Runtime Check
+            /*if (this.getRuntime() > 25) {
+                return;
+            }
+
+             */
+
+            //Update position with known coordinates
+            gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
+
+            intake.setIntakeOff();
+
+            //Runtime Check
+            /*
+            if (this.getRuntime() > 25) {
+                driveSystem.strafeAtAngle(0, 1);
+                Thread.sleep(500);
+                return;
+            }
+
+             */
+
+            //Move out of warehouse
+            driveSystem.moveToPosition(gps.getX() + 1, 70, 180, 2, new DistanceTimeoutWarning(500));
+            yOffset = -6;
         }
+
+
     }
 }
 
