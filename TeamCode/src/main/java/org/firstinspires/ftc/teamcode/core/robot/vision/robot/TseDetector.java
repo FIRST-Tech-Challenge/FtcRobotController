@@ -9,6 +9,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.lang.reflect.Method;
 
 public class TseDetector {
 
@@ -21,20 +24,17 @@ public class TseDetector {
     public TseDetector(HardwareMap hMap, String webcamName, boolean debug, boolean isRed) {
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
-        //noinspection IfStatementWithIdenticalBranches
+        OpenCvCameraFactory cameraFactory = OpenCvCameraFactory.getInstance();
         if (debug) {
             int cameraMonitorViewId = hardwareMap
                     .appContext.getResources()
                     .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            camera = OpenCvCameraFactory.getInstance()
-                    .createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-            camera.setPipeline(pipeline = new TsePipeline(isRed)); //for configurating remove isred from here
-        } else {
-            camera = OpenCvCameraFactory.getInstance()
-                    .createWebcam(hardwareMap.get(WebcamName.class, webcamName));
-            camera.setPipeline(pipeline = new TsePipeline(isRed));
-        }
 
+            camera = cameraFactory.createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId); //for configurating remove isred from here
+        } else {
+            camera = cameraFactory.createWebcam(hardwareMap.get(WebcamName.class, webcamName));
+        }
+        camera.setPipeline(pipeline = new TsePipeline(isRed));
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
