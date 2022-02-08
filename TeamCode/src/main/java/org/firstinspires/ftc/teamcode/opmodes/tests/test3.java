@@ -12,9 +12,10 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
-import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
+import org.firstinspires.ftc.teamcode.core.robot.vision.robot2.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunEveryTimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 import org.firstinspires.ftc.teamcode.opmodes.auto.CVAuto;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
@@ -46,6 +47,7 @@ public class test3 extends LinearOpMode {
         waitForStart();
         eventThread.start();
         eventThread.addEvent(new RunEveryTimedEvent(() -> lift.setPosition(AutoLift.Positions.TOP), 6000));
+        eventThread.addEvent(new TimedEvent(detector::run, 500));
         while (opModeIsActive()) {
             lift.update();
             final double stick = gamepadEx.getLeftY();
