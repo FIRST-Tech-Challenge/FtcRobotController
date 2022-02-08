@@ -195,7 +195,8 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
     public void setOrientation(double angle) throws InterruptedException {
         lock.lockInterruptibly();
         try {
-            angleOffset = Math.toRadians(angle);
+            angleOffset = angle - getImuAngle();
+            robotOrientationRadians = Math.toRadians(getImuAngle()) + angleOffset;
         } finally {
             lock.unlock();
         }
@@ -214,10 +215,10 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
         try {
             robotGlobalXCoordinatePosition = X * COUNTS_PER_INCH;
             robotGlobalYCoordinatePosition = Y * COUNTS_PER_INCH;
-            angleOffset = Math.toRadians(rot);
         } finally {
             lock.unlock();
         }
+        setOrientation(rot);
 
     }
 
@@ -263,11 +264,11 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
         lock.lockInterruptibly();
         try {
 
-            robotOrientationRadians = Math.toRadians(getImuAngle()) + angleOffset;
-            robotOrientationRadians = robotOrientationRadians % 360;
+            robotOrientationRadians = Math.toRadians(this.getRot());
 
             //Get Current Positions
             double verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
+
             //Position variables used for storage and calculations
             double verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
 
@@ -304,7 +305,11 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
      * @return global orientation, in degrees
      */
     public double getRot() {
-        return Math.toDegrees(robotOrientationRadians) % 360;
+        double angle = (getImuAngle() + angleOffset) % 360;
+        while (angle < 0) {
+            angle += 360;
+        }
+        return angle % 360;
     }
 
     /**
