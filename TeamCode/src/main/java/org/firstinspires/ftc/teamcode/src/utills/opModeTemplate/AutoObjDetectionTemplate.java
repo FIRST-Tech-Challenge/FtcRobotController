@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
@@ -255,18 +256,17 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             case Right:
                 // got to the top level when right
                 slide.setTargetLevel(HeightLevel.TopLevel);
-                Thread.sleep(1000);
+                while (!slide.isAtPosition()) {
+                    Thread.sleep(40);
+                }
+                driveSystem.strafeAtAngle(180, 0.5);
+                //while ()
+                driveSystem.move(180, 5, 1, new DistanceTimeoutWarning(500));
 
-                /*
-                driveSystem.strafeAtAngle(180, .2);
-                 Thread.sleep(1000);
-                 driveSystem.stopAll();
-                 */
-                driveSystem.move(180, 5, 1);
 
                 intake.setServoOpen();
                 Thread.sleep(750);
-                driveSystem.move(0, 5, 1);
+                driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
                 intake.setServoClosed();
                 //Thread.sleep(250);
                 slide.setTargetLevel(HeightLevel.Down);
@@ -279,10 +279,10 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 Thread.sleep(725);
                 driveSystem.stopAll();
                  */
-                driveSystem.move(180, 5, 1);
+                driveSystem.move(180, 5, 1, new DistanceTimeoutWarning(500));
                 intake.setServoOpen();
                 Thread.sleep(750);
-                driveSystem.move(0, 5, 1);
+                driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
                 intake.setServoClosed();
                 /*
                 driveSystem.strafeAtAngle(0, .5);
@@ -302,10 +302,10 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 Thread.sleep(1000);
                 driveSystem.stopAll();
                  */
-                driveSystem.move(180, 5, 1);
+                driveSystem.move(180, 5, 1, new DistanceTimeoutWarning(500));
                 intake.setServoOpen();
                 Thread.sleep(750);
-                driveSystem.move(0, 5, 1);
+                driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
                 intake.setServoClosed();
 
                 slide.setTargetLevel(HeightLevel.Down);

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.state;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceSensorException;
@@ -19,8 +18,6 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
 public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.RED;
     private final boolean overBarrier = true;
-    public DistanceSensor intakeDistanceSensor;
-    public DistanceSensor frontDistanceSensor;
 
 
     @Override
@@ -28,8 +25,6 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
         leds.setPattern(def);
         gps.setPos(6, 111, 180);
-        intakeDistanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
-        frontDistanceSensor = (DistanceSensor) hardwareMap.get("front_distance_sensor");
 
         BarcodePositions Pos;
         do {

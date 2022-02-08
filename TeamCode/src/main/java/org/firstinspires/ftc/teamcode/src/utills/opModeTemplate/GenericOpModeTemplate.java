@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
@@ -115,6 +116,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     protected LinearSlide slide;
 
     protected BNO055IMU imu;
+    protected DistanceSensor intakeDistanceSensor;
+
+    protected DistanceSensor frontDistanceSensor;
 
     /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}
@@ -153,9 +157,15 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initLinearSlide();
         initVoltageSensor();
         initSpinner();
+        initDistanceSensors();
         if (voltageSensor.getVoltage() < 12.5) {
             RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
         }
+    }
+
+    private void initDistanceSensors() {
+        intakeDistanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
+        frontDistanceSensor = (DistanceSensor) hardwareMap.get("front_distance_sensor");
     }
 
     /**
