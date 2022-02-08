@@ -202,7 +202,7 @@ public class ContinuousIntake {
      * @return Returns the blink pattern for the object in the bucket
      */
     public RevBlinkinLedDriver.BlinkinPattern getLEDPatternFromFreight() {
-        return FreightFrenzyGameObject.RevColorOfObj.get(FreightFrenzyGameObject.identify(this.getRGB()));
+        return FreightFrenzyGameObject.getLEDColorFromItem(FreightFrenzyGameObject.identify(this.getRGB()));
     }
 
 }

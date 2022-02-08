@@ -2,12 +2,6 @@ package org.firstinspires.ftc.teamcode.src.utills.enums;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
 /**
  * A Enum for each object the bucket can pick up
  */
@@ -18,30 +12,77 @@ public enum FreightFrenzyGameObject {
     DUCK,
     EMPTY;
 
+    private static final double[] BallRGB = new double[]{53, 53, 48};
+    private static final double[] CubeSmoothRGB = new double[]{24, 14, 8};
+    private static final double[] CubeWaffleRGB = new double[]{16, 9, 6};
+    private static final double[] DuckRGB = new double[]{9, 7, 4};
+    private static final double[] EmptyRGB = new double[]{3, 3, 2};
     /**
-     * The Key is the game object, the value is what LED pattern it should corespond to
+     * A Array of every possible enum value
      */
-    public static final HashMap<FreightFrenzyGameObject, RevBlinkinLedDriver.BlinkinPattern> RevColorOfObj = new HashMap<FreightFrenzyGameObject, RevBlinkinLedDriver.BlinkinPattern>() {{
-        put(FreightFrenzyGameObject.BALL, RevBlinkinLedDriver.BlinkinPattern.WHITE);
-        put(FreightFrenzyGameObject.CUBESMOOTH, RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-        put(FreightFrenzyGameObject.CUBEWAFFLE, RevBlinkinLedDriver.BlinkinPattern.ORANGE);
-        put(FreightFrenzyGameObject.DUCK, RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        put(FreightFrenzyGameObject.EMPTY, null);
-    }};
+    private static final FreightFrenzyGameObject[] gameObjectArray = FreightFrenzyGameObject.values();
     /**
-     * A list of every possible enum value
+     * This array holds the RGB values of each item in the same order that gameObjectArray does
      */
-    private static final ArrayList<FreightFrenzyGameObject> gameObjectList = new ArrayList<>(Arrays.asList(FreightFrenzyGameObject.values()));
+    private static final double[][] RGBValuesOfEachItem;
+
+    static {
+        RGBValuesOfEachItem = new double[FreightFrenzyGameObject.gameObjectArray.length][3];
+        for (int x = 0; x < FreightFrenzyGameObject.gameObjectArray.length; x++) {
+            RGBValuesOfEachItem[x] = FreightFrenzyGameObject.getRGBOfObject((FreightFrenzyGameObject.gameObjectArray[x]));
+        }
+    }
+
     /**
-     * The Key is the game object, the value is the RGB value of what the sensor sees
+     * Returns the LED Color that the LED's should be based on the game object provided
+     *
+     * @param item The game object
+     * @return The color the LED's should be based on the game object
      */
-    private static final HashMap<FreightFrenzyGameObject, double[]> RGBOfObj = new HashMap<FreightFrenzyGameObject, double[]>() {{
-        put(FreightFrenzyGameObject.BALL, new double[]{58, 57, 50});
-        put(FreightFrenzyGameObject.CUBESMOOTH, new double[]{25, 16, 10});
-        put(FreightFrenzyGameObject.CUBEWAFFLE, new double[]{18, 10, 7});
-        put(FreightFrenzyGameObject.DUCK, new double[]{11, 9, 5});
-        put(FreightFrenzyGameObject.EMPTY, new double[]{5, 5, 3});
-    }};
+    public static RevBlinkinLedDriver.BlinkinPattern getLEDColorFromItem(final FreightFrenzyGameObject item) {
+        switch (item) {
+            case BALL:
+                return RevBlinkinLedDriver.BlinkinPattern.WHITE;
+
+            case DUCK:
+                return RevBlinkinLedDriver.BlinkinPattern.GREEN;
+
+            case CUBESMOOTH:
+            case CUBEWAFFLE:
+                return RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Returns the RGB of the given game object
+     *
+     * @param item The item whose RGB to look up
+     * @return A reference to the BallRGB, CubeSmoothRGB, CubeWaffleRGB, DuckRGB, or EmptyRGB array that stores the color values in the form R,G,B
+     */
+    private static double[] getRGBOfObject(final FreightFrenzyGameObject item) {
+        switch (item) {
+            case BALL:
+                return BallRGB;
+
+            case DUCK:
+                return DuckRGB;
+
+            case CUBESMOOTH:
+                return CubeSmoothRGB;
+
+            case CUBEWAFFLE:
+                return CubeWaffleRGB;
+
+            case EMPTY:
+                return EmptyRGB;
+
+            default:
+                return null;
+        }
+    }
 
     /**
      * Determines what game object best matches the color pattern provided
@@ -50,16 +91,16 @@ public enum FreightFrenzyGameObject {
      * @return Returns what game object the RGB best matches
      */
     public static FreightFrenzyGameObject identify(double[] RGB) {
-        int numberOfGameElements = FreightFrenzyGameObject.gameObjectList.size();
-        double[][] originalRGB = new double[numberOfGameElements][3];
-        double[] differences = new double[numberOfGameElements];
+
+        final int numberOfGameElements = FreightFrenzyGameObject.gameObjectArray.length;
+
+        final double[] differences = new double[numberOfGameElements];
+
         for (int x = 0; x < numberOfGameElements; x++) {
-            originalRGB[x] = FreightFrenzyGameObject.RGBOfObj.get((FreightFrenzyGameObject.gameObjectList.get(x)));
+            differences[x] = getDifferenceOfColor(RGB, RGBValuesOfEachItem[x]);
         }
-        for (int x = 0; x < numberOfGameElements; x++) {
-            assert originalRGB[x] != null;
-            differences[x] = ContinuousIntake.getDifferenceOfColor(RGB, originalRGB[x]);
-        }
+
+
         double smallestValue = Double.MAX_VALUE;
         int index = -1;
 
@@ -69,9 +110,24 @@ public enum FreightFrenzyGameObject {
                 index = i;
             }
         }
-        return FreightFrenzyGameObject.gameObjectList.get(index);
 
-
+        return FreightFrenzyGameObject.gameObjectArray[index];
     }
+
+    /**
+     * It treats color as 3D space and returns the distance between the two points
+     *
+     * @param sight  The first set of RGB values
+     * @param object The second set of RGB values
+     * @return The distance between the two, smaller is closer
+     */
+    private static double getDifferenceOfColor(final double[] sight, final double[] object) {
+        final double r = Math.abs(sight[0] - object[0]);
+        final double g = Math.abs(sight[1] - object[1]);
+        final double b = Math.abs(sight[2] - object[2]);
+        // this calculates the 3D distance between colors
+        return Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
+    }
+
 
 }
