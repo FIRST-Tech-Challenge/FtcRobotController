@@ -18,6 +18,8 @@ import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 @Autonomous
 @Disabled
@@ -56,9 +58,9 @@ public class NewAutoWarehouse extends LinearOpMode {
         }
 
         // part 2: go to warehouse
-        final Trajectory part2;
+        final TrajectorySequence part2;
         {
-            TrajectoryBuilder builder = drive.trajectoryBuilder(liftPosition);
+            TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(liftPosition);
             builder.lineToLinearHeading(new Pose2d(0, (nextToWall + 1) * multiplier));
             builder.addDisplacementMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)));
             builder.lineTo(new Vector2d(20, (nextToWall + 1) * multiplier));
@@ -105,7 +107,7 @@ public class NewAutoWarehouse extends LinearOpMode {
             drive.update();
         }
 
-        drive.followTrajectoryAsync(part2);
+        drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
 
@@ -115,7 +117,7 @@ public class NewAutoWarehouse extends LinearOpMode {
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        drive.followTrajectoryAsync(part2);
+        drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
     }
 
