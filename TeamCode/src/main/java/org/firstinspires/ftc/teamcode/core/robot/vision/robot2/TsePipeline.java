@@ -37,9 +37,10 @@ top width = 0.08
 @Config
 public class TsePipeline extends OpenCvPipeline {
     private final Mat markerImage = new Mat();
-
     public void startPipeline() {
-
+        Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_4X4_50);
+        Aruco.drawMarker(dictionary, 32, 200, markerImage,1);
+        Imgcodecs.imwrite("tse.png", markerImage);
     }
     public void stopPipeline() {
 
@@ -49,12 +50,7 @@ public class TsePipeline extends OpenCvPipeline {
      */
     @Override
     public Mat processFrame(Mat input) {
-        Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_4X4_50);
-        Aruco.drawMarker(dictionary, 32, 200, markerImage,1);
-        return input;
-    }
 
-    public void saveImage() {
-        Imgcodecs.imwrite("tse.png", markerImage);
+        return input;
     }
 }

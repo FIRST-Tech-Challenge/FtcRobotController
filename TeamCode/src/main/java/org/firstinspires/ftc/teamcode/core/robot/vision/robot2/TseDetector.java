@@ -55,7 +55,7 @@ public class TseDetector {
      * @return integer 1 - 3, corresponds to barcode slots left to right
      */
     public int run() {
-        pipeline.saveImage();
+        pipeline.startPipeline();
         return 0;
     }
 }
