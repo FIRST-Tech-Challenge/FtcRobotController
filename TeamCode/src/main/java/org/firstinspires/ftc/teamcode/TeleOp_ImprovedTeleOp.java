@@ -40,6 +40,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     private CRServo intakeR = null;
     private DcMotor extender = null;
     private DcMotor arm = null;
+    private DcMotor intakeLift = null;
     //private CRServo lIntakeLift = null;
     //private CRServo rIntakeLift = null;
 
@@ -61,6 +62,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         intakeR = hardwareMap.get(CRServo.class, "intakeR");
         extender = hardwareMap.get(DcMotor.class, "extender");
         arm = hardwareMap.get(DcMotor.class, "arm");
+        intakeLift = hardwareMap.get(DcMotor.class, "intakeLift");
        // lIntakeLift = hardwareMap.get(CRServo.class, "intakeLiftL");
         //rIntakeLift = hardwareMap.get(CRServo.class, "intakeLiftR");
 
@@ -72,6 +74,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         frontR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         /* makes the motors break on zero power */
         frontR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -80,6 +83,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         backR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         /* Most robots need the motor on one side to be reversed to drive forward.
@@ -91,6 +95,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         intakeL.setDirection(CRServo.Direction.REVERSE);
         intakeR.setDirection(CRServo.Direction.FORWARD);
         duckWheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeLift.setDirection(DcMotorSimple.Direction.FORWARD);
       //  lIntakeLift.setDirection(CRServo.Direction.REVERSE);
         //rIntakeLift.setDirection(CRServo.Direction.FORWARD);
 
@@ -122,6 +127,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
     int speed = 0;
     double slowSpeed = 0.25;
     double normalSpeed = 0.69;
+    double intakeLiftPow = 0;
 
 
     /** Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP. */
@@ -133,6 +139,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         double leftBPower ;
         double rightBPower;
         double intakePow;
+
 
 
 
@@ -154,6 +161,8 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         boolean toggleSlowMode = gamepad1.dpad_down;
        // boolean liftIntakeUp = gamepad2.dpad_up;
         //boolean liftIntakeDown = gamepad2.dpad_down;
+        boolean liftIntakeUp = gamepad2.dpad_up;
+        boolean liftIntakeDown = gamepad2.dpad_down;
 
 
 
@@ -212,7 +221,17 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             }
         }
 
+        if (liftIntakeUp) {
+            intakeLiftPow = 0.75;
+        }
 
+        else if (liftIntakeDown) {
+            intakeLiftPow = -0.75;
+        }
+
+        else{
+            intakeLiftPow = 0;
+        }
 
          if (drive != 0 || turn != 0) {
             leftFPower = Range.clip(drive + turn, -1.0, 1.0);
@@ -253,6 +272,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             arm.setPower(armMove * 1);
             //lIntakeLift.setPower(liftPow);
             //rIntakeLift.setPower(liftPow);
+            intakeLift.setPower(intakeLiftPow);
         }
 
         else if (speed == -1) {
@@ -265,6 +285,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             duckWheel.setPower(duckPower);
             extender.setPower(extension);
             arm.setPower(armMove * 1);
+            intakeLift.setPower(intakeLiftPow);
         }
 
         else {
@@ -277,6 +298,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
             duckWheel.setPower(duckPower);
             extender.setPower(extension);
             arm.setPower(armMove * 1);
+            intakeLift.setPower(intakeLiftPow);
         }
 
 
@@ -286,7 +308,7 @@ public class TeleOp_ImprovedTeleOp extends OpMode
         telemetry.addData("Intake Power", intakePow );
         telemetry.addData("Arm Power", arm.getPowerFloat());
         telemetry.addData("Extension Power", extender.getPowerFloat());
-        telemetry.addData("Intake lift", liftPow);
+        telemetry.addData("Intake lift", intakePow);
 
         if (gamepad1.right_bumper && gamepad1.left_bumper && gamepad1.a && gamepad1.dpad_up) {
             telemetry.addData("When the imposter is sus", armPow);
