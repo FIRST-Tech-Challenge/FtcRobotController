@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 This entire program acts like a psuedo-main class, Put all code during TeleOp in this class.
 */
 
-@TeleOp(name="Mecanum_Control_V2", group="Testier")
+@TeleOp(name="Mecanum_Control_With_Macro", group="Testier")
 public class MecanumControlV2 extends OpMode {
 
     MecanumDrive robot    = new MecanumDrive();//Initializes motors for drive
@@ -150,44 +150,78 @@ public class MecanumControlV2 extends OpMode {
 
         // TOGGLE FOR DUCK SPINNER ^^^^
 
-//        if(gamepad2.x){
-//            switch(liftPos){
-//                case 0:
-//                    break;
-//                case 1:
-//                    Motor.verLiftPos(.6,-dis/2);
-//                    break;
-//                case 2:
-//                    Motor.verLiftPos(.6,-dis);
-//            }
-//            liftPos = 0;
+        if(gamepad2.x){
+                switch (liftPos) {
+                    case 0:
+                        break;
+                    case 1:
+                        Motor.verLiftPosOp(.6, -dis / 2);
+                        break;
+                    case 2:
+                        Motor.verLiftPosOp(.6, -dis);
+                    case 3:
+                        Motor.verLiftPosOp(.6,-dis/6);
+                        break;
+                }
+                liftPos = 0;
+
+        }
+        if(gamepad2.a){
+                switch (liftPos) {
+                    case 0:
+                        Motor.verLiftPosOp(.6, dis / 2);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        Motor.verLiftPosOp(.6, -dis / 2);
+                    case 3:
+                        Motor.verLiftPosOp(.6,2*dis/6);
+                        break;
+                }
+                liftPos = 1;
+
+        }
+        if(gamepad2.b){
+                switch (liftPos) {
+                    case 0:
+                        Motor.verLiftPosOp(.6, dis);
+                        break;
+                    case 1:
+                        Motor.verLiftPosOp(.6, dis / 2);
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        Motor.verLiftPosOp(.6,5*dis/6);
+                        break;
+
+                }
+                liftPos = 2;
+        }
+        if(gamepad2.y) {
+            switch (liftPos) {
+                case 0:
+                    Motor.verLiftPosOp(.6, dis / 6);
+                    break;
+                case 1:
+                    Motor.verLiftPosOp(.6, -dis * 2 / 6);
+                    break;
+                case 2:
+                    Motor.verLiftPosOp(.6, -dis * 5 / 6);
+                    break;
+            }
+            liftPos = 3;
+        }
+        if (!Motor.VertLift.isBusy()) {
+            Motor.VertLift.setPower(0);
+            Motor.VertLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+//        if (!Motor.VertLift.isBusy()) {
+//            Motor.VertLift.setPower(0);
+//            Motor.VertLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        }
-//        if(gamepad2.a){
-//            switch(liftPos){
-//                case 0:
-//                    Motor.verLiftPos(.6,dis/2);
-//                    break;
-//                case 1:
-//                    break;
-//                case 2:
-//                    Motor.verLiftPos(.6,-dis/2);
-//            }
-//            liftPos = 1;
-//        }
-//        if(gamepad2.b){
-//            switch(liftPos){
-//                case 0:
-//                    Motor.verLiftPos(.6,dis);
-//                    break;
-//                case 1:
-//                    Motor.verLiftPos(.6,dis/2);
-//                    break;
-//                case 2:
-//
-//            }
-//            liftPos = 2;
-//
-//        }
+
 
 //        if (gamepad1.right_trigger>0.1 && !isIntakeOn) {
 //            isIntakeOn = true;
@@ -247,17 +281,17 @@ public class MecanumControlV2 extends OpMode {
         //toggle for spinner, already exists above in different form^^^
 
 
-        if (gamepad2.guide && !spinpos) {
-            spinpos = true;
-        }else if (!gamepad1.guide && spinpos) {
-            spinneg = false;
-        }
-        //Turn Spinner off
-        if (gamepad2.guide && !spinneg) {
-            spinpos = false;
-        }else if (!gamepad1.guide && !spinpos) {
-            spinneg = true;
-        }
+//        if (gamepad2.guide && !spinpos) {
+//            spinpos = true;
+//        }else if (!gamepad1.guide && spinpos) {
+//            spinneg = false;
+//        }
+//        //Turn Spinner off
+//        if (gamepad2.guide && !spinneg) {
+//            spinpos = false;
+//        }else if (!gamepad1.guide && !spinpos) {
+//            spinneg = true;
+//        }
 
 
         //Change spinner power
@@ -276,18 +310,7 @@ public class MecanumControlV2 extends OpMode {
 
 
 
-//        if(gamepad2.start&&isSpinnerOn){
-//            Motor.rotaterPower(shooterPower*1.4);
-//        }
-//        if(gamepad2.back&&isSpinnerOn){
-//            Motor.rotaterPower(shooterPower*8);
-//        }
-//        if(isSpinnerOn){
-//            Motor.rotaterPower(shooterPower);
-//        }
-//        if(!isSpinnerOn){
-//            Motor.rotaterPower(0);
-//        }
+
 //        if (gamepad2.dpad_up) {
 //            wasPowerIncreased = true;
 //        }else if (!gamepad2.dpad_up && wasPowerIncreased) {
@@ -314,16 +337,16 @@ public class MecanumControlV2 extends OpMode {
 
 
         //Vertical Lift Movement
-        if(gamepad2.dpad_down){
-            Motor.VertLift.setPower(-.9);
-        }
-        else if(gamepad2.dpad_up){
-            Motor.VertLift.setPower(.9);
-        }
-       else {
-            Motor.VertLift.setPower(0);
-        }
-        //Horizontal Slide Movement
+//        if(gamepad2.dpad_down){
+//            Motor.VertLift.setPower(-.9);
+//        }
+//        else if(gamepad2.dpad_up){
+//            Motor.VertLift.setPower(.9);
+//        }
+//       else {
+//            Motor.VertLift.setPower(0);
+//        }
+//        //Horizontal Slide Movement
         if(gamepad2.dpad_right){
             Motor.HorzLift.setPower(.8);
         }
@@ -349,11 +372,11 @@ public class MecanumControlV2 extends OpMode {
 
         //Control Output Servos, initial middle and final positions
 
-        if(gamepad2.y){
+        if(gamepad2.left_bumper){
 
             isPrimed = true;
         }
-        else if(isPrimed && !gamepad2.y){
+        else if(isPrimed && !gamepad2.left_bumper){
             if(servopos<2){
                 servopos++;
             }

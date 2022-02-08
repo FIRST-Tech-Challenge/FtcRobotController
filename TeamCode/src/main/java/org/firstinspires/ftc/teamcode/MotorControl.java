@@ -77,5 +77,20 @@ public class MotorControl {
 
 
     }
+    public void verLiftPosOp(double speed, double dis){
+        int target;
+        double counts = (420*1.0)/(3.5326);
+        VertLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        VertLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        target = VertLift.getCurrentPosition() + (int) (dis*counts);
+        VertLift.setTargetPosition(target);
+        VertLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        VertLift.setPower(Math.abs(speed));
+//        if (!VertLift.isBusy()) {
+//            VertLift.setPower(0);
+//            VertLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        }
+
+    }
 
 }
