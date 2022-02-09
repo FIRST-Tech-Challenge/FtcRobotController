@@ -10,19 +10,18 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigation
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
-/**
- * The Autonomous ran on Red side near Warehouse for State
- */
-@Autonomous(name = "Red State Warehouse Autonomous")
-public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
-    static final BlinkinPattern def = BlinkinPattern.RED;
+@Autonomous(name = "Blue State Warehouse Autonomous")
+public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
+    static final BlinkinPattern def = BlinkinPattern.BLUE;
 
     @Override
     public void opModeMain() throws InterruptedException {
+        this.CameraNameToUse = GenericOpModeTemplate.RightWebcamName;
         this.initAll();
         leds.setPattern(def);
-        gps.setPos(6.5, 64, 180);
+        gps.setPos(144 - 6.5, 64, 180);
 
 
         BarcodePositions Pos;
@@ -52,12 +51,12 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
         while (opModeIsActive() && !isStopRequested()) {
 
-            driveSystem.moveTowardsPosition(18, 80.5 + yOffset, 270, 1, 5, new MovementWarning());
+            driveSystem.moveTowardsPosition(144 - 18, 80.5 + yOffset, 90, 1, 5, new MovementWarning());
 
-            driveSystem.moveToPosition(20, 82.5 + yOffset, 270, 1, new DistanceTimeoutWarning(100));
-            driveSystem.turnTo(270, 0.1);
+            driveSystem.moveToPosition(144 - 20, 82.5 + yOffset, 90, 1, new DistanceTimeoutWarning(100));
+            driveSystem.turnTo(90, 0.1);
             {
-                double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6) * Math.cos(Math.toRadians(gps.getRot() - 270));
+                double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) - 6) * Math.cos(Math.toRadians(gps.getRot() - 90));
                 gps.setPos(xDistance, gps.getY(), gps.getRot());
             }
 
@@ -67,10 +66,10 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             Pos = BarcodePositions.Right;
 
             //Move against the wall
-            driveSystem.moveTowardsPosition(12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
+            driveSystem.moveTowardsPosition(144 - 12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
 
             //Through Barrier
-            driveSystem.moveToPosition(8, 30, 180, 1, new DistanceTimeoutWarning(500));
+            driveSystem.moveToPosition(144 - 8, 30, 180, 1, new DistanceTimeoutWarning(500));
 
             //To the last place it was grabbing from
             driveSystem.moveToPosition(gps.getX(), 30 - distanceDriven, 180, 1, new DistanceTimeoutWarning(500));
@@ -127,7 +126,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.stopAll();
 
             //Move to white line and against the wall
-            driveSystem.moveToPosition(-1, 36, gps.getRot(), 1, new DistanceTimeoutWarning(500));
+            driveSystem.moveToPosition(144 - -1, 36, gps.getRot(), 1, new DistanceTimeoutWarning(500));
             //Runtime Check
             if (this.getRuntime() > 25) {
                 return;
@@ -135,7 +134,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
 
             //Update position with known coordinates
-            gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
+            gps.setPos(144 - 6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
 
             intake.setIntakeOff();
 
@@ -149,12 +148,8 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
 
             //Move out of warehouse
-            driveSystem.moveToPosition(gps.getX() + 1, 70, 180, 2, new DistanceTimeoutWarning(500));
+            driveSystem.moveToPosition(gps.getX() - 1, 70, 180, 2, new DistanceTimeoutWarning(500));
             yOffset = -6;
         }
-
-
     }
 }
-
-

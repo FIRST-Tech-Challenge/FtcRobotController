@@ -54,6 +54,8 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      */
     public volatile TFObjectDetector tfod;
 
+    protected String CameraNameToUse = GenericOpModeTemplate.LeftWebcamName;
+
     /**
      * Initializes the Vuforia object
      *
@@ -79,13 +81,11 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      */
     private void _initVuforia() throws InterruptedException {
         //does the initialization
-        VuforiaLocalizer Vuforia;
-
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VuforiaKey.VUFORIA_KEY;
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.LeftWebcamName);
+        parameters.cameraName = hardwareMap.get(WebcamName.class, this.CameraNameToUse);
 
         //Waits for mutex to be available
 
@@ -286,7 +286,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             if (MiscUtils.distance(initialPos[0], initialPos[1], gps.getX(), gps.getY()) > 24) {
                 break;
             }
-            currentWallDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 270));
+            currentWallDistance = Math.abs((frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 270)));
         } while (currentWallDistance < 23 && opModeIsActive() && !isStopRequested());
 
 
