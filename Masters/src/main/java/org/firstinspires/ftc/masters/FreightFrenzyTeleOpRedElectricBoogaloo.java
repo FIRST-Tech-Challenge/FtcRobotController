@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="freight Frenzy Red", group = "competition")
+@TeleOp(name="freight Frenzy Red TEST OLIVER", group = "competition")
 public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
 

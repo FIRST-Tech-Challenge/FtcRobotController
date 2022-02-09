@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.masters;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="freight Frenzy Red", group = "competition")
-public class FreightFrenzyTeleOpRed extends LinearOpMode {
+@TeleOp(name="freight Frenzy Red Async", group = "competition")
+public class FreightFrenzyTeleOpRedAsync extends LinearOpMode {
 
 
     RobotClass robot;
@@ -64,7 +66,12 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     linearSlidePositions linearSlidePos = linearSlidePositions.BASE;
     boolean carouselOn = false; //Outside of loop()
 
+    public enum DrivingMode {
+        DRIVER_CONTROL,
+        AUTO
+    }
 
+    DrivingMode currentMode = DrivingMode.DRIVER_CONTROL;
 
     @Override
     public void runOpMode() {
@@ -79,6 +86,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             Dpad Right
             Left Trigger
         */
+
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -133,64 +142,142 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Wait for the game to start (driver presses PLAY)
+        SampleMecanumDriveCancelable drive = new SampleMecanumDriveCancelable(hardwareMap);
+
+        // We want to turn off velocity control for teleop
+        // Velocity control per wheel is not necessary outside of motion profiled auto
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Retrieve our pose from the PoseStorage.currentPose static field
+        // See AutoTransferPose.java for further details
+       // drive.setPoseEstimate(PoseStorage.currentPose);
+        Pose2d startPose = new Pose2d(new Vector2d(13.5, -63),Math.toRadians(90));
+        drive.setPoseEstimate(startPose);
         waitForStart();
+        // Wait for the game to start (driver presses PLAY)
+
         runtime.reset();
 
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        if (isStopRequested()) return;
+
+        while (opModeIsActive() && !isStopRequested()) {
+            // Update the drive class
+            drive.update();
+            Pose2d poseEstimate = drive.getPoseEstimate();
+
+            // Print pose to telemetry
+            telemetry.addData("mode", currentMode);
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.addData("encode",  + linearSlideMotor.getCurrentPosition());
             telemetry.update();
 
-            double y = 0; //
-            double x = 0;
-            double rx = 0;
+            switch (currentMode){
+                case DRIVER_CONTROL:
+                    double y = 0; //
+                    double x = 0;
+                    double rx = 0;
+
+                    if (Math.abs(gamepad1.left_stick_y) > 0.2 || Math.abs(gamepad1.left_stick_x) > 0.2 || Math.abs(gamepad1.right_stick_x) > 0.2 ) {
+                        y = gamepad1.left_stick_y; //
+                        x = gamepad1.left_stick_x;
+                        rx = gamepad1.right_stick_x;
+                    }
+
+                    double leftFrontPower = y + x + rx;
+                    double leftRearPower = y - x + rx;
+                    double rightFrontPower = y - x - rx;
+                    double rightRearPower = y + x - rx;
+
+                    if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
+
+                        double max;
+                        max = Math.max(leftFrontPower, leftRearPower);
+                        max = Math.max(max, rightFrontPower);
+                        max = Math.max(max, rightRearPower);
+
+                        leftFrontPower /= max;
+                        leftRearPower /= max;
+                        rightFrontPower /= max;
+                        rightRearPower /= max;
+                    }
+
+                    leftFrontMotor.setPower(leftFrontPower*maxPowerConstraint);
+                    leftRearMotor.setPower(leftRearPower*maxPowerConstraint);
+                    rightFrontMotor.setPower(rightFrontPower*maxPowerConstraint);
+                    rightRearMotor.setPower(rightRearPower*maxPowerConstraint);
+
+                    if(gamepad1.a) {
+                        maxPowerConstraint = 1;
+                    }
+
+                    if(gamepad1.x){
+                        maxPowerConstraint = 0.75;
+                    }
+
+                    if (gamepad2.left_trigger >= .35) {
+                        if (linearSlideMotor.getCurrentPosition() >= 500) {
+//                    dump
+                            dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+                            sleep(600);
+
+                            dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+                            robot.pause(400);//200 enough for middle
+                            robot.greenLED.setState(false);
+                            robot.greenLED.setState(false);
+
+                            robot.redLED.setState(true);
+                            robot.redLED2.setState(true);
+                            linearSlideTarget = linearSlideTargets.BASE;
+                            linearSlideMotor.setTargetPosition(20);
+                            linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            linearSlideMotor.setPower(-.4);//-.4
+                            //Wayne trying to go backwards for a while
+                            robot.forward(0.5,-.5);
+                        }
+                    }
+
+                    double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+
+                        if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
+                            robot.pauseButInSecondsForThePlebeians(.1);
+                            intakeMotor.setPower(0);
+                            robot.redLED.setState(false);
+                            robot.greenLED.setState(true);
+                            robot.redLED2.setState(false);
+                            robot.greenLED2.setState(true);
+                            intakeOn=false;
+                        }
 
 
-            if (Math.abs(gamepad1.left_stick_y) > 0.2 || Math.abs(gamepad1.left_stick_x) > 0.2 || Math.abs(gamepad1.right_stick_x) > 0.2 ) {
-                y = gamepad1.left_stick_y;
-                x = gamepad1.left_stick_x;
-                if (Math.abs(y)<0.2){
-                    y=0;
-                }
-                if (Math.abs(x)<0.2){
-                    x=0;
-                }
+                    if (gamepad1.b){
+                        Trajectory traj1 = drive.trajectoryBuilder(poseEstimate)
+                                .lineTo(new Vector2d(15, -66))
+                                .splineToSplineHeading(new Pose2d(-9, -48, Math.toRadians(90)), Math.toRadians(90))
+                                .build();
 
-                rx = gamepad1.right_stick_x;
+                        drive.followTrajectoryAsync(traj1);
+
+                        currentMode= DrivingMode.AUTO;
+                    }
+                    break;
+                case AUTO:
+                    if (gamepad1.x) {
+                        drive.breakFollowing();
+                        currentMode = DrivingMode.DRIVER_CONTROL;
+                    }
+
+                    // If drive finishes its task, cede control to the driver
+                    if (!drive.isBusy()) {
+                        currentMode = DrivingMode.DRIVER_CONTROL;
+                    }
+                    break;
             }
 
-            double leftFrontPower = y + x + rx;
-            double leftRearPower = y - x + rx;
-            double rightFrontPower = y - x - rx;
-            double rightRearPower = y + x - rx;
 
-            if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
-
-                double max;
-                max = Math.max(leftFrontPower, leftRearPower);
-                max = Math.max(max, rightFrontPower);
-                max = Math.max(max, rightRearPower);
-
-                leftFrontPower /= max;
-                leftRearPower /= max;
-                rightFrontPower /= max;
-                rightRearPower /= max;
-            }
-
-            leftFrontMotor.setPower(leftFrontPower*maxPowerConstraint);
-            leftRearMotor.setPower(leftRearPower*maxPowerConstraint);
-            rightFrontMotor.setPower(rightFrontPower*maxPowerConstraint);
-            rightRearMotor.setPower(rightRearPower*maxPowerConstraint);
-
-            if(gamepad1.a) {
-                maxPowerConstraint = 1;
-            }
-
-            if(gamepad1.x){
-                maxPowerConstraint = 0.75;
-            }
 
             if(gamepad2.a) {
                 robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
@@ -254,31 +341,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 linearSlideMotor.setPower(.8);
             }
 
-            if (gamepad2.left_trigger >= .35) {
-                if (linearSlideMotor.getCurrentPosition() >= 500) {
-                    leftFrontMotor.setPower(0);
-                    rightFrontMotor.setPower(0);
-                    leftRearMotor.setPower(0);
-                    rightRearMotor.setPower(0);
-//                    dump
-                    dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-                    sleep(800);
 
-                    dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-                    robot.pause(400);//200 enough for middle
-                    robot.greenLED.setState(false);
-                    robot.greenLED.setState(false);
-
-                    robot.redLED.setState(true);
-                    robot.redLED2.setState(true);
-                    linearSlideTarget = linearSlideTargets.BASE;
-                    linearSlideMotor.setTargetPosition(20);
-                    linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    linearSlideMotor.setPower(-.4);//-.4
-                    //Wayne trying to go backwards for a while
-                    robot.forward(0.5,-.5);
-                }
-            }
 
             linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -315,18 +378,6 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 //            }
 
 
-            double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-
-                if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
-                    robot.pauseButInSecondsForThePlebeians(.1);
-                    intakeMotor.setPower(0);
-                    robot.redLED.setState(false);
-                    robot.greenLED.setState(true);
-                    robot.redLED2.setState(false);
-                    robot.greenLED2.setState(true);
-                    intakeOn= false;
-                    //robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-                }
 
 
 //            if (gamepad2.dpad_right) {

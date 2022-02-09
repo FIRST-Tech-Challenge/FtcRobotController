@@ -68,8 +68,8 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
-//        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
-//        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
 //        colorSensorMiddle = hardwareMap.get(RevColorSensorV3.class,"colorSensorMiddle");
         carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
