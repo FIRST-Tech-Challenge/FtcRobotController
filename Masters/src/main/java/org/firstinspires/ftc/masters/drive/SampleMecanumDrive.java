@@ -148,8 +148,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideServo = hardwareMap.servo.get("dumpServo");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-//        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
-//        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
         distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
 
