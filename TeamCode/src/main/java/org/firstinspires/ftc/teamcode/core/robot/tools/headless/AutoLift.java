@@ -20,7 +20,7 @@ public class AutoLift {
     // 5 1/4 inch from back of robot to rim
     public enum Positions {
         INTAKING(0, 0.76D, false),
-        SAFE(1375, 0.716D, false),
+        SAFE(1375, 0.7D, false),
         TOP(2880, 0.3D, true),
         MIDDLE(1850, 0.3D, true),
         BOTTOM(1375, 0.25D, true),
@@ -62,7 +62,7 @@ public class AutoLift {
      * @param grabber     grabber instance
      */
     public AutoLift(EventThread eventThread, @NonNull HardwareMap map, @Nullable AutoGrabber grabber) {
-        liftMotor = map.get(DcMotor.class,"liftMotor");
+        this.liftMotor = map.get(DcMotor.class,"liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -70,9 +70,10 @@ public class AutoLift {
         liftMotor.setTargetPosition(Math.abs(liftMotor.getCurrentPosition()));
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setPower(1D);
-        armServo = map.get(Servo.class,"armServo");
+        this.armServo = map.get(Servo.class,"armServo");
         this.eventThread = eventThread;
         this.grabber = grabber;
+        this.armServo.setPosition(Positions.INTAKING.armPos);
         final Thread thread = new Thread(() -> {
             while (eventThread.isAlive()) {
                 liftMotor.setPower(liftMotor.getTargetPosition() >= liftMotor.getCurrentPosition() ? 1D : 0.75D);
