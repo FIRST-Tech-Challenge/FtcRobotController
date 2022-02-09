@@ -58,12 +58,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @TeleOp
 public class BarcodePositionDetector extends LinearOpMode
 {
-    OpenCvInternalCamera webcam;
+    OpenCvWebcam webcam;
     SkystoneDeterminationPipeline pipeline;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
 
         /**
          * NOTE: Many comments have been omitted from this sample for the
@@ -73,7 +72,7 @@ public class BarcodePositionDetector extends LinearOpMode
          */
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = (OpenCvInternalCamera) OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
         pipeline = new SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
@@ -97,6 +96,7 @@ public class BarcodePositionDetector extends LinearOpMode
                  * This will be called if the camera could not be opened
                  */
             }
+
         });
 
         waitForStart();
@@ -113,10 +113,11 @@ public class BarcodePositionDetector extends LinearOpMode
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
+
         /*
          * An enum to define the skystone position
          */
-        public enum SkystonePosition
+        public enum BarcodePosition
         {
             LEFT,
             CENTER,
@@ -183,7 +184,7 @@ public class BarcodePositionDetector extends LinearOpMode
         int avg1, avg2, avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile SkystonePosition position = SkystonePosition.LEFT;
+        private volatile BarcodePosition position = BarcodePosition.LEFT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -319,7 +320,7 @@ public class BarcodePositionDetector extends LinearOpMode
              */
             if(max == avg1) // Was it from region 1?
             {
-                position = SkystonePosition.LEFT; // Record our analysis
+                position = BarcodePosition.LEFT; // Record our analysis
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -334,7 +335,7 @@ public class BarcodePositionDetector extends LinearOpMode
             }
             else if(max == avg2) // Was it from region 2?
             {
-                position = SkystonePosition.CENTER; // Record our analysis
+                position = BarcodePosition.CENTER; // Record our analysis
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -349,7 +350,7 @@ public class BarcodePositionDetector extends LinearOpMode
             }
             else if(max == avg3) // Was it from region 3?
             {
-                position = SkystonePosition.RIGHT; // Record our analysis
+                position = BarcodePosition.RIGHT; // Record our analysis
 
                 /*
                  * Draw a solid rectangle on top of the chosen region.
@@ -374,9 +375,10 @@ public class BarcodePositionDetector extends LinearOpMode
         /*
          * Call this from the OpMode thread to obtain the latest analysis
          */
-        public SkystonePosition getAnalysis()
+        public BarcodePosition getAnalysis()
         {
             return position;
         }
+
     }
 }

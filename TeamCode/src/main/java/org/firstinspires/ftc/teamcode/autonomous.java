@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.BarcodePositionDetector;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(name="autonomous", group="Test")
 public class autonomous extends automethods {
     HardwarePushbot robot = new HardwarePushbot();// Use a Pushbot's hardware
-
+OpenCvWebcam webcam;
+BarcodePositionDetector.SkystoneDeterminationPipeline detector;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,8 +44,10 @@ public class autonomous extends automethods {
         waitForStart();
 
 ////////////////////////////////////ROBOT  START////////////////////////////////////////////////////
-    encoderDrive(0.7,60, 5);
-        //  rpos = returnRingPosition(3);
+        ///// Starting Position Left Blue
+
+
+
 
 
 ////////////////////////////////
