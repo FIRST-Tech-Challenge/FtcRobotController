@@ -73,7 +73,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(480); //Go forwards to side of goal
+            sleep(500); //Go forwards to side of goal
 
             tower1.setPower(0.5);
             tower2.setPower(0.5);
@@ -84,7 +84,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(800); //Lower arm
+            sleep(1000); //Lower arm
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -117,7 +117,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(750); //Raise arm and close claw
+            sleep(800); //Raise arm and close claw
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -161,7 +161,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(915); //turn right
+            sleep(1000); //turn right
 
             tower1.setPower(0);
             tower2.setPower(0);
