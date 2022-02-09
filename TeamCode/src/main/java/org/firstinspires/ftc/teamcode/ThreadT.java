@@ -48,6 +48,7 @@ public class ThreadT extends Thread {
                 e.printStackTrace();
             }
 
+            robot.intakeUp.setPower(0);
             pause();
             // Code here -
         }

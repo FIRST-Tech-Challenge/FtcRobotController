@@ -70,8 +70,6 @@ public class Autonocursed extends LinearOpMode {
         telemetry.update();
         // Send telemetry message to indicate successful Encoder reset
 
-        lift(-200, -0.3);
-
         telemetry.addData("Path0", "Starting at %7d :%7d:%7d:%7d",
                 robot.leftFrontDrive.getCurrentPosition(),
                 robot.leftRearDrive.getCurrentPosition(),
@@ -113,10 +111,12 @@ public class Autonocursed extends LinearOpMode {
         }
         */
 
+        lift(-200, -0.3);
+
         // spin duck +
         this.robot.duck.setPower(-0.25);
         goToWayPoint(-0.5, 0.15, -53, 0.7, 30, 0.01, 1);
-        sleep(200);
+        sleep(300);
         // spin duck -
 
 
@@ -143,7 +143,7 @@ public class Autonocursed extends LinearOpMode {
         this.robot.intakeUp.setPower(0);
         goToWayPoint(0.3, 0.55, -53, 2.5, 30, 0.02, 3);
         lift(-50,0.5);
-        goToWayPoint(1.6, -0.18, -90,   2.5, 77, 0.01, 1);
+        goToWayPoint(1.4, -0.18, -90,   2.5, 77, 0.01, 1);
         // drive to warehouse -
 
 
@@ -158,7 +158,7 @@ public class Autonocursed extends LinearOpMode {
         // drive to team shipping hub +
         goToWayPoint(1.4, -0.13, -90,   2.5, 30, 0.02, 1);
         lift(pos[duckPos-1],1);
-        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
+        goToWayPoint(0.9, 0.50, 0, 0.7, 90, 0.01, 1);
         // drive to team shipping hub -
 
 
@@ -199,7 +199,7 @@ public class Autonocursed extends LinearOpMode {
         // park in warehouse +
         goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
         lift(-50,0.7);
-        goToWayPoint(2.8, -0.18, -90,   1.5, 30, 0.03, 1);
+        goToWayPoint(2.5, -0.18, -90,   1.5, 30, 0.03, 1);
         // park in warehouse -
 
 
@@ -222,7 +222,7 @@ public class Autonocursed extends LinearOpMode {
             }
             telemetry.update();
         }
-        Thread.sleep(10);
+        Thread.sleep(49);
 
     }
 

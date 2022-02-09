@@ -72,8 +72,6 @@ public class Autonofrcursed extends LinearOpMode {
         telemetry.update();
         // Send telemetry message to indicate successful Encoder reset
 
-        lift(-200, -0.3);
-
         telemetry.addData("Path0", "Starting at %7d :%7d:%7d:%7d",
                 robot.leftFrontDrive.getCurrentPosition(),
                 robot.leftRearDrive.getCurrentPosition(),
@@ -118,6 +116,8 @@ public class Autonofrcursed extends LinearOpMode {
         }
         */
 
+        lift(-200, -0.3);
+
         // spin duck +
         this.robot.duck.setPower(-0.25);
         goToWayPoint(-0.5, 0.15, -53, 0.7, 30, 0.01, 1);
@@ -132,78 +132,67 @@ public class Autonofrcursed extends LinearOpMode {
         } else if(duckPos == 2){
 
         } else {
-            intakeControl(500, 1000, 1.0);
+            intakeControl(600, 1300, 1.0);
             goToWayPoint(0.4, 0.756, -53, 1.5, 30, 0.01, 1);
         }
+        this.robot.duck.setPower(0);
         // drive to team shipping hub -
 
 
 
         // drive to warehouse +
-        this.robot.duck.setPower(0);
-        this.robot.intakeUp.setPower(0);
-        goToWayPoint(0.3, 0.55, -53, 2.5, 30, 0.02, 3);
+        goToWayPoint(0.3, 0, -90, 2, 50, 0.02, 3);
         lift(-50,0.5);
-        goToWayPoint(1.6, -0.18, -90,   2.5, 77, 0.01, 1);
+        goToWayPoint(1.6, -0.14, -90,   1, 77, 0.01, 1);
         // drive to warehouse -
 
 
         // pick up new cube +
-        this.robot.intakeUp.setPower(-1.0);
+        intakeControl(0,3500,-1.0);
         lift(50,0.3);
-        goToWayPoint(2.5, -0.18, -90,   0.7, 30, 0.03, 1);
-        sleep(500);
+        goToWayPoint(2.45, -0.14, -90,   0.7, 30, 0.03, 1);
+        sleep(300);
         // pick up new cube
 
 
-        // drive to team shipping hub +
-        goToWayPoint(1.4, -0.13, -90,   2.5, 30, 0.02, 1);
-        lift(pos[duckPos-1],1);
-        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
-        // drive to team shipping hub -
-
-
         // score new cube +
-        this.robot.intakeUp.setPower(1.0);
-        sleep(1500);
+        goToWayPoint(1, -0.14, -90,   2.5, 30, 0.02, 1);
+        lift(pos[1],1);
+        intakeControl(1200,1300,1.0);
+        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
         // score new cube -
 
 
         // drive to warehouse +
-        this.robot.intakeUp.setPower(0);
-        goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
+        goToWayPoint(1.4, -0.14, -90,   2.5, 90, 0.01, 1);
         lift(-50,0.3);
         // drive to warehouse -
 
-
-        // pick up new cube +
-        this.robot.intakeUp.setPower(-1.0);
+        /*
+        // pick up new cube 2+
+        intakeControl(0,4000,-1.0);
         lift(50,0.3);
-        goToWayPoint(2.7, -0.18, -90,   0.7, 30, 0.03, 1);
-        sleep(1000);
-        // pick up new cube -
+        goToWayPoint(2.5, -0.14, -90,   0.7, 30, 0.03, 1);
+        sleep(300);
+        // pick up new cube 2-
 
 
-        // drive to team shipping hub +
-        goToWayPoint(1.4, -0.18, -90,   1.5, 30, 0.02, 1);
-        lift(pos[duckPos-1],1);
-        goToWayPoint(1, 0.45, 0, 0.7, 90, 0.01, 1);
-        // drive to team shipping hub -
-
-
-        // score new cube +
-        this.robot.intakeUp.setPower(1.0);
-        sleep(1500);
-        // score new cube -
-
+        // score new cube 2+
+        goToWayPoint(1.1, -0.14, -90,   1.5, 30, 0.02, 1);
+        lift(pos[1],1);
+        intakeControl(1200,1300,1.0);
+        goToWayPoint(1.1, 0.45, 0, 0.7, 90, 0.01, 1);
+        // score new cube 2-
+        */
 
         // park in warehouse +
-        goToWayPoint(1.4, -0.18, -90,   2.5, 90, 0.01, 1);
+        goToWayPoint(1.4, -0.14, -90,   2.5, 90, 0.01, 1);
         lift(-50,0.7);
-        goToWayPoint(2.45, -0.18, -90,   1.5, 30, 0.03, 1);
+        goToWayPoint(2.45, -0.14, -90,   1.5, 30, 0.03, 1);
         // park in warehouse -
 
         obj.killT();
+
     }
 
     public void intakeControl(int delayFirst, int delaySecond, double spinPower){
@@ -231,7 +220,7 @@ public class Autonofrcursed extends LinearOpMode {
             }
             telemetry.update();
         }
-        Thread.sleep(25);
+        Thread.sleep(49);
 
     }
 
