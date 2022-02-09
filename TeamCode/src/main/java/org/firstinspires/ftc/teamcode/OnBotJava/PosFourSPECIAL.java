@@ -41,17 +41,36 @@ public class PosFourSPECIAL extends LinearOpMode {
         sleep(2000);
         while (AutonomousDC.isbusy()) {
             sleep(100);
+        }
             AutonomousDC.resetTicks();
             AutonomousDC.turnDeg(-45.0f, telemetry);
             AutonomousDC.resetTicks();
             sleep(1000);
             AutonomousDC.moveRobot(200, -200, 200, -200, .5, .5, -.5, -.5);
             sleep(2000);
+
             while (AutonomousDC.isbusy()) {
                 sleep(100);
             }
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(135.0f, telemetry);
+        AutonomousDC.resetTicks();
+        sleep(1000);
+        AutonomousDC.moveRobot(1000, -1000, 1000, -1000, .5, .5, -.5, -.5);
+        sleep(2000);
+
+        while (AutonomousDC.isbusy()) {
+            sleep(100);
+        }
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(-180.0f, telemetry);
+        AutonomousDC.resetTicks();
+        sleep(1000);
+        AutonomousDC.moveRobot(5000, -5000, 5000, -5000, .5, .5, -.5, -.5);
+        sleep(2000);
+
 
 
         }
     }
-}
+
