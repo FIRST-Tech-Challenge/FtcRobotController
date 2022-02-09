@@ -2,6 +2,7 @@ package org.firstinspires.ftc.Team19567.opmode; //The "namespace" for the projec
 
 //Import necessary packages/libraries
 
+//FTC SDK packages
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,59 +12,54 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.configuration.Utility;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.Team19567.util.TeleOP_Constants;
 
+//Custom enums and classes
+import org.firstinspires.ftc.Team19567.util.PRESET_STATE;
+import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
+import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
+
 
 @TeleOp(name="TeleOP", group="Dababy") //Gives the TeleOp its name in the driver station menu and categorizes it as an Iterative OpMode
 public class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
     //Declare OpMode members
-    //
+
+    //ElapsedTime
     private final ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime carouselTime = new ElapsedTime();
+
+    //Hardware
     private DcMotor leftDCFront = null;
     private DcMotor rightDCFront = null;
     private DcMotor leftDCBack = null;
     private DcMotor rightDCBack = null;
-    private DcMotor carouselLeft = null;
-    private DcMotor carouselRight = null;
-    private DcMotor intakeDC = null;
     private DcMotorEx armDC = null;
     private Servo releaseServo = null;
     private Servo balanceServo = null;
     private TouchSensor limitSwitch = null;
     private DistanceSensor distanceSensor = null;
-    private double carouselLeftPower = 0.0;
-    private double carouselRightPower = 0.0;
+    private RevBlinkinLedDriver blinkin = null;
     private double armPos = 0;
-    private double armPower = 0.5;
-    private double intakePower = 0.0;
+    private double armPower = 1.0;
     private double releaseServoPos = 0.8;
     private double balanceServoPos = 0.0;
-    private RevBlinkinLedDriver blinkin = null;
     private boolean isSlowmode = false;
-    private double turnSens = TeleOP_Constants.TURN_SENSITIVITY;
-    private double prr_ratio = TeleOP_Constants.PPR_RATIO;
-
+    private final static double turnSens = Utility_Constants.TURN_SENSITIVITY;
+    private final static double strafeSens = Utility_Constants.STRAFE_SENSITIVITY;
+    private TELEOP_STATE currentState = TELEOP_STATE.DRIVER_CONTROL;
     private double acc = 1.0;
+
+    //Objects
     private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
     private Mechanisms mechanisms = null;
     private PIDFCoefficients armCoefficients = new PIDFCoefficients(8,0,1,0);
 
-    private final ElapsedTime carouselTime = new ElapsedTime();
     public int milliCarousel = 2000;
     public double initPower = 0.6;
     public double finalPower = 1;
-
-    public enum PRESET_STATE {
-        SHARED_HUB,
-        ALLIANCE_FIRST,
-        ALLIANCE_SECOND,
-        ALLIANCE_THIRD,
-        GOING_DOWN,
-        NO_PRESET
-    }
 
     private PRESET_STATE presetState = PRESET_STATE.NO_PRESET;
 
@@ -75,9 +71,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         rightDCFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftDCBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightDCBack = hardwareMap.get(DcMotor.class, "rightBack");
-        carouselLeft = hardwareMap.get(DcMotor.class, "carouselLeft");
-        carouselRight = hardwareMap.get(DcMotor.class,"carouselRight");
-        intakeDC = hardwareMap.get(DcMotor.class, "intakeDC");
         armDC = hardwareMap.get(DcMotorEx.class, "armDC");
         releaseServo = hardwareMap.get(Servo.class, "releaseServo");
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
@@ -91,7 +84,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        intakeDC.setDirection(DcMotor.Direction.REVERSE);
         armDC.setDirection(DcMotor.Direction.REVERSE);
         balanceServo.setDirection(Servo.Direction.REVERSE);
 
@@ -115,6 +107,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armDC.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,armCoefficients);
+        mechanisms.setModes();
         telemetry.addData("Status", "Started");
         telemetry.update();
         runtime.reset(); //Reset runtime
@@ -138,12 +131,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         and front right wheels point in the x direction. Thus, we use cosine for the first group and sine for the second group. */
 //DRIVETRAIN
         if(gamepad1.y) isSlowmode = !isSlowmode;
-        if(isSlowmode) acc = 0.3;
+        if(isSlowmode) acc = Utility_Constants.SLOWMODE_MULT;
         else acc = 1.0;
-        final double leftFrontSpeed = (r * Math.sin(angleDC) - *gamepad1.right_stick_x)*acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
-        final double rightFrontSpeed = (r * Math.cos(angleDC) + 0.7*gamepad1.right_stick_x)*acc;
-        final double leftBackSpeed = (r * Math.cos(angleDC) - 0.7*gamepad1.right_stick_x)*acc;
-        final double rightBackSpeed = (r * Math.sin(angleDC) + 0.7*gamepad1.right_stick_x)*acc;
+        final double leftFrontSpeed = (strafeSens * r * Math.sin(angleDC) - turnSens*gamepad1.right_stick_x)*acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
+        final double rightFrontSpeed = (strafeSens * r * Math.cos(angleDC) + turnSens*gamepad1.right_stick_x)*acc;
+        final double leftBackSpeed = (strafeSens * r * Math.cos(angleDC) - turnSens*gamepad1.right_stick_x)*acc;
+        final double rightBackSpeed = (strafeSens * r * Math.sin(angleDC) + turnSens*gamepad1.right_stick_x)*acc;
 
         //INTAKE
         if(gamepad1.right_trigger > 0) mechanisms.moveIntake(1);
@@ -166,6 +159,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else {
             mechanisms.rotateCarousel(0.0);
         }*/
+
         if(gamepad2.right_trigger > 0 || gamepad1.dpad_right || gamepad1.dpad_left)
         {
             carouselTime.reset();
@@ -180,42 +174,43 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,1000);
         if(gamepad1.x || gamepad2.x) {
             presetState = PRESET_STATE.ALLIANCE_FIRST;
+            currentState = TELEOP_STATE.IN_A_PRESET;
         }
         else if(gamepad2.y) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
+            currentState = TELEOP_STATE.IN_A_PRESET;
         }
         else if(gamepad1.a || gamepad2.a) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
+            currentState = TELEOP_STATE.IN_A_PRESET;
+        }
+        else if(gamepad1.b || gamepad2.b) {
+            presetState = PRESET_STATE.GOING_DOWN;
+            currentState = TELEOP_STATE.IN_A_PRESET;
         }
 
-//SERVOS
-        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.9);
-        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.9);
-        if(gamepad1.b || gamepad2.b) {
-            presetState = PRESET_STATE.GOING_DOWN;
-        }
-        if(gamepad2.right_bumper) releaseServoPos = 0.3;
-        if(presetState != PRESET_STATE.NO_PRESET) {
+        //PRESET HANDLING
+        if(currentState == TELEOP_STATE.IN_A_PRESET) {
             armPower = 0.8;
             switch(presetState) {
                 case ALLIANCE_FIRST: {
                     armPower = 0.8;
-                    armPos = 875;
-                    if(armDC.getCurrentPosition() >= 870) {
+                    armPos = Utility_Constants.FIRST_LEVEL_POS;
+                    if(armDC.getCurrentPosition() >= Utility_Constants.FIRST_LEVEL_POS-2) {
                         presetState = PRESET_STATE.NO_PRESET;
                     }
                     break;
                 }
                 case ALLIANCE_SECOND: {
-                    armPos = 750;
-                    if(armDC.getCurrentPosition() >= 750) {
+                    armPos = Utility_Constants.SECOND_LEVEL_POS;
+                    if(armDC.getCurrentPosition() >= Utility_Constants.SECOND_LEVEL_POS-2) {
                         presetState = PRESET_STATE.NO_PRESET;
                     }
                     break;
                 }
                 case ALLIANCE_THIRD: {
-                    armPos = 595;
-                    if(armDC.getCurrentPosition() >= 595) {
+                    armPos = Utility_Constants.THIRD_LEVEL_POS;
+                    if(armDC.getCurrentPosition() >= Utility_Constants.THIRD_LEVEL_POS-5) {
                         presetState = PRESET_STATE.NO_PRESET;
                     }
                     break;
@@ -233,10 +228,11 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 }
             }
         }
-        else {
-            armPower = 0.6;
-        }
-// BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE BOUNCE
+
+        //SERVOS
+        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.9);
+        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.9);
+        if(gamepad2.right_bumper) releaseServoPos = 0.3;
         balanceServoPos = Range.clip((armDC.getCurrentPosition()-100)/1050.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000)) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
@@ -252,7 +248,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         rightDCFront.setPower(rightFrontSpeed);
         leftDCBack.setPower(leftBackSpeed);
         rightDCBack.setPower(rightBackSpeed);
-        carouselLeft.setPower(carouselLeftPower);
         armDC.setTargetPosition((int) armPos);
         armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
@@ -260,10 +255,11 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 //TELEMETRY
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
-        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), carouselLeft(%.2f), carouselRight(%.2f), intakeDC(%.2f), armDC(%.2f)",
-                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, carouselLeftPower, carouselRightPower, intakePower, armPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
+        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), armDC(%.2f)",
+                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, armPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
         //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
         telemetry.addData("Servos","releaseServoPos(%.2f), balanceServoPos(%.2f)",releaseServoPos, balanceServoPos);
+        telemetry.addData("Carousel Time(%.2f)",carouselTime.milliseconds());
         telemetry.update(); //Updates the telemetry
     }
 

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.pipeline.COLOR;
 import org.firstinspires.ftc.Team19567.pipeline.tsePipeline;
@@ -33,7 +34,7 @@ public class redWarehouseFSM extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleMecanumDrive chassis = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDriveCancelable chassis = new SampleMecanumDriveCancelable(hardwareMap);
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
 
@@ -119,7 +120,7 @@ public class redWarehouseFSM extends LinearOpMode {
                 case INTAKING_FREIGHT: {
                     if (!chassis.isBusy()) {
                         currentState = AUTO_STATE.RETURNING_TO_HUB;
-                        chassis.followTrajectorySequence(returningToHub);
+                        chassis.followTrajectorySequenceAsync(returningToHub);
                     }
                     break;
                 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.Team19567.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -31,6 +32,7 @@ public class Mechanisms {
         armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armDC.setDirection(DcMotor.Direction.REVERSE);
         balanceServo.setDirection(Servo.Direction.REVERSE);
+        intakeDC.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void rotateArm(int pos, double speed) {
@@ -40,7 +42,7 @@ public class Mechanisms {
     }
 
     public void rotateArm(int pos) {
-        armDC.setPower(0.5);
+        armDC.setPower(1.0);
         armDC.setTargetPosition(Range.clip(pos,0,1000));
         armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
@@ -75,7 +77,7 @@ public class Mechanisms {
 
     @Deprecated
     public void sharedHub() {
-        telemetry.addData("Mechanisms","Note: use firstLevel instead.");
+        telemetry.addData("Mechanisms","Note: use Mechanisms.firstLevel() instead.");
         firstLevel();
     }
 
