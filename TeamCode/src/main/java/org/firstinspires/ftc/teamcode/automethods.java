@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 /* This autonomous program is designed to go forward, pick up a stone, and deliver it to the blue tray, before returning and repeating it once more.*/
 
-public class automethods extends BarcodePositionDetector {
+public class automethods extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     ElapsedTime timer = new ElapsedTime();
