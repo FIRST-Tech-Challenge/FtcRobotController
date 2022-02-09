@@ -171,25 +171,21 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,3000);
         if(gamepad1.x || gamepad2.x) {
             presetState = PRESET_STATE.ALLIANCE_FIRST;
-            currentState = TELEOP_STATE.IN_A_PRESET;
         }
         else if(gamepad2.y) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
-            currentState = TELEOP_STATE.IN_A_PRESET;
         }
         else if(gamepad1.a || gamepad2.a) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
-            currentState = TELEOP_STATE.IN_A_PRESET;
         }
         else if(gamepad1.b || gamepad2.b) {
             presetState = PRESET_STATE.GOING_DOWN;
-            currentState = TELEOP_STATE.IN_A_PRESET;
         }
 
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
-                armPower = 0.8;
+                armPower = 1.0;
                 armPos = Utility_Constants.FIRST_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= Utility_Constants.FIRST_LEVEL_POS-2) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -197,7 +193,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case ALLIANCE_SECOND: {
-                armPower = 0.8;
+                armPower = 1.0;
                 armPos = Utility_Constants.SECOND_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= Utility_Constants.SECOND_LEVEL_POS-2) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -205,7 +201,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case ALLIANCE_THIRD: {
-                armPower = 0.8;
+                armPower = 1.0;
                 armPos = Utility_Constants.THIRD_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= Utility_Constants.THIRD_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -213,7 +209,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case GOING_DOWN: {
-                armPower = 0.6;
+                armPower = 1.0;
                 armPos = 0;
                 releaseServoPos = 0.8;
                 if(armDC.getCurrentPosition() <= 5) {
@@ -229,7 +225,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.9);
         else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.9);
         if(gamepad2.right_bumper) releaseServoPos = 0.3;
-        balanceServoPos = Range.clip((armDC.getCurrentPosition()-100)/1050.1,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000)) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
         /* else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
@@ -239,7 +234,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
         blinkin.setPattern(blinkinPattern);
 
-//MOTOR SET POWER
+        //MOTOR SET POWER
         leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
         rightDCFront.setPower(rightFrontSpeed);
         leftDCBack.setPower(leftBackSpeed);
@@ -247,8 +242,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setTargetPosition((int) armPos);
         armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
-        balanceServo.setPosition(balanceServoPos);
-//TELEMETRY
+        mechanisms.maintainBalance();
+        //TELEMETRY
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
         telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), armDC(%.2f)",

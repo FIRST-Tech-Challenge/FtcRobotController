@@ -43,6 +43,7 @@ public class WarehouseSplinetest extends LinearOpMode {
     private double chosenArmSpeed = 0.3;
     private double chosenTrajectoryX = -1;
     private double chosenTrajectoryY = 39;
+    private int delay = 0;
     private Mechanisms mechanisms = null;
 
     @Override
@@ -61,9 +62,9 @@ public class WarehouseSplinetest extends LinearOpMode {
 
         Trajectory SplineSequence = chassis.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(0)))
                 .addSpatialMarker(new Vector2d(6,1), () -> {
-                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.6);
+                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.7);
                 })
-                .lineToSplineHeading(new Pose2d(28,7, Math.toRadians(225)))
+                .lineToSplineHeading(new Pose2d(27,6, Math.toRadians(225)))
                 //.lineToSplineHeading(new Pose2d(0,0,0))
                 /* .setReversed(true).splineTo(new Vector2d(10, -60),Math.toRadians(-20))
                 .splineTo(new Vector2d(50,-64),Math.toRadians(0))
@@ -78,7 +79,6 @@ public class WarehouseSplinetest extends LinearOpMode {
 
         currentState = AUTO_STATE.MOVING_TO_HUB;
 
-        mechanisms.releaseServoMove(0.9);
         chassis.followTrajectoryAsync(SplineSequence);
 
         master:while(opModeIsActive()) {
@@ -93,7 +93,8 @@ public class WarehouseSplinetest extends LinearOpMode {
                 }
                 case DELIVERING_FREIGHT: {
                     mechanisms.releaseServoMove(0.3);
-                    if(mechanisms.releaseServo.getPosition() <= 0.35) {
+                    delay++;
+                    if(delay >= 1000) {
                         telemetry.addData("State Machine","Moved to MOVING_TO_WAREHOUSE");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
