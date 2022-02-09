@@ -106,6 +106,8 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         } catch (MovementException stop) {
             this.stop();
         }
+
+
         driveSystem.turnTo(160, 1);
         try {
             driveSystem.moveToPosition(137, 65, 1, 1, new DistanceTimeoutException(500));

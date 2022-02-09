@@ -276,10 +276,10 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             Thread.sleep(40);
         }
 
+        double[] initialPos = {gps.getX(), gps.getY()};
+
         //Strafes forward while the distance from the wall is less than 24 in
         driveSystem.strafeAtAngle(180, 0.5);
-
-        double[] initialPos = {gps.getX(), gps.getY()};
 
         double currentWallDistance;
         do {

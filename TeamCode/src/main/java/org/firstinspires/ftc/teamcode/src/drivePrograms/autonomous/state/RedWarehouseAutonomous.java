@@ -70,7 +70,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.moveTowardsPosition(12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
 
             //Through Barrier
-            driveSystem.moveToPosition(gps.getX(), 30, 180, 1, new DistanceTimeoutWarning(500));
+            driveSystem.moveToPosition(8, 30, 180, 1, new DistanceTimeoutWarning(500));
 
             //To the last place it was grabbing from
             driveSystem.moveToPosition(gps.getX(), 30 - distanceDriven, 180, 1, new DistanceTimeoutWarning(500));
@@ -87,7 +87,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             outer:
             while (opModeIsActive() && !isStopRequested()) {
-                distanceDriven += 4;
+                distanceDriven += 4;  //Four is currently the distance it steps each time
                 driveSystem.strafeAtAngle(0, 0.3);
                 while (opModeIsActive() && !isStopRequested()) {
                     if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
@@ -114,12 +114,16 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             intake.setIntakeReverse();
 
-            driveSystem.strafeAtAngle(180, 0.5);
-            double distanceFromWall;
-            do {
-                distanceFromWall = (frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot()));
-                distanceFromWall = Math.abs(distanceFromWall);
-            } while (distanceFromWall < 25 && (opModeIsActive() && !isStopRequested()));
+            //Strafes away from pile
+            {
+                driveSystem.strafeAtAngle(180, 0.5);
+                double distanceFromWall;
+                do {
+                    distanceFromWall = (frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot()));
+                    distanceFromWall = Math.abs(distanceFromWall);
+                } while (distanceFromWall < 25 && (opModeIsActive() && !isStopRequested()));
+            }
+
             driveSystem.stopAll();
 
             //Move to white line and against the wall
