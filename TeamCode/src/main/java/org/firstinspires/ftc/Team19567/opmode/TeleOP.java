@@ -9,10 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.configuration.Utility;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -42,26 +40,30 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private TouchSensor limitSwitch = null;
     private DistanceSensor distanceSensor = null;
     private RevBlinkinLedDriver blinkin = null;
+
+    //Variables
     private double armPos = 0;
     private double armPower = 1.0;
     private double releaseServoPos = 0.8;
     private double balanceServoPos = 0.0;
+    private double acc = Utility_Constants.MAX_SENSITIVITY;
     private boolean isSlowmode = false;
+
+    //Constants
     private final static double turnSens = Utility_Constants.TURN_SENSITIVITY;
     private final static double strafeSens = Utility_Constants.STRAFE_SENSITIVITY;
-    private TELEOP_STATE currentState = TELEOP_STATE.DRIVER_CONTROL;
-    private double acc = 1.0;
+    private final static int milliCarousel = 2000;
+    private final static double initPower = 0.6;
+    private final static double finalPower = 1;
+    private final static double intakeSpeed = Utility_Constants.INTAKE_SPEED;
 
     //Objects
     private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
     private Mechanisms mechanisms = null;
-    private PIDFCoefficients armCoefficients = new PIDFCoefficients(8,0,1,0);
 
-    public int milliCarousel = 2000;
-    public double initPower = 0.6;
-    public double finalPower = 1;
-
+    //Enums
     private PRESET_STATE presetState = PRESET_STATE.NO_PRESET;
+    private TELEOP_STATE currentState = TELEOP_STATE.DRIVER_CONTROL;
 
     @Override
     public void init() {
@@ -102,11 +104,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
     @Override
     public void start() {
-        armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armDC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armDC.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,armCoefficients);
         mechanisms.setModes();
         telemetry.addData("Status", "Started");
         telemetry.update();
@@ -132,15 +129,15 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 //DRIVETRAIN
         if(gamepad1.y) isSlowmode = !isSlowmode;
         if(isSlowmode) acc = Utility_Constants.SLOWMODE_MULT;
-        else acc = 1.0;
+        else acc = Utility_Constants.MAX_SENSITIVITY;
         final double leftFrontSpeed = (strafeSens * r * Math.sin(angleDC) - turnSens*gamepad1.right_stick_x)*acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
         final double rightFrontSpeed = (strafeSens * r * Math.cos(angleDC) + turnSens*gamepad1.right_stick_x)*acc;
         final double leftBackSpeed = (strafeSens * r * Math.cos(angleDC) - turnSens*gamepad1.right_stick_x)*acc;
         final double rightBackSpeed = (strafeSens * r * Math.sin(angleDC) + turnSens*gamepad1.right_stick_x)*acc;
 
         //INTAKE
-        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(1);
-        else if(gamepad1.right_bumper) mechanisms.moveIntake(-1);
+        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(intakeSpeed);
+        else if(gamepad1.right_bumper) mechanisms.moveIntake(-intakeSpeed);
         else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
         else mechanisms.moveIntake(0.1);
 
@@ -169,9 +166,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else mechanisms.rotateCarousel(0.0);
 
         //ARM
-        if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,1000);
-        else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*4,0,1000);
-        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,1000);
+        if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,3000);
+        else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*4,0,3000);
+        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,3000);
         if(gamepad1.x || gamepad2.x) {
             presetState = PRESET_STATE.ALLIANCE_FIRST;
             currentState = TELEOP_STATE.IN_A_PRESET;
@@ -190,42 +187,41 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
         //PRESET HANDLING
-        if(currentState == TELEOP_STATE.IN_A_PRESET) {
-            armPower = 0.8;
-            switch(presetState) {
-                case ALLIANCE_FIRST: {
-                    armPower = 0.8;
-                    armPos = Utility_Constants.FIRST_LEVEL_POS;
-                    if(armDC.getCurrentPosition() >= Utility_Constants.FIRST_LEVEL_POS-2) {
-                        presetState = PRESET_STATE.NO_PRESET;
-                    }
-                    break;
+        switch(presetState) {
+            case ALLIANCE_FIRST: {
+                armPower = 0.8;
+                armPos = Utility_Constants.FIRST_LEVEL_POS;
+                if(armDC.getCurrentPosition() >= Utility_Constants.FIRST_LEVEL_POS-2) {
+                    presetState = PRESET_STATE.NO_PRESET;
                 }
-                case ALLIANCE_SECOND: {
-                    armPos = Utility_Constants.SECOND_LEVEL_POS;
-                    if(armDC.getCurrentPosition() >= Utility_Constants.SECOND_LEVEL_POS-2) {
-                        presetState = PRESET_STATE.NO_PRESET;
-                    }
-                    break;
+                break;
+            }
+            case ALLIANCE_SECOND: {
+                armPower = 0.8;
+                armPos = Utility_Constants.SECOND_LEVEL_POS;
+                if(armDC.getCurrentPosition() >= Utility_Constants.SECOND_LEVEL_POS-2) {
+                    presetState = PRESET_STATE.NO_PRESET;
                 }
-                case ALLIANCE_THIRD: {
-                    armPos = Utility_Constants.THIRD_LEVEL_POS;
-                    if(armDC.getCurrentPosition() >= Utility_Constants.THIRD_LEVEL_POS-5) {
-                        presetState = PRESET_STATE.NO_PRESET;
-                    }
-                    break;
+                break;
+            }
+            case ALLIANCE_THIRD: {
+                armPower = 0.8;
+                armPos = Utility_Constants.THIRD_LEVEL_POS;
+                if(armDC.getCurrentPosition() >= Utility_Constants.THIRD_LEVEL_POS-5) {
+                    presetState = PRESET_STATE.NO_PRESET;
                 }
-                case GOING_DOWN: {
-                    armPower = 0.6;
-                    armPos = 0;
-                    releaseServoPos = 0.8;
-                    if(armDC.getCurrentPosition() <= 5) {
-                        presetState = PRESET_STATE.NO_PRESET;
-                    }
+                break;
+            }
+            case GOING_DOWN: {
+                armPower = 0.6;
+                armPos = 0;
+                releaseServoPos = 0.8;
+                if(armDC.getCurrentPosition() <= 5) {
+                    presetState = PRESET_STATE.NO_PRESET;
                 }
-                default: {
-                    break;
-                }
+            }
+            default: {
+                break;
             }
         }
 

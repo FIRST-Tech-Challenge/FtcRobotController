@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.Utility;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
@@ -60,11 +59,11 @@ public class WarehouseSplinetest extends LinearOpMode {
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
 
-        Trajectory SplineSequence = chassis.trajectoryBuilder(new Pose2d(10,-63,Math.toRadians(0)))
-                .addSpatialMarker(new Vector2d(16,-62), () -> {
-                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,1.0);
+        Trajectory SplineSequence = chassis.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(0)))
+                .addSpatialMarker(new Vector2d(6,1), () -> {
+                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.6);
                 })
-                .lineToSplineHeading(new Pose2d(37,-57, Math.toRadians(225)))
+                .lineToSplineHeading(new Pose2d(28,7, Math.toRadians(225)))
                 //.lineToSplineHeading(new Pose2d(0,0,0))
                 /* .setReversed(true).splineTo(new Vector2d(10, -60),Math.toRadians(-20))
                 .splineTo(new Vector2d(50,-64),Math.toRadians(0))
@@ -72,7 +71,7 @@ public class WarehouseSplinetest extends LinearOpMode {
                 .setReversed(false).waitSeconds(0.5).splineTo(new Vector2d(50,-64),Math.toRadians(0)) */
                 .build();
 
-        TrajectorySequence returnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).lineToSplineHeading(new Pose2d(0,0,0)).build();
+        TrajectorySequence returnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).lineToSplineHeading(SplineSequence.start()).build();
 
         waitForStart();
         if(isStopRequested()) return;
@@ -86,32 +85,43 @@ public class WarehouseSplinetest extends LinearOpMode {
             switch(currentState) {
                 case MOVING_TO_HUB: {
                     if(!chassis.isBusy()) {
+                        telemetry.addData("State Machine","Moved to DELIVERING_FREIGHT");
+                        telemetry.update();
                         currentState = AUTO_STATE.DELIVERING_FREIGHT;
-                        break;
                     }
+                    break;
                 }
                 case DELIVERING_FREIGHT: {
-                    mechanisms.releaseServoMove(0.4);
-                    if(mechanisms.releaseServo.getPosition() <= 0.31) {
+                    mechanisms.releaseServoMove(0.3);
+                    if(mechanisms.releaseServo.getPosition() <= 0.35) {
+                        telemetry.addData("State Machine","Moved to MOVING_TO_WAREHOUSE");
+                        telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
                         chassis.followTrajectorySequenceAsync(returnSplineSequence);
-                        break;
                     }
+                    break;
                 }
                 case MOVING_TO_WAREHOUSE: {
-                    mechanisms.rotateArm(0,0.1);
+                    mechanisms.rotateArm(0,0.475);
                     mechanisms.releaseServoMove(1.0);
                     if(!chassis.isBusy()) {
+                        telemetry.addData("State Machine","Moved to PATH_FINISHED");
+                        telemetry.update();
                         currentState = AUTO_STATE.PATH_FINISHED;
                     }
+                    break;
                 }
                 case PATH_FINISHED: {
                     break;
+                }
+                default: {
+                    currentState = AUTO_STATE.MOVING_TO_HUB;
                 }
             }
             mechanisms.maintainBalance();
             chassis.update();
             telemetry.addData("State",currentState);
+            telemetry.update();
         }
 
         telemetry.addData("Status", "Path Complete");

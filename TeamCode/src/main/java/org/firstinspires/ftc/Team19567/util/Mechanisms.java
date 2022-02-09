@@ -16,6 +16,7 @@ public class Mechanisms {
     public Servo balanceServo = null;
     public Servo releaseServo = null;
     public Telemetry telemetry = null;
+    private double PPR_RATIO = Utility_Constants.PPR_RATIO;
 
     public Mechanisms(HardwareMap hardwareMap, Telemetry t) {
         armDC = hardwareMap.get(DcMotor.class,"armDC");
@@ -30,6 +31,7 @@ public class Mechanisms {
     public void setModes() {
         armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armDC.setDirection(DcMotor.Direction.REVERSE);
         balanceServo.setDirection(Servo.Direction.REVERSE);
         intakeDC.setDirection(DcMotor.Direction.REVERSE);
@@ -37,13 +39,13 @@ public class Mechanisms {
 
     public void rotateArm(int pos, double speed) {
         armDC.setPower(speed);
-        armDC.setTargetPosition(Range.clip(pos,0,1000));
+        armDC.setTargetPosition(Range.clip(pos,0,3000));
         armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void rotateArm(int pos) {
         armDC.setPower(1.0);
-        armDC.setTargetPosition(Range.clip(pos,0,1000));
+        armDC.setTargetPosition(Range.clip(pos,0,3000));
         armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
@@ -94,6 +96,6 @@ public class Mechanisms {
     }
 
     public void maintainBalance() {
-        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition())/1050.5,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
+        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition())/(1200.5*PPR_RATIO),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
 }
