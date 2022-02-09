@@ -22,6 +22,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         this.initAll();
         leds.setPattern(def);
         gps.setPos(144 - 6.5, 64, 180);
+        String statement = "none";
 
 
         BarcodePositions Pos;
@@ -39,7 +40,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
         Pos = BarcodePositions.Left;
         // get rid of this once camera position working
-        double yOffset = 0;
+        double yOffset = -4;
 
         tfod.shutdown();
         vuforia.close();
@@ -65,8 +66,10 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             Pos = BarcodePositions.Right;
 
+            driveSystem.turnTo(180, .5);
+
             //Move against the wall
-            driveSystem.moveTowardsPosition(144 - 12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
+            driveSystem.moveTowardsPosition(144 - 120, 60, 180, 2, 5, new DistanceTimeoutWarning(100));
 
             //Through Barrier
             driveSystem.moveToPosition(144 - 8, 30, 180, 1, new DistanceTimeoutWarning(500));
@@ -128,9 +131,9 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             //Move to white line and against the wall
             driveSystem.moveToPosition(144 - -1, 36, gps.getRot(), 1, new DistanceTimeoutWarning(500));
             //Runtime Check
-            if (this.getRuntime() > 25) {
-                return;
-            }
+            //if (this.getRuntime() > 25) {
+            //    return;
+            //}
 
 
             //Update position with known coordinates
@@ -140,11 +143,11 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             //Runtime Check
 
-            if (this.getRuntime() > 25) {
-                driveSystem.strafeAtAngle(0, 1);
-                Thread.sleep(500);
-                return;
-            }
+            //if (this.getRuntime() > 25) {
+            //    driveSystem.strafeAtAngle(0, 1);
+            //    Thread.sleep(500);
+            //    return;
+            //}
 
 
             //Move out of warehouse
