@@ -57,7 +57,7 @@ public class NewAutoStorage extends LinearOpMode {
         // Part 1: go to shipping hub
         final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
             .lineTo(new Vector2d(-20, 55 * multiplier))
-            .lineToLinearHeading(new Pose2d(-21 * multiplier,
+            .lineToLinearHeading(new Pose2d(-21,
                     42 * multiplier, Math.toRadians(95 * multiplier)))
             .build();
 

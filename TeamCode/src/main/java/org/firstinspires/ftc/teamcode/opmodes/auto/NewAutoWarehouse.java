@@ -1,29 +1,24 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 import static org.firstinspires.ftc.teamcode.opmodes.util.StayInPosition.stayInPose;
 import static org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight.getPosition;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 @Autonomous
-@Disabled
 public class NewAutoWarehouse extends LinearOpMode {
     public int multiplier = 1;
     public boolean isRed = false;
@@ -39,8 +34,7 @@ public class NewAutoWarehouse extends LinearOpMode {
         EventThread eventThread = new EventThread(() -> !isStopRequested());
 
         AutoIntake intake = new AutoIntake(hardwareMap, eventThread);
-        AutoGrabber grabber = new AutoGrabber(hardwareMap);
-        AutoLift lift = new AutoLift(eventThread, hardwareMap, grabber);
+        AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
@@ -50,6 +44,7 @@ public class NewAutoWarehouse extends LinearOpMode {
                 Math.toRadians(70 * multiplier));
 
         ElapsedTime toolTimer = new ElapsedTime();
+        ElapsedTime wallSmashTimer = new ElapsedTime();
 
         // Part 1: drive to alliance shipping hub
         final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
@@ -57,8 +52,9 @@ public class NewAutoWarehouse extends LinearOpMode {
                 .lineToLinearHeading(liftPosition)
                 .build();
 
+        // where the robot **should** be after you intake
         final Pose2d intakeReturnPoint = new Pose2d(40, nextToWall * multiplier,
-                Math.toRadians(0));
+                0);
 
         // part 2: go to warehouse
         final TrajectorySequence part2 = drive.trajectorySequenceBuilder(liftPosition)
@@ -67,7 +63,7 @@ public class NewAutoWarehouse extends LinearOpMode {
                 .lineTo(intakeReturnPoint.vec())
                 .build();
 
-        // where the robot **should** be after you intake
+
         // part 3: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
         final TrajectorySequence part3 = drive.trajectorySequenceBuilder(intakeReturnPoint)
                 .lineTo(new Vector2d(-3, nextToWall * multiplier))
@@ -84,6 +80,8 @@ public class NewAutoWarehouse extends LinearOpMode {
 
         waitForStart();
         liftThread.start();
+        eventThread.start();
+
         intake.lightsOff();
         height = detector.run();
         intake.lightsOn();
@@ -92,7 +90,6 @@ public class NewAutoWarehouse extends LinearOpMode {
 
         drive.followTrajectorySequenceAsync(part1);
         updateLoop(drive);
-        if (!isStopRequested()) return;
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
@@ -102,10 +99,23 @@ public class NewAutoWarehouse extends LinearOpMode {
             }
             stayInPose(drive, part1.end());
         }
+        drive.setWeightedDrivePower(new Pose2d(0, multiplier, 0));
+        wallSmashTimer.reset();
+        while (wallSmashTimer.milliseconds() < 500) {
+            drive.update();
+        }
+        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 
         drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
+
+        drive.setWeightedDrivePower(new Pose2d(0, multiplier, 0));
+        wallSmashTimer.reset();
+        while (wallSmashTimer.milliseconds() < 500) {
+            drive.update();
+        }
+        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 
         drive.followTrajectorySequenceAsync(part3);
         updateLoop(drive);
@@ -117,13 +127,15 @@ public class NewAutoWarehouse extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
-            stayInPose(drive, part1.end());
+            stayInPose(drive, part3.end());
         }
-
 
         drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
-    }
+        while (!isStopRequested()) {
+            stayInPose(drive, part2.end());
+        }
+}
 
     public void updateLoop(SampleMecanumDrive drive) {
         while (!isStopRequested() && drive.isBusy()) {
