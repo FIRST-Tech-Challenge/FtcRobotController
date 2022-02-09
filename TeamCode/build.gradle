@@ -32,4 +32,8 @@ dependencies {
     implementation 'org.openftc:easyopencv:1.5.0'
     implementation 'org.ftclib.ftclib:vision:1.2.0' // vision for ftclib
     implementation 'org.ftclib.ftclib:core:1.2.1' // core for ftclib
+    implementation('org.boofcv:boofcv-core:0.39') {
+        exclude group: 'org.deepboof'
+    }
+    implementation 'org.boofcv:boofcv-android:0.39'
 }
