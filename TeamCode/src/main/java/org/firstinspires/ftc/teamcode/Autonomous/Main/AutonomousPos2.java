@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Visual;/* Copyright (c) 2019 FIRST. All rights reserved.
+package org.firstinspires.ftc.teamcode.Autonomous.Main;/* Copyright (c) 2019 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -54,8 +54,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "ken visual test", group = "Concept")
-public class ObiectDetection2021 extends LinearOpMode {
+@Autonomous(name = "AutonomousPos2", group = "Concept")
+public class AutonomousPos2 extends LinearOpMode {
     /* Note: This sample uses the all-objects Tensor Flow model (FreightFrenzy_BCDM.tflite), which contains
      * the following 4 detectable objects
      *  0: Ball,

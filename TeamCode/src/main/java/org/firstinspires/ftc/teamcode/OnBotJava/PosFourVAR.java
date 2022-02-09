@@ -37,9 +37,12 @@ public class PosFourVAR extends LinearOpMode {
 
         AutonomousDC.resetTicks();
         AutonomousDC.moveRobot(-700, 700, -700, 700, 0.5, 0.5, -0.5, -0.5); //forward
-        while(AutonomousDC.isbusy()){
-            sleep(100);
-        }
+
+
+
+
+        
+
         sleep(1000);
 
         AutonomousDC.resetTicks();

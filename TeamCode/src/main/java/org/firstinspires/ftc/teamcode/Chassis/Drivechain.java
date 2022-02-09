@@ -411,53 +411,53 @@ public class Drivechain {
 
     }
 
-    public void moveAutonomousRobotPOS1(String type){
-        if (type.equals("var1")){
+    public void moveAutonomousRobotPOS1(String type, String elementPosition){
+        if (type.equals("var1") && elementPosition.equals("left")){
 
         }
-        else if (type.equals("var2")){
-
-        }
-
-        else if (type.equals("var3")){
-
-        }
-    }
-
-    public void moveAutonomousRobotPOS2(String type){
-        if (type.equals("var1")){
-
-        }
-        else if (type.equals("var2")){
+        else if (type.equals("var1") && elementPosition.equals("center")){
 
         }
 
-        else if (type.equals("var3")){
+        else if (type.equals("var1") && elementPosition.equals("right")){
 
         }
     }
 
-    public void moveAutonomousRobotPOS3(String type){
-        if (type.equals("var1")){
-            //Code for movement here
-        }
-        else if (type.equals("var2")){
-            //Code for movement here
-        }
+    public void moveAutonomousRobotPOS2(String type, String elementPosition) {
+        if (type.equals("var1") && elementPosition.equals("left")) {
 
-        else if (type.equals("var3")){
-            //Code for movement here
+        } else if (type.equals("var1") && elementPosition.equals("center")) {
+
+        } else if (type.equals("var1") && elementPosition.equals("right")) {
+
+        } else if (type.equals("var2") && elementPosition.equals("left")) {
+
+        } else if (type.equals("var1") && elementPosition.equals("right")) {
         }
-
-
     }
 
-    public void moveAutonomousRobotPOS4(String type) {
-        if (type.equals("var1")) {
+//    public void moveAutonomousRobotPOS3(String robotPosition, String type, String elementPosition){
+//        if (robotPosition.equals("pos2") && type.equals("var1") && elementPosition.equals("left")){
+//            //Code for movement here
+//        }
+//        else if (type.equals("var2") && elementPosition.equals("center")){
+//            //Code for movement here
+//        }
+//
+//        else if (type.equals("var3") && elementPosition.equals("right")){
+//            //Code for movement here
+//        }
+
+
+
+
+    public void moveAutonomousRobotPOS4(String type, String elementPosition) {
+        if (type.equals("var1") && elementPosition.equals("left")) {
             //Code for movement here
-        } else if (type.equals("var2")) {
+        } else if (type.equals("var2") && elementPosition.equals("center")) {
             //Code for movement here
-        } else if (type.equals("var3")) {
+        } else if (type.equals("var3")&& elementPosition.equals("right")) {
             //Code for movement here
         }
 

@@ -14,27 +14,44 @@ public class PosFourSPECIAL extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Drivechain AutonomousDC = new Drivechain(hardwareMap);
-
+        AutonomousDC.calibrateGyro();
+        AutonomousDC.resetGyro();
+        AutonomousDC.resetTicks();
         waitForStart();
 
-        AutonomousDC.resetTicks();
 
-        //Forward
-        AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
+//        //Forward
+//        AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
+//        sleep(3000);
+//
+//        //Counterclockwise 30 degrees
+//        AutonomousDC.moveRobot( 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
+//        sleep(3000);
+//
+//        //Clockwise 30 degrees
+//        AutonomousDC.moveRobot(-300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25);
+//        sleep(3000);
+//
+//        //Forward
+//        AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
+//        sleep(3000);
 
-        //Counterclockwise 30 degrees
-        AutonomousDC.moveRobot( 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
+        sleep(2500);
+        AutonomousDC.moveRobot(800, -800, 800, -800, .5, .5, -.5, -.5);
+        sleep(2000);
+        while (AutonomousDC.isbusy()) {
+            sleep(100);
+            AutonomousDC.resetTicks();
+            AutonomousDC.turnDeg(-45.0f, telemetry);
+            AutonomousDC.resetTicks();
+            sleep(1000);
+            AutonomousDC.moveRobot(200, -200, 200, -200, .5, .5, -.5, -.5);
+            sleep(2000);
+            while (AutonomousDC.isbusy()) {
+                sleep(100);
+            }
 
-        //Clockwise 30 degrees
-        AutonomousDC.moveRobot(-300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
 
-        //Forward
-        AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
-
+        }
     }
 }
-
