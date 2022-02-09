@@ -14,6 +14,7 @@ public class PosFourSPECIAL extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Drivechain AutonomousDC = new Drivechain(hardwareMap);
+        Carousel AutonomousCS = new Carousel(hardwareMap);
         AutonomousDC.calibrateGyro();
         AutonomousDC.resetGyro();
         AutonomousDC.resetTicks();
@@ -68,7 +69,17 @@ public class PosFourSPECIAL extends LinearOpMode {
         sleep(1000);
         AutonomousDC.moveRobot(5000, -5000, 5000, -5000, .5, .5, -.5, -.5);
         sleep(2000);
-
+        AutonomousCS.CarouselAutonomous(1000,0.3);
+        sleep(2000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(135.0f, telemetry);
+        AutonomousDC.resetTicks();
+        sleep(1000);
+        AutonomousDC.moveRobot(400, -400, 400, -400, .5, .5, -.5, -.5);
+        sleep(2000);
+        while (AutonomousDC.isbusy()) {
+            sleep(100);
+        }
 
 
         }
