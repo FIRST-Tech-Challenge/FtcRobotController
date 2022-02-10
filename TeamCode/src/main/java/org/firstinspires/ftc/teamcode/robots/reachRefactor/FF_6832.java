@@ -293,6 +293,11 @@ public class FF_6832 extends OpMode {
         rotate = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 
+    private void handleArcadeDriveFunkyTest(Gamepad gamepad) {
+        forward = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
+        rotate = Math.pow(gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
+    }
+
     private void handleTankDrive(Gamepad gamepad) {
         double left = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT);
         double right = Math.pow(-gamepad.right_stick_y, DRIVE_VELOCITY_EXPONENT);
@@ -327,8 +332,8 @@ public class FF_6832 extends OpMode {
         // gamepad 2
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
-        if(stickyGamepad2.b) //dump bucket - might be able to combine this with Cycle Complete
-            robot.crane.dump();
+        if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
+            robot.crane.handleDumpUndump();
         if(stickyGamepad2.a) //spin carousel
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
         if(stickyGamepad2.right_trigger)
@@ -358,7 +363,7 @@ public class FF_6832 extends OpMode {
         robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[chassisDistanceLevelIndex]);
 
         if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
-            handleTankDrive(gamepad1);
+            handleArcadeDriveFunkyTest(gamepad1);
         else if (gamepad2JoysticksActive && !gamepad1JoysticksActive)
             handleArcadeDrive(gamepad2);
         else {

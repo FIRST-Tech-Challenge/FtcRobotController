@@ -171,9 +171,24 @@ public class Crane implements Subsystem {
         return telemetryMap;
     }
 
+
     public void dump() {
         setWristTargetPos(currentDumpPos);
     }
+
+    public void unDump(){
+        setWristTargetPos(articulation.wristPos);
+    }
+
+    public void handleDumpUndump(){
+        if (getWristTargetPos() != getArticulation().dumpPos) {
+            dump();
+        } else {
+            unDump();
+        }
+    }
+
+
 
     private void setTargetPositions(Articulation articulation) {
         setShoulderTargetPos(articulation.shoulderPos);
