@@ -1,34 +1,25 @@
 package org.firstinspires.ftc.teamcode.core.robot.vision.robot2;
 
-import android.util.Pair;
-
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import androidx.annotation.Nullable;
 
+import boofcv.android.ConvertBitmap;
 import com.acmerobotics.dashboard.config.Config;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.io.ByteArrayInputStream;
-import javax.imageio.ImageIO;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import boofcv.abst.fiducial.FiducialDetector;
 import boofcv.factory.fiducial.ConfigFiducialBinary;
 import boofcv.factory.fiducial.FactoryFiducial;
 import boofcv.factory.filter.binary.ConfigThreshold;
 import boofcv.factory.filter.binary.ThresholdType;
-import boofcv.io.image.ConvertBufferedImage;
 import boofcv.struct.image.GrayF32;
-import boofcv.struct.image.ImageType;
 import georegression.struct.point.Point2D_F64;
 
 /*
@@ -72,7 +63,8 @@ public class TsePipeline extends OpenCvPipeline {
         if (pipelineRunning) {
             MatOfByte mob = new MatOfByte();
             Imgcodecs.imencode(".bmp", input, mob);
-            GrayF32 original = ConvertBufferedImage.convertFrom(ImageIO.read(new ByteArrayInputStream(mob.toArray())), true, ImageType.single(GrayF32.class));
+            GrayF32 original = new GrayF32();
+            ConvertBitmap.bitmapToGray(BitmapFactory.decodeStream(new ByteArrayInputStream(mob.toArray())), original, null);
             FiducialDetector<GrayF32> detector = FactoryFiducial.squareBinary(new ConfigFiducialBinary(0.1), ConfigThreshold.local(ThresholdType.LOCAL_MEAN, 21), GrayF32.class);
             detector.detect(original);
             Point2D_F64 locationPixel = new Point2D_F64();
