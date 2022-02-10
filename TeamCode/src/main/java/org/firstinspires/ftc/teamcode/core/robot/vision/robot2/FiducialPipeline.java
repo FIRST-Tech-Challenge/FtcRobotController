@@ -59,13 +59,13 @@ public class FiducialPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         if (pipelineRunning) {
-            MatOfByte mob = new MatOfByte();
+            final MatOfByte mob = new MatOfByte();
             Imgcodecs.imencode(".bmp", input, mob);
-            GrayF32 original = new GrayF32();
+            final GrayF32 original = new GrayF32();
             ConvertBitmap.bitmapToGray(BitmapFactory.decodeStream(new ByteArrayInputStream(mob.toArray())), original, null);
-            FiducialDetector<GrayF32> detector = FactoryFiducial.squareBinary(new ConfigFiducialBinary(0.1), ConfigThreshold.local(ThresholdType.LOCAL_MEAN, 21), GrayF32.class);
+            final FiducialDetector<GrayF32> detector = FactoryFiducial.squareBinary(new ConfigFiducialBinary(0.1), ConfigThreshold.local(ThresholdType.LOCAL_MEAN, 21), GrayF32.class);
             detector.detect(original);
-            Point2D_F64 locationPixel = new Point2D_F64();
+            final Point2D_F64 locationPixel = new Point2D_F64();
             detector.getCenter(0, locationPixel);
 
             //distance from 1st square to left side of screen, distance between spots
