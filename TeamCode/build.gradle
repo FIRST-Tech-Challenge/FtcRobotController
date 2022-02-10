@@ -36,4 +36,5 @@ dependencies {
         exclude group: 'org.deepboof'
     }
     implementation 'org.boofcv:boofcv-android:0.39'
+
 }

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.core.robot.vision.robot2;
 
 import android.graphics.BitmapFactory;
-import android.graphics.Bitmap;
-import androidx.annotation.Nullable;
 
 import boofcv.android.ConvertBitmap;
 import com.acmerobotics.dashboard.config.Config;
@@ -40,7 +38,7 @@ top height 0.25
 top width = 0.08
  */
 @Config
-public class TsePipeline extends OpenCvPipeline {
+public class FiducialPipeline extends OpenCvPipeline {
     private final Mat markerImage = new Mat();
     private int location = -1;
     private boolean pipelineRunning = false;
