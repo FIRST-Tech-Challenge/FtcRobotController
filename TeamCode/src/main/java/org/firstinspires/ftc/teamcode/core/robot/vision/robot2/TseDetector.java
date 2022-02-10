@@ -54,8 +54,14 @@ public class TseDetector {
      *
      * @return integer 1 - 3, corresponds to barcode slots left to right
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     public int run() {
+        try { Thread.sleep(100); } catch (InterruptedException ignored) {}
         pipeline.startPipeline();
-        return 0;
+        //noinspection LoopConditionNotUpdatedInsideLoop
+        while (pipeline.getLocation() == -1) {}
+        camera.stopStreaming();
+        camera.closeCameraDeviceAsync(null);
+        return pipeline.getLocation();
     }
 }

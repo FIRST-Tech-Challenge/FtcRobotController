@@ -2,20 +2,34 @@ package org.firstinspires.ftc.teamcode.core.robot.vision.robot2;
 
 import android.util.Pair;
 
+import androidx.annotation.Nullable;
+
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.core.robot.vision.opencv.aruco.Aruco;
-import org.firstinspires.ftc.teamcode.core.robot.vision.opencv.aruco.Dictionary;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.io.ByteArrayInputStream;
+import javax.imageio.ImageIO;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import boofcv.abst.fiducial.FiducialDetector;
+import boofcv.factory.fiducial.ConfigFiducialBinary;
+import boofcv.factory.fiducial.FactoryFiducial;
+import boofcv.factory.filter.binary.ConfigThreshold;
+import boofcv.factory.filter.binary.ThresholdType;
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.ImageType;
+import georegression.struct.point.Point2D_F64;
 
 /*
 red
@@ -37,20 +51,40 @@ top width = 0.08
 @Config
 public class TsePipeline extends OpenCvPipeline {
     private final Mat markerImage = new Mat();
+    private int location = -1;
+    private boolean pipelineRunning = false;
     public void startPipeline() {
-        Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_4X4_50);
-        Aruco.drawMarker(dictionary, 32, 200, markerImage,1);
-        Imgcodecs.imwrite("tse.png", markerImage);
+        pipelineRunning = true;
     }
     public void stopPipeline() {
-
+        pipelineRunning = false;
     }
+
+    public int getLocation() {
+        return location;
+    }
+
     /**
      * @param input input frame matrix
      */
     @Override
     public Mat processFrame(Mat input) {
+        if (pipelineRunning) {
+            MatOfByte mob = new MatOfByte();
+            Imgcodecs.imencode(".bmp", input, mob);
+            GrayF32 original = ConvertBufferedImage.convertFrom(ImageIO.read(new ByteArrayInputStream(mob.toArray())), true, ImageType.single(GrayF32.class));
+            FiducialDetector<GrayF32> detector = FactoryFiducial.squareBinary(new ConfigFiducialBinary(0.1), ConfigThreshold.local(ThresholdType.LOCAL_MEAN, 21), GrayF32.class);
+            detector.detect(original);
+            Point2D_F64 locationPixel = new Point2D_F64();
+            detector.getCenter(0, locationPixel);
 
+            //distance from 1st square to left side of screen, distance between spots
+            final int pos = Math.floorDiv(((int) (locationPixel.getX()) - 50), 30);
+            if (pos >= 0 && pos <= 2) {
+                location = pos;
+                pipelineRunning = false;
+            }
+        }
         return input;
     }
 }
