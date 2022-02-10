@@ -19,6 +19,7 @@ import org.firstinspires.ftc.Team19567.util.PRESET_STATE;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 @TeleOp(name="TeleOP", group="Dababy") //Gives the TeleOp its name in the driver station menu and categorizes it as an Iterative OpMode
@@ -28,6 +29,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     //ElapsedTime
     private final ElapsedTime runtime = new ElapsedTime();
     private final ElapsedTime carouselTime = new ElapsedTime();
+    private final ElapsedTime carouselDebounceTime = new ElapsedTime();
 
     //Hardware
     private DcMotor leftDCFront = null;
@@ -41,21 +43,25 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private DistanceSensor distanceSensor = null;
     private RevBlinkinLedDriver blinkin = null;
 
+    //Constants
+    private final static double turnSens = Utility_Constants.TURN_SENSITIVITY;
+    private final static double strafeSens = Utility_Constants.STRAFE_SENSITIVITY;
+    private final static double intakeSpeed = Utility_Constants.INTAKE_SPEED;
+    private final static int milliFinal = Utility_Constants.MILLI_FINAL;
+    private final static int milliAcc = Utility_Constants.MILLI_ACC;
+    private final static double initPower = Utility_Constants.INIT_POWER;
+    private final static double accCoefficient = Utility_Constants.ACC_COEFFICIENT;
+    private final static double finalPower = Utility_Constants.FINAL_POWER;
+
     //Variables
     private double armPos = 0;
     private double armPower = 1.0;
     private double releaseServoPos = 0.8;
     private double balanceServoPos = 0.0;
     private double acc = Utility_Constants.MAX_SENSITIVITY;
+    private double carouselPower = initPower;
     private boolean isSlowmode = false;
-
-    //Constants
-    private final static double turnSens = Utility_Constants.TURN_SENSITIVITY;
-    private final static double strafeSens = Utility_Constants.STRAFE_SENSITIVITY;
-    private final static int milliCarousel = 2000;
-    private final static double initPower = 0.6;
-    private final static double finalPower = 1;
-    private final static double intakeSpeed = Utility_Constants.INTAKE_SPEED;
+    private boolean isCarouselEngaged = false;
 
     //Objects
     private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
@@ -142,28 +148,19 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else mechanisms.moveIntake(0.1);
 
         //CAROUSEL
-        /*if(gamepad1.dpad_right || gamepad2.dpad_right) {
-            long start = System.nanoTime();
-            mechanisms.rotateCarousel(0.5);
-            long end = System.nanoTime();
-            long elapsedtime = end - start;
-            if (elapsedtime >= 10);
-            mechanisms.rotateCarousel(1);
-        }
-        else if(gamepad1.dpad_left || gamepad2.dpad_left) {
-            mechanisms.rotateCarousel(0.5);
-        }
-        else {
-            mechanisms.rotateCarousel(0.0);
-        }*/
-
-        if(gamepad2.right_trigger > 0 || gamepad1.dpad_right || gamepad1.dpad_left)
-        {
+        if(gamepad1.dpad_right || gamepad1.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.PRESS_THRESHOLD) {
+            carouselDebounceTime.reset();
             carouselTime.reset();
-            if(carouselTime.milliseconds() <= milliCarousel) mechanisms.rotateCarousel(initPower);
-            else mechanisms.rotateCarousel(finalPower);
+            isCarouselEngaged = !isCarouselEngaged;
         }
-        else mechanisms.rotateCarousel(0.0);
+        if(isCarouselEngaged) {
+            if(carouselTime.milliseconds() <= milliFinal) carouselPower = Utility_Constants.INIT_POWER;
+            else if(carouselTime.milliseconds() >= milliAcc && carouselTime.milliseconds() <= milliFinal) {
+                carouselPower += Range.clip(carouselTime.milliseconds()/accCoefficient,initPower,finalPower);
+            }
+            else carouselPower = finalPower;
+        }
+        else carouselPower = 0.0;
 
         //ARM
         if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,1900);
@@ -225,12 +222,14 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.9);
         else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.9);
         if(gamepad2.right_bumper) releaseServoPos = 0.3;
-        if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000)) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
+        if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000)) {
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
+        }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        /* else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
+        else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
             telemetry.addData("Distance Sensor","Freight Detected");
-        } */
+        }
         else blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
         blinkin.setPattern(blinkinPattern);
 
@@ -242,6 +241,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         armDC.setTargetPosition((int) armPos);
         armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
+        mechanisms.rotateCarousel(carouselPower);
         mechanisms.maintainBalance();
         //TELEMETRY
         telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
