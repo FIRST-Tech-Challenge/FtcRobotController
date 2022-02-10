@@ -156,7 +156,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(isCarouselEngaged) {
             if(carouselTime.milliseconds() <= milliFinal) carouselPower = Utility_Constants.INIT_POWER;
             else if(carouselTime.milliseconds() >= milliAcc && carouselTime.milliseconds() <= milliFinal) {
-                carouselPower += Range.clip(carouselTime.milliseconds()/accCoefficient,initPower,finalPower);
+                carouselPower = Range.clip(carouselPower + carouselTime.milliseconds()/accCoefficient,initPower,finalPower);
             }
             else carouselPower = finalPower;
         }
