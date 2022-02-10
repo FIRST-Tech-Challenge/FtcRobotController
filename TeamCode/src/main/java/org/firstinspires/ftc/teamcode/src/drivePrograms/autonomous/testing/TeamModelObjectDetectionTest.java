@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
@@ -11,7 +12,7 @@ import java.util.Locale;
 /**
  * A Autonomous that tests our machine learning tools
  */
-//@Disabled
+@Disabled
 @Autonomous(name = "TeamModelObjectDetectionTest")
 public class TeamModelObjectDetectionTest extends AutoObjDetectionTemplate {
 

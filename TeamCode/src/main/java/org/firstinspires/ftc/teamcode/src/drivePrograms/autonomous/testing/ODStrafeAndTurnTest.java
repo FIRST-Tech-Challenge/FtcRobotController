@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
 
+@Disabled
 @TeleOp(name = "OD Strafe And Turn Test")
 public class ODStrafeAndTurnTest extends AutonomousTemplate {
 

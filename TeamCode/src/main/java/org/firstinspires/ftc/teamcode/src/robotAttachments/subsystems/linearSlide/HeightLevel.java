@@ -79,12 +79,8 @@ public enum HeightLevel {
                 return 1;
             case MiddleLevel:
                 return 2;
-            case CappingDown:
-                return 3;
-            case CappingUp:
-                return 4;
             case TopLevel:
-                return 5;
+                return 3;
         }
         return 0;
     }
@@ -98,14 +94,10 @@ public enum HeightLevel {
             case 2:
                 return MiddleLevel;
             case 3:
-                return CappingDown;
-            case 4:
-                return CappingUp;
-            case 5:
                 return TopLevel;
         }
 
-        if (value > 5) {
+        if (value > 3) {
             return TopLevel;
         }
         return Down;

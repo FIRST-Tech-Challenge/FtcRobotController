@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.state;
 
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
+import androidx.annotation.Nullable;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,7 +15,10 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 public class BlueStateDriveProgram extends TeleOpTemplate {
     final BlinkinPattern defaultColor = BlinkinPattern.BLUE;
     private final ElapsedTime yTimer = new ElapsedTime();
-    boolean x_depressed = true;
+
+    private final ElapsedTime slideResetTimer = new ElapsedTime();
+    private boolean resetSlide = false;
+
     boolean y_depressed2 = true;
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
@@ -25,6 +30,7 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
 
+    @Nullable
     private Void callBack() {
         this.leds.setPattern(BlinkinPattern.BLACK);
         try {
@@ -65,56 +71,74 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
                     driveTrain.setDrivePowerMult(0.3);
                 }
 
-                //Declan gamepad y toggle
-                if (!gamepad1.x) {
-                    x_depressed = true;
-                }
-
             }
 
             //Eli's controls
             {
                 //Handles Linear Slide Control
                 {
-                    if (Math.abs(gamepad2.left_stick_y) > 0.1) {
-                        manualSlideControl = true;
-                        int pos = (int) (Math.abs(slide.getEncoderCount()) + (100 * -gamepad2.left_stick_y));
-                        telemetry.addData("Pos", pos);
-                        telemetry.update();
-                        if (pos < 0) pos = 0;
-                        if (pos > HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel))
-                            pos = HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel);
-                        slide.setTargetPosition(pos);
-                    }
-
-                    if (gamepad2.dpad_left) {
-                        slide.setTargetLevel(HeightLevel.CappingUp);
-                    }
-
-                    if (gamepad2.dpad_right) {
-                        slide.setTargetLevel(HeightLevel.CappingDown);
-                    }
-
-                    //TODO D-pad up and down send it all the way up and down
-                    if (gamepad2.dpad_up) {
-                        if (manualSlideControl) {
-                            manualSlideControl = false;
-                            currentLevel = HeightLevel.getClosestLevel(slide.getEncoderCount());
+                    if (!resetSlide) {
+                        if (Math.abs(gamepad2.left_stick_y) > 0.1) {
+                            manualSlideControl = true;
+                            int pos = (int) (Math.abs(slide.getEncoderCount()) + (100 * -gamepad2.left_stick_y));
+                            telemetry.addData("Pos", pos);
+                            telemetry.update();
+                            if (pos < -100) pos = -100;
+                            if (pos > HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel))
+                                pos = HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel);
+                            slide.setTargetPosition(pos);
                         }
-                        currentLevel = currentLevel.add(1);
-                        slide.setTargetLevel(currentLevel);
 
-                    }
-
-                    //TODO D-pad up and down send it all the way up and down
-                    if (gamepad2.dpad_down) {
-                        if (manualSlideControl) {
-                            manualSlideControl = false;
-                            currentLevel = HeightLevel.getClosestLevel(slide.getEncoderCount());
+                        if (gamepad2.dpad_left) {
+                            slide.setTargetLevel(HeightLevel.CappingUp);
                         }
-                        currentLevel = currentLevel.subtract(1);
-                        slide.setTargetLevel(currentLevel);
+
+                        if (gamepad2.dpad_right) {
+                            slide.setTargetLevel(HeightLevel.CappingDown);
+                        }
+
+                        if (!gamepad2.dpad_up) {
+                            dPadUpDepressed = true;
+                        }
+
+                        if (gamepad2.dpad_up && dPadUpDepressed) {
+                            if (manualSlideControl) {
+                                manualSlideControl = false;
+                                currentLevel = HeightLevel.getClosestLevel(slide.getEncoderCount());
+                            }
+                            dPadUpDepressed = false;
+                            currentLevel = currentLevel.add(1);
+                            slide.setTargetLevel(currentLevel);
+
+                        }
+
+                        if (!gamepad2.dpad_down) {
+                            dPadDownDepressed = true;
+                        }
+
+                        if (gamepad2.dpad_down && dPadDownDepressed) {
+                            if (manualSlideControl) {
+                                manualSlideControl = false;
+                                currentLevel = HeightLevel.getClosestLevel(slide.getEncoderCount());
+                            }
+                            dPadDownDepressed = false;
+                            currentLevel = currentLevel.subtract(1);
+                            slide.setTargetLevel(currentLevel);
+                        }
+
+                        if (gamepad2.right_bumper && gamepad2.left_bumper) {
+                            slide.teleopMode();
+                            slideResetTimer.reset();
+                            resetSlide = true;
+                        }
+                    } else if (slideResetTimer.seconds() > 0.5 && slideResetTimer.seconds() < 0.6) {
+                        slide.setMotorPower(0.3);
+                    } else if (slideResetTimer.seconds() > 1 && resetSlide) {
+                        resetSlide = false;
+                        slide.autoMode();
+                        slide.resetEncoder();
                     }
+
                 }
 
                 //Intake Controls
@@ -185,6 +209,8 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
                 }
 
             }
+
+
         }
     }
 }

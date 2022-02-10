@@ -91,8 +91,9 @@ public class LinearSlide {
      * Changes the linear slide to work by setting power
      */
     public void teleopMode() {
-        linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlide.setPower(0);
+        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /**

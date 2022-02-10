@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
+@Disabled
 @TeleOp(name = "floorDsTest")
 public class floorDistanceSensorTest extends GenericOpModeTemplate {
     @Override
