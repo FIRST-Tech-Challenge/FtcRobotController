@@ -69,7 +69,8 @@ public class Crane implements Subsystem {
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
         MIDDLE_TIER(60,130,40,0, 1f, 150),
         HIGH_TIER(27, 130,70,0, 1f, 170),
-        TRANSFER(-45,-50,-20,0, 2f,0),
+        TRANSFER(-45,-50,-20,0, 0.75f,0),
+
         CAP(30, 140,0,0, 1, 170),
       
         //these articulations are meant to observe the motions and angles to check for belt skips

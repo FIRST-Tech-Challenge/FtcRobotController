@@ -30,7 +30,7 @@ public class Gripper implements Subsystem{
     public static int PITCH_DOWN = 800;
     public static int PITCH_INIT = 1800;
     public static int PITCH_VERTICAL = 1800;
-    public static int FREIGHT_TRIGGER = 35; //mm distance to trigger Lift articulation
+    public static int FREIGHT_TRIGGER = 50; //mm distance to trigger Lift articulation
 
     public Servo pitchServo, servo;
     public DistanceSensor freightSensor;
@@ -75,7 +75,6 @@ public class Gripper implements Subsystem{
         this.up = up;
         pitchTargetPos = up ? PITCH_TRANSFER : PITCH_DOWN;
     }
-
 
     public void togglePitch(){
         pitchGripper(!up);

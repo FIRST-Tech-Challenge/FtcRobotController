@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
@@ -81,33 +82,46 @@ public class Autonomous {
                 .build();
     }
 
+    private StateMachine trajectorySequenceToStateMachine(TrajectorySequence trajectorySequence) {
+        return Utils.getStateMachine(new Stage())
+                .addSingleState(() -> {
+                    robot.driveTrain.followTrajectorySequenceAsync(
+                            trajectorySequence
+                    );
+                })
+                .build();
+    }
+
     public void build() {
         // trajectory articulations
-        backAndForth = trajectorySequenceToStateMachine(builder ->
-                builder
-                    .forward(24)
-                    .back(24)
-        );
-        square = trajectorySequenceToStateMachine(builder ->
-                builder
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-                    .forward(24)
-                    .turn(Math.toRadians(90))
-        );
-        turn = trajectorySequenceToStateMachine(builder ->
-                builder
-                    .turn(Math.toRadians(90))
-                    .turn(Math.toRadians(90))
-                    .turn(Math.toRadians(90))
-                    .turn(Math.toRadians(90))
-        );
+        TrajectorySequence backAndForthSequence =
+                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                        .forward(24)
+                        .back(24)
+                        .build();
+        backAndForth = trajectorySequenceToStateMachine(backAndForthSequence);
 
-        // autonomous articulations
+        TrajectorySequence squareSequence =
+                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                        .forward(24)
+                        .turn(Math.toRadians(90))
+                        .forward(24)
+                        .turn(Math.toRadians(90))
+                        .forward(24)
+                        .turn(Math.toRadians(90))
+                        .forward(24)
+                        .turn(Math.toRadians(90))
+                        .build();
+        square = trajectorySequenceToStateMachine(squareSequence);
+
+        TrajectorySequence turnSequence =
+                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                        .turn(Math.toRadians(90))
+                        .turn(Math.toRadians(90))
+                        .turn(Math.toRadians(90))
+                        .turn(Math.toRadians(90))
+                        .build();
+        turn = trajectorySequenceToStateMachine(turnSequence);
 
         //----------------------------------------------------------------------------------------------
         // Spline Routines

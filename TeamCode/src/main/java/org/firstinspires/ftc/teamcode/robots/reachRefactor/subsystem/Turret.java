@@ -22,6 +22,7 @@ public class Turret implements Subsystem {
 
     private DcMotorEx motor;
 
+    private double offset;
     private double heading;
     private double targetHeading;
     private double ticksPerDegree = 160.0/90.0;
@@ -41,8 +42,9 @@ public class Turret implements Subsystem {
              targetHeading = -90;
 
         heading = motor.getCurrentPosition() / ticksPerDegree;
+        targetHeading += offset;
 
-        motor.setTargetPosition((int)(targetHeading * ticksPerDegree));
+        motor.setTargetPosition((int)((targetHeading) * ticksPerDegree));
     }
 
     public boolean setTargetAngle(double angle){
@@ -69,6 +71,7 @@ public class Turret implements Subsystem {
             telemetryMap.put("turretTargetPos", getTargetAngle());
             telemetryMap.put("turretCurrentAngle", getHeading());
             telemetryMap.put("turretCurrentTest", ticksPerDegree);
+            telemetryMap.put("turret offset", offset);
         }
 
 
@@ -78,6 +81,10 @@ public class Turret implements Subsystem {
     @Override
     public String getTelemetryName() {
         return TELEMETRY_NAME;
+    }
+
+    public void incrementOffset(double increment) {
+        offset += increment;
     }
 }
 

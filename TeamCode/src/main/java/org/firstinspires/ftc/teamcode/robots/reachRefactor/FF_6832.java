@@ -331,6 +331,10 @@ public class FF_6832 extends OpMode {
             robot.crane.dump();
         if(stickyGamepad2.a) //spin carousel
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
+        if(stickyGamepad2.right_trigger)
+            robot.turret.incrementOffset(10);
+        if(stickyGamepad2.left_trigger)
+            robot.turret.incrementOffset(-10);
 
         // joint gamepad controls
         if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)

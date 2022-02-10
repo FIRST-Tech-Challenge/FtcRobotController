@@ -495,6 +495,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public void setChassisLength(double targetChassisLength) {
         this.targetChassisLength = targetChassisLength;
+        chassisLengthPID.setSetpoint(targetChassisLength);
     }
 
     public boolean chassisLengthOnTarget() {

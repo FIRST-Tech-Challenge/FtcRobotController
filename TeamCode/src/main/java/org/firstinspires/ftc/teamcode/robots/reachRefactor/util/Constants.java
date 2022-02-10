@@ -30,17 +30,17 @@ public class Constants {
     public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
     public static double JOYSTICK_DEADZONE = 0.05;
 
-    public static double MAX_VEL = 90;
-    public static double MAX_ACCEL = 90;
+    public static double MAX_VEL = 30;
+    public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = Math.toRadians(360);
     public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
     public static final double TICKS_PER_REV = 1120;
     public static final double MAX_RPM = 150;
-    public static boolean USE_CUSTOM_VELOCITY_PID = false;
-    public static PIDFCoefficients MOTOR_VELOCITY_PID = new PIDFCoefficients(0, 0, 0,
+    public static boolean USE_CUSTOM_VELOCITY_PID = true;
+    public static PIDFCoefficients MOTOR_VELOCITY_PID = new PIDFCoefficients(10, 3, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
-    public static PIDFCoefficients SWERVE_VELOCITY_PID = new PIDFCoefficients(0, 0, 0,
+    public static PIDFCoefficients SWERVE_VELOCITY_PID = new PIDFCoefficients(10, 3, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     //----------------------------------------------------------------------------------------------

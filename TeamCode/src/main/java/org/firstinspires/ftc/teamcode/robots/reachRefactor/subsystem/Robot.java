@@ -104,7 +104,7 @@ public class Robot implements Subsystem {
         TRANSFER_AND_HIGH_TIER
     }
 
-    // Tele-Op articulations`
+    // Tele-Op articulations
     private Stage transferAndHighTierStage = new Stage();
     private StateMachine transferAndHighTier = getStateMachine(transferAndHighTierStage)
             .addState(() -> {
