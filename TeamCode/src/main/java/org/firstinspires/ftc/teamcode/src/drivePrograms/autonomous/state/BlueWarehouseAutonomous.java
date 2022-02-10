@@ -56,8 +56,8 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.moveToPosition(144 - 20, 82.5 + yOffset, 90, 1, new DistanceTimeoutWarning(100));
             driveSystem.newTurnToPrototype(90, .2, .1, false);
             {
-                double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) - 6) * Math.cos(Math.toRadians(gps.getRot() - 90));
-                gps.setPos(xDistance, gps.getY(), gps.getRot());
+                double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6) * Math.cos(Math.toRadians(gps.getRot() - 90));
+                gps.setPos(144 - xDistance, gps.getY(), gps.getRot());
             }
 
 
@@ -69,12 +69,12 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.newTurnToPrototype(180, 1, .2, false);
 
             //Move against the wall
-            driveSystem.moveToPosition(144 - 20, 70, 180, 5, new DistanceTimeoutWarning(100));
+            driveSystem.moveToPosition(144 - 0, 65, 180, 5, new DistanceTimeoutWarning(100));
 
             //driveSystem.moveTowardsPosition(144 -7, 60, 180, 1, 5, new DistanceTimeoutWarning(100));
 
             //Through Barrier
-            driveSystem.moveToPosition(144 - 8, 30, 180, 1, new DistanceTimeoutWarning(100));
+            driveSystem.moveToPosition(144 - 7, 30, 180, 1, new DistanceTimeoutWarning(100));
 
 
             //To the last place it was grabbing from
@@ -140,7 +140,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
 
             //Update position with known coordinates
-            //gps.setPos(144 - 6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
+            gps.setPos(144 - 6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
 
             intake.setIntakeOff();
 
