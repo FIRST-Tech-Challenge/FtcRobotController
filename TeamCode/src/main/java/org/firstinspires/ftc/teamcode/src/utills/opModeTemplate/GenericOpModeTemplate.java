@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CappingArm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
@@ -86,6 +87,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
 
     public static final String RightWebcamName = "Webcam_Right";
 
+    public static final String CappingArmName = "marker_arm";
+
     /**
      * Name of the IMU
      */
@@ -120,6 +123,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
 
     protected DistanceSensor frontDistanceSensor;
 
+    protected CappingArm cappingArm;
+
     /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}
      *
@@ -144,6 +149,10 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         }
     }
 
+    public void initCappingArm() {
+        cappingArm = new CappingArm(hardwareMap, CappingArmName);
+    }
+
     /**
      * Initializes all fields provided by this class
      *
@@ -158,6 +167,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initVoltageSensor();
         initSpinner();
         initDistanceSensors();
+        initCappingArm();
         if (voltageSensor.getVoltage() < 12.5) {
             RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
         }

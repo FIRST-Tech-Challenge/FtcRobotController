@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
 
 import java.util.List;
+import java.util.Locale;
 
 @Disabled
 @TeleOp(name = "HI Son of Carl")
@@ -25,7 +26,7 @@ public class CameraTest extends AutoObjDetectionTemplate {
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
-                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format(Locale.ENGLISH, "label (%d)", i), recognition.getLabel());
                         double cx = (recognition.getLeft() + recognition.getRight()) / 2.0;
                         double cy = (recognition.getTop() + recognition.getBottom()) / 2.0;
                         telemetry.addData("Cx", cx);

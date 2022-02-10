@@ -101,6 +101,7 @@ public class LinearSlide {
     public void autoMode() {
         linearSlide.setTargetPosition(linearSlide.getCurrentPosition());
         linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlide.setPower(1);
     }
 
     /**
