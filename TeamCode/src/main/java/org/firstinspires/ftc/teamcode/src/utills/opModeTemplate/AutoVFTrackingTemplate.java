@@ -208,12 +208,11 @@ public abstract class AutoVFTrackingTemplate extends AutoObjDetectionTemplate {
 
         if (lastLocation == null) return null;
         VectorF translation = lastLocation.getTranslation();
-        Double[] retn = new Double[]{
+
+
+        return new Double[]{
                 (double) (translation.get(0) / mmPerInch), (double) (translation.get(1) / mmPerInch), (double) (translation.get(2) / mmPerInch)
         };
-
-
-        return retn;
     }
 
     /**

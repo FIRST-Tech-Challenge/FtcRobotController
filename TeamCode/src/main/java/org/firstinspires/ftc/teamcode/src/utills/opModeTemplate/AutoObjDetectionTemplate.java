@@ -88,8 +88,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         parameters.cameraName = hardwareMap.get(WebcamName.class, this.CameraNameToUse);
 
         //Waits for mutex to be available
-
-        checkStop();
         VF_Lock.lockInterruptibly();
         try {
             this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
