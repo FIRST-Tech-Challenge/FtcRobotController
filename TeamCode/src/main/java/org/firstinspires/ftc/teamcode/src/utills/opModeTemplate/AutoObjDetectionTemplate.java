@@ -27,12 +27,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     /**
      * The file that is loaded to detect from
      */
-    public static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
+    public static final String TFOD_MODEL_ASSET = "State Pink Team Marker Mk3.tflite";
 
     /**
      * The labels in the file
      */
-    public static final String[] LABELS = {"Pink Team Marker"};
+    public static final String[] LABELS = {"Pink Team Marker v2"};
 
     /**
      * A object to lock on to for the thread safety, used in _initVuforia
@@ -88,8 +88,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         parameters.cameraName = hardwareMap.get(WebcamName.class, this.CameraNameToUse);
 
         //Waits for mutex to be available
-
-        checkStop();
         VF_Lock.lockInterruptibly();
         try {
             this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -222,20 +220,11 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     }
 
     public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-        if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
-            Recognition rec = updatedRecognitions.get(0);
-            double xCenterLine = ((rec.getRight() + rec.getLeft()) / 2.0);
-
-            if (xCenterLine < 450) {
-                return BarcodePositions.Left;
-            } else if (xCenterLine < 820) {
-                return BarcodePositions.Center;
-            } else {
-                return BarcodePositions.Right;
-            }
-        } else {
+        List<Recognition> recognitions = tfod.getRecognitions();
+        if (recognitions == null || (recognitions.size() == 0)) {
             return BarcodePositions.NotSeen;
+        } else {
+            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
         }
     }
 

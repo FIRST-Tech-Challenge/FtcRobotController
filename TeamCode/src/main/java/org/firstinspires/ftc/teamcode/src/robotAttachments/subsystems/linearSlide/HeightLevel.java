@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide;
 
-import java.util.HashMap;
 
 /**
  * A Enum for Height Levels
@@ -11,18 +10,25 @@ public enum HeightLevel {
     MiddleLevel,
     TopLevel,
     GetOverObstacles;
-    /**
-     * Key is the Height Level, Value is the position to go to in ticks
-     */
-    protected static final HashMap<HeightLevel, Integer> EncoderCount = new HashMap<HeightLevel, Integer>() {{
-        put(HeightLevel.BottomLevel, 0);
-        put(HeightLevel.MiddleLevel, 233);
-        put(HeightLevel.TopLevel, 584);
-        put(HeightLevel.GetOverObstacles, 0);
-        put(HeightLevel.Down, 0);
-    }};
 
-    public static Integer getEncoderCountFromEnum(HeightLevel level) {
-        return EncoderCount.get(level);
+    /**
+     * Pass in the Height Level, returns the the position to go to in ticks
+     */
+    private static int getEncoderCountFromLevel(HeightLevel level) {
+        switch (level) {
+            case TopLevel:
+                return 584;
+            case MiddleLevel:
+                return 233;
+            case BottomLevel:
+            case Down:
+            case GetOverObstacles:
+            default:
+                return 0;
+        }
+    }
+
+    public static int getEncoderCountFromEnum(HeightLevel level) {
+        return getEncoderCountFromLevel(level);
     }
 }
