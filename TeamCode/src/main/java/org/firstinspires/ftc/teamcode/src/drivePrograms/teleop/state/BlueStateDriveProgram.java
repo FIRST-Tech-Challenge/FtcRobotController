@@ -17,8 +17,11 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
     boolean y_depressed2 = true;
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
-    int posToGoTo = 0;
-    boolean posOn = false;
+
+    boolean manualSlideControl = false;
+
+    HeightLevel currentLevel = HeightLevel.Down;
+
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
 
@@ -33,38 +36,19 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
 
     }
 
-
     public void opModeMain() throws InterruptedException {
         this.initAll();
         distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, this::callBack, this::opModeIsActive, this::isStopRequested);
         distanceSensor.start();
         leds.setPattern(defaultColor);
 
-        slide.teleopMode();
+        slide.autoMode();
 
         telemetry.addData("Initialization", "finished");
         telemetry.update();
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-
-            if (posOn) {
-                switch (posToGoTo) {
-                    case 0:
-                        telemetry.addData("Pos", HeightLevel.BottomLevel);
-                        break;
-                    case 1:
-                        telemetry.addData("Pos", HeightLevel.MiddleLevel);
-                        break;
-                    case 2:
-                        telemetry.addData("Pos", HeightLevel.TopLevel);
-                        break;
-                }
-            } else {
-                telemetry.addData("Pos", "User Defined");
-            }
-            telemetry.update();
-
             //Declan's controls
             {
                 driveTrain.setPowerFromGamepad(gamepad1);
@@ -92,104 +76,113 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
             {
                 //Handles Linear Slide Control
                 {
-                    if (posOn) {
-                        switch (posToGoTo) {
-                            case 0:
-                                slide.setTargetLevel(HeightLevel.BottomLevel);
-                                break;
-                            case 1:
-                                slide.setTargetLevel(HeightLevel.MiddleLevel);
-                                break;
-                            case 2:
-                                slide.setTargetLevel(HeightLevel.TopLevel);
-                                break;
+                    if (Math.abs(gamepad2.left_stick_y) > 0.1) {
+                        manualSlideControl = true;
+                        int pos = (int) (Math.abs(slide.getEncoderCount()) + (100 * -gamepad2.left_stick_y));
+                        telemetry.addData("Pos", pos);
+                        telemetry.update();
+                        if (pos < 0) pos = 0;
+                        if (pos > HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel))
+                            pos = HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel);
+                        slide.setTargetPosition(pos);
+                    }
+
+                    if (gamepad2.dpad_left) {
+                        slide.setTargetLevel(HeightLevel.CappingUp);
+                    }
+
+                    if (gamepad2.dpad_right) {
+                        slide.setTargetLevel(HeightLevel.CappingDown);
+                    }
+
+                    //TODO D-pad up and down send it all the way up and down
+                    if (gamepad2.dpad_up) {
+                        if (manualSlideControl) {
+                            manualSlideControl = false;
+                            currentLevel = HeightLevel.getClosestLevel(slide.getEncoderCount());
                         }
+                        currentLevel = currentLevel.add(1);
+                        slide.setTargetLevel(currentLevel);
+
                     }
 
-
-                    if (!gamepad2.dpad_down) {
-                        dPadDownDepressed = true;
-                    }
-                    if (gamepad2.dpad_down && dPadDownDepressed) {
-                        dPadDownDepressed = false;
-                        posOn = true;
-                        posToGoTo--;
-                    }
-
-                    if (!gamepad2.dpad_up) {
-                        dPadUpDepressed = true;
-                    }
-                    if (gamepad2.dpad_up && dPadUpDepressed) {
-                        dPadUpDepressed = false;
-                        posOn = true;
-                        posToGoTo++;
-                    }
-
-                    if (posToGoTo > 2) {
-                        posToGoTo = 2;
-                    }
-                    if (posToGoTo < 0) {
-                        posToGoTo = 0;
-                    }
-
-
-                    if ((gamepad2.left_stick_y) != 0) {
-                        slide.setMotorPower(-gamepad2.left_stick_y);
-                        posOn = false;
-                        //slide.setTargetHeight(slide.getEncoderCount());
-                    } else {
-                        //slide.threadMain();
-                        posOn = false;
-                        slide.setMotorPower(0);
+                    //TODO D-pad up and down send it all the way up and down
+                    if (gamepad2.dpad_down) {
+                        if (manualSlideControl) {
+                            manualSlideControl = false;
+                            currentLevel = HeightLevel.getClosestLevel(slide.getEncoderCount());
+                        }
+                        currentLevel = currentLevel.subtract(1);
+                        slide.setTargetLevel(currentLevel);
                     }
                 }
-                if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
-                    intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
-                    BlinkinPattern o = intake.getLEDPatternFromFreight();
-                    if (o == null || !intake.isClosed()) {
-                        if (currentColor != defaultColor) {
-                            leds.setPattern(defaultColor);
-                            currentColor = defaultColor;
+
+                //Intake Controls
+                {
+                    if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
+                        intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
+                        BlinkinPattern o = intake.getLEDPatternFromFreight();
+                        if (o == null || !intake.isClosed()) {
+                            if (currentColor != defaultColor) {
+                                leds.setPattern(defaultColor);
+                                currentColor = defaultColor;
+                            }
+                        } else {
+                            if (currentColor != o) {
+                                leds.setPattern(o);
+                                currentColor = o;
+                            }
                         }
                     } else {
-                        if (currentColor != o) {
-                            leds.setPattern(o);
-                            currentColor = o;
+                        intake.setMotorPower(0);
+                    }
+                }
+
+                //Out take controls
+                {
+                    if (!gamepad2.y) {
+                        y_depressed2 = true;
+                    }
+                    if (gamepad2.y && y_depressed2) {
+                        y_depressed2 = false;
+                        if (intake.isClosed()) {
+                            intake.setServoOpen();
+                            yTimer.reset();
+                        } else {
+                            intake.setServoClosed();
                         }
+                        leds.setPattern(defaultColor);
+                        currentColor = defaultColor;
                     }
 
-
-                } else {
-                    intake.setMotorPower(0);
-                }
-
-                if (!gamepad2.y) {
-                    y_depressed2 = true;
-                }
-                if (gamepad2.y && y_depressed2) {
-                    y_depressed2 = false;
-                    if (intake.isClosed()) {
-                        intake.setServoOpen();
-                        yTimer.reset();
-                    } else {
+                    if (yTimer.seconds() > 1.25) {
                         intake.setServoClosed();
                     }
-                    leds.setPattern(defaultColor);
-                    currentColor = defaultColor;
                 }
 
-                if (yTimer.seconds() > 1.25) {
-                    intake.setServoClosed();
+                // Cap stick controls
+                {
+                    if (gamepad2.x) {
+                        cappingArm.setDownPosition();
+                    } else if (gamepad2.b) {
+                        cappingArm.setUpPosition();
+                    } else if (gamepad2.a) {
+                        cappingArm.setToCappingPosition();
+                    }
                 }
 
-                if (gamepad2.x) {
-                    spinner.setPowerBlueDirection();
-                } else if (gamepad2.b) {
-                    spinner.setPowerRedDirection();
-                } else {
-                    spinner.stop();
+                //Carousel Spinner
+                {
+                    if (Math.abs(gamepad2.right_stick_x) > 0.1) {
+                        if (gamepad2.right_stick_x > 0) {
+                            spinner.setPowerBlueDirection();
+                        } else {
+                            spinner.setPowerRedDirection();
+                        }
+                    } else {
+                        spinner.stop();
+                    }
                 }
-
 
             }
         }
