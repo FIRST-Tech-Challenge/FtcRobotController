@@ -21,35 +21,51 @@ public class PosTwoVAR extends LinearOpMode {
 
         //Clockwise 90 Degrees
         AutonomousDC.moveRobot(-925, -925, -925, -925, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
         //Forward Three Tiles
         AutonomousDC.moveRobot( -3000, 3000, -3000, 3000, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
         //180 Degrees Rotate
         AutonomousDC.moveRobot(-1800, -1800, -1800, -1800, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
         //Forward Three Tiles
         AutonomousDC.moveRobot( -3000, 3000, -3000, 3000, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
         //Clockwise 90 Degrees
         AutonomousDC.moveRobot(-925, -925, -925, -925, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
         //Forward One Tile
         AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
         //Counterclockwise 30 degrees
         AutonomousDC.moveRobot( 925, 925, 925, 925, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
         //Forward One Tile
         AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
+        while(AutonomousDC.isbusy()){
         sleep(3000);
+        }
 
     }
 }
