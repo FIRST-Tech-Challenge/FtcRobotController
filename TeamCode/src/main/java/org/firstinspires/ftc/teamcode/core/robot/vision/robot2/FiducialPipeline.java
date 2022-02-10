@@ -19,7 +19,7 @@ import boofcv.factory.filter.binary.ConfigThreshold;
 import boofcv.factory.filter.binary.ThresholdType;
 import boofcv.struct.image.GrayF32;
 import georegression.struct.point.Point2D_F64;
-
+import static org.firstinspires.ftc.teamcode.core.robot.vision.robot2.FiducialDetector.CAMERA_WIDTH;
 /*
 red
 bottom height = 0.2
@@ -69,7 +69,7 @@ public class FiducialPipeline extends OpenCvPipeline {
             detector.getCenter(0, locationPixel);
 
             //distance from 1st square to left side of screen, distance between spots
-            final int pos = Math.floorDiv(((int) (locationPixel.getX()) - 50), 30);
+            final int pos = (int) Math.floor((locationPixel.getX() - (0.04 * CAMERA_WIDTH)) / (0.29 * CAMERA_WIDTH));
             if (pos >= 0 && pos <= 2) {
                 location = pos;
                 pipelineRunning = false;
