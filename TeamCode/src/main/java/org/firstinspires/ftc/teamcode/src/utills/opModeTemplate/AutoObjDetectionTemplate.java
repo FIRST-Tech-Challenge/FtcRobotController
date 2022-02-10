@@ -220,20 +220,11 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     }
 
     public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
-        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-        if ((updatedRecognitions != null) && (updatedRecognitions.size() > 0)) {
-            Recognition rec = updatedRecognitions.get(0);
-            double xCenterLine = ((rec.getRight() + rec.getLeft()) / 2.0);
-
-            if (xCenterLine < 450) {
-                return BarcodePositions.Left;
-            } else if (xCenterLine < 820) {
-                return BarcodePositions.Center;
-            } else {
-                return BarcodePositions.Right;
-            }
-        } else {
+        List<Recognition> recognitions = tfod.getRecognitions();
+        if (recognitions == null || (recognitions.size() == 0)) {
             return BarcodePositions.NotSeen;
+        } else {
+            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
         }
     }
 

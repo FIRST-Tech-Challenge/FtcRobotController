@@ -11,9 +11,9 @@ public enum BarcodePositions {
     Center,
     Left;
 
-    private static final double[] RightPositionCoordinates = new double[]{0, 0}; //TODO: FIll in this value with actual values from camera
-    private static final double[] CenterPositionCoordinates = new double[]{0, 0};//TODO: FIll in this value with actual values from camera
-    private static final double[] LeftPositionCoordinates = new double[]{0, 0};//TODO: FIll in this value with actual values from camera
+    private static final double[] RightPositionCoordinates = new double[]{610, 225};
+    private static final double[] CenterPositionCoordinates = new double[]{399, 228};
+    private static final double[] LeftPositionCoordinates = new double[]{190, 240};
 
     private static final double[] NotSeenPositionCoordinate = new double[]{Double.MIN_VALUE, Double.MIN_VALUE};
     //These are at minimum values so that the distance getting algorithm will never return a position coordinate for NotSeenPositionCoordinate, yet I don't have to check to see if it is passed back
