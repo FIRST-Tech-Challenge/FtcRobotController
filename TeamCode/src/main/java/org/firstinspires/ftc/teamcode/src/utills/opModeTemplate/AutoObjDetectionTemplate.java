@@ -272,9 +272,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         }
 
         //Waits for the slide to get to it's position
-        while (!slide.isAtPosition() && opModeIsActive() && !isStopRequested()) {
-            Thread.sleep(40);
-        }
 
         double[] initialPos = {gps.getX(), gps.getY()};
 
