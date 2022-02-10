@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.core.robot.vision.robot2;
 
-import android.util.Pair;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,15 +8,15 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-public class TseDetector {
+public class FiducialDetector {
 
     private final OpenCvCamera camera;
     private final String webcamName;
     private final HardwareMap hardwareMap;
-    private final TsePipeline pipeline;
+    private final FiducialPipeline pipeline;
     public static int CAMERA_WIDTH = 320, CAMERA_HEIGHT = 240;
     public static OpenCvCameraRotation ORIENTATION = OpenCvCameraRotation.UPRIGHT;
-    public TseDetector(HardwareMap hMap, String webcamName, boolean debug, boolean isRed) {
+    public FiducialDetector(HardwareMap hMap, String webcamName, boolean debug, boolean isRed) {
         this.hardwareMap = hMap;
         this.webcamName = webcamName;
         OpenCvCameraFactory cameraFactory = OpenCvCameraFactory.getInstance();
@@ -31,7 +29,7 @@ public class TseDetector {
         } else {
             camera = cameraFactory.createWebcam(hardwareMap.get(WebcamName.class, webcamName));
         }
-        camera.setPipeline(pipeline = new TsePipeline());
+        camera.setPipeline(pipeline = new FiducialPipeline());
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -54,8 +52,14 @@ public class TseDetector {
      *
      * @return integer 1 - 3, corresponds to barcode slots left to right
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     public int run() {
+        try { Thread.sleep(100); } catch (InterruptedException ignored) {}
         pipeline.startPipeline();
-        return 0;
+        //noinspection LoopConditionNotUpdatedInsideLoop
+        while (pipeline.getLocation() == -1) {}
+        camera.stopStreaming();
+        camera.closeCameraDeviceAsync(null);
+        return pipeline.getLocation();
     }
 }
