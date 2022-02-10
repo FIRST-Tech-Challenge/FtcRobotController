@@ -4,9 +4,6 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceSensorException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceTimeoutException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
@@ -42,7 +39,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             vuforia.close();
             driveSystem.debugOn();
 
-            driveSystem.moveToPosition(26, 82.5, 272, .5, new DistanceTimeoutWarning(500));
+            driveSystem.moveToPosition(24, 82.5, 272, .5, new DistanceTimeoutWarning(500));
 
             dropOffFreight(Pos);
 
@@ -57,6 +54,10 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
             if (!overBarrier) {
                 //Through crack
+
+                driveSystem.moveTowardsPosition(0, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
+                driveSystem.moveToPosition(0, 26, 180, 1, new DistanceTimeoutWarning(100));
+                /*
                 driveSystem.moveTowardsPosition(0, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
 
                 intake.setIntakeOn();
@@ -70,6 +71,8 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 }
 
                 intake.setIntakeOff();
+
+                 */
 
 
             } else {

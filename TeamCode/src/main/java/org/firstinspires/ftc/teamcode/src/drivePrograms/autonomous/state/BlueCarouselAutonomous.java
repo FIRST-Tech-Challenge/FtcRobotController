@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
 @Autonomous(name = "Blue State Carousel Autonomous")
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
-    private final boolean overBarrier = false;
+    private final boolean overBarrier = true;
 
 
     @Override
