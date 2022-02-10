@@ -27,12 +27,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     /**
      * The file that is loaded to detect from
      */
-    public static final String TFOD_MODEL_ASSET = "Trained Pink Team Marker Finder Mk2.tflite";
+    public static final String TFOD_MODEL_ASSET = "State Pink Team Marker Mk3.tflite";
 
     /**
      * The labels in the file
      */
-    public static final String[] LABELS = {"Pink Team Marker"};
+    public static final String[] LABELS = {"Pink Team Marker v2"};
 
     /**
      * A object to lock on to for the thread safety, used in _initVuforia
