@@ -37,8 +37,7 @@ public class AutoWarehouse extends LinearOpMode {
         EventThread eventThread = new EventThread(() -> !isStopRequested());
 
         AutoIntake intake = new AutoIntake(hardwareMap, eventThread);
-        AutoGrabber grabber = new AutoGrabber(hardwareMap);
-        AutoLift lift = new AutoLift(eventThread, hardwareMap, grabber);
+        AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
@@ -54,11 +53,9 @@ public class AutoWarehouse extends LinearOpMode {
             builder.lineToLinearHeading(new Pose2d(-2, 43.5 * multiplier,
                     Math.toRadians(70 * multiplier)));
             builder.addTemporalMarker(() -> {
-                grabber.close();
                 lift.setPosition(getPosition(height[0]));
             });
             builder.waitSeconds(3.75);
-            builder.addTemporalMarker(grabber::open);
             builder.lineToLinearHeading(new Pose2d(0, (nextToWall + 1) * multiplier));
             builder.addTemporalMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)));
             builder.lineTo(new Vector2d(20, (nextToWall + 1) * multiplier));
@@ -77,12 +74,9 @@ public class AutoWarehouse extends LinearOpMode {
             builder.lineToLinearHeading(new Pose2d(-2, 43.5 * multiplier,
                     Math.toRadians(70 * multiplier)));
             builder.addTemporalMarker(() -> {
-                grabber.close();
                 lift.setPosition(AutoLift.Positions.TOP);
             });
             builder.waitSeconds(4);
-            builder.addTemporalMarker(grabber::open);
-
             builder.lineToLinearHeading(new Pose2d(0, (nextToWall + 1) * multiplier));
             builder.addTemporalMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)));
             builder.lineTo(new Vector2d(40, (nextToWall + 1) * multiplier));

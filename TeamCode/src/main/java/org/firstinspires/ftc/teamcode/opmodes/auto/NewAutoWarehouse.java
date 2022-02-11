@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
+import org.firstinspires.ftc.teamcode.opmodes.util.WallSmash;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
@@ -41,7 +43,7 @@ public class NewAutoWarehouse extends LinearOpMode {
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
         final Pose2d liftPosition = new Pose2d(-2, 43.5 * multiplier,
-                Math.toRadians(70 * multiplier));
+                Math.toRadians(85 * multiplier));
 
         ElapsedTime toolTimer = new ElapsedTime();
         ElapsedTime wallSmashTimer = new ElapsedTime();
@@ -53,12 +55,12 @@ public class NewAutoWarehouse extends LinearOpMode {
                 .build();
 
         // where the robot **should** be after you intake
-        final Pose2d intakeReturnPoint = new Pose2d(40, nextToWall * multiplier,
+        final Pose2d intakeReturnPoint = new Pose2d(40, (nextToWall) * multiplier,
                 0);
 
         // part 2: go to warehouse
         final TrajectorySequence part2 = drive.trajectorySequenceBuilder(liftPosition)
-                .lineToLinearHeading(new Pose2d(0, (nextToWall + 1) * multiplier))
+                .lineToLinearHeading(new Pose2d(0, (nextToWall) * multiplier))
                 .addDisplacementMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)))
                 .lineTo(intakeReturnPoint.vec())
                 .build();
@@ -99,29 +101,22 @@ public class NewAutoWarehouse extends LinearOpMode {
             }
             stayInPose(drive, part1.end());
         }
-        drive.setWeightedDrivePower(new Pose2d(0, multiplier, 0));
-        wallSmashTimer.reset();
-        while (wallSmashTimer.milliseconds() < 500) {
-            drive.update();
-        }
-        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 
         drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        drive.setWeightedDrivePower(new Pose2d(0, multiplier, 0));
-        wallSmashTimer.reset();
-        while (wallSmashTimer.milliseconds() < 500) {
-            drive.update();
-        }
-        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
+        WallSmash.smashIntoWall(drive, multiplier, 500);
+
+        intake(toolTimer, drive, intake);
+
+        WallSmash.smashIntoWall(drive, multiplier, 500);
 
         drive.followTrajectorySequenceAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        lift.setPosition(getPosition(height));
+        lift.setPosition(AutoLift.Positions.TOP);
         toolTimer.reset();
         while (toolTimer.seconds() < 3) {
             if (isStopRequested()) {
@@ -132,10 +127,30 @@ public class NewAutoWarehouse extends LinearOpMode {
 
         drive.followTrajectorySequenceAsync(part2);
         updateLoop(drive);
+        intake(toolTimer, drive, intake);
         while (!isStopRequested()) {
             stayInPose(drive, part2.end());
         }
-}
+    }
+
+    public void intake(ElapsedTime timer, SampleMecanumDrive drive, AutoIntake intake) {
+        // intake a block
+        intake.backward();
+        drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
+        while (intake.noObject()) {
+            if (isStopRequested()) {
+                return;
+            }
+        }
+        timer.reset();
+        while (timer.milliseconds() < 250) {}
+        intake.stop();
+        intake.forward();
+        timer.reset();
+        while (timer.milliseconds() < 100) {}
+        intake.stop();
+        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
+    }
 
     public void updateLoop(SampleMecanumDrive drive) {
         while (!isStopRequested() && drive.isBusy()) {
