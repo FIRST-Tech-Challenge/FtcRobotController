@@ -19,7 +19,7 @@ import boofcv.factory.filter.binary.ConfigThreshold;
 import boofcv.factory.filter.binary.ThresholdType;
 import boofcv.struct.image.GrayF32;
 import georegression.struct.point.Point2D_F64;
-
+import static org.firstinspires.ftc.teamcode.core.robot.vision.robot2.FiducialDetector.CAMERA_WIDTH;
 /*
 red
 bottom height = 0.2
@@ -59,20 +59,28 @@ public class FiducialPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         if (pipelineRunning) {
-            MatOfByte mob = new MatOfByte();
-            Imgcodecs.imencode(".bmp", input, mob);
-            GrayF32 original = new GrayF32();
-            ConvertBitmap.bitmapToGray(BitmapFactory.decodeStream(new ByteArrayInputStream(mob.toArray())), original, null);
-            FiducialDetector<GrayF32> detector = FactoryFiducial.squareBinary(new ConfigFiducialBinary(0.1), ConfigThreshold.local(ThresholdType.LOCAL_MEAN, 21), GrayF32.class);
-            detector.detect(original);
-            Point2D_F64 locationPixel = new Point2D_F64();
-            detector.getCenter(0, locationPixel);
-
-            //distance from 1st square to left side of screen, distance between spots
-            final int pos = Math.floorDiv(((int) (locationPixel.getX()) - 50), 30);
-            if (pos >= 0 && pos <= 2) {
-                location = pos;
-                pipelineRunning = false;
+            try {
+                final MatOfByte mob = new MatOfByte();
+                Imgcodecs.imencode(".bmp", input, mob);
+                final GrayF32 original =ConvertBitmap.bitmapToGray(
+                        BitmapFactory.decodeStream(new ByteArrayInputStream(mob.toArray())),
+                        (GrayF32) null,
+                        null);
+                final FiducialDetector<GrayF32> detector = FactoryFiducial.squareBinary(new ConfigFiducialBinary(0.1), ConfigThreshold.local(ThresholdType.LOCAL_MEAN, 21), GrayF32.class);
+                detector.detect(original);
+                final Point2D_F64 locationPixel = new Point2D_F64();
+                if (detector.totalFound() <= 1) {
+                    return input;
+                }
+                detector.getCenter(0, locationPixel);
+                //distance from 1st square to left side of screen, distance between spots
+                final int pos = (int) Math.floor((locationPixel.getX() - (0.04 * CAMERA_WIDTH)) / (0.29 * CAMERA_WIDTH));
+                if (pos >= 0 && pos <= 2) {
+                    location = pos;
+                    pipelineRunning = false;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return input;
