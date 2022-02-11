@@ -20,24 +20,32 @@ public class PosThreeSPECIAL extends LinearOpMode {
         AutonomousDC.resetTicks();
         waitForStart();
 
-        //Forward
-        AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
+        // TODO: Scan where the duck is
+
+        //Move forward 1 tile
+        AutonomousDC.moveRobot(-925, 925, -925, 925, .5, .5, -.5, -.5);
+        while (AutonomousDC.isbusy()) {
+            sleep(1000);
+        }
+
+        //TODO: Intake the duck
 
         //Clockwise 30 degrees
-        AutonomousDC.moveRobot(-300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(30.0f, telemetry);
+        AutonomousDC.resetTicks();
 
-        //Counterclockwise 30 degrees
-        AutonomousDC.moveRobot( 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
+        //TODO: Outtake the duck on the hub
 
-        //Forward
-        AutonomousDC.moveRobot(300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
-        sleep(3000);
+        //Counter clockwise 30 degrees
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(-30.0f, telemetry);
+        AutonomousDC.resetTicks();
 
+        //Move forward 1 tile (to get out of the way)
+        AutonomousDC.moveRobot(-925, 925, -925, 925, .5, .5, -.5, -.5);
 
+        //End of program
 
     }
 }
-

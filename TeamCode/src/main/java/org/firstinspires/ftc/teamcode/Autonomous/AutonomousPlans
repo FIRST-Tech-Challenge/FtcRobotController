@@ -103,3 +103,20 @@ AutonomousDC.moveRobot(telemetry, -300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25
 
 Forward
 AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
+
+
+
+// Random stuff (ignore)
+
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(-180.0f, telemetry);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(5000, -5000, 5000, -5000, .5, .5, -.5, -.5);
+        AutonomousCS.CarouselAutonomous(1000,0.3);
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(135.0f, telemetry);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(400, -400, 400, -400, .5, .5, -.5, -.5);
+        while (AutonomousDC.isbusy()) {
+            sleep(100);
+        }
