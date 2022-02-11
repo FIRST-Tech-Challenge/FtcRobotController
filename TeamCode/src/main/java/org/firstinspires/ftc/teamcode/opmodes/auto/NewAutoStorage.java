@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
@@ -33,6 +34,7 @@ public class NewAutoStorage extends LinearOpMode {
         EventThread eventThread = new EventThread(() -> !isStopRequested());
 
         AutoCarousel carousel = new AutoCarousel(hardwareMap, multiplier);
+        AutoIntake intake = new AutoIntake(hardwareMap, eventThread);
         AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true, isRed);
@@ -78,7 +80,9 @@ public class NewAutoStorage extends LinearOpMode {
         liftThread.start();
         eventThread.start();
 
+        intake.lightsOff();
         height = detector.run();
+        intake.lightsOn();
         goodTelemetry.addData("height", height);
         goodTelemetry.update();
 
