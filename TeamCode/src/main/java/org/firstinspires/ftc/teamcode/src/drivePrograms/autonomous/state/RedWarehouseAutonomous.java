@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.state;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
 @Autonomous(name = "Red State Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.RED;
+    final ElapsedTime OpModeTimer = new ElapsedTime();
 
     @Override
     public void opModeMain() throws InterruptedException {
@@ -36,7 +38,6 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
         waitForStart();
 
-        Pos = BarcodePositions.Left;
         // get rid of this once camera position working
         double yOffset = 0;
 
@@ -48,11 +49,13 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
         double distanceDriven = 0;
 
+        OpModeTimer.reset();
+
         while (opModeIsActive() && !isStopRequested()) {
 
-            driveSystem.moveTowardsPosition(18, 80.5 + yOffset, 270, 1, 5, new MovementWarning());
+            driveSystem.moveTowardsPosition(17, 80.5 + yOffset, 270, 1, 5, new MovementWarning());
 
-            driveSystem.moveToPosition(20, 82.5 + yOffset, 270, 1, new DistanceTimeoutWarning(100));
+            driveSystem.moveToPosition(19, 82.5 + yOffset, 270, 1, new DistanceTimeoutWarning(100));
             driveSystem.turnTo(270, 0.1);
             {
                 double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6) * Math.cos(Math.toRadians(gps.getRot() - 270));
@@ -65,13 +68,12 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             Pos = BarcodePositions.Right;
 
             //Move against the wall
-            driveSystem.moveTowardsPosition(12, 70, 180, 2, 5, new DistanceTimeoutWarning(100));
+            driveSystem.moveTowardsPosition(10, 65, 180, 2, 5, new DistanceTimeoutWarning(100));
 
             //Through Barrier
-            driveSystem.moveToPosition(8, 30, 180, 1, new DistanceTimeoutWarning(500));
+            driveSystem.moveTowardsPosition(4, 40, 180, 2, 5, new DistanceTimeoutWarning(100));
 
-            //To the last place it was grabbing from
-            driveSystem.moveToPosition(gps.getX(), 30 - distanceDriven, 180, 1, new DistanceTimeoutWarning(500));
+            driveSystem.moveToPosition(gps.getX(), 30, 180, 1, new DistanceTimeoutWarning(500));
 
             //Update position with known coordinates 6 in is the distance from the distance sensor to the center of the robot
             gps.setPos(gps.getX(), frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
@@ -83,7 +85,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             double startingDistanceFromWall = frontDistanceSensor.getDistance(DistanceUnit.INCH);
 
 
-            distanceDriven = pickupBlock(distanceDriven, startingDistanceFromWall);
+            distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall);
 
             driveSystem.stopAll();
 
@@ -102,12 +104,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             driveSystem.stopAll();
 
             //Move to white line and against the wall
-            driveSystem.moveToPosition(-1, 36, gps.getRot(), 1, new DistanceTimeoutWarning(500));
-            //Runtime Check
-            if (this.getRuntime() > 25) {
-                return;
-            }
-
+            driveSystem.moveToPosition(gps.getX(), 36, gps.getRot(), 1, new DistanceTimeoutWarning(500));
 
             //Update position with known coordinates
             gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
@@ -115,12 +112,15 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             intake.setIntakeOff();
 
             //Runtime Check
-
-            if (this.getRuntime() > 25) {
-                driveSystem.strafeAtAngle(0, 1);
+            /*
+            if (OpModeTimer.seconds() > 25) {
+                driveSystem.strafeAtAngle(0, 0.5);
                 Thread.sleep(500);
+                driveSystem.stopAll();
+                intake.setIntakeReverse();
+                Thread.sleep(6000);
                 return;
-            }
+            }*/
 
 
             //Move out of warehouse

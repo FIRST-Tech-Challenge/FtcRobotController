@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceSensorException;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
@@ -265,6 +267,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         //Waits for the slide to get to it's position
 
         double[] initialPos = {gps.getX(), gps.getY()};
+        slide.setMotorPower(1);
 
         //Strafes forward while the distance from the wall is less than 24 in
         driveSystem.strafeAtAngle(180, 0.5);
@@ -284,12 +287,91 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
         intake.setServoClosed();
         slide.setTargetLevel(HeightLevel.Down);
+        slide.setMotorPower(0);
+
     }
 
-    protected double pickupBlock(double distanceDriven, double startingDistanceFromWall) {
+    protected double pickUpBlock2(double distanceDriven, double startingDistanceFromWall) throws InterruptedException {
+
+        //Loops while the item is not detected
         outer:
         while (opModeIsActive() && !isStopRequested()) {
+
+            //Strafes forward in steps of four inches each time
             distanceDriven += 4;  //Four is currently the distance it steps each time
+            driveSystem.strafeAtAngle(0, 0.3);
+            double currentDistance = 0;
+            double previousDistance;
+            double tmpMeasure;
+            double positiveIfBlue = -1;
+
+
+            while (opModeIsActive() && !isStopRequested()) {
+
+                previousDistance = currentDistance;
+                currentDistance = gps.getY();
+
+                if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
+                    driveSystem.stopAll();
+                    break;
+                }
+
+                if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
+                    intake.setIntakeOff();
+                    driveSystem.strafeAtAngle(180, .5);
+                    Thread.sleep(500);
+                    break;
+                }
+                if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
+                    intake.setIntakeReverse();
+                    break outer;
+                }
+
+                final double minimumDistanceThreshold = .1;
+
+                //If it detects that it is stuck
+                if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
+                    telemetry.addData("Warning", "Stuck");
+                    telemetry.update();
+                    driveSystem.stopAll();
+                    driveSystem.strafeAtAngle(180, 0.3);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+                    gps.setPos(gps.getX(), frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
+                    tmpMeasure = frontDistanceSensor.getDistance(DistanceUnit.INCH);
+                    try {
+                        driveSystem.moveTowardsPosition(gps.getX() - (7 * positiveIfBlue), gps.getY() - tmpMeasure, gps.getRot() + (10 * positiveIfBlue), .3, 3, new MovementException[]{new DistanceTimeoutWarning(500), new DistanceSensorException(intakeDistanceSensor, 7.62)});
+                    } catch (DistanceSensorException d) {
+                        driveSystem.strafeAtAngle(180, 1);
+                        Thread.sleep(200);
+                        driveSystem.stopAll();
+                        break;
+                    } catch (MovementException ignored) {
+                    }
+                    continue;
+
+                }
+                Thread.sleep(40);
+            }
+
+
+            driveSystem.stopAll();
+            ElapsedTime time = new ElapsedTime();
+            while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
+                intake.setIntakeOn();
+                if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
+                    break outer;
+                }
+            }
+        }
+
+        return distanceDriven;
+    }
+
+    protected double pickUpBlock(double distanceDriven, double startingDistanceFromWall) {
+        outer:
+        while (opModeIsActive() && !isStopRequested()) {
+            distanceDriven += 2;  //Four is currently the distance it steps each time
             driveSystem.strafeAtAngle(0, 0.3);
             while (opModeIsActive() && !isStopRequested()) {
                 if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
