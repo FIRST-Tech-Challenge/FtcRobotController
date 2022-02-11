@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlid
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
+import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -282,6 +284,34 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
         intake.setServoClosed();
         slide.setTargetLevel(HeightLevel.Down);
+    }
+
+    protected double pickupBlock(double distanceDriven, double startingDistanceFromWall) {
+        outer:
+        while (opModeIsActive() && !isStopRequested()) {
+            distanceDriven += 4;  //Four is currently the distance it steps each time
+            driveSystem.strafeAtAngle(0, 0.3);
+            while (opModeIsActive() && !isStopRequested()) {
+                if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
+                    break;
+                }
+
+                if (intakeDistanceSensor.getDistance(DistanceUnit.CM) < 6) {
+                    break;
+                }
+                if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
+                    break outer;
+                }
+            }
+            driveSystem.stopAll();
+            ElapsedTime time = new ElapsedTime();
+            while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
+                if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
+                    break outer;
+                }
+            }
+        }
+        return distanceDriven;
     }
 
 }

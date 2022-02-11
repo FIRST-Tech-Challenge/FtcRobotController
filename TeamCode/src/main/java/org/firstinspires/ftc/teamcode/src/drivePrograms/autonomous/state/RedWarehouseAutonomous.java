@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.state;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.MovementWarning;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
 
 /**
@@ -85,30 +83,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             double startingDistanceFromWall = frontDistanceSensor.getDistance(DistanceUnit.INCH);
 
 
-            outer:
-            while (opModeIsActive() && !isStopRequested()) {
-                distanceDriven += 4;  //Four is currently the distance it steps each time
-                driveSystem.strafeAtAngle(0, 0.3);
-                while (opModeIsActive() && !isStopRequested()) {
-                    if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
-                        break;
-                    }
-
-                    if (intakeDistanceSensor.getDistance(DistanceUnit.CM) < 6) {
-                        break;
-                    }
-                    if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
-                        break outer;
-                    }
-                }
-                driveSystem.stopAll();
-                ElapsedTime time = new ElapsedTime();
-                while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
-                    if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
-                        break outer;
-                    }
-                }
-            }
+            distanceDriven = pickupBlock(distanceDriven, startingDistanceFromWall);
 
             driveSystem.stopAll();
 
