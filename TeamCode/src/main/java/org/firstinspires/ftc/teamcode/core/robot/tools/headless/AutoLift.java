@@ -26,8 +26,8 @@ public class AutoLift {
         BOTTOM(1375, 0.25D, true),
         TSE(4426, 0.716D, false),
         SAFETOP(TOP.motorPos, SAFE.armPos, false),
-        DUMPTSE(TSE.motorPos, TOP.armPos, true),
-        FUNNYDUMP(TSE.motorPos, 1, true);
+        FUNNYDUMP(TSE.motorPos, 1, true),
+        DUMPTSE(TOP.motorPos, FUNNYDUMP.armPos, true);
 
         public final double armPos;
         public final int motorPos;

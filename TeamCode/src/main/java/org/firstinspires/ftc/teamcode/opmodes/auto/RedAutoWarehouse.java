@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous
 public class RedAutoWarehouse extends AutoWarehouse {
     public RedAutoWarehouse() {
-        super();
-        this.multiplier = -1;
-        this.isRed = true;
+        isRed = true;
+        multiplier = -1;
     }
 }
