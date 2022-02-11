@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TeleOp.MainOpMode.driveAndLinslide;
 
-public class stateHigh {
+public class dump {
     static Servo servo;
     static double timePressed; //records the amount of time that has passed.
     final static double enoughTime=1;
@@ -14,37 +14,44 @@ public class stateHigh {
     public enum states{READY, DUMPING, RECOVER};
     public static states state = states.READY;
 
+    static double dumpStartTime=0;
+    static double recoverStartTime=0;
+
     final static double endPos=0;
     final static double startPos=1;
 
     public static void setServo(Servo thisServo){
         servo = thisServo;
     }
-    static void startPos(){
+    public static void startPos(){
         servo.setPosition(startPos);
     }
-    static void dump(){
+
+    static void dumpFreight(ElapsedTime runtime){
         servo.setPosition(endPos);
+        dumpStartTime = runtime.time();
     }
 
-    static void recover(){
+    static void recover(ElapsedTime runtime){
         servo.setPosition(startPos);
+        recoverStartTime=runtime.time();
     }
 
-    static void update(driveAndLinslide.states linSlideState){
-        if(servo.getPosition()==endPos){
+    static void update(ElapsedTime runtime){
+        if(runtime.time()-dumpStartTime>=1&&state.equals(states.DUMPING)){
             state=states.RECOVER;
-            recover();
+            recover(runtime);
         }
-        if(servo.getPosition()==startPos&&linSlideState==driveAndLinslide.states.HIGH){
+        if(runtime.time()-recoverStartTime>=1&&state.equals(states.RECOVER)){
             state=states.READY;
         }
     }
 
-    public static void re(Gamepad gamepad1, ElapsedTime runtime, driveAndLinslide.states linSlideState){
+    public static void re(Gamepad gamepad1, ElapsedTime runtime){
+        prevTime=runtime.time();
         if(gamepad1.y&&timePressed>=enoughTime&&state==states.READY){
             state=states.DUMPING;
-            dump();
+            dumpFreight(runtime);
         }
         if(gamepad1.y){
             timePressed+=runtime.time()-prevTime;
@@ -53,14 +60,8 @@ public class stateHigh {
             timePressed=0;
         }
 
-        if(state==states.DUMPING){
-            dump();
-        }
 
-        if(state==states.RECOVER){
-            recover();
-        }
-        update(linSlideState);
+        update(runtime);
 
     }
 

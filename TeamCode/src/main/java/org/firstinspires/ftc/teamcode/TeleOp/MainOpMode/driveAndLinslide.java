@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.TeleOp.MainOpMode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TeleOp.functions.carousel;
-import org.firstinspires.ftc.teamcode.TeleOp.functions.stateHigh;
+import org.firstinspires.ftc.teamcode.TeleOp.functions.dump;
 
 @TeleOp(name="General Code", group="Linear Opmode")
 public class driveAndLinslide extends LinearOpMode {
@@ -17,6 +18,7 @@ public class driveAndLinslide extends LinearOpMode {
     public DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
     public DcMotor carouMotor;
     public Servo dumpServo;
+    public CRServo continServo;
 
     private ElapsedTime runtime;
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH}
@@ -40,6 +42,7 @@ public class driveAndLinslide extends LinearOpMode {
         // Reverse left motors if you are using NeveRests
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        dump.startPos();
 
         runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time
         toggle=0;
@@ -195,8 +198,10 @@ public class driveAndLinslide extends LinearOpMode {
         carouMotor = hardwareMap.dcMotor.get("carouMotor");
         carousel.setCarouMotor(carouMotor);
 
+        continServo = hardwareMap.crservo.get("continServo");
+
         dumpServo= hardwareMap.servo.get("dumpServo");
-        stateHigh.setServo(dumpServo);
+        dump.setServo(dumpServo);
 
         waitForStart();
 
@@ -206,14 +211,6 @@ public class driveAndLinslide extends LinearOpMode {
         while (opModeIsActive()) {
             /*the code below does not send anything to the sensors/record movement yet. */
 
-            if (Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.left_stick_x) > 0) { //movement
-
-                move(angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x));// move method, gets angle from angleOfJoystick
-
-            } else { //turning on spot
-
-                turn();
-            }
             //idle();  this was in drive4. uncomment it if removing it causes issue
 
 //LINSLIDE CODE STARTS HERE
@@ -223,7 +220,18 @@ public class driveAndLinslide extends LinearOpMode {
 
             carousel.active(gamepad1);
 
-            stateHigh.re(gamepad1, runtime, state);
+            dump.re(gamepad1, runtime);
+
+            continServo.setPower(0.7);//set this higher if you want. i heard there might be problems if it's too high
+
+            if (Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.left_stick_x) > 0) { //movement
+
+                move(angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x));// move method, gets angle from angleOfJoystick
+
+            } else { //turning on spot
+
+                turn();
+            }
 
             //telemetry
             telemetry.addData("motorPos ", LinSlideMotor.getCurrentPosition());
