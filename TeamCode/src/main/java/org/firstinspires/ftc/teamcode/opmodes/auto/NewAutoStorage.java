@@ -78,7 +78,7 @@ public class NewAutoStorage extends LinearOpMode {
         liftThread.start();
         eventThread.start();
 
-        height = 3; // detector.run();
+        height = detector.run();
         goodTelemetry.addData("height", height);
         goodTelemetry.update();
 
