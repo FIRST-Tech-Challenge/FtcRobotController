@@ -3,18 +3,24 @@ package org.firstinspires.ftc.Team19567.opmode; //The "namespace" for the projec
 //Import necessary packages/libraries
 
 //FTC SDK packages
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 //Custom enums and classes
+import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.Team19567.util.AUTO_STATE;
 import org.firstinspires.ftc.Team19567.util.PRESET_STATE;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
@@ -30,6 +36,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private final ElapsedTime runtime = new ElapsedTime();
     private final ElapsedTime carouselTime = new ElapsedTime();
     private final ElapsedTime carouselDebounceTime = new ElapsedTime();
+    private final ElapsedTime slowModeDebounceTime = new ElapsedTime();
+    private final ElapsedTime automationTimeout = new ElapsedTime();
 
     //Hardware
     private DcMotor leftDCFront = null;
@@ -52,6 +60,17 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private final static double initPower = Utility_Constants.INIT_POWER;
     private final static double accCoefficient = Utility_Constants.ACC_COEFFICIENT;
     private final static double finalPower = Utility_Constants.FINAL_POWER;
+    private final static Gamepad.RumbleEffect endGameRumble = new Gamepad.RumbleEffect.Builder()
+            .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
+            .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
+            .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
+            .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
+            .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
+            .build();
+
+    private final static Gamepad.RumbleEffect boxSecured = new Gamepad.RumbleEffect.Builder()
+            .addStep(0.0, 1.0, 1000)  //  Rumble right motor 100% for one whole second
+            .build();
 
     //Variables
     private double armPos = 0;
@@ -59,13 +78,15 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private double releaseServoPos = 0.8;
     private double balanceServoPos = 0.0;
     private double acc = Utility_Constants.MAX_SENSITIVITY;
-    private double carouselPower = initPower;
+    private double carouselPower = 0.0;
     private boolean isSlowmode = false;
     private boolean isCarouselEngaged = false;
+    private boolean isIntaked = false;
 
     //Objects
     private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
     private Mechanisms mechanisms = null;
+    SampleMecanumDriveCancelable chassis;
 
     //Enums
     private PRESET_STATE presetState = PRESET_STATE.NO_PRESET;
@@ -86,18 +107,16 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
 
-        //Set direction to be forward in case the robot's motors are oriented otherwise; can change FORWARD to REVERSE if necessary
+        chassis = new SampleMecanumDriveCancelable(hardwareMap);
+        mechanisms = new Mechanisms(hardwareMap,telemetry);
 
         leftDCFront.setDirection(DcMotor.Direction.FORWARD);
         rightDCFront.setDirection(DcMotor.Direction.REVERSE);
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
-        armDC.setDirection(DcMotor.Direction.REVERSE);
-        balanceServo.setDirection(Servo.Direction.REVERSE);
 
-        releaseServoPos = 0.8;
-        balanceServoPos = balanceServo.MIN_POSITION;
-        mechanisms = new Mechanisms(hardwareMap,telemetry);
+        chassis.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        mechanisms.setModes();
 
         telemetry.update();
     }
@@ -110,7 +129,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
     @Override
     public void start() {
-        mechanisms.setModes();
         telemetry.addData("Status", "Started");
         telemetry.update();
         runtime.reset(); //Reset runtime
@@ -118,28 +136,71 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
     @Override
     public void loop() {
-        /* Mecanum drive applies forces at a 45 degree angle to its wheels, instead of directly (like most non-holonomic chassis);
-        this means that its axis of movement is not the tradition al x-y plane, but rather said plane rotated 45 degrees. This also means that the wheels
-        of a mecanum chassis should be as close to a square as possible. That way, the rotated plane's axes push straight through the wheels for
-        maximum efficiency. */
 
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y); //Gets the amount that we want to translate
-        double angleDC = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4; /* This gets the angle theta we desire to turn at. It is subtracted
-        by PI/4 radians, which equals 45 degrees. One can also add 45 degrees. It doesn't matter so long as the axes of the robot are rotated 45 degrees. */
+        //DRIVETRAIN
+        chassis.update();
 
-        /* The axes we want to move on are the hypotenuse of the right triangle with non-right angle angleDC. The size of this hypotenuse is determined by the
-        value of r, which we computed earlier. Thus, the amount that we want to move in the standard x-y plane are the legs of the right triangle. To determine
-        which wheels drive th x leg and which drive the y leg (base), we must take a look at the configuration of the wheels. In most robots, which have the wheels
-        pointed outwards in an X shape (maximum efficiency), we see that the front left and rear right wheels point in the y direction, while the rear left
-        and front right wheels point in the x direction. Thus, we use cosine for the first group and sine for the second group. */
-//DRIVETRAIN
-        if(gamepad1.y) isSlowmode = !isSlowmode;
-        if(isSlowmode) acc = Utility_Constants.SLOWMODE_MULT;
-        else acc = Utility_Constants.MAX_SENSITIVITY;
-        final double leftFrontSpeed = (strafeSens * r * Math.sin(angleDC) - turnSens*gamepad1.right_stick_x)*acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
-        final double rightFrontSpeed = (strafeSens * r * Math.cos(angleDC) + turnSens*gamepad1.right_stick_x)*acc;
-        final double leftBackSpeed = (strafeSens * r * Math.cos(angleDC) - turnSens*gamepad1.right_stick_x)*acc;
-        final double rightBackSpeed = (strafeSens * r * Math.sin(angleDC) + turnSens*gamepad1.right_stick_x)*acc;
+        switch(currentState) {
+            case DRIVER_CONTROL: {
+                double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y); //Gets the amount that we want to translate
+                double angleDC = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+                if (gamepad1.triangle && slowModeDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
+                    isSlowmode = !isSlowmode;
+                }
+                if (isSlowmode) acc = Utility_Constants.SLOWMODE_MULT;
+                else acc = Utility_Constants.MAX_SENSITIVITY;
+                final double leftFrontSpeed = (strafeSens * r * Math.sin(angleDC) - turnSens * gamepad1.right_stick_x) * acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
+                final double rightFrontSpeed = (strafeSens * r * Math.cos(angleDC) + turnSens * gamepad1.right_stick_x) * acc;
+                final double leftBackSpeed = (strafeSens * r * Math.cos(angleDC) - turnSens * gamepad1.right_stick_x) * acc;
+                final double rightBackSpeed = (strafeSens * r * Math.sin(angleDC) + turnSens * gamepad1.right_stick_x) * acc;
+
+                leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
+                rightDCFront.setPower(rightFrontSpeed);
+                leftDCBack.setPower(leftBackSpeed);
+                rightDCBack.setPower(rightBackSpeed);
+                if(gamepad1.options) {
+                    currentState = TELEOP_STATE.AUTOMATION_ROADRUNNER_MOVEMENT;
+                    telemetry.addData("State Machine","Moved to AUTOMATION_ROADRUNNER_MOVEMENT");
+                    telemetry.update();
+                    TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(new Pose2d(0,0,Math.toRadians(0)))
+                            .addSpatialMarker(new Vector2d(6,1), () -> {
+                                mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.7);
+                            })
+                            .lineToSplineHeading(new Pose2d(27,6, Math.toRadians(225))).build();
+                    chassis.followTrajectorySequenceAsync(warehouseSequence);
+                }
+                break;
+            }
+            case AUTOMATION_ROADRUNNER_MOVEMENT: {
+                if(!chassis.isBusy()) {
+                    automationTimeout.reset();
+                    telemetry.addData("State Machine","Moved to AUTOMATION_FLICKER");
+                    telemetry.update();
+                    currentState = TELEOP_STATE.AUTOMATION_FLICKER;
+                }
+                if(gamepad1.start) {
+                    chassis.breakFollowing();
+                    currentState = TELEOP_STATE.DRIVER_CONTROL;
+                }
+                break;
+            }
+            case AUTOMATION_FLICKER: {
+                releaseServoPos = 0.3;
+                if(automationTimeout.milliseconds() >= Utility_Constants.FLICKER_TIME) {
+                    telemetry.addData("State Machine","Moved to DRIVER_CONTROL");
+                    telemetry.update();
+                    currentState = TELEOP_STATE.DRIVER_CONTROL;
+                }
+                if(gamepad1.start) {
+                    chassis.breakFollowing();
+                    currentState = TELEOP_STATE.DRIVER_CONTROL;
+                }
+                break;
+            }
+            default: {
+                currentState = TELEOP_STATE.DRIVER_CONTROL;
+            }
+        }
 
         //INTAKE
         if(gamepad1.right_trigger > 0) mechanisms.moveIntake(intakeSpeed);
@@ -148,7 +209,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else mechanisms.moveIntake(0.1);
 
         //CAROUSEL
-        if(gamepad1.dpad_right || gamepad1.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.PRESS_THRESHOLD) {
+        if(gamepad1.dpad_right || gamepad1.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
             carouselDebounceTime.reset();
             carouselTime.reset();
             isCarouselEngaged = !isCarouselEngaged;
@@ -158,6 +219,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             else if(carouselTime.milliseconds() >= milliAcc && carouselTime.milliseconds() <= milliFinal) {
                 carouselPower = Range.clip(carouselPower + carouselTime.milliseconds()/accCoefficient,initPower,finalPower);
             }
+            else if(carouselTime.milliseconds() >= milliFinal) {
+                carouselPower = 0.0;
+            }
             else carouselPower = finalPower;
         }
         else carouselPower = 0.0;
@@ -166,16 +230,16 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,1900);
         else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*4,0,1900);
         if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,1900);
-        if(gamepad1.x || gamepad2.x) {
+        if(gamepad1.square || gamepad2.x) {
             presetState = PRESET_STATE.ALLIANCE_FIRST;
         }
         else if(gamepad2.y) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
         }
-        else if(gamepad1.a || gamepad2.a) {
+        else if(gamepad1.cross || gamepad2.a) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
         }
-        else if(gamepad1.b || gamepad2.b) {
+        else if(gamepad1.circle || gamepad2.b) {
             presetState = PRESET_STATE.GOING_DOWN;
         }
 
@@ -224,33 +288,38 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad2.right_bumper) releaseServoPos = 0.3;
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000)) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
+            gamepad1.runRumbleEffect(endGameRumble);
         }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
+        else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
+            if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
+            isIntaked = true;
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+            telemetry.addData("Distance Sensor","Freight Detected");
+        }
         else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
             telemetry.addData("Distance Sensor","Freight Detected");
         }
-        else blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+        else {
+            isIntaked = false;
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+        }
         blinkin.setPattern(blinkinPattern);
 
         //MOTOR SET POWER
-        leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
-        rightDCFront.setPower(rightFrontSpeed);
-        leftDCBack.setPower(leftBackSpeed);
-        rightDCBack.setPower(rightBackSpeed);
         armDC.setTargetPosition((int) armPos);
         armDC.setPower(armPower);
         releaseServo.setPosition(releaseServoPos);
         mechanisms.rotateCarousel(carouselPower);
         mechanisms.maintainBalance();
+
         //TELEMETRY
-        telemetry.addData("Status", "Looping"); //Add telemetry to show that the program is currently in the loop function
+        telemetry.addData("Status", "Looping");
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
-        telemetry.addData("DCMotors", "leftFront (%.2f), rightFront (%.2f), leftBack (%.2f), rightBack(%.2f), armDC(%.2f)",
-                leftFrontSpeed, rightFrontSpeed, leftBackSpeed, rightBackSpeed, armPos); //In (%.2f), the % means that special modifier is to follow, that modifier being .2f. In .2f, the .2 means to round to to digits after the decimal point, and the f means that the value to be rounded is a float.
-        //(%.2f) is used here so that the displayed motor speeds aren't excessively long and don't cldfasdfasdtter(andy's one contribution) the screen.
+        telemetry.addData("Carousel Time(%.2f)",carouselTime.toString() + "Milliseconds"); //Display the carouselTime
+        telemetry.addData("DCMotors", "armDC(%.2f)", armPos);
         telemetry.addData("Servos","releaseServoPos(%.2f), balanceServoPos(%.2f)",releaseServoPos, balanceServoPos);
-        telemetry.addData("Carousel Time(%.2f)",carouselTime.milliseconds());
         telemetry.update(); //Updates the telemetry
     }
 

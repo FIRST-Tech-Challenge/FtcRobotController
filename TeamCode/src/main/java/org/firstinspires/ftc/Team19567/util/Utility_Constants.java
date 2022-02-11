@@ -19,8 +19,9 @@ public final class Utility_Constants {
     public static final int MILLI_ACC = 1300; //Milliseconds after carousel has been engaged to begin accelerating the carousel
     public static final int MILLI_FINAL = 2000; //Milliseconds after carousel has been engaged to reach the final speed
     public static final int MILLI_END = 2500; //Milliseconds after carousel has been engaged to stop spinning the carousel
-    public static final int PRESS_THRESHOLD = 100; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
+    public static final int DEBOUNCE_TIME = 100; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
     public static final double INIT_POWER = 0.6; //Initial power for carousel
     public static final double ACC_COEFFICIENT = 50000; //Rate at which to accelerate by (reciprocal of)
     public static final double FINAL_POWER = 1.0; //Final power for carousel
+    public static final double FLICKER_TIME = 750; //Time in milliseconds for the flicker to release one freight
 }
