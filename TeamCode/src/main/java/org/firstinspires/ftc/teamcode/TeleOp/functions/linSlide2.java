@@ -18,31 +18,31 @@ public class linSlide2 {
 
     }
 
-    public void moveSlide(){
+    public static void moveSlide(){
         switch (state) {
             case LOW:
                 if (LinSlideMotor.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
-                    state = driveAndLinslide.states.toLOW;
+                    state = states.toLOW;
 
                 }
                 //code when low goes here
                 break;
             case MID:
                 if (LinSlideMotor.getCurrentPosition() != mid) {
-                    state = driveAndLinslide.states.toMID;
+                    state = states.toMID;
                 }
 
                 break;
             case HIGH:
                 if (LinSlideMotor.getCurrentPosition() != high) {
-                    state = driveAndLinslide.states.toHIGH;
+                    state = states.toHIGH;
 
                 }
                 break;
 
             case toLOW:
                 if (LinSlideMotor.getCurrentPosition() == low) {
-                    state = driveAndLinslide.states.LOW;
+                    state = states.LOW;
                 } else {
 
                     LinSlideMotor.setTargetPosition(low);
@@ -51,13 +51,13 @@ public class linSlide2 {
                 }
                 if(!(LinSlideMotor.isBusy())){
                     LinSlideMotor.setPower(0);
-                    state= driveAndLinslide.states.LOW;
+                    state= states.LOW;
 
                 }
                 break;
             case toMID:
                 if (LinSlideMotor.getCurrentPosition() == mid) {
-                    state = driveAndLinslide.states.MID;
+                    state = states.MID;
                 } else {
 
                     LinSlideMotor.setTargetPosition(mid);
@@ -66,13 +66,13 @@ public class linSlide2 {
                 }
                 if(!(LinSlideMotor.isBusy())){
                     LinSlideMotor.setPower(0);
-                    state= driveAndLinslide.states.MID;
+                    state= states.MID;
 
                 }
                 break;
             case toHIGH:
                 if (LinSlideMotor.getCurrentPosition() == high) {
-                    state = driveAndLinslide.states.HIGH;
+                    state = states.HIGH;
                 } else {
 
                     LinSlideMotor.setTargetPosition(high);
@@ -81,7 +81,7 @@ public class linSlide2 {
                 }
                 if(!(LinSlideMotor.isBusy())){
                     LinSlideMotor.setPower(0);
-                    state= driveAndLinslide.states.HIGH;
+                    state= states.HIGH;
 
                 }
 

@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.TeleOp.UntestedFunctionsNew;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TeleOp.functions.driveMethods;
+import org.firstinspires.ftc.teamcode.TeleOp.functions.dump;
 import org.firstinspires.ftc.teamcode.TeleOp.functions.linSlide2;
 
 @Disabled
@@ -16,11 +18,11 @@ public class initializer extends LinearOpMode {
     public DcMotor motorBackLeft ;
     public DcMotor motorFrontRight;
     public DcMotor motorBackRight;
-    private DcMotor LinSlideMotorR;
-    private DcMotor LinSlideMotorL;
+    private DcMotor LinSlideMotor;
     public DcMotor carousel;
-    private Servo servoL;
-    private Servo servoR;
+    public Servo dumpServo;
+    public CRServo continServo;
+
 
 
     private ElapsedTime runtime;
@@ -41,13 +43,25 @@ public class initializer extends LinearOpMode {
     }
 
     public void initializeLinSlide(){
-        LinSlideMotorL = hardwareMap.dcMotor.get("LinSlideMotor");//hardware
-        LinSlideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LinSlideMotor = hardwareMap.dcMotor.get("LinSlideMotor");//hardware
+        LinSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //linSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LinSlideMotorR.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
-        linSlide2.setMotors(LinSlideMotorR);
+        LinSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
+        linSlide2.setMotors(LinSlideMotor);
         runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time, used for PID
         toggle=0;
+    }
+
+    public void initializeDump(){
+        dumpServo = hardwareMap.servo.get("dumpServo");
+        dump.setServo(dumpServo);
+        dump.startPos();
+    }
+
+    public void initializeIntake(){
+        continServo = hardwareMap.crservo.get("continServo");
+
+
     }
 
 
