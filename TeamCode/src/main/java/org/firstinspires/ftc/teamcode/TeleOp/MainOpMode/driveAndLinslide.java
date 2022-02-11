@@ -242,8 +242,14 @@ public class driveAndLinslide extends LinearOpMode {
 
             dump.re(gamepad1, runtime);
 
-            continServo.setPower(0.7);//set this higher if you want. i heard there might be problems if it's too high
 
+
+            if(gamepad1.b) {
+                continServo.setPower(0.7);//set this higher if you want. i heard there might be problems if it's too high
+            }
+            else{
+                continServo.setPower(0);
+            }
             if (Math.abs(gamepad1.left_stick_y) > 0 || Math.abs(gamepad1.left_stick_x) > 0) { //movement
 
                 move(angleOfJoystick(-gamepad1.left_stick_y, gamepad1.left_stick_x));// move method, gets angle from angleOfJoystick
