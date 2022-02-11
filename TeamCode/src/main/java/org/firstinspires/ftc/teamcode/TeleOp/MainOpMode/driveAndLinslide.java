@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -35,6 +36,7 @@ public class driveAndLinslide extends LinearOpMode {
 
     public void initialize(){//initialize linearSlide and drive motors. it assumes the linear slide starts at the lowest state.
         LinSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LinSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LinSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
         //LinSlideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -79,8 +81,8 @@ public class driveAndLinslide extends LinearOpMode {
             case MID:
                 if (LinSlideMotor.getCurrentPosition() != mid) {
                     state = states.toMID;
-
                 }
+
                 break;
             case HIGH:
                 if (LinSlideMotor.getCurrentPosition() != high) {
@@ -96,6 +98,12 @@ public class driveAndLinslide extends LinearOpMode {
 
                     LinSlideMotor.setTargetPosition(low);
                     LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setPower(0.8);
+                }
+                if(!(LinSlideMotor.isBusy())){
+                    LinSlideMotor.setPower(0);
+                    state=states.LOW;
+
                 }
                 break;
             case toMID:
@@ -103,9 +111,14 @@ public class driveAndLinslide extends LinearOpMode {
                     state = states.MID;
                 } else {
 
-
                     LinSlideMotor.setTargetPosition(mid);
                     LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setPower(0.8);
+                }
+                if(!(LinSlideMotor.isBusy())){
+                    LinSlideMotor.setPower(0);
+                    state=states.MID;
+
                 }
                 break;
             case toHIGH:
@@ -115,7 +128,14 @@ public class driveAndLinslide extends LinearOpMode {
 
                     LinSlideMotor.setTargetPosition(high);
                     LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setPower(0.8);
                 }
+                if(!(LinSlideMotor.isBusy())){
+                    LinSlideMotor.setPower(0);
+                    state=states.HIGH;
+
+                }
+
                 break;
         }
     }
