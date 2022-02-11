@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp.UntestedFunctionsNew;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
+@Disabled
 public class contServo extends LinearOpMode {
     CRServo counterC;
     CRServo clockWise;

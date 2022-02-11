@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.TeleOp.UntestedFunctionsNew;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.firstinspires.ftc.teamcode.TeleOp.functions.driveMethods;
 import org.firstinspires.ftc.teamcode.TeleOp.functions.linSlide2;
 
+@Disabled
 public class combined extends initializer {
 
     @Override

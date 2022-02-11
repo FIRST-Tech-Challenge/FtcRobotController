@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp.UntestedFunctionsNew;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Disabled
 public class tapeMeasure extends LinearOpMode {
     private CRServo altitude = hardwareMap.crservo.get("motorFrontLeft");//changes direction up or down
     private CRServo azimuth = hardwareMap.crservo.get("motorFrontLeft");//change direction left or right
