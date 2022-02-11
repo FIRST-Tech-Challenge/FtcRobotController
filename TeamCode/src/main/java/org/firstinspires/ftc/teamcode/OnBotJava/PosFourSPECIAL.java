@@ -37,46 +37,42 @@ public class PosFourSPECIAL extends LinearOpMode {
 //        AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
 //        sleep(3000);
 
-        sleep(2500);
         AutonomousDC.moveRobot(800, -800, 800, -800, .5, .5, -.5, -.5);
-        sleep(2000);
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
+
+        //Counter clockwise
             AutonomousDC.resetTicks();
-            AutonomousDC.turnDeg(-45.0f, telemetry);
+            AutonomousDC.turnDeg(-30.0f, telemetry);
             AutonomousDC.resetTicks();
-            sleep(1000);
             AutonomousDC.moveRobot(200, -200, 200, -200, .5, .5, -.5, -.5);
-            sleep(2000);
 
             while (AutonomousDC.isbusy()) {
                 sleep(100);
             }
+
+            //Clockwise 30 degrees
         AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(135.0f, telemetry);
+        AutonomousDC.turnDeg(30.0f, telemetry);
         AutonomousDC.resetTicks();
-        sleep(1000);
         AutonomousDC.moveRobot(1000, -1000, 1000, -1000, .5, .5, -.5, -.5);
-        sleep(2000);
 
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
+
+        //Forward out of the way
+
         AutonomousDC.resetTicks();
         AutonomousDC.turnDeg(-180.0f, telemetry);
         AutonomousDC.resetTicks();
-        sleep(1000);
         AutonomousDC.moveRobot(5000, -5000, 5000, -5000, .5, .5, -.5, -.5);
-        sleep(2000);
         AutonomousCS.CarouselAutonomous(1000,0.3);
-        sleep(2000);
         AutonomousDC.resetTicks();
         AutonomousDC.turnDeg(135.0f, telemetry);
         AutonomousDC.resetTicks();
-        sleep(1000);
         AutonomousDC.moveRobot(400, -400, 400, -400, .5, .5, -.5, -.5);
-        sleep(2000);
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }

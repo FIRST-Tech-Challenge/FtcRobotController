@@ -14,10 +14,11 @@ public class PosThreeSPECIAL extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Drivechain AutonomousDC = new Drivechain(hardwareMap);
-
-        waitForStart();
-
+        Carousel AutonomousCS = new Carousel(hardwareMap);
+        AutonomousDC.calibrateGyro();
+        AutonomousDC.resetGyro();
         AutonomousDC.resetTicks();
+        waitForStart();
 
         //Forward
         AutonomousDC.moveRobot(-925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
