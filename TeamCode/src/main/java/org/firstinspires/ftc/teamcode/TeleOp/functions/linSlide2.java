@@ -3,74 +3,88 @@ package org.firstinspires.ftc.teamcode.TeleOp.functions;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.TeleOp.MainOpMode.driveAndLinslide;
+
 public class linSlide2 {
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH};
     static states state = states.LOW;
     final static int low = 0;
     final static int mid = 1200;
     final static int high = 2600;
-    static DcMotor LinSlideMotorL;
-    static DcMotor LinSlideMotorR;
+    static DcMotor LinSlideMotor;
 
-    public static void setMotors(DcMotor LSL, DcMotor LSR){
-        LinSlideMotorR= LSR;
-        LinSlideMotorL = LSL;
+    public static void setMotors(DcMotor LSR){
+        LinSlideMotor= LSR;
+
     }
 
-    public static void moveSlide(){
+    public void moveSlide(){
         switch (state) {
             case LOW:
-                if (LinSlideMotorL.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
-                    state = states.toLOW;
+                if (LinSlideMotor.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
+                    state = driveAndLinslide.states.toLOW;
+
                 }
                 //code when low goes here
                 break;
             case MID:
-                if (LinSlideMotorL.getCurrentPosition() != mid) {
-                    state = states.toMID;
+                if (LinSlideMotor.getCurrentPosition() != mid) {
+                    state = driveAndLinslide.states.toMID;
                 }
+
                 break;
             case HIGH:
-                if (LinSlideMotorL.getCurrentPosition() != high) {
-                    state = states.toHIGH;
+                if (LinSlideMotor.getCurrentPosition() != high) {
+                    state = driveAndLinslide.states.toHIGH;
+
                 }
                 break;
 
             case toLOW:
-                if (LinSlideMotorL.getCurrentPosition() == low) {
-                    state = states.LOW;
+                if (LinSlideMotor.getCurrentPosition() == low) {
+                    state = driveAndLinslide.states.LOW;
                 } else {
 
-                    LinSlideMotorR.setTargetPosition(low);
-                    LinSlideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setTargetPosition(low);
+                    LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setPower(0.8);
+                }
+                if(!(LinSlideMotor.isBusy())){
+                    LinSlideMotor.setPower(0);
+                    state= driveAndLinslide.states.LOW;
 
-                    LinSlideMotorL.setTargetPosition(low);
-                    LinSlideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 break;
             case toMID:
-                if (LinSlideMotorL.getCurrentPosition() == mid) {
-                    state = states.MID;
+                if (LinSlideMotor.getCurrentPosition() == mid) {
+                    state = driveAndLinslide.states.MID;
                 } else {
 
-                    LinSlideMotorR.setTargetPosition(mid);
-                    LinSlideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setTargetPosition(mid);
+                    LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setPower(0.8);
+                }
+                if(!(LinSlideMotor.isBusy())){
+                    LinSlideMotor.setPower(0);
+                    state= driveAndLinslide.states.MID;
 
-                    LinSlideMotorL.setTargetPosition(mid);
-                    LinSlideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 break;
             case toHIGH:
-                if (LinSlideMotorL.getCurrentPosition() == high) {
-                    state = states.HIGH;
+                if (LinSlideMotor.getCurrentPosition() == high) {
+                    state = driveAndLinslide.states.HIGH;
                 } else {
 
-                    LinSlideMotorR.setTargetPosition(high);
-                    LinSlideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    LinSlideMotorL.setTargetPosition(high);
-                    LinSlideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setTargetPosition(high);
+                    LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setPower(0.8);
                 }
+                if(!(LinSlideMotor.isBusy())){
+                    LinSlideMotor.setPower(0);
+                    state= driveAndLinslide.states.HIGH;
+
+                }
+
                 break;
         }
     }

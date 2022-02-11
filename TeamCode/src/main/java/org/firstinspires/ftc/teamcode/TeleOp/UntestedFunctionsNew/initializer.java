@@ -41,12 +41,11 @@ public class initializer extends LinearOpMode {
     }
 
     public void initializeLinSlide(){
-        LinSlideMotorL = hardwareMap.dcMotor.get("motorFrontLeft");//hardware
+        LinSlideMotorL = hardwareMap.dcMotor.get("LinSlideMotor");//hardware
         LinSlideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //linSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LinSlideMotorL.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
-        LinSlideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);//change it if needed
-        linSlide2.setMotors(LinSlideMotorL,LinSlideMotorR);
+        LinSlideMotorR.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
+        linSlide2.setMotors(LinSlideMotorR);
         runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time, used for PID
         toggle=0;
     }

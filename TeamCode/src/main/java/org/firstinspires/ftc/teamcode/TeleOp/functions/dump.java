@@ -17,7 +17,7 @@ public class dump {
     static double dumpStartTime=0;
     static double recoverStartTime=0;
 
-    final static double endPos=-1;
+    final static double endPos=0;
     final static double startPos=1;
 
     public static void setServo(Servo thisServo){
