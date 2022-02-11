@@ -122,15 +122,12 @@ public class Main {
 
         builder.lineToLinearHeading(new Pose2d(0, 50, Math.toRadians(70)));
         builder.waitSeconds(2);
-        builder.lineToLinearHeading(new Pose2d(-3, 60, Math.toRadians(0)));
-        builder.lineTo(new Vector2d(20, 64));
-        builder.lineTo(new Vector2d(40, 64));
+        builder.splineToSplineHeading(new Pose2d(35, 64,0), 0);
         for (int i = 0; i < 4; i++) {
             builder.lineTo(new Vector2d(-3,64));
             builder.lineToLinearHeading(new Pose2d(-3, 40, Math.toRadians(70)));
             builder.waitSeconds(2);
-            builder.lineToLinearHeading(new Pose2d(-3,64,0));
-            builder.lineTo(new Vector2d(40,64));
+            builder.splineToSplineHeading(new Pose2d(35, 64,0), 0);
         }
 
         bot.followTrajectorySequence(builder.build());

@@ -119,7 +119,7 @@ public class AutoWarehouse extends LinearOpMode {
                     }
                 }
                 eventThread.addEvent(new TimedEvent(intake::stop, 250));
-                drive.setMotorPowers(0, 0, 0, 0);
+                drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
                 drive.followTrajectory(
                         drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .lineToLinearHeading(new Pose2d(40, nextToWall + 2 * multiplier,
