@@ -44,7 +44,7 @@ public class Crane implements Subsystem {
     private double turretTargetPos;
 
     private Articulation articulation;
-  
+
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
         if(simulated) {
             shoulderServo = new ServoSim();
@@ -181,7 +181,7 @@ public class Crane implements Subsystem {
     }
 
     public void handleDumpUndump(){
-        if (getWristTargetPos() != getArticulation().dumpPos) {
+        if (getWristTargetPos() != wristServoValue(Articulation.HIGH_TIER.dumpPos)) {
             dump();
         } else {
             unDump();

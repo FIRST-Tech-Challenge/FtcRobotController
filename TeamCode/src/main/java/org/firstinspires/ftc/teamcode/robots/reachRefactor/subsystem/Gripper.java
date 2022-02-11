@@ -24,8 +24,8 @@ public class Gripper implements Subsystem{
     private static final String TELEMETRY_NAME = "Gripper";
 
     public static int CLOSED = 1300;
-    public static int RELEASE = 1550;
-    public static int OPEN = 1650;
+    public static int RELEASE = 1700;
+    public static int OPEN = 1630;
     public static int PITCH_TRANSFER = 2100;
     public static int PITCH_DOWN = 800;
     public static int PITCH_INIT = 1800;

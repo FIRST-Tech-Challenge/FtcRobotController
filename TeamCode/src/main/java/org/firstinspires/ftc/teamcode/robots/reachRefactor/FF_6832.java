@@ -282,7 +282,7 @@ public class FF_6832 extends OpMode {
         robot.articulate(Robot.Articulation.START);
         if(!gameState.equals(GameState.MANUAL_DIAGNOSTIC)) {
             robot.driveTrain.setMaintainChassisLengthEnabled(true);
-            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
+            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[1]);
         }
         lastLoopClockTime = System.nanoTime();
     }
@@ -295,7 +295,7 @@ public class FF_6832 extends OpMode {
 
     private void handleArcadeDriveFunkyTest(Gamepad gamepad) {
         forward = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
-        rotate = Math.pow(gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
+        rotate = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 
     private void handleTankDrive(Gamepad gamepad) {
