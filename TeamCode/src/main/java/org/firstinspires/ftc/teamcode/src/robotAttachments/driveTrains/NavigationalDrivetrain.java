@@ -557,7 +557,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param turnAngle The angle to turn to
      * @param power     The power to turn at
      */
-    private void strafeAtAngleWhileTurn(double angle, double turnAngle, double power) {
+    public void strafeAtAngleWhileTurn(double angle, double turnAngle, double power) {
 
         power = MiscUtils.boundNumber(power);
         double power1;

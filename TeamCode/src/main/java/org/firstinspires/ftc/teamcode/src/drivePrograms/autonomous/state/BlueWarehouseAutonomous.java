@@ -52,7 +52,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             driveSystem.moveTowardsPosition(144 - 16, 80.5 - 4 + yOffset, 90, 1, 5, new MovementWarning());
 
-            driveSystem.moveToPosition(144 - 20, 82.5 + yOffset, 90, 1, new DistanceTimeoutWarning(100));
+            driveSystem.moveToPosition(144 - 20, 81.5 + yOffset, 90, 1, new DistanceTimeoutWarning(100));
             driveSystem.newTurnToPrototype(90, .2, .1, false);
             {
                 double xDistance = (frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6) * Math.cos(Math.toRadians(gps.getRot() - 90));
@@ -89,11 +89,12 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             double startingDistanceFromWall = frontDistanceSensor.getDistance(DistanceUnit.INCH); //first time 22
 
 
-            distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall);
+            distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall, true);
 
             driveSystem.stopAll();
 
             intake.setIntakeReverse();
+            Thread.sleep(500);
 
             //Strafes away from pile
             {

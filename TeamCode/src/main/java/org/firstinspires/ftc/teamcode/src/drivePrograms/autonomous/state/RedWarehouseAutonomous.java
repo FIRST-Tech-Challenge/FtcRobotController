@@ -63,7 +63,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             }
 
 
-            dropOffFreight(Pos);
+            dropOffFreight(Pos, -2);
 
             Pos = BarcodePositions.Right;
 
@@ -85,7 +85,8 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             double startingDistanceFromWall = frontDistanceSensor.getDistance(DistanceUnit.INCH);
 
 
-            distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall);
+            // distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall);
+            distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall, false);
 
             driveSystem.stopAll();
 
@@ -112,7 +113,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             intake.setIntakeOff();
 
             //Runtime Check
-            /*
+
             if (OpModeTimer.seconds() > 25) {
                 driveSystem.strafeAtAngle(0, 0.5);
                 Thread.sleep(500);
@@ -120,7 +121,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                 intake.setIntakeReverse();
                 Thread.sleep(6000);
                 return;
-            }*/
+            }
 
 
             //Move out of warehouse

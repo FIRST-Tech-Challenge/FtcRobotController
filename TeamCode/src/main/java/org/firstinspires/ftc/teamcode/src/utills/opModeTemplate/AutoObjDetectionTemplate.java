@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -9,8 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.DistanceSensorException;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
@@ -245,7 +244,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         dropOffFreight(BarcodePositions.Right);
     }
 
-    public void dropOffFreight(BarcodePositions Pos) throws InterruptedException {
+    public void dropOffFreight(BarcodePositions Pos, double tuningFactor) throws InterruptedException {
         switch (Pos) {
             case NotSeen:
             case Right:
@@ -269,6 +268,16 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         double[] initialPos = {gps.getX(), gps.getY()};
         slide.setMotorPower(1);
 
+        ElapsedTime slideStuckTimer = new ElapsedTime();
+        while (!slide.isAtPosition()) {
+            if (slideStuckTimer.seconds() > 8) {
+                RobotLog.addGlobalWarningMessage("Slide Was Stuck. Dropping on lowest level");
+                slide.setTargetLevel(HeightLevel.BottomLevel);
+                break;
+            }
+            Thread.sleep(40);
+        }
+
         //Strafes forward while the distance from the wall is less than 24 in
         driveSystem.strafeAtAngle(180, 0.5);
 
@@ -278,7 +287,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 break;
             }
             currentWallDistance = Math.abs((frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 270)));
-        } while (currentWallDistance < 23 && opModeIsActive() && !isStopRequested());
+        } while (currentWallDistance < (23 + tuningFactor) && opModeIsActive() && !isStopRequested());
 
 
         driveSystem.stopAll();
@@ -291,7 +300,11 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     }
 
-    protected double pickUpBlock2(double distanceDriven, double startingDistanceFromWall) throws InterruptedException {
+    public void dropOffFreight(BarcodePositions pos) throws InterruptedException {
+        dropOffFreight(pos, 0);
+    }
+
+    protected double pickUpBlock2(double distanceDriven, double startingDistanceFromWall, boolean isBlue) throws InterruptedException {
 
         //Loops while the item is not detected
         outer:
@@ -302,26 +315,34 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             driveSystem.strafeAtAngle(0, 0.3);
             double currentDistance = 0;
             double previousDistance;
-            double tmpMeasure;
-            double positiveIfBlue = -1;
+            double turnIncrement = 0; //this is the additional amount the robot should turn to pick up each time
+            double positiveIfBlue = 1;
+            if (!isBlue) {
+                positiveIfBlue = -1;
+            }
 
 
             while (opModeIsActive() && !isStopRequested()) {
 
+                driveSystem.strafeAtAngleWhileTurn(0, gps.getRot() + turnIncrement, .3);
                 previousDistance = currentDistance;
                 currentDistance = gps.getY();
 
-                if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
+                //checks if increment of 4 inches is fulfilled for this loop
+                if (gps.getY() < (startingDistanceFromWall - distanceDriven)) {
                     driveSystem.stopAll();
                     break;
                 }
 
+                // checks if intake sensor is triggered
                 if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
                     intake.setIntakeOff();
                     driveSystem.strafeAtAngle(180, .5);
                     Thread.sleep(500);
                     break;
                 }
+
+                //checks if bucket is filled
                 if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
                     intake.setIntakeReverse();
                     break outer;
@@ -331,23 +352,23 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
                 //If it detects that it is stuck
                 if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
+
+                    // output to telemetry
                     telemetry.addData("Warning", "Stuck");
                     telemetry.update();
                     driveSystem.stopAll();
-                    driveSystem.strafeAtAngle(180, 0.3);
+
+                    // back away from block
+                    driveSystem.strafeAtAngle(180, .5);
                     Thread.sleep(500);
                     driveSystem.stopAll();
-                    gps.setPos(gps.getX(), frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
-                    tmpMeasure = frontDistanceSensor.getDistance(DistanceUnit.INCH);
-                    try {
-                        driveSystem.moveTowardsPosition(gps.getX() - (7 * positiveIfBlue), gps.getY() - tmpMeasure, gps.getRot() + (10 * positiveIfBlue), .3, 3, new MovementException[]{new DistanceTimeoutWarning(500), new DistanceSensorException(intakeDistanceSensor, 7.62)});
-                    } catch (DistanceSensorException d) {
-                        driveSystem.strafeAtAngle(180, 1);
-                        Thread.sleep(200);
-                        driveSystem.stopAll();
-                        break;
-                    } catch (MovementException ignored) {
-                    }
+
+
+                    // turn 20 degrees away from wall
+                    //sets the strafeAtAngle of this movement to these variable changes
+                    turnIncrement += (10 * positiveIfBlue);
+
+
                     continue;
 
                 }
@@ -368,21 +389,70 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         return distanceDriven;
     }
 
-    protected double pickUpBlock(double distanceDriven, double startingDistanceFromWall) {
+    protected double pickUpBlock(double distanceDriven, double startingDistanceFromWall, boolean isBlue) throws InterruptedException {
+        boolean strafeIntoWall = false;
+        double positiveIfBlue = 1;
+        if (!isBlue) {
+            positiveIfBlue = -1;
+        }
+
         outer:
         while (opModeIsActive() && !isStopRequested()) {
-            distanceDriven += 2;  //Four is currently the distance it steps each time
+            //Strafes forward in steps of four inches each time
+            distanceDriven += 4;  //Four is currently the distance it steps each time
             driveSystem.strafeAtAngle(0, 0.3);
+
+            double currentDistance = 0;
+            double previousDistance;
+            double turnIncrement = 0; //this is the additional amount the robot should turn to pick up each time
+
+            final double minimumDistanceThreshold = .05;
+
+
             while (opModeIsActive() && !isStopRequested()) {
+
+                if (turnIncrement > 21) {
+                    turnIncrement = 0;
+                }
+                driveSystem.strafeAtAngleWhileTurn(0, gps.getRot() + turnIncrement, .3);
+                previousDistance = currentDistance;
+                currentDistance = gps.getY();
+
                 if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
                     break;
                 }
 
-                if (intakeDistanceSensor.getDistance(DistanceUnit.CM) < 6) {
+                if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
                     break;
                 }
                 if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
                     break outer;
+                }
+
+                //If it detects that it is stuck
+                if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
+
+                    // output to telemetry
+                    telemetry.addData("Warning", "Stuck");
+                    telemetry.update();
+                    driveSystem.stopAll();
+
+                    // back away from block
+                    driveSystem.strafeAtAngle(180, .35);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+                    Thread.sleep(50);
+
+                    // turn 20 degrees away from wall
+                    //sets the strafeAtAngle of this movement to these variable changes
+                    turnIncrement += (7 * positiveIfBlue);
+                    strafeIntoWall = true;
+
+                }
+
+                if (Math.abs(180 - gps.getRot()) > 45) {
+                    driveSystem.turnTo(180, 0.3);
+                    turnIncrement = 0;
                 }
             }
             driveSystem.stopAll();
@@ -392,6 +462,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                     break outer;
                 }
             }
+
+
+        }
+        if (strafeIntoWall) {
+
+            driveSystem.moveToPosition(gps.getX() - (10 * (-positiveIfBlue)), 30, 180, 2, new DistanceTimeoutWarning(100));
         }
         return distanceDriven;
     }
