@@ -61,10 +61,10 @@ public class WarehouseSplinetest extends LinearOpMode {
         mechanisms.setModes();
 
         TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(0,0,Math.toRadians(0)))
-                .addSpatialMarker(new Vector2d(6,1), () -> {
+                .addSpatialMarker(new Vector2d(10,-63), () -> {
                     mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.7);
                 })
-                .lineToSplineHeading(new Pose2d(27,6, Math.toRadians(225)))
+                .lineToSplineHeading(new Pose2d(37,-57, Math.toRadians(225)))
                 //.lineToSplineHeading(new Pose2d(0,0,0))
                 /* .setReversed(true).splineTo(new Vector2d(10, -60),Math.toRadians(-20))
                 .splineTo(new Vector2d(50,-64),Math.toRadians(0))
