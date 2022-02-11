@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.TeleOp.UntestedFunctionsNew;
 
-public class combined extends initializer{
+import org.firstinspires.ftc.teamcode.TeleOp.functions.driveMethods;
+import org.firstinspires.ftc.teamcode.TeleOp.functions.linSlide2;
+
+public class combined extends initializer {
 
     @Override
     public void runOpMode() throws InterruptedException {

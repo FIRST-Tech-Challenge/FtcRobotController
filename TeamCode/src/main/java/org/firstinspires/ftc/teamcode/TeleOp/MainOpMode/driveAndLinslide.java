@@ -1,16 +1,22 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.TeleOp.MainOpMode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.TeleOp.functions.carousel;
+import org.firstinspires.ftc.teamcode.TeleOp.functions.stateHigh;
 
 @TeleOp(name="General Code", group="Linear Opmode")
 public class driveAndLinslide extends LinearOpMode {
 
-    public DcMotor LinSlideMotorL, LinSlideMotorR; //motors declared
+    public DcMotor LinSlideMotor; //motors declared
     public DcMotor motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
+    public DcMotor carouMotor;
+    public Servo dumpServo;
 
     private ElapsedTime runtime;
     public enum states{LOW,MID,HIGH,toLOW,toMID,toHIGH}
@@ -26,13 +32,9 @@ public class driveAndLinslide extends LinearOpMode {
     final int high = 2600;
 
     public void initialize(){//initialize linearSlide and drive motors. it assumes the linear slide starts at the lowest state.
-        LinSlideMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LinSlideMotorL.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
+        LinSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LinSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
         //LinSlideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        LinSlideMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LinSlideMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
-        //LinSlideMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -41,6 +43,8 @@ public class driveAndLinslide extends LinearOpMode {
 
         runtime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);//gets time
         toggle=0;
+
+
     }
 
     public void desiredSlideHeight(){  //trigger inputs to move slide all the way up or down
@@ -63,59 +67,51 @@ public class driveAndLinslide extends LinearOpMode {
     public void moveSlide(){
         switch (state) {
             case LOW:
-                if (LinSlideMotorL.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
+                if (LinSlideMotor.getCurrentPosition() != low) {//checks position again to see if overshoot when toLOW ended. state MID and HIGH do the same.
                     state = states.toLOW;
 
                 }
                 //code when low goes here
                 break;
             case MID:
-                if (LinSlideMotorL.getCurrentPosition() != mid) {
+                if (LinSlideMotor.getCurrentPosition() != mid) {
                     state = states.toMID;
 
                 }
                 break;
             case HIGH:
-                if (LinSlideMotorL.getCurrentPosition() != high) {
+                if (LinSlideMotor.getCurrentPosition() != high) {
                     state = states.toHIGH;
 
                 }
                 break;
 
             case toLOW:
-                if (LinSlideMotorL.getCurrentPosition() == low) {
+                if (LinSlideMotor.getCurrentPosition() == low) {
                     state = states.LOW;
                 } else {
 
-                    LinSlideMotorR.setTargetPosition(low);
-                    LinSlideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    LinSlideMotorL.setTargetPosition(low);
-                    LinSlideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setTargetPosition(low);
+                    LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 break;
             case toMID:
-                if (LinSlideMotorL.getCurrentPosition() == mid) {
+                if (LinSlideMotor.getCurrentPosition() == mid) {
                     state = states.MID;
                 } else {
 
-                    LinSlideMotorR.setTargetPosition(mid);
-                    LinSlideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    LinSlideMotorL.setTargetPosition(mid);
-                    LinSlideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setTargetPosition(mid);
+                    LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 break;
             case toHIGH:
-                if (LinSlideMotorL.getCurrentPosition() == high) {
+                if (LinSlideMotor.getCurrentPosition() == high) {
                     state = states.HIGH;
                 } else {
 
-                    LinSlideMotorR.setTargetPosition(high);
-                    LinSlideMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    LinSlideMotorL.setTargetPosition(high);
-                    LinSlideMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    LinSlideMotor.setTargetPosition(high);
+                    LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
                 break;
         }
@@ -133,8 +129,8 @@ public class driveAndLinslide extends LinearOpMode {
         double turnMoveMagnitude = 1; // larger values means less turning while moving, can be adjusted
         double speedFactor = 1; //max speed, between 0 and 1
 
-        double hypotenuseLeft = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x ) + (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of left motion
-        double hypotenuseRight = (Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x) - (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.ceil(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude)); //magnitude of right motion
+        double hypotenuseLeft = Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x ); //+ (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude); //magnitude of left motion
+        double hypotenuseRight = Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x); //- (gamepad1.right_stick_x/turnMoveMagnitude)) / (1+(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude); //magnitude of right motion
 
         if (hypotenuseRight > 1) { //keeps magnitude in bounds just in case
             hypotenuseRight = 1;
@@ -144,15 +140,17 @@ public class driveAndLinslide extends LinearOpMode {
             hypotenuseLeft = 1;
         }
 
-        // motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * Math.pow(hypotenuseLeft, 2) * speedFactor)); //motor code
-        // motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * Math.pow(hypotenuseLeft, 2) * speedFactor));
-        // motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * Math.pow(hypotenuseRight, 2) * speedFactor));
-        // motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * Math.pow(hypotenuseRight, 2) * speedFactor));
+        double denominator = 1+(Math.abs(gamepad1.right_stick_x))/turnMoveMagnitude;
 
-        motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * (amps * Math.sin(hypotenuseLeft * 2 * Math.PI) + hypotenuseLeft * speedFactor))); //put the b value as 2 pi and add a linear realtionship to the sin function in order to make it work
-        motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * (amps * Math.sin(hypotenuseLeft * 2 * Math.PI) + hypotenuseLeft * speedFactor)));
-        motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * (amps * Math.sin(hypotenuseRight * 2 * Math.PI) + hypotenuseRight * speedFactor)));
-        motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * (amps * Math.sin(hypotenuseRight * 2 * Math.PI) + hypotenuseRight * speedFactor)));
+         motorFrontLeft.setPower((((Math.sin(direction + (3.14159265 / 4)) + (gamepad1.right_stick_x/turnMoveMagnitude))/denominator) * Math.pow(hypotenuseLeft, 2) * speedFactor)); //motor code
+         motorBackLeft.setPower((((Math.sin(direction - (3.14159265 / 4)) + (gamepad1.right_stick_x/turnMoveMagnitude))/denominator) * Math.pow(hypotenuseLeft, 2) * speedFactor));
+         motorFrontRight.setPower((((Math.sin(direction - (3.14159265 / 4)) - (gamepad1.right_stick_x/turnMoveMagnitude))/denominator) * Math.pow(hypotenuseRight, 2) * speedFactor));
+         motorBackRight.setPower((((Math.sin(direction + (3.14159265 / 4)) - (gamepad1.right_stick_x/turnMoveMagnitude))/denominator) * Math.pow(hypotenuseRight, 2) * speedFactor));
+
+        //motorFrontLeft.setPower((Math.sin(direction + (3.14159265 / 4)) * (amps * Math.sin(hypotenuseLeft * 2 * Math.PI) + hypotenuseLeft * speedFactor))); //put the b value as 2 pi and add a linear realtionship to the sin function in order to make it work
+        //motorBackLeft.setPower((Math.sin(direction - (3.14159265 / 4)) * (amps * Math.sin(hypotenuseLeft * 2 * Math.PI) + hypotenuseLeft * speedFactor)));
+        //motorFrontRight.setPower((Math.sin(direction - (3.14159265 / 4)) * (amps * Math.sin(hypotenuseRight * 2 * Math.PI) + hypotenuseRight * speedFactor)));
+        //motorBackRight.setPower((Math.sin(direction + (3.14159265 / 4)) * (amps * Math.sin(hypotenuseRight * 2 * Math.PI) + hypotenuseRight * speedFactor)));
 
         //AN IDEA:
         //I'm thinking that we set some max velocity such as: float MAXvsfrontleft = (Math.sin(direction + (3.14159265 / 4)) * (amps * Math.sin(hypotenuseLeft * 2 * Math.PI) + hypotenuseLeft * speedFactor))
@@ -187,13 +185,18 @@ public class driveAndLinslide extends LinearOpMode {
 
         // Declare our motors
         // Make sure your ID's match your configuration
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
-        LinSlideMotorL = hardwareMap.dcMotor.get("LinSlideMotorL");
-        LinSlideMotorR = hardwareMap.dcMotor.get("LinSlideMotorR");
+        LinSlideMotor = hardwareMap.dcMotor.get("LinSlideMotor");
+
+        carouMotor = hardwareMap.dcMotor.get("carouMotor");
+        carousel.setCarouMotor(carouMotor);
+
+        dumpServo= hardwareMap.servo.get("dumpServo");
+        stateHigh.setServo(dumpServo);
 
         waitForStart();
 
@@ -216,12 +219,15 @@ public class driveAndLinslide extends LinearOpMode {
 //LINSLIDE CODE STARTS HERE
 
             desiredSlideHeight();
-
             moveSlide();
 
+            carousel.active(gamepad1);
+
+            stateHigh.re(gamepad1, runtime, state);
+
             //telemetry
-            telemetry.addData("motorPos ", LinSlideMotorL.getCurrentPosition());
-            telemetry.addData("motorPos ", LinSlideMotorR.getCurrentPosition());
+            telemetry.addData("motorPos ", LinSlideMotor.getCurrentPosition());
+
         }
 
     }

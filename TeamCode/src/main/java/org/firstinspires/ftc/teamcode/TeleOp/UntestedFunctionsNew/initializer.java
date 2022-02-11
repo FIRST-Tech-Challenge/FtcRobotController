@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.TeleOp.UntestedFunctionsNew;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.TeleOp.functions.driveMethods;
+import org.firstinspires.ftc.teamcode.TeleOp.functions.linSlide2;
 
 @Disabled
 public class initializer extends LinearOpMode {
@@ -15,6 +18,7 @@ public class initializer extends LinearOpMode {
     public DcMotor motorBackRight;
     private DcMotor LinSlideMotorR;
     private DcMotor LinSlideMotorL;
+    public DcMotor carousel;
     private Servo servoL;
     private Servo servoR;
 
@@ -30,6 +34,7 @@ public class initializer extends LinearOpMode {
         motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        carousel = hardwareMap.dcMotor.get("carousel");
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         driveMethods.setMotors(motorFrontLeft,motorBackLeft,motorFrontRight,motorBackRight);
