@@ -40,7 +40,7 @@ public class AutoLift {
         }
     }
 
-    protected enum MovementStates { // switch this to a bool if you have time
+    public enum MovementStates { // switch this to a bool if you have time
         NONE,
         START,
         LIFT_MOVEMENT,
@@ -82,7 +82,6 @@ public class AutoLift {
         thread.setPriority(7);
         thread.start();
     }
-
     /**
      * @param eventThread local eventThread instance
      * @param map         local hardwareMap instance
@@ -105,6 +104,7 @@ public class AutoLift {
     }
 
     private boolean liftWaiting = true;
+
     public void update() {
         if (Objects.requireNonNull(position) != lastPosition) state = MovementStates.START;
         switch (state) {
@@ -154,5 +154,9 @@ public class AutoLift {
                 break;
         }
         lastPosition = position;
+    }
+
+    public MovementStates getState() {
+        return state;
     }
 }

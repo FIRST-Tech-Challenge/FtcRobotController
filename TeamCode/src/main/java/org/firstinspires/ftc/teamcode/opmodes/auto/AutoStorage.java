@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight.getPosition;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -43,7 +44,6 @@ public class AutoStorage extends LinearOpMode {
         drive.setPoseEstimate(initial);
         TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(initial);
 
-        builder.waitSeconds(0.1);
         // 9.35 seconds long
         builder.lineTo(new Vector2d(-40, multiplier == 1 ? 55 : -53));
         builder.splineToLinearHeading(new Pose2d(multiplier == 1 ? -21 : -20, multiplier == 1 ? 42 : -38, Math.toRadians(multiplier == 1 ? 100 : -95)),
@@ -86,8 +86,5 @@ public class AutoStorage extends LinearOpMode {
         drive.followTrajectorySequenceAsync(null);
     }
 
-    public AutoLift.Positions getPosition(int input) {
-        return input == 1 ? AutoLift.Positions.BOTTOM :
-                input == 2 ? AutoLift.Positions.MIDDLE : AutoLift.Positions.TOP;
-    }
+
 }
