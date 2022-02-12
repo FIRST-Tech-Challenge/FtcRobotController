@@ -85,11 +85,13 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             A
             B
             X
+            Y
             Dpad up
             Dpad down
             Dpad Left
             Dpad Right
             Left Trigger
+            Right Trigger
         */
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -216,6 +218,14 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             } else if (gamepad2.x){
                 intakeOn = false;
                 intakeMotor.setPower(0);
+            }
+
+            if (gamepad2.right_trigger >= .35) {
+                dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+                linearSlideTarget = linearSlideTargets.BASE;
+                linearSlideMotor.setTargetPosition(20);
+                linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlideMotor.setPower(-.4);
             }
 
             if (gamepad2.dpad_up) {
