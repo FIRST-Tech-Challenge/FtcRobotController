@@ -66,6 +66,17 @@ public class StateMachine {
             return this;
         }
 
+        public Builder addConditionalState(final boolean doIt, State trueCondition, State falseCondition) {
+            states.add(() -> {
+                    if(doIt){
+                        return trueCondition.runState();
+                    }
+                    else
+                        return falseCondition.runState();
+            });
+            return this;
+        }
+
         public Builder addTimedState(final float seconds, final SingleState start, final SingleState stop) {
             states.add(new State() {
                 private float seconds;

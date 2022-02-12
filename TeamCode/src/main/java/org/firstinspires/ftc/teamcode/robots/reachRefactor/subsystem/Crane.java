@@ -34,8 +34,6 @@ public class Crane implements Subsystem {
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
 
-    public static double DUMP_TIME = 2;
-
     public Turret turret;
 
     public Servo shoulderServo, elbowServo, wristServo;
@@ -44,6 +42,8 @@ public class Crane implements Subsystem {
     private double turretTargetAngle;
 
     private Articulation articulation;
+
+    public boolean isInTransferPos = false;
 
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
         if(simulated) {
@@ -108,7 +108,7 @@ public class Crane implements Subsystem {
             .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
-                        if(articulation.dumpPos!=0) currentDumpPos= articulation.dumpPos;
+                        if(articulation.dumpPos!=0) currentDumpPos = articulation.dumpPos;
                     }
             )
 
@@ -132,6 +132,7 @@ public class Crane implements Subsystem {
         else {
             this.articulation = articulation;
             if(main.execute()) {
+                isInTransferPos = (articulation == Articulation.TRANSFER);
                 this.articulation = Articulation.MANUAL;
                 return true;
             }
@@ -165,6 +166,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Shoulder Target Position", shoulderTargetPos);
             telemetryMap.put("Elbow Target Position", elbowTargetPos);
             telemetryMap.put("Wrist Target Position", wristTargetPos);
+            telemetryMap.put("isInTransferPos", isInTransferPos);
         }
 
         telemetryMap.put("Turret:", "");
@@ -178,20 +180,6 @@ public class Crane implements Subsystem {
     public void dump() {
         setWristTargetPos(currentDumpPos);
     }
-
-    public void unDump(){
-        setWristTargetPos(articulation.wristPos);
-    }
-
-    public void handleDumpUndump(){
-        if (getWristTargetPos() != wristServoValue(Articulation.HIGH_TIER.dumpPos)) {
-            dump();
-        } else {
-            unDump();
-        }
-    }
-
-
 
     private void setTargetPositions(Articulation articulation) {
         setShoulderTargetPos(articulation.shoulderPos);

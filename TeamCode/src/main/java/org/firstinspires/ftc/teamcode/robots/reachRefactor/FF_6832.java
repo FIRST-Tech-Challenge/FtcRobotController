@@ -327,7 +327,7 @@ public class FF_6832 extends OpMode {
             robot.gripper.set();
         if(stickyGamepad1.b)
             //robot.gripper.lift();
-            robot.crane.handleDumpUndump();
+            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad1.a)
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
@@ -335,7 +335,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
-            robot.crane.handleDumpUndump();
+            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad2.a) //spin carousel
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
         if(stickyGamepad2.right_trigger)

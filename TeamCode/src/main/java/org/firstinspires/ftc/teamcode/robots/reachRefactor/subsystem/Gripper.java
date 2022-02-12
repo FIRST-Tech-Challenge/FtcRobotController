@@ -44,7 +44,7 @@ public class Gripper implements Subsystem{
 
     private double freightDistance;
 
-    private Articulation articulation;
+    public Articulation articulation;
     private Map<Gripper.Articulation, StateMachine> articulationMap;
 
     public Gripper(HardwareMap hardwareMap, boolean simulated){
@@ -88,8 +88,6 @@ public class Gripper implements Subsystem{
     public void update(Canvas fieldOverlay) {
         freightDistance = freightSensor.getDistance(DistanceUnit.MM);
 
-        if (pitchServo.getPosition() < 0.5 && freightDistance < FREIGHT_TRIGGER && articulation == Articulation.MANUAL)
-            articulation=Articulation.LIFT;
         articulate(articulation);
         servo.setPosition(servoNormalize(targetPos));
         pitchServo.setPosition(servoNormalize(pitchTargetPos));
@@ -194,6 +192,8 @@ public class Gripper implements Subsystem{
     public int getPitchTargetPos() {
         return pitchTargetPos;
     }
+
+    public double getFreightDistance(){return freightDistance;}
 
     private void setPitchTargetPos(int pitchTargetPos) {
         this.pitchTargetPos = pitchTargetPos;

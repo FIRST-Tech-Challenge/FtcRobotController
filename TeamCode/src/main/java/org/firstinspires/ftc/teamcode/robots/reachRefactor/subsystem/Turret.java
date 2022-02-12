@@ -42,7 +42,6 @@ public class Turret implements Subsystem {
              targetHeading = -90;
 
         heading = motor.getCurrentPosition() / ticksPerDegree;
-        //wtf targetHeading += offset;
 
         motor.setTargetPosition((int)((targetHeading+offset) * ticksPerDegree));
     }

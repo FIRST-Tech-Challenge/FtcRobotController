@@ -59,12 +59,15 @@ public class Robot implements Subsystem {
         articulationMap.put(Articulation.START_END_GAME, startEnd);
         articulationMap.put(Articulation.TRANSFER, transfer);
         articulationMap.put(Articulation.TRANSFER_AND_HIGH_TIER, transferAndHighTier);
+        articulationMap.put(Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER, dumpAndSetCraneForTransfer);
+        articulationMap.put(Articulation.AUTO_GRAB_AND_TRANSFER, autoGrabAndTransfer);
     }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
+        telemetryMap.put("getIsInTransferPos", getIsInTransferPos());
 
         return telemetryMap;
     }
@@ -87,6 +90,9 @@ public class Robot implements Subsystem {
             crane.articulate(Crane.Articulation.HIGH_TIER);
 
         articulate(articulation);
+
+        if (gripper.pitchServo.getPosition() < 0.5 && gripper.getFreightDistance() < gripper.FREIGHT_TRIGGER && gripper.articulation == Gripper.Articulation.MANUAL)
+            articulate(Articulation.AUTO_GRAB_AND_TRANSFER);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -103,7 +109,9 @@ public class Robot implements Subsystem {
 
         // tele-op articulations
         TRANSFER,
-        TRANSFER_AND_HIGH_TIER
+        TRANSFER_AND_HIGH_TIER,
+        DUMP_AND_SET_CRANE_FOR_TRANSFER,
+        AUTO_GRAB_AND_TRANSFER;
     }
 
     // Tele-Op articulations
@@ -116,6 +124,22 @@ public class Robot implements Subsystem {
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
             .addState(() -> crane.articulate(Crane.Articulation.HIGH_TIER))
+            .build();
+
+    private Stage autoGrabAndTransferStage = new Stage();
+    private StateMachine autoGrabAndTransfer = getStateMachine(autoGrabAndTransferStage)
+            .addState(() -> gripper.articulate(Gripper.Articulation.LIFT))
+            .addTimedState(1f, () -> {}, () -> {})
+            .addConditionalState(getIsInTransferPos(), (() -> gripper.articulate(Gripper.Articulation.TRANSFER)), (() -> true))
+            .addTimedState(1f, () -> {}, () -> {})
+            .addConditionalState(getIsInTransferPos(), (() -> crane.articulate(Crane.Articulation.HOME)), (() -> true) )
+            .build();
+
+    private Stage dumpAndSetCraneForTransferStage = new Stage();
+    private StateMachine dumpAndSetCraneForTransfer = getStateMachine(dumpAndSetCraneForTransferStage)
+            .addSingleState(() -> crane.dump())
+            .addTimedState(1f, () -> {}, () -> {})
+            .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .build();
 
     private Stage transferStage = new Stage();
@@ -155,5 +179,13 @@ public class Robot implements Subsystem {
             return true;
         }
         return false;
+    }
+
+    //don't mind this
+    public boolean getIsInTransferPos(){
+        if(crane == null){
+            return false;
+        }
+        return crane.isInTransferPos;
     }
 }
