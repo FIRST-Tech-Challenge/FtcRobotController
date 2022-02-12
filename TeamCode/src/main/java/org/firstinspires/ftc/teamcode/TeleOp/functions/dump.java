@@ -25,7 +25,6 @@ public class dump {
     }
     public static void startPos(){
         servo.setPosition(startPos);
-        servo.
     }
 
     public static void dumpFreight(ElapsedTime runtime){
