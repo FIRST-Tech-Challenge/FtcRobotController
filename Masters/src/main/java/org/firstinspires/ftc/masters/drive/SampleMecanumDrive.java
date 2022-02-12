@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -19,6 +20,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -93,6 +95,8 @@ public class SampleMecanumDrive extends MecanumDrive {
    public DistanceSensor distanceSensorIntake, distanceSensorTop;
     public Servo linearSlideServo;
     public DigitalChannel redLED, greenLED, redLED2, greenLED2;
+    RevColorSensorV3 colorSensorLeft;
+    RevColorSensorV3 colorSensorRight;
 
     private final List<DcMotorEx> motors;
 
@@ -104,6 +108,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     HardwareMap hardwareMap;
     Telemetry telemetry;
+
+    public Pose2d position;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         this(hardwareMap, null, null);
@@ -148,6 +154,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideServo = hardwareMap.servo.get("dumpServo");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
+        colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
+
+//        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
+//        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
         distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
 
@@ -813,4 +824,31 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearSlideMotor.setPower(.4);
     }
+
+    public void toLineRedTeleop(double seconds){
+        setMotorPowers(.5,.5,.5,.5);
+        long startTime = new Date().getTime();
+        long time = 0;
+        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+            if (colorSensorLeft.alpha() > 40 && colorSensorRight.alpha() > 40) {
+                position = new Pose2d(new Vector2d(26, -63),Math.toRadians(180));
+                break;
+            }
+        }
+    }
+
+    public void toLineBlueTeleop(double seconds){
+        setMotorPowers(.5,.5,.5,.5);
+        long startTime = new Date().getTime();
+        long time = 0;
+        while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+            if (colorSensorLeft.alpha() > 40 && colorSensorRight.alpha() > 40) {
+                position = new Pose2d(new Vector2d(26, 63),Math.toRadians(180));
+                break;
+            }
+        }
+    }
+
 }
