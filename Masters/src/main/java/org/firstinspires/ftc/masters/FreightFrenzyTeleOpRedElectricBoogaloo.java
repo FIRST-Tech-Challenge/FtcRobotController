@@ -14,11 +14,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="freight Frenzy Red", group = "competition")
+@TeleOp(name="Freight Frenzy Red 2: Electric Boogaloo", group = "competition")
 public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
 
     RobotClass robot;
+    SampleMecanumDrive drive;
 
     /* Declare OpMode members. */
     private final ElapsedTime runtime = new ElapsedTime();
@@ -77,11 +78,9 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
     boolean carouselOn = false; //Outside of loop()
 
-    Trajectory toLine;
-    Trajectory toHub;
+    Trajectory pastLineRed;
+    Trajectory toHubRed;
     Trajectory toWarehouse;
-
-    Pose2d atWhiteLineFacingHub = new Pose2d(new Vector2d(352487, 62539837),Math.toRadians(270));
 
     @Override
     public void runOpMode() {
@@ -99,9 +98,14 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
+        drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
-        robot = new RobotClass(hardwareMap, telemetry, this);
+        Pose2d startPose = new Pose2d(new Vector2d(0, 0), Math.toRadians(0));
+
+        drive.setPoseEstimate(startPose);
+
+        telemetry.addData("Status", "Initialized odometry");
+        telemetry.update();
 
         /* Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -118,8 +122,14 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
         dumpServo = hardwareMap.servo.get("dumpServo");
         dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
 
+        telemetry.addData("Status", "Initialized motors");
+        telemetry.update();
+
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
         distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
+
+        telemetry.addData("Status", "Initialized distance sensors");
+        telemetry.update();
 
         // Set the drive motor direction:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -137,6 +147,9 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        telemetry.addData("Status", "Initialized motor modes");
+        telemetry.update();
+
         // Set the drive motor run modes:
         // "RUN_USING_ENCODER" causes the motor to try to run at the specified fraction of full velocity
         // Note: We were not able to make this run mode work until we switched Channel A and B encoder wiring into
@@ -152,14 +165,26 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        telemetry.addData("Status", "Before trajectories");
+        telemetry.update();
 
-        toLine = drive.trajectoryBuilder(new Pose2d(-10,0))
-                .lineTo(new Vector2d(-10,0))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toHub))
+
+        pastLineRed = drive.trajectoryBuilder(drive.position)
+                .lineTo(new Vector2d(16, -63))
+                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toHubRed))
                 .build();
-        toHub = drive.trajectoryBuilder(atWhiteLineFacingHub)
+
+        telemetry.addData("Status", "Initialized trajectory 1");
+        telemetry.update();
+
+        toHubRed = drive.trajectoryBuilder(pastLineRed.end())
                 .splineToSplineHeading(new Pose2d(-11, 48, Math.toRadians(270)), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-12.7, -42), Math.toRadians(90)), Math.toRadians(90) )
                 .build();
+
+
+        telemetry.addData("Status", "Initialized trajectories");
+        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -232,13 +257,24 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
                         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
                     }
 
+                    if (gamepad1.right_trigger > .35) {
+                        currentMode = DriveMode.TO_HUB;
+                    }
+
                 case TO_HUB:
 //                    Strafe till touch sensor
-                    drive.followTrajectoryAsync(toLine);
+//                    drive.followTrajectoryAsync(toLine);
+                    drive.toLineRedTeleop(4);
+                    drive.followTrajectoryAsync(pastLineRed);
+
+
+
                 case TO_SHARED_HUB:
 
                 case TO_WAREHOUSE:
             }
+
+            drive.update();
 
             if (gamepad1.right_bumper) {
                 currentMode = DriveMode.TO_HUB;
