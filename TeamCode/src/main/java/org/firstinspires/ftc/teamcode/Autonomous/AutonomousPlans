@@ -53,60 +53,20 @@
 
 
 
-// PosOne
-// PosTwo
-// PosThree
-// PosFour
-// PosOneVAR
-// PosTwoVAR
-// PosThreeVAR
-// PosFourVAR
+Values to rotate robot
 
-// Values to rotate robot
+Counter clockwise
+++++
 
-// Counter clockwise
-// ++++
-//ticks
-
-// Clockwise
-// ----
-//ticks
+Clockwise
+----
 
 
 
 
-P3Special
-
-Forward
-AutonomousDC.moveRobot(telemetry, -925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
-
-Clockwise 30 degrees
-AutonomousDC.moveRobot(telemetry, -300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25);
-
-Counterclockwise 30 degrees
-AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
-
-Forward
-AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
 
 
-P4Special
-
-Forward
-AutonomousDC.moveRobot(telemetry, -925, 925, -925, 925, 0.25, 0.25, 0.25, 0.25);
-
-Counterclockwise 30 degrees
-AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
-
-Clockwise 30 degrees
-AutonomousDC.moveRobot(telemetry, -300, -300, -300, -300, 0.25, 0.25, 0.25, 0.25);
-
-Forward
-AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
-
-
-
-// Random stuff (ignore)
+Random stuff (ignore)
 
         AutonomousDC.resetTicks();
         AutonomousDC.turnDeg(-180.0f, telemetry);
@@ -120,3 +80,12 @@ AutonomousDC.moveRobot(telemetry, 300, 300, 300, 300, 0.25, 0.25, 0.25, 0.25);
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
+
+Right position
+
+left 90
+forward 1.5
+outtake
+backward 1.5
+right 90
+forward 2.0
