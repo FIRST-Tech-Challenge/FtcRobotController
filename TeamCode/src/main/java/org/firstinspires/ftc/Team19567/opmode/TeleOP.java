@@ -126,6 +126,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         chassis.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mechanisms.setModes();
 
+        chassis.setPoseEstimate(new Pose2d(0, 0, 0));
+
         telemetry.update();
     }
 
@@ -152,7 +154,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             case DRIVER_CONTROL: {
                 double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y); //Gets the amount that we want to translate
                 double angleDC = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-                if (gamepad1.triangle && slowModeDebounceTime.milliseconds() >= DEBOUNCE_TIME) {
+                if (gamepad1.y && slowModeDebounceTime.milliseconds() >= DEBOUNCE_TIME) {
                     isSlowmode = !isSlowmode;
                 }
                 if (isSlowmode) acc = SLOWMODE_MULT;
@@ -240,23 +242,23 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,1900);
         else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*4,0,1900);
         if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,1900);
-        if(gamepad1.square || gamepad2.x) {
+        if(gamepad1.x || gamepad2.x) {
             presetState = PRESET_STATE.ALLIANCE_FIRST;
         }
         else if(gamepad2.y) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
         }
-        else if(gamepad1.cross || gamepad2.a) {
+        else if(gamepad1.a || gamepad2.a) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
         }
-        else if(gamepad1.circle || gamepad2.b) {
+        else if(gamepad1.b || gamepad2.b) {
             presetState = PRESET_STATE.GOING_DOWN;
         }
 
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
-                armPower = 1.0;
+                armPower = 0.5;
                 armPos = FIRST_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= FIRST_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -264,7 +266,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case ALLIANCE_SECOND: {
-                armPower = 1.0;
+                armPower = 0.55;
                 armPos = SECOND_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= SECOND_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -272,7 +274,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case ALLIANCE_THIRD: {
-                armPower = 1.0;
+                armPower = 0.65;
                 armPos = THIRD_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= THIRD_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -280,14 +282,15 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case GOING_DOWN: {
-                armPower = 1.0;
+                armPower = 0.5;
+                mechanisms.releaseServoMove(1.0);
                 armPos = 0;
-                releaseServoPos = 0.8;
                 if(armDC.getCurrentPosition() <= 5) {
                     presetState = PRESET_STATE.NO_PRESET;
                 }
             }
             default: {
+                armPower = 0.8;
                 break;
             }
         }
@@ -296,7 +299,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.9);
         else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.9);
         if(gamepad2.right_bumper) releaseServoPos = 0.3;
-        if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000)) {
+        if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000 && runtime.milliseconds() <= 120000)) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
             gamepad1.runRumbleEffect(END_GAME_RUMBLE);
         }
@@ -304,10 +307,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
             if(!isIntaked) gamepad1.runRumbleEffect(BOX_SECURED_RUMBLE);
             isIntaked = true;
-            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
-            telemetry.addData("Distance Sensor","Freight Detected");
-        }
-        else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
             telemetry.addData("Distance Sensor","Freight Detected");
         }

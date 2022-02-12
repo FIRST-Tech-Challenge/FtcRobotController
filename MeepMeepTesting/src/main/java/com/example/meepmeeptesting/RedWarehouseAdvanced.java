@@ -17,10 +17,13 @@ public class RedWarehouseAdvanced {
                 // Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(38.7, 38.7, Math.toRadians(180), Math.toRadians(180), 15).setBotDimensions(13.2,16.603)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(10, -63, Math.toRadians(-90)))
+                        drive.trajectorySequenceBuilder(new Pose2d(52, -66.5, Math.toRadians(90)))
+                        .addSpatialMarker(new Vector2d(20,-50), () -> {
+                            //mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.65);
+                        }).strafeTo(new Vector2d(12,-66.5)).lineToSplineHeading(new Pose2d(10,-63,Math.toRadians(90)))
                                 .addSpatialMarker(new Vector2d(40,-64),() -> { /* mechanisms.moveIntake(0.7); */ })
                                 .addSpatialMarker(new Vector2d(5,-50),() -> { /* mechanisms.rotateArm(650,0.25); */ })
-                                .lineToSplineHeading(new Pose2d(-2,-40, Math.toRadians(-240)))
+                                .lineToSplineHeading(new Pose2d(-2,-40, Math.toRadians(-60)))
                                 .addDisplacementMarker(() -> {
                                     /*
                                     mechanisms.releaseServoMove(0.3);
