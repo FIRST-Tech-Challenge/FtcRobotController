@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.TeleOp.MainOpMode.driveAndLinslide;
 public class dump {
     static Servo servo;
     static double timePressed; //records the amount of time that has passed.
-    final static double enoughTime=0.5;
-    static double prevTime;
+    final static double enoughTime=0.0;
+    static double prevTime=1;
     public enum states{READY, DUMPING, RECOVER}
     public static states state = states.READY;
 
@@ -25,19 +25,20 @@ public class dump {
     }
     public static void startPos(){
         servo.setPosition(startPos);
+        servo.
     }
 
-    static void dumpFreight(ElapsedTime runtime){
+    public static void dumpFreight(ElapsedTime runtime){
         servo.setPosition(endPos);
         dumpStartTime = runtime.time();
     }
 
-    static void recover(ElapsedTime runtime){
+    public static void recover(ElapsedTime runtime){
         servo.setPosition(startPos);
         recoverStartTime=runtime.time();
     }
 
-    static void update(ElapsedTime runtime){
+    public static void update(ElapsedTime runtime){
         if(runtime.time()-dumpStartTime>=1&&state.equals(states.DUMPING)){
             state=states.RECOVER;
             recover(runtime);
@@ -48,21 +49,20 @@ public class dump {
     }
 
     public static void re(Gamepad gamepad1, ElapsedTime runtime){
-        prevTime=runtime.time();
-        if(gamepad1.y&&timePressed>=enoughTime&&state==states.READY){  //problem is likely that we must push the dump button for a long time? (2nd and statement)
-            state=states.DUMPING;
-            dumpFreight(runtime);
-        }
-        if(gamepad1.y){
 
+        if(gamepad1.y){
             timePressed+=runtime.time()-prevTime;  // purpose? could be causing problems
         }
         else{
             timePressed=0;
         }
 
-        prevTime= runtime.time();
+        if(gamepad1.y&&timePressed>=enoughTime){  //problem is likely that we must push the dump button for a long time? (2nd and statement)
+            state=states.DUMPING;
+            dumpFreight(runtime);
+        }
 
+        prevTime=runtime.time();
         update(runtime);
 
     }

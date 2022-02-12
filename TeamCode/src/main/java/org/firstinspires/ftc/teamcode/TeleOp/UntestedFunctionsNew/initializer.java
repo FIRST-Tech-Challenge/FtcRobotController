@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.TeleOp.functions.contServo2;
 import org.firstinspires.ftc.teamcode.TeleOp.functions.driveMethods;
 import org.firstinspires.ftc.teamcode.TeleOp.functions.dump;
 import org.firstinspires.ftc.teamcode.TeleOp.functions.linSlide2;
@@ -60,7 +61,7 @@ public class initializer extends LinearOpMode {
 
     public void initializeIntake(){
         continServo = hardwareMap.crservo.get("continServo");
-
+        contServo2.setCRservo(continServo);
 
     }
 

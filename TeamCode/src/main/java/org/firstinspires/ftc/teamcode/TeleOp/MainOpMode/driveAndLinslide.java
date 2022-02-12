@@ -30,14 +30,14 @@ public class driveAndLinslide extends LinearOpMode {
     double CDtimer = 0;
 
     //Encoder positions for each level on linear slide
-    final int low = 0;
-    final int mid = 1200;
-    final int high = 2600;
+    final int low = 100;
+    final int mid = 200;
+    final int high = 600;
 
     public void initialize(){//initialize linearSlide and drive motors. it assumes the linear slide starts at the lowest state.
         LinSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LinSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LinSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);//change it if needed
+        LinSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);//change it if needed
         //LinSlideMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Reverse the right side motors
@@ -78,12 +78,12 @@ public class driveAndLinslide extends LinearOpMode {
                 }
                 //code when low goes here
                 break;
-            case MID:
+            /*case MID:
                 if (LinSlideMotor.getCurrentPosition() != mid) {
                     state = states.toMID;
                 }
 
-                break;
+                break;*/
             case HIGH:
                 if (LinSlideMotor.getCurrentPosition() != high) {
                     state = states.toHIGH;
@@ -98,7 +98,7 @@ public class driveAndLinslide extends LinearOpMode {
 
                     LinSlideMotor.setTargetPosition(low);
                     LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    LinSlideMotor.setPower(0.8);
+                    LinSlideMotor.setPower(0.4);
                 }
                 if(!(LinSlideMotor.isBusy())){
                     LinSlideMotor.setPower(0);
@@ -113,7 +113,7 @@ public class driveAndLinslide extends LinearOpMode {
 
                     LinSlideMotor.setTargetPosition(mid);
                     LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    LinSlideMotor.setPower(0.8);
+                    LinSlideMotor.setPower(0.4);
                 }
                 if(!(LinSlideMotor.isBusy())){
                     LinSlideMotor.setPower(0);
@@ -128,11 +128,12 @@ public class driveAndLinslide extends LinearOpMode {
 
                     LinSlideMotor.setTargetPosition(high);
                     LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    LinSlideMotor.setPower(0.8);
+                    LinSlideMotor.setPower(0.4);
                 }
                 if(!(LinSlideMotor.isBusy())){
                     LinSlideMotor.setPower(0);
                     state=states.HIGH;
+                    LinSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
                 }
 
@@ -222,6 +223,7 @@ public class driveAndLinslide extends LinearOpMode {
 
         dumpServo= hardwareMap.servo.get("dumpServo");
         dump.setServo(dumpServo);
+
 
         waitForStart();
 

@@ -57,6 +57,7 @@ public class autov1 extends LinearOpMode {
 
         dumpServo= hardwareMap.servo.get("dumpServo");
         dump.setServo(dumpServo);
+        dump.startPos();
 
         waitForStart();
 
@@ -201,6 +202,29 @@ public class autov1 extends LinearOpMode {
     public int round(double num){
         int result = (int)Math.round(num);
         return result;
+    }
+
+    public void dropItem(){
+        LinSlideMotor.setTargetPosition(high);
+        LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LinSlideMotor.setPower(0.8);
+        while(LinSlideMotor.isBusy()){}
+        LinSlideMotor.setPower(0);
+
+        timeStart = runtime.time();
+        dumpServo.setPosition(0);
+        while(runtime.time()-timeStart>=0.7){
+        }
+        dumpServo.setPosition(1);
+        LinSlideMotor.setTargetPosition(low);
+        LinSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LinSlideMotor.setPower(0.8);
+
+    }
+
+    public void approachGoal(){//activate after robot turns 180 to go to the goal.
+        setDist(round(-encodeNum*1),round(encodeNum*1),round(encodeNum*1),round(-encodeNum*1));
+        setDist(round(-encodeNum*0.1),round(-encodeNum*0.1),round(-encodeNum*0.1),round(-encodeNum*0.1));
     }
 
 
