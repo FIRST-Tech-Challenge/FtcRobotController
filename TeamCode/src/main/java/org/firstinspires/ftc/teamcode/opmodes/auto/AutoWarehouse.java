@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.i
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -43,7 +44,7 @@ public class AutoWarehouse extends LinearOpMode {
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
         final Pose2d liftPosition = new Pose2d(-2, 43.5 * multiplier,
-                Math.toRadians(85 * multiplier));
+                Math.toRadians(80 * multiplier));
 
         ElapsedTime toolTimer = new ElapsedTime();
         ElapsedTime wallSmashTimer = new ElapsedTime();
@@ -59,15 +60,17 @@ public class AutoWarehouse extends LinearOpMode {
                 0);
 
         // part 2: go to warehouse
-        final TrajectorySequence part2 = drive.trajectorySequenceBuilder(liftPosition)
+        final Trajectory part2 = drive.trajectoryBuilder(liftPosition)
                 .lineToLinearHeading(new Pose2d(0, (nextToWall) * multiplier))
-                .addDisplacementMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)))
-                .lineTo(intakeReturnPoint.vec())
                 .build();
 
+        // go to intake return point
+        final Trajectory part3 = drive.trajectoryBuilder(part2.end())
+                .lineToLinearHeading(intakeReturnPoint)
+                .build();
 
-        // part 3: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
-        final TrajectorySequence part3 = drive.trajectorySequenceBuilder(intakeReturnPoint)
+        // part 4: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
+        final TrajectorySequence part4 = drive.trajectorySequenceBuilder(intakeReturnPoint)
                 .lineTo(new Vector2d(-3, nextToWall * multiplier))
                 .lineToLinearHeading(liftPosition)
                 .build();
@@ -102,17 +105,25 @@ public class AutoWarehouse extends LinearOpMode {
             stayInPose(drive, part1.end());
         }
 
-        drive.followTrajectorySequenceAsync(part2);
+        drive.followTrajectoryAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        WallSmash.smashIntoWall(drive, multiplier, 500);
+        WallSmash.smashIntoWall(drive, multiplier, 100);
+        drive.followTrajectoryAsync(part3);
+        updateLoop(drive);
+        if (isStopRequested()) return;
 
         intake(toolTimer, drive, intake);
 
+        drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(intakeReturnPoint)
+                .build());
+        updateLoop(drive);
+        if (isStopRequested()) return;
         WallSmash.smashIntoWall(drive, multiplier, 500);
 
-        drive.followTrajectorySequenceAsync(part3);
+        drive.followTrajectorySequenceAsync(part4);
         updateLoop(drive);
         if (isStopRequested()) return;
 
@@ -122,14 +133,20 @@ public class AutoWarehouse extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
-            stayInPose(drive, part3.end());
+            stayInPose(drive, part4.end());
         }
 
-        drive.followTrajectorySequenceAsync(part2);
+        drive.followTrajectoryAsync(part2);
         updateLoop(drive);
+
+        WallSmash.smashIntoWall(drive, multiplier, 100);
+        drive.followTrajectoryAsync(part3);
+        updateLoop(drive);
+        if (isStopRequested()) return;
+
         intake(toolTimer, drive, intake);
         while (!isStopRequested()) {
-            stayInPose(drive, part2.end());
+            stayInPose(drive, intakeReturnPoint);
         }
     }
 
