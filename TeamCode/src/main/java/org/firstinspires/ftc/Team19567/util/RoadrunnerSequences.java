@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.Team19567.util;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
 
-@Config
 public class RoadrunnerSequences {
-    public TrajectorySequence desiredSequence;
+    public static TrajectorySequence desiredSequence;
 
-    public TrajectorySequence GetSequence(ROADRUNNER_SEQUENCE roadrunnerSequence,
+    public static TrajectorySequence GetSequence(ROADRUNNER_SEQUENCE roadrunnerSequence,
                                                  SampleMecanumDriveCancelable chassis, Mechanisms mechanisms) {
         switch(roadrunnerSequence) {
             case LINE_TO_SPLINE_WAREHOUSE: {

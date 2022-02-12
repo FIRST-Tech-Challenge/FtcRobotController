@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.Team19567.util;
 
-public final class Utility_Constants {
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+public class Utility_Constants {
     public static final double PPR_RATIO = 1.95509087; //ratio of old encoder values to current encoder values
     public static final double INTAKE_SPEED = 1.0; //speed to set the intake motor to
     public static final double TURN_SENSITIVITY = 0.9; //driver-controlled sensitivity for turning
@@ -24,4 +26,15 @@ public final class Utility_Constants {
     public static final double ACC_COEFFICIENT = 50000; //Rate at which to accelerate by (reciprocal of)
     public static final double FINAL_POWER = 1.0; //Final power for carousel
     public static final double FLICKER_TIME = 750; //Time in milliseconds for the flicker to release one freight
+    public final static Gamepad.RumbleEffect END_GAME_RUMBLE = new Gamepad.RumbleEffect.Builder()
+            .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
+            .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
+            .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
+            .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
+            .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
+            .build();
+
+    public final static Gamepad.RumbleEffect BOX_SECURED_RUMBLE = new Gamepad.RumbleEffect.Builder()
+            .addStep(0.0, 1.0, 1000)  //  Rumble right motor 100% for one whole second
+            .build();
 }
