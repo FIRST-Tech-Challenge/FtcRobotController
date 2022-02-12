@@ -248,9 +248,10 @@ public class FF_6832 extends OpMode {
             alliance = Alliance.RED;
             startingPosition = Position.START_RED_UP;
         }
-
-        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
+        if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
+        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
+            robot.articulate(Robot.Articulation.START); //stow crane to the starting position
         if(stickyGamepad1.left_trigger || stickyGamepad2.left_trigger)
             numericalDashboardEnabled = !numericalDashboardEnabled;
         if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
@@ -325,7 +326,8 @@ public class FF_6832 extends OpMode {
         if (stickyGamepad1.x)
             robot.gripper.set();
         if(stickyGamepad1.b)
-            robot.gripper.lift();
+            //robot.gripper.lift();
+            robot.crane.handleDumpUndump();
         if(stickyGamepad1.a)
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
@@ -337,19 +339,21 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.a) //spin carousel
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
         if(stickyGamepad2.right_trigger)
-            robot.turret.incrementOffset(10);
+            robot.turret.incrementOffset(1);
         if(stickyGamepad2.left_trigger)
-            robot.turret.incrementOffset(-10);
+            robot.turret.incrementOffset(-1);
 
         // joint gamepad controls
         if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
-            robot.crane.articulate(Crane.Articulation.HOME);
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
+            //robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
-            robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+            //robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
-            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
+            robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 

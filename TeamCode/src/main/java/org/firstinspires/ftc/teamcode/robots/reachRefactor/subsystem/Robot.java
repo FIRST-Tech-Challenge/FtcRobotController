@@ -56,6 +56,7 @@ public class Robot implements Subsystem {
         articulationMap = new HashMap<>();
         articulationMap.put(Articulation.INIT, init);
         articulationMap.put(Articulation.START, start);
+        articulationMap.put(Articulation.START_END_GAME, startEnd);
         articulationMap.put(Articulation.TRANSFER, transfer);
         articulationMap.put(Articulation.TRANSFER_AND_HIGH_TIER, transferAndHighTier);
     }
@@ -97,7 +98,8 @@ public class Robot implements Subsystem {
 
         // misc. articulations
         INIT,
-        START,
+        START, //use to prep for start - mostly stows the Crane
+        START_END_GAME, //use on a timer to automatically deploy carousel spinner 10 seconds before end game
 
         // tele-op articulations
         TRANSFER,
@@ -130,12 +132,18 @@ public class Robot implements Subsystem {
     private Stage initStage = new Stage();
     private StateMachine init = getStateMachine(initStage)
             .addSingleState(() -> gripper.lift())
-            .addState(() -> crane.articulate(Crane.Articulation.INIT))
+            .addState(() -> crane.articulate(Crane.Articulation.HOME)) //for visual confirmation that the crane is vertial and aligned
             .build();
 
-    private Stage startStage = new Stage();
-    private StateMachine start = getStateMachine(startStage)
+    private Stage startEndGame = new Stage();
+    private StateMachine startEnd = getStateMachine(startEndGame)
             .addTimedState(2, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
+            .build();
+
+    private Stage startStage = new Stage(); //prep for Start
+    private StateMachine start = getStateMachine(startStage)
+            .addSingleState(() -> gripper.lift())
+            .addState(() -> crane.articulate(Crane.Articulation.INIT))
             .build();
 
     public boolean articulate(Articulation articulation) {

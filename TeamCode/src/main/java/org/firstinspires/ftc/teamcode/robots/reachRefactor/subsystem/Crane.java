@@ -41,7 +41,7 @@ public class Crane implements Subsystem {
     public Servo shoulderServo, elbowServo, wristServo;
 
     private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
-    private double turretTargetPos;
+    private double turretTargetAngle;
 
     private Articulation articulation;
 
@@ -69,6 +69,8 @@ public class Crane implements Subsystem {
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
         MIDDLE_TIER(60,130,40,0, 1f, 150),
         HIGH_TIER(27, 130,70,0, 1f, 170),
+        HIGH_TIER_LEFT(10, 80,30,-80, 1f, 170),
+        HIGH_TIER_RIGHT(10, 80,40,80, 1f, 170),
         TRANSFER(-45,-50,-20,0, 0.75f,0),
 
         CAP(30, 140,0,0, 1, 170),
@@ -144,7 +146,8 @@ public class Crane implements Subsystem {
         shoulderServo.setPosition(servoNormalize(shoulderTargetPos));
         elbowServo.setPosition(servoNormalize(elbowTargetPos));
         wristServo.setPosition(servoNormalize(wristTargetPos));
-        turret.setTargetAngle(turretTargetPos);
+        turret.setTargetAngle(turretTargetAngle);
+        turret.update(fieldOverlay);
     }
 
     @Override
@@ -195,7 +198,7 @@ public class Crane implements Subsystem {
         setElbowTargetPos(articulation.elbowPos);
         setWristTargetPos(articulation.wristPos);
 
-        this.turretTargetPos = articulation.turretAngle;
+        this.turretTargetAngle = articulation.turretAngle;
 
         turret.setTargetAngle(articulation.turretAngle);
     }

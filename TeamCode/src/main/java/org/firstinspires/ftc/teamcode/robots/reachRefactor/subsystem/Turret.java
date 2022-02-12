@@ -42,9 +42,9 @@ public class Turret implements Subsystem {
              targetHeading = -90;
 
         heading = motor.getCurrentPosition() / ticksPerDegree;
-        targetHeading += offset;
+        //wtf targetHeading += offset;
 
-        motor.setTargetPosition((int)((targetHeading) * ticksPerDegree));
+        motor.setTargetPosition((int)((targetHeading+offset) * ticksPerDegree));
     }
 
     public boolean setTargetAngle(double angle){
@@ -66,12 +66,14 @@ public class Turret implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         if(debug) {
+            telemetryMap.put("turretMotorTargetTics", motor.getTargetPosition());
             telemetryMap.put("turretMotorPosition", motor.getCurrentPosition());
             telemetryMap.put("motor amps", motor.getCurrent(CurrentUnit.AMPS));
-            telemetryMap.put("turretTargetPos", getTargetAngle());
-            telemetryMap.put("turretCurrentAngle", getHeading());
-            telemetryMap.put("turretCurrentTest", ticksPerDegree);
+            telemetryMap.put("turretTargetAngle", getTargetAngle());
             telemetryMap.put("turret offset", offset);
+            telemetryMap.put("turretCurrentAngle", getHeading());
+            telemetryMap.put("turretTicksPerDegree", ticksPerDegree);
+
         }
 
 
