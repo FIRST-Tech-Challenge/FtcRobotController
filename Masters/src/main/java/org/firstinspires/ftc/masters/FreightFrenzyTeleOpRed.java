@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -11,6 +12,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region1;
+import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region2;
 
 @TeleOp(name="freight Frenzy Red", group = "competition")
 public class FreightFrenzyTeleOpRed extends LinearOpMode {
@@ -31,7 +35,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
     DistanceSensor distanceSensorIntake, distanceSensorTop;
 
-    DcMotor carouselMotor = null;
+    DcMotorEx carouselMotor = null;
     // declare motor speed variables
     double RF; double LF; double RR; double LR;
     // declare joystick position variables
@@ -63,6 +67,14 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     linearSlideTargets linearSlideTarget = linearSlideTargets.BASE;
     linearSlidePositions linearSlidePos = linearSlidePositions.BASE;
     boolean carouselOn = false; //Outside of loop()
+    boolean carouselPushed = false;
+    int encoderPos=0;
+    double velocity=0;
+    boolean start=false;
+    boolean startCarousel = true;
+    ElapsedTime elapsedTimeCarousel;
+    double vel2Max=0;
+    double vel1Max=0;
 
 
 
@@ -92,7 +104,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
-        carouselMotor = hardwareMap.dcMotor.get("carouselMotor");
+        carouselMotor = hardwareMap.get(DcMotorEx.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
 
@@ -118,11 +130,9 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Set the drive motor run modes:
-        // "RUN_USING_ENCODER" causes the motor to try to run at the specified fraction of full velocity
-        // Note: We were not able to make this run mode work until we switched Channel A and B encoder wiring into
-        // the motor controllers. (Neverest Channel A connects to MR Channel B input, and vice versa.)
         linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        carouselMotor.setVelocityPIDFCoefficients(10,0,0.01,14);
 
 
         robot.lightSet();
@@ -132,6 +142,9 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         boolean intakeOn = false;
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        elapsedTimeCarousel = new ElapsedTime();
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -318,6 +331,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
 
                 if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
+
                     robot.pauseButInSecondsForThePlebeians(.1);
                     intakeMotor.setPower(0);
                     robot.redLED.setState(false);
@@ -326,6 +340,13 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     robot.greenLED2.setState(true);
                     intakeOn= false;
                     //robot.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+                }
+
+                if (distanceSensorTop.getDistance(DistanceUnit.CM)>13.5){
+                    robot.redLED.setState(true);
+                    robot.greenLED.setState(false);
+                    robot.redLED2.setState(true);
+                    robot.greenLED2.setState(false);
                 }
 
 
@@ -337,11 +358,47 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         }
     }
     protected void rotateCarousel(){
-        if(gamepad2.y && !carouselOn) {
-            if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
-            else carouselMotor.setPower(.6);
-            carouselOn = true;
-        } else if(!gamepad2.y) carouselOn = false;
+        if (gamepad2.y && !carouselPushed)  {
+            if (carouselOn){
+                carouselOn = false;
+                carouselMotor.setVelocity(0);
+            } else {
+                carouselOn = true;
+            }
+            carouselPushed= true;
+
+        } else if (!gamepad2.y) {
+            carouselPushed = false;
+        }
+
+        if (carouselOn) {
+
+            encoderPos = carouselMotor.getCurrentPosition();
+
+            if (encoderPos < region1) {
+                velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
+                vel1Max = velocity;
+                carouselMotor.setVelocity(velocity);
+                telemetry.update();
+            } else if (encoderPos >= region1 && encoderPos < region2) {
+                velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (encoderPos - region1));
+                vel2Max = velocity;
+                carouselMotor.setVelocity(velocity);
+                telemetry.update();
+            }
+            else if (encoderPos >= region2 && encoderPos < FreightFrenzyConstants.goal) {
+                velocity = vel2Max+Math.sqrt(2*FreightFrenzyConstants.accelerate3*(encoderPos-region2));
+                carouselMotor.setVelocity(velocity);
+                telemetry.update();
+            } else if (encoderPos >= FreightFrenzyConstants.goal) {
+                carouselOn = false;
+                carouselMotor.setVelocity(0);
+                carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            }
+
+        }
+
     }
 
 }

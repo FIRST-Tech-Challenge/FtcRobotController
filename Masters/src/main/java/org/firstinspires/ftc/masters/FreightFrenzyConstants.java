@@ -10,4 +10,13 @@ public class FreightFrenzyConstants {
     public static int SLIDE_TOP = 1700;
     public static int SLIDE_MIDDLE = 1300;
     public static int SLIDE_LOW = 800;
+
+    public static int accelerate1 = 300;
+    public static int accelerate2= 200;
+    public static int accelerate3 = 600;
+    public static  int startVelocity= 650;
+    public static int region1=600;
+    public static  int region2 = 1900;
+    public static int goal = 3500;
+
 }
