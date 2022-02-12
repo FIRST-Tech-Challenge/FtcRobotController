@@ -19,7 +19,7 @@ import java.io.IOException;
  * TeleOp Full Control.
  */
 @TeleOp(name="Teleop-Skunkworks", group="7592")
-@Disabled
+//@Disabled
 public class TestGreatNewFunctionality extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Capping arm score position
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Duck motor control
@@ -29,6 +29,8 @@ public class TestGreatNewFunctionality extends LinearOpMode {
     boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;  //   (see processDpadDriveMode() below)
     boolean gamepad1_dpad_left_last,  gamepad1_dpad_left_now  = false;
     boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
+    boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;
+    boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;
 
     boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  //
     boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Freight Arm (Transport height)
@@ -50,10 +52,11 @@ public class TestGreatNewFunctionality extends LinearOpMode {
 
     // Configure a motor
     public void configureMotor() {
-        oldPIDF = robot.cappingMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+//        oldPIDF = robot.cappingMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.cappingMotor.setDirection(DcMotor.Direction.FORWARD);
         robot.cappingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
+        robot.cappingMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robot.cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPIDF);
     }
 
 
@@ -294,8 +297,97 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         }
     }
 
+    double cappingMotorPower, cappingMotorPowerLast = 0.05;
+    public void processMinimumPowerTest() {
+        if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last) {
+            cappingMotorPower += 0.05;
+            cappingMotorPower = Math.min(cappingMotorPower, 1.0);
+        }
+        if( gamepad1_dpad_down_now && !gamepad1_dpad_down_last) {
+            cappingMotorPower -= 0.05;
+            cappingMotorPower = Math.max(cappingMotorPower, -1.0);
+        }
+        if(gamepad1_r_bumper_now && !gamepad1_r_bumper_last) {
+            if( !gotoPosition ) {
+                robot.cappingMotor.setPower(cappingMotorPower);
+                cappingMotorPowerLast = cappingMotorPower;
+            }
+        }
+        if( gamepad1_circle_now && !gamepad1_circle_last) {
+            robot.cappingMotor.setPower(0.0);
+            cappingMotorPower = 0.0;
+            cappingMotorPowerLast = 0.0;
+            gotoPosition = false;
+        }
+    }
+
+    int cappingEncoderGoto = 0;
+    boolean gotoPosition = false;
+    double cappingSlowdownMultiplier = 4;
+    public void processCappingGotoPosition() {
+        if( gamepad1_dpad_right_now && !gamepad1_dpad_right_last ) {
+            cappingEncoderGoto += 100;
+            cappingEncoderGoto = Math.min(cappingEncoderGoto, robot.CAPPING_ARM_POS_GRAB);
+        }
+        if( gamepad1_dpad_left_now && !gamepad1_dpad_left_last ) {
+            cappingEncoderGoto -= 100;
+            cappingEncoderGoto = Math.max(cappingEncoderGoto, 0);
+        }
+        if(gamepad1_triangle_now && !gamepad1_triangle_last) {
+            cappingSlowdownMultiplier += 0.5;
+        } else if (gamepad1_cross_now && !gamepad1_cross_last) {
+            cappingSlowdownMultiplier -= 0.5;
+            cappingSlowdownMultiplier = Math.max(cappingSlowdownMultiplier, 0.5);
+        }
+        if( gamepad1_circle_now && !gamepad1_circle_last) {
+            robot.cappingMotor.setPower(0.0);
+            cappingMotorPowerLast = cappingMotorPower;
+            cappingMotorPower = 0.0;
+            gotoPosition = false;
+        } else if( gamepad1_square_now && !gamepad1_square_last ) {
+            gotoPosition = true;
+        }
+    }
+
+    int atPositionCount = 0;
+    public boolean runToPosition() {
+        boolean reachedDestination = false;
+        // This would be the power ramp down would occur with 4 motor rotations
+        double POWER_SCALE = cappingSlowdownMultiplier * 103.8;
+
+        if( gotoPosition ) {
+            int ticksToGo = cappingEncoderGoto - robot.cappingMotorPos;
+            if(Math.abs(ticksToGo) <= 20) {
+                cappingMotorPowerLast = cappingMotorPower;
+                cappingMotorPower = 0.0;
+                robot.cappingMotor.setPower(0.0);
+                atPositionCount++;
+                if( atPositionCount > 7 ) {
+                    reachedDestination = true;
+                    gotoPosition = false;
+                }
+            } else {
+                atPositionCount = 0;
+                cappingMotorPowerLast = cappingMotorPower;
+                cappingMotorPower = ticksToGo / POWER_SCALE;
+                cappingMotorPower = Math.copySign(Math.min(Math.abs(cappingMotorPower), 1.0), cappingMotorPower);
+                cappingMotorPower = Math.copySign(Math.max(Math.abs(cappingMotorPower), 0.5), cappingMotorPower);
+                robot.cappingMotor.setPower(cappingMotorPower);
+            }
+        }
+
+        return reachedDestination;
+    }
+
+    public void processArmTriggers() {
+        double leftTrigger = gamepad1.left_trigger;
+        double rightTrigger = gamepad1.right_trigger;
+
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
+        boolean atPosition;
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
 
@@ -323,13 +415,24 @@ public class TestGreatNewFunctionality extends LinearOpMode {
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
             robot.headingIMU();
+            processMinimumPowerTest();
+            processCappingGotoPosition();
+            atPosition = runToPosition();
+            processArmTriggers();
+
 
             // Hopefully this does everything capping arm.
-            processCappingArmControls();
-            processPIDFAdjustControls();
-            telemetry.addData("Current PIDF Adjust: ", currentPIDFAdjust);
-            telemetry.addData("New PIDF: ", newPIDF.toString());
-            telemetry.addData("Old PIDF: ", oldPIDF.toString());
+//            processCappingArmControls();
+//            processPIDFAdjustControls();
+//            telemetry.addData("Current PIDF Adjust: ", currentPIDFAdjust);
+//            telemetry.addData("New PIDF: ", newPIDF.toString());
+//            telemetry.addData("Old PIDF: ", oldPIDF.toString());
+            telemetry.addData("Capping Motor Power:", cappingMotorPower);
+            telemetry.addData("Capping Motor Encoder:", robot.cappingMotorPos);
+            telemetry.addData( "Capping Goto Position:", cappingEncoderGoto);
+            telemetry.addData( "Goto Position Enabled:", gotoPosition);
+            telemetry.addData( "At Position:", atPosition);
+            telemetry.addData( "Slowdown Multiplier:", cappingSlowdownMultiplier);
             telemetry.update();
         }
     } // runOpMode
@@ -344,6 +447,8 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         gamepad1_dpad_down_last  = gamepad1_dpad_down_now;   gamepad1_dpad_down_now  = gamepad1.dpad_down;
         gamepad1_dpad_left_last  = gamepad1_dpad_left_now;   gamepad1_dpad_left_now  = gamepad1.dpad_left;
         gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
+        gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
+        gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
