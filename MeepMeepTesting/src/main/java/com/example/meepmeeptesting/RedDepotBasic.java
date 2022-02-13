@@ -16,11 +16,31 @@ public class RedDepotBasic {
                // Background opacity from 0-1
                .setBackgroundAlpha(1f)
                // Set constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-               .setConstraints(38.7, 30, 4.5836622, Math.toRadians(60), 14.2).setBotDimensions(13.2,16.603)
+               .setConstraints(57.635630404559784, 38.7, 4.5836622, Math.toRadians(60), 14.2).setBotDimensions(13.2,16.603)
                .followTrajectorySequence(drive ->
                        drive.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
-                               .strafeTo(new Vector2d(-32.5,-24)).turn(Math.toRadians(-90)).back(4).waitSeconds(2)
-                               .strafeTo(new Vector2d(-62,-52)).waitSeconds(3).strafeTo(new Vector2d(-60,-36))
+                               .addSpatialMarker(new Vector2d(-33,-40),() -> {
+                                   /*
+                                      mechanisms.rotateArm(UtilityConstants.THIRD_LEVEL_POS,0.65)
+                                    */
+                               })
+                               .lineToSplineHeading(new Pose2d(-32.5,-24,Math.toRadians(0))).addDisplacementMarker(() -> {
+                                   /*
+                                      mechanisms.releaseServoMove(0.3);
+                                    */
+                               }).waitSeconds(0.5)//.setReversed(true)
+                               .addDisplacementMarker(55,() -> {
+                                   /*
+                                      mechanisms.reset();
+                                    */
+                               })
+                               .lineToSplineHeading(new Pose2d(-62,-55,Math.toRadians(180))).addDisplacementMarker(() -> {
+                                /*
+                                   mechanisms.rotateCarousel(0.6);
+                                 */
+                                }).setReversed(true)
+                               .waitSeconds(1.0).splineToConstantHeading(new Vector2d(10,-64),Math.toRadians(0))
+                               .splineToConstantHeading(new Vector2d(50,-64),Math.toRadians(0))
                                .build()).start();
    }
 }
