@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.Team19567.util;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+@Config
 public class Utility_Constants {
     public static final double PPR_RATIO = 1.95509087; //ratio of old encoder values to current encoder values
     public static final double INTAKE_SPEED = 1.0; //speed to set the intake motor to
