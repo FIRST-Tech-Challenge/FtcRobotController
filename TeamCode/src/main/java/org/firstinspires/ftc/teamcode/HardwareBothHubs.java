@@ -88,9 +88,10 @@ public class HardwareBothHubs
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
 
-    public int          CAPPING_ARM_POS_START   = 0;     // also used for STORE
+    public int          CAPPING_ARM_POS_START   = 0;
     public int          CAPPING_ARM_POS_STORE   = 291;
     public int          CAPPING_ARM_POS_LIBERTY = 786;   // status of liberty pose (end duck-autonomous here)
+    public int          CAPPING_ARM_POS_VERTICAL= 1006;  // straight up (minimal motor power required)
     public int          CAPPING_ARM_POS_CAP     = 1335;
     public int          CAPPING_ARM_POS_GRAB    = 2070;
     public int          cappingArmPos = CAPPING_ARM_POS_START;

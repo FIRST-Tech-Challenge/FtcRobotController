@@ -611,6 +611,32 @@ public abstract class Teleop extends LinearOpMode {
     } // processFreightArmControls
 
     /*---------------------------------------------------------------------------------*/
+    /* The 1620rpm capping-arm motor requires a minimum of 10% power to RAISE the arm  */
+    /* and 5% power to LOWER the arm -- where RAISE and LOWER switch orientation as    */
+    /* the arm rotates thru the full range of encoder counts. This function scales the */
+    /* manual user input (left/right trigger) to allow fine control over the full      */
+    /* range of motion.                                                                */
+    double determineCappingMotorPower( double percentInput ) {
+        int countsFromVertical = robot.cappingMotorPos - robot.CAPPING_ARM_POS_VERTICAL;
+        // The necessary min/max power range is determined by these inputs:
+        // a) percentInput > 0 = rotation toward CAPPING_ARM_POS_GRAB (gamepad1.left_trigger) 
+        //      countsFromVertical >= 0 = LOWERING the capping arm (need 5%+ power)
+        //      countsFromVertical <  0 = RAISING the capping arm  (need 10%+ power)
+        // b) percentInput < 0 = rotation toward CAPPING_ARM_POS_START (gamepad1.right_trigger) 
+        //      countsFromVertical >= 0 = RAISING the capping arm  (need 10%+ power)
+        //      countsFromVertical <  0 = LOWERING the capping arm (need 5%+ power)
+        boolean raisingArm = ((percentInput > 0.0) && (countsFromVertical < 0)) ||
+                             ((percentInput < 0.0) && (countsFromVertical >= 0));
+        double minPower = (raisingArm)? 0.10 : 0.05;
+        double maxPower = (raisingArm)? 1.00 : 0.40;
+        double computedPower = minPower + Math.abs(percentInput) * (maxPower - minPower);
+        // Apply the positive/negative sign from percentInput
+        computedPower *= (percentInput > 0.0)? 1.0 : -1.0;
+//      telemetry.addData("CappingMotor", "%.2f", computedPower );
+        return computedPower;
+    } // determineCappingMotorPower
+
+    /*---------------------------------------------------------------------------------*/
     void processCappingArmControls() {
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
         if( gamepad1_cross_now && !gamepad1_cross_last)
@@ -692,20 +718,22 @@ public abstract class Teleop extends LinearOpMode {
             cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;   // ensure we're reset
             double gamepad1_left_trigger  = gamepad1.left_trigger;
             double gamepad1_right_trigger = gamepad1.right_trigger;
-            if( gamepad1_left_trigger > 0.05 ) {
+            if( gamepad1_left_trigger > 0.03 ) {
                 // limit how far we can drive this direction
                 if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
-                    robot.cappingMotor.setPower( +0.10 * gamepad1_left_trigger );
+                    double motorPower = determineCappingMotorPower( +gamepad1_left_trigger );
+                    robot.cappingMotor.setPower( motorPower );
                     cappingArmTweaked = true;
                 }
                 else {
                     robot.cappingMotor.setPower( 0.0 );
                 }
             }
-            else if( gamepad1_right_trigger > 0.05 ) {
+            else if( gamepad1_right_trigger > 0.03 ) {
                 // limit how far we can drive this direction
                 if( robot.cappingMotorPos > 0 ) {
-                    robot.cappingMotor.setPower( -0.10 * gamepad1_right_trigger );
+                    double motorPower = determineCappingMotorPower( -gamepad1_right_trigger );
+                    robot.cappingMotor.setPower( motorPower );
                     cappingArmTweaked = true;
                 }
                 else {
@@ -1077,5 +1105,4 @@ public abstract class Teleop extends LinearOpMode {
         }
     } // averagedRangeSensors
 
-
-} // TeleopBlue
+} // Teleop
