@@ -364,6 +364,9 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
             robot.driveTrain.setMaintainChassisLengthEnabled(!robot.driveTrain.isMaintainChassisLengthEnabled());
 
+        double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward2 - forward1) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+        robot.driveTrain.setChassisLength(chassisLength);
+
         handleArcadeDriveFunkyTest(gamepad1);
         handleArcadeDrive(gamepad2);
 
