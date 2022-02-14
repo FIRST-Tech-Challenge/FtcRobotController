@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.ExponentialSmoother;
@@ -90,6 +91,7 @@ public class FF_6832 extends OpMode {
     public static double DRIVE_VELOCITY_EXPONENT = 1;
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
     public static double ROTATE_SMOOTHING_FACTOR = 0.3;
+    public static double CHASSIS_LENGTH_SCALING_FACTOR = 0.05;
 
     private Robot robot;
     private Autonomous auto;
@@ -103,7 +105,6 @@ public class FF_6832 extends OpMode {
     private GameState gameState;
     private int gameStateIndex;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
-    private boolean gamepad1JoysticksActive, gamepad2JoysticksActive;
 
     // vision state
     private int visionProviderIndex;
@@ -111,7 +112,7 @@ public class FF_6832 extends OpMode {
 
     // tele-op state
     private int chassisDistanceLevelIndex;
-    private double forward, rotate;
+    private double forward1, rotate1, forward2, rotate2, forward, rotate;
 
     // diagnostic state
     private DiagnosticStep diagnosticStep;
@@ -290,30 +291,33 @@ public class FF_6832 extends OpMode {
 
 
     private void handleArcadeDrive(Gamepad gamepad) {
-        forward = Math.pow(gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
-        rotate = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
+        forward1 = Math.pow(gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
+        rotate1 = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 
     private void handleArcadeDriveFunkyTest(Gamepad gamepad) {
-        forward = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
-        rotate = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
+        forward2 = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
+        rotate2 = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 
     private void handleTankDrive(Gamepad gamepad) {
         double left = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT);
         double right = Math.pow(-gamepad.right_stick_y, DRIVE_VELOCITY_EXPONENT);
 
-        forward = (right + left) / 2.0 * FORWARD_SCALING_FACTOR;
-        rotate = (right - left) / 2.0 * ROTATE_SCALING_FACTOR * .4;
+        forward2 = (right + left) / 2.0 * FORWARD_SCALING_FACTOR;
+        rotate2 = (right - left) / 2.0 * ROTATE_SCALING_FACTOR * .4;
 
         if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
-            rotate = 0;
+            rotate2 = 0;
     }
 
     private void sendDriveCommands() {
         if(smoothingEnabled) {
-            forward = forwardSmoother.update(forward);
-            rotate = rotateSmoother.update(rotate);
+            forward = forwardSmoother.update(forward2 + forward1);
+            rotate = rotateSmoother.update(rotate2 + rotate1);
+        } else {
+            forward = forward1 + forward2;
+            rotate = rotate1 + rotate2;
         }
         if(antiTippingEnabled)
             robot.driveTrain.setDrivePowerSafe(new Pose2d(forward, 0, rotate));
@@ -358,22 +362,11 @@ public class FF_6832 extends OpMode {
             robot.articulate(Robot.Articulation.TRANSFER);
 
         if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
-            chassisDistanceLevelIndex++;
-        else if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
-            chassisDistanceLevelIndex--;
-        if(chassisDistanceLevelIndex < 0)
-            chassisDistanceLevelIndex = CHASSIS_LENGTH_LEVELS.length - 1;
-        chassisDistanceLevelIndex %= CHASSIS_LENGTH_LEVELS.length;
-        robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[chassisDistanceLevelIndex]);
+            robot.driveTrain.setMaintainChassisLengthEnabled(!robot.driveTrain.isMaintainChassisLengthEnabled());
 
-        if(gamepad1JoysticksActive && !gamepad2JoysticksActive)
-            handleArcadeDriveFunkyTest(gamepad1);
-        else if (gamepad2JoysticksActive && !gamepad1JoysticksActive)
-            handleArcadeDrive(gamepad2);
-        else {
-            forward = 0;
-            rotate = 0;
-        }
+        handleArcadeDriveFunkyTest(gamepad1);
+        handleArcadeDrive(gamepad2);
+
         sendDriveCommands();
     }
 
@@ -526,9 +519,6 @@ public class FF_6832 extends OpMode {
             auto.visionProvider.update();
             robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         }
-
-        gamepad1JoysticksActive = joysticksActive(gamepad1);
-        gamepad2JoysticksActive = joysticksActive(gamepad2);
 
         stickyGamepad1.update();
         stickyGamepad2.update();
