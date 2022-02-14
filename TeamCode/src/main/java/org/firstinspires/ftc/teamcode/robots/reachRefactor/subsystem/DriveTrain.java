@@ -73,7 +73,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public static PIDCoefficients SWIVEL_PID = new PIDCoefficients(1, 0, 0.08);
     public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(4, 0,  0);
-    public static double CHASSIS_LENGTH_PID_TOLERANCE = 15;
+    public static double CHASSIS_LENGTH_PID_TOLERANCE = 5;
     public static double SWIVEL_PID_TOLERANCE = 5;
 
     public TrajectorySequenceRunner trajectorySequenceRunner;
@@ -108,8 +108,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private long lastLoopTime, loopTime;
 
     private boolean maintainChassisLengthEnabled;
-
-    private boolean frontWheelsFixed;
+    private ChassisLengthMode chassisLengthMode;
+    public enum ChassisLengthMode {
+        SWERVE, DIFF, BOTH;
+    }
 
     public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
         super(TRACK_WIDTH, simulated);
@@ -192,6 +194,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
+        chassisLengthMode = ChassisLengthMode.BOTH;
         lastLoopTime = System.nanoTime();
     }
 
@@ -236,9 +239,24 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         }
     }
 
+    private void updatePIDCoefficients() {
+        swivelPID.setPID(SWIVEL_PID);
+        swivelPID.setTolerance(SWIVEL_PID_TOLERANCE);
+
+        chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
+        chassisLengthPID.setTolerance(CHASSIS_LENGTH_PID_TOLERANCE);
+
+        rollAntiTipPID.setPID(ROLL_ANTI_TIP_PID);
+        rollAntiTipPID.setTolerance(ROLL_ANTI_TIP_PID_TOLERANCE);
+
+        pitchAntiTipPID.setPID(PITCH_ANTI_TIP_PID);
+        pitchAntiTipPID.setTolerance(PITCH_ANTI_TIP_PID_TOLERANCE);
+    }
+
     @Override
     public void update(Canvas fieldOverlay) {
         updateVelocityCoefficients();
+        updatePIDCoefficients();
 
         // sensor readings
         leftVelocity = encoderTicksToInches(leftMotor.getVelocity());
@@ -297,22 +315,40 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         if(pitchAntiTipPID.onTarget())
             pitchCorrection = 0;
 
+        // sending corrections for chassis length
         chassisLengthOnTarget = chassisLengthPID.onTarget();
-
         if(maintainChassisLengthEnabled && !simulated) {
             chassisLengthCorrection = getChassisLengthCorrection();
 
-            List<Double> frontVelocities = Arrays.asList(0.0, 0.0, 0.0);
-            if(!frontWheelsFixed)
-                frontVelocities = TrikeKinematics.robotToWheelVelocities(driveVelocity.plus(new Pose2d(chassisLengthCorrection, 0, 0)), TRACK_WIDTH, chassisLength);
-            List<Double> backVelocities = TrikeKinematics.robotToWheelVelocities(driveVelocity.plus(new Pose2d(-chassisLengthCorrection, 0, 0)), TRACK_WIDTH, chassisLength);
+            List<Double> frontVelocities = TrikeKinematics.robotToWheelVelocities(
+                    driveVelocity.plus(
+                            new Pose2d(
+                                    chassisLengthMode == ChassisLengthMode.DIFF || chassisLengthMode == ChassisLengthMode.BOTH ?
+                                            chassisLengthCorrection : 0, 0, 0
+                            )
+                    ), TRACK_WIDTH, chassisLength
+            );
+            List<Double> backVelocities = TrikeKinematics.robotToWheelVelocities(
+                    driveVelocity.plus(
+                            new Pose2d(
+                                    chassisLengthMode == ChassisLengthMode.SWERVE || chassisLengthMode == ChassisLengthMode.BOTH ?
+                                            -chassisLengthCorrection : 0, 0, 0
+                            )
+                    ), TRACK_WIDTH, chassisLength
+            );
             setMotorVelocities(frontVelocities.get(0), frontVelocities.get(1), backVelocities.get(2));
             if(
                     !approxEquals(frontVelocities.get(0), 0) ||
                             !approxEquals(frontVelocities.get(1), 0) ||
                             !approxEquals(backVelocities.get(2), 0)
             )
-                setSwivelAngle(TrikeKinematics.robotToSwivelAngle(driveVelocity.plus(new Pose2d(-chassisLengthCorrection, 0, 0)), chassisLength));
+                setSwivelAngle(TrikeKinematics.robotToSwivelAngle(
+                        driveVelocity.plus(
+                                new Pose2d(
+                                        chassisLengthMode == ChassisLengthMode.SWERVE || chassisLengthMode == ChassisLengthMode.BOTH ?
+                                                -chassisLengthCorrection : 0, 0, 0
+                                )), chassisLength
+                ));
         }
 
         // swerve optimizations
@@ -331,19 +367,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         if(simulated)
             swivelAngle = targetSwivelAngle;
         swivelPower = getSwivelAngleCorrection();
-
-        // updating PIDs from dashboard
-        swivelPID.setPID(SWIVEL_PID);
-        swivelPID.setTolerance(SWIVEL_PID_TOLERANCE);
-
-        chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
-        chassisLengthPID.setTolerance(CHASSIS_LENGTH_PID_TOLERANCE);
-
-        rollAntiTipPID.setPID(ROLL_ANTI_TIP_PID);
-        rollAntiTipPID.setTolerance(ROLL_ANTI_TIP_PID_TOLERANCE);
-
-        pitchAntiTipPID.setPID(PITCH_ANTI_TIP_PID);
-        pitchAntiTipPID.setTolerance(PITCH_ANTI_TIP_PID_TOLERANCE);
 
         leftMotor.setVelocity(inchesToEncoderTicks(targetLeftVelocity));
         rightMotor.setVelocity(inchesToEncoderTicks(targetRightVelocity));
@@ -585,15 +608,15 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         return pitchVelocity;
     }
 
-    public boolean isFrontWheelsFixed() {
-        return frontWheelsFixed;
-    }
-
-    public void setFrontWheelsFixed(boolean frontWheelsFixed) {
-        this.frontWheelsFixed = frontWheelsFixed;
-    }
-
     public double getTargetChassisLength() {
         return targetChassisLength;
+    }
+
+    public ChassisLengthMode getChassisLengthMode() {
+        return chassisLengthMode;
+    }
+
+    public void setChassisLengthMode(ChassisLengthMode chassisLengthMode) {
+        this.chassisLengthMode = chassisLengthMode;
     }
 }

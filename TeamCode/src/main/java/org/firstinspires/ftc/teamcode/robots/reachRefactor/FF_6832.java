@@ -131,7 +131,8 @@ public class FF_6832 extends OpMode {
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
         BACK_AND_FORTH("Back And Forth"),
         SQUARE("Square"),
-        TURN("Turn");
+        TURN("Turn"),
+        LENGTH_TEST("Length Test");
 
         private final String name;
 
@@ -484,6 +485,13 @@ public class FF_6832 extends OpMode {
                     break;
                 case TURN:
                     auto.turn.execute();
+                    break;
+                case LENGTH_TEST:
+                    if(auto.lengthTest.execute()) {
+                        active = false;
+                        gameState = GameState.TELE_OP;
+                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
+                    }
                     break;
             }
         } else {
