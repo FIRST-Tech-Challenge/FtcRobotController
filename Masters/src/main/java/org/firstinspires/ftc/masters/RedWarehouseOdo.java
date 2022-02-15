@@ -31,12 +31,12 @@ public class RedWarehouseOdo extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-15, -44))
+                .strafeTo(new Vector2d(-15, -43))
                 .build();
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
                 .addTemporalMarker(1,()->{drive.retract();})
-                .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(2))
                 .build();
         drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
@@ -44,7 +44,7 @@ public class RedWarehouseOdo extends LinearOpMode {
         waitForStart();
 
 //        TWCA CHANGES! ALERT!
-        drive.pause(650);
+//        drive.pause(650);
 //
 
         drive.stopDuckCamera();
@@ -103,11 +103,14 @@ public class RedWarehouseOdo extends LinearOpMode {
                     .lineTo(new Vector2d(15, -66))
                     .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
                     .addDisplacementMarker(() -> {
+                        drive.intakeMotor.setPower(-0.8);
+                        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
+                        drive.intakeMotor.setPower(0);
                     })
-                    .splineToSplineHeading(new Pose2d(-9, -48, Math.toRadians(90)), Math.toRadians(90))
+                    .splineToSplineHeading(new Pose2d(-9, -46, Math.toRadians(90)), Math.toRadians(90))
                     .build();
             drive.followTrajectorySequence(trajSeq3);
 //            fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
@@ -129,11 +132,14 @@ public class RedWarehouseOdo extends LinearOpMode {
                          .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
 
                          .addDisplacementMarker(() -> {
+                             drive.intakeMotor.setPower(-0.8);
+                             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                              drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                              drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                              drive.linearSlideMotor.setPower(.8);
+                             drive.intakeMotor.setPower(0);
                          })
-                         .splineToSplineHeading(new Pose2d(-9, -48, Math.toRadians(90)), Math.toRadians(90))
+                         .splineToSplineHeading(new Pose2d(-9, -46, Math.toRadians(90)), Math.toRadians(90))
 
                          .build();
                  drive.followTrajectorySequence(trajSeq3);

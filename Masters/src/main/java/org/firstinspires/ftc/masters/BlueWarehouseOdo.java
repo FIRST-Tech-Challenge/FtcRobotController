@@ -98,9 +98,12 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
                     .lineTo(new Vector2d(15, 66))
                     .addDisplacementMarker(() -> {
+                        drive.intakeMotor.setPower(-0.8);
+                        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
+                        drive.intakeMotor.setPower(0);
                     })
                     .splineToSplineHeading(new Pose2d(-6, 45, Math.toRadians(270)), Math.toRadians(270))
 //                    -14, 46
@@ -123,9 +126,12 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
                         .lineTo(new Vector2d(15, 66))
                         .addDisplacementMarker(() -> {
+                            drive.intakeMotor.setPower(-0.8);
+                            drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                             drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             drive.linearSlideMotor.setPower(.8);
+                            drive.intakeMotor.setPower(0);
                         })
                         .splineToSplineHeading(new Pose2d(-6, 46, Math.toRadians(270)), Math.toRadians(270))
                         .build();

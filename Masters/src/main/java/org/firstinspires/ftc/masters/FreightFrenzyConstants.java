@@ -14,7 +14,7 @@ public class FreightFrenzyConstants {
     public static int accelerate1 = 300;
     public static int accelerate2= 200;
     public static int accelerate3 = 600;
-    public static  int startVelocity= 650;
+    public static  int startVelocity= 580;
     public static int region1=600;
     public static  int region2 = 1900;
     public static int goal = 3500;
