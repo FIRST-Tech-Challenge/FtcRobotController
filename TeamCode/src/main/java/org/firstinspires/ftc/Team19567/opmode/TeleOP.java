@@ -282,8 +282,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case GOING_DOWN: {
-                armPower = 0.5;
-                mechanisms.releaseServoMove(0.75);
+                mechanisms.releaseServoMove(0.76);
+                armPower = 0.2;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
                     presetState = PRESET_STATE.NO_PRESET;
