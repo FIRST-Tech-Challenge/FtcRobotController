@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.i
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,7 +16,6 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 import org.firstinspires.ftc.teamcode.opmodes.util.WallSmash;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -42,11 +42,10 @@ public class AutoWarehouse extends LinearOpMode {
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-        final Pose2d liftPosition = new Pose2d(-2, 43.5 * multiplier,
-                Math.toRadians(85 * multiplier));
+        final Pose2d liftPosition = new Pose2d(-3, 43.5 * multiplier,
+                Math.toRadians(75 * multiplier));
 
         ElapsedTime toolTimer = new ElapsedTime();
-        ElapsedTime wallSmashTimer = new ElapsedTime();
 
         // Part 1: drive to alliance shipping hub
         final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
@@ -59,12 +58,13 @@ public class AutoWarehouse extends LinearOpMode {
                 0);
 
         // part 2: go to warehouse
-        final TrajectorySequence part2 = drive.trajectorySequenceBuilder(liftPosition)
+        final Trajectory part2 = drive.trajectoryBuilder(liftPosition)
                 .lineToLinearHeading(new Pose2d(0, (nextToWall) * multiplier))
-                .addDisplacementMarker(() -> drive.setWeightedDrivePower(new Pose2d(0, -0.2 * multiplier, 0)))
-                .lineTo(intakeReturnPoint.vec())
                 .build();
 
+        final Trajectory toIntakeReturnPoint = drive.trajectoryBuilder(part2.end())
+                .lineTo(intakeReturnPoint.vec())
+                .build();
 
         // part 3: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
         final TrajectorySequence part3 = drive.trajectorySequenceBuilder(intakeReturnPoint)
@@ -102,21 +102,31 @@ public class AutoWarehouse extends LinearOpMode {
             stayInPose(drive, part1.end());
         }
 
-        drive.followTrajectorySequenceAsync(part2);
+        drive.followTrajectoryAsync(part2);
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        WallSmash.smashIntoWall(drive, multiplier, 500);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 250);
+
+        drive.followTrajectoryAsync(toIntakeReturnPoint);
+        updateLoop(drive);
+        if (isStopRequested()) return;
+
+        WallSmash.smashIntoWallSideways(drive, multiplier, 250);
 
         intake(toolTimer, drive, intake);
 
-        WallSmash.smashIntoWall(drive, multiplier, 500);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 300);
+
+        drive.followTrajectoryAsync(toIntakeReturnPoint);
+        updateLoop(drive);
+        if (isStopRequested()) return;
 
         drive.followTrajectorySequenceAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        lift.setPosition(AutoLift.Positions.TOP);
+        lift.setPosition(AutoLift.Positions.AUTOTOP);
         toolTimer.reset();
         while (toolTimer.seconds() < 3) {
             if (isStopRequested()) {
@@ -125,11 +135,20 @@ public class AutoWarehouse extends LinearOpMode {
             stayInPose(drive, part3.end());
         }
 
-        drive.followTrajectorySequenceAsync(part2);
+        drive.followTrajectoryAsync(part2);
         updateLoop(drive);
+        if (isStopRequested()) return;
+
+        WallSmash.smashIntoWallSideways(drive, multiplier, 250);
+
+        drive.followTrajectoryAsync(toIntakeReturnPoint);
+        updateLoop(drive);
+        if (isStopRequested()) return;
+
         intake(toolTimer, drive, intake);
+
         while (!isStopRequested()) {
-            stayInPose(drive, part2.end());
+            stayInPose(drive, toIntakeReturnPoint.end());
         }
     }
 
