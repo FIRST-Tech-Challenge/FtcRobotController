@@ -79,17 +79,17 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    private final TrajectorySequenceRunner trajectorySequenceRunner;
+    protected final TrajectorySequenceRunner trajectorySequenceRunner;
 
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
+    protected TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
+    protected TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    private final TrajectoryFollower follower;
+    protected TrajectoryFollower follower;
 
-    private final DcMotorEx frontLeft;
-    private final DcMotorEx backLeft;
-    private final DcMotorEx backRight;
-    private final DcMotorEx frontRight;
+    protected final DcMotorEx frontLeft;
+    protected final DcMotorEx backLeft;
+    protected final DcMotorEx backRight;
+    protected final DcMotorEx frontRight;
     public DcMotor carousel, intakeMotor, linearSlideMotor;
    // public DistanceSensor distanceSensorLeft, distanceSensorRight;
    public DistanceSensor distanceSensorIntake, distanceSensorTop;
@@ -98,10 +98,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     RevColorSensorV3 colorSensorLeft;
     RevColorSensorV3 colorSensorRight;
 
-    private final List<DcMotorEx> motors;
+    protected final List<DcMotorEx> motors;
 
-    private final BNO055IMU imu;
-    private final VoltageSensor batteryVoltageSensor;
+    protected final BNO055IMU imu;
+    protected final VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
     public MultipleCameraCV CV;
    // TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV duckCV;
@@ -270,12 +270,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontRight.setPower(-.25);
         backLeft.setPower(-.25);
         backRight.setPower(-.25);
-        intakeMotor.setPower(.9);
+        intakeMotor.setPower(1);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
         double bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while ((intakeDistance>10 && bucketdistance>14) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<2500) {
+        while ((intakeDistance>10 && bucketdistance>13.5) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
             bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
             telemetry.addData("top distance", bucketdistance);
@@ -825,18 +825,25 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideMotor.setPower(.4);
     }
 
-    public void toLineRedTeleop(double seconds){
-        setMotorPowers(.5,.5,.5,.5);
+
+    public boolean toLineRedTeleop(double seconds){
+        boolean found = false;
+        setMotorPowers(.4,.4,.4,.4);
         long startTime = new Date().getTime();
         long time = 0;
         while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
-            if (colorSensorLeft.alpha() > 40 && colorSensorRight.alpha() > 40) {
-                position = new Pose2d(new Vector2d(26, -63),Math.toRadians(180));
+            if (colorSensorLeft.alpha() > 400 || colorSensorRight.alpha() > 400) {
+                position = new Pose2d(new Vector2d(31, -66),Math.toRadians(180));
+                setPoseEstimate(position);
+                found= true;
+                //setMotorPowers(0,0,0,0);
                 break;
             }
         }
+        return found;
     }
+
 
     public void toLineBlueTeleop(double seconds){
         setMotorPowers(.5,.5,.5,.5);
@@ -844,8 +851,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         long time = 0;
         while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
-            if (colorSensorLeft.alpha() > 40 && colorSensorRight.alpha() > 40) {
-                position = new Pose2d(new Vector2d(26, 63),Math.toRadians(180));
+            if (colorSensorLeft.alpha() > 400 || colorSensorRight.alpha() > 400) {
+                position = new Pose2d(new Vector2d(31, 66),Math.toRadians(180));
                 break;
             }
         }

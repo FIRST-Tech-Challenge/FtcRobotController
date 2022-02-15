@@ -6,20 +6,25 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region1;
+import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region2;
 
 @TeleOp(name="Freight Frenzy Red 2: Electric Boogaloo", group = "competition")
 public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
 
-    RobotClass robot;
-    SampleMecanumDrive drive;
+    //RobotClass robot;
+    SampleMecanumDriveCancelable drive;
 
     /* Declare OpMode members. */
     private final ElapsedTime runtime = new ElapsedTime();
@@ -34,7 +39,7 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
     DistanceSensor distanceSensorIntake, distanceSensorTop;
 
-    DcMotor carouselMotor = null;
+    DcMotorEx carouselMotor = null;
 
 
 //    // declare motor speed variables
@@ -77,6 +82,14 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
     DriveMode currentMode = DriveMode.NORMAL;
 
     boolean carouselOn = false; //Outside of loop()
+    boolean carouselPushed = false;
+    int encoderPos=0;
+    double velocity=0;
+    boolean start=false;
+    boolean startCarousel = true;
+    ElapsedTime elapsedTimeCarousel;
+    double vel2Max=0;
+    double vel1Max=0;
 
     Trajectory pastLineRed;
     Trajectory toHubRed;
@@ -98,11 +111,12 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
+        drive = new SampleMecanumDriveCancelable(hardwareMap, this, telemetry);
 
-        Pose2d startPose = new Pose2d(new Vector2d(0, 0), Math.toRadians(0));
+        Pose2d startPose =new Pose2d(new Vector2d(26, -66),Math.toRadians(180));
 
         drive.setPoseEstimate(startPose);
+
 
         telemetry.addData("Status", "Initialized odometry");
         telemetry.update();
@@ -115,7 +129,7 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
-        carouselMotor = hardwareMap.dcMotor.get("carouselMotor");
+        carouselMotor = hardwareMap.get(DcMotorEx.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
 
@@ -157,7 +171,7 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        drive.lightSet();
+        //drive.lightSet();
         drive.redLED.setState(true);
         drive.redLED2.setState(true);
 
@@ -167,20 +181,28 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
         telemetry.addData("Status", "Before trajectories");
         telemetry.update();
+        currentMode = DriveMode.NORMAL;
 
 
-        pastLineRed = drive.trajectoryBuilder(drive.position)
-                .lineTo(new Vector2d(16, -63))
-                .addDisplacementMarker(() -> drive.followTrajectoryAsync(toHubRed))
+        pastLineRed= drive.trajectoryBuilder(new Pose2d(new Vector2d(26, -66),Math.toRadians(180)))
+                .lineTo(new Vector2d(10, -65))
+               .splineToSplineHeading(new Pose2d(-12, -45, Math.toRadians(90)), Math.toRadians(90))
+              //  .addDisplacementMarker(()->drive.followTrajectoryAsync(toHubRed))
                 .build();
+
+//        toHubRed = drive.trajectoryBuilder(pastLineRed.end())
+//                .splineToSplineHeading(new Pose2d(-9, -48, Math.toRadians(90)), Math.toRadians(90))
+//                .build();
+
+
 
         telemetry.addData("Status", "Initialized trajectory 1");
         telemetry.update();
 
-        toHubRed = drive.trajectoryBuilder(pastLineRed.end())
-                .splineToSplineHeading(new Pose2d(-11, 48, Math.toRadians(270)), Math.toRadians(270))
-                .splineToLinearHeading(new Pose2d(new Vector2d(-12.7, -42), Math.toRadians(90)), Math.toRadians(90) )
-                .build();
+//        toHubRed = drive.trajectoryBuilder(pastLineRed.end())
+//                .splineToSplineHeading(new Pose2d(-11, 48, Math.toRadians(270)), Math.toRadians(270))
+//                .splineToLinearHeading(new Pose2d(new Vector2d(-12.7, -42), Math.toRadians(90)), Math.toRadians(90) )
+//                .build();
 
 
         telemetry.addData("Status", "Initialized trajectories");
@@ -196,7 +218,7 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
             telemetry.addData("encode",  + linearSlideMotor.getCurrentPosition());
             telemetry.update();
 
-            drive.update();
+           // drive.update();
 
 
             switch (currentMode) {
@@ -207,10 +229,18 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
                     double rx = 0;
 
                     if (Math.abs(gamepad1.left_stick_y) > 0.2 || Math.abs(gamepad1.left_stick_x) > 0.2 || Math.abs(gamepad1.right_stick_x) > 0.2 ) {
-                        y = gamepad1.left_stick_y; //
+                        y = gamepad1.left_stick_y;
                         x = gamepad1.left_stick_x;
+                        if (Math.abs(y)<0.2){
+                            y=0;
+                        }
+                        if (Math.abs(x)<0.2){
+                            x=0;
+                        }
+
                         rx = gamepad1.right_stick_x;
                     }
+
 
                     double leftFrontPower = y + x + rx;
                     double leftRearPower = y - x + rx;
@@ -259,19 +289,28 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
                     if (gamepad1.right_trigger > .35) {
                         currentMode = DriveMode.TO_HUB;
+                        boolean foundWhite = drive.toLineRedTeleop(1.5);
+                        if (foundWhite) {
+                            drive.followTrajectoryAsync(pastLineRed);
+                        }
                     }
+                    break;
 
                 case TO_HUB:
-//                    Strafe till touch sensor
-//                    drive.followTrajectoryAsync(toLine);
-                    drive.toLineRedTeleop(4);
-                    drive.followTrajectoryAsync(pastLineRed);
+
+                    if (!drive.isBusy()) {
+                        currentMode = DriveMode.NORMAL;
+                    }
+
+                    break;
 
 
 
                 case TO_SHARED_HUB:
+                    break;
 
                 case TO_WAREHOUSE:
+                    break;
             }
 
             drive.update();
@@ -282,7 +321,7 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
             if(gamepad2.a) {
                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-                intakeMotor.setPower(-.8);
+                intakeMotor.setPower(-1);
                 intakeOn = true;
 
             } else if (gamepad2.b) {
@@ -363,43 +402,76 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
             rotateCarousel();
 
-//            double distance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-//            telemetry.addData("distance", distance);
-//            telemetry.update();
-//            if (distance < 7) {
-//                intakeMotor.setPower(0);
-//                intakeOn = false;
-//            }
-
-
             double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            if (linearSlideTarget != linearSlideTargets.BASE) {
-                if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
-                    drive.pauseButInSecondsForThePlebeians(.1);
-                    intakeMotor.setPower(0);
-                    drive.redLED.setState(false);
-                    drive.greenLED.setState(true);
-                    drive.redLED2.setState(false);
-                    drive.greenLED2.setState(true);
-                    drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-                }
+
+            if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
+
+                drive.pauseButInSecondsForThePlebeians(.1);
+                intakeMotor.setPower(0);
+                drive.redLED.setState(false);
+                drive.greenLED.setState(true);
+                drive.redLED2.setState(false);
+                drive.greenLED2.setState(true);
+                intakeOn= false;
+                //drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
             }
 
-//            if (gamepad2.dpad_right) {
-//                //Thing that will be doing to find the thing
-//                drive.distanceSensorStuff();
-//            }
+            if (distanceSensorTop.getDistance(DistanceUnit.CM)<13.5){
+                drive.redLED.setState(true);
+                drive.greenLED.setState(false);
+                drive.redLED2.setState(true);
+                drive.greenLED2.setState(false);
+                intakeMotor.setPower(0);
+                intakeOn=false;
+            }
+            telemetry.addData("intake on", Boolean.toString(intakeOn));
+
 
         }
     }
 
     protected void rotateCarousel(){
-        if(gamepad2.y && !carouselOn) {
-            if(carouselMotor.getPower() != 0) carouselMotor.setPower(0);
-            else carouselMotor.setPower(.6);
-            carouselOn = true;
-        } else if(!gamepad2.y) carouselOn = false;
+        if (gamepad2.y && !carouselPushed)  {
+            if (carouselOn){
+                carouselOn = false;
+                carouselMotor.setVelocity(0);
+            } else {
+                carouselOn = true;
+            }
+            carouselPushed= true;
+
+        } else if (!gamepad2.y) {
+            carouselPushed = false;
+        }
+
+        if (carouselOn) {
+
+            encoderPos = carouselMotor.getCurrentPosition();
+
+            if (encoderPos < region1) {
+                velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
+                vel1Max = velocity;
+                carouselMotor.setVelocity(velocity);
+                telemetry.update();
+            } else if (encoderPos >= region1 && encoderPos < region2) {
+                velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (encoderPos - region1));
+                vel2Max = velocity;
+                carouselMotor.setVelocity(velocity);
+                telemetry.update();
+            }
+            else if (encoderPos >= region2 && encoderPos < FreightFrenzyConstants.goal) {
+                velocity = vel2Max+Math.sqrt(2*FreightFrenzyConstants.accelerate3*(encoderPos-region2));
+                carouselMotor.setVelocity(velocity);
+                telemetry.update();
+            } else if (encoderPos >= FreightFrenzyConstants.goal) {
+                carouselOn = false;
+                carouselMotor.setVelocity(0);
+                carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            }
+
+        }
+
     }
-    
 
 }
