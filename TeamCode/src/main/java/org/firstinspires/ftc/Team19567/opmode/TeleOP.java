@@ -83,7 +83,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     //Variables
     private double armPos = 0;
     private double armPower = 1.0;
-    private double releaseServoPos = 0.8;
+    private double releaseServoPos = 0.75;
     private double balanceServoPos = 0.0;
     private double acc = MAX_SENSITIVITY;
     private double carouselPower = 0.0;
@@ -214,7 +214,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
         //INTAKE
         if(gamepad1.right_trigger > 0) mechanisms.moveIntake(INTAKE_SPEED);
-        else if(gamepad1.right_bumper) mechanisms.moveIntake(INTAKE_SPEED);
+        else if(gamepad1.right_bumper) mechanisms.moveIntake(-1*INTAKE_SPEED);
         else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
         else mechanisms.moveIntake(0.1);
 
@@ -283,7 +283,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
             case GOING_DOWN: {
                 armPower = 0.5;
-                mechanisms.releaseServoMove(1.0);
+                mechanisms.releaseServoMove(0.75);
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -296,8 +296,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
         //SERVOS
-        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.9);
-        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.9);
+        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.8);
+        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.8);
         if(gamepad2.right_bumper) releaseServoPos = 0.3;
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000 && runtime.milliseconds() <= 120000)) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
