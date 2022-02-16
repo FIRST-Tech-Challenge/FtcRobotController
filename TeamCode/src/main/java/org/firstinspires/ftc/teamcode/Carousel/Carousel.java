@@ -16,6 +16,7 @@ public class Carousel {
     // Constructor
     public Carousel(HardwareMap hardwareMap) {
         carouselTurningMotor = hardwareMap.dcMotor.get("carouselTurningMotor");
+        carouselTurningMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         distance_sensor = hardwareMap.get(DistanceSensor.class, "carouselDistanceSensor");
         // touchSensor = hardwareMap.digitalChannel.get("carouselTouchSensor");
 

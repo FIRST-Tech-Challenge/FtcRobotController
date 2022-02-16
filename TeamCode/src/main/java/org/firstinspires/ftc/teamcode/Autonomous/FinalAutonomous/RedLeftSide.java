@@ -1,14 +1,11 @@
-package org.firstinspires.ftc.teamcode.OnBotJava;
-
+package org.firstinspires.ftc.teamcode.Autonomous.FinalAutonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
-import org.firstinspires.ftc.teamcode.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Carousel.Carousel;
 import org.firstinspires.ftc.teamcode.Chassis.Drivechain;
 
 @Autonomous
-public class PosFour extends LinearOpMode {
+public class RedLeftSide extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,48 +35,33 @@ public class PosFour extends LinearOpMode {
 //        sleep(3000);
 
         sleep(2500);
-        AutonomousDC.moveRobot(800, -800, 800, -800, .5, .5, -.5, -.5);
+        AutonomousDC.moveRobot(1100, -1100, 1100, -1100, 1, 1, -1, -1);
+        AutonomousDC.turnDeg(-90.0f, telemetry);
         sleep(2000);
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
         AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(-45.0f, telemetry);
-        AutonomousDC.resetTicks();
-        sleep(1000);
-        AutonomousDC.moveRobot(200, -200, 200, -200, .5, .5, -.5, -.5);
-        sleep(2000);
 
-        while (AutonomousDC.isbusy()) {
-            sleep(100);
-        }
-        AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(135.0f, telemetry);
-        AutonomousDC.resetTicks();
-        sleep(1000);
-        AutonomousDC.moveRobot(1000, -1000, 1000, -1000, .5, .5, -.5, -.5);
-        sleep(2000);
+        AutonomousCS.CarouselAutonomous(2000,-0.3);
 
-        while (AutonomousDC.isbusy()) {
-            sleep(100);
-        }
-        AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(-180.0f, telemetry);
-        AutonomousDC.resetTicks();
-        sleep(1000);
-        AutonomousDC.moveRobot(5000, -5000, 5000, -5000, .5, .5, -.5, -.5);
+//        AutonomousDC.turnDeg(-45.0f, telemetry);
+//        AutonomousDC.resetTicks();
+//        sleep(1000);
         sleep(2000);
-        AutonomousCS.CarouselAutonomous(1000,0.3);
+        AutonomousDC.turnDeg(180.0f, telemetry);
         sleep(2000);
         AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(135.0f, telemetry);
-        AutonomousDC.resetTicks();
-        sleep(1000);
-        AutonomousDC.moveRobot(400, -400, 400, -400, .5, .5, -.5, -.5);
+        AutonomousDC.moveRobot(1100, -1100, 1100, -1100, 1, 1, -1, -1);
         sleep(2000);
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
+        AutonomousDC.resetTicks();
+        //Intake
+
+        AutonomousDC.turnDeg(-120.0f, telemetry);
+
 
 
     }

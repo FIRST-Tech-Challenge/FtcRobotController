@@ -4,45 +4,60 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Carousel.Carousel;
+
 @TeleOp(name = "Jon DC")
 public class JonDC extends LinearOpMode{
     DcMotor fl;
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
+    DcMotor carouselTurningMotor;
 
     public void runOpMode(){
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         br = hardwareMap.get(DcMotor.class, "br");
+        carouselTurningMotor = hardwareMap.dcMotor.get("carouselTurningMotor");
 
-        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         float[] power = new float[4];
         boolean lsDeadzone = false;
         boolean rsDeadzone = false;
+        boolean direction1 = true;
+        boolean direction2 = false;
 
         waitForStart();
-
+        Carousel car = new Carousel(hardwareMap);
+        Chassis ch = new Chassis(hardwareMap);
         while (opModeIsActive()) {
+            //carousel code
+            car.toggleDirection(this.gamepad1.b);
+            car.toggleCarousel(this.gamepad1.a);
 
-            Chassis ch = new Chassis(hardwareMap);
-
+            //drive
+            ch.slowMode(this.gamepad1.right_bumper);
             power = ch.mecanumDr(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y,this.gamepad1.right_stick_x,this.gamepad1.right_stick_y);
             //assigning speeds
-            fl.setPower(-power[0]);
-            fr.setPower(power[1]);
-            bl.setPower(-power[2]);
-            br.setPower(power[3]);
+            fl.setPower(-power[0]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            fr.setPower(power[1]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
+            bl.setPower(-power[2]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            br.setPower(power[3]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
 
+            /*
+            fl.setPower(-.5); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            fr.setPower(.5); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
+            bl.setPower(.5); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            br.setPower(-.5);*/
             /* --------------------------------------
             Telemetry Stuff
             -------------------------------------- */
@@ -59,6 +74,9 @@ public class JonDC extends LinearOpMode{
             telemetry.update();
         }
     }
+
+
+
 
     //Displays a Tic Tac Toe board of directions (may need adjustment depending on bot)
     public static String[] dirDisplay(float xVal, float yVal){
