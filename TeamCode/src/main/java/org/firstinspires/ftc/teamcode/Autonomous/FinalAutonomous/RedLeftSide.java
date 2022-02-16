@@ -58,11 +58,18 @@ public class RedLeftSide extends LinearOpMode {
             sleep(100);
         }
         AutonomousDC.resetTicks();
-        //Intake
+
+        //Outtake stuff
 
         AutonomousDC.turnDeg(-120.0f, telemetry);
-
-
+        sleep(2000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(950, -950, 950, -950, 1, 1, -1, -1);
+        sleep(2000);
+        while (AutonomousDC.isbusy()) {
+            sleep(100);
+        }
+        AutonomousDC.resetTicks();
 
     }
 }

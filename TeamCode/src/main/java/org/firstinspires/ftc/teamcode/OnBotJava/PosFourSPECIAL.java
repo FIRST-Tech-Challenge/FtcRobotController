@@ -81,7 +81,6 @@ public class PosFourSPECIAL extends LinearOpMode {
             sleep(100);
         }
 
-
         }
     }
 
