@@ -23,5 +23,6 @@ configurations.all {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }

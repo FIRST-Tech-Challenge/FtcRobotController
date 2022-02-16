@@ -1,15 +1,11 @@
-package org.firstinspires.ftc.teamcode.OnBotJava;
-
-
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous.FinalAutonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.Carousel.Carousel;
-
 import org.firstinspires.ftc.teamcode.Chassis.Drivechain;
 
 @Autonomous
-public class PosFourSPECIAL extends LinearOpMode {
+public class BlueLeftSide extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,49 +35,37 @@ public class PosFourSPECIAL extends LinearOpMode {
 //        sleep(3000);
 
         sleep(2500);
-        AutonomousDC.moveRobot(800, -800, 800, -800, .5, .5, -.5, -.5);
+        AutonomousDC.turnDeg(-40.0f, telemetry);
         sleep(2000);
-        while (AutonomousDC.isbusy()) {
-            sleep(100);
-        }
-            AutonomousDC.resetTicks();
-            AutonomousDC.turnDeg(-45.0f, telemetry);
-            AutonomousDC.resetTicks();
-            sleep(1000);
-            AutonomousDC.moveRobot(200, -200, 200, -200, .5, .5, -.5, -.5);
-            sleep(2000);
-
-            while (AutonomousDC.isbusy()) {
-                sleep(100);
-            }
         AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(135.0f, telemetry);
-        AutonomousDC.resetTicks();
-        sleep(1000);
-        AutonomousDC.moveRobot(1000, -1000, 1000, -1000, .5, .5, -.5, -.5);
+        AutonomousDC.moveRobot(400, -400, 400, -400, 1, 1, -1, -1);
         sleep(2000);
-
+        AutonomousDC.resetTicks();
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
         AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(-180.0f, telemetry);
-        AutonomousDC.resetTicks();
-        sleep(1000);
-        AutonomousDC.moveRobot(5000, -5000, 5000, -5000, .5, .5, -.5, -.5);
-        sleep(2000);
-        AutonomousCS.CarouselAutonomous(1000,0.3);
+
+        //Outtake stuff
+
+        AutonomousDC.turnDeg(220.0f, telemetry);
         sleep(2000);
         AutonomousDC.resetTicks();
-        AutonomousDC.turnDeg(135.0f, telemetry);
-        AutonomousDC.resetTicks();
-        sleep(1000);
-        AutonomousDC.moveRobot(400, -400, 400, -400, .5, .5, -.5, -.5);
+        AutonomousDC.moveRobot(200, -200, 200, -200, 1, 1, -1, -1);
         sleep(2000);
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
-
+        AutonomousDC.resetTicks();
+        AutonomousDC.turnDeg(-90.0f, telemetry);
+        sleep(2000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(700, -700, 700, -700, 1, 1, -1, -1);
+        sleep(2000);
+        while (AutonomousDC.isbusy()) {
+            sleep(100);
         }
     }
+}
+
 
