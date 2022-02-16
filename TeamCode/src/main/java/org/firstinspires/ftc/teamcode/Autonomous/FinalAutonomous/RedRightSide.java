@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.Carousel.Carousel;
 import org.firstinspires.ftc.teamcode.Chassis.Drivechain;
 
 @Autonomous
-public class RedLeftSide extends LinearOpMode {
+public class RedRightSide extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
