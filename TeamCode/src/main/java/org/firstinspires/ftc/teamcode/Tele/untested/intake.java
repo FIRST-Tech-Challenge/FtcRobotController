@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.Tele.untested;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 
-@TeleOp
 public class intake {
+    static CRServo intakeServo;
+
+    public static void setIntakeServo(CRServo INTK){
+        intakeServo = INTK;
+    }
+
 }

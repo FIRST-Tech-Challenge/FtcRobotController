@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.Tele.untested;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp
 public class dump {
+    static Servo dumpServo = null;
+
+    public static void setDumpServo(Servo DS){
+        dumpServo = DS;
+    }
 }
