@@ -346,6 +346,12 @@ public class TestGreatNewFunctionality extends LinearOpMode {
             gotoPosition = false;
         } else if( gamepad1_square_now && !gamepad1_square_last ) {
             gotoPosition = true;
+            // If logging for PIDF purposes, begin a new dataset now:
+            if( robot.cappingMotorPIDFlogging ) {
+                robot.capMotorLogIndex  = 0;
+                robot.capMotorLogEnable = true;
+                robot.capMotorTimer.reset();
+            }
         }
     }
 
@@ -365,6 +371,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
                 if( atPositionCount > 7 ) {
                     reachedDestination = true;
                     gotoPosition = false;
+                    robot.writeCappingLog();
                 }
             } else {
                 atPositionCount = 0;

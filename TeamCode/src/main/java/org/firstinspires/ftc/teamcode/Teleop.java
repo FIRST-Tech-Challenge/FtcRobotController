@@ -711,6 +711,7 @@ public abstract class Teleop extends LinearOpMode {
                 robot.cappingMotor.setPower( 0.0 );
                 robot.cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;   // ensure we're reset
+                robot.writeCappingLog();
             }
         }
         else { // cappingArmCycleCount == CAPPING_CYCLECOUNT_DONE

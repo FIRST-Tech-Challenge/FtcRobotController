@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Environment;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -24,6 +28,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
+import java.text.SimpleDateFormat;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Hardware class for goBilda robot (15"x15" chassis with 6" Andymark mecanum wheels)
@@ -87,6 +98,17 @@ public class HardwareBothHubs
     public int          cappingMotorTgt  = 0;          // RUN_TO_POSITION target encoder count
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
+
+    // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
+    // motor performance we store data to memory until the movement is complete, then dump to a file.
+    public boolean          cappingMotorPIDFlogging = true;     // only enable during development!!
+    public final static int CAPMOTORLOG_SIZE  = 256;            // 256 entries = 2+ seconds @ 100Hz.
+    protected double[]      capMotorLogTime   = new double[CAPMOTORLOG_SIZE];  // msec
+    protected int[]         capMotorLogPos    = new int[CAPMOTORLOG_SIZE];     // encoder count
+    protected double[]      capMotorLogAmps   = new double[CAPMOTORLOG_SIZE];  // mAmp
+    protected boolean       capMotorLogEnable = false;
+    protected int           capMotorLogIndex  = 0;
+    protected ElapsedTime   capMotorTimer     = new ElapsedTime();
 
     public int          CAPPING_ARM_POS_START   = 0;
     public int          CAPPING_ARM_POS_STORE   = 291;
@@ -281,6 +303,8 @@ public class HardwareBothHubs
         }
         cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         cappingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        PIDFCoefficients cappingPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
+        cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, cappingPIDF );
 
         wristServo = hwMap.servo.get("WristServo");    // servo port 0 (hub 2)
         if (!transitionFromAutonomous) {
@@ -306,10 +330,6 @@ public class HardwareBothHubs
         if (!transitionFromAutonomous) {
             boxServo.setPosition( BOX_SERVO_INIT );
         }
-
-//      sweepServo = hwMap.crservo.get("SweepServo");    // servo port 5 (hub 2)
-//      sweepServo.setDirection( CRServo.Direction.REVERSE );
-//      sweepServo.setPower( 0.0 );
 
         linkServo = hwMap.servo.get("linkServo");        // servo port 5 (hub 2)
         if (!transitionFromAutonomous) {
@@ -401,8 +421,58 @@ public class HardwareBothHubs
         cappingMotorAmps   = cappingMotor.getCurrent( MILLIAMPS );
         freightMotorPos    = freightMotor.getCurrentPosition();
         freightMotorAmps   = freightMotor.getCurrent( MILLIAMPS );
+
+        // Do we need to capture capping-arm instrumentation data?
+        if( capMotorLogEnable ) {
+           capMotorLogTime[capMotorLogIndex] = capMotorTimer.milliseconds();
+           capMotorLogPos[capMotorLogIndex]  = cappingMotorPos;
+           capMotorLogAmps[capMotorLogIndex] = cappingMotorAmps;
+           // If the log is now full, disable further logging
+           if( ++capMotorLogIndex >= CAPMOTORLOG_SIZE )
+               capMotorLogEnable = false;
+        } // capMotorLogEnable
+
     } // readBulkData
 
+    /*--------------------------------------------------------------------------------------------*/
+    public void writeCappingLog() {
+        // Are we even logging these events?
+        if( !cappingMotorPIDFlogging ) return;
+        // Movement must be complete (disable further logging to memory)
+        capMotorLogEnable = false;
+        // Create a subdirectory based on DATE
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String directoryPath = Environment.getExternalStorageDirectory().getPath() + "//FIRST//CappingArm//" + dateString;
+        // Ensure that directory path exists
+        File directory = new File(directoryPath);
+        directory.mkdirs();
+        // Create a filename based on TIME
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directoryPath + "/" + "capping_" + timeString + ".txt";
+        // Open the file
+        FileWriter cappingLog;
+        try {
+            cappingLog = new FileWriter(filePath, false);
+            // Log the current PIDF settings
+            PIDFCoefficients currPIDF = cappingMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            cappingLog.write("CappingArm " + currPIDF.toString() + "\r\n");
+            cappingLog.write("Target position," + cappingMotorTgt + "\r\n");
+            // Log Column Headings
+            cappingLog.write("msec,mAmp,encoder\r\n");
+            // Log all the data recorded
+            for( int i=0; i<capMotorLogIndex; i++ ) {
+                String msecString = String.format("%.3f, ", capMotorLogTime[i] );
+                String ampString  = String.format("%.0f, ", capMotorLogAmps[i] );
+                String posString  = String.format("%d\r\n", capMotorLogPos[i]  );
+                cappingLog.write( msecString + ampString + posString );
+            }
+            cappingLog.flush();
+            cappingLog.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } // createDriveLog()
+    
     /*--------------------------------------------------------------------------------------------*/
     public void driveTrainMotors( double frontLeft, double frontRight, double rearLeft, double rearRight )
     {
@@ -455,7 +525,7 @@ public class HardwareBothHubs
     /* - motorPower = desired motor power level to get there                                      */
     public void cappingArmPosition( int newPos, double motorPower )
     {
-        // Are we ALREADY at the specific position?
+        // Are we ALREADY at the specified position?
         if( Math.abs(newPos-cappingMotorPos) < 20 )
            return;
         
@@ -472,6 +542,13 @@ public class HardwareBothHubs
         // Enable RUN_TO_POSITION mode
         cappingMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
 
+        // If logging for PIDF purposes, begin a new dataset now:
+        if( cappingMotorPIDFlogging ) {
+            capMotorLogIndex  = 0;
+            capMotorLogEnable = true;
+            capMotorTimer.reset();
+        }
+        
         // Initiate motor movement to the new position
         cappingMotor.setPower( motorPower );
 
