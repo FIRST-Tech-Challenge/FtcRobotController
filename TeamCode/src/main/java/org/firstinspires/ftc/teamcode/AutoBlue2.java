@@ -18,10 +18,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
-@Autonomous(name="AutoWarehouseBlue", group="Autonomous")
+@Autonomous(name="AutoBlue2", group="Autonomous")
 //@Disabled
 
-public class AutoWarehouseBlue extends LinearOpMode {
+public class AutoBlue2 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf = null;  //left front wheel
     private DcMotor rf = null;  //right front wheel
@@ -32,7 +32,6 @@ public class AutoWarehouseBlue extends LinearOpMode {
     private Servo clawservo = null; //clawservo
     private DcMotor duckspinnerL = null; // the duck spinny thingy
     private DcMotor duckspinnerR = null; // the other duck spinny thingy
-
 
 
     @Override
@@ -58,7 +57,6 @@ public class AutoWarehouseBlue extends LinearOpMode {
         tower2.setDirection(DcMotor.Direction.FORWARD);
         waitForStart();
         runtime.reset();
-
 
 
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
@@ -139,7 +137,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(400); //Go backwards
+            sleep(350); //Go backwards
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -154,14 +152,14 @@ public class AutoWarehouseBlue extends LinearOpMode {
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(-1.0);
-            rf.setPower(1.0);
-            lb.setPower(-1.0);
-            rb.setPower(1.0);
+            lf.setPower(0.75);
+            rf.setPower(-0.75);
+            lb.setPower(1.0);
+            rb.setPower(-1.0);
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1025); //turn left
+            sleep(675); //turn right
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -176,14 +174,14 @@ public class AutoWarehouseBlue extends LinearOpMode {
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(0.45);
-            rf.setPower(0.45);
-            lb.setPower(0.45);
-            rb.setPower(0.45);
+            lf.setPower(0.8);
+            rf.setPower(0.8);
+            lb.setPower(0.8);
+            rb.setPower(0.8);
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1000); //go forward
+            sleep(950); //Go forward
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -194,41 +192,7 @@ public class AutoWarehouseBlue extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(2000); //quick stop
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(0.05);
-            rf.setPower(0.05);
-            lb.setPower(0.05);
-            rb.setPower(0.05);
-            clawservo.setPosition(0);
-            duckspinnerL.setPower(-.75);
-            duckspinnerR.setPower(0);
-            sleep(6911); //duck spin
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(-0.5);
-            rf.setPower(-0.5);
-            lb.setPower(-0.5);
-            rb.setPower(-0.5);
-            clawservo.setPosition(0);
-            duckspinnerL.setPower(0);
-            duckspinnerR.setPower(0);
-            sleep(500); //go backwards
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(0);
-            rf.setPower(0);
-            lb.setPower(0);
-            rb.setPower(0);
-            clawservo.setPosition(0);
-            duckspinnerL.setPower(0);
-            duckspinnerR.setPower(0);
-            sleep(25000); //Do nothing
-
+            sleep(25000); //quick stop
 
 
         }
