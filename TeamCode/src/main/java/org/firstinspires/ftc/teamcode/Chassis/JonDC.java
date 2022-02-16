@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Chassis;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import org.firstinspires.ftc.teamcode.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Carousel.Carousel;
 
 @TeleOp(name = "Jon DC")
@@ -20,6 +20,7 @@ public class         JonDC extends LinearOpMode{
         bl = hardwareMap.get(DcMotor.class, "bl");
         br = hardwareMap.get(DcMotor.class, "br");
         carouselTurningMotor = hardwareMap.dcMotor.get("carouselTurningMotor");
+
 
         //fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -39,11 +40,12 @@ public class         JonDC extends LinearOpMode{
         waitForStart();
         Carousel car = new Carousel(hardwareMap);
         Chassis ch = new Chassis(hardwareMap);
+        Intake it = new Intake(hardwareMap);
         while (opModeIsActive()) {
             //carousel code
-            car.toggleDirection(this.gamepad1.b);
-            car.toggleCarousel(this.gamepad1.a);
-
+            car.toggleDirection(this.gamepad2.b);
+            car.toggleCarousel(this.gamepad2.a);
+            it.intakeHold(this.gamepad2.x, this);
             //drive
             ch.slowMode(this.gamepad1.right_bumper);
             power = ch.mecanumDr(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y,this.gamepad1.right_stick_x,this.gamepad1.right_stick_y);
