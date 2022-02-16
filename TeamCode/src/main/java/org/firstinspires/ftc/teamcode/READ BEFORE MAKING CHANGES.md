@@ -1,9 +1,9 @@
-##This file includes important information on file management and workflow.
+## This file includes important information on file management and workflow.
 
 Please make sure that you read this document thoroughly before adding new files or pushing changes onto the master. 
 Any questions about file hierarchy and workflow can be asked in person at a meeting, or in the coding channel on Discord.
 
-##File Management:
+## File Management:
 
 1.  Ensure that everything goes into the pertinent folders. If you have questions about this, ask Atharve(Art) or William.
 2.  Every new function must be tested individually before insertion into experimental OpMode.
@@ -18,7 +18,7 @@ Any questions about file hierarchy and workflow can be asked in person at a meet
     support files into the competition folder.
 9.  All OpModes and supporting modules will be copied manually into the competition folder after approval from Art and William.
 
-##Workflow:
+## Workflow:
 
 1.  Ensure that you create a branch for your devices and always push edits onto the branch instead of the master. 
 2.  When you want to push changes to the master, confirm it with Art and make sure that your change list does NOT
