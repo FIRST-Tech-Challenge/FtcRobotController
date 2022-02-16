@@ -35,25 +35,12 @@ public class RedLeftSide extends LinearOpMode {
 //        sleep(3000);
 
         sleep(2500);
-        AutonomousDC.moveRobot(1100, -1100, 1100, -1100, 1, 1, -1, -1);
-        AutonomousDC.turnDeg(-90.0f, telemetry);
-        sleep(2000);
-        while (AutonomousDC.isbusy()) {
-            sleep(100);
-        }
-        AutonomousDC.resetTicks();
-
-        AutonomousCS.CarouselAutonomous(2000,-0.3);
-
-//        AutonomousDC.turnDeg(-45.0f, telemetry);
-//        AutonomousDC.resetTicks();
-//        sleep(1000);
-        sleep(2000);
-        AutonomousDC.turnDeg(180.0f, telemetry);
+        AutonomousDC.turnDeg(-40.0f, telemetry);
         sleep(2000);
         AutonomousDC.resetTicks();
-        AutonomousDC.moveRobot(1100, -1100, 1100, -1100, 1, 1, -1, -1);
+        AutonomousDC.moveRobot(400, -400, 400, -400, 1, 1, -1, -1);
         sleep(2000);
+        AutonomousDC.resetTicks();
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
@@ -61,16 +48,24 @@ public class RedLeftSide extends LinearOpMode {
 
         //Outtake stuff
 
-        AutonomousDC.turnDeg(-120.0f, telemetry);
+        AutonomousDC.turnDeg(220.0f, telemetry);
         sleep(2000);
         AutonomousDC.resetTicks();
-        AutonomousDC.moveRobot(950, -950, 950, -950, 1, 1, -1, -1);
+        AutonomousDC.moveRobot(200, -200, 200, -200, 1, 1, -1, -1);
         sleep(2000);
         while (AutonomousDC.isbusy()) {
             sleep(100);
         }
         AutonomousDC.resetTicks();
-
+        AutonomousDC.turnDeg(-90.0f, telemetry);
+        sleep(2000);
+        AutonomousDC.resetTicks();
+        AutonomousDC.moveRobot(700, -700, 700, -700, 1, 1, -1, -1);
+        sleep(2000);
+        while (AutonomousDC.isbusy()) {
+            sleep(100);
+        }
     }
 }
+
 
