@@ -5,11 +5,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
     DcMotor frontIntakeMotor;
     DcMotor backIntakeMotor;
-
+    Servo intakeFlap;
     //Toggle
     Boolean prevInput;
     Boolean itToggle;
@@ -17,7 +18,7 @@ public class Intake {
     public Intake(HardwareMap hardwareMap){
         frontIntakeMotor = hardwareMap.dcMotor.get("frontMotorIntake");
         frontIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        intakeFlap = hardwareMap.servo.get("intakeFlapServo");
         backIntakeMotor = hardwareMap.dcMotor.get("backMotorIntake");
         prevInput = false;
         itToggle = false;
@@ -69,7 +70,16 @@ public class Intake {
         backIntakeMotor.setPower(power);
     }
 
+    public void flapHalfOpen(Boolean imp, LinearOpMode op){
+        intakeFlap.setPosition(-0.2);
+        op.sleep(2000);
+        intakeFlap.setPosition(0.0);
+    }
 
-
+    public void flapFullOpen(Boolean imp, LinearOpMode op){
+        intakeFlap.setPosition(-0.4);
+        op.sleep(2000);
+        intakeFlap.setPosition(0.0);
+    }
 
 }

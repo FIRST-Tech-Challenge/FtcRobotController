@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Chassis;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Carousel.Carousel;
 
@@ -42,6 +44,7 @@ public class JonDC extends LinearOpMode{
         Carousel car = new Carousel(hardwareMap);
         Chassis ch = new Chassis(hardwareMap);
         Intake it = new Intake(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
         while (opModeIsActive()) {
             //carousel code
             car.toggleDirection(this.gamepad2.b);

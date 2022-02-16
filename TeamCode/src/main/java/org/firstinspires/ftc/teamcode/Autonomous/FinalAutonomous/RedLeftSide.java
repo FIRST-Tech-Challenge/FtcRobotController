@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autonomous.FinalAutonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Carousel.Carousel;
 import org.firstinspires.ftc.teamcode.Chassis.Drivechain;
 
@@ -12,6 +14,7 @@ public class RedLeftSide extends LinearOpMode {
 
         Drivechain AutonomousDC = new Drivechain(hardwareMap);
         Carousel AutonomousCS = new Carousel(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
         AutonomousDC.calibrateGyro();
         AutonomousDC.resetGyro();
         AutonomousDC.resetTicks();
