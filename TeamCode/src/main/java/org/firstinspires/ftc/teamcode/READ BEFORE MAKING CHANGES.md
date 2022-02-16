@@ -1,8 +1,10 @@
 ##This file includes important information on file management and workflow.
-Please make sure that you read this document thoroughly before adding new files or pushing changes onto the master.
+
+Please make sure that you read this document thoroughly before adding new files or pushing changes onto the master. 
 Any questions about file hierarchy and workflow can be asked in person at a meeting, or in the coding channel on Discord.
 
 ##File Management:
+
 1.  Ensure that everything goes into the pertinent folders. If you have questions about this, ask Atharve(Art) or William.
 2.  Every new function must be tested individually before insertion into experimental OpMode.
 3.  Every new function must have an accompanying markdown(.MD) file detailing the intended use, along with comments about
@@ -17,6 +19,7 @@ Any questions about file hierarchy and workflow can be asked in person at a meet
 9.  All OpModes and supporting modules will be copied manually into the competition folder after approval from Art and William.
 
 ##Workflow:
+
 1.  Ensure that you create a branch for your devices and always push edits onto the branch instead of the master. 
 2.  When you want to push changes to the master, confirm it with Art and make sure that your change list does NOT
     include any gradle or (.XML) changes. The only files your changelist should update will be in the teamcode folder.
