@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_COEFFICIENT;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.PPR_RATIO;
 //
 public class Mechanisms {
     public DcMotor armDC = null;
@@ -16,7 +18,6 @@ public class Mechanisms {
     public Servo balanceServo = null;
     public Servo releaseServo = null;
     public Telemetry telemetry = null;
-    private double PPR_RATIO = Utility_Constants.PPR_RATIO;
 
     public Mechanisms(HardwareMap hardwareMap, Telemetry t) {
         armDC = hardwareMap.get(DcMotor.class,"armDC");
@@ -96,6 +97,6 @@ public class Mechanisms {
     }
 
     public void maintainBalance() {
-        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(1250.5*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
+        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(BALANCE_COEFFICIENT*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
 }

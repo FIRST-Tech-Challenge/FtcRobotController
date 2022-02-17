@@ -23,26 +23,16 @@ import org.firstinspires.ftc.Team19567.util.AUTO_STATE;
 import org.firstinspires.ftc.Team19567.util.PRESET_STATE;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
+import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 
 //Custom constants
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.TURN_SENSITIVITY;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.STRAFE_SENSITIVITY;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.ACC_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FIRST_LEVEL_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.SECOND_LEVEL_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.THIRD_LEVEL_POS;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FLICKER_TIME;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INTAKE_SPEED;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MAX_SENSITIVITY;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.SLOWMODE_MULT;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.DEBOUNCE_TIME;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MILLI_ACC;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MILLI_FINAL;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MILLI_END;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INIT_POWER;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FINAL_POWER;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.ACC_COEFFICIENT;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.END_GAME_RUMBLE;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BOX_SECURED_RUMBLE;
 
 @TeleOp(name="TeleOP", group="Dababy") //Gives the TeleOp its name in the driver station menu and categorizes it as an Iterative OpMode
 public class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
@@ -68,24 +58,16 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private RevBlinkinLedDriver blinkin = null;
 
     //Constants
-    /* private final static Gamepad.RumbleEffect endGameRumble = new Gamepad.RumbleEffect.Builder()
-            .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
-            .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
-            .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
-            .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
-            .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
-            .build();
+    private final static Gamepad.RumbleEffect endGameRumble = Utility_Constants.END_GAME_RUMBLE;
 
-    private final static Gamepad.RumbleEffect boxSecured = new Gamepad.RumbleEffect.Builder()
-            .addStep(0.0, 1.0, 1000)  //  Rumble right motor 100% for one whole second
-            .build(); */
+    private final static Gamepad.RumbleEffect boxSecured = Utility_Constants.BOX_SECURED_RUMBLE;
 
     //Variables
     private double armPos = 0;
     private double armPower = 1.0;
     private double releaseServoPos = 0.75;
     private double balanceServoPos = 0.0;
-    private double acc = MAX_SENSITIVITY;
+    private double acc = Utility_Constants.MAX_SENSITIVITY;
     private double carouselPower = 0.0;
     private boolean isSlowmode = false;
     private boolean isCarouselEngaged = false;
@@ -154,11 +136,11 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             case DRIVER_CONTROL: {
                 double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y); //Gets the amount that we want to translate
                 double angleDC = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-                if (gamepad1.y && slowModeDebounceTime.milliseconds() >= DEBOUNCE_TIME) {
+                if (gamepad1.y && slowModeDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
                     isSlowmode = !isSlowmode;
                 }
-                if (isSlowmode) acc = SLOWMODE_MULT;
-                else acc = MAX_SENSITIVITY;
+                if (isSlowmode) acc = Utility_Constants.SLOWMODE_MULT;
+                else acc = Utility_Constants.MAX_SENSITIVITY;
                 final double leftFrontSpeed = (STRAFE_SENSITIVITY* r * Math.sin(angleDC) - TURN_SENSITIVITY * gamepad1.right_stick_x) * acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
                 final double rightFrontSpeed = (STRAFE_SENSITIVITY * r * Math.cos(angleDC) + TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
                 final double leftBackSpeed = (STRAFE_SENSITIVITY * r * Math.cos(angleDC) - TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
@@ -196,7 +178,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
             case AUTOMATION_FLICKER: {
                 releaseServoPos = 0.3;
-                if(automationTimeout.milliseconds() >= FLICKER_TIME) {
+                if(automationTimeout.milliseconds() >= Utility_Constants.FLICKER_TIME) {
                     telemetry.addData("State Machine","Moved to DRIVER_CONTROL");
                     telemetry.update();
                     currentState = TELEOP_STATE.DRIVER_CONTROL;
@@ -219,21 +201,21 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else mechanisms.moveIntake(0.1);
 
         //CAROUSEL
-        if(gamepad1.dpad_right || gamepad1.dpad_left && carouselDebounceTime.milliseconds() >= DEBOUNCE_TIME) {
+        if(gamepad1.dpad_right || gamepad1.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
             carouselDebounceTime.reset();
             carouselTime.reset();
             isCarouselEngaged = !isCarouselEngaged;
         }
         if(isCarouselEngaged) {
-            if(carouselTime.milliseconds() <= MILLI_FINAL) carouselPower = INIT_POWER;
-            else if(carouselTime.milliseconds() >= MILLI_ACC && carouselTime.milliseconds() <= MILLI_FINAL) {
-                carouselPower = Range.clip(carouselPower + carouselTime.milliseconds()/ACC_COEFFICIENT,INIT_POWER,FINAL_POWER);
+            if(carouselTime.milliseconds() <= Utility_Constants.MILLI_FINAL) carouselPower = Utility_Constants.INIT_POWER;
+            else if(carouselTime.milliseconds() >= Utility_Constants.MILLI_ACC && carouselTime.milliseconds() <= Utility_Constants.MILLI_FINAL) {
+                carouselPower = Range.clip(carouselPower + carouselTime.milliseconds()/ACC_COEFFICIENT,Utility_Constants.INIT_POWER,Utility_Constants.FINAL_POWER);
             }
-            else if(carouselTime.milliseconds() >= MILLI_END) {
+            else if(carouselTime.milliseconds() >= Utility_Constants.MILLI_END) {
                 isCarouselEngaged = false;
             }
             else {
-                carouselPower = FINAL_POWER;
+                carouselPower = Utility_Constants.FINAL_POWER;
             }
         }
         else carouselPower = 0.0;
@@ -301,11 +283,11 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(gamepad2.right_bumper) releaseServoPos = 0.3;
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000 && runtime.milliseconds() <= 120000)) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
-            gamepad1.runRumbleEffect(END_GAME_RUMBLE);
+            gamepad1.runRumbleEffect(endGameRumble);
         }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
         else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
-            if(!isIntaked) gamepad1.runRumbleEffect(BOX_SECURED_RUMBLE);
+            if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
             isIntaked = true;
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
             telemetry.addData("Distance Sensor","Freight Detected");

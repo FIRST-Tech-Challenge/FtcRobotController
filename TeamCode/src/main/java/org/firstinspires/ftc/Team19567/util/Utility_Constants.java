@@ -28,6 +28,7 @@ public class Utility_Constants {
     public static double ACC_COEFFICIENT = 80000; //Rate at which to accelerate by (reciprocal of)
     public static double FINAL_POWER = -1.0; //Final power for carousel
     public static double FLICKER_TIME = 400; //Time in milliseconds for the flicker to release one freight
+    public static double BALANCE_COEFFICIENT = 1300.1;
     public static Gamepad.RumbleEffect END_GAME_RUMBLE = new Gamepad.RumbleEffect.Builder()
             .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
             .addStep(0.0, 0.0, 300)  //  Pause for 300 mSec
