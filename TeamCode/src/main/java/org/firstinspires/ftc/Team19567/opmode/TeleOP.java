@@ -168,16 +168,16 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 rightDCFront.setPower(rightFrontSpeed);
                 leftDCBack.setPower(leftBackSpeed);
                 rightDCBack.setPower(rightBackSpeed);
-                if(gamepad1.options) {
-                    currentState = TELEOP_STATE.AUTOMATION_ROADRUNNER_MOVEMENT;
-                    telemetry.addData("State Machine","Moved to AUTOMATION_ROADRUNNER_MOVEMENT");
-                    telemetry.update();
-                    TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(new Pose2d(0,0,Math.toRadians(0)))
+                if(gamepad1.share) {
+                    TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(chassis.getPoseEstimate())
                             .addSpatialMarker(new Vector2d(6,1), () -> {
                                 mechanisms.rotateArm(THIRD_LEVEL_POS,0.7);
                             })
                             .lineToSplineHeading(new Pose2d(27,6, Math.toRadians(225))).build();
                     chassis.followTrajectorySequenceAsync(warehouseSequence);
+                    currentState = TELEOP_STATE.AUTOMATION_ROADRUNNER_MOVEMENT;
+                    telemetry.addData("State Machine","Moved to AUTOMATION_ROADRUNNER_MOVEMENT");
+                    telemetry.update();
                 }
                 break;
             }
