@@ -107,7 +107,7 @@ public class AutoWarehouse extends LinearOpMode {
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        WallSmash.smashIntoWall(drive, multiplier, 100);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 100);
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
@@ -119,7 +119,7 @@ public class AutoWarehouse extends LinearOpMode {
                 .build());
         updateLoop(drive);
         if (isStopRequested()) return;
-        WallSmash.smashIntoWall(drive, multiplier, 500);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 500);
 
         drive.followTrajectorySequenceAsync(part4);
         updateLoop(drive);
@@ -137,7 +137,7 @@ public class AutoWarehouse extends LinearOpMode {
         drive.followTrajectoryAsync(part2);
         updateLoop(drive);
 
-        WallSmash.smashIntoWall(drive, multiplier, 100);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 100);
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
