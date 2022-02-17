@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -56,10 +57,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private TouchSensor limitSwitch = null;
     private DistanceSensor distanceSensor = null;
     private RevBlinkinLedDriver blinkin = null;
+    private AnalogInput forceSensor = null;
 
     //Constants
     private final static Gamepad.RumbleEffect endGameRumble = Utility_Constants.END_GAME_RUMBLE;
-
     private final static Gamepad.RumbleEffect boxSecured = Utility_Constants.BOX_SECURED_RUMBLE;
 
     //Variables
@@ -96,6 +97,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
+        forceSensor = hardwareMap.get(AnalogInput.class,"forceSensor");
 
         chassis = new SampleMecanumDriveCancelable(hardwareMap);
         mechanisms = new Mechanisms(hardwareMap,telemetry);
@@ -286,12 +288,18 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             gamepad1.runRumbleEffect(endGameRumble);
         }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        else if(distanceSensor.getDistance(DistanceUnit.MM) <= 80) {
+        else if(forceSensor.getVoltage() <= Utility_Constants.FORCE_SENSOR_THRESHOLD) {
             if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
             isIntaked = true;
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
             telemetry.addData("Distance Sensor","Freight Detected");
         }
+        /* else if(distanceSensor.getDistance(DistanceUnit.MM) <= Utility_Constants.DISTANCE_SENSOR_THRESHOLD) {
+            if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
+            isIntaked = true;
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+            telemetry.addData("Distance Sensor","Freight Detected");
+        } */
         else {
             isIntaked = false;
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;

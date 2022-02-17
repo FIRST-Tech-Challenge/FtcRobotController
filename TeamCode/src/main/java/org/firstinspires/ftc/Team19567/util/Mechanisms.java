@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.Team19567.util;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,17 +8,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_COEFFICIENT;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.PPR_RATIO;
-//
+/* import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_COEFFICIENT;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.PPR_RATIO; */
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MAX_POS;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POTENTIOMETER_COEFFICIENT;
+
 public class Mechanisms {
-    public DcMotor armDC = null;
-    public DcMotor carouselLeft = null;
-    public DcMotor carouselRight = null;
-    public DcMotor intakeDC = null;
-    public Servo balanceServo = null;
-    public Servo releaseServo = null;
-    public Telemetry telemetry = null;
+    public DcMotor armDC;
+    public DcMotor carouselLeft;
+    public DcMotor carouselRight;
+    public DcMotor intakeDC;
+    public Servo balanceServo;
+    public Servo releaseServo;
+    public AnalogInput potentiometer;
+    public Telemetry telemetry;
 
     public Mechanisms(HardwareMap hardwareMap, Telemetry t) {
         armDC = hardwareMap.get(DcMotor.class,"armDC");
@@ -26,6 +30,7 @@ public class Mechanisms {
         intakeDC = hardwareMap.get(DcMotor.class,"intakeDC");
         balanceServo = hardwareMap.get(Servo.class,"balanceServo");
         releaseServo = hardwareMap.get(Servo.class,"releaseServo");
+        potentiometer = hardwareMap.get(AnalogInput.class,"potentiometer");
         telemetry = t;
     }
 
@@ -97,6 +102,7 @@ public class Mechanisms {
     }
 
     public void maintainBalance() {
-        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(BALANCE_COEFFICIENT*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
+        balanceServo.setPosition(Range.clip((3.3-potentiometer.getVoltage())/POTENTIOMETER_COEFFICIENT,0,MAX_POS));
+        //balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(BALANCE_COEFFICIENT*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
 }
