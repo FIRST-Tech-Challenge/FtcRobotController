@@ -29,7 +29,7 @@ public class test2 extends LinearOpMode {
         final AutoCarousel carousel =  new AutoCarousel(hardwareMap);
         final DistanceSensor sensor = hardwareMap.get(DistanceSensor.class, "intakeSensor");
         final Encoder leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
-        final Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "tapeMeasure"));
+        final Encoder rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "spinner"));
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
         TseDetector detector = new TseDetector(hardwareMap, "webcam", true, CVAuto.zeroOrOneRedorBlue == 0);
         final Encoder frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));

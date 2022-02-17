@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
 import org.firstinspires.ftc.teamcode.opmodes.util.WallSmash;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -43,8 +42,8 @@ public class AutoWarehouse extends LinearOpMode {
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-        final Pose2d liftPosition = new Pose2d(-5, 43.5 * multiplier,
-                Math.toRadians(80 * multiplier));
+        final Pose2d liftPosition = new Pose2d(-3, 43.5 * multiplier,
+                Math.toRadians(75 * multiplier));
 
         ElapsedTime toolTimer = new ElapsedTime();
 
