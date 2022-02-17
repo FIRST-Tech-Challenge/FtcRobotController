@@ -66,6 +66,7 @@ public class PositionConfiguration extends LinearOpMode {
 
             if (oldSetPosition != LiftPositionConfig.position) {
                 lift.setPosition(LiftPositionConfig.position);
+                oldSetPosition = LiftPositionConfig.position;
             } else if (lift.getPosition() != oldPosition) {
                 LiftPositionConfig.position = lift.getPosition();
             }
