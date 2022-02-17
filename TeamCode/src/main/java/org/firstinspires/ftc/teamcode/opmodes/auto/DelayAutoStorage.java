@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import static org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight.getPosition;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -21,9 +18,11 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 import static org.firstinspires.ftc.teamcode.opmodes.util.StayInPosition.stayInPose;
+import static org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight.getPosition;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 
 @Autonomous
-public class AutoStorage extends LinearOpMode {
+public class DelayAutoStorage extends LinearOpMode {
     public int multiplier = 1;
     public boolean isRed = false;
 
@@ -60,7 +59,7 @@ public class AutoStorage extends LinearOpMode {
         final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
             .lineTo(new Vector2d(-20, 55 * multiplier))
             .lineToLinearHeading(new Pose2d(-21,
-                    40 * multiplier, Math.toRadians(95 * multiplier)))
+                    41.5 * multiplier, Math.toRadians(95 * multiplier)))
             .build();
 
         // Part 2: carousel
@@ -85,6 +84,13 @@ public class AutoStorage extends LinearOpMode {
         intake.lightsOn();
         goodTelemetry.addData("height", height);
         goodTelemetry.update();
+
+        toolTimer.reset();
+        while (toolTimer.seconds() < 13) {
+            if (isStopRequested()) {
+                return;
+            }
+        }
 
         // Part 1
         drive.followTrajectorySequenceAsync(part1);

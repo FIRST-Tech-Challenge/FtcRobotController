@@ -43,11 +43,10 @@ public class AutoWarehouse extends LinearOpMode {
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-        final Pose2d liftPosition = new Pose2d(-2, 43.5 * multiplier,
+        final Pose2d liftPosition = new Pose2d(-5, 43.5 * multiplier,
                 Math.toRadians(80 * multiplier));
 
         ElapsedTime toolTimer = new ElapsedTime();
-        ElapsedTime wallSmashTimer = new ElapsedTime();
 
         // Part 1: drive to alliance shipping hub
         final TrajectorySequence part1 = drive.trajectorySequenceBuilder(initial)
@@ -145,9 +144,9 @@ public class AutoWarehouse extends LinearOpMode {
         if (isStopRequested()) return;
 
         intake(toolTimer, drive, intake);
-        while (!isStopRequested()) {
-            stayInPose(drive, intakeReturnPoint);
-        }
+//        while (!isStopRequested()) {
+//            stayInPose(drive, intakeReturnPoint);
+//        }
     }
 
     public void intake(ElapsedTime timer, SampleMecanumDrive drive, AutoIntake intake) {
