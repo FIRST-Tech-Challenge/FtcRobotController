@@ -37,6 +37,6 @@ public class Utility_Constants {
             .build();
 
     public static Gamepad.RumbleEffect BOX_SECURED_RUMBLE = new Gamepad.RumbleEffect.Builder()
-            .addStep(0.0, 1.0, 1000)  //  Rumble right motor 100% for one whole second
+            .addStep(0.0, 1.0, 800)  //  Rumble right motor 100% for one whole second
             .build();
 }
