@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class linSlide {
 
     static final int low = 000; //encoder values
-    static final int high = 500;
+    static final int high = 2100;
 
     public enum states{LOW, HIGH} //states the slide can be in
     static states state = states.LOW;
