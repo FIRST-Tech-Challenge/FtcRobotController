@@ -20,11 +20,11 @@ public class AutoLift {
     // 5 1/4 inch from back of robot to rim
     public enum Positions {
         INTAKING(0, 0.76D, false),
-        SAFE(1375, 0.7D, false),
-        TOP(2880, 0.3D, true),
-        MIDDLE(1850, 0.3D, true),
-        BOTTOM(1375, 0.25D, true),
-        TSE(4326, 0.716D, false),
+        SAFE(700, 0.7D, false),
+        TOP(1467, 0.3D, true),
+        MIDDLE(942, 0.3D, true),
+        BOTTOM(700, 0.25D, true),
+        TSE(2254, 0.716D, false),
         SAFETOP(TOP.motorPos, SAFE.armPos, false),
         FUNNYDUMP(TSE.motorPos, 1, true),
         DUMPTSE(TOP.motorPos, FUNNYDUMP.armPos, true),
