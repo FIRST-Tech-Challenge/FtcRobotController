@@ -53,6 +53,6 @@ public class AutoIntake {
     }
 
     public void lightsOn() {
-        setPattern(RAINBOW_RAINBOW_PALETTE);
+        setPattern(COLOR_WAVES_RAINBOW_PALETTE);
     }
 }

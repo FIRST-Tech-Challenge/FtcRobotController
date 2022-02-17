@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.opmodes.util.WallSmash;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -42,8 +43,8 @@ public class AutoWarehouse extends LinearOpMode {
         final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-        final Pose2d liftPosition = new Pose2d(-3, 43.5 * multiplier,
-                Math.toRadians(75 * multiplier));
+        final Pose2d liftPosition = new Pose2d(-3, 45 * multiplier,
+                Math.toRadians(70 * multiplier));
 
         ElapsedTime toolTimer = new ElapsedTime();
 
@@ -96,7 +97,7 @@ public class AutoWarehouse extends LinearOpMode {
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
-        while (toolTimer.seconds() < 3) {
+        while (lift.getPosition() != AutoLift.Positions.INTAKING) {
             if (isStopRequested()) {
                 return;
             }
@@ -107,7 +108,7 @@ public class AutoWarehouse extends LinearOpMode {
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        WallSmash.smashIntoWall(drive, multiplier, 100);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 250);
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
@@ -119,15 +120,15 @@ public class AutoWarehouse extends LinearOpMode {
                 .build());
         updateLoop(drive);
         if (isStopRequested()) return;
-        WallSmash.smashIntoWall(drive, multiplier, 500);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 500);
 
         drive.followTrajectorySequenceAsync(part4);
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        lift.setPosition(AutoLift.Positions.TOP);
+        lift.setPosition(AutoLift.Positions.AUTOTOP);
         toolTimer.reset();
-        while (toolTimer.seconds() < 3) {
+        while (lift.getPosition() != AutoLift.Positions.INTAKING) {
             if (isStopRequested()) {
                 return;
             }
@@ -137,15 +138,18 @@ public class AutoWarehouse extends LinearOpMode {
         drive.followTrajectoryAsync(part2);
         updateLoop(drive);
 
-        WallSmash.smashIntoWall(drive, multiplier, 100);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 250);
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
 
         intake(toolTimer, drive, intake);
-//        while (!isStopRequested()) {
-//            stayInPose(drive, intakeReturnPoint);
-//        }
+        Pose2d endingPose = drive.getPoseEstimate();
+        while (!isStopRequested()) {
+            stayInPose(drive, endingPose);
+        }
+
+        PoseStorage.currentPose = drive.getPoseEstimate();
     }
 
     public void intake(ElapsedTime timer, SampleMecanumDrive drive, AutoIntake intake) {
@@ -156,15 +160,16 @@ public class AutoWarehouse extends LinearOpMode {
             if (isStopRequested()) {
                 return;
             }
+            drive.update();
         }
+        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
         timer.reset();
-        while (timer.milliseconds() < 250) {}
+        while (timer.milliseconds() < 250) { }
         intake.stop();
         intake.forward();
         timer.reset();
         while (timer.milliseconds() < 100) {}
         intake.stop();
-        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
     }
 
     public void updateLoop(SampleMecanumDrive drive) {

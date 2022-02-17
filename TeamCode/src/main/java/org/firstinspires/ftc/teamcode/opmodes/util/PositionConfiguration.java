@@ -1,16 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes.util;
 
+import static org.firstinspires.ftc.teamcode.opmodes.util.StayInPosition.stayInPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -62,6 +60,8 @@ public class PositionConfiguration extends LinearOpMode {
                         .lineToLinearHeading(pose)
                         .build());
                 lastSetPose = pose;
+            } else if (!drive.isBusy()) {
+                stayInPose(drive, pose);
             }
 
             if (oldSetPosition != LiftPositionConfig.position) {
