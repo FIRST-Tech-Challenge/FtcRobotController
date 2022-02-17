@@ -34,7 +34,7 @@ public class Utility_Constants {
     public static double FLICKER_TIME = 400; //Time in milliseconds for the flicker to release one freight
     //COEFFICIENTS
     public static double BALANCE_COEFFICIENT = 1300.1; //Balancing coefficient for ARM ENCODER VALUES
-    public static double POTENTIOMETER_COEFFICIENT = 3.1; //Balancing Coefficient for POTENTIOMETER VOLTAGE VALUES
+    public static double POTENTIOMETER_COEFFICIENT = 2.8278717297; //Balancing Coefficient for POTENTIOMETER VOLTAGE VALUES
     public static double ACC_COEFFICIENT = 80000; //Rate at which to accelerate by (reciprocal of)
     //THRESHOLDS
     public static double DISTANCE_SENSOR_THRESHOLD = 80; //Specifies maximum distance for distance sensor to detect freight (cannot be less than 50)
