@@ -58,12 +58,6 @@ import org.firstinspires.ftc.teamcode.Intake.Intake;
  *
  *===========================================================
  *
- *
- *
- *
- *
- *
- *
  */
 
 public class JonDC extends LinearOpMode{
