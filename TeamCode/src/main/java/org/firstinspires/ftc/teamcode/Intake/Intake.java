@@ -15,6 +15,9 @@ public class Intake {
     Boolean prevInput;
     Boolean itToggle;
     Boolean prevHoldToggle;
+    int togg = 1;
+    double time = 0;
+    float prevHold;
     public Intake(HardwareMap hardwareMap){
         frontIntakeMotor = hardwareMap.dcMotor.get("frontMotorIntake");
         frontIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -23,6 +26,7 @@ public class Intake {
         prevInput = false;
         itToggle = false;
         prevHoldToggle = false;
+        prevHold = 0;
     }
 
 
@@ -45,21 +49,37 @@ public class Intake {
     }
 
 
+    public void intakeHold(Telemetry telemetry, float inp, LinearOpMode op) {
+        if (inp > 0 && prevHold == 0) {
+            frontIntakeMotor.setPower(togg);
+            backIntakeMotor.setPower(togg);
+            telemetry.addLine("Pressed");
 
-
-    public void intakeHold(Boolean inp, LinearOpMode op) {
-        if (inp) {
-            frontIntakeMotor.setPower(1);
-            backIntakeMotor.setPower(1);
-        } else if (prevHoldToggle == true && inp == false) {
+        } else if (inp == 0 && prevHold > 0) {
             frontIntakeMotor.setPower(0);
-            op.sleep(2000);
-            backIntakeMotor.setPower(0);
-        }
-        prevHoldToggle = inp;
+            time = op.time;
 
+        }
+
+        else if (op.time > time + 2 && inp == 0){
+            backIntakeMotor.setPower(0);
+            telemetry.addLine("Not Pressed");
+        }
+        prevHold = inp;
+        telemetry.addData("time passed", op.time - time );
 
     }
+
+    public void reverse(Boolean imp){
+        if (togg == 1 && imp == true && prevHoldToggle == false){
+            togg = -1;
+        }
+        else if (togg == -1 && imp == true && prevHoldToggle == false){
+            togg = 1;
+        }
+        prevHoldToggle = imp;
+    }
+
 
     public void autonomousIntake(int position, int power){
         frontIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -70,16 +90,22 @@ public class Intake {
         backIntakeMotor.setPower(power);
     }
 
-    public void flapHalfOpen(Boolean imp, LinearOpMode op){
-        intakeFlap.setPosition(-0.2);
-        op.sleep(2000);
-        intakeFlap.setPosition(0.0);
+    public void flapHalfOpen(Boolean imp){
+        if (imp){
+            intakeFlap.setPosition(0.4);
+        }
     }
 
-    public void flapFullOpen(Boolean imp, LinearOpMode op){
-        intakeFlap.setPosition(-0.4);
-        op.sleep(2000);
-        intakeFlap.setPosition(0.0);
+    public void flapFullOpen(Boolean imp){
+        if (imp){
+            intakeFlap.setPosition(0.2);
+        }
+    }
+
+    public void resetFlap(Boolean imp){
+        if (imp){
+            intakeFlap.setPosition(1);
+        }
     }
 
 }
