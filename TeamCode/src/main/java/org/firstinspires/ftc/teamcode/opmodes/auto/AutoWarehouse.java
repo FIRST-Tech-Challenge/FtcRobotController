@@ -40,11 +40,11 @@ public class AutoWarehouse extends LinearOpMode {
         AutoLift lift = new AutoLift(eventThread, hardwareMap);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
-        final Pose2d initial = new Pose2d(0, multiplier * 70 - inchesToCoordinate(9),
+        final Pose2d initial = new Pose2d(0, multiplier * (70 - inchesToCoordinate(9)),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-        final Pose2d liftPosition = new Pose2d(-3, 45 * multiplier,
-                Math.toRadians(70 * multiplier));
+        final Pose2d liftPosition = isRed ? new Pose2d(-4, -45, Math.toRadians(-70)) :
+                new Pose2d(-3, 45, Math.toRadians(70));
 
         ElapsedTime toolTimer = new ElapsedTime();
 

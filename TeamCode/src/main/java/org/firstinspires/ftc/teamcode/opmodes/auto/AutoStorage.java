@@ -67,13 +67,13 @@ public class AutoStorage extends LinearOpMode {
         // Part 2: carousel
         final Trajectory part2 = drive.trajectoryBuilder(part1.end())
             .splineToSplineHeading(new Pose2d(-60.5, 60 * multiplier,
-                    Math.toRadians(!isRed ? 240 : 330)), Math.toRadians(180))
+                    Math.toRadians(!isRed ? 240 : 330)), Math.toRadians(180 - 10 * multiplier))
             .build();
 
 
         // Part 3: Park in Alliance Storage Unit
         final Trajectory part3 = drive.trajectoryBuilder(part2.end())
-                .lineToLinearHeading(new Pose2d(-60, 35 * multiplier,
+                .lineToLinearHeading(new Pose2d(-60, 36 * multiplier,
                         Math.toRadians(90 * multiplier)))
                 .build();
 
@@ -111,7 +111,7 @@ public class AutoStorage extends LinearOpMode {
         // CAROUSEL GARBAG
         carousel.on();
         toolTimer.reset();
-        while (!isStopRequested() && toolTimer.milliseconds() < 4500) {
+        while (!isStopRequested() && toolTimer.milliseconds() < 3000) {
             stayInPose(drive, part2endPose);
         }
         if (isStopRequested()) return;
