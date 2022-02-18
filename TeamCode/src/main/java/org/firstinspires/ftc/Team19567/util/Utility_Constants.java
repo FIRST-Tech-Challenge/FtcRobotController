@@ -48,7 +48,6 @@ public class Utility_Constants {
             .addStep(0.0, 0.0, 250)  //  Pause for 250 mSec
             .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 250 mSec
             .build();
-
     public static Gamepad.RumbleEffect BOX_SECURED_RUMBLE = new Gamepad.RumbleEffect.Builder()
             .addStep(0.0, 1.0, 800)  //  Rumble right motor 100% for one whole second
             .build();

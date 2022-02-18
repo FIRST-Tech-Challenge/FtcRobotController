@@ -67,7 +67,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private double armPos = 0;
     private double armPower = 1.0;
     private double releaseServoPos = 0.75;
-    private double balanceServoPos = 0.0;
     private double acc = Utility_Constants.MAX_SENSITIVITY;
     private double carouselPower = 0.0;
     private boolean isSlowmode = false;
@@ -107,7 +106,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         leftDCBack.setDirection(DcMotor.Direction.FORWARD);
         rightDCBack.setDirection(DcMotor.Direction.REVERSE);
 
-        chassis.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mechanisms.setModes();
 
         chassis.setPoseEstimate(new Pose2d(0, 0, 0));
@@ -266,7 +264,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case GOING_DOWN: {
-                mechanisms.releaseServoMove(0.76);
+                releaseServoPos = 0.76;
                 armPower = 0.2;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
@@ -288,7 +286,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             gamepad1.runRumbleEffect(endGameRumble);
         }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        else if(forceSensor.getVoltage() <= Utility_Constants.FORCE_SENSOR_THRESHOLD) {
+        else if(forceSensor.getVoltage() >= Utility_Constants.FORCE_SENSOR_THRESHOLD) {
             if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
             isIntaked = true;
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
@@ -318,7 +316,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         telemetry.addData("Runtime", runtime.toString() + " Milliseconds"); //Display the runtime
         telemetry.addData("Carousel Time(%.2f)",carouselTime.toString() + "Milliseconds"); //Display the carouselTime
         telemetry.addData("DCMotors", "armDC(%.2f)", armPos);
-        telemetry.addData("Servos","releaseServoPos(%.2f), balanceServoPos(%.2f)",releaseServoPos, balanceServoPos);
+        telemetry.addData("Servos","releaseServoPos(%.2f)",releaseServoPos);
         telemetry.update(); //Updates the telemetry
     }
 
