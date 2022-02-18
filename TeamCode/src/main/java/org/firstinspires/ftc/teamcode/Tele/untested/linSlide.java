@@ -29,29 +29,30 @@ public class linSlide {
                 if(gamepad1.left_trigger == 1 && LSM.getCurrentPosition() != high){
                     state = states.HIGH;
                     LSM.setTargetPosition(high);
-                    while (LSM.getCurrentPosition() != high) {
+                    while (LSM.getCurrentPosition() != high && gamepad1.right_trigger != 1) {
                         LSM.setPower(0.9);
                         LSM.getCurrentPosition();
                     }
-                    LSM.setPower(0.1);
+
                 }
+                LSM.setPower(0);
                 break;
             case HIGH:
                 if(gamepad1.right_trigger == 1 && LSM.getCurrentPosition() != low){
                     state = states.LOW;
                     LSM.setTargetPosition(low);
-                    while (LSM.getCurrentPosition() != low) {
+                    while (LSM.getCurrentPosition() != low && gamepad1.left_trigger != 1) {
                         LSM.setPower(0.9);
                         LSM.getCurrentPosition();
                     }
-                    LSM.setPower(0);
+
                 }
+                LSM.setPower(0.1);
                 break;
             default:
                 break;
         }
     }
-
 
 }
 //end
