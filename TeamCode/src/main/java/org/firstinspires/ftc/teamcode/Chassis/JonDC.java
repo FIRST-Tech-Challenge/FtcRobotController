@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Chassis;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,6 +18,53 @@ import org.firstinspires.ftc.teamcode.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Intake.Intake;
 
 @TeleOp(name = "Driver Control")
+/**CONTROLS**
+ *
+ * =======================================================
+ *
+ * Gamepad 1
+ *
+ * Joysticks = driving
+ *
+ * Right Bumper = Slow Mode
+ *
+ * A button = Resets the outtake flap(Blocks the game elements)
+ *
+ * B button = Opens the outtake flap half-way full
+ *
+ * X button = Closes the arm(Grabs the team-element)
+ *
+ * Y button = Opens the arm(Releases the team-element)
+ *
+ *=========================================================
+ *
+ * Gamepad 2
+ *
+ * Left trigger = Intake(in)
+ *
+ * Right Trigger = Intake(out/reverse)
+ *
+ * A button = Carousel on/off(toggle)
+ *
+ * B button = Direction of Carousel(CW/CCW)
+ *
+ * X button = Move teamElement arm to the Left(Inside the robot/Default)
+ *
+ * Y button = Move teamElement arm to the Right(Outside of the robot)
+ *
+ * DPad UP = Winch UP
+ *
+ * DPad Down = Winch DOWN
+ *
+ *===========================================================
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 public class JonDC extends LinearOpMode{
 
@@ -87,9 +135,11 @@ public class JonDC extends LinearOpMode{
 
         Chassis ch = new Chassis(hardwareMap);
 
-        Arm arm = new Arm(hardwareMap);
+        Arm arm = new Arm(telemetry, hardwareMap);
 
         Intake it = new Intake(hardwareMap);
+
+        arm.resetArmPosition();
 
         while (opModeIsActive()) {
 
@@ -101,24 +151,30 @@ public class JonDC extends LinearOpMode{
 
             //Intake
 
-            it.intakeHold(telemetry, this.gamepad1.left_trigger, this);
+            it.intakeHold(telemetry, this.gamepad2.left_trigger, this);
 
-            it.flapFullOpen(this.gamepad1.x);
+            //it.flapFullOpen(this.gamepad1.x);
 
-            it.flapHalfOpen(this.gamepad1.y);
+            it.flapHalfOpen(this.gamepad1.b);
 
-            it.reverse(this.gamepad1.a);
+            it.reverse(telemetry, this.gamepad2.right_trigger, this);
 
-            it.resetFlap(this.gamepad1.b);
+            it.resetFlap(this.gamepad1.a);
 
             telemetry.addData("Left Trigger", gamepad1.left_trigger);
 
+            telemetry.addData("Right Trigger", gamepad1.right_trigger);
             //Tommy Arm
 
             arm.moveWinchUp(this.gamepad2.dpad_up);
 
             arm.moveWinchDown(this.gamepad2.dpad_down);
 
+            telemetry.addData("Level", arm.getWinchPosition());
+
+            arm.armRight(this.gamepad2.y);
+
+            arm.armLeft(this.gamepad2.x);
 
 
             //drive
@@ -129,13 +185,13 @@ public class JonDC extends LinearOpMode{
 
             //assigning speeds
 
-            fl.setPower(-power[0]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            fl.setPower(power[0]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
 
-            fr.setPower(power[1]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
+            fr.setPower(-power[1]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
 
-            bl.setPower(-power[2]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
+            bl.setPower(power[2]); //(+) for 2020-21 Mayhem bot | (-) for 2021-22
 
-            br.setPower(power[3]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
+            br.setPower(-power[3]); //(-) for 2020-21 Mayhem bot | (+) for 2021-22
 
 
 

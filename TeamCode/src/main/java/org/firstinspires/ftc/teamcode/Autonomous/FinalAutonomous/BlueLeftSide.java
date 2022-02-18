@@ -14,7 +14,7 @@ public class BlueLeftSide extends LinearOpMode {
 
         Drivechain AutonomousDC = new Drivechain(hardwareMap);
         Carousel AutonomousCS = new Carousel(hardwareMap);
-        Arm arm = new Arm(hardwareMap);
+        Arm arm = new Arm(telemetry, hardwareMap);
         AutonomousDC.calibrateGyro();
         AutonomousDC.resetGyro();
         AutonomousDC.resetTicks();

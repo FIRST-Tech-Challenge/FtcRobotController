@@ -15,8 +15,10 @@ public class Intake {
     Boolean prevInput;
     Boolean itToggle;
     Boolean prevHoldToggle;
+    float prevHoldReverse;
     int togg = 1;
-    double time = 0;
+    double time;
+    double reverseTime;
     float prevHold;
     public Intake(HardwareMap hardwareMap){
         frontIntakeMotor = hardwareMap.dcMotor.get("frontMotorIntake");
@@ -27,6 +29,9 @@ public class Intake {
         itToggle = false;
         prevHoldToggle = false;
         prevHold = 0;
+        prevHoldReverse = 0;
+        time = 0;
+        reverseTime = 0;
     }
 
 
@@ -50,34 +55,46 @@ public class Intake {
 
 
     public void intakeHold(Telemetry telemetry, float inp, LinearOpMode op) {
-        if (inp > 0 && prevHold == 0) {
-            frontIntakeMotor.setPower(togg);
-            backIntakeMotor.setPower(togg);
-            telemetry.addLine("Pressed");
+        if (inp > 0) {
+            time = op.time;
+            frontIntakeMotor.setPower(1);
+            backIntakeMotor.setPower(1);
+            telemetry.addLine("Pressed(Intake)");
 
-        } else if (inp == 0 && prevHold > 0) {
+        } else if (inp == 0) {
             frontIntakeMotor.setPower(0);
             time = op.time;
 
         }
 
-        else if (op.time > time + 2 && inp == 0){
+        else if (op.time > time + 2 && inp == 0 && op.time + 2 > reverseTime){
             backIntakeMotor.setPower(0);
-            telemetry.addLine("Not Pressed");
+            telemetry.addLine("Not Pressed(Intake)");
         }
         prevHold = inp;
         telemetry.addData("time passed", op.time - time );
 
     }
 
-    public void reverse(Boolean imp){
-        if (togg == 1 && imp == true && prevHoldToggle == false){
-            togg = -1;
+    public void reverse(Telemetry telemetry, float inp, LinearOpMode op){
+        if (inp > 0) {
+            reverseTime = op.time;
+            frontIntakeMotor.setPower(-1);
+            backIntakeMotor.setPower(-1);
+            telemetry.addLine("Pressed(Reverse)");
+
+        } else if (inp == 0) {
+            frontIntakeMotor.setPower(0);
+            reverseTime = op.time;
+
         }
-        else if (togg == -1 && imp == true && prevHoldToggle == false){
-            togg = 1;
+
+        else if (op.time > time + 2 && inp == 0 && op.time > 2 + time){
+            backIntakeMotor.setPower(0);
+            telemetry.addLine("Not Pressed(Reverse)");
         }
-        prevHoldToggle = imp;
+        prevHoldReverse = inp;
+        telemetry.addData("time passed", op.time - time );
     }
 
 
