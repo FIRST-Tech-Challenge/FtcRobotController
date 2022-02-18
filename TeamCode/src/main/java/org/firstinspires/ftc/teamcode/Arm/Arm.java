@@ -157,7 +157,7 @@ public class Arm {
 
 
 
-    //Releases(Resets( the arm
+    //Releases(Resets) the arm
     public void resetArm(boolean inp){
         if (inp){
             teamElementMotor.setPosition(0.4);

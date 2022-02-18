@@ -37,7 +37,7 @@ public class RedLeftSide extends LinearOpMode {
 //        sleep(3000);
 
         sleep(2500);
-        AutonomousDC.moveRobot(400, -400, 400, -400, 1, 1, -1, -1);
+        AutonomousDC.moveRobot(-800, 800, -800, 800, 1, 1, 1, 1);
         AutonomousDC.turnDeg(-120.0f, telemetry);
         sleep(2000);
         while (AutonomousDC.isbusy()) {

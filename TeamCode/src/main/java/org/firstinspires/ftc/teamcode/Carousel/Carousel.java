@@ -38,8 +38,8 @@ public class Carousel {
     public void CarouselAutonomous(int time, double power) throws InterruptedException {
         // while (carouselTurningMotor.getCurrentPosition() < time){
         //     if (distance_sensor.getDistance(DistanceUnit.INCH) < 10){
-        carouselTurningMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         carouselTurningMotor.setTargetPosition(time);
+        carouselTurningMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         carouselTurningMotor.setPower(power);
         //      }
         //   }
