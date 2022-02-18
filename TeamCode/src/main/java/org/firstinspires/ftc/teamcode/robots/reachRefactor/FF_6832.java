@@ -51,6 +51,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
  * gamepad 1: b - lift gripper
  * gamepad 1: y - transfer
  * gamepad 1: a - toggle duck spinner
+ * gamepad 1: dpad up - enable duck game
  * gamepad 1: tank drive
  *
  * gamepad 2: x - articulate crane to home
@@ -100,7 +101,7 @@ public class FF_6832 extends OpMode {
 
     // global state
     private boolean active, initializing, debugTelemetryEnabled, numericalDashboardEnabled, smoothingEnabled, antiTippingEnabled;
-    private Alliance alliance;
+    private Alliance ALLIANCE;
     private Position startingPosition;
     private GameState gameState;
     private int gameStateIndex;
@@ -173,7 +174,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
         robot = new Robot(hardwareMap, false);
-        alliance = Alliance.BLUE;
+        ALLIANCE = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         auto = new Autonomous(robot);
@@ -235,19 +236,19 @@ public class FF_6832 extends OpMode {
 
     private void handlePregameControls() {
         if(stickyGamepad1.x || stickyGamepad2.x) {
-            alliance = Alliance.BLUE;
+            ALLIANCE = Alliance.BLUE;
             startingPosition = Position.START_BLUE_UP;
         }
         if(stickyGamepad1.a || stickyGamepad2.a) {
-            alliance = Alliance.BLUE;
+            ALLIANCE = Alliance.BLUE;
             startingPosition = Position.START_BLUE_DOWN;
         }
         if(stickyGamepad1.b || stickyGamepad2.b) {
-            alliance = Alliance.RED;
+            ALLIANCE = Alliance.RED;
             startingPosition = Position.START_RED_DOWN;
         }
         if(stickyGamepad1.y || stickyGamepad2.y) {
-            alliance = Alliance.RED;
+            ALLIANCE = Alliance.RED;
             startingPosition = Position.START_RED_UP;
         }
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
@@ -285,7 +286,7 @@ public class FF_6832 extends OpMode {
         robot.articulate(Robot.Articulation.START);
         if(!gameState.equals(GameState.MANUAL_DIAGNOSTIC)) {
             robot.driveTrain.setMaintainChassisLengthEnabled(true);
-            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[1]);
+            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
         }
         lastLoopClockTime = System.nanoTime();
     }
@@ -331,10 +332,9 @@ public class FF_6832 extends OpMode {
         if (stickyGamepad1.x)
             robot.gripper.set();
         if(stickyGamepad1.b)
-            //robot.gripper.lift();
-            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
+            robot.gripper.lift();
         if(stickyGamepad1.a)
-            robot.driveTrain.toggleDuckSpinner(alliance.getMod());
+            robot.driveTrain.toggleDuckSpinner(ALLIANCE.getMod());
 
         // gamepad 2
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
@@ -342,31 +342,36 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad2.a) //spin carousel
-            robot.driveTrain.toggleDuckSpinner(alliance.getMod());
+            robot.driveTrain.toggleDuckSpinner(ALLIANCE.getMod());
         if(stickyGamepad2.right_trigger)
             robot.turret.incrementOffset(1);
         if(stickyGamepad2.left_trigger)
             robot.turret.incrementOffset(-1);
 
         // joint gamepad controls
-        if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
+        if(stickyGamepad2.dpad_right)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
-        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
+        if(stickyGamepad2.dpad_down)
             //robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
-        if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
+        if(stickyGamepad2.dpad_left)
             //robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
-        if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
+        if(stickyGamepad2.dpad_up)
             robot.crane.articulate(Crane.Articulation.HOME);
-        if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
+        if(stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
+
+        if(stickyGamepad1.dpad_down)
+            robot.driveTrain.setDuckGameEnabled(!robot.driveTrain.isDuckGameEnabled());
 
         if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
             robot.driveTrain.setMaintainChassisLengthEnabled(!robot.driveTrain.isMaintainChassisLengthEnabled());
+        if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
+            robot.articulate(Robot.Articulation.AUTO_HIGH_TIER);
 
-        double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward2 - forward1) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
-        robot.driveTrain.setChassisLength(chassisLength);
+//        double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward2 - forward1) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+        robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
 
         handleArcadeDriveFunkyTest(gamepad1);
         handleArcadeDrive(gamepad2);

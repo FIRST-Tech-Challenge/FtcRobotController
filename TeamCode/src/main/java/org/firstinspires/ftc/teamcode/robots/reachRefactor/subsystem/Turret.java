@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExS
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants;
 
 import static org.firstinspires.ftc.teamcode.util.utilMethods.between360Clockwise;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class Turret implements Subsystem {
         return targetHeading;
     }
 
-    public double getHeading(){return motor.getCurrentPosition() / ticksPerDegree;}
+    public double getHeading(){return wrapAngle(motor.getCurrentPosition() / ticksPerDegree);}
 
     public boolean isTurretNearTarget(){
         return between360Clockwise(heading, targetHeading - TURRET_TOLERANCE, heading + TURRET_TOLERANCE);

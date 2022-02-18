@@ -62,9 +62,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    public static double B = 0;
-    public static double ZETA = 0;
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static Double B = 100.0;
+    public static Double ZETA = 0.0;
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 2);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
     public static double ROLL_ANTI_TIP_PID_TOLERANCE = 2;
@@ -96,7 +96,12 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private double chassisLength;
     private double targetChassisLength;
     private double chassisLengthCorrection;
-    private boolean chassisLengthOnTarget, duckSpinnerToggled, simulated, imuOffsetsInitialized;
+    private boolean chassisLengthOnTarget;
+    private boolean duckSpinnerToggled;
+    private boolean simulated;
+    private boolean imuOffsetsInitialized;
+
+    private boolean duckGameEnabled;
     private double heading, roll, pitch, pitchVelocity, angularVelocity;
     private double headingOffset, rollOffset, pitchOffset;
     private double rollCorrection, pitchCorrection;
@@ -375,7 +380,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         duckSpinner.setPower(duckSpinnerPower);
 
         lastDriveVelocity = driveVelocity;
-        DashboardUtil.drawRobot(fieldOverlay, getPoseEstimate(), chassisLength, swivelAngle, getWheelVelocities());
 
         long loopClockTime = System.nanoTime();
         loopTime = loopClockTime - lastLoopTime;
@@ -385,6 +389,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
+
+        telemetryMap.put("duck game enabled", duckGameEnabled);
 
         if(debug) {
             telemetryMap.put("x", poseEstimate.getX());
@@ -523,8 +529,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     public void setMotorVelocities(double left, double right, double swerve) {
-        this.targetLeftVelocity = left;
-        this.targetRightVelocity = right;
+        if(!duckGameEnabled) {
+            this.targetLeftVelocity = left;
+            this.targetRightVelocity = right;
+        }
         this.targetSwerveVelocity = swerve;
     }
 
@@ -618,5 +626,15 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public void setChassisLengthMode(ChassisLengthMode chassisLengthMode) {
         this.chassisLengthMode = chassisLengthMode;
+    }
+
+    public boolean isDuckGameEnabled() {
+        return duckGameEnabled;
+    }
+
+    public void setDuckGameEnabled(boolean duckGameEnabled) {
+        setMotorVelocities(0, 0, targetSwerveVelocity);
+        setMaintainChassisLengthEnabled(false);
+        this.duckGameEnabled = duckGameEnabled;
     }
 }

@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants;
-
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.DashboardUtil;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
@@ -16,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 
 /**
@@ -61,6 +64,7 @@ public class Robot implements Subsystem {
         articulationMap.put(Articulation.TRANSFER_AND_HIGH_TIER, transferAndHighTier);
         articulationMap.put(Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER, dumpAndSetCraneForTransfer);
         articulationMap.put(Articulation.AUTO_GRAB_AND_TRANSFER, autoGrabAndTransfer);
+        articulationMap.put(Articulation.AUTO_HIGH_TIER, autoHighTier);
     }
 
     @Override
@@ -93,6 +97,8 @@ public class Robot implements Subsystem {
 
         if (gripper.pitchServo.getPosition() < 0.5 && gripper.getFreightDistance() < gripper.FREIGHT_TRIGGER && gripper.articulation == Gripper.Articulation.MANUAL)
             articulate(Articulation.AUTO_GRAB_AND_TRANSFER);
+
+        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getChassisLength(), driveTrain.getSwivelAngle(), driveTrain.getWheelVelocities(), Utils.wrapAngleRad(Math.toRadians(360 - turret.getHeading())));
     }
 
     //----------------------------------------------------------------------------------------------
@@ -111,14 +117,15 @@ public class Robot implements Subsystem {
         TRANSFER,
         TRANSFER_AND_HIGH_TIER,
         DUMP_AND_SET_CRANE_FOR_TRANSFER,
-        AUTO_GRAB_AND_TRANSFER;
+        AUTO_GRAB_AND_TRANSFER,
+        AUTO_HIGH_TIER;
     }
 
     // Tele-Op articulations
     private Stage transferAndHighTierStage = new Stage();
     private StateMachine transferAndHighTier = getStateMachine(transferAndHighTierStage)
             .addState(() -> {
-                driveTrain.setChassisLength(Constants.MIN_CHASSIS_LENGTH);
+                driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
                 return driveTrain.chassisLengthOnTarget();
             })
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
@@ -145,12 +152,33 @@ public class Robot implements Subsystem {
     private Stage transferStage = new Stage();
     private StateMachine transfer = getStateMachine(transferStage)
             .addState(() -> {
-                        driveTrain.setChassisLength(Constants.MIN_CHASSIS_LENGTH);
+                        driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
                         return driveTrain.chassisLengthOnTarget();
             })
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addSingleState(() -> gripper.intakeServo.setPower(1.0))
             .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addSingleState(() -> gripper.intakeServo.setPower(0.0))
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
+            .build();
+    
+    private Stage autoHighTierStage = new Stage();
+    private StateMachine autoHighTier = getStateMachine(autoHighTierStage)
+            .addState(() -> {
+                Pose2d pose = driveTrain.getPoseEstimate();
+                Vector2d turretPose = pose.vec().minus(
+                        new Vector2d(
+                                TURRET_OFFSET_X + driveTrain.getChassisLength(),
+                                TURRET_OFFSET_Y
+                        ).rotated(driveTrain.getExternalHeading())
+                );
+
+                Vector2d shippingHub = ALLIANCE == Alliance.BLUE ? Position.BLUE_SHIPPING_HUB.getPose().vec() : Position.RED_SHIPPING_HUB.getPose().vec();
+                double turretAngle = Math.atan2(shippingHub.getY() - turretPose.getY(), shippingHub.getX() - turretPose.getX());
+                turret.setTargetAngle(360 - Utils.wrapAngle(Math.toDegrees(Utils.wrapAngleRad(turretAngle) - pose.getHeading())));
+
+              return crane.isDumping();
+            })
             .build();
 
     private Stage initStage = new Stage();

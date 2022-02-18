@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.CRServoSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
@@ -33,6 +36,7 @@ public class Gripper implements Subsystem{
     public static int FREIGHT_TRIGGER = 50; //mm distance to trigger Lift articulation
 
     public Servo pitchServo, servo;
+    public CRServo intakeServo;
     public DistanceSensor freightSensor;
 
     // State
@@ -51,10 +55,13 @@ public class Gripper implements Subsystem{
         if(simulated) {
             servo = new ServoSim();
             pitchServo = new ServoSim();
+            intakeServo = new CRServoSim();
             freightSensor = new DistanceSensorSim(100);
         } else {
             servo = hardwareMap.get(Servo.class, "gripperServo");
             pitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
+            intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+            intakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
             freightSensor = hardwareMap.get(RevColorSensorV3.class, "freightSensor");
         }
 
@@ -119,6 +126,7 @@ public class Gripper implements Subsystem{
     //Do not assume that we want to Set directly out of Transfer - there may be barriers to cross
     private final Stage setStage = new Stage();
     private final StateMachine set = getStateMachine(setStage)
+            .addSingleState(() -> intakeServo.setPower(1.0))
             .addSingleState(()->{setTargetPos(CLOSED);}) //close the gripper so it's less likely to catch something
             .addTimedState(.25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
             .addTimedState(.5f, ()->{setTargetPos(OPEN);}, () -> {})
@@ -128,6 +136,7 @@ public class Gripper implements Subsystem{
     //Gripper remains closed - Transfer is separate
     private final Stage liftStage = new Stage();
     private final StateMachine lift = getStateMachine(liftStage)
+            .addSingleState(() -> intakeServo.setPower(0.0))
             .addTimedState(() -> .5f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
             .addTimedState(() -> .5f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();

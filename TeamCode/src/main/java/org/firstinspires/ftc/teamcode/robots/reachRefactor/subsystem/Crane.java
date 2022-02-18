@@ -44,6 +44,7 @@ public class Crane implements Subsystem {
     private Articulation articulation;
 
     public boolean isInTransferPos = false;
+    private boolean dumping;
 
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
         if(simulated) {
@@ -63,7 +64,7 @@ public class Crane implements Subsystem {
     public enum Articulation {
         TEST_INIT(0, 0, 0, 0, 5,0),
         MANUAL(0, 0, 0, 0, 0,0),
-        INIT(-90,0,70,0, 1.5f,0),
+        INIT(-90,0,90,0, 1.5f,0),
         HOME(0,0,0,0, 0,0),
       
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
@@ -104,6 +105,7 @@ public class Crane implements Subsystem {
     private int currentDumpPos = 0;
     private final Stage mainStage = new Stage();
     private final StateMachine main = getStateMachine(mainStage)
+            .addSingleState(() -> { dumping = false; })
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
             .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation),
                     () -> {
@@ -179,6 +181,7 @@ public class Crane implements Subsystem {
 
     public void dump() {
         setWristTargetPos(currentDumpPos);
+        dumping = true;
     }
 
     private void setTargetPositions(Articulation articulation) {
@@ -252,5 +255,9 @@ public class Crane implements Subsystem {
     }
 
     public Articulation getArticulation() { return articulation; }
+
+    public boolean isDumping() {
+        return dumping;
+    }
 }
 

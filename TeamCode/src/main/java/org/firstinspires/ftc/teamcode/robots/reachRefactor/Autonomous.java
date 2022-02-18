@@ -79,6 +79,7 @@ public class Autonomous {
                             trajectorySequence
                     );
                 })
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .build();
     }
 
