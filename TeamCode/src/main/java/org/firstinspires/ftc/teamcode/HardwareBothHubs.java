@@ -102,9 +102,11 @@ public class HardwareBothHubs
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
     public boolean          cappingMotorPIDFlogging = true;     // only enable during development!!
-    public final static int CAPMOTORLOG_SIZE  = 256;            // 256 entries = 2+ seconds @ 100Hz.
+    public final static int CAPMOTORLOG_SIZE  = 128;            // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      capMotorLogTime   = new double[CAPMOTORLOG_SIZE];  // msec
     protected int[]         capMotorLogPos    = new int[CAPMOTORLOG_SIZE];     // encoder count
+    protected double[]      capMotorLogVel    = new double[CAPMOTORLOG_SIZE];  // counts/sec
+    protected double[]      capMotorLogPwr    = new double[CAPMOTORLOG_SIZE];  // Power
     protected double[]      capMotorLogAmps   = new double[CAPMOTORLOG_SIZE];  // mAmp
     protected boolean       capMotorLogEnable = false;
     protected int           capMotorLogIndex  = 0;
@@ -137,6 +139,19 @@ public class HardwareBothHubs
     public int          freightMotorTgt  = 0;          // RUN_TO_POSITION target encoder count
     public int          freightMotorPos  = 0;          // current encoder count
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
+
+    // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
+    // motor performance we store data to memory until the movement is complete, then dump to a file.
+    public boolean          freightMotorPIDFlogging = true;     // only enable during development!!
+    public final static int FRGMOTORLOG_SIZE  = 128;            // 128 entries = 2+ seconds @ 16msec/60Hz
+    protected double[]      frgMotorLogTime   = new double[FRGMOTORLOG_SIZE];  // msec
+    protected int[]         frgMotorLogPos    = new int[FRGMOTORLOG_SIZE];     // encoder count
+    protected double[]      frgMotorLogVel    = new double[FRGMOTORLOG_SIZE];  // counts/sec
+    protected double[]      frgMotorLogPwr    = new double[FRGMOTORLOG_SIZE];  // Power
+    protected double[]      frgMotorLogAmps   = new double[FRGMOTORLOG_SIZE];  // mAmp
+    protected boolean       frgMotorLogEnable = false;
+    protected int           frgMotorLogIndex  = 0;
+    protected ElapsedTime   frgMotorTimer     = new ElapsedTime();
 
     public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
     public int          FREIGHT_ARM_POS_SAFE       = 60;    // Low enough that it's safe to raise/lower collector arm
@@ -325,6 +340,8 @@ public class HardwareBothHubs
         }
         freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         freightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        PIDFCoefficients freightPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
+        freightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, freightPIDF );
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         if (!transitionFromAutonomous) {
@@ -426,11 +443,25 @@ public class HardwareBothHubs
         if( capMotorLogEnable ) {
            capMotorLogTime[capMotorLogIndex] = capMotorTimer.milliseconds();
            capMotorLogPos[capMotorLogIndex]  = cappingMotorPos;
+           capMotorLogVel[capMotorLogIndex]  = cappingMotor.getVelocity();
+           capMotorLogPwr[capMotorLogIndex]  = cappingMotor.getPower();
            capMotorLogAmps[capMotorLogIndex] = cappingMotorAmps;
            // If the log is now full, disable further logging
            if( ++capMotorLogIndex >= CAPMOTORLOG_SIZE )
                capMotorLogEnable = false;
         } // capMotorLogEnable
+
+        // Do we need to capture freight-arm instrumentation data?
+        if( frgMotorLogEnable ) {
+           frgMotorLogTime[frgMotorLogIndex] = frgMotorTimer.milliseconds();
+           frgMotorLogPos[frgMotorLogIndex]  = freightMotorPos;
+           frgMotorLogVel[frgMotorLogIndex]  = freightMotor.getVelocity();
+           frgMotorLogPwr[frgMotorLogIndex]  = freightMotor.getPower();
+           frgMotorLogAmps[frgMotorLogIndex] = freightMotorAmps;
+           // If the log is now full, disable further logging
+           if( ++frgMotorLogIndex >= FRGMOTORLOG_SIZE )
+               frgMotorLogEnable = false;
+        } // frgMotorLogEnable
 
     } // readBulkData
 
@@ -458,20 +489,63 @@ public class HardwareBothHubs
             cappingLog.write("CappingArm " + currPIDF.toString() + "\r\n");
             cappingLog.write("Target position," + cappingMotorTgt + "\r\n");
             // Log Column Headings
-            cappingLog.write("msec,mAmp,encoder\r\n");
+            cappingLog.write("msec,pwr,mAmp,cts/sec,encoder\r\n");
             // Log all the data recorded
             for( int i=0; i<capMotorLogIndex; i++ ) {
                 String msecString = String.format("%.3f, ", capMotorLogTime[i] );
+                String pwrString  = String.format("%.3f, ", capMotorLogPwr[i]  );
                 String ampString  = String.format("%.0f, ", capMotorLogAmps[i] );
+                String velString  = String.format("%.0f, ", capMotorLogVel[i]  );
                 String posString  = String.format("%d\r\n", capMotorLogPos[i]  );
-                cappingLog.write( msecString + ampString + posString );
+                cappingLog.write( msecString + pwrString + ampString + velString + posString );
             }
             cappingLog.flush();
             cappingLog.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    } // createDriveLog()
+    } // writeCappingLog()
+    
+    /*--------------------------------------------------------------------------------------------*/
+    public void writeFreightLog() {
+        // Are we even logging these events?
+        if( !freightMotorPIDFlogging ) return;
+        // Movement must be complete (disable further logging to memory)
+        frgMotorLogEnable = false;
+        // Create a subdirectory based on DATE
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String directoryPath = Environment.getExternalStorageDirectory().getPath() + "//FIRST//FreightArm//" + dateString;
+        // Ensure that directory path exists
+        File directory = new File(directoryPath);
+        directory.mkdirs();
+        // Create a filename based on TIME
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directoryPath + "/" + "freight_" + timeString + ".txt";
+        // Open the file
+        FileWriter freightLog;
+        try {
+            freightLog = new FileWriter(filePath, false);
+            // Log the current PIDF settings
+            PIDFCoefficients currPIDF = freightMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            freightLog.write("FreightArm " + currPIDF.toString() + "\r\n");
+            freightLog.write("Target position," + freightMotorTgt + "\r\n");
+            // Log Column Headings
+            freightLog.write("msec,pwr,mAmp,cts/sec,encoder\r\n");
+            // Log all the data recorded
+            for( int i=0; i<frgMotorLogIndex; i++ ) {
+                String msecString = String.format("%.3f, ", frgMotorLogTime[i] );
+                String pwrString  = String.format("%.3f, ", frgMotorLogPwr[i]  );
+                String ampString  = String.format("%.0f, ", frgMotorLogAmps[i] );
+                String velString  = String.format("%.0f, ", frgMotorLogVel[i]  );
+                String posString  = String.format("%d\r\n", frgMotorLogPos[i]  );
+                freightLog.write( msecString + pwrString + ampString + velString + posString );
+            }
+            freightLog.flush();
+            freightLog.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } // writeFreightLog()
     
     /*--------------------------------------------------------------------------------------------*/
     public void driveTrainMotors( double frontLeft, double frontRight, double rearLeft, double rearRight )
@@ -542,7 +616,7 @@ public class HardwareBothHubs
         // Enable RUN_TO_POSITION mode
         cappingMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
 
-        // If logging for PIDF purposes, begin a new dataset now:
+        // If logging instrumentation, begin a new dataset now:
         if( cappingMotorPIDFlogging ) {
             capMotorLogIndex  = 0;
             capMotorLogEnable = true;
@@ -568,7 +642,7 @@ public class HardwareBothHubs
     /* - motorPower = desired motor power level to get there                                      */
     public void freightArmPosition( int newPos, double motorPower )
     {
-        // Are we ALREADY at the specific position?
+        // Are we ALREADY at the specified position?
         if( Math.abs(newPos-freightMotorPos) < 20 )
             return;
 
@@ -584,6 +658,13 @@ public class HardwareBothHubs
 
         // Enable RUN_TO_POSITION mode
         freightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
+        
+        // If logging instrumentation, begin a new dataset now:
+        if( freightMotorPIDFlogging ) {
+            frgMotorLogIndex  = 0;
+            frgMotorLogEnable = true;
+            frgMotorTimer.reset();
+        }
 
         // Initiate motor movement to the new position
         freightMotor.setPower( motorPower );

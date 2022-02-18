@@ -581,6 +581,7 @@ public abstract class Teleop extends LinearOpMode {
                 robot.freightMotor.setPower( 0.0 );
                 robot.freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
+                robot.writeFreightLog();
                 // If we stopped in COLLECT position then sweeper will be
                 // running so use that to restart our freight detection flags
                 if( !collectingFreight && sweeperRunning) {
