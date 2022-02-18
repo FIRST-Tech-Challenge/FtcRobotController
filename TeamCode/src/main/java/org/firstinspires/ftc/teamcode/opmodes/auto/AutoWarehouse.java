@@ -126,7 +126,7 @@ public class AutoWarehouse extends LinearOpMode {
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        lift.setPosition(AutoLift.Positions.AUTOTOP);
+        lift.setPosition(AutoLift.Positions.TOP);
         toolTimer.reset();
         while (lift.getPosition() != AutoLift.Positions.INTAKING) {
             if (isStopRequested()) {

@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class AutoCarousel extends HeadlessToggleableTool<DcMotor> {
+    public static String carouselName = "spinner";
+
     public AutoCarousel(@NonNull HardwareMap hardwareMap, double power) {
-        super(hardwareMap, DcMotor.class, "spinner", power * CarouselSpeedConfig.speed);
+        super(hardwareMap, DcMotor.class, carouselName, power * CarouselSpeedConfig.speed);
     }
 
     public AutoCarousel(@NonNull HardwareMap hardwareMap) {
@@ -18,6 +20,6 @@ public class AutoCarousel extends HeadlessToggleableTool<DcMotor> {
 
     @Config
     public static class CarouselSpeedConfig {
-        public static double speed = 0.45;
+        public static double speed = 0.6;
     }
 }
