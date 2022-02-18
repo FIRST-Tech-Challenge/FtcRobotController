@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Arm.Arm;
 import org.firstinspires.ftc.teamcode.Intake.Intake;
 
 @TeleOp(name = "Driver Control")
-/**CONTROLS**
+/**CONTROLS(NOTE: Will change based on Driver's preference)**
  *
  * =======================================================
  *
@@ -32,10 +32,6 @@ import org.firstinspires.ftc.teamcode.Intake.Intake;
  *
  * B button = Opens the outtake flap half-way full
  *
- * X button = Closes the arm(Grabs the team-element)
- *
- * Y button = Opens the arm(Releases the team-element)
- *
  *=========================================================
  *
  * Gamepad 2
@@ -48,13 +44,17 @@ import org.firstinspires.ftc.teamcode.Intake.Intake;
  *
  * B button = Direction of Carousel(CW/CCW)
  *
- * X button = Move teamElement arm to the Left(Inside the robot/Default)
+ * X Button = Closes the arm(Grabs the team-element)
  *
- * Y button = Move teamElement arm to the Right(Outside of the robot)
+ * Y Button = Opens the arm(Releases the team-element)
+ *
+ * DPad LEFT = Move teamElement arm to the Left(Inside the robot/Default)
+ *
+ * DPad RIGHT =  Move teamElement arm to the Right(Outside of the robot)
  *
  * DPad UP = Winch UP
  *
- * DPad Down = Winch DOWN
+ * DPad DOWN = Winch DOWN
  *
  *===========================================================
  *
@@ -166,9 +166,15 @@ public class JonDC extends LinearOpMode{
 
             telemetry.addData("Level", arm.getWinchPosition());
 
-            arm.armRight(this.gamepad2.y);
+            arm.armRight(this.gamepad2.dpad_right);
 
-            arm.armLeft(this.gamepad2.x);
+            arm.armLeft(this.gamepad2.dpad_left);
+
+            arm.grabArm(this.gamepad2.x);
+
+            arm.resetArm(this.gamepad1.y);
+
+
 
 
             //drive
