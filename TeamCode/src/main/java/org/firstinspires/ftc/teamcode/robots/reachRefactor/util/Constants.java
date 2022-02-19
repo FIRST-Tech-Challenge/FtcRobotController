@@ -18,9 +18,6 @@ public class Constants {
     public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
     public static final double DISTANCE_TARGET_TO_BACK_WHEEL = 7.086614;
 
-    public static final double TURRET_OFFSET_X = 0;
-    public static final double TURRET_OFFSET_Y = 0;
-
     // constraints
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
     public static double TICKS_PER_INCH = 26.375;
@@ -36,7 +33,7 @@ public class Constants {
     public static double MAX_VEL = 30;
     public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = Math.toRadians(360);
-    public static double MAX_ANG_ACCEL = Math.toRadians(60);
+    public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
     public static final double TICKS_PER_REV = 1120;
     public static final double MAX_RPM = 150;
@@ -54,7 +51,6 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
     // Enums
     //----------------------------------------------------------------------------------------------
-    public static Alliance ALLIANCE;
     public enum Alliance {
         RED(-1), BLUE(1);
 
@@ -73,10 +69,7 @@ public class Constants {
         START_RED_UP(new Pose2d(12, -60, Math.toRadians(90))),
         START_RED_DOWN(new Pose2d(-36, -60, Math.toRadians(90))),
         START_BLUE_UP(new Pose2d(12, 60, Math.toRadians(270))),
-        START_BLUE_DOWN(new Pose2d(-36, 60, Math.toRadians(270))),
-
-        RED_SHIPPING_HUB(new Pose2d(-12, 24)),
-        BLUE_SHIPPING_HUB(new Pose2d(-12, -24));
+        START_BLUE_DOWN(new Pose2d(-36, 60, Math.toRadians(270)));
 
         private final Pose2d pose;
 

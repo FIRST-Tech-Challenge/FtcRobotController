@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.util;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.TURRET_OFFSET_X;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.TURRET_OFFSET_Y;
-
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -13,7 +10,6 @@ import java.util.List;
 public class DashboardUtil {
     private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
     private static final double ROBOT_RADIUS = 9; // in
-    private static final double TURRET_RADIUS = 3;
     private static final double VELOCITY_SCALE = 0.1;
 
     private static final String ROBOT_COLOR = "Black";
@@ -65,7 +61,7 @@ public class DashboardUtil {
         canvas.strokeLine(x1, y1, x2, y2);
     }
 
-    public static void drawRobot(Canvas canvas, Pose2d pose, double chassisLength, double swivelAngle, List<Double> wheelVelocities, double turretAngle) {
+    public static void drawRobot(Canvas canvas, Pose2d pose, double chassisLength, double swivelAngle, List<Double> wheelVelocities) {
         // calculating wheel positions
         Vector2d position = pose.vec();
         Vector2d leftWheel = new Vector2d(0, Constants.TRACK_WIDTH / 2);
@@ -96,18 +92,5 @@ public class DashboardUtil {
         drawLine(canvas, leftWheel, leftWheelEnd);
         drawLine(canvas, rightWheel, rightWheelEnd);
         drawLine(canvas, swerveWheel, swerveWheelEnd);
-
-        // drawing turret
-        Vector2d turretPose = pose.vec().minus(
-                new Vector2d(
-                        TURRET_OFFSET_X + chassisLength,
-                        TURRET_OFFSET_Y
-                ).rotated(pose.getHeading())
-        );
-        canvas.strokeCircle(turretPose.getX(), turretPose.getY(), TURRET_RADIUS);
-        Vector2d v = new Vector2d(Math.cos(turretAngle + pose.getHeading()), Math.sin(turretAngle + pose.getHeading())).times(TURRET_RADIUS);
-        double x1 = turretPose.getX() + v.getX() / 2, y1 = pose.getY() + v.getY() / 2;
-        double x2 = turretPose.getX() + v.getX(), y2 = pose.getY() + v.getY();
-        canvas.strokeLine(x1, y1, x2, y2);
     }
 }

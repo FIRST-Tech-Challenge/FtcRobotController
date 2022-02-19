@@ -21,8 +21,7 @@ public class Autonomous {
     private Robot robot;
 
     // autonomous routines
-    private StateMachine blueUp, redUp, blueDown, redDown, blueUpLinear, redUpLinear, blueDownLinear, redDownLinear;
-//    public StateMachine blueUpDumb;
+    private StateMachine blueUp, redUp, blueDown, redDown, blueUpLinear, redUpLinear, blueDownLinear, redDownLinear, blueUpSimple, redUpSimple, blueDownSimple, redDownSimple;
     // misc. routines
     public StateMachine backAndForth, square, turn, lengthTest;
 
@@ -56,6 +55,20 @@ public class Autonomous {
         return null;
     }
 
+    public StateMachine getStateMachineSimple(Constants.Position startingPosition) {
+        switch(startingPosition) {
+            case START_BLUE_UP:
+                return blueDownSimple;
+            case START_RED_UP:
+                return redUpSimple;
+            case START_BLUE_DOWN:
+                return blueDownSimple;
+            case START_RED_DOWN:
+                return redDownSimple;
+        }
+        return null;
+    }
+
     private StateMachine trajectorySequenceToStateMachine(Function<TrajectorySequenceBuilder, TrajectorySequenceBuilder> function) {
         return Utils.getStateMachine(new Stage())
                 .addSingleState(() -> {
@@ -79,7 +92,6 @@ public class Autonomous {
                             trajectorySequence
                     );
                 })
-                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .build();
     }
 
@@ -143,11 +155,6 @@ public class Autonomous {
         //----------------------------------------------------------------------------------------------
         // Spline Routines
         //----------------------------------------------------------------------------------------------
-
-//        blueUpDumb = Utils.getStateMachine(new Stage())
-//                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.AUTON_REACH_RIGHT))
-//                .build();
-
 
         blueUp = Utils.getStateMachine(new Stage())
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
@@ -362,6 +369,7 @@ public class Autonomous {
                         )
                 )
                 .build();
+
         redDownLinear = Utils.getStateMachine(new Stage())
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
@@ -393,6 +401,30 @@ public class Autonomous {
                                 .back(120)
                         )
                 )
+                .build();
+
+        //----------------------------------------------------------------------------------------------
+        // Simple Routines (traditionally walk of fame)
+        //----------------------------------------------------------------------------------------------
+
+        blueUpSimple = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_RIGHT))
+                .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
+                .build();
+
+        redUpSimple = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_LEFT))
+                .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
+                .build();
+
+        blueDownSimple = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_LEFT))
+                .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
+                .build();
+
+        redDownSimple = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_RIGHT))
+                .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
                 .build();
     }
 
