@@ -20,7 +20,7 @@ public class linSlide {
 
     public static void setLSMotor(DcMotor LSMotor){
         moveLS(LSMotor);
-        LSMotor = hardwareMap.dcMotor.get("LSMotor");
+       // LSMotor = hardwareMap.dcMotor.get("LSMotor");
         if(LSMotor.getCurrentPosition() == low){
             LSMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
