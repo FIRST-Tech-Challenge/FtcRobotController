@@ -82,16 +82,16 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     public void runOpMode() {
         /*
             Buttons Being Used Gamepad 2
-            A
-            B
-            X
-            Y
-            Dpad up
-            Dpad down
-            Dpad Left
-            Dpad Right
-            Left Trigger
-            Right Trigger
+            A - Intake
+            B - Intake
+            X - Intake
+            Y - Toggle Carousel
+            Dpad up - Raise
+            Dpad down - Raise
+            Dpad Left - Raise
+            Dpad Right - Raise
+            Left Trigger - Dump
+            Right Trigger - Dump
         */
         telemetry.addData("Status", "Initialized");
         telemetry.update();

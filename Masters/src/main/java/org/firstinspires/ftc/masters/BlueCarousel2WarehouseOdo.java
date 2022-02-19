@@ -30,7 +30,7 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
-                .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d( new Vector2d(48, 65.5), Math.toRadians(180)), Math.toRadians(0))
                 .build();
         drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
