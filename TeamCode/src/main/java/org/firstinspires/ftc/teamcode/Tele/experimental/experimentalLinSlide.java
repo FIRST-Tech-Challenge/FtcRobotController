@@ -8,15 +8,15 @@ import org.firstinspires.ftc.teamcode.Tele.untested.linSlide;
 @TeleOp
 public class experimentalLinSlide extends LinearOpMode {
 
-    public DcMotor linSlideMotor;
+    public DcMotor LinSlideMotor;
 
     public void runOpMode() throws InterruptedException {
 
         waitForStart();
 
         while (opModeIsActive()) {
-            linSlideMotor = hardwareMap.dcMotor.get("linSlideMotor");
-            linSlide.setLSMotor(linSlideMotor);
+            LinSlideMotor = hardwareMap.dcMotor.get("LinSlideMotor");
+            linSlide.setLSMotor(LinSlideMotor);
 
         }
 
