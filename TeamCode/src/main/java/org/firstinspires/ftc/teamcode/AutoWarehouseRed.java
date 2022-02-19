@@ -139,7 +139,7 @@ public class AutoWarehouseRed extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(400); //Go backwards
+            sleep(500); //Go backwards
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -161,7 +161,7 @@ public class AutoWarehouseRed extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1250); //turn left
+            sleep(800); //turn left
 
             tower1.setPower(0);
             tower2.setPower(0);
