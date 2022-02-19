@@ -33,6 +33,11 @@ import static org.firstinspires.ftc.Team19567.util.Utility_Constants.ACC_COEFFIC
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FIRST_LEVEL_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.SECOND_LEVEL_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.THIRD_LEVEL_POS;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MAX_POS;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FIRST_LEVEL_POWER;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.SECOND_LEVEL_POWER;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.THIRD_LEVEL_POWER;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.GOING_DOWN_POWER;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INTAKE_SPEED;
 
 @TeleOp(name="TeleOP", group="Dababy") //Gives the TeleOp its name in the driver station menu and categorizes it as an Iterative OpMode
@@ -221,9 +226,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else carouselPower = 0.0;
 
         //ARM
-        if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*4,0,1900);
-        else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*4,0,1900);
-        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-4,0,1900);
+        if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*8,0,MAX_POS);
+        else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*8,0,MAX_POS);
+        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-8,0,MAX_POS);
         if(gamepad1.x || gamepad2.x) {
             presetState = PRESET_STATE.ALLIANCE_FIRST;
         }
@@ -240,7 +245,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
-                armPower = 0.5;
+                armPower = FIRST_LEVEL_POWER;
                 armPos = FIRST_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= FIRST_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -248,7 +253,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case ALLIANCE_SECOND: {
-                armPower = 0.55;
+                armPower = SECOND_LEVEL_POWER;
                 armPos = SECOND_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= SECOND_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -256,7 +261,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case ALLIANCE_THIRD: {
-                armPower = 0.65;
+                armPower = THIRD_LEVEL_POWER;
                 armPos = THIRD_LEVEL_POS;
                 if(armDC.getCurrentPosition() >= THIRD_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -264,15 +269,15 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 break;
             }
             case GOING_DOWN: {
-                releaseServoPos = 0.76;
-                armPower = 0.2;
+                releaseServoPos = Utility_Constants.RELEASE_SERVO_DEFAULT;
+                armPower = GOING_DOWN_POWER;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
                     presetState = PRESET_STATE.NO_PRESET;
                 }
             }
             default: {
-                armPower = 0.8;
+                armPower = 1.0;
                 break;
             }
         }
@@ -290,7 +295,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
             isIntaked = true;
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
-            telemetry.addData("Distance Sensor","Freight Detected");
+            telemetry.addData("Force Sensor","Freight Detected");
+            telemetry.update();
         }
         /* else if(distanceSensor.getDistance(DistanceUnit.MM) <= Utility_Constants.DISTANCE_SENSOR_THRESHOLD) {
             if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
@@ -317,6 +323,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         telemetry.addData("Carousel Time(%.2f)",carouselTime.toString() + "Milliseconds"); //Display the carouselTime
         telemetry.addData("DCMotors", "armDC(%.2f)", armPos);
         telemetry.addData("Servos","releaseServoPos(%.2f)",releaseServoPos);
+        telemetry.addData("Sensors","forceSensorVoltage(%.2f)",forceSensor.getVoltage());
         telemetry.update(); //Updates the telemetry
     }
 
