@@ -36,11 +36,8 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
     DcMotor linearSlideMotor = null;
 
     Servo dumpServo = null;
-
     DistanceSensor distanceSensorIntake, distanceSensorTop;
-
     DcMotorEx carouselMotor = null;
-
 
 //    // declare motor speed variables
 //    double RF; double LF; double RR; double LR;
@@ -53,8 +50,6 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 //    int linearSlideTolerance = 5;
 
     double maxPowerConstraint = 0.75;
-
-
 
     private enum linearSlideTargets {
         TOP,
@@ -289,7 +284,7 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
                     if (gamepad1.right_trigger > .35) {
                         currentMode = DriveMode.TO_HUB;
-                        boolean foundWhite = drive.toLineRedTeleop(1.5);
+                        boolean foundWhite = toLineTeleop(1.5);
                         if (foundWhite) {
                             drive.followTrajectoryAsync(pastLineRed);
                         }
@@ -472,6 +467,10 @@ public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 
         }
 
+    }
+
+    protected boolean toLineTeleop(double time){
+        return drive.toLineRedTeleop(time);
     }
 
 }
