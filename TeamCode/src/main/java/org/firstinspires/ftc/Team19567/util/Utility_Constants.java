@@ -33,7 +33,7 @@ public class Utility_Constants {
     public static double THIRD_LEVEL_POWER = 0.65;
     public static double GOING_DOWN_POWER = 0.4;
     //POSITIONS
-    public static double RELEASE_SERVO_DEFAULT = 0.76;
+    public static double RELEASE_SERVO_DEFAULT = 0.67;
     //TIMINGS
     public static int MILLI_ACC = 1100; //Milliseconds after carousel has been engaged to begin accelerating the carousel
     public static int MILLI_FINAL = 1100; //Milliseconds after carousel has been engaged to reach the final speed
@@ -43,11 +43,11 @@ public class Utility_Constants {
     public static double BALANCE_COEFFICIENT = 1300.1; //Balancing coefficient for ARM ENCODER VALUES
     public static double POTENTIOMETER_COEFFICIENT = 3.45; //Balancing Coefficient for POTENTIOMETER VOLTAGE VALUES
     public static double ACC_COEFFICIENT = 80000; //Rate at which to accelerate by (reciprocal of)
-    public static double POW_COEFFICIENT = 1.5; //Exponent at which the balancing increases by
+    public static double POW_COEFFICIENT = 1.3; //Exponent at which the balancing increases by
     //THRESHOLDS
     public static double DISTANCE_SENSOR_THRESHOLD = 80; //Specifies maximum distance in MM for distance sensor to detect freight (cannot be less than 50)
     public static double FORCE_SENSOR_THRESHOLD = 0.1; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
-    public static int DEBOUNCE_TIME = 500; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
+    public static int DEBOUNCE_TIME = 250; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
     //MISC
     public static Gamepad.RumbleEffect END_GAME_RUMBLE = new Gamepad.RumbleEffect.Builder()
             .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec

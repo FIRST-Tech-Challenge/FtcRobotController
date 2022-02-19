@@ -275,6 +275,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 if(armDC.getCurrentPosition() <= 5) {
                     presetState = PRESET_STATE.NO_PRESET;
                 }
+                break;
             }
             default: {
                 armPower = 1.0;
