@@ -148,7 +148,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(500); //quick stop
+            sleep(30000); //quick stop
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -159,7 +159,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(800); //turn left
+            sleep(1500); //turn left
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -181,7 +181,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1000); //Go forward
+            sleep(1250); //Go forward
 
             tower1.setPower(0);
             tower2.setPower(0);
