@@ -134,6 +134,7 @@ public class FF_6832 extends OpMode {
         SQUARE("Square"),
         TURN("Turn"),
         LENGTH_TEST("Length Test");
+//        JANK_AUTO("jank Auto");
 
         private final String name;
 
@@ -498,6 +499,14 @@ public class FF_6832 extends OpMode {
                         gameStateIndex = GameState.indexOf(GameState.TELE_OP);
                     }
                     break;
+//                case JANK_AUTO:
+//                    StateMachine jankAutoStateMachine = auto.blueUpDumb;
+//                    if(jankAutoStateMachine.execute()) {
+//                        active = false;
+//                        gameState = GameState.TELE_OP;
+//                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
+//                    }
+//                    break;
             }
         } else {
             handlePregameControls();

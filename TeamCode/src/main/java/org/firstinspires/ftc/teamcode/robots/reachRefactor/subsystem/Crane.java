@@ -64,7 +64,7 @@ public class Crane implements Subsystem {
     public enum Articulation {
         TEST_INIT(0, 0, 0, 0, 5,0),
         MANUAL(0, 0, 0, 0, 0,0),
-        INIT(-90,0,90,0, 1.5f,0),
+        INIT(-90,0,90,0, 1.5f,90),
         HOME(0,0,0,0, 0,0),
       
         LOWEST_TIER(75,130,20,0, 1.5f, 130),

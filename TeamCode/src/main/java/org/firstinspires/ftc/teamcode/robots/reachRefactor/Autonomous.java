@@ -22,7 +22,7 @@ public class Autonomous {
 
     // autonomous routines
     private StateMachine blueUp, redUp, blueDown, redDown, blueUpLinear, redUpLinear, blueDownLinear, redDownLinear;
-
+//    public StateMachine blueUpDumb;
     // misc. routines
     public StateMachine backAndForth, square, turn, lengthTest;
 
@@ -144,6 +144,11 @@ public class Autonomous {
         // Spline Routines
         //----------------------------------------------------------------------------------------------
 
+//        blueUpDumb = Utils.getStateMachine(new Stage())
+//                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.AUTON_REACH_RIGHT))
+//                .build();
+
+
         blueUp = Utils.getStateMachine(new Stage())
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
                     builder
@@ -225,6 +230,7 @@ public class Autonomous {
                         )
                 )
                 .build();
+
         redDown = Utils.getStateMachine(new Stage())
                 .addNestedStateMachine(trajectorySequenceToStateMachine(
                         builder -> builder
