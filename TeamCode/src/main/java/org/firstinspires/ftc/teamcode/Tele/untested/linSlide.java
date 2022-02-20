@@ -21,7 +21,7 @@ public class linSlide {
         }
     }
 
-    public static void moveLS(float LTrig, Float RTrig, DcMotor LSM){
+    public static void moveLS(float LTrig, float RTrig, DcMotor LSM){
         switch (state){
             case LOW:
                 if(LTrig == 1 && LSM.getCurrentPosition() != high){
