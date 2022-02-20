@@ -2,9 +2,11 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -38,9 +40,11 @@ public class RedWarehouseOdo extends LinearOpMode {
                 .addTemporalMarker(1,()->{drive.retract();})
                 .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(2))
                 .build();
+        TrajectorySequence roomyWarehouse = drive.trajectorySequenceBuilder(fromHubToWarehouse.end())
+                .strafeLeft(12)
+                .build();
         drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-
         waitForStart();
 
 //        TWCA CHANGES! ALERT!
@@ -157,8 +161,8 @@ public class RedWarehouseOdo extends LinearOpMode {
                  drive.getCube();
              }
         }
+
+        drive.followTrajectorySequence(roomyWarehouse);
+
     }
-
-
-
 }

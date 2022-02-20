@@ -248,6 +248,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                         currentMode = DriveMode.NORMAL;
                     }
 
+                    //add way to stop trajectory
+
                     break;
                 case TO_SHARED_HUB:
                     break;

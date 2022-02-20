@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -28,14 +29,18 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
         Pose2d startPose = new Pose2d(new Vector2d(-35, 63), Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
-        TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+        TrajectorySequence fromHubToWaitPos = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
+                .build();
+        TrajectorySequence fromWaitPosToWarehouse = drive.trajectorySequenceBuilder(fromHubToWaitPos.end())
                 .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
                 .build();
         drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
+
+        ElapsedTime elapsedTime = new ElapsedTime();
 
         long startTime = new Date().getTime();
         long time = 0;
@@ -141,7 +146,12 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
 //                .build();
 //        drive.followTrajectorySequence(trajSeq7);
 
-        drive.followTrajectorySequence(fromHubToWarehouse);
+        drive.followTrajectorySequence(fromHubToWaitPos);
+        double seconds = elapsedTime.seconds();
+        while (seconds<27) {
+            seconds = elapsedTime.seconds();
+        }
+        drive.followTrajectorySequence(fromWaitPosToWarehouse);
         drive.getCube();
 
     }
