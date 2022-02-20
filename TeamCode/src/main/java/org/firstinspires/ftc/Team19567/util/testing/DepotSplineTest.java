@@ -27,9 +27,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Warehouse Spline Test", group="Testing")
-
-public class WarehouseSplinetest extends LinearOpMode {
+@Autonomous(name="Depot Spline Test", group="Testing")
+public class DepotSplineTest extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
     private greenPipeline pipeline = new greenPipeline(telemetry); //Team shipping element OpenCV Pipeline
@@ -143,13 +142,13 @@ public class WarehouseSplinetest extends LinearOpMode {
                         }
                     }
                     else if(timeout.milliseconds() >= 200) {
-                            chassis.breakFollowing();
-                            TrajectorySequence substituteReturnSplineSequence = chassis.trajectorySequenceBuilder(poseEstimate).addSpatialMarker(new Vector2d(20,-50), () -> {
-                                mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.65);
-                            }).strafeTo(new Vector2d(12,-66.5)).lineToSplineHeading(new Pose2d(0,-35,Math.toRadians(-45))).build();
-                            chassis.followTrajectorySequenceAsync(substituteReturnSplineSequence);
-                            currentState = AUTO_STATE.MOVING_TO_HUB;
-                            freightCount++;
+                        chassis.breakFollowing();
+                        TrajectorySequence substituteReturnSplineSequence = chassis.trajectorySequenceBuilder(poseEstimate).addSpatialMarker(new Vector2d(20,-50), () -> {
+                            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.65);
+                        }).strafeTo(new Vector2d(12,-66.5)).lineToSplineHeading(new Pose2d(0,-35,Math.toRadians(-45))).build();
+                        chassis.followTrajectorySequenceAsync(substituteReturnSplineSequence);
+                        currentState = AUTO_STATE.MOVING_TO_HUB;
+                        freightCount++;
                     }
                     break;
                 }
