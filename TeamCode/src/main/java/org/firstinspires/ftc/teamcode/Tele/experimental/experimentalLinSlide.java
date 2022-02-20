@@ -12,11 +12,11 @@ public class experimentalLinSlide extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
 
-        waitForStart();
-
         LinSlideMotor = hardwareMap.dcMotor.get("LinSlideMotor");
         LinSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LinSlideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        waitForStart();
 
         while (opModeIsActive()) {
 
