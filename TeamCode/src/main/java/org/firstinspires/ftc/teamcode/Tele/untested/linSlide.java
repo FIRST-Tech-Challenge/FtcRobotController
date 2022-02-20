@@ -17,21 +17,21 @@ public class linSlide {
 
     //DcMotor LinSlideMotor = null; //declares motor
 
-    public static void setLSMotor(DcMotor LSMotor){
-        moveLS(LSMotor);
+    public static void setLSMotor(float LTrigger, float RTrigger, DcMotor LSMotor){
+        moveLS(LTrigger, RTrigger, LSMotor);
        //LSMotor = hardwareMap.dcMotor.get("LSMotor");
         if(LSMotor.getCurrentPosition() == low){
             LSMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
     }
 
-    public static void moveLS(DcMotor LSM){
+    public static void moveLS(float LTrig, Float RTrig, DcMotor LSM){
         switch (state){
             case LOW:
-                if(gamepad1.left_trigger == 1 && LSM.getCurrentPosition() != high){
+                if(LTrig == 1 && LSM.getCurrentPosition() != high){
                     state = states.HIGH;
                     LSM.setTargetPosition(high);
-                    while (LSM.getCurrentPosition() != high && gamepad1.right_trigger != 1) {
+                    while (LSM.getCurrentPosition() != high && RTrig != 1) {
                         LSM.setPower(0.9);
                         LSM.getCurrentPosition();
                     }
@@ -40,10 +40,10 @@ public class linSlide {
                 LSM.setPower(0);
                 break;
             case HIGH:
-                if(gamepad1.right_trigger == 1 && LSM.getCurrentPosition() != low){
+                if(RTrig == 1 && LSM.getCurrentPosition() != low){
                     state = states.LOW;
                     LSM.setTargetPosition(low);
-                    while (LSM.getCurrentPosition() != low && gamepad1.left_trigger != 1) {
+                    while (LSM.getCurrentPosition() != low && LTrig != 1) {
                         LSM.setPower(0.9);
                         LSM.getCurrentPosition();
                     }
