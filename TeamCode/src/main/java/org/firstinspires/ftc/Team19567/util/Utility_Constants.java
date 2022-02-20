@@ -33,20 +33,21 @@ public class Utility_Constants {
     public static double THIRD_LEVEL_POWER = 0.65;
     public static double GOING_DOWN_POWER = 0.4;
     //POSITIONS
-    public static double RELEASE_SERVO_DEFAULT = 0.67;
+    public static double RELEASE_SERVO_DEFAULT = 0.71;
+    public static double BALANCE_SERVO_DEFAULT = 0.08;
     //TIMINGS
     public static int MILLI_ACC = 1100; //Milliseconds after carousel has been engaged to begin accelerating the carousel
     public static int MILLI_FINAL = 1100; //Milliseconds after carousel has been engaged to reach the final speed
     public static int MILLI_END = 1400; //Milliseconds after carousel has been engaged to stop spinning the carousel
-    public static double FLICKER_TIME = 400; //Time in milliseconds for the flicker to release one freight
+    public static double FLICKER_TIME = 250; //Time in milliseconds for the flicker to release one freight
     //COEFFICIENTS
     public static double BALANCE_COEFFICIENT = 1300.1; //Balancing coefficient for ARM ENCODER VALUES
-    public static double POTENTIOMETER_COEFFICIENT = 3.45; //Balancing Coefficient for POTENTIOMETER VOLTAGE VALUES
+    public static double POTENTIOMETER_COEFFICIENT = 3.8; //Balancing Coefficient for POTENTIOMETER VOLTAGE VALUES
     public static double ACC_COEFFICIENT = 80000; //Rate at which to accelerate by (reciprocal of)
-    public static double POW_COEFFICIENT = 1.3; //Exponent at which the balancing increases by
+    public static double POW_COEFFICIENT = 1.2; //Exponent at which the balancing increases by
     //THRESHOLDS
     public static double DISTANCE_SENSOR_THRESHOLD = 80; //Specifies maximum distance in MM for distance sensor to detect freight (cannot be less than 50)
-    public static double FORCE_SENSOR_THRESHOLD = 0.1; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
+    public static double FORCE_SENSOR_THRESHOLD = 0.15; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
     public static int DEBOUNCE_TIME = 250; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
     //MISC
     public static Gamepad.RumbleEffect END_GAME_RUMBLE = new Gamepad.RumbleEffect.Builder()

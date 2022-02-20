@@ -156,6 +156,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 leftDCBack.setPower(leftBackSpeed);
                 rightDCBack.setPower(rightBackSpeed);
                 if(gamepad1.share) {
+                    chassis.setPoseEstimate(new Pose2d(0,0,0));
                     TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(chassis.getPoseEstimate())
                             .addSpatialMarker(new Vector2d(6,1), () -> {
                                 mechanisms.rotateArm(THIRD_LEVEL_POS,0.7);
@@ -175,7 +176,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                     telemetry.update();
                     currentState = TELEOP_STATE.AUTOMATION_FLICKER;
                 }
-                if(gamepad1.start) {
+                if(gamepad1.options) {
                     chassis.breakFollowing();
                     currentState = TELEOP_STATE.DRIVER_CONTROL;
                 }
@@ -233,7 +234,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             presetState = PRESET_STATE.ALLIANCE_FIRST;
         }
         else if(gamepad2.y) {
-            presetState = PRESET_STATE.ALLIANCE_THIRD;
+            presetState = PRESET_STATE.ALLIANCE_SECOND;
         }
         else if(gamepad1.a || gamepad2.a) {
             presetState = PRESET_STATE.ALLIANCE_THIRD;
@@ -292,7 +293,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             gamepad1.runRumbleEffect(endGameRumble);
         }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        else if(forceSensor.getVoltage() >= Utility_Constants.FORCE_SENSOR_THRESHOLD) {
+        if(forceSensor.getVoltage() >= Utility_Constants.FORCE_SENSOR_THRESHOLD) {
             if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
             isIntaked = true;
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;

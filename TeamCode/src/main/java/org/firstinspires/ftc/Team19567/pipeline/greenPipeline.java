@@ -51,70 +51,72 @@ public class greenPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input,output,Imgproc.COLOR_RGB2HSV);
-        telemetry.addData("Pipeline Status","Setup Complete");
+        //telemetry.addData("Pipeline Status","Setup Complete");
 
         Core.inRange(output,lowHSV,highHSV,output);
-        telemetry.addData("Pipeline Status","InRange Conv. Completed");
+        //telemetry.addData("Pipeline Status","InRange Conv. Completed");
 
         Mat first = output.submat(LEFT_SQUARE);
         Mat second = output.submat(RIGHT_SQUARE);
         Mat third = output.submat(RIGHTEST_SQUARE);
-        telemetry.addData("Pipeline Status","Submats Computed");
+        //telemetry.addData("Pipeline Status","Submats Computed");
 
         firstConf = Core.sumElems(first).val[0] / LEFT_SQUARE.area()/255;
         secondConf = Core.sumElems(second).val[0] / RIGHT_SQUARE.area()/255;
         thirdConf = Core.sumElems(third).val[0] / RIGHTEST_SQUARE.area()/255;
 
-        telemetry.addData("Pipeline Status","Confidences Ascertained");
+        //telemetry.addData("Pipeline Status","Confidences Ascertained");
 
         first.release();
         second.release();
 
-        telemetry.addData("Left",(int) Core.sumElems(first).val[0]);
+        /* telemetry.addData("Left",(int) Core.sumElems(first).val[0]);
         telemetry.addData("Right",(int) Core.sumElems(second).val[0]);
         telemetry.addData("LeftP(%.2f)",firstConf*100);
         telemetry.addData("RightP(%.2f)",secondConf*100);
-        telemetry.addData("Telemetry Status","Values Broadcasted via Telemetry");
+        telemetry.addData("Telemetry Status","Values Broadcasted via Telemetry"); */
 
         tseFirst = firstConf > THRESHOLD;
         tseSecond = secondConf > THRESHOLD;
         tseThird = thirdConf > THRESHOLD;
 
-        telemetry.addData("Yop?",tseFirst);
+        /* telemetry.addData("Yop?",tseFirst);
         telemetry.addData("Yop2?",tseSecond);
-        telemetry.addData("Yop3?",tseThird);
+        telemetry.addData("Yop3?",tseThird); */
 
         if(tseFirst) {
             location = LOCATION.ALLIANCE_FIRST;
-            telemetry.addData("Level","First");
+            /* telemetry.addData("Level","First");
+            telemetry.update(); */
         }
         else if(tseSecond) {
             location = LOCATION.ALLIANCE_SECOND;
-            telemetry.addData("Level","Second");
+            /* telemetry.addData("Level","Second");
+            telemetry.update(); */
         }
         else if(tseThird) {
             location = LOCATION.ALLIANCE_THIRD;
         }
         else {
             location = LOCATION.NO_ALLIANCE;
-            telemetry.addData("Level","Third");
+            /* telemetry.addData("Level","Third");
+            telemetry.update(); */
         }
-        telemetry.addData("OpenCV Status","Location Decided");
+        //telemetry.addData("OpenCV Status","Location Decided");
 
         Imgproc.cvtColor(output, output, Imgproc.COLOR_GRAY2RGB);
 
-
-        telemetry.addData("OpenCV Status","Final Conversion + Color Complete");
-        telemetry.update();
+        /* telemetry.addData("OpenCV Status","Final Conversion + Color Complete");
+        telemetry.update(); */
 
         Imgproc.rectangle(output,LEFT_SQUARE,location==LOCATION.ALLIANCE_FIRST? detectedColor:none);
         Imgproc.rectangle(output,RIGHT_SQUARE,location==LOCATION.ALLIANCE_SECOND? detectedColor:none);
         Imgproc.rectangle(output,RIGHTEST_SQUARE,(location==LOCATION.ALLIANCE_THIRD || location==LOCATION.NO_ALLIANCE)? detectedColor:none);
-        telemetry.addData("OpenCV Status","Rectangles Drawn");
         System.gc();
+        /* telemetry.addData("OpenCV Status","Rectangles Drawn");
         telemetry.addData("Input Frame Size",input.rows()+" x "+input.cols());
         telemetry.addData("Output Frame Size", output.rows()+" x "+output.cols());
-        telemetry.update();
+        telemetry.update(); */
 
         return output;
     }

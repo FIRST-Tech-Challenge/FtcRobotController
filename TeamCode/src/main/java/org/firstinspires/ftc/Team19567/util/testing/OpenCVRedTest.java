@@ -3,15 +3,15 @@ package org.firstinspires.ftc.Team19567.util.testing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
+import org.firstinspires.ftc.Team19567.pipeline.redPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
-@Autonomous(name="OpenCV Test",group="Testing")
-public class OpenCVtest extends LinearOpMode {
+@Autonomous(name="OpenCV Red Test",group="Testing")
+public class OpenCVRedTest extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     @Override
     public void runOpMode() {
@@ -22,7 +22,7 @@ public class OpenCVtest extends LinearOpMode {
         OpenCvCamera camera = OpenCvCameraFactory.getInstance()
                 .createWebcam(webcamName,cameraMonitorViewId);
 
-        greenPipeline pipeline = new greenPipeline(telemetry);
+        redPipeline pipeline = new redPipeline(telemetry);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.Team19567.util.Utility_Constants.PPR_RATIO; 
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MAX_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POTENTIOMETER_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POW_COEFFICIENT;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_SERVO_DEFAULT;
 
 public class Mechanisms {
     public DcMotor armDC;
@@ -103,7 +104,7 @@ public class Mechanisms {
     }
 
     public void maintainBalance() {
-        double balanceServoPos = Range.clip(Math.pow(Range.clip((3.31-potentiometer.getVoltage())/POTENTIOMETER_COEFFICIENT,0,1),POW_COEFFICIENT),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
+        double balanceServoPos = Range.clip(Math.pow(Range.clip((3.31-potentiometer.getVoltage())/POTENTIOMETER_COEFFICIENT,0,1),POW_COEFFICIENT)+BALANCE_SERVO_DEFAULT,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
         balanceServo.setPosition(balanceServoPos);
         telemetry.addData("Mechanisms","balanceServoPos(%.3f)",balanceServoPos); //TODO: TUNE THIs
         telemetry.addData("Mechanisms","Potentiometer Voltage(%.3f)",potentiometer.getVoltage());
