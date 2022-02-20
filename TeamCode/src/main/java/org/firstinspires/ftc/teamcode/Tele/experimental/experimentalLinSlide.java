@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Tele.experimental;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Tele.untested.linSlide;
 
@@ -25,6 +24,7 @@ public class experimentalLinSlide extends LinearOpMode {
         while (opModeIsActive()) {
 
             linSlide.setLSMotor(gamepad1.left_trigger, gamepad1.right_trigger, LinSlideMotor);
+            idle();
 
         }
 

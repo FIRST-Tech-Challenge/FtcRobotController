@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.teamcode.Tele.untested;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class linSlide {
 
-    static final int low = 000; //encoder values
+    static final int low = 0; //encoder values
     static final int high = 2100;
 
     public enum states{LOW, HIGH} //states the slide can be in
@@ -18,8 +13,9 @@ public class linSlide {
     //DcMotor LinSlideMotor = null; //declares motor
 
     public static void setLSMotor(float LTrigger, float RTrigger, DcMotor LSMotor){
+
         moveLS(LTrigger, RTrigger, LSMotor);
-       //LSMotor = hardwareMap.dcMotor.get("LSMotor");
+
         if(LSMotor.getCurrentPosition() == low){
             LSMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
