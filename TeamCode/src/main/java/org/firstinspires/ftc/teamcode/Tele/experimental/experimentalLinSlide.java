@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Tele.untested.linSlide;
 
-@TeleOp
+@TeleOp(name="LinSlideTest", group="experimental")
 public class experimentalLinSlide extends LinearOpMode {
 
     public DcMotor LinSlideMotor;
