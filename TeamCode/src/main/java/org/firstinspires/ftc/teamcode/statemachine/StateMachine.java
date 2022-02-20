@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.statemachine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class StateMachine {
 
@@ -62,6 +63,17 @@ public class StateMachine {
                     default:
                         return true;
                 }
+            });
+            return this;
+        }
+
+        public Builder addConditionalState(Supplier<Boolean> doIt, State trueCondition, State falseCondition) {
+            states.add(() -> {
+                if(doIt.get()){
+                    return trueCondition.runState();
+                }
+                else
+                    return falseCondition.runState();
             });
             return this;
         }

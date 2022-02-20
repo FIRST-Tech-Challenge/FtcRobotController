@@ -62,9 +62,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    public static double B = 0;
+    public static double B = 0.01;
     public static double ZETA = 0;
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.5, 0, 2);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
     public static double ROLL_ANTI_TIP_PID_TOLERANCE = 2;
@@ -73,8 +73,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public static PIDCoefficients SWIVEL_PID = new PIDCoefficients(1, 0, 0.08);
     public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(4, 0,  0);
-    public static double CHASSIS_LENGTH_PID_TOLERANCE = 5;
-    public static double SWIVEL_PID_TOLERANCE = 5;
+    public static double CHASSIS_LENGTH_PID_TOLERANCE = 1;
+    public static double SWIVEL_PID_TOLERANCE = 1;
 
     public TrajectorySequenceRunner trajectorySequenceRunner;
     private TrajectoryFollower follower;
@@ -107,6 +107,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private long lastLoopTime, loopTime;
 
+    private boolean duckGameEnabled;
     private boolean maintainChassisLengthEnabled;
     private ChassisLengthMode chassisLengthMode;
     public enum ChassisLengthMode {
@@ -116,7 +117,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
         super(TRACK_WIDTH, simulated);
         this.simulated = simulated;
-        follower = new RamseteFollower(B, ZETA, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), Double.MAX_VALUE);
+        follower = new RamseteFollower(B, ZETA, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 2);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         if(simulated) {
@@ -172,7 +173,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
         chassisLengthPID = new PIDController(CHASSIS_LENGTH_PID);
         chassisLengthPID.setInputRange(Constants.MIN_CHASSIS_LENGTH, Constants.MAX_CHASSIS_LENGTH);
-        chassisLengthPID.setOutputRange(-12, 12);
+        chassisLengthPID.setOutputRange(-100, 100);
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_PID_TOLERANCE);
         chassisLengthPID.enable();
 
@@ -370,7 +371,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
         leftMotor.setVelocity(inchesToEncoderTicks(targetLeftVelocity));
         rightMotor.setVelocity(inchesToEncoderTicks(targetRightVelocity));
-        swerveMotor.setVelocity(inchesToEncoderTicks(targetSwerveVelocity));
+        swerveMotor.setVelocity(inchesToSwerveEncoderTicks(targetSwerveVelocity));
         swivelMotor.setPower(swivelPower);
         duckSpinner.setPower(duckSpinnerPower);
 
@@ -386,6 +387,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
 
+        telemetryMap.put("duck game enabled", duckGameEnabled);
         if(debug) {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
@@ -406,7 +408,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
             telemetryMap.put("left position", inchesToEncoderTicks(leftPosition));
             telemetryMap.put("right position", inchesToEncoderTicks(rightPosition));
-            telemetryMap.put("swerve position", inchesToEncoderTicks(swervePosition));
+            telemetryMap.put("swerve position", inchesToSwerveEncoderTicks(swervePosition));
 
             telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
             telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));
@@ -523,8 +525,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     public void setMotorVelocities(double left, double right, double swerve) {
-        this.targetLeftVelocity = left;
-        this.targetRightVelocity = right;
+        if(!duckGameEnabled) {
+            this.targetLeftVelocity = left;
+            this.targetRightVelocity = right;
+        }
         this.targetSwerveVelocity = swerve;
     }
 
@@ -539,7 +543,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     public boolean chassisLengthOnTarget() {
-        chassisLengthOnTarget=chassisLengthPID.onTarget();
+        chassisLengthOnTarget = chassisLengthPID.onTarget();
         return chassisLengthOnTarget;
     }
 
@@ -618,5 +622,19 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public void setChassisLengthMode(ChassisLengthMode chassisLengthMode) {
         this.chassisLengthMode = chassisLengthMode;
+    }
+
+    public void setDuckGameEnabled(boolean duckGameEnabled) {
+        if(duckGameEnabled) {
+            setMotorVelocities(0, 0, targetSwerveVelocity);
+            setMaintainChassisLengthEnabled(false);
+        } else {
+            setMaintainChassisLengthEnabled(true);
+        }
+        this.duckGameEnabled = duckGameEnabled;
+    }
+
+    public boolean isDuckGameEnabled() {
+        return duckGameEnabled;
     }
 }

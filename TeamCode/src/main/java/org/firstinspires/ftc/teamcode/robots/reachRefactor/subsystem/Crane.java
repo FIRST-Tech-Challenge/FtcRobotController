@@ -69,7 +69,7 @@ public class Crane implements Subsystem {
       
         LOWEST_TIER(75,130,20,0, 1.5f, 130),
         MIDDLE_TIER(60,130,40,0, 1f, 150),
-        HIGH_TIER(27, 130,70,0, 1f, 170),
+        HIGH_TIER(24, 130,70,0, 1f, 170),
         HIGH_TIER_LEFT(10, 80,30,-80, 1f, 170),
         HIGH_TIER_RIGHT(10, 80,40,80, 1f, 170),
         TRANSFER(-45,-50,-20,0, 0.75f,0),
@@ -178,8 +178,9 @@ public class Crane implements Subsystem {
     }
 
 
-    public void dump() {
+    public boolean dump() {
         setWristTargetPos(currentDumpPos);
+        return true;
     }
 
     private void setTargetPositions(Articulation articulation) {

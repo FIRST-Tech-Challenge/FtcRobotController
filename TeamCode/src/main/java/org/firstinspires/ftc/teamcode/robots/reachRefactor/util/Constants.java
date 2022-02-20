@@ -16,11 +16,12 @@ public class Constants {
     public static final double MAX_CHASSIS_LENGTH = 35.4331;
     public static final double TRACK_WIDTH = 12.132362205;
     public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
-    public static final double DISTANCE_TARGET_TO_BACK_WHEEL = 7.086614;
+    public static final double DISTANCE_TARGET_TO_BACK_WHEEL = 8.75;
 
     // constraints
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
-    public static double TICKS_PER_INCH = 26.375;
+    public static double TICKS_PER_INCH = 31;
+    public static double SWERVE_TICKS_PER_INCH = 31;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants
@@ -31,9 +32,9 @@ public class Constants {
     public static double JOYSTICK_DEADZONE = 0.05;
 
     public static double MAX_VEL = 30;
-    public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(360);
-    public static double MAX_ANG_ACCEL = Math.toRadians(360);
+    public static double MAX_ACCEL = 10;
+    public static double MAX_ANG_VEL = Math.toRadians(120);
+    public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
     public static final double TICKS_PER_REV = 1120;
     public static final double MAX_RPM = 150;
@@ -52,7 +53,7 @@ public class Constants {
     // Enums
     //----------------------------------------------------------------------------------------------
     public enum Alliance {
-        RED(-1), BLUE(1);
+        RED(1), BLUE(-1);
 
         private final int mod;
 
@@ -66,10 +67,13 @@ public class Constants {
     }
 
     public enum Position {
-        START_RED_UP(new Pose2d(12, -60, Math.toRadians(90))),
-        START_RED_DOWN(new Pose2d(-36, -60, Math.toRadians(90))),
-        START_BLUE_UP(new Pose2d(12, 60, Math.toRadians(270))),
-        START_BLUE_DOWN(new Pose2d(-36, 60, Math.toRadians(270)));
+        START_RED_UP(new Pose2d(12, -72, Math.toRadians(270))),
+        START_RED_DOWN(new Pose2d(-36, -72, Math.toRadians(270))),
+        START_BLUE_UP(new Pose2d(12, 72, Math.toRadians(90))),
+        START_BLUE_DOWN(new Pose2d(-36, 72, Math.toRadians(90))),
+
+        RED_SHIPPING_HUB(new Pose2d(-12, 24)),
+        BLUE_SHIPPING_HUB(new Pose2d(-12, -24));
 
         private final Pose2d pose;
 
@@ -88,6 +92,10 @@ public class Constants {
 
     public static double inchesToEncoderTicks(double inches) {
         return inches * TICKS_PER_INCH;
+    }
+
+    public static double inchesToSwerveEncoderTicks(double inches) {
+        return inches * SWERVE_TICKS_PER_INCH;
     }
 
     public static double getMotorVelocityF(double ticksPerSecond) {

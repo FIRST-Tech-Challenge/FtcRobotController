@@ -133,7 +133,8 @@ public class FF_6832 extends OpMode {
         SQUARE("Square"),
         TURN("Turn"),
         LENGTH_TEST("Length Test"),
-        JANK_AUTO("jank Auto");
+        JANK_AUTO("jank Auto"),
+        DIAGONAL_TEST("Diagonal Test");
 
         private final String name;
 
@@ -286,7 +287,9 @@ public class FF_6832 extends OpMode {
         robot.articulate(Robot.Articulation.START);
         if(!gameState.equals(GameState.MANUAL_DIAGNOSTIC)) {
             robot.driveTrain.setMaintainChassisLengthEnabled(true);
-            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[1]);
+            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
+        } else if(gameState.equals(GameState.TELE_OP)) {
+            robot.driveTrain.setMaintainChassisLengthEnabled(true);
         }
         lastLoopClockTime = System.nanoTime();
     }
@@ -363,11 +366,15 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 
-        if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
-            robot.driveTrain.setMaintainChassisLengthEnabled(!robot.driveTrain.isMaintainChassisLengthEnabled());
+        if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper) {
+            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[CHASSIS_LENGTH_LEVELS.length - 1]);
+        }
+        if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper) {
+            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
+        }
 
-        double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward2 - forward1) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
-        robot.driveTrain.setChassisLength(chassisLength);
+//        double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward2 - forward1) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+//        robot.driveTrain.setChassisLength(chassisLength);
 
         handleArcadeDriveFunkyTest(gamepad1);
         handleArcadeDrive(gamepad2);
@@ -497,6 +504,13 @@ public class FF_6832 extends OpMode {
                 case JANK_AUTO:
                     StateMachine autoStateMachineSimple = auto.getStateMachineSimple(startingPosition);
                     if(autoStateMachineSimple.execute()) {
+                        active = false;
+                        gameState = GameState.TELE_OP;
+                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
+                    }
+                    break;
+                case DIAGONAL_TEST:
+                    if(auto.diagonalTest.execute()) {
                         active = false;
                         gameState = GameState.TELE_OP;
                         gameStateIndex = GameState.indexOf(GameState.TELE_OP);

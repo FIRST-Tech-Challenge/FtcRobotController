@@ -5,9 +5,12 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
@@ -137,6 +140,7 @@ public class Robot implements Subsystem {
 
     private Stage dumpAndSetCraneForTransferStage = new Stage();
     private StateMachine dumpAndSetCraneForTransfer = getStateMachine(dumpAndSetCraneForTransferStage)
+//            .addConditionalState(() -> crane.getArticulation() != Crane.Articulation.HOME, () -> crane.dump(), () -> true)
             .addSingleState(() -> crane.dump())
             .addTimedState(1f, () -> {}, () -> {})
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
@@ -144,12 +148,10 @@ public class Robot implements Subsystem {
 
     private Stage transferStage = new Stage();
     private StateMachine transfer = getStateMachine(transferStage)
-            .addState(() -> {
-                        driveTrain.setChassisLength(Constants.MIN_CHASSIS_LENGTH);
-                        return driveTrain.chassisLengthOnTarget();
-            })
             .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addSingleState(() -> gripper.intakeServo.setPower(1.0))
             .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addSingleState(() -> gripper.intakeServo.setPower(0.0))
             .addState(() -> crane.articulate(Crane.Articulation.HOME))
             .build();
 
@@ -168,6 +170,27 @@ public class Robot implements Subsystem {
     private StateMachine start = getStateMachine(startStage)
             .addSingleState(() -> gripper.lift())
             .addState(() -> crane.articulate(Crane.Articulation.INIT))
+//            .addTimedState(2, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
+            .build();
+
+    private Stage autoHighTierStageRed = new Stage();
+    private StateMachine autoHighTierRed = getStateMachine(autoHighTierStageRed)
+            .addState(() -> {
+                Pose2d pose = driveTrain.getPoseEstimate();
+                Vector2d turretPose = pose.vec().minus(
+                        new Vector2d(
+                                driveTrain.getChassisLength(),
+                                0
+                        ).rotated(driveTrain.getExternalHeading())
+                );
+
+                Vector2d shippingHub = Constants.Position.RED_SHIPPING_HUB.getPose().vec();
+                double turretAngle = Math.atan2(shippingHub.getY() - turretPose.getY(), shippingHub.getX() - turretPose.getX());
+                turret.setTargetAngle(360 - Utils.wrapAngle(Math.toDegrees(Utils.wrapAngleRad(turretAngle) - pose.getHeading())));
+
+//                return crane.isDumping();
+                return false;
+            })
             .build();
 
     public boolean articulate(Articulation articulation) {

@@ -23,7 +23,7 @@ public class Autonomous {
     // autonomous routines
     private StateMachine blueUp, redUp, blueDown, redDown, blueUpLinear, redUpLinear, blueDownLinear, redDownLinear, blueUpSimple, redUpSimple, blueDownSimple, redDownSimple;
     // misc. routines
-    public StateMachine backAndForth, square, turn, lengthTest;
+    public StateMachine backAndForth, square, turn, lengthTest, diagonalTest;
 
     public Autonomous(Robot robot) {
         this.robot = robot;
@@ -92,6 +92,7 @@ public class Autonomous {
                             trajectorySequence
                     );
                 })
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .build();
     }
 
@@ -102,21 +103,21 @@ public class Autonomous {
         
         TrajectorySequence backAndForthSequence =
                 robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .forward(24)
-                        .back(24)
+                        .back(48)
+                        .forward(48)
                         .build();
         backAndForth = trajectorySequenceToStateMachine(backAndForthSequence);
 
         TrajectorySequence squareSequence =
                 robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .forward(24)
-                        .turn(Math.toRadians(90))
-                        .forward(24)
-                        .turn(Math.toRadians(90))
-                        .forward(24)
-                        .turn(Math.toRadians(90))
-                        .forward(24)
-                        .turn(Math.toRadians(90))
+                        .back(24)
+                        .turn(Math.toRadians(-90))
+                        .back(24)
+                        .turn(Math.toRadians(-90))
+                        .back(24)
+                        .turn(Math.toRadians(-90))
+                        .back(24)
+                        .turn(Math.toRadians(-90))
                         .build();
         square = trajectorySequenceToStateMachine(squareSequence);
 
@@ -157,30 +158,27 @@ public class Autonomous {
         //----------------------------------------------------------------------------------------------
 
         blueUp = Utils.getStateMachine(new Stage())
-                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
-                    builder
-                    .splineTo(new Vector2d(0, 43), Math.toRadians(235))
-                ))
-                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
-                )
-                .addState(() -> robot.crane.getArticulation().equals(Crane.Articulation.MANUAL))
-                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
-                    builder
-                    .turn(Math.toRadians(-75))
-                    .splineTo(new Vector2d(-60, 60), Math.toRadians(180))
-                ))
-                .addTimedState(
-                        4,
-                        () -> robot.driveTrain.toggleDuckSpinner(1),
-                        () -> robot.driveTrain.toggleDuckSpinner(1)
-                )
-                .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
-                        builder
-                        .back(120)
-                ))
+//                .addTimedState(3, () -> {
+//                    robot.driveTrain.setMaintainChassisLengthEnabled(true);
+//                    robot.driveTrain.setChassisLengthMode(DriveTrain.ChassisLengthMode.SWERVE);
+//                    robot.driveTrain.setChassisLength(robot.driveTrain.getTargetChassisLength() + 6);
+//                }, () -> {})
+                .addSingleState(() -> {
+                    robot.driveTrain.followTrajectorySequenceAsync(
+                            robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                            .back(12)
+                            .build()
+                    );
+                })
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
+//                .addMineralState(() -> visionProvider.getMostFrequentPosition().getIndex(),
+//                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+//                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+//                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+//                )
+                .addState(() -> robot.crane.articulate(Crane.Articulation.HIGH_TIER))
+                .addTimedState(2, () -> robot.crane.dump(), () -> {})
+                .addState(() -> robot.crane.articulate(Crane.Articulation.HOME))
                 .build();
         redUp = Utils.getStateMachine(new Stage())
                 .addNestedStateMachine(trajectorySequenceToStateMachine(builder ->
@@ -409,23 +407,37 @@ public class Autonomous {
 
         blueUpSimple = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_RIGHT))
+                .addTimedState(.5f, ()->{}, () -> {})
                 .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
                 .build();
 
         redUpSimple = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_LEFT))
+                .addTimedState(.5f, ()->{}, () -> {})
                 .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
                 .build();
 
         blueDownSimple = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_LEFT))
+                .addTimedState(.5f, ()->{}, () -> {})
                 .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
                 .build();
 
         redDownSimple = Utils.getStateMachine(new Stage())
                 .addState(() -> robot.crane.articulate(Crane.Articulation.AUTON_REACH_RIGHT))
+                .addTimedState(.5f, ()->{}, () -> {})
                 .addState(() -> robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER))
                 .build();
+
+        TrajectorySequence diagonalTestTrajectory =
+                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                        .back(72)
+                        .turn(Math.toRadians(180))
+                        .back(48)
+                        .turn(Math.toRadians(-45))
+                        .back(100)
+                        .build();
+        diagonalTest = trajectorySequenceToStateMachine(diagonalTestTrajectory);
     }
 
     public void createVisionProvider(int visionProviderIndex) {

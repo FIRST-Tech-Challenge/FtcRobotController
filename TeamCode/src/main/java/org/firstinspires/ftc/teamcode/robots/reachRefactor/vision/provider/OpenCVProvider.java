@@ -30,7 +30,7 @@ public class OpenCVProvider extends VisionProvider {
     private Bitmap noCameraBitmap;
     private OpenCvCamera camera;
     private OpenCVPipeline pipeline;
-    private boolean cameraOpened;
+    private volatile boolean cameraOpened;
 
     // Constants
     private static final String TELEMETRY_NAME = "OpenCV Vision Provider";
