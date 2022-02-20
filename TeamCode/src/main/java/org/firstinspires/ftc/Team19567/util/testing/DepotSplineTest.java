@@ -67,15 +67,21 @@ public class DepotSplineTest extends LinearOpMode {
 
         chassis.setPoseEstimate(new Pose2d(10, -63, Math.toRadians(90)));
 
-        TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
-                .addSpatialMarker(new Vector2d(5,-50), () -> {
-                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.65);
-                }).lineToSplineHeading(new Pose2d(0,-35,Math.toRadians(-45)))
+        TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
+                .addSpatialMarker(new Vector2d(-33,-40),() -> {
+                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,Utility_Constants.THIRD_LEVEL_POWER);
+                }).lineToSplineHeading(new Pose2d(-32.5,-24,Math.toRadians(0)))
                 .build();
 
-        TrajectorySequence returnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
-            mechanisms.moveIntake(1.0);
-        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(1.0);}).lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5)).build();
+        TrajectorySequence returnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end())
+                .lineToSplineHeading(new Pose2d(-62,-55,Math.toRadians(180))).addDisplacementMarker(() -> {
+                                /*
+                                   mechanisms.rotateCarousel(0.6);
+                                 */
+                }).setReversed(true)
+                .waitSeconds(1.0).splineToConstantHeading(new Vector2d(10,-64),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(50,-64),Math.toRadians(0))
+                .build();
 
         TrajectorySequence intakingSequence = chassis.trajectorySequenceBuilder(returnSplineSequence.end()).back(10).forward(10).build();
 

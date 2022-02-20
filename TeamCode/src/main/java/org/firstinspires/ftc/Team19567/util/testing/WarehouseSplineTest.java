@@ -70,7 +70,7 @@ public class WarehouseSplineTest extends LinearOpMode {
 
         TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
                 .addSpatialMarker(new Vector2d(5,-50), () -> {
-                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.65);
+                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,Utility_Constants.THIRD_LEVEL_POWER);
                 }).lineToSplineHeading(new Pose2d(0,-35,Math.toRadians(-45)))
                 .build();
 
@@ -81,7 +81,7 @@ public class WarehouseSplineTest extends LinearOpMode {
         TrajectorySequence intakingSequence = chassis.trajectorySequenceBuilder(returnSplineSequence.end()).back(10).forward(10).build();
 
         TrajectorySequence faiyoiSequence = chassis.trajectorySequenceBuilder(intakingSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
-            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,0.65);
+            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,Utility_Constants.THIRD_LEVEL_POWER);
         }).strafeTo(new Vector2d(12,-66.5)).lineToSplineHeading(new Pose2d(10,-63,Math.toRadians(90))).build();
 
         waitForStart();
