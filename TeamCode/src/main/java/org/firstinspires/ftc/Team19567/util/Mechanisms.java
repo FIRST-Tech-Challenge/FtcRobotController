@@ -79,9 +79,9 @@ public class Mechanisms {
     }
 
     public void reset() {
-        releaseServoMove(0);
+        releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         rotateCarousel(0);
-        rotateArm(0,0.15);
+        rotateArm(0,Utility_Constants.GOING_DOWN_POWER);
     }
 
     @Deprecated
