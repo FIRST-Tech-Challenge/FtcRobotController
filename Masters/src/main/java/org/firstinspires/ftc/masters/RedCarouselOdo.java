@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
@@ -32,6 +33,8 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
+
+        ElapsedTime elapsedTime = new ElapsedTime();
 
         long startTime = new Date().getTime();
         long time = 0;
@@ -127,6 +130,7 @@ drive.CV.duckWebcam.stopStreaming();
             drive.pause(300);
         }
         drive.retract();
+
 
         position = drive.getLocalizer().getPoseEstimate();
         Pose2d parkPosition = new Pose2d(new Vector2d(-62, -35), Math.toRadians(0));

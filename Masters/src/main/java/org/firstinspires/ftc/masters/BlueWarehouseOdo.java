@@ -37,6 +37,9 @@ public class BlueWarehouseOdo extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
                 .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
                 .build();
+        TrajectorySequence roomyWarehouse = drive.trajectorySequenceBuilder(fromHubToWarehouse.end())
+                .strafeRight(12)
+                .build();
         drive.  linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
         waitForStart();
@@ -149,6 +152,8 @@ public class BlueWarehouseOdo extends LinearOpMode {
                 drive.getCube();
             }
         }
+
+        drive.followTrajectorySequence(roomyWarehouse);
 
     }
 
