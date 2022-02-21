@@ -27,8 +27,8 @@ public class RedWarehouseAdvanced {
                                      */
                                 })
                                 .addDisplacementMarker(() -> { /*mechanisms.reset(); */ })
-                                .setReversed(true).splineTo(new Vector2d(10, -60),Math.toRadians(-20))
-                                .splineTo(new Vector2d(50,-64),Math.toRadians(0)).setReversed(true)
+                                .setReversed(true).splineTo(new Vector2d(15, -62),Math.toRadians(-10))
+                                .splineTo(new Vector2d(50,-64),Math.toRadians(0))
                                 //.lineToLinearHeading(new Pose2d(12,-64,Math.toRadians(180))).strafeTo(new Vector2d(50,-64))//.splineToSplineHeading(new Pose2d(4,-62,Math.toRadians(180)),Math.toRadians(90)).splineToConstantHeading(new Vector2d(50, -64), Math.toRadians(0))
                                 .back(5).forward(5)
                                 /* .splineToConstantHeading(new Vector2d(36, -64),0) */

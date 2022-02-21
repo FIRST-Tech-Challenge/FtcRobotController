@@ -245,10 +245,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else if(gamepad1.b || gamepad2.b) {
             presetState = PRESET_STATE.GOING_DOWN;
         }
-        //helps it get up
-        if(gamepad1.x || gamepad2.x || gamepad2.y || gamepad1.a || gamepad2.a) mechanisms.moveIntake(0.4);
-        else if (gamepad1.b || gamepad2.b) mechanisms.moveIntake(-0.4);
 
+        if(presetState != PRESET_STATE.NO_PRESET) {
+            mechanisms.moveIntake(0.4);
+        }
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
@@ -277,6 +277,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
             case GOING_DOWN: {
                 releaseServoPos = Utility_Constants.RELEASE_SERVO_DEFAULT;
+                mechanisms.moveIntake(-0.4);
                 armPower = GOING_DOWN_POWER;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
