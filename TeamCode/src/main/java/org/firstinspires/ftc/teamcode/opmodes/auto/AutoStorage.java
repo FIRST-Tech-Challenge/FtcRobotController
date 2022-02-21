@@ -95,7 +95,7 @@ public class AutoStorage extends LinearOpMode {
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
-        while (toolTimer.seconds() < 3) {
+        while (lift.getPosition() != AutoLift.Positions.INTAKING && /* Ethan doodoohead */ toolTimer.seconds() < 5) {
             if (isStopRequested()) {
                 return;
             }

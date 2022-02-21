@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.opmodes.util.StayInPosition.stayInP
 import static org.firstinspires.ftc.teamcode.opmodes.util.VisionToLiftHeight.getPosition;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RoadRunnerHelper.inchesToCoordinate;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -43,8 +45,8 @@ public class AutoWarehouse extends LinearOpMode {
         final Pose2d initial = new Pose2d(0, multiplier * (70 - inchesToCoordinate(9)),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-        final Pose2d liftPosition = isRed ? new Pose2d(-4, -45, Math.toRadians(-70)) :
-                new Pose2d(-3, 45, Math.toRadians(70));
+        final Pose2d liftPosition = isRed ? new Pose2d(-4, -44, Math.toRadians(-65)) :
+                new Pose2d(-3, 45, Math.toRadians(65));
 
         ElapsedTime toolTimer = new ElapsedTime();
 
@@ -67,7 +69,8 @@ public class AutoWarehouse extends LinearOpMode {
         final Trajectory part3 = drive.trajectoryBuilder(part2.end())
                 .lineToLinearHeading(intakeReturnPoint)
                 .build();
-
+        // hello guys its me fin I am going to blow up GitHub HQ also idk how to use shift key
+        // lololololol kek derp face
         // part 4: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
         final TrajectorySequence part4 = drive.trajectorySequenceBuilder(intakeReturnPoint)
                 .lineTo(new Vector2d(-3, nextToWall * multiplier))
@@ -97,7 +100,7 @@ public class AutoWarehouse extends LinearOpMode {
         liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
-        while (lift.getPosition() != AutoLift.Positions.INTAKING) {
+        while (lift.getPosition() != AutoLift.Positions.INTAKING && /* Ethan doodoohead */ toolTimer.seconds() < 5) {
             if (isStopRequested()) {
                 return;
             }
@@ -109,18 +112,19 @@ public class AutoWarehouse extends LinearOpMode {
         if (isStopRequested()) return;
 
         WallSmash.smashIntoWallSideways(drive, multiplier, 250);
+        driveToPose(drive, part2.end());
+
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
 
         intake(toolTimer, drive, intake);
 
-        drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(intakeReturnPoint)
-                .build());
+        driveToPose(drive, intakeReturnPoint);
         updateLoop(drive);
         if (isStopRequested()) return;
         WallSmash.smashIntoWallSideways(drive, multiplier, 500);
+        driveToPose(drive, intakeReturnPoint);
 
         drive.followTrajectorySequenceAsync(part4);
         updateLoop(drive);
@@ -128,7 +132,7 @@ public class AutoWarehouse extends LinearOpMode {
 
         lift.setPosition(AutoLift.Positions.TOP);
         toolTimer.reset();
-        while (lift.getPosition() != AutoLift.Positions.INTAKING) {
+        while (lift.getPosition() != AutoLift.Positions.INTAKING && /* Ethan doodoohead */ toolTimer.seconds() < 5) {
             if (isStopRequested()) {
                 return;
             }
@@ -139,6 +143,9 @@ public class AutoWarehouse extends LinearOpMode {
         updateLoop(drive);
 
         WallSmash.smashIntoWallSideways(drive, multiplier, 250);
+        driveToPose(drive, part2.end());
+        if (isStopRequested()) return;
+
         drive.followTrajectoryAsync(part3);
         updateLoop(drive);
         if (isStopRequested()) return;
@@ -152,7 +159,7 @@ public class AutoWarehouse extends LinearOpMode {
         PoseStorage.currentPose = drive.getPoseEstimate();
     }
 
-    public void intake(ElapsedTime timer, SampleMecanumDrive drive, AutoIntake intake) {
+    public void intake(ElapsedTime timer, @NonNull SampleMecanumDrive drive, @NonNull AutoIntake intake) {
         // intake a block
         intake.backward();
         drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
@@ -175,6 +182,18 @@ public class AutoWarehouse extends LinearOpMode {
     public void updateLoop(SampleMecanumDrive drive) {
         while (!isStopRequested() && drive.isBusy()) {
             drive.update();
+        }
+    }
+
+    public void driveToPose(@NonNull SampleMecanumDrive drive, Pose2d pose) {
+        if (!drive.getPoseEstimate().epsilonEquals(pose)) {
+            drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+                    .lineToLinearHeading(pose)
+                    .build());
+
+            while (!isStopRequested() && drive.isBusy()) {
+                drive.update();
+            }
         }
     }
 }
