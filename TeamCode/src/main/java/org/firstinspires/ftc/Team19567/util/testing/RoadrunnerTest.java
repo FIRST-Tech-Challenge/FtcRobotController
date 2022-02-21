@@ -3,6 +3,7 @@ package org.firstinspires.ftc.Team19567.util.testing;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -21,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
 @Autonomous(name="Roadrunner Test", group="Testing")
-
+@Disabled
 public class RoadrunnerTest extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();

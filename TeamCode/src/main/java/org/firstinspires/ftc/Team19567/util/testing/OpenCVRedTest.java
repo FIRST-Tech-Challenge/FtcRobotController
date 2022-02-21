@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.Team19567.util.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.Team19567.pipeline.redPipeline;
@@ -11,6 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
 @Autonomous(name="OpenCV Red Test",group="Testing")
+@Disabled
 public class OpenCVRedTest extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     @Override
