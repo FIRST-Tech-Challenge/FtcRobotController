@@ -27,7 +27,9 @@ import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 
 //Custom constants
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FORCE_SENSOR_THRESHOLD;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INIT_POWER;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INTAKE_TIME;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.TURN_SENSITIVITY;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.STRAFE_SENSITIVITY;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.ACC_COEFFICIENT;
@@ -51,6 +53,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private final ElapsedTime carouselDebounceTime = new ElapsedTime();
     private final ElapsedTime slowModeDebounceTime = new ElapsedTime();
     private final ElapsedTime automationTimeout = new ElapsedTime();
+    private ElapsedTime intakeTimeout = new ElapsedTime();
 
     //Hardware
     private DcMotor leftDCFront = null;
@@ -61,7 +64,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private Servo releaseServo = null;
     private Servo balanceServo = null;
     private TouchSensor limitSwitch = null;
-    private DistanceSensor distanceSensor = null;
+    //private DistanceSensor distanceSensor = null;
     private RevBlinkinLedDriver blinkin = null;
     private AnalogInput forceSensor = null;
 
@@ -101,7 +104,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
+        //distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
         forceSensor = hardwareMap.get(AnalogInput.class,"forceSensor");
 
         chassis = new SampleMecanumDriveCancelable(hardwareMap);
@@ -159,10 +162,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 if(gamepad1.share) {
                     chassis.setPoseEstimate(new Pose2d(0,0,0));
                     TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(chassis.getPoseEstimate())
-                            .addSpatialMarker(new Vector2d(6,1), () -> {
+                            .addSpatialMarker(new Vector2d(3,10), () -> {
                                 mechanisms.rotateArm(THIRD_LEVEL_POS,0.7);
                             })
-                            .lineToSplineHeading(new Pose2d(27,6, Math.toRadians(225))).build();
+                            .lineToSplineHeading(new Pose2d(6,24, Math.toRadians(225))).build();
                     chassis.followTrajectorySequenceAsync(warehouseSequence);
                     currentState = TELEOP_STATE.AUTOMATION_ROADRUNNER_MOVEMENT;
                     telemetry.addData("State Machine","Moved to AUTOMATION_ROADRUNNER_MOVEMENT");
@@ -202,11 +205,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
         //INTAKE
-        if(gamepad1.right_trigger > 0) mechanisms.moveIntake(INTAKE_SPEED);
-        else if(gamepad1.right_bumper) mechanisms.moveIntake(-1*INTAKE_SPEED);
-        else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
-        else mechanisms.moveIntake(0.1);
-
+        if(intakeTimeout.milliseconds() >= INTAKE_TIME) {
+            if(gamepad1.right_trigger > 0) mechanisms.moveIntake(INTAKE_SPEED);
+            else if(gamepad1.right_bumper) mechanisms.moveIntake(-1*INTAKE_SPEED);
+            else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
+            else mechanisms.moveIntake(0.1);
+        }
         //CAROUSEL
         if(gamepad2.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
             carouselDebounceTime.reset();
@@ -301,10 +305,20 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             gamepad1.runRumbleEffect(endGameRumble);
         }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        if(forceSensor.getVoltage() >= Utility_Constants.FORCE_SENSOR_THRESHOLD) {
-            if(!isIntaked) gamepad1.runRumbleEffect(boxSecured);
+        else if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+        else {
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+        }
+        if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) {
+            if(!isIntaked) {
+                gamepad1.runRumbleEffect(boxSecured);
+                mechanisms.moveIntake(-INTAKE_SPEED);
+                intakeTimeout.reset();
+            }
+            if(intakeTimeout.milliseconds() >= Utility_Constants.INTAKE_TIME) {
+                mechanisms.moveIntake(0.0);
+            }
             isIntaked = true;
-            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
             telemetry.addData("Force Sensor","Freight Detected");
             telemetry.update();
         }
@@ -316,8 +330,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         } */
         else {
             isIntaked = false;
-            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
         }
+
         blinkin.setPattern(blinkinPattern);
 
         //MOTOR SET POWER

@@ -47,8 +47,9 @@ public class Utility_Constants {
     public static double POW_COEFFICIENT = 1.2; //Exponent at which the balancing increases by
     //THRESHOLDS
     public static double DISTANCE_SENSOR_THRESHOLD = 80; //Specifies maximum distance in MM for distance sensor to detect freight (cannot be less than 50)
-    public static double FORCE_SENSOR_THRESHOLD = 0.15; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
+    public static double FORCE_SENSOR_THRESHOLD = 0.05; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
     public static int DEBOUNCE_TIME = 250; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
+    public static int INTAKE_TIME = 500; //Milliseconds to run the intake in reverse after a freight has been detected
     //MISC
     public static Gamepad.RumbleEffect END_GAME_RUMBLE = new Gamepad.RumbleEffect.Builder()
             .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec

@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Depot Spline Test", group="Testing")
+@Autonomous(name="Red Depot FSM", group="Testing")
 public class RedDepotFSM extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
