@@ -16,7 +16,7 @@ public class Utility_Constants {
     //INTERNAL ARM VALUES
     private static double _firstLevelPos = 870; //original encoder values for first level of alliance hub/shared hub
     private static double _secondLevelPos = 750; //original encoder values for second level of alliance hub/shared hub
-    private static double _thirdLevelPos = 600; //original encoder values for third level of alliance hub/shared hub
+    private static double _thirdLevelPos = 580; //original encoder values for third level of alliance hub/shared hub
     private static double _maxPos = 1000; //original encoder values for maximum rotatable position of the arm
     //EXTERNAL ARM VALUES
     //Tune the previous values, not these values
@@ -25,16 +25,16 @@ public class Utility_Constants {
     public static int THIRD_LEVEL_POS = (int)(_thirdLevelPos*PPR_RATIO);
     public static int MAX_POS = (int)(_maxPos*PPR_RATIO);
     //CAROUSEL POWERS
-    public static double INIT_POWER = -0.55; //Initial power for carousel
+    public static double INIT_POWER = -0.6; //Initial power for carousel
     public static double FINAL_POWER = -1.0; //Final power for carousel
     //ARM POWERS
     public static double FIRST_LEVEL_POWER= 0.45;
     public static double SECOND_LEVEL_POWER = 0.525;
     public static double THIRD_LEVEL_POWER = 0.65;
-    public static double GOING_DOWN_POWER = 0.4;
+    public static double GOING_DOWN_POWER = 0.3;
     //POSITIONS
     public static double RELEASE_SERVO_DEFAULT = 0.71;
-    public static double BALANCE_SERVO_DEFAULT = 0.08;
+    public static double BALANCE_SERVO_DEFAULT = 0.09;
     //TIMINGS
     public static int MILLI_ACC = 1100; //Milliseconds after carousel has been engaged to begin accelerating the carousel
     public static int MILLI_FINAL = 1100; //Milliseconds after carousel has been engaged to reach the final speed

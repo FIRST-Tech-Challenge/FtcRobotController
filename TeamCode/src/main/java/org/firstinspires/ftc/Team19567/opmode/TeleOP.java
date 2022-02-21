@@ -27,6 +27,7 @@ import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 
 //Custom constants
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INIT_POWER;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.TURN_SENSITIVITY;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.STRAFE_SENSITIVITY;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.ACC_COEFFICIENT;
@@ -207,15 +208,15 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else mechanisms.moveIntake(0.1);
 
         //CAROUSEL
-        if(gamepad1.dpad_right || gamepad1.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
+        if(gamepad2.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
             carouselDebounceTime.reset();
             carouselTime.reset();
             isCarouselEngaged = !isCarouselEngaged;
         }
         if(isCarouselEngaged) {
-            if(carouselTime.milliseconds() <= Utility_Constants.MILLI_FINAL) carouselPower = Utility_Constants.INIT_POWER;
+            if(carouselTime.milliseconds() <= Utility_Constants.MILLI_FINAL) carouselPower = INIT_POWER;
             else if(carouselTime.milliseconds() >= Utility_Constants.MILLI_ACC && carouselTime.milliseconds() <= Utility_Constants.MILLI_FINAL) {
-                carouselPower = Range.clip(carouselPower + carouselTime.milliseconds()/ACC_COEFFICIENT,Utility_Constants.INIT_POWER,Utility_Constants.FINAL_POWER);
+                carouselPower = Range.clip(carouselPower + carouselTime.milliseconds()/ACC_COEFFICIENT, INIT_POWER,Utility_Constants.FINAL_POWER);
             }
             else if(carouselTime.milliseconds() >= Utility_Constants.MILLI_END) {
                 isCarouselEngaged = false;
@@ -225,6 +226,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
         }
         else carouselPower = 0.0;
+
+        if(gamepad1.dpad_left || gamepad1.dpad_right || gamepad2.dpad_right) carouselPower = INIT_POWER;
 
         //ARM
         if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*8,0,MAX_POS);
@@ -242,6 +245,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else if(gamepad1.b || gamepad2.b) {
             presetState = PRESET_STATE.GOING_DOWN;
         }
+        //helps it get up
+        if(gamepad1.x || gamepad2.x || gamepad2.y || gamepad1.a || gamepad2.a) mechanisms.moveIntake(0.4);
+        else if (gamepad1.b || gamepad2.b) mechanisms.moveIntake(-0.4);
 
         //PRESET HANDLING
         switch(presetState) {
@@ -285,9 +291,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
         //SERVOS
-        if(gamepad1.dpad_down || gamepad2.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.8);
+        if(gamepad1.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.8);
         else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.8);
-        if(gamepad2.right_bumper) releaseServoPos = 0.3;
+        if(gamepad2.right_bumper) releaseServoPos = 0.64;
+        else if(gamepad2.dpad_down) releaseServoPos = 0.38;
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000 && runtime.milliseconds() <= 120000)) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
             gamepad1.runRumbleEffect(endGameRumble);
