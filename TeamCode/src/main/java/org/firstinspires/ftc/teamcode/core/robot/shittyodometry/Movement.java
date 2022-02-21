@@ -69,7 +69,7 @@ public class Movement {
 
     private void zeroMotors() {
         drive.setWeightedDrivePower(new Pose2d(
-                0.4,
+                0,
                 0,
                 0
         ));
