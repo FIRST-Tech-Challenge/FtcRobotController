@@ -237,7 +237,6 @@ public class TrajectorySequenceRunner {
             DashboardUtil.drawPose(fieldOverlay, targetPose);
         }
 
-        fieldOverlay.setStroke("#3F51B5");
         DashboardUtil.drawPoseHistory(fieldOverlay, poseHistory);
 
         fieldOverlay.setStroke("#3F51B5");
@@ -250,5 +249,9 @@ public class TrajectorySequenceRunner {
 
     public boolean isBusy() {
         return currentTrajectorySequence != null;
+    }
+
+    public void stop() {
+        currentTrajectorySequence = null;
     }
 }

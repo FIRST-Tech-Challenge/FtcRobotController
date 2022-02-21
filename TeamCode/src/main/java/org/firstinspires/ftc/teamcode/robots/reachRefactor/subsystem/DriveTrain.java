@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.followers.RamseteFollower;
+import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -32,13 +32,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TrikeKinematics;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.VoltageSensorSim;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
@@ -57,13 +53,13 @@ import java.util.Map;
 
 @Config
 public class DriveTrain extends TrikeDrive implements Subsystem {
-    private static String TELEMETRY_NAME = "Drive Train";
-
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    public static double B = 0.01;
-    public static double ZETA = 0;
+//    public static double B = 0.01;
+//    public static double ZETA = 0;
+    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(3.5, 0, 2);
+    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(3.5, 0, 2);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.5, 0, 2);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -73,21 +69,21 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public static PIDCoefficients SWIVEL_PID = new PIDCoefficients(1, 0, 0.08);
     public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(4, 0,  0);
-    public static double CHASSIS_LENGTH_PID_TOLERANCE = 1;
-    public static double SWIVEL_PID_TOLERANCE = 1;
+    public static double CHASSIS_LENGTH_TOLERANCE = 1;
+    public static double SWIVEL_TOLERANCE = 1;
 
-    public TrajectorySequenceRunner trajectorySequenceRunner;
-    private TrajectoryFollower follower;
+    public final TrajectorySequenceRunner trajectorySequenceRunner;
 
-    private List<DcMotorEx> motors;
-    private DcMotorEx leftMotor, rightMotor, swerveMotor, swivelMotor; // swerveMotor drives the module, swivelMotor rotates the module
-    private DcMotorEx duckSpinner;
-    private BNO055IMU imu;
+    private final List<DcMotorEx> motors;
+    private final DcMotorEx leftMotor, rightMotor, swerveMotor, swivelMotor; // swerveMotor drives the module, swivelMotor rotates the module
+    private final DcMotorEx duckSpinner;
+    private final BNO055IMU imu;
 
-    private DistanceSensor chassisLengthDistanceSensor;
-    private VoltageSensor batteryVoltageSensor;
+    private final DistanceSensor chassisLengthDistanceSensor;
 
-    private PIDController swivelPID, chassisLengthPID, rollAntiTipPID, pitchAntiTipPID;
+    private final PIDController swivelPID, chassisLengthPID, rollAntiTipPID, pitchAntiTipPID;
+
+    private final boolean simulated;
 
     private double leftPosition, rightPosition, swervePosition, swivelPosition;
     private double swivelAngle, targetSwivelAngle;
@@ -96,7 +92,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private double chassisLength;
     private double targetChassisLength;
     private double chassisLengthCorrection;
-    private boolean chassisLengthOnTarget, duckSpinnerToggled, simulated, imuOffsetsInitialized;
+    private boolean chassisLengthOnTarget;
+    private boolean duckSpinnerToggled;
+    private boolean imuOffsetsInitialized;
     private double heading, roll, pitch, pitchVelocity, angularVelocity;
     private double headingOffset, rollOffset, pitchOffset;
     private double rollCorrection, pitchCorrection;
@@ -111,18 +109,19 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private boolean maintainChassisLengthEnabled;
     private ChassisLengthMode chassisLengthMode;
     public enum ChassisLengthMode {
-        SWERVE, DIFF, BOTH;
+        SWERVE, DIFF, BOTH
     }
 
     public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
         super(TRACK_WIDTH, simulated);
         this.simulated = simulated;
-        follower = new RamseteFollower(B, ZETA, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 2);
+//        TrajectoryFollower follower = new RamseteFollower(B, ZETA, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 2);
+        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), Double.POSITIVE_INFINITY);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
+        VoltageSensor batteryVoltageSensor;
         if(simulated) {
             chassisLengthDistanceSensor = new DistanceSensorSim(MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL));
-            batteryVoltageSensor = new VoltageSensorSim();
 
             leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
@@ -168,13 +167,13 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         swivelPID = new PIDController(SWIVEL_PID);
         swivelPID.setInputRange(0, Math.toRadians(360));
         swivelPID.setContinuous(true);
-        swivelPID.setTolerance(SWIVEL_PID_TOLERANCE);
+        swivelPID.setTolerance(SWIVEL_TOLERANCE);
         swivelPID.enable();
 
         chassisLengthPID = new PIDController(CHASSIS_LENGTH_PID);
-        chassisLengthPID.setInputRange(Constants.MIN_CHASSIS_LENGTH, Constants.MAX_CHASSIS_LENGTH);
+        chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
         chassisLengthPID.setOutputRange(-100, 100);
-        chassisLengthPID.setTolerance(CHASSIS_LENGTH_PID_TOLERANCE);
+        chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
         chassisLengthPID.enable();
 
         rollAntiTipPID = new PIDController(ROLL_ANTI_TIP_PID);
@@ -242,10 +241,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private void updatePIDCoefficients() {
         swivelPID.setPID(SWIVEL_PID);
-        swivelPID.setTolerance(SWIVEL_PID_TOLERANCE);
+        swivelPID.setTolerance(SWIVEL_TOLERANCE);
 
         chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
-        chassisLengthPID.setTolerance(CHASSIS_LENGTH_PID_TOLERANCE);
+        chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
 
         rollAntiTipPID.setPID(ROLL_ANTI_TIP_PID);
         rollAntiTipPID.setTolerance(ROLL_ANTI_TIP_PID_TOLERANCE);
@@ -260,21 +259,23 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         updatePIDCoefficients();
 
         // sensor readings
-        leftVelocity = encoderTicksToInches(leftMotor.getVelocity());
-        rightVelocity = encoderTicksToInches(rightMotor.getVelocity());
-        swerveVelocity = encoderTicksToInches(swerveMotor.getVelocity());
+        leftVelocity = 0.75 * encoderTicksToInches(leftMotor.getVelocity());
+        rightVelocity = 0.75 * encoderTicksToInches(rightMotor.getVelocity());
+        swerveVelocity = 0.75 * encoderTicksToInches(swerveMotor.getVelocity());
         if(simulated) {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
             rightPosition += rightVelocity * dt;
             swervePosition += swerveVelocity * dt;
             swivelPosition += swivelPower * dt;
+            chassisLength = targetChassisLength;
         } else {
             leftPosition = encoderTicksToInches(leftMotor.getCurrentPosition());
             rightPosition = encoderTicksToInches(rightMotor.getCurrentPosition());
             swervePosition = encoderTicksToInches(swerveMotor.getCurrentPosition());
             swivelPosition = swivelMotor.getCurrentPosition();
             swivelAngle = wrapAngleRad(swivelPosition / SWIVEL_TICKS_PER_REVOLUTION * Math.toRadians(360));
+            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
         }
 
         Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS);
@@ -293,8 +294,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         AngularVelocity angularVelocities = imu.getAngularVelocity();
         pitchVelocity = wrapAngleRad(angularVelocities.yRotationRate);
         angularVelocity = wrapAngleRad(-angularVelocities.xRotationRate);
-
-        chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
 
         updatePoseEstimate();
         poseEstimate = getPoseEstimate();
@@ -376,11 +375,20 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         duckSpinner.setPower(duckSpinnerPower);
 
         lastDriveVelocity = driveVelocity;
-        DashboardUtil.drawRobot(fieldOverlay, getPoseEstimate(), chassisLength, swivelAngle, getWheelVelocities());
 
         long loopClockTime = System.nanoTime();
         loopTime = loopClockTime - lastLoopTime;
         lastLoopTime = loopClockTime;
+    }
+
+    @Override
+    public void stop() {
+        setChassisLength(chassisLength);
+        setSwivelAngle(swivelAngle);
+        trajectorySequenceRunner.stop();
+        setMotorVelocities(0, 0, 0);
+        duckSpinnerPower = 0;
+        driveVelocity = new Pose2d(0, 0, 0);
     }
 
     @Override
@@ -425,6 +433,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
             telemetryMap.put("chassis length", chassisLength);
             telemetryMap.put("target chassis length", targetChassisLength);
+            telemetryMap.put("chassis length mode", chassisLengthMode);
             telemetryMap.put("chassis length PID on target", chassisLengthOnTarget);
             telemetryMap.put("chassis length PID correction", chassisLengthCorrection);
 
@@ -448,7 +457,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     @Override
     public String getTelemetryName() {
-        return TELEMETRY_NAME;
+        return "Drive Train";
     }
 
     //----------------------------------------------------------------------------------------------
@@ -485,10 +494,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             setDrivePower(drivePower);
     }
 
-    private static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
+    private static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel) {
         return new MinVelocityConstraint(Arrays.asList(
                 new AngularVelocityConstraint(maxAngularVel),
-                new TankVelocityConstraint(maxVel, trackWidth)
+                new TankVelocityConstraint(maxVel, TRACK_WIDTH)
         ));
     }
 
@@ -596,28 +605,12 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         this.targetSwivelAngle = targetSwivelAngle;
     }
 
-    public Pose2d getLastError() {
-        return trajectorySequenceRunner.getLastPoseError();
-    }
-
-    public boolean isMaintainChassisLengthEnabled() {
-        return maintainChassisLengthEnabled;
-    }
-
     public void setMaintainChassisLengthEnabled(boolean maintainChassisLengthEnabled) {
         this.maintainChassisLengthEnabled = maintainChassisLengthEnabled;
     }
 
-    public double getPitchVelocity() {
-        return pitchVelocity;
-    }
-
     public double getTargetChassisLength() {
         return targetChassisLength;
-    }
-
-    public ChassisLengthMode getChassisLengthMode() {
-        return chassisLengthMode;
     }
 
     public void setChassisLengthMode(ChassisLengthMode chassisLengthMode) {

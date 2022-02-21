@@ -16,8 +16,6 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @Config
 public class Crane implements Subsystem {
-    private static final String TELEMETRY_NAME = "Crane";
-
     public static int SHOULDER_HOME_PWM = 1500;
     public static int ELBOW_HOME_PWM = 1550;
     public static int WRIST_HOME_PWM = 1500;
@@ -38,12 +36,10 @@ public class Crane implements Subsystem {
 
     public Servo shoulderServo, elbowServo, wristServo;
 
-    private int shoulderTargetPos, elbowTargetPos, wristTargetPos;
-    private double turretTargetAngle;
+    private double shoulderTargetAngle, elbowTargetAngle, wristTargetAngle;
+    private boolean dumping;
 
     private Articulation articulation;
-
-    public boolean isInTransferPos = false;
 
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
         if(simulated) {
@@ -67,9 +63,9 @@ public class Crane implements Subsystem {
         INIT(-90,0,90,0, 1.5f,90),
         HOME(0,0,0,0, 0,0),
       
-        LOWEST_TIER(75,130,20,0, 1.5f, 130),
-        MIDDLE_TIER(60,130,40,0, 1f, 150),
-        HIGH_TIER(24, 130,70,0, 1f, 170),
+        LOWEST_TIER(75,130,20, 1.5f, 130),
+        MIDDLE_TIER(60,130,40, 1f, 150),
+        HIGH_TIER(24, 130,70, 1f, 170),
         HIGH_TIER_LEFT(10, 80,30,-80, 1f, 170),
         HIGH_TIER_RIGHT(10, 80,40,80, 1f, 170),
         TRANSFER(-45,-50,-20,0, 0.75f,0),
@@ -90,6 +86,7 @@ public class Crane implements Subsystem {
         public double turretAngle;
         public float toHomeTime;
         public int dumpPos;
+        public boolean turret;
 
         Articulation(int shoulderPos, int elbowPos, int wristPos, double turretAngle, float toHomeTime, int dumpPos){
             this.shoulderPos = shoulderPos;
@@ -98,13 +95,24 @@ public class Crane implements Subsystem {
             this.turretAngle = turretAngle;
             this.toHomeTime = toHomeTime;
             this.dumpPos = dumpPos;
+            turret = true;
+        }
+
+        Articulation(int shoulderPos, int elbowPos, int wristPos, float toHomeTime, int dumpPos){
+            this.shoulderPos = shoulderPos;
+            this.elbowPos = elbowPos;
+            this.wristPos = wristPos;
+            this.toHomeTime = toHomeTime;
+            this.dumpPos = dumpPos;
+            turret = false;
         }
     }
 
     private float currentToHomeTime = Articulation.HOME.toHomeTime;
-    private int currentDumpPos = 0;
+    private double currentDumpPos = 0;
     private final Stage mainStage = new Stage();
     private final StateMachine main = getStateMachine(mainStage)
+            .addSingleState(() -> { dumping = false; })
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
             .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation),
                     () -> {
@@ -133,7 +141,6 @@ public class Crane implements Subsystem {
         else {
             this.articulation = articulation;
             if(main.execute()) {
-                isInTransferPos = (articulation == Articulation.TRANSFER);
                 this.articulation = Articulation.MANUAL;
                 return true;
             }
@@ -145,16 +152,23 @@ public class Crane implements Subsystem {
     public void update(Canvas fieldOverlay){
         articulate(articulation);
 
-        shoulderServo.setPosition(servoNormalize(shoulderTargetPos));
-        elbowServo.setPosition(servoNormalize(elbowTargetPos));
-        wristServo.setPosition(servoNormalize(wristTargetPos));
-        turret.setTargetAngle(turretTargetAngle);
+        shoulderServo.setPosition(servoNormalize(shoulderServoValue(shoulderTargetAngle)));
+        elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
+        wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
+
+        if(articulation != Articulation.MANUAL)
+            turret.setTargetHeading(articulation.turretAngle);
         turret.update(fieldOverlay);
     }
 
     @Override
+    public void stop() {
+        articulation = Articulation.HOME;
+    }
+
+    @Override
     public String getTelemetryName() {
-        return TELEMETRY_NAME;
+        return "Crane";
     }
 
     @Override
@@ -164,10 +178,9 @@ public class Crane implements Subsystem {
         telemetryMap.put("Current Articulation", articulation);
 
         if(debug) {
-            telemetryMap.put("Shoulder Target Position", shoulderTargetPos);
-            telemetryMap.put("Elbow Target Position", elbowTargetPos);
-            telemetryMap.put("Wrist Target Position", wristTargetPos);
-            telemetryMap.put("isInTransferPos", isInTransferPos);
+            telemetryMap.put("Shoulder Target Angle", shoulderTargetAngle);
+            telemetryMap.put("Elbow Target Angle", elbowTargetAngle);
+            telemetryMap.put("Wrist Target Angle", wristTargetAngle);
         }
 
         telemetryMap.put("Turret:", "");
@@ -178,19 +191,18 @@ public class Crane implements Subsystem {
     }
 
 
-    public boolean dump() {
-        setWristTargetPos(currentDumpPos);
-        return true;
+    public void dump() {
+        setWristTargetAngle(currentDumpPos);
+        dumping = true;
     }
 
     private void setTargetPositions(Articulation articulation) {
-        setShoulderTargetPos(articulation.shoulderPos);
-        setElbowTargetPos(articulation.elbowPos);
-        setWristTargetPos(articulation.wristPos);
+        setShoulderTargetAngle(articulation.shoulderPos);
+        setElbowTargetAngle(articulation.elbowPos);
+        setWristTargetAngle(articulation.wristPos);
 
-        this.turretTargetAngle = articulation.turretAngle;
-
-        turret.setTargetAngle(articulation.turretAngle);
+        if(articulation.turret)
+            turret.setTargetHeading(articulation.turretAngle);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -217,42 +229,36 @@ public class Crane implements Subsystem {
         return newPos;
     }
 
-    public void setShoulderTargetPos(int shoulderTargetPos) {
-        this.shoulderTargetPos = (int) shoulderServoValue(shoulderTargetPos);
+    public void setShoulderTargetAngle(double shoulderTargetAngle) {
+        this.shoulderTargetAngle = wrapAngle(shoulderTargetAngle);
     }
 
-    public void setElbowTargetPos(int elbowTargetPos) {
-        this.elbowTargetPos = (int) elbowServoValue(elbowTargetPos);
+    public void setElbowTargetAngle(double elbowTargetAngle) {
+        this.elbowTargetAngle = wrapAngle(elbowTargetAngle);
     }
 
-    public void setWristTargetPos(int wristTargetPos) {
-        this.wristTargetPos = (int) wristServoValue(wristTargetPos);
+    public void setWristTargetAngle(double wristTargetAngle) {
+        this.wristTargetAngle = wrapAngle(wristTargetAngle);
     }
 
-    public void setShoulderTargetPosRaw(int shoulderTargetPos) {
-        this.shoulderTargetPos = shoulderTargetPos;
+    public void setDumpPos(double dumpPos) {
+        this.currentDumpPos = dumpPos;
     }
 
-    public void setElbowTargetPosRaw(int elbowTargetPos) {
-        this.elbowTargetPos = elbowTargetPos;
+    public double getShoulderTargetAngle() {
+        return shoulderTargetAngle;
     }
 
-    public void setWristTargetPosRaw(int wristTargetPos) {
-        this.wristTargetPos = wristTargetPos;
+    public double getElbowTargetAngle() {
+        return elbowTargetAngle;
     }
 
-    public int getShoulderTargetPos() {
-        return shoulderTargetPos;
-    }
-
-    public int getElbowTargetPos() {
-        return elbowTargetPos;
-    }
-
-    public int getWristTargetPos() {
-        return wristTargetPos;
+    public double getWristTargetAngle() {
+        return wristTargetAngle;
     }
 
     public Articulation getArticulation() { return articulation; }
+
+    public boolean isDumping() { return dumping; }
 }
 

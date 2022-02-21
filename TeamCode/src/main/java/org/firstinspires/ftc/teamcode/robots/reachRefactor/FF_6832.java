@@ -16,12 +16,12 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.ExponentialSmoot
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
-import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 
@@ -86,12 +86,12 @@ public class FF_6832 extends OpMode {
             MIN_CHASSIS_LENGTH + 2 * (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,
             MAX_CHASSIS_LENGTH
     };
-    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW = 5;
-    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST = 15;
+    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW = 5;
+    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST = 15;
     public static double DRIVE_VELOCITY_EXPONENT = 1;
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
     public static double ROTATE_SMOOTHING_FACTOR = 0.3;
-    public static double CHASSIS_LENGTH_SCALING_FACTOR = 0.05;
+    public static double CHASSIS_LENGTH_SCALING_FACTOR = 1;
 
     private Robot robot;
     private Autonomous auto;
@@ -105,6 +105,7 @@ public class FF_6832 extends OpMode {
     private GameState gameState;
     private int gameStateIndex;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
+    private long startTime;
 
     // vision state
     private int visionProviderIndex;
@@ -112,12 +113,12 @@ public class FF_6832 extends OpMode {
 
     // tele-op state
     private int chassisDistanceLevelIndex;
-    private double forward1, rotate1, forward2, rotate2, forward, rotate;
+    private boolean dynamicChassisLengthEnabled, endGameHandled;
+    private double forward1, rotate1, forward2, rotate2;
 
     // diagnostic state
     private DiagnosticStep diagnosticStep;
     private int diagnosticIndex;
-    private int servoTargetPos;
 
     // timing
     private long lastLoopClockTime, loopTime;
@@ -125,24 +126,34 @@ public class FF_6832 extends OpMode {
     private ExponentialSmoother loopTimeSmoother;
 
     public enum GameState {
+        AUTONOMOUS("Autonomous", true),
+        LINEAR_AUTONOMOUS("Linear Autonomous", true),
+        JANK_AUTO("Jank Auto", true),
+
         TELE_OP("Tele-Op"),
-        AUTONOMOUS("Autonomous"),
-        LINEAR_AUTONOMOUS("Linear Autonomous"),
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
-        BACK_AND_FORTH("Back And Forth"),
-        SQUARE("Square"),
-        TURN("Turn"),
-        LENGTH_TEST("Length Test"),
-        JANK_AUTO("jank Auto"),
-        DIAGONAL_TEST("Diagonal Test");
+
+        BACK_AND_FORTH("Back And Forth", false),
+        SQUARE("Square", false),
+        TURN("Turn", false),
+        LENGTH_TEST("Length Test", false),
+        DIAGONAL_TEST("Diagonal Test", false);
 
         private final String name;
+        private final boolean autonomous;
+
+        GameState(String name, boolean autonomous) {
+            this.name = name;
+            this.autonomous = autonomous;
+        }
 
         GameState(String name) {
-            this.name = name;
+            this(name, false);
         }
 
         public String getName() { return name; }
+
+        public boolean isAutonomous() { return autonomous; }
 
         public static GameState getGameState(int index) {
             return GameState.values()[index];
@@ -174,7 +185,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, false);
+        robot = new Robot(hardwareMap, true);
         alliance = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
@@ -288,20 +299,18 @@ public class FF_6832 extends OpMode {
         if(!gameState.equals(GameState.MANUAL_DIAGNOSTIC)) {
             robot.driveTrain.setMaintainChassisLengthEnabled(true);
             robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
-        } else if(gameState.equals(GameState.TELE_OP)) {
-            robot.driveTrain.setMaintainChassisLengthEnabled(true);
         }
         lastLoopClockTime = System.nanoTime();
+        startTime = System.currentTimeMillis();
     }
 
-
     private void handleArcadeDrive(Gamepad gamepad) {
-        forward1 = Math.pow(gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
+        forward1 = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
         rotate1 = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 
-    private void handleArcadeDriveFunkyTest(Gamepad gamepad) {
-        forward2 = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
+    private void handleArcadeDriveReversed(Gamepad gamepad) {
+        forward2 = Math.pow(gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
         rotate2 = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
     }
 
@@ -317,6 +326,7 @@ public class FF_6832 extends OpMode {
     }
 
     private void sendDriveCommands() {
+        double forward, rotate;
         if(smoothingEnabled) {
             forward = forwardSmoother.update(forward2 + forward1);
             rotate = rotateSmoother.update(rotate2 + rotate1);
@@ -335,7 +345,6 @@ public class FF_6832 extends OpMode {
         if (stickyGamepad1.x)
             robot.gripper.set();
         if(stickyGamepad1.b)
-            //robot.gripper.lift();
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad1.a)
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
@@ -347,19 +356,13 @@ public class FF_6832 extends OpMode {
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad2.a) //spin carousel
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
-        if(stickyGamepad2.right_trigger)
-            robot.turret.incrementOffset(1);
-        if(stickyGamepad2.left_trigger)
-            robot.turret.incrementOffset(-1);
 
         // joint gamepad controls
         if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
-            //robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
             robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
-            //robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             robot.crane.articulate(Crane.Articulation.HOME);
@@ -367,17 +370,26 @@ public class FF_6832 extends OpMode {
             robot.articulate(Robot.Articulation.TRANSFER);
 
         if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper) {
-            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[CHASSIS_LENGTH_LEVELS.length - 1]);
+            dynamicChassisLengthEnabled = false;
+            robot.driveTrain.setChassisLength(robot.driveTrain.getTargetChassisLength() == CHASSIS_LENGTH_LEVELS[0] ? CHASSIS_LENGTH_LEVELS[CHASSIS_LENGTH_LEVELS.length - 1] : CHASSIS_LENGTH_LEVELS[0]);
         }
-        if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper) {
-            robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
+        if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
+            dynamicChassisLengthEnabled = true;
+        if(dynamicChassisLengthEnabled) {
+            double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward1 - forward2) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+            robot.driveTrain.setChassisLength(chassisLength);
         }
 
-//        double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward2 - forward1) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
-//        robot.driveTrain.setChassisLength(chassisLength);
+        if(stickyGamepad1.left_trigger) {
+            if (alliance == Alliance.BLUE)
+                robot.articulate(Robot.Articulation.AUTO_HIGH_TIER_BLUE);
+            else
+                robot.articulate(Robot.Articulation.AUTO_HIGH_TIER_RED);
+        }
 
-        handleArcadeDriveFunkyTest(gamepad1);
-        handleArcadeDrive(gamepad2);
+
+        handleArcadeDrive(gamepad1);
+        handleArcadeDriveReversed(gamepad2);
 
         sendDriveCommands();
     }
@@ -402,11 +414,17 @@ public class FF_6832 extends OpMode {
     }
 
     private void handleDiagnosticServoControls(IntSupplier getTargetPos, IntConsumer setTargetPos) {
-        servoTargetPos = getTargetPos.getAsInt();
         if(notJoystickDeadZone(gamepad1.right_stick_y))
-            setTargetPos.accept(servoClip((int) (getTargetPos.getAsInt() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_SLOW)));
+            setTargetPos.accept(servoClip((int) (getTargetPos.getAsInt() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW)));
         else if(notJoystickDeadZone(gamepad1.left_stick_y))
-            setTargetPos.accept(servoClip((int) (getTargetPos.getAsInt() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLER_FAST)));
+            setTargetPos.accept(servoClip((int) (getTargetPos.getAsInt() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST)));
+    }
+
+    private void handleDiagnosticServoAngleControls(DoubleSupplier getTargetPosAngle, DoubleConsumer setTargetAngle, double minAngle, double maxAngle) {
+        if(notJoystickDeadZone(gamepad1.right_stick_y))
+            setTargetAngle.accept(Range.clip(getTargetPosAngle.getAsDouble() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW, minAngle, maxAngle));
+        else if(notJoystickDeadZone(gamepad1.left_stick_y))
+            setTargetAngle.accept(Range.clip(getTargetPosAngle.getAsDouble() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW, minAngle, maxAngle));
     }
 
     private void handleManualDiagnostic() {
@@ -433,16 +451,16 @@ public class FF_6832 extends OpMode {
                 robot.driveTrain.setSwivelAngle(-gamepad1.right_stick_y);
                 break;
             case CRANE_SHOULDER_SERVO:
-                handleDiagnosticServoControls(robot.crane::getShoulderTargetPos, robot.crane::setShoulderTargetPosRaw);
+                handleDiagnosticServoAngleControls(robot.crane::getShoulderTargetAngle, robot.crane::setShoulderTargetAngle, Crane.SHOULDER_DEG_MIN, Crane.SHOULDER_DEG_MAX);
                 break;
             case CRANE_ELBOW_SERVO:
-                handleDiagnosticServoControls(robot.crane::getElbowTargetPos, robot.crane::setElbowTargetPosRaw);
+                handleDiagnosticServoAngleControls(robot.crane::getElbowTargetAngle, robot.crane::setElbowTargetAngle, Crane.ELBOW_DEG_MIN, Crane.ELBOW_DEG_MAX);
                 break;
             case CRANE_WRIST_SERVO:
-                handleDiagnosticServoControls(robot.crane::getWristTargetPos, robot.crane::setWristTargetPosRaw);
+                handleDiagnosticServoAngleControls(robot.crane::getWristTargetAngle, robot.crane::setWristTargetAngle, Crane.WRIST_DEG_MIN, Crane.WRIST_DEG_MAX);
                 break;
             case TURRET_MOTOR:
-                robot.crane.turret.setTargetAngle(robot.crane.turret.getTargetAngle() - gamepad1.right_stick_y);
+                robot.crane.turret.setTargetHeading(robot.crane.turret.getTargetHeading() - gamepad1.right_stick_y);
                 break;
             case GRIPPER_SERVO:
                 handleDiagnosticServoControls(robot.gripper::getTargetPos, robot.gripper::setTargetPosDiag);
@@ -456,34 +474,45 @@ public class FF_6832 extends OpMode {
         }
     }
 
+    private void changeGameState(GameState state) {
+        active = false;
+        gameState = state;
+        gameStateIndex = GameState.indexOf(state);
+        startTime = System.currentTimeMillis();
+    }
+
     //Main loop that repeats after hitting PLAY
     @Override
     public void loop() {
         handleStateSwitch();
 
         if (active) {
+            long currentTime = System.currentTimeMillis();
+            if (gameState.isAutonomous() && (currentTime - startTime) * 1e-3 >= 30) {
+                robot.stop();
+                changeGameState(GameState.TELE_OP);
+            } else if (!endGameHandled && gameState == GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
+                robot.articulate(Robot.Articulation.START_END_GAME);
+                endGameHandled = true;
+            }
             switch(gameState) {
                 case TELE_OP:
                     handleTeleOp();
                     break;
-                case AUTONOMOUS:
-                    StateMachine autoStateMachine = auto.getStateMachine(startingPosition, true);
-                    if(autoStateMachine.execute()) {
-                        active = false;
-                        gameState = GameState.TELE_OP;
-                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
-                    }
-                    break;
-                case LINEAR_AUTONOMOUS:
-                    StateMachine linearAutoStateMachine = auto.getStateMachine(startingPosition, false);
-                    if(linearAutoStateMachine.execute()) {
-                        active = false;
-                        gameState = GameState.TELE_OP;
-                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
-                    }
-                    break;
                 case MANUAL_DIAGNOSTIC:
                     handleManualDiagnostic();
+                    break;
+                case AUTONOMOUS:
+                    if(auto.getStateMachine(startingPosition, true).execute())
+                        changeGameState(GameState.TELE_OP);
+                    break;
+                case LINEAR_AUTONOMOUS:
+                    if(auto.getStateMachine(startingPosition, false).execute())
+                        changeGameState(GameState.TELE_OP);
+                    break;
+                case JANK_AUTO:
+                    if(auto.getStateMachineSimple(startingPosition).execute())
+                        changeGameState(GameState.TELE_OP);
                     break;
                 case BACK_AND_FORTH:
                     auto.backAndForth.execute();
@@ -495,26 +524,12 @@ public class FF_6832 extends OpMode {
                     auto.turn.execute();
                     break;
                 case LENGTH_TEST:
-                    if(auto.lengthTest.execute()) {
-                        active = false;
-                        gameState = GameState.TELE_OP;
-                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
-                    }
-                    break;
-                case JANK_AUTO:
-                    StateMachine autoStateMachineSimple = auto.getStateMachineSimple(startingPosition);
-                    if(autoStateMachineSimple.execute()) {
-                        active = false;
-                        gameState = GameState.TELE_OP;
-                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
-                    }
+                    if(auto.lengthTest.execute())
+                        changeGameState(GameState.TELE_OP);
                     break;
                 case DIAGONAL_TEST:
-                    if(auto.diagonalTest.execute()) {
-                        active = false;
-                        gameState = GameState.TELE_OP;
-                        gameStateIndex = GameState.indexOf(GameState.TELE_OP);
-                    }
+                    if(auto.diagonalTest.execute())
+                        changeGameState(GameState.TELE_OP);
                     break;
             }
         } else {
@@ -574,7 +589,6 @@ public class FF_6832 extends OpMode {
         switch(gameState) {
             case MANUAL_DIAGNOSTIC:
                 opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
-                opModeTelemetryMap.put("Servo Target Pos", servoTargetPos);
                 break;
         }
         handleTelemetry(opModeTelemetryMap,  String.format("(%d): %s", gameStateIndex, gameState.getName()), packet);

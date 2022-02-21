@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TelemetryProvider;
@@ -11,14 +12,18 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TelemetryProvide
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+@Config
 public abstract class VisionProvider implements TelemetryProvider {
 
-    private Map<Position, Integer> positionFrequencies;
+    public static int MAX_POSITIONS = 50;
+
+    private List<Position> positions;
     private Position mostFrequentPosition;
     private Bitmap dashboardImage;
     private FtcDashboard dashboard;
@@ -27,10 +32,7 @@ public abstract class VisionProvider implements TelemetryProvider {
     public VisionProvider() {
         mostFrequentPosition = Position.HOLD;
 
-        positionFrequencies = new HashMap<>();
-        positionFrequencies.put(Position.LEFT, 0);
-        positionFrequencies.put(Position.MIDDLE, 0);
-        positionFrequencies.put(Position.RIGHT, 0);
+        positions = new ArrayList<>();
 
         dashboard = FtcDashboard.getInstance();
         saveDashboard = false;
@@ -49,19 +51,32 @@ public abstract class VisionProvider implements TelemetryProvider {
     abstract public Bitmap getDashboardImage();
 
     private void updateMostFrequentPosition() {
-        int mostFrequentPositionCount = -1;
-        for(Map.Entry<Position, Integer> entry: positionFrequencies.entrySet()) {
-            Position position = entry.getKey();
-            if(position != Position.HOLD && position != Position.NONE_FOUND) {
-                int positionFrequency = entry.getValue();
-                if (positionFrequency > mostFrequentPositionCount) {
-                    mostFrequentPositionCount = positionFrequency;
-                    mostFrequentPosition = position;
+        int leftCount = 0, middleCount = 0, rightCount = 0;
+        for(int i = 0 ; i < positions.size(); i++) {
+            if(i >= MAX_POSITIONS) {
+                positions.remove(i);
+                i--;
+            } else
+                switch(positions.get(i)) {
+                    case LEFT:
+                        leftCount++;
+                        break;
+                    case MIDDLE:
+                        middleCount++;
+                        break;
+                    case RIGHT:
+                        rightCount++;
+                        break;
                 }
-            }
         }
-        if(mostFrequentPositionCount == 0)
-            mostFrequentPosition = Position.NONE_FOUND;
+
+        if(leftCount >= middleCount && leftCount >= rightCount)
+            mostFrequentPosition = Position.LEFT;
+        else if(middleCount >= leftCount && middleCount >= rightCount)
+            mostFrequentPosition = Position.MIDDLE;
+        else
+            mostFrequentPosition = Position.RIGHT;
+
     }
 
     private void sendDashboardImage() {
@@ -86,7 +101,7 @@ public abstract class VisionProvider implements TelemetryProvider {
 
         Position position = getPosition();
         if(position != Position.HOLD && position != Position.NONE_FOUND)
-            positionFrequencies.put(position, positionFrequencies.get(position) + 1);
+            positions.add(0, position);
         updateMostFrequentPosition();
 
         if(canSendDashboardImage())

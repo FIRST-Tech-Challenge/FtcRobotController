@@ -58,7 +58,7 @@ public class Autonomous {
     public StateMachine getStateMachineSimple(Constants.Position startingPosition) {
         switch(startingPosition) {
             case START_BLUE_UP:
-                return blueDownSimple;
+                return blueUpSimple;
             case START_RED_UP:
                 return redUpSimple;
             case START_BLUE_DOWN:

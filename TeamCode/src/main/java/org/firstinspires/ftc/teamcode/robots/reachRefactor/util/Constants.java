@@ -17,6 +17,10 @@ public class Constants {
     public static final double TRACK_WIDTH = 12.132362205;
     public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
     public static final double DISTANCE_TARGET_TO_BACK_WHEEL = 8.75;
+    public static final double SHOULDER_TO_ELBOW = 14.031496;
+    public static final double ELBOW_TO_WRIST = 11.0236;
+    public static final double SHIPPING_HUB_HEIGHT = 20.25;
+    public static final double ROBOT_HEIGHT = 8;
 
     // constraints
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
@@ -72,8 +76,8 @@ public class Constants {
         START_BLUE_UP(new Pose2d(12, 72, Math.toRadians(90))),
         START_BLUE_DOWN(new Pose2d(-36, 72, Math.toRadians(90))),
 
-        RED_SHIPPING_HUB(new Pose2d(-12, 24)),
-        BLUE_SHIPPING_HUB(new Pose2d(-12, -24));
+        RED_SHIPPING_HUB(new Pose2d(-12, -24)),
+        BLUE_SHIPPING_HUB(new Pose2d(-12, 24));
 
         private final Pose2d pose;
 

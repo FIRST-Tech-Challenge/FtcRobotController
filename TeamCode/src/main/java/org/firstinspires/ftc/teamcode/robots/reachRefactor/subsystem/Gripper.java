@@ -23,33 +23,30 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 
 @Config
-public class Gripper implements Subsystem{
-    private static final String TELEMETRY_NAME = "Gripper";
-
+public class Gripper implements Subsystem {
     public static int CLOSED = 1300;
     public static int RELEASE = 1700;
     public static int OPEN = 1630;
     public static int PITCH_TRANSFER = 2100;
     public static int PITCH_DOWN = 800;
-    public static int PITCH_INIT = 1800;
     public static int PITCH_VERTICAL = 1800;
     public static int FREIGHT_TRIGGER = 50; //mm distance to trigger Lift articulation
 
-    public Servo pitchServo, servo;
-    public CRServo intakeServo;
-    public DistanceSensor freightSensor;
+    private final Servo pitchServo, servo;
+    private final CRServo intakeServo;
+    private final DistanceSensor freightSensor;
 
     // State
     boolean up = true;
     boolean open = true;
 
-    private int targetPos = 0;
-    private int pitchTargetPos = 0;
+    private int targetPos, pitchTargetPos;
+    private double intakePower;
 
     private double freightDistance;
 
     public Articulation articulation;
-    private Map<Gripper.Articulation, StateMachine> articulationMap;
+    private final Map<Gripper.Articulation, StateMachine> articulationMap;
 
     public Gripper(HardwareMap hardwareMap, boolean simulated){
         if(simulated) {
@@ -73,24 +70,6 @@ public class Gripper implements Subsystem{
         articulationMap.put(Articulation.TRANSFER, transfer);
     }
 
-    public void actuateGripper(boolean open){
-        this.open = open;
-        targetPos = open ? OPEN : CLOSED;
-    }
-
-    public void pitchGripper(boolean up){
-        this.up = up;
-        pitchTargetPos = up ? PITCH_TRANSFER : PITCH_DOWN;
-    }
-
-    public void togglePitch(){
-        pitchGripper(!up);
-    }
-
-    public void toggleGripper(){
-        actuateGripper(!open);
-    }
-
     @Override
     public void update(Canvas fieldOverlay) {
         freightDistance = freightSensor.getDistance(DistanceUnit.MM);
@@ -98,6 +77,13 @@ public class Gripper implements Subsystem{
         articulate(articulation);
         servo.setPosition(servoNormalize(targetPos));
         pitchServo.setPosition(servoNormalize(pitchTargetPos));
+        intakeServo.setPower(intakePower);
+    }
+
+    public void stop() {
+        articulation = Articulation.MANUAL;
+        targetPos = 750;
+        pitchTargetPos = 750;
     }
 
     public enum Articulation {
@@ -126,7 +112,7 @@ public class Gripper implements Subsystem{
     //Do not assume that we want to Set directly out of Transfer - there may be barriers to cross
     private final Stage setStage = new Stage();
     private final StateMachine set = getStateMachine(setStage)
-            .addSingleState(() -> intakeServo.setPower(1.0))
+            .addSingleState(() -> setIntakePower(1.0))
             .addSingleState(()->{setTargetPos(CLOSED);}) //close the gripper so it's less likely to catch something
             .addTimedState(.25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
             .addTimedState(.5f, ()->{setTargetPos(OPEN);}, () -> {})
@@ -136,7 +122,7 @@ public class Gripper implements Subsystem{
     //Gripper remains closed - Transfer is separate
     private final Stage liftStage = new Stage();
     private final StateMachine lift = getStateMachine(liftStage)
-            .addSingleState(() -> intakeServo.setPower(0.0))
+            .addSingleState(() -> setIntakePower(0))
             .addTimedState(() -> .5f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
             .addTimedState(() -> .5f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
@@ -149,26 +135,24 @@ public class Gripper implements Subsystem{
             .addTimedState(() -> 0, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
 
+    //Prepare for intake
+    public void set() {
+        articulation = Articulation.SET;
+    }
 
-    //public void Grip(){}
-
-
-    public void
-    set() //Prepare for intake
-    {articulation=Articulation.SET;}
-    public void lift() //grip and lift into Transfer position - this might need timing
-    {articulation=Articulation.LIFT;}
-    public void transfer() //barely open gripper to release freight into the bucket
-    {articulation=Articulation.TRANSFER;}
+    // grip and lift into Transfer position - this might need timing
+    public void lift() {
+        articulation = Articulation.LIFT;
+    }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
 
         if(debug) {
-            telemetryMap.put("Freight Distance", freightSensor.getDistance(DistanceUnit.MM));
             telemetryMap.put("Servo Target Pos", targetPos);
             telemetryMap.put("Pitch Servo Target Pos", pitchTargetPos);
+            telemetryMap.put("intake power", intakePower);
             telemetryMap.put("Open", open);
             telemetryMap.put("Up", up);
             telemetryMap.put("Freight Distance", freightDistance);
@@ -179,7 +163,7 @@ public class Gripper implements Subsystem{
 
     @Override
     public String getTelemetryName() {
-        return TELEMETRY_NAME;
+        return "Gripper";
     }
 
     //----------------------------------------------------------------------------------------------
@@ -210,5 +194,5 @@ public class Gripper implements Subsystem{
     public void setPitchTargetPosDiag(int pitchTargetPos) {
         this.pitchTargetPos = pitchTargetPos;
     }
-
+    public void setIntakePower(double intakePower) { this.intakePower = intakePower; }
 }
