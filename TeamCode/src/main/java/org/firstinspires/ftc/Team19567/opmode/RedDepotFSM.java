@@ -100,7 +100,7 @@ public class RedDepotFSM extends LinearOpMode {
             case ALLIANCE_THIRD: {
                 chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
-                chosenTrajectoryX = -43;
+                chosenTrajectoryX = -39.5;
                 telemetry.addData("OpenCV","basiccly first Level Detected");
                 telemetry.update();
                 break;
@@ -120,15 +120,15 @@ public class RedDepotFSM extends LinearOpMode {
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
                 }).addSpatialMarker( new Vector2d(-32, -36), () -> {
                     mechanisms.releaseServoMove(0.2);
-                }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,-24,Math.toRadians(180)))
+                }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,-27,Math.toRadians(180)))
                 .build();
         TrajectorySequence moveToCarouselSequence = chassis.trajectorySequenceBuilder(preloadSequence.end())
                 .lineToSplineHeading(new Pose2d(-64,-57,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .splineToConstantHeading(new Vector2d(15,-35),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(45,-35),Math.toRadians(180)).build();
-        chassis.followTrajectorySequenceAsync(warehouseSequence);
+                .splineToConstantHeading(new Vector2d(60,-25),Math.toRadians(0)).build();
+
+        mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         chassis.followTrajectorySequenceAsync(preloadSequence);
 
         master:while(opModeIsActive() && !isStopRequested()) {
@@ -150,7 +150,7 @@ public class RedDepotFSM extends LinearOpMode {
                     break;
                 }
                 case DELIVERING_FREIGHT: {
-                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME) {
+                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME+100) {
                         telemetry.addData("State Machine","Moved to MOVING_TO_CAROUSEL");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_CAROUSEL;
@@ -169,8 +169,8 @@ public class RedDepotFSM extends LinearOpMode {
                     break;
                 }
                 case ROTATING_CAROUSEL: {
-                    mechanisms.rotateCarousel(Utility_Constants.INIT_POWER);
-                    if(carouselTimeout.milliseconds() >= Utility_Constants.MILLI_END+500) {
+                    mechanisms.rotateCarousel(Utility_Constants.INIT_POWER+0.1);
+                    if(carouselTimeout.milliseconds() >= Utility_Constants.MILLI_END+650) {
                         telemetry.addData("State Machine","Moved to ROTATING_CAROUSEL");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;

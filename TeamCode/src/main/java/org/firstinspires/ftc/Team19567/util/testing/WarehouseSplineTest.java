@@ -71,13 +71,13 @@ public class WarehouseSplineTest extends LinearOpMode {
             mechanisms.moveIntake(1.0);
         }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
                 .splineTo(new Vector2d(15, -68),Math.toRadians(-10))
-                .splineTo(new Vector2d(69,-70),Math.toRadians(0))
+                .splineTo(new Vector2d(69,-69),Math.toRadians(0))
                 //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
                 .build();
         TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(firstReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
             mechanisms.moveIntake(0.4);
             mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
-        }).addSpatialMarker(new Vector2d(6.5,-39.5),() -> {
+        }).addSpatialMarker(new Vector2d(8.5,-39.5),() -> {
             mechanisms.releaseServoMove(0.3);
             mechanisms.moveIntake(0.0);
         }).setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))

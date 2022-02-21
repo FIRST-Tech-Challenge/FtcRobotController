@@ -14,7 +14,7 @@ public class Utility_Constants {
     public static double MAX_SENSITIVITY = 1.0; //driver-controller overall sensitivity, basically
     public static double SLOWMODE_MULT = 0.3; //speed multiplier during SlowMode
     //INTERNAL ARM VALUES
-    private static double _firstLevelPos = 870; //original encoder values for first level of alliance hub/shared hub
+    private static double _firstLevelPos = 850; //original encoder values for first level of alliance hub/shared hub
     private static double _secondLevelPos = 750; //original encoder values for second level of alliance hub/shared hub
     private static double _thirdLevelPos = 580; //original encoder values for third level of alliance hub/shared hub
     private static double _maxPos = 1000; //original encoder values for maximum rotatable position of the arm
