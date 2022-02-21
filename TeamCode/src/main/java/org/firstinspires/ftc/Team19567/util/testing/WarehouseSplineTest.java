@@ -1,34 +1,26 @@
 package org.firstinspires.ftc.Team19567.util.testing;
 
-import android.text.method.Touch;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.Team19567.util.AUTO_STATE;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import kotlin.coroutines.CoroutineContextImplKt;
 
 @Autonomous(name="Warehouse Spline Test", group="Testing")
 
@@ -64,32 +56,87 @@ public class WarehouseSplineTest extends LinearOpMode {
 
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
         forceSensor = hardwareMap.get(AnalogInput.class,"forceSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
 
         chassis.setPoseEstimate(new Pose2d(10, -63, Math.toRadians(90)));
 
         TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
                 .addSpatialMarker(new Vector2d(8,-50), () -> {
                     mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,Utility_Constants.THIRD_LEVEL_POWER);
-                }).addSpatialMarker(new Vector2d(-1,-41), () -> {
+                }).addSpatialMarker(new Vector2d(-1.5,-41), () -> {
                     mechanisms.releaseServoMove(0.3);
-                }).lineToSplineHeading(new Pose2d(-2,-40,Math.toRadians(-45)))
+                }).lineToSplineHeading(new Pose2d(-1.5,-40.5,Math.toRadians(-45)))
                 .build();
-
-        TrajectorySequence returnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
+        TrajectorySequence firstReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
             mechanisms.moveIntake(1.0);
         }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .splineTo(new Vector2d(16, -64),Math.toRadians(-10))
-                .splineTo(new Vector2d(62,-67),Math.toRadians(0))
+                .splineTo(new Vector2d(15, -68),Math.toRadians(-10))
+                .splineTo(new Vector2d(69,-70),Math.toRadians(0))
+                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
+                .build();
+        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(firstReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
+            mechanisms.moveIntake(0.4);
+            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
+        }).addSpatialMarker(new Vector2d(6.5,-39.5),() -> {
+            mechanisms.releaseServoMove(0.3);
+            mechanisms.moveIntake(0.0);
+        }).setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))
+                .setReversed(false).build();
+        /* TrajectorySequence firstReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
+            mechanisms.moveIntake(1.0);
+        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
+                .splineTo(new Vector2d(15, -66.5),Math.toRadians(-10))
+                .splineTo(new Vector2d(67,-69),Math.toRadians(0))
                 //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
                 .build();
 
-        TrajectorySequence hubSplineSequence = chassis.trajectorySequenceBuilder(returnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
+        TrajectorySequence secondReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
+            mechanisms.moveIntake(1.0);
+        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
+                .splineTo(new Vector2d(19, -68.5),Math.toRadians(-10))
+                .splineTo(new Vector2d(71,-71),Math.toRadians(0))
+                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
+                .build();
+
+        TrajectorySequence thirdReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
+            mechanisms.moveIntake(1.0);
+        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
+                .splineTo(new Vector2d(24, -68.5),Math.toRadians(-10))
+                .splineTo(new Vector2d(76,-71),Math.toRadians(0))
+                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
+                .build();
+
+        TrajectorySequence fourthReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
+            mechanisms.moveIntake(1.0);
+        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
+                .splineTo(new Vector2d(28, -68.5),Math.toRadians(-10))
+                .splineTo(new Vector2d(80,-71),Math.toRadians(0))
+                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
+                .build();
+        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(firstReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
             mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
-        }).addSpatialMarker(new Vector2d(5.5,-39.5),() -> {
+        }).addSpatialMarker(new Vector2d(6.5,-40.5),() -> {
             mechanisms.releaseServoMove(0.3);
-        }).setReversed(true).splineTo(new Vector2d(16, -64),Math.toRadians(170)).splineTo(new Vector2d(5,-39),Math.toRadians(135))
+        }).setReversed(true).splineTo(new Vector2d(15, -68.5),Math.toRadians(170)).splineTo(new Vector2d(6,-38),Math.toRadians(135))
                 .setReversed(false).build();
-        //.strafeTo(new Vector2d(12,-66.5)).lineToSplineHeading(new Pose2d(0,-35,Math.toRadians(-45))).build();
+
+        TrajectorySequence secondHubSplineSequence = chassis.trajectorySequenceBuilder(secondReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
+            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
+        }).addSpatialMarker(new Vector2d(10.5,-40.5),() -> {
+            mechanisms.releaseServoMove(0.3);
+        }).setReversed(true).splineTo(new Vector2d(19, -68.5),Math.toRadians(170)).splineTo(new Vector2d(12,-38),Math.toRadians(135))
+                .setReversed(false).build();
+
+        TrajectorySequence thirdHubSplineSequence = chassis.trajectorySequenceBuilder(thirdReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
+            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
+        }).addSpatialMarker(new Vector2d(15.5,-40.5),() -> {
+            mechanisms.releaseServoMove(0.3);
+        }).setReversed(true).splineTo(new Vector2d(28, -68.5),Math.toRadians(170)).splineTo(new Vector2d(19,-38),Math.toRadians(135))
+                .setReversed(false).build();
+        //.strafeTo(new Vector2d(12,-66.5)).lineToSplineHeading(new Pose2d(0,-35,Math.toRadians(-45))).build(); */
+
+        telemetry.addData("Status","Finished loading Roadrunner splines");
+        telemetry.update();
 
         waitForStart();
         if(isStopRequested()) return;
@@ -107,24 +154,29 @@ public class WarehouseSplineTest extends LinearOpMode {
 
             switch(currentState) {
                 case MOVING_TO_HUB: {
-                    mechanisms.moveIntake(0);
                     if(!chassis.isBusy()) {
                         timeout.reset();
                         telemetry.addData("State Machine","Moved to DELIVERING_FREIGHT");
                         telemetry.update();
-                        currentState = AUTO_STATE.DELIVERING_FREIGHT;
+                        chassis.followTrajectorySequenceAsync(firstReturnSplineSequence);
+                        /* else if(freightCount == 1) chassis.followTrajectorySequenceAsync(secondReturnSplineSequence);
+                        else if(freightCount == 2) chassis.followTrajectorySequenceAsync(thirdReturnSplineSequence);
+                        else if(freightCount == 3) chassis.followTrajectorySequenceAsync(fourthReturnSplineSequence); */
+                        currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
+                        freightCount++;
                     }
                     break;
                 }
+
                 case DELIVERING_FREIGHT: {
                     if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME) {
                         telemetry.addData("State Machine","Moved to MOVING_TO_WAREHOUSE");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
-                        chassis.followTrajectorySequenceAsync(returnSplineSequence);
                     }
                     break;
                 }
+
                 case MOVING_TO_WAREHOUSE: {
                     mechanisms.rotateArm(0,Utility_Constants.GOING_DOWN_POWER);
                     if(!chassis.isBusy()) {
@@ -136,11 +188,15 @@ public class WarehouseSplineTest extends LinearOpMode {
                     break;
                 }
                 case INTAKING_FREIGHT: {
-                    if(forceSensor.getVoltage() >= Utility_Constants.FORCE_SENSOR_THRESHOLD || timeout.milliseconds() >= 400) {
-                            mechanisms.moveIntake(0);
-                            chassis.followTrajectorySequenceAsync(hubSplineSequence);
+                    if(distanceSensor.getDistance(DistanceUnit.MM) <= Utility_Constants.DISTANCE_SENSOR_THRESHOLD || forceSensor.getVoltage() >= Utility_Constants.FORCE_SENSOR_THRESHOLD || timeout.milliseconds() >= 200) {
+                            mechanisms.moveIntake(-1.0);
                             currentState = AUTO_STATE.MOVING_TO_HUB;
-                            freightCount++;
+                            chassis.followTrajectorySequenceAsync(firstHubSplineSequence);
+                            /* else if(freightCount == 2) chassis.followTrajectorySequenceAsync(secondHubSplineSequence);
+                            else if(freightCount == 3) chassis.followTrajectorySequenceAsync(thirdHubSplineSequence);
+                            else {
+                                currentState = AUTO_STATE.PATH_FINISHED;
+                            } */
                     }
                     break;
                 }
@@ -163,6 +219,7 @@ public class WarehouseSplineTest extends LinearOpMode {
             telemetry.addData("State",currentState);
             telemetry.addData("Timeout",timeout.milliseconds());
             telemetry.addData("Force Sensor",forceSensor.getVoltage());
+            telemetry.addData("Distance Sensor",distanceSensor.getDistance(DistanceUnit.MM));
             telemetry.update();
         }
 

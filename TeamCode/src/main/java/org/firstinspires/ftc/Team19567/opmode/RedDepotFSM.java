@@ -92,7 +92,7 @@ public class RedDepotFSM extends LinearOpMode {
             case ALLIANCE_SECOND: {
                 chosenArmPos = Utility_Constants.SECOND_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
-                chosenTrajectoryX = -37;
+                chosenTrajectoryX = -38.5;
                 telemetry.addData("OpenCV","Actually Second Level Detected");
                 telemetry.update();
                 break;
@@ -100,7 +100,7 @@ public class RedDepotFSM extends LinearOpMode {
             case ALLIANCE_THIRD: {
                 chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
-                chosenTrajectoryX = -41;
+                chosenTrajectoryX = -43;
                 telemetry.addData("OpenCV","basiccly first Level Detected");
                 telemetry.update();
                 break;

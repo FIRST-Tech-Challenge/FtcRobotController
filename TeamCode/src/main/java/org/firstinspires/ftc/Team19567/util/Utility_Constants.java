@@ -39,7 +39,7 @@ public class Utility_Constants {
     public static int MILLI_ACC = 1100; //Milliseconds after carousel has been engaged to begin accelerating the carousel
     public static int MILLI_FINAL = 1100; //Milliseconds after carousel has been engaged to reach the final speed
     public static int MILLI_END = 1400; //Milliseconds after carousel has been engaged to stop spinning the carousel
-    public static double FLICKER_TIME = 250; //Time in milliseconds for the flicker to release one freight
+    public static double FLICKER_TIME = 100; //Time in milliseconds for the flicker to release one freight
     //COEFFICIENTS
     public static double BALANCE_COEFFICIENT = 1300.1; //Balancing coefficient for ARM ENCODER VALUES
     public static double POTENTIOMETER_COEFFICIENT = 3.8; //Balancing Coefficient for POTENTIOMETER VOLTAGE VALUES
@@ -47,7 +47,7 @@ public class Utility_Constants {
     public static double POW_COEFFICIENT = 1.2; //Exponent at which the balancing increases by
     //THRESHOLDS
     public static double DISTANCE_SENSOR_THRESHOLD = 80; //Specifies maximum distance in MM for distance sensor to detect freight (cannot be less than 50)
-    public static double FORCE_SENSOR_THRESHOLD = 0.05; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
+    public static double FORCE_SENSOR_THRESHOLD = 0.01; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
     public static int DEBOUNCE_TIME = 250; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
     public static int INTAKE_TIME = 500; //Milliseconds to run the intake in reverse after a freight has been detected
     //MISC
