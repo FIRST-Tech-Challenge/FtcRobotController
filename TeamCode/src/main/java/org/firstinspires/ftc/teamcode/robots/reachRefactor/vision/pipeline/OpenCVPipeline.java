@@ -41,30 +41,30 @@ public class OpenCVPipeline extends OpenCvPipeline
     private Mat dashboardMat = new Mat();
     private volatile Bitmap dashboardBitmap;
 
-    private int largestX, largestY;
+    private volatile int largestX, largestY;
     private double largestArea;
     private volatile Position lastPosition;
     
     // Constants
     public static int VIEW_OPEN_CV_PIPELINE_STAGE = 6;
     public static int TOP_LEFT_X = 0;
-    public static int TOP_LEFT_Y = 120;
+    public static int TOP_LEFT_Y = 50;
     public static int BOTTOM_RIGHT_X = 320;
-    public static int BOTTOM_RIGHT_Y = 240;
+    public static int BOTTOM_RIGHT_Y = 140;
     public static double NORMALIZE_ALPHA = 51.0;
     public static double NORMALIZE_BETA = 261.0;
     public static double BLUR_RADIUS = 7;
-    public static double HUE_MIN = 0;
-    public static double HUE_MAX = 90;
-    public static double SATURATION_MIN = 120;
+    public static double HUE_MIN = 100;
+    public static double HUE_MAX = 150;
+    public static double SATURATION_MIN = 80;
     public static double SATURATION_MAX = 255;
-    public static double VALUE_MIN = 100;
+    public static double VALUE_MIN = 120;
     public static double VALUE_MAX = 255;
-    public static double MIN_CONTOUR_AREA = 2000;
+    public static double MIN_CONTOUR_AREA = 1000;
     public static String BLUR = "Box Blur";
 
-    public static int LEFT_THRESHOLD = 107;
-    public static int RIGHT_THRESHOLD = 213;
+    public static int LEFT_THRESHOLD = 142;
+    public static int RIGHT_THRESHOLD = 211;
 
     public OpenCVPipeline() {
         largestX = -1;
@@ -131,6 +131,8 @@ public class OpenCVPipeline extends OpenCvPipeline
             Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
             Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(255, 255, 255));
         }
+        Imgproc.line(finalContourOutputMat, new Point(RIGHT_THRESHOLD, 0), new Point(RIGHT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
+        Imgproc.line(finalContourOutputMat, new Point(LEFT_THRESHOLD, 0), new Point(LEFT_THRESHOLD  , finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
 
         if(largestX > 0 && largestX < LEFT_THRESHOLD) {
             lastPosition = Position.LEFT;
@@ -272,4 +274,6 @@ public class OpenCVPipeline extends OpenCvPipeline
     public Position getLastPosition() {
         return lastPosition;
     }
+
+    public double[] getLargestCoordinate() { return new double[] {largestX, largestY}; }
 }

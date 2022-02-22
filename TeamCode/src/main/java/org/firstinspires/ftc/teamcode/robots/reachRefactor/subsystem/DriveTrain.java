@@ -58,8 +58,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
 //    public static double B = 0.01;
 //    public static double ZETA = 0;
-    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(3.5, 0, 2);
-    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(3.5, 0, 2);
+    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.5, 0, 2);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -116,7 +116,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         super(TRACK_WIDTH, simulated);
         this.simulated = simulated;
 //        TrajectoryFollower follower = new RamseteFollower(B, ZETA, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 2);
-        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), Double.POSITIVE_INFINITY);
+        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 2.0);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         VoltageSensor batteryVoltageSensor;
@@ -219,8 +219,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private void updateVelocityCoefficients() {
         if(USE_CUSTOM_VELOCITY_PID) {
             PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-                    MOTOR_VELOCITY_PID.p, MOTOR_VELOCITY_PID.i, MOTOR_VELOCITY_PID.d,
-                    MOTOR_VELOCITY_PID.f * 12 / compensatedBatteryVoltage
+                    DIFF_MOTOR_VELOCITY_PID.p, DIFF_MOTOR_VELOCITY_PID.i, DIFF_MOTOR_VELOCITY_PID.d,
+                    DIFF_MOTOR_VELOCITY_PID.f * 12 / compensatedBatteryVoltage
             );
             for (DcMotorEx motor : motors) {
                 motor.setVelocityPIDFCoefficients(
@@ -259,9 +259,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         updatePIDCoefficients();
 
         // sensor readings
-        leftVelocity = 0.75 * encoderTicksToInches(leftMotor.getVelocity());
-        rightVelocity = 0.75 * encoderTicksToInches(rightMotor.getVelocity());
-        swerveVelocity = 0.75 * encoderTicksToInches(swerveMotor.getVelocity());
+        leftVelocity = 0.75 * diffEncoderTicksToInches(leftMotor.getVelocity());
+        rightVelocity = 0.75 * diffEncoderTicksToInches(rightMotor.getVelocity());
+        swerveVelocity = 0.75 * swerveEncoderTicksToInches(swerveMotor.getVelocity());
         if(simulated) {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
@@ -270,9 +270,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             swivelPosition += swivelPower * dt;
             chassisLength = targetChassisLength;
         } else {
-            leftPosition = encoderTicksToInches(leftMotor.getCurrentPosition());
-            rightPosition = encoderTicksToInches(rightMotor.getCurrentPosition());
-            swervePosition = encoderTicksToInches(swerveMotor.getCurrentPosition());
+            leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition());
+            rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition());
+            swervePosition = swerveEncoderTicksToInches(swerveMotor.getCurrentPosition());
             swivelPosition = swivelMotor.getCurrentPosition();
             swivelAngle = wrapAngleRad(swivelPosition / SWIVEL_TICKS_PER_REVOLUTION * Math.toRadians(360));
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
@@ -368,9 +368,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             swivelAngle = targetSwivelAngle;
         swivelPower = getSwivelAngleCorrection();
 
-        leftMotor.setVelocity(inchesToEncoderTicks(targetLeftVelocity));
-        rightMotor.setVelocity(inchesToEncoderTicks(targetRightVelocity));
-        swerveMotor.setVelocity(inchesToSwerveEncoderTicks(targetSwerveVelocity));
+        leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
+        rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
+        swerveMotor.setVelocity(swerveInchesToEncoderTicks(targetSwerveVelocity));
         swivelMotor.setPower(swivelPower);
         duckSpinner.setPower(duckSpinnerPower);
 
@@ -414,9 +414,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("anti-tip roll on target", rollAntiTipPID.onTarget());
             telemetryMap.put("anti-tip pitch on target", pitchAntiTipPID.onTarget());
 
-            telemetryMap.put("left position", inchesToEncoderTicks(leftPosition));
-            telemetryMap.put("right position", inchesToEncoderTicks(rightPosition));
-            telemetryMap.put("swerve position", inchesToSwerveEncoderTicks(swervePosition));
+            telemetryMap.put("left position", diffInchesToEncoderTicks(leftPosition));
+            telemetryMap.put("right position", diffInchesToEncoderTicks(rightPosition));
+            telemetryMap.put("swerve position", swerveInchesToEncoderTicks(swervePosition));
 
             telemetryMap.put("swivel angle", Math.toDegrees(swivelAngle));
             telemetryMap.put("target swivel angle", Math.toDegrees(targetSwivelAngle));

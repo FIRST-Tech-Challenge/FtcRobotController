@@ -19,6 +19,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ public class OpenCVProvider extends VisionProvider {
     // Constants
     private static final String TELEMETRY_NAME = "OpenCV Vision Provider";
     public static int WEBCAM_WIDTH = 320;
-    public static int WEBCAM_HEIGHT = 240;
+    public static int WEBCAM_HEIGHT = 180;
 
     @Override
     public void initializeVision(HardwareMap hardwareMap) {
@@ -54,7 +55,7 @@ public class OpenCVProvider extends VisionProvider {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                camera.startStreaming(WEBCAM_WIDTH, WEBCAM_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
+                camera.startStreaming(WEBCAM_WIDTH, WEBCAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
                 cameraOpened = true;
             }
 
@@ -108,6 +109,7 @@ public class OpenCVProvider extends VisionProvider {
             telemetryMap.put("Pipeline time ms", camera.getPipelineTimeMs());
             telemetryMap.put("Overhead time ms", camera.getOverheadTimeMs());
             telemetryMap.put("Theoretical max FPS", camera.getCurrentPipelineMaxFps());
+            telemetryMap.put("Largest Coordinate", Arrays.toString(pipeline.getLargestCoordinate()));
         }
 
         return telemetryMap;
