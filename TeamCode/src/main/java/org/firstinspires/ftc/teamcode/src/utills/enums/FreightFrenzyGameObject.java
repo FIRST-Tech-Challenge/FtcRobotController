@@ -12,11 +12,11 @@ public enum FreightFrenzyGameObject {
     DUCK,
     EMPTY;
 
-    private static final double[] BallRGB = new double[]{53, 53, 48};
+    private static final double[] BallRGB = new double[]{60, 60, 54};
     private static final double[] CubeSmoothRGB = new double[]{24, 14, 8};
-    private static final double[] CubeWaffleRGB = new double[]{16, 9, 6};
-    private static final double[] DuckRGB = new double[]{9, 7, 4};
-    private static final double[] EmptyRGB = new double[]{3, 3, 2};
+    private static final double[] CubeWaffleRGB = new double[]{16, 11, 6};
+    private static final double[] DuckRGB = new double[]{10, 10, 6};
+    private static final double[] EmptyRGB = new double[]{4, 6, 5};
     /**
      * A Array of every possible enum value
      */

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -243,7 +244,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         dropOffFreight(BarcodePositions.Right);
     }
 
-    public void dropOffFreight(BarcodePositions Pos) throws InterruptedException {
+    public void dropOffFreight(BarcodePositions Pos, double tuningFactor) throws InterruptedException {
         switch (Pos) {
             case NotSeen:
             case Right:
@@ -265,6 +266,17 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         //Waits for the slide to get to it's position
 
         double[] initialPos = {gps.getX(), gps.getY()};
+        slide.setMotorPower(1);
+
+        ElapsedTime slideStuckTimer = new ElapsedTime();
+        while (!slide.isAtPosition()) {
+            if (slideStuckTimer.seconds() > 8) {
+                RobotLog.addGlobalWarningMessage("Slide Was Stuck. Dropping on lowest level");
+                slide.setTargetLevel(HeightLevel.BottomLevel);
+                break;
+            }
+            Thread.sleep(40);
+        }
 
         //Strafes forward while the distance from the wall is less than 24 in
         driveSystem.strafeAtAngle(180, 0.5);
@@ -275,7 +287,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 break;
             }
             currentWallDistance = Math.abs((frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 270)));
-        } while (currentWallDistance < 23 && opModeIsActive() && !isStopRequested());
+        } while (currentWallDistance < (23 + tuningFactor) && opModeIsActive() && !isStopRequested());
 
 
         driveSystem.stopAll();
@@ -284,23 +296,163 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
         intake.setServoClosed();
         slide.setTargetLevel(HeightLevel.Down);
+        slide.setMotorPower(0);
+
     }
 
-    protected double pickupBlock(double distanceDriven, double startingDistanceFromWall) {
+    public void dropOffFreight(BarcodePositions pos) throws InterruptedException {
+        dropOffFreight(pos, 0);
+    }
+
+    protected double pickUpBlock2(double distanceDriven, double startingDistanceFromWall, boolean isBlue) throws InterruptedException {
+
+        //Loops while the item is not detected
         outer:
         while (opModeIsActive() && !isStopRequested()) {
+
+            //Strafes forward in steps of four inches each time
             distanceDriven += 4;  //Four is currently the distance it steps each time
             driveSystem.strafeAtAngle(0, 0.3);
+            double currentDistance = 0;
+            double previousDistance;
+            double turnIncrement = 0; //this is the additional amount the robot should turn to pick up each time
+            double positiveIfBlue = 1;
+            if (!isBlue) {
+                positiveIfBlue = -1;
+            }
+
+
             while (opModeIsActive() && !isStopRequested()) {
+
+                driveSystem.strafeAtAngleWhileTurn(0, gps.getRot() + turnIncrement, .3);
+                previousDistance = currentDistance;
+                currentDistance = gps.getY();
+
+                //checks if increment of 4 inches is fulfilled for this loop
+                if (gps.getY() < (startingDistanceFromWall - distanceDriven)) {
+                    driveSystem.stopAll();
+                    break;
+                }
+
+                // checks if intake sensor is triggered
+                if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
+                    intake.setIntakeOff();
+                    driveSystem.strafeAtAngle(180, .5);
+                    Thread.sleep(500);
+                    break;
+                }
+
+                //checks if bucket is filled
+                if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
+                    intake.setIntakeReverse();
+                    break outer;
+                }
+
+                final double minimumDistanceThreshold = .1;
+
+                //If it detects that it is stuck
+                if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
+
+                    // output to telemetry
+                    telemetry.addData("Warning", "Stuck");
+                    telemetry.update();
+                    driveSystem.stopAll();
+
+                    // back away from block
+                    driveSystem.strafeAtAngle(180, .5);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+
+
+                    // turn 20 degrees away from wall
+                    //sets the strafeAtAngle of this movement to these variable changes
+                    turnIncrement += (10 * positiveIfBlue);
+
+
+                    continue;
+
+                }
+                Thread.sleep(40);
+            }
+
+
+            driveSystem.stopAll();
+            ElapsedTime time = new ElapsedTime();
+            while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
+                intake.setIntakeOn();
+                if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
+                    break outer;
+                }
+            }
+        }
+
+        return distanceDriven;
+    }
+
+    protected double pickUpBlock(double distanceDriven, double startingDistanceFromWall, boolean isBlue) throws InterruptedException {
+        boolean strafeIntoWall = false;
+        double positiveIfBlue = 1;
+        if (!isBlue) {
+            positiveIfBlue = -1;
+        }
+
+        outer:
+        while (opModeIsActive() && !isStopRequested()) {
+            //Strafes forward in steps of four inches each time
+            distanceDriven += 4;  //Four is currently the distance it steps each time
+            driveSystem.strafeAtAngle(0, 0.3);
+
+            double currentDistance = 0;
+            double previousDistance;
+            double turnIncrement = 0; //this is the additional amount the robot should turn to pick up each time
+
+            final double minimumDistanceThreshold = .05;
+
+
+            while (opModeIsActive() && !isStopRequested()) {
+
+                if (turnIncrement > 21) {
+                    turnIncrement = 0;
+                }
+                driveSystem.strafeAtAngleWhileTurn(0, gps.getRot() + turnIncrement, .3);
+                previousDistance = currentDistance;
+                currentDistance = gps.getY();
+
                 if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
                     break;
                 }
 
-                if (intakeDistanceSensor.getDistance(DistanceUnit.CM) < 6) {
+                if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
                     break;
                 }
                 if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
                     break outer;
+                }
+
+                //If it detects that it is stuck
+                if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
+
+                    // output to telemetry
+                    telemetry.addData("Warning", "Stuck");
+                    telemetry.update();
+                    driveSystem.stopAll();
+
+                    // back away from block
+                    driveSystem.strafeAtAngle(180, .35);
+                    Thread.sleep(500);
+                    driveSystem.stopAll();
+                    Thread.sleep(50);
+
+                    // turn 20 degrees away from wall
+                    //sets the strafeAtAngle of this movement to these variable changes
+                    turnIncrement += (7 * positiveIfBlue);
+                    strafeIntoWall = true;
+
+                }
+
+                if (Math.abs(180 - gps.getRot()) > 45) {
+                    driveSystem.turnTo(180, 0.3);
+                    turnIncrement = 0;
                 }
             }
             driveSystem.stopAll();
@@ -310,6 +462,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                     break outer;
                 }
             }
+
+
+        }
+        if (strafeIntoWall) {
+
+            driveSystem.moveToPosition(gps.getX() - (10 * (-positiveIfBlue)), 30, 180, 2, new DistanceTimeoutWarning(100));
         }
         return distanceDriven;
     }
