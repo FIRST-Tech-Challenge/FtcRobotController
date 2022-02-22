@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions;
 
 
-import android.annotation.SuppressLint;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
+import org.firstinspires.ftc.teamcode.src.utills.SuppressLint;
 
 /**
  * The class that all {@link MovementException} and {@link org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.MovementWarning} extend from

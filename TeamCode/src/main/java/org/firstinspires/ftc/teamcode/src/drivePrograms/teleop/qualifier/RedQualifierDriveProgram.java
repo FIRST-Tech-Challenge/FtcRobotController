@@ -11,6 +11,9 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDista
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
+/**
+ * Teleop for Red Qualifier
+ */
 @Disabled
 @TeleOp(name = "Red Qualifier Drive Program")
 public class RedQualifierDriveProgram extends TeleOpTemplate {

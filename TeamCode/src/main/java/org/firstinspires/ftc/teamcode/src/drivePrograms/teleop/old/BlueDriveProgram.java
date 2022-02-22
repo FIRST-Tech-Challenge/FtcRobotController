@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 /**
- * A Teleop for blue side
+ * A Teleop for blue side Meets 1-3
  */
 @Disabled
 @TeleOp(name = "Blue Drive Program")
