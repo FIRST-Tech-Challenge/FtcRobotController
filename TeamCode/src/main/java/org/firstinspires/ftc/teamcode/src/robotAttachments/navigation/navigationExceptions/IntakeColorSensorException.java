@@ -20,7 +20,7 @@ public class IntakeColorSensorException extends MovementException {
     /**
      * A constructor
      *
-     * @param intake
+     * @param intake A intake objects to read from
      */
     public IntakeColorSensorException(ContinuousIntake intake) {
         super();
