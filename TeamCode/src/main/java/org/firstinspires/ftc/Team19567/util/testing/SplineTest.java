@@ -2,6 +2,7 @@ package org.firstinspires.ftc.Team19567.util.testing;
 
 import android.text.method.Touch;
 
+import com.acmerobotics.dashboard.canvas.Spline;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -28,8 +29,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Spline Test", group="Testing")
-@Disabled
+@Autonomous(name="Extended Spline Test", group="Testing")
+
 public class SplineTest extends LinearOpMode {
     private Mechanisms mechanisms = null;
 
@@ -45,27 +46,48 @@ public class SplineTest extends LinearOpMode {
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
 
-        TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
-                .addSpatialMarker(new Vector2d(8,-50), () -> {
-                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,Utility_Constants.THIRD_LEVEL_POWER);
-                }).lineToSplineHeading(new Pose2d(-2,-40,Math.toRadians(-45)))
+        TrajectorySequence splineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-2,-40,Math.toRadians(-45)))
                 .build();
 
-        TrajectorySequence returnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
-            mechanisms.moveIntake(1.0);
-        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
+        TrajectorySequence returnSplineSequence = chassis.trajectorySequenceBuilder(splineSequence.end())
                 .splineTo(new Vector2d(16, -64),Math.toRadians(-10))
-                .splineTo(new Vector2d(54,-66.5),Math.toRadians(0)).setReversed(false)
-                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
+                .splineTo(new Vector2d(54,-66.5),Math.toRadians(0))
                 .build();
-        chassis.setPoseEstimate(returnSplineSequence.start());
 
-        TrajectorySequence intakingSequence = chassis.trajectorySequenceBuilder(returnSplineSequence.end()).back(10).forward(10).build();
+        TrajectorySequence hubSplineSequence = chassis.trajectorySequenceBuilder(returnSplineSequence.end())
+                .setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))
+                .setReversed(false).build();
+
+        //Lol
+        TrajectorySequence fullSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-2,-40,Math.toRadians(-45)))
+                .splineTo(new Vector2d(16, -64),Math.toRadians(-10))
+                .splineTo(new Vector2d(54,-66.5),Math.toRadians(0))
+                .setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))
+                .setReversed(false).splineTo(new Vector2d(16, -64),Math.toRadians(-10))
+                .splineTo(new Vector2d(54,-66.5),Math.toRadians(0))
+                .setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))
+                .setReversed(false).splineTo(new Vector2d(16, -64),Math.toRadians(-10))
+                .splineTo(new Vector2d(54,-66.5),Math.toRadians(0))
+                .setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))
+                .setReversed(false)
+                .build();
+
+        chassis.setPoseEstimate(splineSequence.start());
 
         waitForStart();
         if(isStopRequested()) return;
 
-        chassis.followTrajectorySequence(returnSplineSequence);
+        chassis.followTrajectorySequence(fullSplineSequence);
+
+        /*
+        chassis.followTrajectorySequenceAsync(splineSequence);
+
+        while(opModeIsActive() && !isStopRequested()) {
+
+        }
+        */
 
         telemetry.addData("Status", "Path Complete");
         telemetry.update();

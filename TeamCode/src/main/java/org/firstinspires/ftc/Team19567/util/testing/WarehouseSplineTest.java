@@ -82,58 +82,6 @@ public class WarehouseSplineTest extends LinearOpMode {
             mechanisms.moveIntake(0.0);
         }).setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))
                 .setReversed(false).build();
-        /* TrajectorySequence firstReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
-            mechanisms.moveIntake(1.0);
-        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .splineTo(new Vector2d(15, -66.5),Math.toRadians(-10))
-                .splineTo(new Vector2d(67,-69),Math.toRadians(0))
-                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
-                .build();
-
-        TrajectorySequence secondReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
-            mechanisms.moveIntake(1.0);
-        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .splineTo(new Vector2d(19, -68.5),Math.toRadians(-10))
-                .splineTo(new Vector2d(71,-71),Math.toRadians(0))
-                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
-                .build();
-
-        TrajectorySequence thirdReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
-            mechanisms.moveIntake(1.0);
-        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .splineTo(new Vector2d(24, -68.5),Math.toRadians(-10))
-                .splineTo(new Vector2d(76,-71),Math.toRadians(0))
-                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
-                .build();
-
-        TrajectorySequence fourthReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
-            mechanisms.moveIntake(1.0);
-        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .splineTo(new Vector2d(28, -68.5),Math.toRadians(-10))
-                .splineTo(new Vector2d(80,-71),Math.toRadians(0))
-                //.lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(54, -66.5))
-                .build();
-        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(firstReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
-            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
-        }).addSpatialMarker(new Vector2d(6.5,-40.5),() -> {
-            mechanisms.releaseServoMove(0.3);
-        }).setReversed(true).splineTo(new Vector2d(15, -68.5),Math.toRadians(170)).splineTo(new Vector2d(6,-38),Math.toRadians(135))
-                .setReversed(false).build();
-
-        TrajectorySequence secondHubSplineSequence = chassis.trajectorySequenceBuilder(secondReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
-            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
-        }).addSpatialMarker(new Vector2d(10.5,-40.5),() -> {
-            mechanisms.releaseServoMove(0.3);
-        }).setReversed(true).splineTo(new Vector2d(19, -68.5),Math.toRadians(170)).splineTo(new Vector2d(12,-38),Math.toRadians(135))
-                .setReversed(false).build();
-
-        TrajectorySequence thirdHubSplineSequence = chassis.trajectorySequenceBuilder(thirdReturnSplineSequence.end()).addSpatialMarker(new Vector2d(20,-50), () -> {
-            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
-        }).addSpatialMarker(new Vector2d(15.5,-40.5),() -> {
-            mechanisms.releaseServoMove(0.3);
-        }).setReversed(true).splineTo(new Vector2d(28, -68.5),Math.toRadians(170)).splineTo(new Vector2d(19,-38),Math.toRadians(135))
-                .setReversed(false).build();
-        //.strafeTo(new Vector2d(12,-66.5)).lineToSplineHeading(new Pose2d(0,-35,Math.toRadians(-45))).build(); */
 
         telemetry.addData("Status","Finished loading Roadrunner splines");
         telemetry.update();
@@ -159,9 +107,6 @@ public class WarehouseSplineTest extends LinearOpMode {
                         telemetry.addData("State Machine","Moved to DELIVERING_FREIGHT");
                         telemetry.update();
                         chassis.followTrajectorySequenceAsync(firstReturnSplineSequence);
-                        /* else if(freightCount == 1) chassis.followTrajectorySequenceAsync(secondReturnSplineSequence);
-                        else if(freightCount == 2) chassis.followTrajectorySequenceAsync(thirdReturnSplineSequence);
-                        else if(freightCount == 3) chassis.followTrajectorySequenceAsync(fourthReturnSplineSequence); */
                         currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
                         freightCount++;
                     }
@@ -192,11 +137,6 @@ public class WarehouseSplineTest extends LinearOpMode {
                             mechanisms.moveIntake(-1.0);
                             currentState = AUTO_STATE.MOVING_TO_HUB;
                             chassis.followTrajectorySequenceAsync(firstHubSplineSequence);
-                            /* else if(freightCount == 2) chassis.followTrajectorySequenceAsync(secondHubSplineSequence);
-                            else if(freightCount == 3) chassis.followTrajectorySequenceAsync(thirdHubSplineSequence);
-                            else {
-                                currentState = AUTO_STATE.PATH_FINISHED;
-                            } */
                     }
                     break;
                 }

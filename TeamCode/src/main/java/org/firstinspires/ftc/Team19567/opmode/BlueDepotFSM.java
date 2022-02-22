@@ -22,8 +22,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Red Depot FSM", group="Dababy")
-public class RedDepotFSM extends LinearOpMode {
+@Autonomous(name="Blue Depot FSM", group="Dababy")
+public class BlueDepotFSM extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
     private ElapsedTime carouselTimeout = new ElapsedTime();
@@ -34,7 +34,7 @@ public class RedDepotFSM extends LinearOpMode {
     private int chosenArmPos = 600;
     private double chosenArmSpeed = 0.3;
     private double chosenTrajectoryX = -22;
-    private double chosenTrajectoryY = -40;
+    private double chosenTrajectoryY = 40;
     private Mechanisms mechanisms = null;
 
     @Override
@@ -51,7 +51,7 @@ public class RedDepotFSM extends LinearOpMode {
 
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
 
-        chassis.setPoseEstimate(new Pose2d(-34, -63, Math.toRadians(90)));
+        chassis.setPoseEstimate(new Pose2d(-34, 63, Math.toRadians(-90)));
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
@@ -86,7 +86,7 @@ public class RedDepotFSM extends LinearOpMode {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
                 chosenTrajectoryX = -22;
-                chosenTrajectoryY = -40;
+                chosenTrajectoryY = 40;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -95,7 +95,7 @@ public class RedDepotFSM extends LinearOpMode {
                 chosenArmPos = Utility_Constants.SECOND_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
                 chosenTrajectoryX = -26.25;
-                chosenTrajectoryY = -44.25;
+                chosenTrajectoryY = 44.25;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
@@ -104,7 +104,7 @@ public class RedDepotFSM extends LinearOpMode {
                 chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
                 chosenTrajectoryX = -26.95;
-                chosenTrajectoryY = -44.95;
+                chosenTrajectoryY = 44.95;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -113,25 +113,25 @@ public class RedDepotFSM extends LinearOpMode {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
                 chosenTrajectoryX = -22;
-                chosenTrajectoryY = -40;
+                chosenTrajectoryY = 40;
                 telemetry.addData("OpenCV","Defaulted to Third Level");
                 telemetry.update();
             }
         }
         currentState = AUTO_STATE.MOVING_TO_HUB;
 
-        TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
-                .addSpatialMarker(new Vector2d(chosenTrajectoryX-2.5,chosenTrajectoryY-5),() -> {
+        TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(-90)))
+                .addSpatialMarker(new Vector2d(chosenTrajectoryX-2.5,chosenTrajectoryY+5),() -> {
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
-                }).addSpatialMarker( new Vector2d(chosenTrajectoryX-0.5, chosenTrajectoryY-1), () -> {
-                    mechanisms.releaseServoMove(0.2);
+                }).addSpatialMarker( new Vector2d(chosenTrajectoryX-0.5, chosenTrajectoryY+1), () -> {
+                    mechanisms.releaseServoMove(0.3);
                 }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,chosenTrajectoryY,Math.toRadians(180)))
                 .build();
         TrajectorySequence moveToCarouselSequence = chassis.trajectorySequenceBuilder(preloadSequence.end())
-                .lineToSplineHeading(new Pose2d(-64,-57,Math.toRadians(0))).build();
+                .lineToSplineHeading(new Pose2d(-64,57,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .splineToConstantHeading(new Vector2d(60,-25),Math.toRadians(0)).build();
+                .splineToConstantHeading(new Vector2d(60,25),Math.toRadians(0)).build();
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         chassis.followTrajectorySequenceAsync(preloadSequence);
