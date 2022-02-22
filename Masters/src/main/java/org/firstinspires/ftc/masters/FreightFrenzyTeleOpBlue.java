@@ -33,22 +33,22 @@ public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
 
             encoderPos = carouselMotor.getCurrentPosition();
 
-            if (encoderPos < region1) {
-                velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
+            if (encoderPos > -region1) {
+                velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*-encoderPos)+FreightFrenzyConstants.startVelocity;
                 vel1Max = velocity;
                 carouselMotor.setVelocity(-velocity);
                 telemetry.update();
-            } else if (encoderPos >= region1 && encoderPos < region2) {
-                velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (encoderPos - region1));
+            } else if (encoderPos <= -region1 && encoderPos > -region2) {
+                velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (-encoderPos - region1));
                 vel2Max = velocity;
                 carouselMotor.setVelocity(-velocity);
                 telemetry.update();
             }
-            else if (encoderPos >= region2 && encoderPos < FreightFrenzyConstants.goal) {
-                velocity = vel2Max+Math.sqrt(2*FreightFrenzyConstants.accelerate3*(encoderPos-region2));
+            else if (encoderPos <= -region2 && encoderPos > -FreightFrenzyConstants.goal) {
+                velocity = vel2Max+Math.sqrt(2*FreightFrenzyConstants.accelerate3*(-encoderPos-region2));
                 carouselMotor.setVelocity(-velocity);
                 telemetry.update();
-            } else if (encoderPos >= FreightFrenzyConstants.goal) {
+            } else if (encoderPos <=- FreightFrenzyConstants.goal) {
                 carouselOn = false;
                 carouselMotor.setVelocity(0);
                 carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,5 +63,9 @@ public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
                 .lineTo(new Vector2d(10, 65))
                 .splineToSplineHeading(new Pose2d(-12, 45, Math.toRadians(270)), Math.toRadians(270))
                 .build();
+    }
+
+    protected boolean toLineTeleop(double time){
+        return drive.toLineBlueTeleop(time);
     }
 }

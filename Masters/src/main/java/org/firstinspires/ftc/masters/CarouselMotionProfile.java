@@ -9,17 +9,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region1;
-import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region2;
+
 
 @Config
 @TeleOp(name = "carousel test quick duck")
 public class CarouselMotionProfile extends LinearOpMode {
 
-//    public static int accelerate1 = 300;
-//    public static int accelerate2= 200;
-//    public static int accelerate3 = 600;
-//    public static  int startVelocity= 650;
+    public static int accelerate1 = 600;
+    public static int accelerate2= 65;
+    public static int accelerate3 = 300;
+    public static  int startVelocity= 620;
+    public static int region1 = 750;
+    public static int region2 = 2000;
     public DcMotorEx carousel;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -27,7 +28,7 @@ public class CarouselMotionProfile extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        telemetry = dashboard.getTelemetry();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         carousel = hardwareMap.get(DcMotorEx.class, "carouselMotor");
         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -49,7 +50,7 @@ public class CarouselMotionProfile extends LinearOpMode {
             telemetry.addData("velocity", carousel.getVelocity());
             telemetry.addData("encoder", carousel.getCurrentPosition());
             telemetry.addData("time", elapsedTime.milliseconds());
-            telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
 
             if (gamepad1.a) {
                 carouselOn = true;
@@ -69,24 +70,25 @@ public class CarouselMotionProfile extends LinearOpMode {
                 encoderPos = carousel.getCurrentPosition();
 
                 if (encoderPos < region1) {
-                    velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
+                    velocity = Math.sqrt(2*accelerate1*encoderPos)+startVelocity;
                     vel1Max = velocity;
                     carousel.setVelocity(velocity);
                     telemetry.update();
                 } else if (encoderPos >= region1 && encoderPos < region2) {
-                    velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (encoderPos - region1));
+                    velocity = vel1Max + Math.sqrt(2 * accelerate2 * (encoderPos - region1));
                     vel2Max = velocity;
                     carousel.setVelocity(velocity);
                     telemetry.update();
                 }
                  else if (encoderPos >= region2 && encoderPos < FreightFrenzyConstants.goal) {
-                    velocity = vel2Max+Math.sqrt(2*FreightFrenzyConstants.accelerate3*(encoderPos-region2));
+                    velocity = vel2Max+Math.sqrt(2*accelerate3*(encoderPos-region2));
                     carousel.setVelocity(velocity);
                     telemetry.update();
                 } else if (encoderPos >= FreightFrenzyConstants.goal) {
                     carouselOn = false;
                     carousel.setVelocity(0);
                     carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    start = true;
 
                 }
 
