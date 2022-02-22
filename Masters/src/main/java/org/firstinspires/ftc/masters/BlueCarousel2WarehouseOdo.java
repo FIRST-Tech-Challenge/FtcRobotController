@@ -148,7 +148,7 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
 
         drive.followTrajectorySequence(fromHubToWaitPos);
         double seconds = elapsedTime.seconds();
-        while (seconds<27) {
+        while (seconds<26) {
             seconds = elapsedTime.seconds();
         }
         drive.followTrajectorySequence(fromWaitPosToWarehouse);
