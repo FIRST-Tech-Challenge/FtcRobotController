@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -95,7 +96,10 @@ public class HardwareBothHubs
 
     //====== CAPPING ARM MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx cappingMotor     = null;
-    public int          cappingMotorTgt  = 0;          // RUN_TO_POSITION target encoder count
+    public boolean      cappingMotorAuto = false;      // Automatic go-to-position in progress
+    public int          cappingMotorTgt  = 0;          // go-to-position target encoder count
+    public int          cappingMotorCycl = 0;          // go-to-position cycle count
+    public int          cappingMotorWait = 0;          // go-to-position wait count (truly there! not just passing thru)
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
 
@@ -136,7 +140,10 @@ public class HardwareBothHubs
 
     //====== FREIGHT ARM MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx freightMotor     = null;
+    public boolean      freightMotorAuto = false;      // Automatic go-to-position in progress
     public int          freightMotorTgt  = 0;          // RUN_TO_POSITION target encoder count
+    public int          freightMotorCycl = 0;          // go-to-position cycle count
+    public int          freightMotorWait = 0;          // go-to-position wait count (truly there! not just passing thru)
     public int          freightMotorPos  = 0;          // current encoder count
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
 
@@ -176,8 +183,6 @@ public class HardwareBothHubs
     public double       BOX_SERVO_DUMP_MIDDLE      = 0.65;
     public double       BOX_SERVO_DUMP_BOTTOM      = 0.75;
     public double       BOX_SERVO_DUMP_FRONT       = 0.80;  // ??
-
-//  public CRServo      sweepServo                 = null;  // CONTINUOUS, so no need for fixed positions
 
     public Servo        linkServo                  = null;
     public double       LINK_SERVO_INIT            = 0.500; // we init to the FULLY STORED position
@@ -316,10 +321,11 @@ public class HardwareBothHubs
         if (!transitionFromAutonomous) {
             cappingMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//      cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        cappingMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         cappingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        PIDFCoefficients cappingPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
-        cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, cappingPIDF );
+//      PIDFCoefficients cappingPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
+//      cappingMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, cappingPIDF );
 
         wristServo = hwMap.servo.get("WristServo");    // servo port 0 (hub 2)
         if (!transitionFromAutonomous) {
@@ -355,7 +361,7 @@ public class HardwareBothHubs
 
         //Initialize sweeper motor
         sweepMotor = hwMap.get(DcMotorEx.class,"sweepMotor");
-        sweepMotor.setDirection(DcMotor.Direction.REVERSE);
+        sweepMotor.setDirection(DcMotor.Direction.FORWARD);
         sweepMotor.setPower( 0.0 );
         sweepMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         sweepMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -485,8 +491,9 @@ public class HardwareBothHubs
         try {
             cappingLog = new FileWriter(filePath, false);
             // Log the current PIDF settings
-            PIDFCoefficients currPIDF = cappingMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-            cappingLog.write("CappingArm " + currPIDF.toString() + "\r\n");
+//          PIDFCoefficients currPIDF = cappingMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+//          cappingLog.write("CappingArm " + currPIDF.toString() + "\r\n");
+            cappingLog.write("CappingArm\r\n");
             cappingLog.write("Target position," + cappingMotorTgt + "\r\n");
             // Log Column Headings
             cappingLog.write("msec,pwr,mAmp,cts/sec,encoder\r\n");
@@ -627,6 +634,75 @@ public class HardwareBothHubs
         cappingMotor.setPower( motorPower );
 
     } // cappingArmPosition
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* cappingArmPosInit()                                                                        */
+    /* - newPos = desired new arm position                                                        */
+    public void cappingArmPosInit( int newPos )
+    {
+        // Current distance from target (number of encoder counts)
+        int ticksToGo = newPos - cappingMotorPos;
+        
+        // Are we ALREADY at the specified position?
+        if( Math.abs(ticksToGo) < 10 )
+           return;
+        
+        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
+        cappingMotor.setPower( 0.0 );
+
+        // Establish a new target position & reset counters
+        cappingMotorAuto = true;
+        cappingMotorTgt  = newPos;
+        cappingMotorCycl = 0;
+        cappingMotorWait = 0;
+
+        // If logging instrumentation, begin a new dataset now:
+        if( cappingMotorPIDFlogging ) {
+            capMotorLogIndex  = 0;
+            capMotorLogEnable = true;
+            capMotorTimer.reset();
+        }
+
+    } // cappingArmPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* cappingArmPosRun()                                                                         */
+    public void cappingArmPosRun()
+    {
+        // Has an automatic movement been initiated?
+        if( cappingMotorAuto ) {
+          // Keep track of how long we've been doing this  
+          cappingMotorCycl++;
+          // Current distance from target (number of encoder counts)
+          int ticksToGo = cappingMotorTgt - cappingMotorPos;
+          // Have we achieved the target?
+          if( Math.abs(ticksToGo) < 10 ) {
+            cappingMotor.setPower( 0.0 );
+            if( ++cappingMotorWait >= 5 ) {
+                cappingMotorAuto = false;
+                writeCappingLog();                
+            }
+          }
+          // No, still not within tolerance of desired target
+          else {
+              double minPower, maxPower, cappingMotorPower;
+              // Reset the wait count back to zero
+              cappingMotorWait = 0;
+              // Determine our min/max power range
+              switch( cappingMotorCycl ) {
+                  case 1  : minPower=0.20; maxPower=0.25; break;
+                  case 2  : minPower=0.20; maxPower=0.50; break;
+                  case 3  : minPower=0.20; maxPower=0.75; break;
+                  default : minPower=0.20; maxPower=1.00;
+              } // switch
+              // Compute motor power (automatically reduce as we approach target)
+              cappingMotorPower = ticksToGo / 450.0;
+              cappingMotorPower = Math.copySign( Math.min(Math.abs(cappingMotorPower), maxPower), cappingMotorPower );
+              cappingMotorPower = Math.copySign( Math.max(Math.abs(cappingMotorPower), minPower), cappingMotorPower );
+              cappingMotor.setPower( cappingMotorPower );
+          }
+        } // cappingMotorAuto
+    } // cappingArmPosRun
 
     /*--------------------------------------------------------------------------------------------*/
     /* wristPositionAuto()                                                                        */

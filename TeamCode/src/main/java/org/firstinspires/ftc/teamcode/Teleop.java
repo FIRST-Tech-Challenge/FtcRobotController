@@ -37,6 +37,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // UNUSED
     boolean gamepad2_share_last,      gamepad2_share_now      = false;  // PROBLEM!! reset freight arm controls
 
+    double  sweeperVelocity = 1900.0; // power 1.0 = 2200 counts/sec
     boolean sweeperRunning  = false;  // Intake sweeper forward (fast/continuous - for collecting)
     boolean sweeperEjecting = false;  // Intake sweeper reverse (fast/continuous - eject extra freight)
     boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
@@ -175,6 +176,9 @@ public abstract class Teleop extends LinearOpMode {
             processSweeperControls();
             processCappingArmControls();
 
+            // Execute any automatic movements
+            robot.cappingArmPosRun();
+
 /* DISABLE DRIVER-CENTRIC MODE FOR THIS SEASON
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -232,8 +236,7 @@ public abstract class Teleop extends LinearOpMode {
                     frontLeft, robot.frontLeftMotorVel, frontRight, robot.frontRightMotorVel );
             telemetry.addData("Back ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
-            telemetry.addData("Duck ", "%.2f (%.0f cts/sec)",
-                    duckVelocityStep,  robot.duckMotorVel );
+            telemetry.addData("Duck ", "%.2f (%.0f cts/sec)",  duckVelocityStep,  robot.duckMotorVel );
             telemetry.addData("Freight Arm", "%d cts %.2f mA", robot.freightMotorPos, robot.freightMotorAmps );
             telemetry.addData("Capping Arm", "%d cts %.2f mA", robot.cappingMotorPos, robot.cappingMotorAmps );
             telemetry.addData("Capping Wrist", "%.3f (commanded)", robot.wristServo.getPosition() );
@@ -333,12 +336,12 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
         if( gamepad2_square_now && !gamepad2_square_last) {
           if( sweeperEjecting ) {  // already reverse; toggle back to forward
-            robot.sweepMotor.setPower( 1.0 );  // ON (forward)
+            robot.sweepMotor.setVelocity( sweeperVelocity );  // ON (forward)
             sweeperRunning  = true;
             sweeperEjecting = false;
           }
           else {  // currently forward, so switch to reverse
-            robot.sweepMotor.setPower( -0.5 );  // ON (reverse)
+              robot.sweepMotor.setVelocity( -0.5 * sweeperVelocity);  // ON (reverse)
             sweeperRunning  = true;
             sweeperEjecting = true;
           }
@@ -354,7 +357,8 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     // NOTE: There are two limits that govern our maximum velocity:
     // 1) Motor capability - We can't exceed the velocity associated with 100% power.
-    //    For a 435rpm motor, 100% power is 2360 counts/sec
+    //    For a 435rpm motor,  100% power is 2360 counts/sec (single gecko wheel)
+    //    For a 1150rpm motor, 100% power is 2200 counts/sec (wall of wheels)
     // 2) Duck fly-off - Must remain below fly-off velocity until duck reaches the sweeper bar
     // The 1st limit is easily found with setPower(1.0) but the 2nd requires testing.
     void processDuckMotorControls() {
@@ -432,7 +436,7 @@ public abstract class Teleop extends LinearOpMode {
              collectorArmTimer.reset(); // start our timer
              collectorArmLowering = true;
              // automatically turn ON the sweeper as the arm is lowered
-             robot.sweepMotor.setPower( 1.0 );  // ON (forward)
+             robot.sweepMotor.setVelocity( sweeperVelocity );  // ON (forward)
              sweeperRunning = true;
         } // lower
 
@@ -619,6 +623,7 @@ public abstract class Teleop extends LinearOpMode {
     /* range of motion.                                                                */
     double determineCappingMotorPower( double percentInput ) {
         int countsFromVertical = robot.cappingMotorPos - robot.CAPPING_ARM_POS_VERTICAL;
+        double absPercentInput = Math.abs( percentInput );
         // The necessary min/max power range is determined by these inputs:
         // a) percentInput > 0 = rotation toward CAPPING_ARM_POS_GRAB (gamepad1.left_trigger) 
         //      countsFromVertical >= 0 = LOWERING the capping arm (need 5%+ power)
@@ -628,9 +633,10 @@ public abstract class Teleop extends LinearOpMode {
         //      countsFromVertical <  0 = LOWERING the capping arm (need 5%+ power)
         boolean raisingArm = ((percentInput > 0.0) && (countsFromVertical < 0)) ||
                              ((percentInput < 0.0) && (countsFromVertical >= 0));
-        double minPower = (raisingArm)? 0.10 : 0.05;
-        double maxPower = (raisingArm)? 1.00 : 0.40;
-        double computedPower = minPower + Math.abs(percentInput) * (maxPower - minPower);
+        double minPower = (raisingArm)? 0.30 : 0.30;
+//      double maxPower = (raisingArm)? 0.80 : 0.70;
+//      double computedPower = minPower + absPercentInput * (maxPower - minPower);
+        double computedPower = (absPercentInput <= 0.75)? minPower : (minPower + absPercentInput-0.75);
         // Apply the positive/negative sign from percentInput
         computedPower *= (percentInput > 0.0)? 1.0 : -1.0;
 //      telemetry.addData("CappingMotor", "%.2f", computedPower );
@@ -639,6 +645,10 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processCappingArmControls() {
+        double gamepad1_left_trigger  = gamepad1.left_trigger;
+        double gamepad1_right_trigger = gamepad1.right_trigger;
+        boolean manual_trigger_control = ((gamepad1_left_trigger  > 0.03) ||
+                                          (gamepad1_right_trigger > 0.03));
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
         if( gamepad1_cross_now && !gamepad1_cross_last)
         {
@@ -662,13 +672,13 @@ public abstract class Teleop extends LinearOpMode {
                 (robot.cappingMotorPos > midpoint2) )    /* currently GRAB  */
             {  // switch to CAP
             wristServoPos =  robot.WRIST_SERVO_CAP;
-            robot.cappingArmPosition( robot.CAPPING_ARM_POS_CAP, 0.70 );
+            robot.cappingArmPosInit( robot.CAPPING_ARM_POS_CAP );
             cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
             }
             else
             { // currently CAP; switch to STORE
               wristServoPos = robot.WRIST_SERVO_STORE;
-              robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.70 );
+              robot.cappingArmPosInit( robot.CAPPING_ARM_POS_STORE );
               cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
             }
         }
@@ -681,16 +691,49 @@ public abstract class Teleop extends LinearOpMode {
             if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_CAP )
             {  // currently STORE; switch to GRAB
               wristServoPos = robot.WRIST_SERVO_GRAB;
-              robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
+              robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
               cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
             }
             else
             { // currently GRAB; switch to STORE
               wristServoPos = robot.WRIST_SERVO_STORE;
-              robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.70 );
+              robot.cappingArmPosInit( robot.CAPPING_ARM_POS_STORE );
               cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
             }
         }
+        else if( manual_trigger_control || cappingArmTweaked ) {
+            // Abort any automatic movement is progress
+            robot.cappingMotorAuto = false;
+            cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;
+            // Does user want to lower
+            if( gamepad1_left_trigger > 0.03 ) {
+                // limit how far we can drive this direction
+                if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
+                    double motorPower = determineCappingMotorPower( +gamepad1_left_trigger );
+                    robot.cappingMotor.setPower( motorPower );
+                    cappingArmTweaked = true;
+                }
+                else {  // stop at the GRAB position
+                    robot.cappingMotor.setPower( 0.0 );
+                }
+            }
+            else if( gamepad1_right_trigger > 0.03 ) {
+                // limit how far we can drive this direction
+                if( robot.cappingMotorPos > 0 ) {
+                    double motorPower = determineCappingMotorPower( -gamepad1_right_trigger );
+                    robot.cappingMotor.setPower( motorPower );
+                    cappingArmTweaked = true;
+                }
+                else { // stop at the STORED position
+                    robot.cappingMotor.setPower( 0.0 );
+                }
+            }
+            else if( cappingArmTweaked ) {
+                robot.cappingMotor.setPower( 0.0 );
+                cappingArmTweaked = false;
+            }
+        } // manual control
+
         //===================================================================
         if( cappingArmCycleCount > CAPPING_CYCLECOUNT_SERVO ) {
             // nothing to do yet (just started moving)
@@ -705,46 +748,11 @@ public abstract class Teleop extends LinearOpMode {
             cappingArmCycleCount--;
         }
         else if( cappingArmCycleCount == CAPPING_CYCLECOUNT_CHECK ) {
-            if( robot.cappingMotor.isBusy() ) {
+            if( robot.cappingMotorAuto ) {
                 // still moving; hold at this cycle count
             }
-            else { // no longer busy; turn off motor power
-                robot.cappingMotor.setPower( 0.0 );
-                robot.cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;   // ensure we're reset
-                robot.writeCappingLog();
-            }
-        }
-        else { // cappingArmCycleCount == CAPPING_CYCLECOUNT_DONE
-            // arm must be idle; check for manual arm control
-            cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;   // ensure we're reset
-            double gamepad1_left_trigger  = gamepad1.left_trigger;
-            double gamepad1_right_trigger = gamepad1.right_trigger;
-            if( gamepad1_left_trigger > 0.03 ) {
-                // limit how far we can drive this direction
-                if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_GRAB ) {
-                    double motorPower = determineCappingMotorPower( +gamepad1_left_trigger );
-                    robot.cappingMotor.setPower( motorPower );
-                    cappingArmTweaked = true;
-                }
-                else {
-                    robot.cappingMotor.setPower( 0.0 );
-                }
-            }
-            else if( gamepad1_right_trigger > 0.03 ) {
-                // limit how far we can drive this direction
-                if( robot.cappingMotorPos > 0 ) {
-                    double motorPower = determineCappingMotorPower( -gamepad1_right_trigger );
-                    robot.cappingMotor.setPower( motorPower );
-                    cappingArmTweaked = true;
-                }
-                else {
-                    robot.cappingMotor.setPower( 0.0 );
-                }
-            }
-            else if( cappingArmTweaked ) {
-                robot.cappingMotor.setPower( 0.0 );
-                cappingArmTweaked = false;
+            else { // no longer busy; transition to DONE state
+                cappingArmCycleCount = CAPPING_CYCLECOUNT_DONE;
             }
         }
         //===================================================================
@@ -963,7 +971,7 @@ public abstract class Teleop extends LinearOpMode {
 //          rotation     = multSegLinearRot( -gamepad1.right_stick_x );
             yTranslation = -gamepad1.left_stick_y * 0.60;
             xTranslation =  gamepad1.left_stick_x * 0.60;
-            rotation     = -gamepad1.right_stick_x * 0.28;
+            rotation     = -gamepad1.right_stick_x * 0.33;
         }
         else {
             yTranslation = -gamepad1.left_stick_y;
