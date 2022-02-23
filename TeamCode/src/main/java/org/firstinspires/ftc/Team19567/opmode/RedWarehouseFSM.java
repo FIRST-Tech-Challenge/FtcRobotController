@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Red Warehouse FSM", group="Testing")
+@Autonomous(name="Red Warehouse FSM", group="Dababy")
 
 public class RedWarehouseFSM extends LinearOpMode {
 

@@ -25,6 +25,7 @@ import org.firstinspires.ftc.Team19567.util.PRESET_STATE;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
+import org.opencv.core.Mat;
 
 //Custom constants
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FORCE_SENSOR_THRESHOLD;
@@ -71,6 +72,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     //Constants
     private final static Gamepad.RumbleEffect endGameRumble = Utility_Constants.END_GAME_RUMBLE;
     private final static Gamepad.RumbleEffect boxSecured = Utility_Constants.BOX_SECURED_RUMBLE;
+    /* private TrajectorySequence redWarehouseSequence;
+    private TrajectorySequence blueWarehouseSequence; */
 
     //Variables
     private double armPos = 0;
@@ -81,6 +84,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private boolean isSlowmode = false;
     private boolean isCarouselEngaged = false;
     private boolean isIntaked = false;
+    private boolean redAlliance = true;
 
     //Objects
     private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
@@ -117,7 +121,27 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
 
         mechanisms.setModes();
 
-        chassis.setPoseEstimate(new Pose2d(0, 0, 0));
+        chassis.setPoseEstimate(new Pose2d(69,-69,0));
+
+        /*
+        redWarehouseSequence = chassis.trajectorySequenceBuilder(new Pose2d(69,-69,0)).addSpatialMarker(new Vector2d(20,-50), () -> {
+            mechanisms.moveIntake(0.4);
+            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
+        }).addSpatialMarker(new Vector2d(8.5,-39.5),() -> {
+            mechanisms.releaseServoMove(0.3);
+            mechanisms.moveIntake(0.0);
+        }).setReversed(true).splineTo(new Vector2d(15, -68),Math.toRadians(170)).splineTo(new Vector2d(8,-39),Math.toRadians(135))
+                .setReversed(false).build();
+
+        blueWarehouseSequence = chassis.trajectorySequenceBuilder(new Pose2d(69,69,0)).addSpatialMarker(new Vector2d(20,50), () -> {
+            mechanisms.moveIntake(0.4);
+            mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS, Utility_Constants.THIRD_LEVEL_POWER);
+        }).addSpatialMarker(new Vector2d(8.5,39.5),() -> {
+            mechanisms.releaseServoMove(0.3);
+            mechanisms.moveIntake(0.0);
+        }).setReversed(true).splineTo(new Vector2d(15, 68),Math.toRadians(-170)).splineTo(new Vector2d(8,39),Math.toRadians(-135))
+                .setReversed(false).build();
+         */
 
         telemetry.update();
     }
@@ -141,6 +165,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         //DRIVETRAIN
         chassis.update();
 
+        if(gamepad1.ps) {
+            redAlliance = !redAlliance;
+        }
+
         switch(currentState) {
             case DRIVER_CONTROL: {
                 double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y); //Gets the amount that we want to translate
@@ -159,18 +187,19 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 rightDCFront.setPower(rightFrontSpeed);
                 leftDCBack.setPower(leftBackSpeed);
                 rightDCBack.setPower(rightBackSpeed);
-                if(gamepad1.share) {
-                    chassis.setPoseEstimate(new Pose2d(0,0,0));
-                    TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(chassis.getPoseEstimate())
-                            .addSpatialMarker(new Vector2d(3,10), () -> {
-                                mechanisms.rotateArm(THIRD_LEVEL_POS,0.7);
-                            })
-                            .lineToSplineHeading(new Pose2d(6,24, Math.toRadians(225))).build();
-                    chassis.followTrajectorySequenceAsync(warehouseSequence);
+                /* if(gamepad1.share) {
+                    if(redAlliance) {
+                        chassis.setPoseEstimate(new Pose2d(69, -69, 0));
+                        chassis.followTrajectorySequenceAsync(redWarehouseSequence);
+                    }
+                    else {
+                        chassis.setPoseEstimate(new Pose2d(69, 69, 0));
+                        chassis.followTrajectorySequenceAsync(blueWarehouseSequence);
+                    }
                     currentState = TELEOP_STATE.AUTOMATION_ROADRUNNER_MOVEMENT;
                     telemetry.addData("State Machine","Moved to AUTOMATION_ROADRUNNER_MOVEMENT");
                     telemetry.update();
-                }
+                } */
                 break;
             }
             case AUTOMATION_ROADRUNNER_MOVEMENT: {

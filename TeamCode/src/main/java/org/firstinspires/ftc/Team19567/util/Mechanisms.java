@@ -39,6 +39,7 @@ public class Mechanisms {
     public void setModes() {
         armDC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armDC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armDC.setTargetPosition(0);
         armDC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armDC.setDirection(DcMotor.Direction.REVERSE);
         balanceServo.setDirection(Servo.Direction.REVERSE);

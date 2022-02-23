@@ -31,7 +31,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name="Extended Spline Test", group="Testing")
 
-public class SplineTest extends LinearOpMode {
+public class ExtendedSplineTest extends LinearOpMode {
     private Mechanisms mechanisms = null;
 
     @Override

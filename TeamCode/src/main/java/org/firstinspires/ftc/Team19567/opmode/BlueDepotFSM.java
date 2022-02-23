@@ -2,6 +2,7 @@ package org.firstinspires.ftc.Team19567.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -35,6 +36,7 @@ public class BlueDepotFSM extends LinearOpMode {
     private double chosenArmSpeed = 0.3;
     private double chosenTrajectoryX = -22;
     private double chosenTrajectoryY = 40;
+    private RevBlinkinLedDriver blinkin = null;
     private Mechanisms mechanisms = null;
 
     @Override
@@ -50,8 +52,9 @@ public class BlueDepotFSM extends LinearOpMode {
         mechanisms.setModes();
 
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
+        blinkin = hardwareMap.get(RevBlinkinLedDriver.class,"blinkin");
 
-        chassis.setPoseEstimate(new Pose2d(-34, 63, Math.toRadians(-90)));
+        chassis.setPoseEstimate(new Pose2d(-43, 64.5, Math.toRadians(-90)));
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
@@ -82,7 +85,7 @@ public class BlueDepotFSM extends LinearOpMode {
 
         switch(location) {
             case NO_ALLIANCE:
-            case ALLIANCE_FIRST: {
+            case ALLIANCE_THIRD: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
                 chosenTrajectoryX = -22;
@@ -100,11 +103,11 @@ public class BlueDepotFSM extends LinearOpMode {
                 telemetry.update();
                 break;
             }
-            case ALLIANCE_THIRD: {
+            case ALLIANCE_FIRST: {
                 chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
-                chosenTrajectoryX = -26.95;
-                chosenTrajectoryY = 44.95;
+                chosenTrajectoryX = -29.5;
+                chosenTrajectoryY = 47;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -118,22 +121,26 @@ public class BlueDepotFSM extends LinearOpMode {
                 telemetry.update();
             }
         }
+
         currentState = AUTO_STATE.MOVING_TO_HUB;
 
-        TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, 63, Math.toRadians(-90)))
-                .addSpatialMarker(new Vector2d(chosenTrajectoryX-2.5,chosenTrajectoryY+5),() -> {
+        TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-42.5, 64, Math.toRadians(-90)))
+                .addSpatialMarker(new Vector2d(chosenTrajectoryX-12,chosenTrajectoryY+14),() -> {
+                    mechanisms.moveIntake(0.4);
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
-                }).addSpatialMarker( new Vector2d(chosenTrajectoryX-0.5, chosenTrajectoryY+1), () -> {
+                }).addSpatialMarker( new Vector2d(chosenTrajectoryX, chosenTrajectoryY+0.5), () -> {
                     mechanisms.releaseServoMove(0.3);
-                }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,chosenTrajectoryY,Math.toRadians(180)))
+                    mechanisms.moveIntake(0);
+                }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,chosenTrajectoryY,Math.toRadians(-225)))
                 .build();
         TrajectorySequence moveToCarouselSequence = chassis.trajectorySequenceBuilder(preloadSequence.end())
                 .lineToSplineHeading(new Pose2d(-64,57,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .splineToConstantHeading(new Vector2d(60,25),Math.toRadians(0)).build();
+                .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0)).build();
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
+        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
         chassis.followTrajectorySequenceAsync(preloadSequence);
 
         master:while(opModeIsActive() && !isStopRequested()) {
@@ -144,7 +151,6 @@ public class BlueDepotFSM extends LinearOpMode {
 
             switch(currentState) {
                 case MOVING_TO_HUB: {
-                    mechanisms.moveIntake(0);
                     if(!chassis.isBusy()) {
                         timeout.reset();
                         telemetry.addData("State Machine","Moved to DELIVERING_FREIGHT");
@@ -155,7 +161,7 @@ public class BlueDepotFSM extends LinearOpMode {
                     break;
                 }
                 case DELIVERING_FREIGHT: {
-                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME+100) {
+                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME+200) {
                         telemetry.addData("State Machine","Moved to MOVING_TO_CAROUSEL");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_CAROUSEL;
@@ -198,12 +204,6 @@ public class BlueDepotFSM extends LinearOpMode {
                 default: {
                     currentState = AUTO_STATE.MOVING_TO_HUB;
                 }
-            }
-            if(!limitSwitch.isPressed()) {
-                mechanisms.moveIntake(0.1);
-            }
-            else {
-                mechanisms.moveIntake(0.0);
             }
             mechanisms.maintainBalance();
             chassis.update();
