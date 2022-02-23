@@ -404,7 +404,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         if(debug) {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
-            telemetryMap.put("raw heading", Math.toDegrees(heading));
+            telemetryMap.put("raw heading", Math.toDegrees(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS).firstAngle));
             telemetryMap.put("heading", Math.toDegrees(poseEstimate.getHeading()));
 
             if (trajectorySequenceRunner.isBusy()) {

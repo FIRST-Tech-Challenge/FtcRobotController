@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -9,6 +10,8 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
@@ -35,7 +38,9 @@ public class Crane implements Subsystem {
     public Turret turret;
 
     public Servo shoulderServo, elbowServo, wristServo;
+    private final DistanceSensor bucketDistanceSensor;
 
+    private double bucketDistance;
     private double shoulderTargetAngle, elbowTargetAngle, wristTargetAngle;
     private boolean dumping;
 
@@ -46,10 +51,12 @@ public class Crane implements Subsystem {
             shoulderServo = new ServoSim();
             elbowServo = new ServoSim();
             wristServo = new ServoSim();
+            bucketDistanceSensor = new DistanceSensorSim(100);
         } else {
             shoulderServo = hardwareMap.get(Servo.class, "firstLinkServo");
             elbowServo = hardwareMap.get(Servo.class, "secondLinkServo");
             wristServo = hardwareMap.get(Servo.class, "bucketServo");
+            bucketDistanceSensor = hardwareMap.get(DistanceSensor.class, "distBucket");
         }
 
         this.turret = turret;
@@ -65,9 +72,9 @@ public class Crane implements Subsystem {
       
         LOWEST_TIER(75,130,20, 1.5f, 130),
         MIDDLE_TIER(60,130,40, 1f, 150),
-        HIGH_TIER(24, 130,70, 0, 1f, 170),
-        HIGH_TIER_LEFT(10, 80,30,-80, 1f, 170),
-        HIGH_TIER_RIGHT(10, 80,40,80, 1f, 170),
+        HIGH_TIER(22, 125,70, 0, 1f, 170),
+        HIGH_TIER_LEFT(20, 125,70,-80, 1f, 170),
+        HIGH_TIER_RIGHT(20, 125,70,80, 1f, 170),
         TRANSFER(-45,-50,-20,0, 0.75f,0),
 
         CAP(30, 140,0,0, 1, 170),
@@ -150,6 +157,8 @@ public class Crane implements Subsystem {
 
     @Override
     public void update(Canvas fieldOverlay){
+        bucketDistance = bucketDistanceSensor.getDistance(DistanceUnit.INCH);
+
         articulate(articulation);
 
         if(shoulderTargetAngle > 180)
@@ -192,6 +201,8 @@ public class Crane implements Subsystem {
             telemetryMap.put("Shoulder Target PWM", shoulderServoValue(shoulderTargetAngle));
             telemetryMap.put("Elbow Target PWM", elbowServoValue(elbowTargetAngle));
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
+
+            telemetryMap.put("bucket distance", bucketDistance);
         }
 
         telemetryMap.put("Turret:", "");
@@ -271,5 +282,9 @@ public class Crane implements Subsystem {
     public Articulation getArticulation() { return articulation; }
 
     public boolean isDumping() { return dumping; }
+
+    public double getBucketDistance() {
+        return bucketDistance;
+    }
 }
 

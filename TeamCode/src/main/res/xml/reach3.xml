@@ -9,7 +9,7 @@
             <Servo name="bucketServo" port="2" />
             <Servo name="firstLinkServo" port="1" />
             <Servo name="secondLinkServo" port="0" />
-            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="distBucket" port="1" bus="3" />
         </LynxModule>
         <LynxModule name="Expansion Hub 2" port="2">
             <RevRobotics40HDHexMotor name="motorFrontLeft" port="1" />
@@ -20,6 +20,7 @@
             <Servo name="gripperServo" port="0" />
             <RevColorSensorV3 name="freightSensor" port="1" bus="1" />
             <REV_VL53L0X_RANGE_SENSOR name="distLength" port="2" bus="2" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

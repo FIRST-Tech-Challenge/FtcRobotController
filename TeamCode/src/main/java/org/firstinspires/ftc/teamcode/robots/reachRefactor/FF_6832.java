@@ -406,7 +406,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
-            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
+            robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 

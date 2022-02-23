@@ -24,7 +24,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
  * @author Mahesh Natamai
  */
 
-@Config
+@Config(value = "FFRobot")
 public class Robot implements Subsystem {
     public DriveTrain driveTrain;
     public Turret turret;
@@ -37,7 +37,7 @@ public class Robot implements Subsystem {
     private Articulation articulation;
     private final Map<Articulation, StateMachine> articulationMap;
 
-    private Vector2d shippingHub;
+    public static double BUCKET_TRIGGER_DISTANCE = 5;
 
     public Robot(HardwareMap hardwareMap, boolean simulated) {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -75,7 +75,6 @@ public class Robot implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
-        telemetryMap.put("shipping hub", shippingHub);
 
         return telemetryMap;
     }
@@ -97,6 +96,9 @@ public class Robot implements Subsystem {
 
         if (gripper.getPitchTargetPos() < 1500 && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && gripper.articulation == Gripper.Articulation.MANUAL)
             articulate(Articulation.AUTO_GRAB_AND_TRANSFER);
+
+        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation == Articulation.MANUAL)
+            articulate(Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
 
         DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getChassisLength(), driveTrain.getSwivelAngle(), driveTrain.getWheelVelocities(), turret.getTargetHeading(), crane.getShoulderTargetAngle(), crane.getElbowTargetAngle(), crane.getWristTargetAngle());
     }
@@ -146,9 +148,12 @@ public class Robot implements Subsystem {
     private StateMachine autoGrabAndTransfer = getStateMachine(new Stage())
             .addState(() -> gripper.articulate(Gripper.Articulation.LIFT))
             .addTimedState(1f, () -> {}, () -> {})
-            .addConditionalState(() -> crane.getArticulation() == Crane.Articulation.TRANSFER, (() -> gripper.articulate(Gripper.Articulation.TRANSFER)), (() -> true))
-            .addTimedState(1f, () -> {}, () -> {})
-            .addConditionalState(() -> crane.getArticulation() == Crane.Articulation.TRANSFER, (() -> crane.articulate(Crane.Articulation.HOME)), (() -> true) )
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addSingleState(() -> gripper.setIntakePower(1.0))
+            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addSingleState(() -> gripper.setIntakePower(0.0))
+            .addState(() -> crane.articulate(Crane.Articulation.HOME))
             .build();
 
     private StateMachine dumpAndSetCraneForTransfer = getStateMachine(new Stage())
@@ -159,7 +164,8 @@ public class Robot implements Subsystem {
             .build();
 
     private StateMachine transfer = getStateMachine(new Stage())
-            .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(1.0))
             .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
             .addSingleState(() -> gripper.setIntakePower(0.0))
