@@ -16,12 +16,15 @@ import java.util.Date;
 @Autonomous(name = "Red - Carousel (STATE)", group = "competition")
 public class RedCarouselOdo extends LinearOpMode {
 
-    final int SERVO_DROP_PAUSE=900;
+    final int SERVO_DROP_PAUSE = 900;
+    Pose2d position;
+    SampleMecanumDrive drive;
+    ElapsedTime elapsedTime;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
+        drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
         MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = drive.analyze();
@@ -34,7 +37,7 @@ public class RedCarouselOdo extends LinearOpMode {
 
         waitForStart();
 
-        ElapsedTime elapsedTime = new ElapsedTime();
+        elapsedTime = new ElapsedTime();
 
         long startTime = new Date().getTime();
         long time = 0;
@@ -74,14 +77,14 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation == MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT) {
             drive.pause(300);
         }
         drive.stopShippingElementCamera();
         drive.retract();
 
 //        To spin duck
-        Pose2d position = drive.getLocalizer().getPoseEstimate();
+        position = drive.getLocalizer().getPoseEstimate();
 
         TrajectorySequence toCarousel = drive.trajectorySequenceBuilder(position)
                 .lineToLinearHeading(new Pose2d(new Vector2d(-61.5, -56.5), Math.toRadians(90)))
@@ -90,7 +93,6 @@ public class RedCarouselOdo extends LinearOpMode {
 
         drive.intakeMotor.setPower(0.8);
         drive.jevilTurnCarousel(.5, 4); //can we go faster?
-
 
 
         TrajectorySequence getOffCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
@@ -108,7 +110,7 @@ public class RedCarouselOdo extends LinearOpMode {
 
 //        boolean hasDuck = drive
 
-drive.CV.duckWebcam.stopStreaming();
+        drive.CV.duckWebcam.stopStreaming();
 
         drive.pause(250);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
@@ -126,19 +128,23 @@ drive.CV.duckWebcam.stopStreaming();
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation == MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT) {
             drive.pause(300);
         }
         drive.retract();
 
 
+        gotToPark();
+
+    }
+
+    protected void gotToPark() {
         position = drive.getLocalizer().getPoseEstimate();
         Pose2d parkPosition = new Pose2d(new Vector2d(-62, -35), Math.toRadians(0));
         TrajectorySequence trajSeq7 = drive.trajectorySequenceBuilder(position)
                 .lineToLinearHeading(parkPosition)
                 .build();
         drive.followTrajectorySequence(trajSeq7);
-
     }
 
 
