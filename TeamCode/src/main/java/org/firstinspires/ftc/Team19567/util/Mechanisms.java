@@ -15,6 +15,8 @@ import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POTENTIOMET
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POW_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_SERVO_DEFAULT;
 
+import androidx.annotation.NonNull;
+
 public class Mechanisms {
     public DcMotor armDC;
     public DcMotor carouselLeft;
@@ -25,7 +27,7 @@ public class Mechanisms {
     public AnalogInput potentiometer;
     public Telemetry telemetry;
 
-    public Mechanisms(HardwareMap hardwareMap, Telemetry t) {
+    public Mechanisms(@NonNull HardwareMap hardwareMap, Telemetry t) {
         armDC = hardwareMap.get(DcMotor.class,"armDC");
         carouselLeft = hardwareMap.get(DcMotor.class,"carouselLeft");
         carouselRight = hardwareMap.get(DcMotor.class,"carouselRight");
