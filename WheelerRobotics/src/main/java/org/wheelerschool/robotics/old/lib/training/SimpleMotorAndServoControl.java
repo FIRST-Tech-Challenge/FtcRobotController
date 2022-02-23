@@ -1,10 +1,9 @@
-package org.wheelerschool.robotics.training;
+package org.wheelerschool.robotics.old.lib.training;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Simple Motor & Servo Control", group="Demos")

@@ -4,8 +4,8 @@ package org.wheelerschool.robotics.comp.test;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.wheelerschool.robotics.comp.CompBot;
-import org.wheelerschool.robotics.lib.StatefulButton;
+import org.wheelerschool.robotics.old.lib.CompBot;
+import org.wheelerschool.robotics.old.lib.StatefulButton;
 
 @TeleOp
 public class AdjustDrive extends OpMode {

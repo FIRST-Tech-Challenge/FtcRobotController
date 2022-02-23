@@ -27,19 +27,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.wheelerschool.robotics.training;
-
-import static java.lang.Math.pow;
+package org.wheelerschool.robotics.old.lib.training;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.sun.tools.javac.tree.DocTreeMaker;
 
 
 /**
@@ -55,93 +50,64 @@ import com.sun.tools.javac.tree.DocTreeMaker;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="servotest", group="Demos")
-public class servotest extends LinearOpMode {
+@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+@Disabled
+public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private Servo servo0;
-    private DcMotor arm;
-
-    private DcMotor motorFrontRight;
-    private DcMotor motorBackRight;
-    private DcMotor motorFrontLeft;
-    private DcMotor motorBackLeft;
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        servo0 = hardwareMap.get(Servo.class, "servo-0");
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        servo0.setDirection(Servo.Direction.FORWARD);
-        telemetry.addData("thing", servo0.getController());
-        telemetry.update();
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            double y = pow(-gamepad1.left_stick_y,3); // Remember, this is reversed!
-            double x = pow(gamepad1.left_stick_x * 1.1,3); // Counteract imperfect strafing
-            double rx = pow(gamepad1.right_stick_x,3);
+            // Setup a variable for each drive wheel to save power level for telemetry
+            double leftPower;
+            double rightPower;
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio, but only when
-            // at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            // Choose to drive using either Tank Mode, or POV Mode
+            // Comment out the method that's not used.  The default below is POV.
 
+            // POV Mode uses left stick to go forward, and right stick to turn.
+            // - This uses basic math to combine motions and is easier to drive straight.
+            double drive = -gamepad1.left_stick_y;
+            double turn  =  gamepad1.right_stick_x;
+            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
-
-
-            double arm_power = gamepad2.left_stick_y;
-            double servo_angle = gamepad2.right_stick_y/0.5;
-
-            // Tank Mode uses one stick
-            // to control each wheel.
+            // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
             // leftPower  = -gamepad1.left_stick_y ;
             // rightPower = -gamepad1.right_stick_y ;
 
-
-            arm.setPower(arm_power);
-
-            servo0.setPosition(servo_angle);
-
-
-            telemetry.addData("Servo", servo0.getPosition());
-            telemetry.addData("angle", servo_angle);
+            // Send calculated power to wheels
+            leftDrive.setPower(leftPower);
+            rightDrive.setPower(rightPower);
 
             // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }

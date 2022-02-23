@@ -1,13 +1,4 @@
-// Battery side of Control Hub is front and we care about the heading (in degrees, we have +-180)
-
 package org.wheelerschool.robotics.comp.auto;
-
-import static com.sun.tools.doclint.Entity.and;
-import static com.sun.tools.doclint.Entity.ge;
-import static com.sun.tools.doclint.Entity.pi;
-import static com.sun.tools.doclint.Entity.tau;
-import static java.lang.Math.floor;
-import static java.lang.Math.round;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -28,27 +19,39 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 
 @Autonomous
-public class AutoNav5 extends LinearOpMode {
-    // for next to carousel
+public class AutoNavBlueC extends LinearOpMode {
+    // for non next to caurousel
     Meccanum meccanum = new Meccanum();
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         meccanum.init(hardwareMap);
         waitForStart();
-        executeAutomaticSequence2();
+        executeAutomaticSequence1();
 
     }
-    private void executeAutomaticSequence2(){
+    private void executeAutomaticSequence1(){
+        // should get 22
 
         // auto for near carousel
-        // gotta replace 0 with tested vals
-        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
+        //FILL IN THE NON NEAR CAROUSEL HERE WITH FLIPPED VALS
 
-        meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
+        // here ur facing the warehouse
+        meccanum.motorDriveLeftEncoded(meccanum.NORMAL_SPEED, 800);
+        // <-
+        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 800);
+        meccanum.delay(1000);
+        // \/
+        meccanum.spinnySpinTime(meccanum.OPTIMAL_SPINNER_POWER, 1000);
+        meccanum.delay(1000);
+        // *
+        meccanum.motorDriveRightEncoded(meccanum.NORMAL_SPEED, 775);
+        meccanum.delay(1000);
+        // ->
 
-        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
+
 
     }
+
+
 
 }

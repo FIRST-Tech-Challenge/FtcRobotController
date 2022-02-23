@@ -1,9 +1,4 @@
-package org.wheelerschool.robotics.vision;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+package org.wheelerschool.robotics.old.lib;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,21 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-@TeleOp(name = "Platform Drive", group="test-plat")
-public class TestPlatDrive extends OpMode {
+public class BotVision {
+    private VuforiaTrackables targetsUltimateGoal;
 
-    DcMotor left;
-    DcMotor right;
-
-    // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-    private static final boolean PHONE_IS_PORTRAIT = false  ;
-
+    private static final boolean PHONE_IS_PORTRAIT = false;
 
     private static final String VUFORIA_KEY =
             "Ab7oYbj/////AAABmUWCVRgoZkuuu7bkLaZWztV7Ce6KfyDyGfPgSRuFHm3URYp9CqsXMGsvKUxaji17TFgwS/zkC66Lt1zEtXINDE58AeSA8f2gNcdr+pQO8hZvRmoIUjmniZ5Fr7IuPuHoz2cWgcPN8H8EJOviayojof5lroZ4A6HI9PXHowRW8GPkjFRJDOhY6GpapILDQRu4UxPNKqM6+diTjb2KkJn8XtGE5vxPdqRAS4dSPy9yRrCiAnwzTMRy+DaELRDsOl1sgaEOMzjlv1919iSxBUwQUTRRWeg13l14BemOfTgpCmpC2DbzoAujIBKolyeys0yXTLhI4ETJSOICAKp3wvhFwxpKFH1LCs+vIuTrxx+pACtK";
@@ -52,59 +43,38 @@ public class TestPlatDrive extends OpMode {
     // Class Members
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
+    private TFObjectDetector tfod = null;
 
+    /**
+     * This is the webcam we are to use. As with other hardware devices such as motors and
+     * servos, this device is identified using the robot configuration tool in the FTC application.
+     */
     WebcamName webcamName = null;
 
-    private boolean targetVisible = false;
+    private List<VuforiaTrackable> allTrackables;
+    public boolean targetVisible = false;
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
-
-    private VuforiaTrackables targetsUltimateGoal;
-    List<VuforiaTrackable> allTrackables;
-
 
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
-    private TFObjectDetector tfod;
-
-    @Override
-    public void init() {
-        left = hardwareMap.dcMotor.get("left");
-        left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        left.setDirection(DcMotorSimple.Direction.FORWARD);
-        right = hardwareMap.dcMotor.get("right");
-        right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        left.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        /*
-         * Retrieve the camera we are to use.
-         */
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
+    public BotVision(CompBot hw) {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
          * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
          */
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
 
-        /**
-         * We also indicate which camera on the RC we wish to use.
-         */
-        parameters.cameraName = webcamName;
+        parameters.cameraName = hw.webcam;
 
-        // Make sure extended tracking is disabled for this example.
         parameters.useExtendedTracking = false;
 
-        //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Load the data sets for the trackable objects. These particular data
@@ -199,59 +169,28 @@ public class TestPlatDrive extends OpMode {
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
 
-        /**  Let all the trackable listeners know where the phone is.  */
+        /*  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
 
-        /* TFOD */
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        /* TensorFlow initialization */
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters();
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    @Override
-    public void start() {
-        this.targetsUltimateGoal.activate();
-        if (tfod != null) {
-            tfod.activate();
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 1.78 or 16/9).
-
-            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            //tfod.setZoom(2.5, 1.78);
-        }
+    public void activate() {
+        targetsUltimateGoal.activate();
+        tfod.activate();
     }
 
-    @Override
-    public void loop() {
-        double fwd = Math.copySign(Math.pow(gamepad1.left_stick_y, 4), gamepad1.left_stick_y);
-        telemetry.addData("y", fwd);
-        double rotate = Math.copySign(Math.pow(gamepad1.left_stick_x, 4), gamepad1.left_stick_x);
-        telemetry.addData("x", rotate);
-
-        double mag = Math.abs(fwd)+Math.abs(rotate);
-        if (mag < 1) {
-            mag = mag = 1;
-        }
-
-
-        left.setPower((fwd+rotate)/mag);
-        right.setPower((fwd-rotate)/mag);
-
+    public OpenGLMatrix getLocation() {
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
             if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                telemetry.addData("Visible Target", trackable.getName());
                 targetVisible = true;
 
                 // getUpdatedRobotLocation() will return null if no new information is available since
@@ -264,46 +203,38 @@ public class TestPlatDrive extends OpMode {
             }
         }
 
+        return lastLocation;
+    }
+
+    public VectorF getLastTranslation() {
         // Provide feedback as to where the robot is located (if we know).
-        if (targetVisible) {
-            // express position (translation) of robot in inches.
-            VectorF translation = lastLocation.getTranslation();
-            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+        return (targetVisible) ? lastLocation.getTranslation() : null;
+    }
 
-            // express the rotation of the robot in degrees.
-            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-        }
-        else {
-            telemetry.addData("Visible Target", "none");
-        }
+    public Orientation getLastOrientation() {
+        return (targetVisible) ?
+                Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, RADIANS) : null;
+    }
 
+    public String ringDetect() {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
-
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
-                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                            recognition.getLeft(), recognition.getTop());
-                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                            recognition.getRight(), recognition.getBottom());
+                    return recognition.getLabel();
                 }
             }
         }
+
+        return null;
     }
 
-    @Override
-    public void stop() {
+    public void deactivate() {
+        tfod.shutdown();
         targetsUltimateGoal.deactivate();
-        if (tfod != null) {
-            tfod.shutdown();
-        }
     }
 }

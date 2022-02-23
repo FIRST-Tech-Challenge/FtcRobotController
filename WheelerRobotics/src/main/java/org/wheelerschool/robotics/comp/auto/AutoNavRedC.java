@@ -1,5 +1,3 @@
-// Battery side of Control Hub is front and we care about the heading (in degrees, we have +-180)
-
 package org.wheelerschool.robotics.comp.auto;
 
 import static com.sun.tools.doclint.Entity.and;
@@ -28,27 +26,55 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.wheelerschool.robotics.comp.chassis.Meccanum;
 
 @Autonomous
-public class AutoNav5 extends LinearOpMode {
-    // for next to carousel
+public class AutoNavRedC extends LinearOpMode {
+    // for non next to caurousel
     Meccanum meccanum = new Meccanum();
 
     @Override
     public void runOpMode() throws InterruptedException {
         meccanum.init(hardwareMap);
         waitForStart();
-        executeAutomaticSequence2();
-
+        while(opModeIsActive()){
+            executeAutomaticSequence1();
+        }
     }
-    private void executeAutomaticSequence2(){
+    private void executeAutomaticSequence1(){
+        // should get 22
+
 
         // auto for near carousel
         // gotta replace 0 with tested vals
-        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 0);
-
+        meccanum.closeServoFull();
+        // ()
+        meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 10);
+        // /\
+        meccanum.motorDriveLeftEncoded(meccanum.NORMAL_SPEED, 0);
+        // ->
+        meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 10);
+        // /\
+        meccanum.motorSpinRightEncoded(meccanum.NORMAL_SPEED, 0);
+        // <~
+        meccanum.moveArmTime(meccanum.ARM_MAX_SPEED, 1);
+        // |\ /\
+        meccanum.openServoFull();
+        // (_
+        meccanum.moveArmTime(meccanum.ARM_MAX_SPEED, -1);
+        // |\ \/
+        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 1);
+        // \/
+        meccanum.motorSpinLeftEncoded(meccanum.NORMAL_SPEED, 0);
+        // ~>
+        meccanum.motorDriveLeftEncoded(meccanum.NORMAL_SPEED, 1);
+        // ->
+        meccanum.motorDriveBackEncoded(meccanum.NORMAL_SPEED, 1);
+        // \/
         meccanum.spinnySpinEncoded(meccanum.OPTIMAL_SPINNER_POWER, 0);
-
-        meccanum.motorDriveRelativeAngleTime(0, 0, 0);
+        // *
+        meccanum.motorDriveForwardEncoded(meccanum.NORMAL_SPEED, 100);
+        // /\
 
     }
+
+
 
 }
