@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.util;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
@@ -10,12 +11,13 @@ import java.util.List;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 
+@Config
 public class DashboardUtil {
     private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
     private static final double ROBOT_RADIUS = 9; // in
     private static final double TURRET_RADIUS = 6;
     private static final double WRIST_RADIUS = 3;
-    private static final double VELOCITY_SCALE = 0.1;
+    public static double VELOCITY_SCALE = 0.1;
 
     private static final String ROBOT_COLOR = "Black";
     private static final String WHEEL_COLOR = "Red";

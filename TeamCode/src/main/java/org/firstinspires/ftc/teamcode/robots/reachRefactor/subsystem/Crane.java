@@ -72,7 +72,7 @@ public class Crane implements Subsystem {
       
         LOWEST_TIER(75,130,20, 1.5f, 130),
         MIDDLE_TIER(60,130,40, 1f, 150),
-        HIGH_TIER(22, 125,70, 0, 1f, 170),
+        HIGH_TIER(22, 125,70, 1f, 170),
         HIGH_TIER_LEFT(20, 125,70,-80, 1f, 170),
         HIGH_TIER_RIGHT(20, 125,70,80, 1f, 170),
         TRANSFER(-45,-50,-20,0, 0.75f,0),

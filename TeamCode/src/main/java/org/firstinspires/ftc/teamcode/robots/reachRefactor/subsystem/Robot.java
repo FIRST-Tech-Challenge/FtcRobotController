@@ -59,9 +59,8 @@ public class Robot implements Subsystem {
         articulationMap.put(Articulation.START, start);
         articulationMap.put(Articulation.START_END_GAME, startEnd);
         articulationMap.put(Articulation.TRANSFER, transfer);
-        articulationMap.put(Articulation.TRANSFER_AND_HIGH_TIER, transferAndHighTier);
         articulationMap.put(Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER, dumpAndSetCraneForTransfer);
-        articulationMap.put(Articulation.AUTO_GRAB_AND_TRANSFER, autoGrabAndTransfer);
+        articulationMap.put(Articulation.GRAB_AND_TRANSFER, grabAndTransfer);
 
         articulationMap.put(Articulation.AUTO_HIGH_TIER_RED, autoHighTierRed);
         articulationMap.put(Articulation.AUTO_HIGH_TIER_BLUE, autoHighTierBlue);
@@ -89,16 +88,16 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        for(Subsystem subsystem: subsystems)
-            subsystem.update(fieldOverlay);
+        if (gripper.getPitchTargetPos() < 1500 && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            articulation = Articulation.GRAB_AND_TRANSFER;
+
+        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation == Articulation.MANUAL)
+            articulation = Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER;
 
         articulate(articulation);
 
-        if (gripper.getPitchTargetPos() < 1500 && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && gripper.articulation == Gripper.Articulation.MANUAL)
-            articulate(Articulation.AUTO_GRAB_AND_TRANSFER);
-
-        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation == Articulation.MANUAL)
-            articulate(Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
+        for(Subsystem subsystem: subsystems)
+            subsystem.update(fieldOverlay);
 
         DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getChassisLength(), driveTrain.getSwivelAngle(), driveTrain.getWheelVelocities(), turret.getTargetHeading(), crane.getShoulderTargetAngle(), crane.getElbowTargetAngle(), crane.getWristTargetAngle());
     }
@@ -123,9 +122,9 @@ public class Robot implements Subsystem {
 
         // tele-op articulations
         TRANSFER,
-        TRANSFER_AND_HIGH_TIER,
         DUMP_AND_SET_CRANE_FOR_TRANSFER,
-        AUTO_GRAB_AND_TRANSFER,
+        GRAB_AND_TRANSFER,
+
         AUTO_HIGH_TIER_RED,
         AUTO_HIGH_TIER_BLUE,
         AUTO_MIDDLE_TIER_RED,
@@ -135,51 +134,53 @@ public class Robot implements Subsystem {
     }
 
     // Tele-Op articulations
-    private StateMachine transferAndHighTier = getStateMachine(new Stage())
-            .addState(() -> {
-                driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
-                return driveTrain.chassisLengthOnTarget();
-            })
-            .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
-            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
-            .addState(() -> crane.articulate(Crane.Articulation.HIGH_TIER))
-            .build();
-
-    private StateMachine autoGrabAndTransfer = getStateMachine(new Stage())
-            .addState(() -> gripper.articulate(Gripper.Articulation.LIFT))
-            .addTimedState(1f, () -> {}, () -> {})
+    private StateMachine grabAndTransfer = getStateMachine(new Stage())
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(1.0))
-            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(0.0))
-            .addState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .build();
 
     private StateMachine dumpAndSetCraneForTransfer = getStateMachine(new Stage())
-//            .addConditionalState(() -> crane.getArticulation() != Crane.Articulation.HOME, () -> crane.dump(), () -> true)
-            .addSingleState(() -> crane.dump())
-            .addTimedState(1f, () -> {}, () -> {})
-            .addState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addTimedState(1f, () -> crane.dump(), () -> {})
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .build();
 
     private StateMachine transfer = getStateMachine(new Stage())
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(1.0))
-            .addTimedState(1f, () -> gripper.articulate(Gripper.Articulation.TRANSFER), () -> {})
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(0.0))
-            .addState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .build();
 
+    // Game articulations
     private StateMachine init = getStateMachine(new Stage())
             .addSingleState(() -> gripper.lift())
-            .addState(() -> crane.articulate(Crane.Articulation.HOME)) //for visual confirmation that the crane is vertial and aligned
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addSimultaneousStates(
+                    () -> gripper.getArticulation() == Gripper.Articulation.MANUAL,
+                    () -> crane.getArticulation() == Crane.Articulation.MANUAL
+            )
             .build();
 
     private StateMachine start = getStateMachine(new Stage())
             .addSingleState(() -> gripper.lift())
-            .addState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addSimultaneousStates(
+                    () -> gripper.getArticulation() == Gripper.Articulation.MANUAL,
+                    () -> crane.getArticulation() == Crane.Articulation.MANUAL
+            )
             .build();
 
     private StateMachine startEnd = getStateMachine(new Stage())
@@ -198,13 +199,6 @@ public class Robot implements Subsystem {
         Vector2d shippingHub = targetPosition.getPose().vec();
         Vector2d diff = shippingHub.minus(turretPose);
         double turretAngle = Math.atan2(diff.getY(), diff.getX());
-//        double mag = diff.norm();
-//        shippingHub = turretPose.plus(diff.times((mag - hubRadius / 2) / mag));
-//        this.shippingHub = shippingHub;
-//        diff = shippingHub.minus(turretPose);
-//        turret.setTargetHeading(wrapAngle(360 - Math.toDegrees(wrapAngleRad(-turretAngle) - (-pose.getHeading() + Math.toRadians(180)))));
-//        turret.setTargetHeading(wrapAngle(180 + 360 - Math.toDegrees(wrapAngleRad(-turretAngle) - (-pose.getHeading() + Math.toRadians(180)))));
-//        turret.setTargetHeading(wrapAngle(360 - Math.toDegrees(wrapAngleRad(turretAngle) - (-pose.getHeading() + Math.toRadians(180)))));
         turret.setTargetHeading(wrapAngle(360 - Math.toDegrees(wrapAngleRad(turretAngle) - (pose.getHeading() + Math.toRadians(180)))));
 
         double dx = Math.hypot(diff.getX(), diff.getY());

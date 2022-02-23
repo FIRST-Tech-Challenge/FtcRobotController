@@ -58,8 +58,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
 //    public static double B = 0.01;
 //    public static double ZETA = 0;
-    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(5, 0, 0);
+    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0.8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.5, 0, 2);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -115,7 +115,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         super(TRACK_WIDTH, simulated);
         this.simulated = simulated;
 //        TrajectoryFollower follower = new RamseteFollower(B, ZETA, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 2);
-        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 2.0);
+        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         if(simulated) {
@@ -127,6 +127,12 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             swivelMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             duckSpinner = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor, duckSpinner);
+
+            AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
+            CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
+            HEADING_PID = new PIDCoefficients(0, 0, 0);
+
+            compensatedBatteryVoltage = 14.0;
         } else {
             chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distLength");
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -275,7 +281,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             swivelAngle = wrapAngleRad(swivelPosition / SWIVEL_TICKS_PER_REVOLUTION * Math.toRadians(360));
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
         }
-        batteryVoltageSensor.getVoltage();
 
         Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS);
         if(!imuOffsetsInitialized && imu.isGyroCalibrated()) {
@@ -404,7 +409,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         if(debug) {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
-            telemetryMap.put("raw heading", Math.toDegrees(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS).firstAngle));
             telemetryMap.put("heading", Math.toDegrees(poseEstimate.getHeading()));
 
             if (trajectorySequenceRunner.isBusy()) {

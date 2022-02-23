@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntConsumer;
@@ -84,8 +85,8 @@ public class FF_6832 extends OpMode {
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.2;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
-    public static double FORWARD_SCALING_FACTOR = 48; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = 4; // scales the target angular robot velocity from tele-op controls
+    public static double FORWARD_SCALING_FACTOR = 36; // scales the target linear robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 3; // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             MIN_CHASSIS_LENGTH,
             MIN_CHASSIS_LENGTH + (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,
@@ -121,6 +122,8 @@ public class FF_6832 extends OpMode {
     private int chassisDistanceLevelIndex;
     private boolean dynamicChassisLengthEnabled, endGameHandled;
     private double forward1, rotate1, forward2, rotate2;
+    private double velocityBoost;
+    public static double MAX_VELOCITY_BOOST = 1;
 
     // diagnostic state
     private DiagnosticStep diagnosticStep;
@@ -215,7 +218,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, false);
+        robot = new Robot(hardwareMap, true);
         alliance = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
@@ -369,11 +372,11 @@ public class FF_6832 extends OpMode {
     private void sendDriveCommands() {
         double forward, rotate;
         if(smoothingEnabled) {
-            forward = forwardSmoother.update(forward2 + forward1);
-            rotate = rotateSmoother.update(rotate2 + rotate1);
+            forward = forwardSmoother.update((forward2 + forward1) * velocityBoost);
+            rotate = rotateSmoother.update((rotate2 + rotate1) * velocityBoost);
         } else {
-            forward = forward1 + forward2;
-            rotate = rotate1 + rotate2;
+            forward = (forward1 + forward2) * velocityBoost;
+            rotate = (rotate1 + rotate2) * velocityBoost;
         }
         if(antiTippingEnabled)
             robot.driveTrain.setDrivePowerSafe(new Pose2d(forward, 0, rotate));
@@ -386,7 +389,7 @@ public class FF_6832 extends OpMode {
         if (stickyGamepad1.x)
             robot.gripper.set();
         if(stickyGamepad1.b)
-            robot.crane.dump();
+            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad1.a)
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
@@ -420,14 +423,15 @@ public class FF_6832 extends OpMode {
             double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward1 - forward2) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
             robot.driveTrain.setChassisLength(chassisLength);
         }
+        if(notTriggerDeadZone(gamepad1.left_trigger))
+            velocityBoost = (1 + gamepad1.left_trigger * MAX_VELOCITY_BOOST);
+        if(notTriggerDeadZone((gamepad2.left_trigger)))
+            velocityBoost = (1 + gamepad2.left_trigger * MAX_VELOCITY_BOOST);
+        if(!notTriggerDeadZone(gamepad1.left_trigger) && !notTriggerDeadZone(gamepad2.left_trigger))
+            velocityBoost = 1;
 
-        if(stickyGamepad1.left_trigger) {
-            if (alliance == Alliance.BLUE)
-                robot.articulate(Robot.Articulation.AUTO_HIGH_TIER_BLUE);
-            else
-                robot.articulate(Robot.Articulation.AUTO_HIGH_TIER_RED);
-        }
-
+        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
+            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
 
         handleArcadeDrive(gamepad1);
         handleArcadeDriveReversed(gamepad2);
@@ -546,10 +550,7 @@ public class FF_6832 extends OpMode {
 
         if (active) {
             long currentTime = System.currentTimeMillis();
-            if (gameState.isAutonomous() && (currentTime - startTime) * 1e-3 >= 30) {
-                robot.stop();
-                changeGameState(GameState.TELE_OP);
-            } else if (!endGameHandled && gameState == GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
+            if (!endGameHandled && gameState == GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
                 robot.articulate(Robot.Articulation.START_END_GAME);
                 endGameHandled = true;
             }
@@ -663,6 +664,14 @@ public class FF_6832 extends OpMode {
         telemetry.addLine(telemetryName);
         packet.addLine(telemetryName);
 
+        if(robot.driveTrain.getVoltage() <= 12.5) {
+            telemetryMap = new LinkedHashMap<>();
+            for(int i = 0; i < 20; i++) {
+                telemetryMap.put(i +
+                        (System.currentTimeMillis() / 500 % 2 == 0 ? "**BATTERY VOLTAGE LOW**" : "  BATTERY VOLTAGE LOW  "),
+                        (System.currentTimeMillis() / 500 % 2 == 0 ? "**CHANGE BATTERY ASAP!!**" : "  CHANGE BATTERY ASAP!!  "));
+            }
+        }
         for (Map.Entry<String, Object> entry : telemetryMap.entrySet()) {
             String line = Misc.formatInvariant("%s: %s", entry.getKey(), entry.getValue());
             if(numericalDashboardEnabled)
@@ -689,10 +698,6 @@ public class FF_6832 extends OpMode {
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
         // handling op mode telemetry
-        if(robot.driveTrain.getVoltage() <= 12.5) {
-            opModeTelemetryMap.put("'PUT A NEW FUCKING BATTERY IN!' - mista V", "");
-//            requestOpModeStop();
-        }
         opModeTelemetryMap.put("Active", active);
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);
@@ -704,6 +709,9 @@ public class FF_6832 extends OpMode {
         opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
 
         switch(gameState) {
+            case TELE_OP:
+                opModeTelemetryMap.put("velocity boost", velocityBoost);
+                break;
             case MANUAL_DIAGNOSTIC:
                 opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
                 break;
@@ -741,7 +749,7 @@ public class FF_6832 extends OpMode {
         handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
 
         dashboard.sendTelemetryPacket(packet);
-        telemetry.update();
+        CompletableFuture.runAsync(() -> telemetry.update());
 
         // handling dashboard changes
         forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);

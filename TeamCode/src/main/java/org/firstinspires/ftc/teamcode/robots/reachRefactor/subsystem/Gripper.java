@@ -45,7 +45,7 @@ public class Gripper implements Subsystem {
 
     private double freightDistance;
 
-    public Articulation articulation;
+    private Articulation articulation;
     private final Map<Gripper.Articulation, StateMachine> articulationMap;
 
     public Gripper(HardwareMap hardwareMap, boolean simulated){
@@ -156,6 +156,7 @@ public class Gripper implements Subsystem {
             telemetryMap.put("Open", open);
             telemetryMap.put("Up", up);
             telemetryMap.put("Freight Distance", freightDistance);
+            telemetryMap.put("articulation", articulation);
         }
 
         return telemetryMap;
@@ -195,4 +196,8 @@ public class Gripper implements Subsystem {
         this.pitchTargetPos = pitchTargetPos;
     }
     public void setIntakePower(double intakePower) { this.intakePower = intakePower; }
+
+    public Articulation getArticulation() {
+        return articulation;
+    }
 }
