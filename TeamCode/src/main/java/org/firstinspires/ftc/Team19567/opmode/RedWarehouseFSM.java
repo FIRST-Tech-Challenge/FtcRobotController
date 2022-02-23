@@ -37,9 +37,8 @@ public class RedWarehouseFSM extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private RevBlinkinLedDriver blinkin = null;
     private AUTO_STATE currentState = AUTO_STATE.DETECTING_OPENCV;
-    private TrajectorySequence chosenTrajectorySequence;
-    private int chosenArmPos = 600;
-    private double chosenArmSpeed = 0.3;
+    private int chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
+    private double chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
     private double chosenTrajectoryX = -1;
     private double chosenTrajectoryY = 39;
     private int delay = 0;
@@ -65,25 +64,7 @@ public class RedWarehouseFSM extends LinearOpMode {
 
         chassis.setPoseEstimate(new Pose2d(10, -63, Math.toRadians(90)));
 
-        TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
-                .addSpatialMarker(new Vector2d(8,-50), () -> {
-                    mechanisms.moveIntake(0.4);
-                    mechanisms.rotateArm(Utility_Constants.THIRD_LEVEL_POS,Utility_Constants.THIRD_LEVEL_POWER);
-                }).addSpatialMarker(new Vector2d(-1.5,-41), () -> {
-                    mechanisms.releaseServoMove(0.3);
-                    mechanisms.moveIntake(0);
-                }).lineToSplineHeading(new Pose2d(-1.5,-40.5,Math.toRadians(-45)))
-                .build();
-        TrajectorySequence firstReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
-            mechanisms.moveIntake(1.0);
-        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(60.5, -68))
-                /*
-                .splineTo(new Vector2d(14, -62),Math.toRadians(-30))
-                .splineTo(new Vector2d(67,-62.5),Math.toRadians(0))
-                 */
-                .build();
-        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(firstReturnSplineSequence.end()).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
+        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(60.5, -68,0)).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
             mechanisms.moveIntake(0);
         }).addSpatialMarker(new Vector2d(15.5,-60), () -> {
             mechanisms.moveIntake(0.4);
@@ -107,8 +88,66 @@ public class RedWarehouseFSM extends LinearOpMode {
         telemetry.addData("Status","Finished loading Roadrunner splines");
         telemetry.update();
 
+        while(!opModeIsActive()) {
+            location = pipeline.getLocation();
+            telemetry.addData("Location",location);
+            telemetry.update();
+        }
+
         waitForStart();
         if(isStopRequested()) return;
+
+        switch(location) {
+            case ALLIANCE_FIRST: {
+                chosenArmPos = Utility_Constants.SECOND_LEVEL_POS;
+                chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
+                chosenTrajectoryX = 6;
+                chosenTrajectoryY = -46.5;
+                telemetry.addData("OpenCV","First Level Detected");
+                telemetry.update();
+                break;
+            }
+            case ALLIANCE_SECOND: {
+                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
+                chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
+                chosenTrajectoryX = 2.75;
+                chosenTrajectoryY = -44.75;
+                telemetry.addData("OpenCV","Second Level Detected");
+                telemetry.update();
+                break;
+            }
+            case NO_ALLIANCE: {
+                chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
+                chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
+                chosenTrajectoryX = -1.5;
+                chosenTrajectoryY = -40.5;
+                telemetry.addData("OpenCV","Third Level Detected");
+                telemetry.update();
+                break;
+            }
+            default: {
+                location = LOCATION.ALLIANCE_THIRD;
+            }
+        }
+
+        TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
+                .addSpatialMarker(new Vector2d(chosenTrajectoryX+10,chosenTrajectoryY-14), () -> {
+                    mechanisms.moveIntake(0.4);
+                    mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
+                }).addSpatialMarker(new Vector2d(chosenTrajectoryX, chosenTrajectoryY-0.5), () -> {
+                    mechanisms.releaseServoMove(0.3);
+                    mechanisms.moveIntake(0);
+                }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,chosenTrajectoryY,Math.toRadians(-45)))
+                .build();
+        TrajectorySequence firstReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(30,-64), () -> {
+            mechanisms.moveIntake(1.0);
+        }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
+                .lineToSplineHeading(new Pose2d(12,-66.5,0)).strafeTo(new Vector2d(60.5, -68))
+                /*
+                .splineTo(new Vector2d(14, -62),Math.toRadians(-30))
+                .splineTo(new Vector2d(67,-62.5),Math.toRadians(0))
+                 */
+                .build();
 
         currentState = AUTO_STATE.MOVING_TO_HUB;
 

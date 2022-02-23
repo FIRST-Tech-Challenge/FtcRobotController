@@ -77,6 +77,7 @@ public class RedDepotFSM extends LinearOpMode {
             telemetry.addData("Location",location);
             telemetry.update();
         }
+
         if(!opModeIsActive() || isStopRequested()) return;
 
         waitForStart();
