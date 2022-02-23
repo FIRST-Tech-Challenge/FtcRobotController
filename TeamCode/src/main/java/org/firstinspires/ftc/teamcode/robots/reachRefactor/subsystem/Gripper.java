@@ -26,7 +26,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 public class Gripper implements Subsystem {
     public static int CLOSED = 1300;
     public static int RELEASE = 1700;
-    public static int OPEN = 1630;
+    public static int OPEN = 1500;
     public static int PITCH_TRANSFER = 2100;
     public static int PITCH_DOWN = 800;
     public static int PITCH_VERTICAL = 1800;

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor;
 
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Crane;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -8,14 +9,19 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.MovingStatistics;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -86,8 +92,8 @@ public class FF_6832 extends OpMode {
             MIN_CHASSIS_LENGTH + 2 * (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,
             MAX_CHASSIS_LENGTH
     };
-    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW = 5;
-    public static int DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST = 15;
+    public static double DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW = 0.5;
+    public static double DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST = 0.15;
     public static double DRIVE_VELOCITY_EXPONENT = 1;
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
     public static double ROTATE_SMOOTHING_FACTOR = 0.3;
@@ -120,6 +126,26 @@ public class FF_6832 extends OpMode {
     private DiagnosticStep diagnosticStep;
     private int diagnosticIndex;
 
+    // max angular tuner state
+    private double maxAngularVelocity, lastAngularVelocity, maxAngularAcceleration;
+    private long lastAngularTunerUpdateTime;
+    public static double ANGULAR_TUNER_RUNTIME = 4.0;
+
+    // max linear tuner state
+    private double maxVelocity, lastVelocity, maxAcceleration;
+    private long lastLinearTunerUpdateTime;
+    public static double LINEAR_TUNER_RUNTIME = 4.0;
+
+    // track width tuner state
+    public static double TRACK_WIDTH_TUNER_ANGLE = 180; // deg
+    public static int TRACK_WIDTH_TUNER_NUM_TRIALS = 5;
+    public static float TRACK_WIDTH_TUNER_DELAY = 0.5f; // s
+    double headingAccumulator, lastHeading;
+    int trackWidthTrial;
+    MovingStatistics trackWidthStats = new MovingStatistics(TRACK_WIDTH_TUNER_NUM_TRIALS);
+    StateMachine trackWidthTurn;
+    Stage trackWidthTurnStage = new Stage();
+
     // timing
     private long lastLoopClockTime, loopTime;
     private double averageLoopTime;
@@ -132,12 +158,16 @@ public class FF_6832 extends OpMode {
 
         TELE_OP("Tele-Op"),
         MANUAL_DIAGNOSTIC("Manual Diagnostic"),
+        MAX_ANGULAR_TUNER("Max Angular Tuner"),
+        MAX_LINEAR_TUNER("Max Linear Tuner"),
+        TRACK_WIDTH_TUNER("Track Width Tuner"),
+        CRANE_DEBUG("Crane Debug"),
 
-        BACK_AND_FORTH("Back And Forth", false),
-        SQUARE("Square", false),
-        TURN("Turn", false),
-        LENGTH_TEST("Length Test", false),
-        DIAGONAL_TEST("Diagonal Test", false);
+        BACK_AND_FORTH("Back And Forth"),
+        SQUARE("Square"),
+        TURN("Turn"),
+        LENGTH_TEST("Length Test"),
+        DIAGONAL_TEST("Diagonal Test");
 
         private final String name;
         private final boolean autonomous;
@@ -293,6 +323,17 @@ public class FF_6832 extends OpMode {
         initializing = false;
 
         auto.build();
+        trackWidthTurn = Utils.getStateMachine(trackWidthTurnStage)
+                .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(
+                        robot.driveTrain.trajectorySequenceBuilder(
+                                robot.driveTrain.getPoseEstimate()
+                        )
+                                .turn(TRACK_WIDTH_TUNER_ANGLE)
+                                .build()
+                ))
+                .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
+                .addTimedState(() -> TRACK_WIDTH_TUNER_DELAY, () -> {}, () -> {})
+                .build();
         auto.visionProvider.shutdownVision();
 
         robot.articulate(Robot.Articulation.START);
@@ -337,7 +378,7 @@ public class FF_6832 extends OpMode {
         if(antiTippingEnabled)
             robot.driveTrain.setDrivePowerSafe(new Pose2d(forward, 0, rotate));
         else
-            robot.driveTrain.setDrivePower(new Pose2d(forward, 0, rotate));
+            robot.driveTrain.setDriveVelocity(new Pose2d(forward, 0, rotate));
     }
 
     private void handleTeleOp() { // apple
@@ -345,7 +386,7 @@ public class FF_6832 extends OpMode {
         if (stickyGamepad1.x)
             robot.gripper.set();
         if(stickyGamepad1.b)
-            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
+            robot.crane.dump();
         if(stickyGamepad1.a)
             robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
@@ -365,7 +406,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
-            robot.crane.articulate(Crane.Articulation.HOME);
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
         if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 
@@ -474,6 +515,23 @@ public class FF_6832 extends OpMode {
         }
     }
 
+    private void handleCraneDebug() {
+        if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER);
+        if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
+            robot.crane.articulate(Crane.Articulation.MIDDLE_TIER);
+        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
+            robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
+        if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
+            robot.crane.articulate(Crane.Articulation.HOME);
+        if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
+            robot.articulate(Robot.Articulation.TRANSFER);
+        if(stickyGamepad1.x || stickyGamepad2.x) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
+        if(stickyGamepad1.b || stickyGamepad2.b) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
+            robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
+    }
+
     private void changeGameState(GameState state) {
         active = false;
         gameState = state;
@@ -501,6 +559,61 @@ public class FF_6832 extends OpMode {
                     break;
                 case MANUAL_DIAGNOSTIC:
                     handleManualDiagnostic();
+                    break;
+                case MAX_ANGULAR_TUNER:
+                    robot.driveTrain.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.driveTrain.setDrivePower(new Pose2d(0, 0, 1));
+
+                    if((currentTime - startTime) * 1e-3 < ANGULAR_TUNER_RUNTIME) {
+                        Pose2d poseVelocity = robot.driveTrain.getPoseVelocity();
+                        double angularVelocity = poseVelocity.getHeading();
+                        maxAngularVelocity = Math.max(angularVelocity, maxAngularVelocity);
+
+                        long currentUpdateTime = System.nanoTime();
+                        if(lastAngularTunerUpdateTime == 0)
+                            lastAngularTunerUpdateTime = currentUpdateTime;
+
+                        double angularAcceleration = (lastAngularVelocity - angularVelocity) / ((currentUpdateTime - lastAngularTunerUpdateTime) * 1e-9);
+                        lastAngularTunerUpdateTime = currentUpdateTime;
+                        maxAngularAcceleration = Math.max(angularAcceleration, maxAngularAcceleration);
+                        lastAngularVelocity = angularVelocity;
+                    }
+                    break;
+                case MAX_LINEAR_TUNER:
+                    robot.driveTrain.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.driveTrain.setDrivePower(new Pose2d(1, 0, 0));
+
+                    if((currentTime - startTime) * 1e-3 < LINEAR_TUNER_RUNTIME) {
+                        Pose2d poseVelocity = robot.driveTrain.getPoseVelocity();
+                        double velocity = poseVelocity.vec().norm();
+                        maxVelocity = Math.max(velocity, maxAngularVelocity);
+
+                        long currentUpdateTime = System.nanoTime();
+                        if(lastLinearTunerUpdateTime == 0)
+                            lastLinearTunerUpdateTime = currentUpdateTime;
+
+                        double acceleration = (lastVelocity - velocity) / ((currentUpdateTime - lastLinearTunerUpdateTime) * 1e-9);
+                        lastLinearTunerUpdateTime = currentUpdateTime;
+                        maxAcceleration = Math.max(acceleration, maxAcceleration);
+                        lastVelocity = velocity;
+                    }
+                    break;
+                case TRACK_WIDTH_TUNER:
+                    if(trackWidthTurn.execute()) {
+                        double trackWidth = TRACK_WIDTH * Math.toRadians(TRACK_WIDTH_TUNER_ANGLE) / headingAccumulator;
+                        trackWidthStats.add(trackWidth);
+                        trackWidthTurnStage.resetStage();
+                        if(trackWidthTrial < TRACK_WIDTH_TUNER_NUM_TRIALS) {
+                            trackWidthTrial++;
+                            trackWidthTurn.execute();
+                        }
+                    } else {
+                        double heading = robot.driveTrain.getPoseEstimate().getHeading();
+                        headingAccumulator += wrapAngleRad(heading - lastHeading);
+                    }
+                    break;
+                case CRANE_DEBUG:
+                    handleCraneDebug();
                     break;
                 case AUTONOMOUS:
                     if(auto.getStateMachine(startingPosition, true).execute())
@@ -551,7 +664,7 @@ public class FF_6832 extends OpMode {
         packet.addLine(telemetryName);
 
         for (Map.Entry<String, Object> entry : telemetryMap.entrySet()) {
-            String line = String.format("%s: %s", entry.getKey(), entry.getValue());
+            String line = Misc.formatInvariant("%s: %s", entry.getKey(), entry.getValue());
             if(numericalDashboardEnabled)
                 packet.put(entry.getKey(), entry.getValue());
             else
@@ -576,22 +689,37 @@ public class FF_6832 extends OpMode {
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
         // handling op mode telemetry
+        if(robot.driveTrain.getVoltage() <= 12.5) {
+            opModeTelemetryMap.put("'PUT A NEW FUCKING BATTERY IN!' - mista V", "");
+//            requestOpModeStop();
+        }
         opModeTelemetryMap.put("Active", active);
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);
             opModeTelemetryMap.put("Anti-Tipping Enabled", antiTippingEnabled);
             opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
         }
-        opModeTelemetryMap.put("Chassis Level Index", String.format("%d / %d", chassisDistanceLevelIndex, CHASSIS_LENGTH_LEVELS.length));
-        opModeTelemetryMap.put("Average Loop Time", String.format("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
-        opModeTelemetryMap.put("Last Loop Time", String.format("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+        opModeTelemetryMap.put("Chassis Level Index", Misc.formatInvariant("%d / %d", chassisDistanceLevelIndex, CHASSIS_LENGTH_LEVELS.length));
+        opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+        opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
 
         switch(gameState) {
             case MANUAL_DIAGNOSTIC:
                 opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
                 break;
+            case TRACK_WIDTH_TUNER:
+                opModeTelemetryMap.put("Effective track width", Misc.formatInvariant("%.2f (SE = %.3f)", trackWidthStats.getMean(), trackWidthStats.getStandardDeviation() / Math.sqrt(TRACK_WIDTH_TUNER_NUM_TRIALS)));
+                break;
+            case MAX_ANGULAR_TUNER:
+                opModeTelemetryMap.put("Max Angular Velocity", Math.toDegrees(maxAngularVelocity));
+                opModeTelemetryMap.put("Max Angular Acceleration", Math.toDegrees(maxAngularAcceleration));
+                break;
+            case MAX_LINEAR_TUNER:
+                opModeTelemetryMap.put("Max Velocity", maxVelocity);
+                opModeTelemetryMap.put("Max Acceleration", maxAcceleration);
+                break;
         }
-        handleTelemetry(opModeTelemetryMap,  String.format("(%d): %s", gameStateIndex, gameState.getName()), packet);
+        handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
 
         robot.update(packet.fieldOverlay());
 
@@ -603,7 +731,7 @@ public class FF_6832 extends OpMode {
         // handling vision telemetry
         Map<String, Object> visionTelemetryMap = auto.visionProvider.getTelemetry(debugTelemetryEnabled);
         visionTelemetryMap.put("Backend",
-                String.format("%s (%s)",
+                Misc.formatInvariant("%s (%s)",
                         VisionProviders.VISION_PROVIDERS[visionProviderIndex].getSimpleName(),
                         visionProviderFinalized ?
                                 "finalized" :

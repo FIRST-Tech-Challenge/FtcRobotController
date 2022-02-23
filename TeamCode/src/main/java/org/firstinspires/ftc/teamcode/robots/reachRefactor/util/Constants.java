@@ -23,16 +23,19 @@ public class Constants {
     public static final double HIGH_TIER_SHIPPING_HUB_HEIGHT = 20.25;
     public static final double MIDDLE_TIER_SHIPPING_HUB_HEIGHT = 16.625;
     public static final double LOW_TIER_SHIPPING_HUB_HEIGHT = 5.75;
+    public static final double HIGH_TIER_RADIUS = 6;
+    public static final double MIDDLE_TIER_RADIUS = 7.5;
+    public static final double LOW_TIER_RADIUS = 9;
 
     public static final double SHOULDER_AXLE_TO_GROUND_HEIGHT = 13.75;
 
-    // constraints
+    public static double DIFF_WHEEL_RADIUS = 6.5 / 16.0 + 2.991;
+    public static double SWERVE_WHEEL_RADIUS = 6.5 / 16.0 + 3.175;
+
+    // ratios
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
-//    public static double TICKS_PER_INCH = 31;
     public static double DIFF_TICKS_PER_REV = 768;
-    public static double DIFF_WHEEL_RADIUS = (6.5 / 16 + 2.991);
     public static double SWERVE_TICKS_PER_REV = 768;
-    public static double SWERVE_WHEEL_RADIUS = (6.5 / 16 + 3.175);
     public static double DIFF_TICKS_PER_INCH = DIFF_TICKS_PER_REV / (2 * Math.PI * DIFF_WHEEL_RADIUS);
     public static double SWERVE_TICKS_PER_INCH = SWERVE_TICKS_PER_REV / (2 * Math.PI * SWERVE_WHEEL_RADIUS);
 
@@ -52,9 +55,9 @@ public class Constants {
     public static final double MAX_RPM = 150;
     public static boolean USE_CUSTOM_VELOCITY_PID = true;
     public static PIDFCoefficients DIFF_MOTOR_VELOCITY_PID = new PIDFCoefficients(10, 3, 0,
-            getMotorVelocityF(MAX_RPM / 60 * DIFF_TICKS_PER_REV));
+            getMotorVelocityF(MAX_RPM / 60 * 1120));
     public static PIDFCoefficients SWERVE_VELOCITY_PID = new PIDFCoefficients(10, 3, 0,
-            getMotorVelocityF(MAX_RPM / 60 * SWERVE_TICKS_PER_REV));
+            getMotorVelocityF(MAX_RPM / 60 * 1120));
 
     //----------------------------------------------------------------------------------------------
     // Simulation

@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @Config
 public class Crane implements Subsystem {
-    public static int SHOULDER_HOME_PWM = 1500;
-    public static int ELBOW_HOME_PWM = 1550;
+    public static int SHOULDER_HOME_PWM = 1550;
+    public static int ELBOW_HOME_PWM = 1500;
     public static int WRIST_HOME_PWM = 1500;
 
     public static double SHOULDER_PWM_PER_DEGREE = 600.0 / 90.0;
@@ -65,7 +65,7 @@ public class Crane implements Subsystem {
       
         LOWEST_TIER(75,130,20, 1.5f, 130),
         MIDDLE_TIER(60,130,40, 1f, 150),
-        HIGH_TIER(24, 130,70, 1f, 170),
+        HIGH_TIER(24, 130,70, 0, 1f, 170),
         HIGH_TIER_LEFT(10, 80,30,-80, 1f, 170),
         HIGH_TIER_RIGHT(10, 80,40,80, 1f, 170),
         TRANSFER(-45,-50,-20,0, 0.75f,0),
@@ -152,6 +152,13 @@ public class Crane implements Subsystem {
     public void update(Canvas fieldOverlay){
         articulate(articulation);
 
+        if(shoulderTargetAngle > 180)
+            shoulderTargetAngle -= 360;
+        if(elbowTargetAngle > 180)
+            elbowTargetAngle -= 360;
+        if(wristTargetAngle > 180)
+            wristTargetAngle -= 360;
+
         shoulderServo.setPosition(servoNormalize(shoulderServoValue(shoulderTargetAngle)));
         elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
         wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
@@ -181,6 +188,10 @@ public class Crane implements Subsystem {
             telemetryMap.put("Shoulder Target Angle", shoulderTargetAngle);
             telemetryMap.put("Elbow Target Angle", elbowTargetAngle);
             telemetryMap.put("Wrist Target Angle", wristTargetAngle);
+
+            telemetryMap.put("Shoulder Target PWM", shoulderServoValue(shoulderTargetAngle));
+            telemetryMap.put("Elbow Target PWM", elbowServoValue(elbowTargetAngle));
+            telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
         }
 
         telemetryMap.put("Turret:", "");
@@ -242,7 +253,7 @@ public class Crane implements Subsystem {
     }
 
     public void setDumpPos(double dumpPos) {
-        this.currentDumpPos = dumpPos;
+        this.currentDumpPos = wrapAngle(dumpPos);
     }
 
     public double getShoulderTargetAngle() {

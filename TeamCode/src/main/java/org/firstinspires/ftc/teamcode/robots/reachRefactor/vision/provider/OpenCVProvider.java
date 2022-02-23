@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.Position;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.pipeline.OpenCVPipeline;
@@ -104,7 +105,7 @@ public class OpenCVProvider extends VisionProvider {
 
         if(debug && cameraOpened) {
             telemetryMap.put("Frame Count", camera.getFrameCount());
-            telemetryMap.put("FPS", String.format("%.2f", camera.getFps()));
+            telemetryMap.put("FPS", Misc.formatInvariant("%.2f", camera.getFps()));
             telemetryMap.put("Total frame time ms", camera.getTotalFrameTimeMs());
             telemetryMap.put("Pipeline time ms", camera.getPipelineTimeMs());
             telemetryMap.put("Overhead time ms", camera.getOverheadTimeMs());

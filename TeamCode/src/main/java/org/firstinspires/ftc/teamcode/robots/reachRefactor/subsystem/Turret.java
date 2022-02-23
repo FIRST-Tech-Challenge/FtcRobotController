@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
@@ -21,8 +22,10 @@ import java.util.Map;
 @Config(value = "FFTurret")
 public class Turret implements Subsystem {
 
-    private static final double TICKS_PER_DEGREE = 160.0 / 90.0;
+    public static final double TICKS_PER_DEGREE = 160.0 / 90.0;
     public static double TURRET_TOLERANCE = 2;
+
+    private final boolean simulated;
 
     private DcMotorEx motor;
 
@@ -30,6 +33,7 @@ public class Turret implements Subsystem {
     private double heading, targetHeading;
 
     public Turret(HardwareMap hardwareMap, boolean simulated) {
+        this.simulated = simulated;
         motor = simulated ? new DcMotorExSim(USE_MOTOR_SMOOTHING) : hardwareMap.get(DcMotorEx.class, "turret");
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setTargetPosition(motor.getCurrentPosition());
@@ -37,15 +41,15 @@ public class Turret implements Subsystem {
         motor.setPower(1);
     }
 
-    public void update(Canvas fieldOverlay){
-        if(targetHeading > 90)
-            targetHeading = 90;
-        else if(targetHeading < -90)
-            targetHeading = -90;
-
+    public void update(Canvas fieldOverlay) {
         heading = wrapAngle(motor.getCurrentPosition() / TICKS_PER_DEGREE);
+        if(heading > 180)
+            heading -= 360;
 
-        motor.setTargetPosition((int)(targetHeading * TICKS_PER_DEGREE));
+        targetHeading = Range.clip(targetHeading, -90, 90);
+        heading = simulated ? targetHeading : Range.clip(heading, -90, 90);
+
+        motor.setTargetPosition((int)((targetHeading * TICKS_PER_DEGREE)));
     }
 
     public void stop() {
@@ -53,14 +57,12 @@ public class Turret implements Subsystem {
         power = 0;
     }
 
-    public boolean setTargetHeading(double targetHeading){
+    public void setTargetHeading(double targetHeading){
         targetHeading = wrapAngle(targetHeading);
-        if(targetHeading > 180) {
-            targetHeading -= 180;
-            targetHeading *= -1;
-        }
+        if(targetHeading > 180)
+            targetHeading -= 360;
         this.targetHeading = targetHeading;
-        return isTurretNearTarget();
+        isTurretNearTarget();
     }
 
     public double getTargetHeading() {

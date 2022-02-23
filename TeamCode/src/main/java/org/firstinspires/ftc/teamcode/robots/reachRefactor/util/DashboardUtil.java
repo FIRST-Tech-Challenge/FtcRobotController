@@ -114,7 +114,7 @@ public class DashboardUtil {
         );
 
         canvas.strokeCircle(turretPose.getX(), turretPose.getY(), TURRET_RADIUS);
-        turretHeading = Math.toRadians(360 - turretHeading) + heading;
+        turretHeading = Math.toRadians(180 + -turretHeading) + heading;
         Vector2d u = new Vector2d(Math.cos(turretHeading), Math.sin(turretHeading));
         Vector2d v = u.times(TURRET_RADIUS);
         double x1 = turretPose.getX() + v.getX() / 2, y1 = turretPose.getY() + v.getY() / 2;

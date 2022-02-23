@@ -37,7 +37,7 @@ public class Robot implements Subsystem {
     private Articulation articulation;
     private final Map<Articulation, StateMachine> articulationMap;
 
-    private double theta1, theta2;
+    private Vector2d shippingHub;
 
     public Robot(HardwareMap hardwareMap, boolean simulated) {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -75,8 +75,7 @@ public class Robot implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
-        telemetryMap.put("theta1", theta1);
-        telemetryMap.put("theta2", theta2);
+        telemetryMap.put("shipping hub", shippingHub);
 
         return telemetryMap;
     }
@@ -88,9 +87,9 @@ public class Robot implements Subsystem {
 
     @Override
     public void update(Canvas fieldOverlay) {
-        for (LynxModule module : hubs) {
+        for (LynxModule module : hubs)
             module.clearBulkCache();
-        }
+
         for(Subsystem subsystem: subsystems)
             subsystem.update(fieldOverlay);
 
@@ -181,7 +180,7 @@ public class Robot implements Subsystem {
             .addTimedState(2, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
             .build();
 
-    private boolean handleAutoCrane(Position targetPosition, double targetHeight) {
+    private boolean handleAutoCrane(Position targetPosition, double targetHeight, double hubRadius) {
         Pose2d pose = driveTrain.getPoseEstimate();
         Vector2d turretPose = pose.vec().minus(
                 new Vector2d(
@@ -193,7 +192,14 @@ public class Robot implements Subsystem {
         Vector2d shippingHub = targetPosition.getPose().vec();
         Vector2d diff = shippingHub.minus(turretPose);
         double turretAngle = Math.atan2(diff.getY(), diff.getX());
-        turret.setTargetHeading(wrapAngle(180 - Math.toDegrees(wrapAngleRad(turretAngle) - (pose.getHeading() + Math.toRadians(180)))));
+//        double mag = diff.norm();
+//        shippingHub = turretPose.plus(diff.times((mag - hubRadius / 2) / mag));
+//        this.shippingHub = shippingHub;
+//        diff = shippingHub.minus(turretPose);
+//        turret.setTargetHeading(wrapAngle(360 - Math.toDegrees(wrapAngleRad(-turretAngle) - (-pose.getHeading() + Math.toRadians(180)))));
+//        turret.setTargetHeading(wrapAngle(180 + 360 - Math.toDegrees(wrapAngleRad(-turretAngle) - (-pose.getHeading() + Math.toRadians(180)))));
+//        turret.setTargetHeading(wrapAngle(360 - Math.toDegrees(wrapAngleRad(turretAngle) - (-pose.getHeading() + Math.toRadians(180)))));
+        turret.setTargetHeading(wrapAngle(360 - Math.toDegrees(wrapAngleRad(turretAngle) - (pose.getHeading() + Math.toRadians(180)))));
 
         double dx = Math.hypot(diff.getX(), diff.getY());
         double dy = targetHeight - SHOULDER_AXLE_TO_GROUND_HEIGHT;
@@ -209,29 +215,29 @@ public class Robot implements Subsystem {
             crane.setShoulderTargetAngle(shoulderTargetAngle);
             crane.setElbowTargetAngle(elbowTargetAngle);
             crane.setWristTargetAngle(wristAngle);
-            crane.setDumpPos(wrapAngle(wristAngle + 180));
+            crane.setDumpPos(wristAngle + 180);
         }
 
         return crane.isDumping();
     }
 
     private StateMachine autoHighTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT, HIGH_TIER_RADIUS))
             .build();
     private StateMachine autoHighTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT, HIGH_TIER_RADIUS))
             .build();
     private StateMachine autoMiddleTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT, MIDDLE_TIER_RADIUS))
             .build();
     private StateMachine autoMiddleTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT, MIDDLE_TIER_RADIUS))
             .build();
     private StateMachine autoLowTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT, LOW_TIER_RADIUS))
             .build();
     private StateMachine autoLowTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT, LOW_TIER_RADIUS))
             .build();
 
     public boolean articulate(Articulation articulation) {
