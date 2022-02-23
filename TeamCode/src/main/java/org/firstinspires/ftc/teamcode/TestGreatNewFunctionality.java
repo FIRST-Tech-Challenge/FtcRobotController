@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.io.File;
@@ -347,7 +346,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         } else if( gamepad1_square_now && !gamepad1_square_last ) {
             gotoPosition = true;
             // If logging for PIDF purposes, begin a new dataset now:
-            if( robot.cappingMotorPIDFlogging ) {
+            if( robot.cappingMotorLogging) {
                 robot.capMotorLogIndex  = 0;
                 robot.capMotorLogEnable = true;
                 robot.capMotorTimer.reset();

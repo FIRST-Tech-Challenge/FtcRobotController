@@ -7,7 +7,6 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -105,8 +104,8 @@ public class HardwareBothHubs
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean          cappingMotorPIDFlogging = true;     // only enable during development!!
-    public final static int CAPMOTORLOG_SIZE  = 128;            // 128 entries = 2+ seconds @ 16msec/60Hz
+    public boolean        cappingMotorLogging = true;  // only enable during development!!
+    public final static int CAPMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      capMotorLogTime   = new double[CAPMOTORLOG_SIZE];  // msec
     protected int[]         capMotorLogPos    = new int[CAPMOTORLOG_SIZE];     // encoder count
     protected double[]      capMotorLogVel    = new double[CAPMOTORLOG_SIZE];  // counts/sec
@@ -149,8 +148,8 @@ public class HardwareBothHubs
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean          freightMotorPIDFlogging = true;     // only enable during development!!
-    public final static int FRGMOTORLOG_SIZE  = 128;            // 128 entries = 2+ seconds @ 16msec/60Hz
+    public boolean        freightMotorLogging = true;  // only enable during development!!
+    public final static int FRGMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      frgMotorLogTime   = new double[FRGMOTORLOG_SIZE];  // msec
     protected int[]         frgMotorLogPos    = new int[FRGMOTORLOG_SIZE];     // encoder count
     protected double[]      frgMotorLogVel    = new double[FRGMOTORLOG_SIZE];  // counts/sec
@@ -474,7 +473,7 @@ public class HardwareBothHubs
     /*--------------------------------------------------------------------------------------------*/
     public void writeCappingLog() {
         // Are we even logging these events?
-        if( !cappingMotorPIDFlogging ) return;
+        if( !cappingMotorLogging) return;
         // Movement must be complete (disable further logging to memory)
         capMotorLogEnable = false;
         // Create a subdirectory based on DATE
@@ -516,7 +515,7 @@ public class HardwareBothHubs
     /*--------------------------------------------------------------------------------------------*/
     public void writeFreightLog() {
         // Are we even logging these events?
-        if( !freightMotorPIDFlogging ) return;
+        if( !freightMotorLogging) return;
         // Movement must be complete (disable further logging to memory)
         frgMotorLogEnable = false;
         // Create a subdirectory based on DATE
@@ -533,8 +532,9 @@ public class HardwareBothHubs
         try {
             freightLog = new FileWriter(filePath, false);
             // Log the current PIDF settings
-            PIDFCoefficients currPIDF = freightMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-            freightLog.write("FreightArm " + currPIDF.toString() + "\r\n");
+//          PIDFCoefficients currPIDF = freightMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+//          freightLog.write("FreightArm " + currPIDF.toString() + "\r\n");
+            freightLog.write("FreightArm\r\n");
             freightLog.write("Target position," + freightMotorTgt + "\r\n");
             // Log Column Headings
             freightLog.write("msec,pwr,mAmp,cts/sec,encoder\r\n");
@@ -624,7 +624,7 @@ public class HardwareBothHubs
         cappingMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
 
         // If logging instrumentation, begin a new dataset now:
-        if( cappingMotorPIDFlogging ) {
+        if(cappingMotorLogging) {
             capMotorLogIndex  = 0;
             capMotorLogEnable = true;
             capMotorTimer.reset();
@@ -657,7 +657,7 @@ public class HardwareBothHubs
         cappingMotorWait = 0;
 
         // If logging instrumentation, begin a new dataset now:
-        if( cappingMotorPIDFlogging ) {
+        if(cappingMotorLogging) {
             capMotorLogIndex  = 0;
             capMotorLogEnable = true;
             capMotorTimer.reset();
@@ -690,9 +690,8 @@ public class HardwareBothHubs
               cappingMotorWait = 0;
               // Determine our min/max power range
               switch( cappingMotorCycl ) {
-                  case 1  : minPower=0.20; maxPower=0.25; break;
-                  case 2  : minPower=0.20; maxPower=0.50; break;
-                  case 3  : minPower=0.20; maxPower=0.75; break;
+                  case 1  : minPower=0.20; maxPower=0.33; break;
+                  case 2  : minPower=0.20; maxPower=0.66; break;
                   default : minPower=0.20; maxPower=1.00;
               } // switch
               // Compute motor power (automatically reduce as we approach target)
@@ -736,7 +735,7 @@ public class HardwareBothHubs
         freightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
         
         // If logging instrumentation, begin a new dataset now:
-        if( freightMotorPIDFlogging ) {
+        if(freightMotorLogging) {
             frgMotorLogIndex  = 0;
             frgMotorLogEnable = true;
             frgMotorTimer.reset();
@@ -746,7 +745,75 @@ public class HardwareBothHubs
         freightMotor.setPower( motorPower );
 
     } // freightArmPosition
-    
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* freightArmPosInit()                                                                        */
+    /* - newPos = desired new arm position                                                        */
+    public void freightArmPosInit( int newPos )
+    {
+        // Current distance from target (number of encoder counts)
+        int ticksToGo = newPos - freightMotorPos;
+
+        // Are we ALREADY at the specified position?
+        if( Math.abs(ticksToGo) < 10 )
+            return;
+
+        // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
+        freightMotor.setPower( 0.0 );
+
+        // Establish a new target position & reset counters
+        freightMotorAuto = true;
+        freightMotorTgt  = newPos;
+        freightMotorCycl = 0;
+        freightMotorWait = 0;
+
+        // If logging instrumentation, begin a new dataset now:
+        if(freightMotorLogging) {
+            frgMotorLogIndex  = 0;
+            frgMotorLogEnable = true;
+            frgMotorTimer.reset();
+        }
+
+    } // freightArmPosInit
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* freightArmPosRun()                                                                         */
+    public void freightArmPosRun()
+    {
+        // Has an automatic movement been initiated?
+        if( freightMotorAuto ) {
+            // Keep track of how long we've been doing this
+            freightMotorCycl++;
+            // Current distance from target (number of encoder counts)
+            int ticksToGo = freightMotorTgt - freightMotorPos;
+            // Have we achieved the target?
+            if( Math.abs(ticksToGo) < 10 ) {
+                freightMotor.setPower( 0.0 );
+                if( ++freightMotorWait >= 5 ) {
+                    freightMotorAuto = false;
+                    writeFreightLog();
+                }
+            }
+            // No, still not within tolerance of desired target
+            else {
+                double minPower, maxPower, freightMotorPower;
+                // Reset the wait count back to zero
+                freightMotorWait = 0;
+                // Determine our min/max power range
+                switch( freightMotorCycl ) {
+                    case 1  : minPower=0.07; maxPower=0.33; break;
+                    case 2  : minPower=0.07; maxPower=0.66; break;
+                    default : minPower=0.07; maxPower=1.00;
+                } // switch
+                // Compute motor power (automatically reduce as we approach target)
+                freightMotorPower = ticksToGo / 450.0;
+                freightMotorPower = Math.copySign( Math.min(Math.abs(freightMotorPower), maxPower), freightMotorPower );
+                freightMotorPower = Math.copySign( Math.max(Math.abs(freightMotorPower), minPower), freightMotorPower );
+                freightMotor.setPower( freightMotorPower );
+            }
+        } // freightMotorAuto
+    } // freightArmPosRun
+
     /*--------------------------------------------------------------------------------------------*/
     /* NOTE ABOUT RANGE SENSORS:                                                                  */
     /* The REV 2m Range Sensor is really only 1.2m (47.2") maximum in DEFAULT mode. Depending on  */        
