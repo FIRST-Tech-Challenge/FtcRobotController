@@ -100,7 +100,9 @@ public class HardwareBothHubs
     public int          cappingMotorCycl = 0;          // go-to-position cycle count
     public int          cappingMotorWait = 0;          // go-to-position wait count (truly there! not just passing thru)
     public int          cappingMotorPos  = 0;          // current encoder count
+    public double       cappingMotorVel  = 0.0;        // encoder counts per second
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
+    public boolean      cappingMotorRamp = false;      // current is ramping down
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -140,11 +142,13 @@ public class HardwareBothHubs
     //====== FREIGHT ARM MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx freightMotor     = null;
     public boolean      freightMotorAuto = false;      // Automatic go-to-position in progress
-    public int          freightMotorTgt  = 0;          // RUN_TO_POSITION target encoder count
+    public int          freightMotorTgt  = 0;          // go-to-position target encoder count
     public int          freightMotorCycl = 0;          // go-to-position cycle count
     public int          freightMotorWait = 0;          // go-to-position wait count (truly there! not just passing thru)
     public int          freightMotorPos  = 0;          // current encoder count
+    public double       freightMotorVel  = 0.0;        // encoder counts per second
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
+    public boolean      freightMotorRamp = false;      // current is ramping down
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -343,10 +347,11 @@ public class HardwareBothHubs
         if (!transitionFromAutonomous) {
             freightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//      freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        freightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         freightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        PIDFCoefficients freightPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
-        freightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, freightPIDF );
+//      PIDFCoefficients freightPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
+//      freightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, freightPIDF );
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         if (!transitionFromAutonomous) {
@@ -439,16 +444,24 @@ public class HardwareBothHubs
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
         rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
         duckMotorVel       = duckMotor.getVelocity();
+
         cappingMotorPos    = cappingMotor.getCurrentPosition();
+        cappingMotorVel    = cappingMotor.getVelocity();
+        double cappingMotorAmpPrior = cappingMotorAmps;
         cappingMotorAmps   = cappingMotor.getCurrent( MILLIAMPS );
+        cappingMotorRamp   = ((cappingMotorAmpPrior - cappingMotorAmps) > 0.0);
+
         freightMotorPos    = freightMotor.getCurrentPosition();
+        freightMotorVel    = freightMotor.getVelocity();
+        double freightMotorAmpPrior = freightMotorAmps;
         freightMotorAmps   = freightMotor.getCurrent( MILLIAMPS );
+        freightMotorRamp   = ((freightMotorAmpPrior - freightMotorAmps) > 0.0);
 
         // Do we need to capture capping-arm instrumentation data?
         if( capMotorLogEnable ) {
            capMotorLogTime[capMotorLogIndex] = capMotorTimer.milliseconds();
            capMotorLogPos[capMotorLogIndex]  = cappingMotorPos;
-           capMotorLogVel[capMotorLogIndex]  = cappingMotor.getVelocity();
+           capMotorLogVel[capMotorLogIndex]  = cappingMotorVel;
            capMotorLogPwr[capMotorLogIndex]  = cappingMotor.getPower();
            capMotorLogAmps[capMotorLogIndex] = cappingMotorAmps;
            // If the log is now full, disable further logging
@@ -460,7 +473,7 @@ public class HardwareBothHubs
         if( frgMotorLogEnable ) {
            frgMotorLogTime[frgMotorLogIndex] = frgMotorTimer.milliseconds();
            frgMotorLogPos[frgMotorLogIndex]  = freightMotorPos;
-           frgMotorLogVel[frgMotorLogIndex]  = freightMotor.getVelocity();
+           frgMotorLogVel[frgMotorLogIndex]  = freightMotorVel;
            frgMotorLogPwr[frgMotorLogIndex]  = freightMotor.getPower();
            frgMotorLogAmps[frgMotorLogIndex] = freightMotorAmps;
            // If the log is now full, disable further logging
@@ -609,16 +622,16 @@ public class HardwareBothHubs
         // Are we ALREADY at the specified position?
         if( Math.abs(newPos-cappingMotorPos) < 20 )
            return;
-        
+
         // Update the target position
         cappingMotorTgt = newPos;
 
         // Ensure motor is stopped/stationary and abort any prior RUN_TO_POSITION command
         cappingMotor.setPower( 0.0 );
         cappingMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-   
+
         // Configure new target encoder count
-        cappingMotor.setTargetPosition(  cappingMotorTgt  );
+        cappingMotor.setTargetPosition( cappingMotorTgt );
 
         // Enable RUN_TO_POSITION mode
         cappingMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
@@ -629,7 +642,7 @@ public class HardwareBothHubs
             capMotorLogEnable = true;
             capMotorTimer.reset();
         }
-        
+
         // Initiate motor movement to the new position
         cappingMotor.setPower( motorPower );
 
@@ -642,11 +655,11 @@ public class HardwareBothHubs
     {
         // Current distance from target (number of encoder counts)
         int ticksToGo = newPos - cappingMotorPos;
-        
+
         // Are we ALREADY at the specified position?
         if( Math.abs(ticksToGo) < 10 )
            return;
-        
+
         // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
         cappingMotor.setPower( 0.0 );
 
@@ -671,7 +684,7 @@ public class HardwareBothHubs
     {
         // Has an automatic movement been initiated?
         if( cappingMotorAuto ) {
-          // Keep track of how long we've been doing this  
+          // Keep track of how long we've been doing this
           cappingMotorCycl++;
           // Current distance from target (number of encoder counts)
           int ticksToGo = cappingMotorTgt - cappingMotorPos;
@@ -688,14 +701,18 @@ public class HardwareBothHubs
               double minPower, maxPower, cappingMotorPower;
               // Reset the wait count back to zero
               cappingMotorWait = 0;
-              // Determine our min/max power range
+                // Determine our max power (don't go straight to 100% power on start-up)
               switch( cappingMotorCycl ) {
-                  case 1  : minPower=0.20; maxPower=0.33; break;
-                  case 2  : minPower=0.20; maxPower=0.66; break;
-                  default : minPower=0.20; maxPower=1.00;
-              } // switch
+                case 1  : maxPower=0.33; break;
+                case 2  : maxPower=0.66; break;
+                default : maxPower=1.00;
+                }
+                // Determine our min power:
+                // - Current ramping down implies motor/arm is coming to a stop (allow low power)
+                // - Current at zero or increasing means arm won't move unless given enough power
+                minPower = (cappingMotorRamp)? 0.01 : 0.30;
               // Compute motor power (automatically reduce as we approach target)
-              cappingMotorPower = ticksToGo / 450.0;
+              cappingMotorPower = ticksToGo / 416.0;  // 1620rpm = 103.8 counts per shaft revolution
               cappingMotorPower = Math.copySign( Math.min(Math.abs(cappingMotorPower), maxPower), cappingMotorPower );
               cappingMotorPower = Math.copySign( Math.max(Math.abs(cappingMotorPower), minPower), cappingMotorPower );
               cappingMotor.setPower( cappingMotorPower );
@@ -729,11 +746,11 @@ public class HardwareBothHubs
         freightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Configure new target encoder count
-        freightMotor.setTargetPosition(  freightMotorTgt  );
+        freightMotor.setTargetPosition( freightMotorTgt );
 
         // Enable RUN_TO_POSITION mode
         freightMotor.setMode(  DcMotor.RunMode.RUN_TO_POSITION );
-        
+
         // If logging instrumentation, begin a new dataset now:
         if(freightMotorLogging) {
             frgMotorLogIndex  = 0;
@@ -756,7 +773,7 @@ public class HardwareBothHubs
 
         // Are we ALREADY at the specified position?
         if( Math.abs(ticksToGo) < 10 )
-            return;
+           return;
 
         // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
         freightMotor.setPower( 0.0 );
@@ -799,14 +816,18 @@ public class HardwareBothHubs
                 double minPower, maxPower, freightMotorPower;
                 // Reset the wait count back to zero
                 freightMotorWait = 0;
-                // Determine our min/max power range
+                // Determine our max power (don't go straight to 100% power on start-up)
                 switch( freightMotorCycl ) {
-                    case 1  : minPower=0.07; maxPower=0.33; break;
-                    case 2  : minPower=0.07; maxPower=0.66; break;
-                    default : minPower=0.07; maxPower=1.00;
-                } // switch
+                case 1  : maxPower=0.33; break;
+                case 2  : maxPower=0.66; break;
+                default : maxPower=1.00;
+                }
+                // Determine our min power:
+                // - Current ramping down implies motor/arm is coming to a stop (allow low power)
+                // - Current at zero or increasing means arm won't move unless given enough power
+                minPower = (freightMotorRamp)? 0.01 : 0.30;
                 // Compute motor power (automatically reduce as we approach target)
-                freightMotorPower = ticksToGo / 450.0;
+                freightMotorPower = ticksToGo / 416.0;  // 1620rpm = 103.8 counts per shaft revolution
                 freightMotorPower = Math.copySign( Math.min(Math.abs(freightMotorPower), maxPower), freightMotorPower );
                 freightMotorPower = Math.copySign( Math.max(Math.abs(freightMotorPower), minPower), freightMotorPower );
                 freightMotor.setPower( freightMotorPower );
