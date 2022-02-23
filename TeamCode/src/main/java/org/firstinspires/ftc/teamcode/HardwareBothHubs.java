@@ -101,8 +101,9 @@ public class HardwareBothHubs
     public int          cappingMotorWait = 0;          // go-to-position wait count (truly there! not just passing thru)
     public int          cappingMotorPos  = 0;          // current encoder count
     public double       cappingMotorVel  = 0.0;        // encoder counts per second
+    public double       cappingMotorPwr  = 0.0;        // motor power setpoint (-1.0 to +1.0)
     public double       cappingMotorAmps = 0.0;        // current power draw (Amps)
-    public boolean      cappingMotorRamp = false;      // current is ramping down
+    public boolean      cappingMotorRamp = false;      // motor power setting is ramping down
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -147,8 +148,9 @@ public class HardwareBothHubs
     public int          freightMotorWait = 0;          // go-to-position wait count (truly there! not just passing thru)
     public int          freightMotorPos  = 0;          // current encoder count
     public double       freightMotorVel  = 0.0;        // encoder counts per second
+    public double       freightMotorPwr  = 0.0;        // motor power setpoint (-1.0 to +1.0)
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
-    public boolean      freightMotorRamp = false;      // current is ramping down
+    public boolean      freightMotorRamp = false;      // motor power setting is ramping down
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -424,6 +426,16 @@ public class HardwareBothHubs
     } // headingIMUradians
 
     /*--------------------------------------------------------------------------------------------*/
+    public boolean isPwrRampingDown( double priorPwr, double thisPwr ) {
+        // Check for POSITIVE power ramp-down (0.30 to 0.20)
+        boolean positiveRampDown = ((priorPwr >= 0.0) && (thisPwr >= 0.0) && (thisPwr < priorPwr));
+        // Check for NEGATIVE power ramp-down (-0.30 to -0.20)
+        boolean negativeRampDown = ((priorPwr <= 0.0) && (thisPwr <= 0.0) && (thisPwr > priorPwr));
+        // If either is true, we're ramping down power toward zero
+        return positiveRampDown || negativeRampDown;
+    } // isPwrRampingDown
+
+    /*--------------------------------------------------------------------------------------------*/
     public void readBulkData() {
         // For MANUAL mode, we must clear the BulkCache once per control cycle
         expansionHub.clearBulkCache();
@@ -447,22 +459,24 @@ public class HardwareBothHubs
 
         cappingMotorPos    = cappingMotor.getCurrentPosition();
         cappingMotorVel    = cappingMotor.getVelocity();
-        double cappingMotorAmpPrior = cappingMotorAmps;
         cappingMotorAmps   = cappingMotor.getCurrent( MILLIAMPS );
-        cappingMotorRamp   = ((cappingMotorAmpPrior - cappingMotorAmps) > 0.0);
+        double cappingMotorPwrPrior = cappingMotorPwr;
+        cappingMotorPwr    = cappingMotor.getPower();
+        cappingMotorRamp   = isPwrRampingDown( cappingMotorPwrPrior, cappingMotorPwr );
 
         freightMotorPos    = freightMotor.getCurrentPosition();
         freightMotorVel    = freightMotor.getVelocity();
-        double freightMotorAmpPrior = freightMotorAmps;
         freightMotorAmps   = freightMotor.getCurrent( MILLIAMPS );
-        freightMotorRamp   = ((freightMotorAmpPrior - freightMotorAmps) > 0.0);
+        double freightMotorPwrPrior = freightMotorPwr;
+        freightMotorPwr    = freightMotor.getPower();
+        freightMotorRamp   = isPwrRampingDown( freightMotorPwrPrior, freightMotorPwr );
 
         // Do we need to capture capping-arm instrumentation data?
         if( capMotorLogEnable ) {
            capMotorLogTime[capMotorLogIndex] = capMotorTimer.milliseconds();
            capMotorLogPos[capMotorLogIndex]  = cappingMotorPos;
            capMotorLogVel[capMotorLogIndex]  = cappingMotorVel;
-           capMotorLogPwr[capMotorLogIndex]  = cappingMotor.getPower();
+           capMotorLogPwr[capMotorLogIndex]  = cappingMotorPwr;
            capMotorLogAmps[capMotorLogIndex] = cappingMotorAmps;
            // If the log is now full, disable further logging
            if( ++capMotorLogIndex >= CAPMOTORLOG_SIZE )
@@ -474,7 +488,7 @@ public class HardwareBothHubs
            frgMotorLogTime[frgMotorLogIndex] = frgMotorTimer.milliseconds();
            frgMotorLogPos[frgMotorLogIndex]  = freightMotorPos;
            frgMotorLogVel[frgMotorLogIndex]  = freightMotorVel;
-           frgMotorLogPwr[frgMotorLogIndex]  = freightMotor.getPower();
+           frgMotorLogPwr[frgMotorLogIndex]  = freightMotorPwr;
            frgMotorLogAmps[frgMotorLogIndex] = freightMotorAmps;
            // If the log is now full, disable further logging
            if( ++frgMotorLogIndex >= FRGMOTORLOG_SIZE )
@@ -825,9 +839,9 @@ public class HardwareBothHubs
                 // Determine our min power:
                 // - Current ramping down implies motor/arm is coming to a stop (allow low power)
                 // - Current at zero or increasing means arm won't move unless given enough power
-                minPower = (freightMotorRamp)? 0.01 : 0.30;
+                minPower = (freightMotorRamp)? 0.01 : 0.40;
                 // Compute motor power (automatically reduce as we approach target)
-                freightMotorPower = ticksToGo / 416.0;  // 1620rpm = 103.8 counts per shaft revolution
+                freightMotorPower = ticksToGo / 520.0;  // 1620rpm = 103.8 counts per shaft revolution
                 freightMotorPower = Math.copySign( Math.min(Math.abs(freightMotorPower), maxPower), freightMotorPower );
                 freightMotorPower = Math.copySign( Math.max(Math.abs(freightMotorPower), minPower), freightMotorPower );
                 freightMotor.setPower( freightMotorPower );
