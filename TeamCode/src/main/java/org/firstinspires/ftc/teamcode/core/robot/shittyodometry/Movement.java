@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.IMU;
+import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.opmodes.util.MyToggleButtonReader;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
@@ -20,6 +21,7 @@ public class Movement {
     private final MyToggleButtonReader yReader;
     private final BNO055IMU imu;
     private final Encoder leftEncoder, frontEncoder;
+    private final AutoLift lift;
 
     private double headingOffset = 0;
     private double forwardOffset = 0;
@@ -29,7 +31,7 @@ public class Movement {
     private boolean firstTimeAuto = true;
 
 
-    public Movement(HardwareMap hardwareMap, GamepadEx gamepad) {
+    public Movement(HardwareMap hardwareMap, GamepadEx gamepad, AutoLift lift) {
         this.imu = IMU.create(hardwareMap);
         this.drive = new SampleMecanumDrive(hardwareMap);
         this.moveGamepad = gamepad;
@@ -37,6 +39,7 @@ public class Movement {
         this.leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "intake"));
         this.frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
         this.frontEncoder.setDirection(Encoder.Direction.REVERSE);
+        this.lift = lift;
     }
 
     public SampleMecanumDrive getDrive() {
@@ -78,6 +81,7 @@ public class Movement {
     private enum States {
         MOVEFORWARD,
         TURN,
+        DUMP,
         TURNBACK,
         MOVEBACK
     }
@@ -122,8 +126,14 @@ public class Movement {
                                 -0.4
                         ));
                     } else {
-                        state = States.TURNBACK;
+                        state = States.DUMP;
                         resetHeading();
+                        lift.setPosition(AutoLift.Positions.DUMPTSE);
+                    }
+                    break;
+                case DUMP:
+                    if (lift.getPosition() != AutoLift.Positions.INTAKING) {
+                        state = States.TURNBACK;
                     }
                     break;
                 case TURNBACK:

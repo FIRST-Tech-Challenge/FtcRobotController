@@ -84,7 +84,8 @@ public class BlueDrive extends LinearOpMode {
         // Initialize custom cancelable SampleMecanumDrive class
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
-        final Movement move = new Movement(hardwareMap, moveGamepad);
+        final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
+        final Movement move = new Movement(hardwareMap, moveGamepad, lift);
         final SampleMecanumDrive drive = move.getDrive();
 
         // will automatically run update method
@@ -97,10 +98,8 @@ public class BlueDrive extends LinearOpMode {
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseStorage.currentPose);
 
-        final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
         Thread toolThread = new Thread(() -> {
             final ControllerIntake intake = new ControllerIntake(hardwareMap, eventThread, toolGamepad, power == 1);
-
             while (!isStopRequested()) {
                 lift.update();
                 intake.update(lift.getPosition());
