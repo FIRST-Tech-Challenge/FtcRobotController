@@ -587,10 +587,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         return CV.duckPipeline.position;
     }
 
-    public MultipleCameraCV.WarehouseDeterminationPipeline.FreightPosition analyzeWarehouse(){
-        return CV.warehouseDeterminationPipeline.position;
-    }
-
 
 //    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
 //        return CV.pipeline.hub_position;

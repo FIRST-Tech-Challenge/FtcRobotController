@@ -48,7 +48,6 @@ public class MultipleCameraCV {
 
 //    Initial declaration of pipelines (One for each webcam we use)
     public DuckDeterminationPipeline duckPipeline;
-    public WarehouseDeterminationPipeline warehouseDeterminationPipeline;
     public ShippingElementDeterminationPipeline pipeline;
 
 //    Random useful tidbit of information, to access the camera stream, hit innit, then
@@ -117,7 +116,7 @@ public class MultipleCameraCV {
                  * away from the user.
                  */
                 telemetry.addData("Duck Webcam Opened", "Yes");
-                duckWebcam.setPipeline(warehouseDeterminationPipeline);
+                duckWebcam.setPipeline(duckPipeline);
                 duckWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("duck webcam startStreaming", "yes");
             }
@@ -560,186 +559,6 @@ public class MultipleCameraCV {
             return input;
         }
 
-    }
-
-    public static class WarehouseDeterminationPipeline extends OpenCvPipeline{
-        Telemetry telemetry;
-        public WarehouseDeterminationPipeline(Telemetry telemetry) {
-            this.telemetry = telemetry;
-        }
-
-        //    All possible regions to be detected in are stored in an enum
-        public enum FreightPosition {
-            LEFT2,
-            LEFT1,
-            CENTER,
-            RIGHT1,
-            RIGHT2,
-            SHRUG_NOISES
-        }
-
-
-        /*
-         * Some color constants used for displaying rectangles on the camera stream
-         */
-        static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
-        static final Scalar RED = new Scalar(255, 0, 0);
-
-
-        //        Sizes for subregions of the camera from which our data is extracted 640/5 = 128 / 360/3 = 120
-        static final int REGION_WIDTH = 120;
-        static final int REGION_HEIGHT = 120;
-
-        /*
-         * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
-         * are done like this.
-         */
-
-        ArrayList<Point> topLeftPoints = new ArrayList<Point>();
-        ArrayList<Point> bottomRightPoints = new ArrayList<Point>();
-
-
-        //        The threshold to which the averages are compared.
-        final int FREIGHT_PRESENT_THRESHOLD = 140;
-
-
-
-        /*
-         * Empty matrixes that data will be stored in
-         */
-
-        Mat LAB = new Mat();
-        Mat A = new Mat();
-        Mat B = new Mat();
-
-        // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile FreightPosition position = FreightPosition.SHRUG_NOISES;
-
-        /*
-         * This function takes the RGB frame, converts to LAB,
-         * and extracts the A channel to the 'A' variable
-         */
-        void inputToLAB(Mat input) {
-
-            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
-            Core.extractChannel(LAB, A, 1);
-            Core.extractChannel(LAB, B, 2);
-        }
-
-        //        Done in innit, this was a more complicated formation of subregions for detecting the duck, but essentially
-//        just assign the top left and bottom right points for each region you desire.
-        @Override
-        public void init(Mat firstFrame) {
-
-            topLeftPoints.add(new Point(40,0));
-            bottomRightPoints.add(new Point(topLeftPoints.get(0).x + REGION_WIDTH, topLeftPoints.get(0).y + REGION_HEIGHT));
-
-            int tempY = 40;
-            int tempX = 0;
-            for (int i = 1; i < 27; i++) {
-                if (tempX == 520) {
-                    tempX = 40;
-                    tempY += REGION_HEIGHT;
-                } else {
-                    tempX += REGION_WIDTH/2;
-                }
-                topLeftPoints.add(new Point(tempX,tempY));
-                bottomRightPoints.add(new Point(tempX + REGION_WIDTH, tempY + REGION_HEIGHT));
-            }
-
-            inputToLAB(firstFrame);
-
-
-        }
-
-        //        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutly essential to CV functioning
-        @Override
-        public Mat processFrame(Mat input) {
-            inputToLAB(input);
-
-//            Declare list of regions
-            ArrayList<Mat> region = new ArrayList<Mat>();
-
-
-//            Put the necessary data from the frame to each region
-            for (int i = 0; i<27; i++) {
-                region.add(B.submat(new Rect(topLeftPoints.get(i), bottomRightPoints.get(i))));
-            }
-
-            ArrayList<Integer> regionAvgs = new ArrayList<Integer>();
-
-            for (int i = 0; i<27; i++) {
-                regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
-            }
-
-//              This is what displays the rectangles to the camera stream on the drive hub
-            for (int i = 0; i<27; i++) {
-                Imgproc.rectangle(
-                        input, // Buffer to draw on
-                        topLeftPoints.get(i), // First point which defines the rectangle
-                        bottomRightPoints.get(i), // Second point which defines the rectangle
-                        RED, // The color the rectangle is drawn in
-                        3); // Thickness of the rectangle lines
-
-            }
-
-//            The next several lines determine which region has the highest B average.
-            int indexOfMaximumBAvg = 0;
-
-            for (int i = 0; i<27; i++) {
-                if (regionAvgs.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
-                    indexOfMaximumBAvg = i;
-                }
-            }
-
-            int levelOfWarehouse = 0;
-            int columnOfWarehouse = 0;
-//            Display telemetry
-            telemetry.addData("Warehouse B Averages", regionAvgs);
-            telemetry.addData("Index of highest likelihood.", indexOfMaximumBAvg);
-
-//            Fix indexes (Regions are stacked 11 to a row)
-            if (regionAvgs.get(indexOfMaximumBAvg) >= FREIGHT_PRESENT_THRESHOLD) {
-                if (indexOfMaximumBAvg > 8) {
-                    columnOfWarehouse = indexOfMaximumBAvg - 9;
-                    levelOfWarehouse = 2;
-                } else if (indexOfMaximumBAvg > 17) {
-                    columnOfWarehouse = indexOfMaximumBAvg - 18;
-                    levelOfWarehouse = 1;
-                } else {
-                    levelOfWarehouse = 0;
-                }
-            } else {
-                position = FreightPosition.SHRUG_NOISES; // Default enum result. Aptly named
-            }
-
-            if (levelOfWarehouse == 0) {
-                for (int i = 0; i<9; i++) {
-                    if (regionAvgs.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
-                        indexOfMaximumBAvg = i;
-                    }
-                }
-            } else if (levelOfWarehouse == 1) {
-                for (int i = 0; i<9; i++) {
-                    if (regionAvgs.get(i+9) >= regionAvgs.get(indexOfMaximumBAvg)) {
-                        indexOfMaximumBAvg = i;
-                    }
-                }
-            } else if (levelOfWarehouse == 2) {
-                for (int i = 0; i<9; i++) {
-                    if (regionAvgs.get(i+18) >= regionAvgs.get(indexOfMaximumBAvg)) {
-                        indexOfMaximumBAvg = i;
-                    }
-                }
-            }
-            position = WarehouseDeterminationPipeline.FreightPosition.values()[indexOfMaximumBAvg];
-
-            telemetry.addData("Warehouse ideal position", position);
-
-
-            return input;
-        }
 
     }
 
