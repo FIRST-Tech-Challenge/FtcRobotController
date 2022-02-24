@@ -204,7 +204,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
                 }
                 case MOVING_TO_WAREHOUSE: {
                     mechanisms.rotateArm(0,Utility_Constants.GOING_DOWN_POWER);
-                    if(freightCount >= 3) {
+                    if(freightCount >= 2) {
                         telemetry.addData("State Machine","Moved to PATH_FINISHED");
                         telemetry.update();
                         currentState = AUTO_STATE.PATH_FINISHED;

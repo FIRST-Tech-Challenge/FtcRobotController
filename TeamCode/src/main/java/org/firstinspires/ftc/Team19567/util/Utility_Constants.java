@@ -7,12 +7,14 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class Utility_Constants {
     //GENERAL_CONSTANTS
     public static double PPR_RATIO = 1.95509087; //ratio of old encoder values to current encoder values
-    public static double INTAKE_SPEED = 1.0; //speed to set the intake motor to
-    //MULTIPLIERS
+    public static double INTAKE_SPEED = 1.0; //speed to set the intake motor to when intaking freight
+    public static double EJECTION_SPEED = -0.6; //speed to eject freight at
+    //MULTIPLIERS/SENSITIVITIES
     public static double TURN_SENSITIVITY = 0.9; //driver-controlled sensitivity for turning
     public static double STRAFE_SENSITIVITY = 1.0; //driver-controlled sensitivity for strafing
     public static double MAX_SENSITIVITY = 1.0; //driver-controller overall sensitivity, basically
     public static double SLOWMODE_MULT = 0.3; //speed multiplier during SlowMode
+    public static double SERVO_SENSITIVITY = 0.05; //sensitivity for release servo during manual operation
     //INTERNAL ARM VALUES
     private static double _firstLevelPos = 850; //original encoder values for first level of alliance hub/shared hub
     private static double _secondLevelPos = 750; //original encoder values for second level of alliance hub/shared hub

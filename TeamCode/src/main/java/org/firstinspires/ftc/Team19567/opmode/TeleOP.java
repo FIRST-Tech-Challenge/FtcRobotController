@@ -325,8 +325,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
         //SERVOS
-        if(gamepad1.dpad_down) releaseServoPos = Range.clip(releaseServoPos-0.01,releaseServo.MIN_POSITION,0.8);
-        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+0.01,releaseServo.MIN_POSITION,0.8);
+        if(gamepad1.dpad_down) releaseServoPos = Range.clip(releaseServoPos-Utility_Constants.SERVO_SENSITIVITY,releaseServo.MIN_POSITION,0.8);
+        else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+Utility_Constants.SERVO_SENSITIVITY,releaseServo.MIN_POSITION,0.8);
         if(gamepad2.right_bumper) releaseServoPos = 0.64;
         else if(gamepad2.dpad_down) releaseServoPos = 0.38;
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000 && runtime.milliseconds() <= 120000)) {
@@ -341,7 +341,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) {
             if(!isIntaked) {
                 gamepad1.runRumbleEffect(boxSecured);
-                mechanisms.moveIntake(-INTAKE_SPEED);
+                mechanisms.moveIntake(Utility_Constants.EJECTION_SPEED);
                 intakeTimeout.reset();
             }
             if(intakeTimeout.milliseconds() >= Utility_Constants.INTAKE_TIME) {
