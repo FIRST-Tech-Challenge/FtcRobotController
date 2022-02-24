@@ -51,29 +51,29 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.TICKS_PER_REV;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.kV;
-import static org.firstinspires.ftc.masters.drive.DriveConstants.encoderTicksToInches;
 import static java.lang.Math.abs;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TICKS_PER_REV;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TRACK_WIDTH;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.encoderTicksToInches;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kA;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kStatic;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.  kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class SampleMecanumDriveDeadWheels extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(7, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.14;
+    public static double LATERAL_MULTIPLIER = 60/58.5;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -100,7 +100,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     protected final List<DcMotorEx> motors;
 
-    protected final BNO055IMU imu;
+    //protected final BNO055IMU imu;
     protected final VoltageSensor batteryVoltageSensor;
     protected LinearOpMode opmode;
     public MultipleCameraCV CV;
@@ -111,11 +111,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public Pose2d position;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public SampleMecanumDriveDeadWheels(HardwareMap hardwareMap) {
         this(hardwareMap, null, null);
     }
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, LinearOpMode opmode, Telemetry telemetry) {
+    public SampleMecanumDriveDeadWheels(HardwareMap hardwareMap, LinearOpMode opmode, Telemetry telemetry) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
         this.opmode = opmode;
         this.hardwareMap = hardwareMap;
@@ -131,16 +131,16 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-
-        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
-        // upward (normal to the floor) using a command like the following:
-
-        BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
+//        // TODO: adjust the names of the following hardware devices to match your configuration
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
+//
+//        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
+//        // upward (normal to the floor) using a command like the following:
+//
+//        BNO055IMUUtil.remapAxes(imu, AxesOrder.XZY, AxesSigns.NPN);
 
 
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
@@ -190,7 +190,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
@@ -766,10 +766,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontRight.setPower(v3);
     }
 
-    @Override
-    public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
-    }
 
     @Override
     public Double getExternalHeadingVelocity() {
@@ -796,7 +792,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // expected). This bug does NOT affect orientation. 
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) -imu.getAngularVelocity().xRotationRate;
+        return (double) 0;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
@@ -845,21 +841,21 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
 
-    public boolean toLineBlueTeleop(double seconds){
-        boolean found = false;
-        setMotorPowers(.4,.4,.4,.4);
+    public void toLineBlueTeleop(double seconds){
+        setMotorPowers(.5,.5,.5,.5);
         long startTime = new Date().getTime();
         long time = 0;
         while (time < seconds * 1000 && this.opmode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
             if (colorSensorLeft.alpha() > 400 || colorSensorRight.alpha() > 400) {
                 position = new Pose2d(new Vector2d(31, 66),Math.toRadians(180));
-                setPoseEstimate(position);
-                found= true;
                 break;
             }
         }
-        return found;
+    }
+
+    public double getRawExternalHeading() {
+        return 0;
     }
 
 }

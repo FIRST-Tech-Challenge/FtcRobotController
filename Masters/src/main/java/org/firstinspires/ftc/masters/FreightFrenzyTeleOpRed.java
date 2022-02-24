@@ -5,11 +5,9 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -37,6 +35,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     DcMotor linearSlideMotor = null;
 
     Servo dumpServo = null;
+    Servo capServo = null;
 
     DistanceSensor distanceSensorIntake, distanceSensorTop;
 
@@ -78,22 +77,27 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     protected double vel2Max=0;
     protected double vel1Max=0;
 
+    protected final double capServoBottom = 0.72;
+    protected final double capServoTop = 0.1;
+    protected double capServoPos = capServoBottom;
+
     Trajectory toHub;
 
     @Override
     public void runOpMode() {
         /*
             Buttons Being Used Gamepad 2
-            A - Intake
-            B - Intake
-            X - Intake
-            Y - Toggle Carousel
-            Dpad up - Raise
-            Dpad down - Raise
-            Dpad Left - Raise
-            Dpad Right - Raise
-            Left Trigger - Dump
-            Right Trigger - Dump
+            A
+            B
+            X
+            Y
+            Dpad up
+            Dpad down
+            Dpad Left
+            Dpad Right
+            Left Trigger
+            Right Trigger
+            Left Joystick
         */
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -114,6 +118,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
 
         dumpServo = hardwareMap.servo.get("dumpServo");
+        capServo = hardwareMap.servo.get("capServo");
         dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
 
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
@@ -160,6 +165,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 //  .addDisplacementMarker(()->drive.followTrajectoryAsync(toHubRed))
                 .build();
         // Wait for the game to start (driver presses PLAY)
+        capServo.setPosition(capServoBottom);
         waitForStart();
         runtime.reset();
 
@@ -248,6 +254,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                         currentMode = DriveMode.NORMAL;
                     }
 
+                    //add way to stop trajectory
+
                     break;
                 case TO_SHARED_HUB:
                     break;
@@ -256,6 +264,22 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     break;
 
             }
+
+            if (Math.abs(gamepad2.left_stick_y)>0.2) {
+                if (gamepad2.left_stick_y<0) {
+                    if (capServoPos>capServoTop) {
+                        capServoPos=capServoPos-0.01;
+                    }
+                    capServo.setPosition(capServoPos);
+                }
+                if (gamepad2.left_stick_y>0) {
+                    if (capServoPos<capServoBottom) {
+                        capServoPos=capServoPos+0.01;
+                    }
+                    capServo.setPosition(capServoPos);
+                }
+            }
+            telemetry.addData("Cap Servo Pos = ", capServoPos);
 
             if(gamepad2.a) {
                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
