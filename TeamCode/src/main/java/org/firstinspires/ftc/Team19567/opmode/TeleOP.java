@@ -28,6 +28,7 @@ import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 import org.opencv.core.Mat;
 
 //Custom constants
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.EJECTION_SPEED;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FORCE_SENSOR_THRESHOLD;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INIT_POWER;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INTAKE_TIME;
@@ -54,6 +55,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private final ElapsedTime carouselDebounceTime = new ElapsedTime();
     private final ElapsedTime slowModeDebounceTime = new ElapsedTime();
     private final ElapsedTime automationTimeout = new ElapsedTime();
+    private ElapsedTime forceSensorTimeout = new ElapsedTime();
     private ElapsedTime intakeTimeout = new ElapsedTime();
 
     //Hardware
@@ -240,6 +242,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
             else mechanisms.moveIntake(0.1);
         }
+        else if(intakeTimeout.milliseconds() >= 100 && intakeTimeout.milliseconds() <= INTAKE_TIME) mechanisms.moveIntake(EJECTION_SPEED);
+        else mechanisms.moveIntake(0);
+
         //CAROUSEL
         if(gamepad2.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
             carouselDebounceTime.reset();
@@ -338,15 +343,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
         }
-        if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) {
+        if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD && forceSensorTimeout.milliseconds() >= 50) {
             if(!isIntaked) {
                 gamepad1.runRumbleEffect(boxSecured);
-                mechanisms.moveIntake(Utility_Constants.EJECTION_SPEED);
                 intakeTimeout.reset();
             }
-            if(intakeTimeout.milliseconds() >= Utility_Constants.INTAKE_TIME) {
-                mechanisms.moveIntake(0.0);
-            }
+            forceSensorTimeout.reset();
             isIntaked = true;
             telemetry.addData("Force Sensor","Freight Detected");
             telemetry.update();

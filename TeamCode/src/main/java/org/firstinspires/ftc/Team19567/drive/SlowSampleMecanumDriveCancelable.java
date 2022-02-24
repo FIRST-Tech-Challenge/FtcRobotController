@@ -59,7 +59,7 @@ public class SlowSampleMecanumDriveCancelable extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0, 0.4);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(2.5, 0, 0.8);
 
-    public static double LATERAL_MULTIPLIER = 1.11;
+    public static double LATERAL_MULTIPLIER = 1.12;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
