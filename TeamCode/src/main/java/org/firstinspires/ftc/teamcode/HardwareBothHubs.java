@@ -171,6 +171,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 232;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
+//    public int          FREIGHT_ARM_POS_HUB_TOP    = 1670;  // For dumping into hub top level last
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level last
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
@@ -839,9 +840,9 @@ public class HardwareBothHubs
                 // Determine our min power:
                 // - Current ramping down implies motor/arm is coming to a stop (allow low power)
                 // - Current at zero or increasing means arm won't move unless given enough power
-                minPower = (freightMotorRamp)? 0.01 : 0.40;
+                minPower = (freightMotorRamp)? 0.1 : 0.40;
                 // Compute motor power (automatically reduce as we approach target)
-                freightMotorPower = ticksToGo / 520.0;  // 1620rpm = 103.8 counts per shaft revolution
+                freightMotorPower = ticksToGo / 720.0;  // 1620rpm = 103.8 counts per shaft revolution
                 freightMotorPower = Math.copySign( Math.min(Math.abs(freightMotorPower), maxPower), freightMotorPower );
                 freightMotorPower = Math.copySign( Math.max(Math.abs(freightMotorPower), minPower), freightMotorPower );
                 freightMotor.setPower( freightMotorPower );

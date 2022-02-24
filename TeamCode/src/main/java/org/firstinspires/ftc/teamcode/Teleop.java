@@ -461,6 +461,7 @@ public abstract class Teleop extends LinearOpMode {
      
     } // processCollectorArmControl
 
+    ElapsedTime autoCollectDelayTimer = new ElapsedTime();
     /*---------------------------------------------------------------------------------*/
     void processFreightArmControls() {
         boolean safeToManuallyLower  = collectorArmRaised && (robot.freightMotorPos > robot.FREIGHT_ARM_POS_TRANSPORT1);
@@ -562,7 +563,7 @@ public abstract class Teleop extends LinearOpMode {
                 freightArmTweaked = true;
             }
             else if( safeToManuallyLower && (gamepad2_left_stick < -0.05) ) {
-                robot.freightMotor.setPower( -0.20 );
+                robot.freightMotor.setPower( -0.40 );
                 freightArmTweaked = true;
             }
             else if( freightArmTweaked ) {
@@ -603,10 +604,14 @@ public abstract class Teleop extends LinearOpMode {
                 // If we stopped in COLLECT position then sweeper will be
                 // running so use that to restart our freight detection flags
                 if( !collectingFreight && sweeperRunning) {
-                    collectingFreight = true;
+                    autoCollectDelayTimer.reset();
                     freightPresent = false;
                     freightIsCube = false;
                 }
+            }
+        } else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_DONE) {
+            if(sweeperRunning && !collectingFreight && (autoCollectDelayTimer.milliseconds() > 500) ) {
+                collectingFreight = true;
             }
         }
     } // processFreightArmControls
@@ -629,7 +634,7 @@ public abstract class Teleop extends LinearOpMode {
         //      countsFromVertical <  0 = LOWERING the capping arm (need 5%+ power)
         boolean raisingArm = ((percentInput > 0.0) && (countsFromVertical < 0)) ||
                              ((percentInput < 0.0) && (countsFromVertical >= 0));
-        double minPower = (raisingArm)? 0.30 : 0.30;
+        double minPower = (raisingArm)? 0.30 : 0.20;
 //      double maxPower = (raisingArm)? 0.80 : 0.70;
 //      double computedPower = minPower + absPercentInput * (maxPower - minPower);
         double computedPower = (absPercentInput <= 0.75)? minPower : (minPower + absPercentInput-0.75);
