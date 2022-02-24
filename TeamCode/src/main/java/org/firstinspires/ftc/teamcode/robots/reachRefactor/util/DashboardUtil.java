@@ -17,7 +17,7 @@ public class DashboardUtil {
     private static final double ROBOT_RADIUS = 9; // in
     private static final double TURRET_RADIUS = 6;
     private static final double WRIST_RADIUS = 3;
-    public static double VELOCITY_SCALE = 0.1;
+    public static double VELOCITY_SCALE = 0.4;
 
     private static final String ROBOT_COLOR = "Black";
     private static final String WHEEL_COLOR = "Red";

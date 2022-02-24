@@ -66,9 +66,9 @@ public abstract class TrikeDrive extends Drive {
             List<Double> wheelVelocities = drive.getWheelVelocities();
             double externalHeadingVel = drive.getExternalHeadingVelocity();
             if(wheelVelocities != null) {
-                poseVelocity = TrikeKinematics.wheelToRobotVelocities(wheelVelocities, TRACK_WIDTH);
-                if(useExternalHeading)
-                    poseVelocity = new Pose2d(poseVelocity.vec(), externalHeadingVel);
+                    poseVelocity = useExternalHeading ?
+                            new Pose2d((wheelVelocities.get(0) + wheelVelocities.get(1)) / 2, externalHeadingVel) :
+                            new Pose2d((wheelVelocities.get(0) + wheelVelocities.get(1)) / 2, (-wheelVelocities.get(0) + wheelVelocities.get(1)) / TRACK_WIDTH);
             }
 
             lastWheelPositions = wheelPositions;

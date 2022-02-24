@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
+import com.acmerobotics.roadrunner.followers.RamseteFollower;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -56,11 +57,11 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 //
-//    public static double B = 0.01;
-//    public static double ZETA = 0.0;
-    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(5, 0, 0);
-    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0.8, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.5, 0, 0.2);
+    public static double B = 0.005;
+    public static double ZETA = 0.01;
+    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(6, 0, 0);
+    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0.004, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
     public static double ROLL_ANTI_TIP_PID_TOLERANCE = 2;
@@ -103,7 +104,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private double rollCorrection, pitchCorrection;
     private double compensatedBatteryVoltage;
 
-    private Pose2d poseEstimate, poseError;
+    private Pose2d poseEstimate, poseError, poseVelocity;
     private Pose2d driveVelocity, lastDriveVelocity;
 
     private long lastLoopTime, loopTime;
@@ -116,7 +117,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
         super(simulated);
         this.simulated = simulated;
-        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5)), Double.MAX_VALUE);
+//        TrajectoryFollower follower = new RamseteFollower(B, ZETA, new Pose2d(0.5, 0.5, Math.toRadians(5)), 3);
+        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5)), 3);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         if(simulated) {
@@ -269,9 +271,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         updatePIDCoefficients();
 
         // sensor readings
-        leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
-        rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
-        swerveVelocity = swerveEncoderTicksToInches(swerveMotor.getVelocity());
+        leftVelocity = 0.75 * diffEncoderTicksToInches(leftMotor.getVelocity());
+        rightVelocity = 0.75 * diffEncoderTicksToInches(rightMotor.getVelocity());
+        swerveVelocity = 0.75 * swerveEncoderTicksToInches(swerveMotor.getVelocity());
         if(simulated) {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
@@ -303,10 +305,13 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
         AngularVelocity angularVelocities = imu.getAngularVelocity();
         pitchVelocity = wrapAngleRad(angularVelocities.yRotationRate);
-        angularVelocity = wrapAngleRad(-angularVelocities.xRotationRate);
+        angularVelocity = wrapAngleRad(angularVelocities.xRotationRate);
+        if(angularVelocity > Math.PI)
+            angularVelocity -= 2 * Math.PI;
 
         updatePoseEstimate();
         poseEstimate = getPoseEstimate();
+        poseVelocity = getPoseVelocity();
 
         if(trajectorySequenceRunner.isBusy()) {
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity(), fieldOverlay);
@@ -425,6 +430,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
             telemetryMap.put("heading", Math.toDegrees(poseEstimate.getHeading()));
+
+            telemetryMap.put("x vel", poseVelocity.getX());
+            telemetryMap.put("y vel", poseVelocity.getY());
+            telemetryMap.put("heading vel", Math.toDegrees(poseVelocity.getHeading()));
 
             if (trajectorySequenceRunner.isBusy()) {
                 telemetryMap.put("xError", poseError.getX());
@@ -698,11 +707,17 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public void setMaintainHeadingEnabled(boolean maintainHeadingEnabled) {
         this.maintainHeadingEnabled = maintainHeadingEnabled;
-        if(maintainHeadingEnabled)
-            maintainHeading = poseEstimate.getHeading();
     }
 
     public boolean isMaintainHeadingEnabled() {
         return maintainHeadingEnabled;
+    }
+
+    public void setMaintainHeading(double maintainHeading) {
+        this.maintainHeading = maintainHeading;
+    }
+
+    public double getMaintainHeading() {
+        return maintainHeading;
     }
 }

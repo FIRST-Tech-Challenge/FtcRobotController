@@ -217,7 +217,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, false);
+        robot = new Robot(hardwareMap, true);
         alliance = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
@@ -349,6 +349,7 @@ public class FF_6832 extends OpMode {
         if(!gameState.equals(GameState.MANUAL_DIAGNOSTIC)) {
             robot.driveTrain.setMaintainChassisLengthEnabled(true);
             robot.driveTrain.setChassisLength(CHASSIS_LENGTH_LEVELS[0]);
+            robot.driveTrain.setMaintainHeading(robot.driveTrain.getPoseEstimate().getHeading());
         }
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
@@ -373,8 +374,12 @@ public class FF_6832 extends OpMode {
             forward = (forward1 + forward2) * velocityBoost;
             rotate = (rotate1 + rotate2) * velocityBoost;
         }
-        if(!approxEquals(rotate, 0))
+        if(!approxEquals(rotate, 0)) {
             robot.driveTrain.setMaintainHeadingEnabled(false);
+            robot.driveTrain.setMaintainHeading(robot.driveTrain.getPoseEstimate().getHeading());
+        } else {
+            robot.driveTrain.setMaintainHeadingEnabled(true);
+        }
         if(antiTippingEnabled)
             robot.driveTrain.setDrivePowerSafe(new Pose2d(forward, 0, rotate));
         else
@@ -429,9 +434,6 @@ public class FF_6832 extends OpMode {
 
 //        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
 //            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
-
-        if(stickyGamepad1.right_trigger)
-            robot.driveTrain.setMaintainHeadingEnabled(!robot.driveTrain.isMaintainHeadingEnabled());
 
         handleArcadeDrive(gamepad1);
         handleArcadeDriveReversed(gamepad2);
