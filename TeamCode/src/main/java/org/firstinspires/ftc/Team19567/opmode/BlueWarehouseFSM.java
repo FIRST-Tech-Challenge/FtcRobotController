@@ -24,9 +24,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="Red Warehouse FSM", group="Dababy")
+@Autonomous(name="Blue Warehouse FSM", group="Dababy")
 
-public class RedWarehouseFSM extends LinearOpMode {
+public class BlueWarehouseFSM extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
     private ElapsedTime intakeTimeout = new ElapsedTime();

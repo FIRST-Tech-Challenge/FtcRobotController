@@ -236,7 +236,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         //INTAKE
         if(intakeTimeout.milliseconds() >= INTAKE_TIME) {
             if(gamepad1.right_trigger > 0) mechanisms.moveIntake(INTAKE_SPEED);
-            else if(gamepad1.right_bumper) mechanisms.moveIntake(-1*INTAKE_SPEED);
+            else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.5);
             else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
             else mechanisms.moveIntake(0.1);
         }

@@ -28,8 +28,8 @@ public class Utility_Constants {
     public static double INIT_POWER = -0.6; //Initial power for carousel
     public static double FINAL_POWER = -1.0; //Final power for carousel
     //ARM POWERS
-    public static double FIRST_LEVEL_POWER= 0.45;
-    public static double SECOND_LEVEL_POWER = 0.525;
+    public static double FIRST_LEVEL_POWER= 0.5;
+    public static double SECOND_LEVEL_POWER = 0.55;
     public static double THIRD_LEVEL_POWER = 0.65;
     public static double GOING_DOWN_POWER = 0.3;
     //POSITIONS
