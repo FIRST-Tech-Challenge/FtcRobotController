@@ -97,7 +97,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
         }).addSpatialMarker(new Vector2d(10, 50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
                 /* .splineTo(new Vector2d(14, -62),Math.toRadians(-30))
                 .splineTo(new Vector2d(72,-63),Math.toRadians(0)) */
-                .lineToSplineHeading(new Pose2d(12,72,0)).strafeTo(new Vector2d(60.5, 68.5))
+                .lineToSplineHeading(new Pose2d(12,72,0)).strafeTo(new Vector2d(60.5, 70))
                 .build();
 
         telemetry.addData("Status","Finished loading Roadrunner splines");
@@ -116,8 +116,8 @@ public class BlueWarehouseFSM extends LinearOpMode {
             case ALLIANCE_SECOND: {
                 chosenArmPos = Utility_Constants.SECOND_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
-                chosenTrajectoryX = 2;
-                chosenTrajectoryY = 42;
+                chosenTrajectoryX = 2.5;
+                chosenTrajectoryY = 43;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
