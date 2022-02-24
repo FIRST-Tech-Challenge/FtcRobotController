@@ -24,7 +24,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
 
         drive.openCVInnitShenanigans("red");
 
-        MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = drive.analyze();
+        MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(-35, -63), Math.toRadians(90));
 
@@ -73,7 +73,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-        if (freightLocation== MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition.LEFT){
+        if (freightLocation== MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition.LEFT){
             drive.pause(300);
         }
         drive.retract();

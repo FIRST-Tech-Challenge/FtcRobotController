@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDriveDeadWheels;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
@@ -24,7 +23,7 @@ public class RedWarehouseOdoDeadWheels extends LinearOpMode {
         SampleMecanumDriveDeadWheels drive = new SampleMecanumDriveDeadWheels(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
-        MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
+        MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition freightLocation = null;
 
         freightLocation = drive.analyze();
 

@@ -18,7 +18,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -39,11 +38,8 @@ import org.firstinspires.ftc.masters.MultipleCameraCV;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.masters.util.AxesSigns;
-import org.firstinspires.ftc.masters.util.BNO055IMUUtil;
 import org.firstinspires.ftc.masters.util.LynxModuleUtil;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
@@ -588,7 +584,7 @@ public class SampleMecanumDriveDeadWheels extends MecanumDrive {
 //        duckCV = new TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV(hardwareMap, telemetry);
 //    }
 
-    public MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition analyze() {
+    public MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition analyze() {
         return CV.pipeline.position;
     }
 

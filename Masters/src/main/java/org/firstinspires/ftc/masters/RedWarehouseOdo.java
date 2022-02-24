@@ -2,11 +2,9 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -25,7 +23,7 @@ public class RedWarehouseOdo extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
-        MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition freightLocation = null;
+        MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition freightLocation = null;
 
         freightLocation = drive.analyze();
 
