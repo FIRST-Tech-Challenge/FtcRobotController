@@ -588,7 +588,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        duckCV = new TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV(hardwareMap, telemetry);
 //    }
 
-    public MultipleCameraCV.ShippingElementDeterminationPipeline.FreightPosition analyze() {
+    public MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition analyze() {
         return CV.pipeline.position;
     }
 
@@ -596,14 +596,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         return CV.duckPipeline.position;
     }
 
+    public MultipleCameraCV.WarehousePipeline.FreightPosition analyzeWarehouse() {
+        return CV.warehousePipeline.freightPosition;
+    }
 
-//    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_blue() {
-//        return CV.pipeline.hub_position;
-//    }
-//
-//    public TheAbsolutelyPositivelyWithoutAShadowOfADoubtFinalLastIterationOfFreightFrenzyCV.SkystoneDeterminationPipeline.HubPosition analyze_hub_red() {
-//        return CV.pipeline.hub_position;
-//    }
     public void stopDuckCamera(){
         CV.stopDuckCamera();
     }
@@ -860,6 +856,46 @@ public class SampleMecanumDrive extends MecanumDrive {
             }
         }
         return found;
+    }
+
+    public void getWarehouseFreight() {
+        double speed = 0.35;
+
+        MultipleCameraCV.WarehousePipeline.FreightPosition analysis = analyzeWarehouse();
+        ElapsedTime elapsedTime= new ElapsedTime();
+
+        while (this.opmode.opModeIsActive() && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.CENTER && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT1 && analysis != MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT1 && elapsedTime.milliseconds()<2500){
+            analysis = analyzeWarehouse();
+            if (analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT5
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT4
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT3
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT2
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.LEFT1) {
+
+                frontLeft.setPower(-speed);
+                frontRight.setPower(speed);
+                backLeft.setPower(speed);
+                backRight.setPower(-speed);
+            } else if (analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT5
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT4
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT3
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT2
+                    || analysis == MultipleCameraCV.WarehousePipeline.FreightPosition.RIGHT1) {
+                frontLeft.setPower(speed);
+                frontRight.setPower(-speed);
+                backLeft.setPower(-speed);
+                backRight.setPower(speed);
+            }
+        }
+
+        intakeMotor.setPower(0.8);
+        forward(0.4, -2);
+
+        stopMotors();
     }
 
 }

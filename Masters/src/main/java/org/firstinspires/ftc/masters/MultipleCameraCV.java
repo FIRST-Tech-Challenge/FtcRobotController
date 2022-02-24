@@ -21,6 +21,10 @@
 
 package org.firstinspires.ftc.masters;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -38,6 +42,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public class MultipleCameraCV {
@@ -49,6 +55,7 @@ public class MultipleCameraCV {
 //    Initial declaration of pipelines (One for each webcam we use)
     public DuckDeterminationPipeline duckPipeline;
     public ShippingElementDeterminationPipeline pipeline;
+    public WarehousePipeline warehousePipeline;
 
 //    Random useful tidbit of information, to access the camera stream, hit innit, then
 //    press the ellipsis button on the top right of the screen, then select "Camera Stream".
@@ -361,7 +368,7 @@ public class MultipleCameraCV {
         /*
          * Enums to hold the various positions possible.
          */
-        public enum FreightPosition {
+        public enum ElementPosition {
             LEFT,
             MIDDLE,
             RIGHT
@@ -437,7 +444,7 @@ public class MultipleCameraCV {
         int avg3 = 0;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile ShippingElementDeterminationPipeline.FreightPosition position = ShippingElementDeterminationPipeline.FreightPosition.LEFT;
+        public volatile ElementPosition position = ElementPosition.LEFT;
 
 //        public volatile SkystoneDeterminationPipeline.HubPosition hub_position = SkystoneDeterminationPipeline.HubPosition.SHRUG_NOISES;
 
@@ -531,11 +538,11 @@ public class MultipleCameraCV {
             }
 
             if (avg1 < FREIGHT_PRESENT_THRESHOLD) {
-                position = ShippingElementDeterminationPipeline.FreightPosition.LEFT;
+                position = ElementPosition.LEFT;
             } else if (avg2 < FREIGHT_PRESENT_THRESHOLD) {
-                position = ShippingElementDeterminationPipeline.FreightPosition.MIDDLE;
+                position = ElementPosition.MIDDLE;
             } else {
-                position = ShippingElementDeterminationPipeline.FreightPosition.RIGHT;
+                position = ElementPosition.RIGHT;
             }
             telemetry.addData("Analysis", avg1);
             telemetry.addData("Analysis2", avg2);
@@ -555,6 +562,218 @@ public class MultipleCameraCV {
 
             telemetry.update();
 
+
+            return input;
+        }
+
+
+    }public static class WarehousePipeline extends OpenCvPipeline{
+        Telemetry telemetry;
+        public WarehousePipeline(Telemetry telemetry) {
+            this.telemetry = telemetry;
+        }
+
+        //    All possible regions to be detected in are stored in an enum
+        public enum FreightPosition {
+            LEFT5,
+            LEFT4,
+            LEFT3,
+            LEFT2,
+            LEFT1,
+            CENTER,
+            RIGHT1,
+            RIGHT2,
+            RIGHT3,
+            RIGHT4,
+            RIGHT5,
+            SHRUG_NOISES
+        }
+
+        public enum FreightLocation {
+            NEAR,
+            MIDDLE,
+            FAR,
+            UNKNOWN
+        }
+
+
+
+        /*
+         * Some color constants used for displaying rectangles on the camera stream
+         */
+        static final Scalar BLUE = new Scalar(0, 0, 255);
+        static final Scalar GREEN = new Scalar(0, 255, 0);
+        static final Scalar RED = new Scalar(255, 0, 0);
+
+
+        //        Sizes for subregions of the camera from which our data is extracted
+        static final int REGION_WIDTH = 120;
+        static final int REGION_HEIGHT = 120;
+
+        /*
+         * List for the storage of points, if you're only dealing with a few regions declare them all seperately, the freight regions in the other pipeline
+         * are done like this.
+         */
+
+        ArrayList<Point> topLeftPoints = new ArrayList<Point>();
+        ArrayList<Point> bottomRightPoints = new ArrayList<Point>();
+
+
+        //        The threshold to which the averages are compared.
+        final int DUCK_PRESENT_THRESHOLD = 160;
+
+
+
+        /*
+         * Empty matrixes that data will be stored in
+         */
+
+        Mat LAB = new Mat();
+        Mat A = new Mat();
+        Mat B = new Mat();
+
+        // Volatile since accessed by OpMode thread w/o synchronization
+        public volatile WarehousePipeline.FreightPosition freightPosition = WarehousePipeline.FreightPosition.CENTER;
+        public volatile WarehousePipeline.FreightLocation freightDistance = WarehousePipeline.FreightLocation.UNKNOWN;
+        /*
+         * This function takes the RGB frame, converts to LAB,
+         * and extracts the A channel to the 'A' variable
+         */
+        void inputToLAB(Mat input) {
+
+            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
+            Core.extractChannel(LAB, A, 1);
+            Core.extractChannel(LAB, B, 2);
+        }
+
+        //        Done in innit, this was a more complicated formation of subregions for detecting the duck, but essentially
+//        just assign the top left and bottom right points for each region you desire.
+        @Override
+        public void init(Mat firstFrame) {
+
+            topLeftPoints.add(new Point(20,1));
+            bottomRightPoints.add(new Point(topLeftPoints.get(0).x + REGION_WIDTH, topLeftPoints.get(0).y + REGION_HEIGHT));
+
+            int tempY = 0;
+            int tempX = 20;
+            for (int i = 1; i < 27; i++) {
+                if (tempX == 500) {
+                    tempX = 20;
+                    tempY += REGION_HEIGHT;
+                } else {
+                    tempX += REGION_WIDTH/2;
+                }
+                topLeftPoints.add(new Point(tempX,tempY));
+                bottomRightPoints.add(new Point(tempX + REGION_WIDTH, tempY + REGION_HEIGHT));
+            }
+
+            inputToLAB(firstFrame);
+
+
+        }
+
+        //        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutely essential to CV functioning
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public Mat processFrame(Mat input) {
+            inputToLAB(input);
+
+//            Declare list of regions
+            ArrayList<Mat> region = new ArrayList<Mat>();
+
+
+//            Put the necessary data from the frame to each region
+            for (int i = 0; i<27; i++) {
+                region.add(B.submat(new Rect(topLeftPoints.get(i), bottomRightPoints.get(i))));
+            }
+
+            ArrayList<Integer> regionAvgs = new ArrayList<Integer>();
+
+            for (int i = 0; i<27; i++) {
+                regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
+            }
+
+//              This is what displays the rectangles to the camera stream on the drive hub
+            for (int i = 0; i<27; i++) {
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        topLeftPoints.get(i), // First point which defines the rectangle
+                        bottomRightPoints.get(i), // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        2); // Thickness of the rectangle lines
+
+            }
+
+//            The next several lines determine which region has the highest B average.
+            int indexOfMaximumBAvg = 0;
+            int maxIndexDistance = 2794;
+
+            for (int i = 0; i<27; i++) {
+                if (regionAvgs.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                    indexOfMaximumBAvg = i;
+                }
+            }
+
+//            Display telemetry
+            telemetry.addData("B Averages", regionAvgs);
+            telemetry.addData("Index of highest likelihood.", indexOfMaximumBAvg);
+
+//            Fix indexes (Regions are stacked 11 to a row)
+//            if (regionAvgs.get(indexOfMaximumBAvg) >= DUCK_PRESENT_THRESHOLD) {
+//                if (indexOfMaximumBAvg > 21) {
+//                    indexOfMaximumBAvg -= 22;
+//                    maxIndexDistance = 0;
+//                } else if (indexOfMaximumBAvg > 10) {
+//                    indexOfMaximumBAvg -= 11;
+//                    maxIndexDistance = 1;
+//                } else {
+//                    maxIndexDistance = 0;
+//                }
+//                position = MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.values()[indexOfMaximumBAvg];
+//            } else {
+//                position = MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.SHRUG_NOISES; // Default enum result. Aptly named
+//            }
+            List<Integer> nearRow = (List<Integer>) regionAvgs.subList(18,27);
+            List<Integer> middleRow = (List<Integer>) regionAvgs.subList(9,18);
+            List<Integer> farRow = (List<Integer>) regionAvgs.subList(0,9);
+
+
+
+            if (nearRow.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new) > DUCK_PRESENT_THRESHOLD) {
+                indexOfMaximumBAvg = 0;
+                for (int i = 0; i<9; i++) {
+                    if (nearRow.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                        indexOfMaximumBAvg = i;
+                    }
+                }
+                freightPosition = WarehousePipeline.FreightPosition.values()[indexOfMaximumBAvg];
+                freightDistance = WarehousePipeline.FreightLocation.NEAR;
+            } else if (middleRow.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new) > DUCK_PRESENT_THRESHOLD) {
+                indexOfMaximumBAvg = 0;
+                for (int i = 0; i<9; i++) {
+                    if (nearRow.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                        indexOfMaximumBAvg = i;
+                    }
+                }
+                freightPosition = WarehousePipeline.FreightPosition.values()[indexOfMaximumBAvg];
+                freightDistance = WarehousePipeline.FreightLocation.MIDDLE;
+            } else if (farRow.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new) > DUCK_PRESENT_THRESHOLD) {
+                indexOfMaximumBAvg = 0;
+                for (int i = 0; i<9; i++) {
+                    if (nearRow.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                        indexOfMaximumBAvg = i;
+                    }
+                }
+                freightPosition = WarehousePipeline.FreightPosition.values()[indexOfMaximumBAvg];
+                freightDistance = WarehousePipeline.FreightLocation.FAR;
+            } else {
+                freightPosition = WarehousePipeline.FreightPosition.SHRUG_NOISES;
+            }
+
+
+            telemetry.addData("Position", freightPosition);
+            telemetry.addData("Distance", freightDistance);
+            telemetry.update();
 
             return input;
         }
