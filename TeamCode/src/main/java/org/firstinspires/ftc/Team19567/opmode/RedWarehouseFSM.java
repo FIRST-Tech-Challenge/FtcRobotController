@@ -79,7 +79,7 @@ public class RedWarehouseFSM extends LinearOpMode {
 
         chassis.setPoseEstimate(new Pose2d(10, -63, Math.toRadians(90)));
 
-        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(60.5, -67.5,0)).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
+        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(60.5, -68,0)).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
             mechanisms.moveIntake(0);
         }).addSpatialMarker(new Vector2d(15.5,-60), () -> {
             mechanisms.moveIntake(0.4);
@@ -151,7 +151,7 @@ public class RedWarehouseFSM extends LinearOpMode {
         }
 
         TrajectorySequence SplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(10,-63,Math.toRadians(90)))
-                .addSpatialMarker(new Vector2d(chosenTrajectoryX+11,chosenTrajectoryY-14), () -> {
+                .addDisplacementMarker(() -> {
                     mechanisms.moveIntake(0.4);
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
                 }).addSpatialMarker(new Vector2d(chosenTrajectoryX, chosenTrajectoryY-0.4), () -> {
@@ -203,6 +203,11 @@ public class RedWarehouseFSM extends LinearOpMode {
                 }
                 case MOVING_TO_WAREHOUSE: {
                     mechanisms.rotateArm(0,Utility_Constants.GOING_DOWN_POWER);
+                    if(freightCount >= 3) {
+                        telemetry.addData("State Machine","Moved to PATH_FINISHED");
+                        telemetry.update();
+                        currentState = AUTO_STATE.PATH_FINISHED;
+                    }
                     if(!chassis.isBusy()) {
                         telemetry.addData("State Machine","Moved to INTAKING_FREIGHT");
                         telemetry.update();
@@ -216,11 +221,6 @@ public class RedWarehouseFSM extends LinearOpMode {
                         intakeTimeout.reset();
                         mechanisms.moveIntake(-0.35);
                         currentState = AUTO_STATE.RETURNING_TO_HUB;
-                        if(freightCount >= 3) {
-                            telemetry.addData("State Machine","Moved to PATH_FINISHED");
-                            telemetry.update();
-                            currentState = AUTO_STATE.PATH_FINISHED;
-                        }
                         chassis.followTrajectorySequenceAsync(firstHubSplineSequence);
                     }
                     break;

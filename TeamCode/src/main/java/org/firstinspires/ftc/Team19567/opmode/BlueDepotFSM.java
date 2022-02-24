@@ -84,8 +84,7 @@ public class BlueDepotFSM extends LinearOpMode {
         waitForStart();
 
         switch(location) {
-            case NO_ALLIANCE:
-            case ALLIANCE_THIRD: {
+            case ALLIANCE_FIRST: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
                 chosenTrajectoryX = -22;
@@ -94,7 +93,7 @@ public class BlueDepotFSM extends LinearOpMode {
                 telemetry.update();
                 break;
             }
-            case ALLIANCE_SECOND: {
+                case ALLIANCE_SECOND: {
                 chosenArmPos = Utility_Constants.SECOND_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
                 chosenTrajectoryX = -26.25;
@@ -103,11 +102,12 @@ public class BlueDepotFSM extends LinearOpMode {
                 telemetry.update();
                 break;
             }
-            case ALLIANCE_FIRST: {
-                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
+            case NO_ALLIANCE:
+            case ALLIANCE_THIRD: {
+                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-25;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
                 chosenTrajectoryX = -29.5;
-                chosenTrajectoryY = 47;
+                chosenTrajectoryY = 46.75;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
