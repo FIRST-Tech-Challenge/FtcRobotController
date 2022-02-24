@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -26,18 +27,21 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 
 @Config(value = "FFRobot")
 public class Robot implements Subsystem {
+
+    public static double BUCKET_TRIGGER_DISTANCE = 5;
+
     public DriveTrain driveTrain;
     public Turret turret;
     public Crane crane;
     public Gripper gripper;
     public Subsystem[] subsystems;
 
+    private long[] subsystemUpdateTimes;
+
     private final List<LynxModule> hubs;
 
     private Articulation articulation;
     private final Map<Articulation, StateMachine> articulationMap;
-
-    public static double BUCKET_TRIGGER_DISTANCE = 5;
 
     public Robot(HardwareMap hardwareMap, boolean simulated) {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -50,7 +54,9 @@ public class Robot implements Subsystem {
         turret = new Turret(hardwareMap, simulated);
         crane = new Crane(hardwareMap, turret, simulated);
         gripper = new Gripper(hardwareMap, simulated);
+
         subsystems = new Subsystem[] {driveTrain, crane, gripper};
+        subsystemUpdateTimes = new long[subsystems.length];
 
         articulation = Articulation.MANUAL;
 
@@ -74,6 +80,12 @@ public class Robot implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
+        if(debug) {
+            for (int i = 0; i < subsystems.length; i++) {
+                String name = subsystems[i].getClass().getSimpleName();
+                telemetryMap.put(name + " Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (subsystemUpdateTimes[i] * 1e-6), (int) (1 / (subsystemUpdateTimes[i] * 1e-9))));
+            }
+        }
 
         return telemetryMap;
     }
@@ -96,8 +108,12 @@ public class Robot implements Subsystem {
 
         articulate(articulation);
 
-        for(Subsystem subsystem: subsystems)
+        for(int i = 0; i < subsystems.length; i++) {
+            Subsystem subsystem = subsystems[i];
+            long updateStartTime = System.nanoTime();
             subsystem.update(fieldOverlay);
+            subsystemUpdateTimes[i] = System.nanoTime() - updateStartTime;
+        }
 
         DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getChassisLength(), driveTrain.getSwivelAngle(), driveTrain.getWheelVelocities(), turret.getTargetHeading(), crane.getShoulderTargetAngle(), crane.getElbowTargetAngle(), crane.getWristTargetAngle());
     }

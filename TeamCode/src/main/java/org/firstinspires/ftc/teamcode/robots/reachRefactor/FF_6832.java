@@ -119,7 +119,6 @@ public class FF_6832 extends OpMode {
     private boolean visionProviderFinalized;
 
     // tele-op state
-    private int chassisDistanceLevelIndex;
     private boolean dynamicChassisLengthEnabled, endGameHandled;
     private double forward1, rotate1, forward2, rotate2;
     private double velocityBoost;
@@ -152,7 +151,7 @@ public class FF_6832 extends OpMode {
     // timing
     private long lastLoopClockTime, loopTime;
     private double averageLoopTime;
-    private ExponentialSmoother loopTimeSmoother;
+    private ExponentialSmoother loopTimeSmoother, averageUpdateTimeSmoother;
 
     public enum GameState {
         AUTONOMOUS("Autonomous", true),
@@ -213,6 +212,7 @@ public class FF_6832 extends OpMode {
         // timing
         lastLoopClockTime = System.nanoTime();
         loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
+        averageUpdateTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
 
         // gamepads
         stickyGamepad1 = new StickyGamepad(gamepad1);
@@ -227,11 +227,11 @@ public class FF_6832 extends OpMode {
         forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
-        // vision
         auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
-
         auto.visionProvider.initializeVision(hardwareMap);
         visionProviderFinalized = true;
+
+        auto.build(startingPosition);
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
@@ -277,9 +277,12 @@ public class FF_6832 extends OpMode {
         {
             auto.visionProvider.saveDashboardImage();
         }
+        if(visionProviderFinalized)
+            auto.visionProvider.update();
     }
 
     private void handlePregameControls() {
+        Position previousStartingPosition = startingPosition;
         if(stickyGamepad1.x || stickyGamepad2.x) {
             alliance = Alliance.BLUE;
             startingPosition = Position.START_BLUE_UP;
@@ -296,6 +299,11 @@ public class FF_6832 extends OpMode {
             alliance = Alliance.RED;
             startingPosition = Position.START_RED_UP;
         }
+        if(previousStartingPosition != startingPosition) {
+            robot.driveTrain.setPoseEstimate(startingPosition.getPose());
+            auto.build(startingPosition);
+        }
+
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
@@ -325,7 +333,6 @@ public class FF_6832 extends OpMode {
     public void start() {
         initializing = false;
 
-        auto.build();
         trackWidthTurn = Utils.getStateMachine(trackWidthTurnStage)
                 .addSingleState(() -> robot.driveTrain.followTrajectorySequenceAsync(
                         robot.driveTrain.trajectorySequenceBuilder(
@@ -356,17 +363,6 @@ public class FF_6832 extends OpMode {
     private void handleArcadeDriveReversed(Gamepad gamepad) {
         forward2 = Math.pow(gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT) * FORWARD_SCALING_FACTOR;
         rotate2 = Math.pow(-gamepad.right_stick_x, DRIVE_VELOCITY_EXPONENT) * ROTATE_SCALING_FACTOR;
-    }
-
-    private void handleTankDrive(Gamepad gamepad) {
-        double left = Math.pow(-gamepad.left_stick_y, DRIVE_VELOCITY_EXPONENT);
-        double right = Math.pow(-gamepad.right_stick_y, DRIVE_VELOCITY_EXPONENT);
-
-        forward2 = (right + left) / 2.0 * FORWARD_SCALING_FACTOR;
-        rotate2 = (right - left) / 2.0 * ROTATE_SCALING_FACTOR * .4;
-
-        if(Math.abs(right - left) < TANK_DRIVE_JOYSTICK_DIFF_DEADZONE)
-            rotate2 = 0;
     }
 
     private void sendDriveCommands() {
@@ -664,7 +660,7 @@ public class FF_6832 extends OpMode {
         telemetry.addLine(telemetryName);
         packet.addLine(telemetryName);
 
-        if(robot.driveTrain.getVoltage() <= 12.5) {
+        if(robot.driveTrain.getVoltage() <= LOW_BATTERY_VOLTAGE) {
             telemetryMap = new LinkedHashMap<>();
             for(int i = 0; i < 20; i++) {
                 telemetryMap.put(i +
@@ -686,15 +682,20 @@ public class FF_6832 extends OpMode {
     }
 
     private void update() {
-        if(initializing) {
-            auto.visionProvider.update();
-            robot.driveTrain.setPoseEstimate(startingPosition.getPose());
-        }
-
         stickyGamepad1.update();
         stickyGamepad2.update();
 
+        // handling dashboard changes
+        forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
+        rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
+
         TelemetryPacket packet = new TelemetryPacket();
+
+        long updateStartTime = System.nanoTime();
+        robot.update(packet.fieldOverlay());
+        long updateTime = (System.nanoTime() - updateStartTime);
+        double averageUpdateTime = averageUpdateTimeSmoother.update(updateTime);
+
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
         // handling op mode telemetry
@@ -704,9 +705,12 @@ public class FF_6832 extends OpMode {
             opModeTelemetryMap.put("Anti-Tipping Enabled", antiTippingEnabled);
             opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
         }
-        opModeTelemetryMap.put("Chassis Level Index", Misc.formatInvariant("%d / %d", chassisDistanceLevelIndex, CHASSIS_LENGTH_LEVELS.length));
         opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
         opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+        if(debugTelemetryEnabled) {
+            opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));
+            opModeTelemetryMap.put("Last Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (updateTime * 1e-6), (int) (1 / (updateTime * 1e-9))));
+        }
 
         switch(gameState) {
             case TELE_OP:
@@ -729,8 +733,6 @@ public class FF_6832 extends OpMode {
         }
         handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
 
-        robot.update(packet.fieldOverlay());
-
         // handling subsystem telemetry
         for(TelemetryProvider telemetryProvider: robot.subsystems)
             handleTelemetry(telemetryProvider.getTelemetry(debugTelemetryEnabled), telemetryProvider.getTelemetryName(), packet);
@@ -749,11 +751,7 @@ public class FF_6832 extends OpMode {
         handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
 
         dashboard.sendTelemetryPacket(packet);
-        CompletableFuture.runAsync(() -> telemetry.update());
-
-        // handling dashboard changes
-        forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
-        rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
+        telemetry.update();
 
         updateTiming();
     }

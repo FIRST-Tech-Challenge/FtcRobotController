@@ -29,7 +29,6 @@ public class Turret implements Subsystem {
 
     private DcMotorEx motor;
 
-    private double power;
     private double heading, targetHeading;
 
     public Turret(HardwareMap hardwareMap, boolean simulated) {
@@ -54,7 +53,6 @@ public class Turret implements Subsystem {
 
     public void stop() {
         setTargetHeading(heading);
-        power = 0;
     }
 
     public void setTargetHeading(double targetHeading){
