@@ -79,7 +79,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
 
         chassis.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(-90)));
 
-        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(60.5, 68.5,0)).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
+        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(59.5, 68.5,0)).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
             mechanisms.moveIntake(0);
         }).addSpatialMarker(new Vector2d(15.5,60), () -> {
             mechanisms.moveIntake(0.4);
@@ -97,7 +97,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
         }).addSpatialMarker(new Vector2d(10, 50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
                 /* .splineTo(new Vector2d(14, -62),Math.toRadians(-30))
                 .splineTo(new Vector2d(72,-63),Math.toRadians(0)) */
-                .lineToSplineHeading(new Pose2d(12,72,0)).strafeTo(new Vector2d(60.5, 70))
+                .lineToSplineHeading(new Pose2d(12,72,0)).strafeTo(new Vector2d(59.5, 70))
                 .build();
 
         telemetry.addData("Status","Finished loading Roadrunner splines");
@@ -123,10 +123,10 @@ public class BlueWarehouseFSM extends LinearOpMode {
                 break;
             }
             case ALLIANCE_THIRD: {
-                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
+                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-50;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
-                chosenTrajectoryX = 3;
-                chosenTrajectoryY = 45;
+                chosenTrajectoryX = 4.5;
+                chosenTrajectoryY = 47;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -135,8 +135,8 @@ public class BlueWarehouseFSM extends LinearOpMode {
             case NO_ALLIANCE: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
-                chosenTrajectoryX = -2;
-                chosenTrajectoryY = 41;
+                chosenTrajectoryX = 2;
+                chosenTrajectoryY = 37;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -144,8 +144,8 @@ public class BlueWarehouseFSM extends LinearOpMode {
             default: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
-                chosenTrajectoryX = -1.5;
-                chosenTrajectoryY = 40.5;
+                chosenTrajectoryX = 2;
+                chosenTrajectoryY = 37.5;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
             }
@@ -163,7 +163,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
         TrajectorySequence firstReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(20,64), () -> {
             mechanisms.moveIntake(0.9);
         }).addSpatialMarker(new Vector2d(10, 50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .lineToSplineHeading(new Pose2d(12,69,0)).strafeTo(new Vector2d(60.5, 68.5))
+                .lineToSplineHeading(new Pose2d(12,69,0)).strafeTo(new Vector2d(59.5, 68.5))
                 /*
                 .splineTo(new Vector2d(14, -62),Math.toRadians(-30))
                 .splineTo(new Vector2d(67,-62.5),Math.toRadians(0))
