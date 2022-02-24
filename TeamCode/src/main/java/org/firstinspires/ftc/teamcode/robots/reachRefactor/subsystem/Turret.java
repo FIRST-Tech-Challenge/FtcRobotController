@@ -23,7 +23,7 @@ import java.util.Map;
 public class Turret implements Subsystem {
 
     public static final double TICKS_PER_DEGREE = 160.0 / 90.0;
-    public static double TURRET_TOLERANCE = 2;
+    public static double TURRET_TOLERANCE = 10;
 
     private final boolean simulated;
 
@@ -84,6 +84,7 @@ public class Turret implements Subsystem {
             telemetryMap.put("turret heading", heading);
             telemetryMap.put("target turret heading", targetHeading);
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
+            telemetryMap.put("turret near target", isTurretNearTarget());
         }
 
         return telemetryMap;

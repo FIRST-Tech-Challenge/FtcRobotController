@@ -54,9 +54,17 @@ public abstract class TrikeDrive extends Drive {
                 for(int i = 0; i < wheelPositions.size(); i++) {
                     wheelDeltas.add(wheelPositions.get(i) - lastWheelPositions.get(i));
                 }
-                Pose2d robotPoseDelta = TrikeKinematics.wheelToRobotVelocities(wheelDeltas, drive.getTrackWidth());
-                double finalHeadingDelta = useExternalHeading ? wrapAngleRad(externalHeading - lastExternalHeading) : robotPoseDelta.getHeading();
-                poseEstimate = Kinematics.relativeOdometryUpdate(poseEstimate, new Pose2d(robotPoseDelta.vec(), finalHeadingDelta));
+//                Pose2d robotPoseDelta = TrikeKinematics.wheelToRobotVelocities(wheelDeltas, drive.getTrackWidth());
+//                double finalHeadingDelta = useExternalHeading ? wrapAngleRad(externalHeading - lastExternalHeading) : robotPoseDelta.getHeading();
+//                poseEstimate = Kinematics.relativeOdometryUpdate(poseEstimate, new Pose2d(robotPoseDelta.vec(), finalHeadingDelta));
+
+                double displacement = (wheelDeltas.get(0) + wheelDeltas.get(1)) / 2;
+                double heading = wrapAngleRad(poseEstimate.getHeading() + wrapAngleRad(externalHeading - lastExternalHeading));
+                poseEstimate = new Pose2d(
+                        poseEstimate.getX() + displacement * Math.cos(heading),
+                        poseEstimate.getY() + displacement * Math.sin(heading),
+                        heading
+                );
             }
 
             List<Double> wheelVelocities = drive.getWheelVelocities();

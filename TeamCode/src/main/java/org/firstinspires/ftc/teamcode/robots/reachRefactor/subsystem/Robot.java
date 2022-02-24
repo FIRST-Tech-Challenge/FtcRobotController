@@ -88,10 +88,10 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        if (gripper.getPitchTargetPos() < 1500 && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && gripper.getArticulation() == Gripper.Articulation.MANUAL)
+        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != Articulation.GRAB_AND_TRANSFER)
             articulation = Articulation.GRAB_AND_TRANSFER;
 
-        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation == Articulation.MANUAL)
+        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation != Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER && turret.isTurretNearTarget())
             articulation = Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER;
 
         articulate(articulation);

@@ -48,7 +48,7 @@ public class OpenCVPipeline extends OpenCvPipeline
     // Constants
     public static int VIEW_OPEN_CV_PIPELINE_STAGE = 6;
     public static int TOP_LEFT_X = 0;
-    public static int TOP_LEFT_Y = 50;
+    public static int TOP_LEFT_Y = 40;
     public static int BOTTOM_RIGHT_X = 320;
     public static int BOTTOM_RIGHT_Y = 140;
     public static double NORMALIZE_ALPHA = 51.0;

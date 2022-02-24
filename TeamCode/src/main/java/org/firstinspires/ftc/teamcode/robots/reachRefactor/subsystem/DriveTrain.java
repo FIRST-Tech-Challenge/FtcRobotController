@@ -99,6 +99,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private double rollCorrection, pitchCorrection;
     private double compensatedBatteryVoltage;
 
+    private double lastLeftPosition, lastRightPosition;
+    private double testX, testY, testHeading;
+
     private Pose2d poseEstimate, poseError;
     private Pose2d driveVelocity, lastDriveVelocity;
 
@@ -200,6 +203,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         lastDriveVelocity = new Pose2d(0, 0, 0);
         chassisLengthMode = ChassisLengthMode.BOTH;
         lastLoopTime = System.nanoTime();
+        testX = 12;
+        testY = 72;
     }
 
     private double getSwivelAngleCorrection() {
@@ -298,6 +303,18 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         AngularVelocity angularVelocities = imu.getAngularVelocity();
         pitchVelocity = wrapAngleRad(angularVelocities.yRotationRate);
         angularVelocity = wrapAngleRad(-angularVelocities.xRotationRate);
+
+        testHeading = wrapAngleRad(heading + Math.toRadians(90));
+        double leftDiff = leftPosition - lastLeftPosition;
+        double rightDiff = rightPosition - lastRightPosition;
+        double displacement = (leftDiff + rightDiff) / 2;
+        double dx = displacement * Math.cos(testHeading);
+        double dy = displacement * Math.sin(testHeading);
+        testX += dx;
+        testY += dy;
+
+        lastLeftPosition = leftPosition;
+        lastRightPosition = rightPosition;
 
         updatePoseEstimate();
         poseEstimate = getPoseEstimate();
@@ -410,6 +427,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
             telemetryMap.put("heading", Math.toDegrees(poseEstimate.getHeading()));
+
+            telemetryMap.put("test x", testX);
+            telemetryMap.put("test y", testY);
+            telemetryMap.put("test heading", Math.toDegrees(testHeading));
 
             if (trajectorySequenceRunner.isBusy()) {
                 telemetryMap.put("xError", poseError.getX());
@@ -674,5 +695,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public double getVoltage() {
         return compensatedBatteryVoltage;
+    }
+
+    public Pose2d getTestPoseEstimate() {
+        return new Pose2d(testX, testY, testHeading);
     }
 }

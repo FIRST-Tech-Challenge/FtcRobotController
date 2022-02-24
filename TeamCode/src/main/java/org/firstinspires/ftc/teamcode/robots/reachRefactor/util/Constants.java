@@ -36,8 +36,8 @@ public class Constants {
     public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
     public static double DIFF_TICKS_PER_REV = 768;
     public static double SWERVE_TICKS_PER_REV = 768;
-    public static double DIFF_TICKS_PER_INCH = DIFF_TICKS_PER_REV / (2 * Math.PI * DIFF_WHEEL_RADIUS);
-    public static double SWERVE_TICKS_PER_INCH = SWERVE_TICKS_PER_REV / (2 * Math.PI * SWERVE_WHEEL_RADIUS);
+    public static double DIFF_TICKS_PER_INCH = 30.7708333333;
+    public static double SWERVE_TICKS_PER_INCH = 30.7708333333;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants

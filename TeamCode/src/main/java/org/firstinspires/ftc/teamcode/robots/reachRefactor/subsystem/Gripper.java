@@ -30,7 +30,7 @@ public class Gripper implements Subsystem {
     public static int PITCH_TRANSFER = 2100;
     public static int PITCH_DOWN = 800;
     public static int PITCH_VERTICAL = 1800;
-    public static int FREIGHT_TRIGGER = 50; //mm distance to trigger Lift articulation
+    public static int FREIGHT_TRIGGER = 26; //mm distance to trigger Lift articulation
 
     private final Servo pitchServo, servo;
     private final CRServo intakeServo;
@@ -112,10 +112,11 @@ public class Gripper implements Subsystem {
     //Do not assume that we want to Set directly out of Transfer - there may be barriers to cross
     private final Stage setStage = new Stage();
     private final StateMachine set = getStateMachine(setStage)
-            .addSingleState(() -> setIntakePower(1.0))
+            .addSingleState(() -> setIntakePower(-1.0))
             .addSingleState(()->{setTargetPos(CLOSED);}) //close the gripper so it's less likely to catch something
             .addTimedState(.25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
             .addTimedState(.5f, ()->{setTargetPos(OPEN);}, () -> {})
+            .addSingleState(() -> setIntakePower(1.0))
             .build();
 
     //Gripper closes and lifts to the Transfer-ready position

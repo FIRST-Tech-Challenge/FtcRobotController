@@ -72,9 +72,9 @@ public class Crane implements Subsystem {
       
         LOWEST_TIER(75,130,20, 1.5f, 130),
         MIDDLE_TIER(60,130,40, 1f, 150),
-        HIGH_TIER(22, 125,70, 1f, 170),
-        HIGH_TIER_LEFT(20, 125,70,-80, 1f, 170),
-        HIGH_TIER_RIGHT(20, 125,70,80, 1f, 170),
+        HIGH_TIER(15, 125,70, 1f, 170),
+        HIGH_TIER_LEFT(15, 125,70,-80, 1f, 170),
+        HIGH_TIER_RIGHT(15, 125,70,80, 1f, 170),
         TRANSFER(-45,-50,-20,0, 0.75f,0),
 
         CAP(30, 140,0,0, 1, 170),
@@ -115,12 +115,24 @@ public class Crane implements Subsystem {
         }
     }
 
+    private boolean checkTargetPositions(Articulation articulation) {
+        return shoulderTargetAngle == articulation.shoulderPos &&
+                elbowTargetAngle == articulation.elbowPos &&
+                wristTargetAngle == articulation.wristPos &&
+                (!articulation.turret || turret.getTargetHeading() == articulation.turretAngle);
+    }
+
     private float currentToHomeTime = Articulation.HOME.toHomeTime;
     private double currentDumpPos = 0;
+    private boolean goingHome;
     private final Stage mainStage = new Stage();
     private final StateMachine main = getStateMachine(mainStage)
-            .addSingleState(() -> { dumping = false; })
-            .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
+            .addSingleState(() -> { dumping = false; goingHome = false; })
+            .addConditionalState(() -> checkTargetPositions(articulation), () -> true, () -> { setTargetPositions(Articulation.HOME); goingHome = true; return true; })
+            .addTimedState(() -> goingHome ? currentToHomeTime : 0, () -> {
+                if(goingHome)
+                    setTargetPositions(Articulation.HOME);
+            }, () -> {})
             .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
