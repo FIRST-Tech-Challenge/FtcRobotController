@@ -31,12 +31,12 @@ public class Utility_Constants {
     public static double FINAL_POWER = -1.0; //Final power for carousel
     //ARM POWERS
     public static double FIRST_LEVEL_POWER= 0.5;
-    public static double SECOND_LEVEL_POWER = 0.55;
+    public static double SECOND_LEVEL_POWER = 0.5;
     public static double THIRD_LEVEL_POWER = 0.65;
     public static double GOING_DOWN_POWER = 0.3;
     //POSITIONS
     public static double RELEASE_SERVO_DEFAULT = 0.71;
-    public static double BALANCE_SERVO_DEFAULT = 0.09;
+    public static double BALANCE_SERVO_DEFAULT = 0.07;
     //TIMINGS
     public static int MILLI_ACC = 1100; //Milliseconds after carousel has been engaged to begin accelerating the carousel
     public static int MILLI_FINAL = 1100; //Milliseconds after carousel has been engaged to reach the final speed

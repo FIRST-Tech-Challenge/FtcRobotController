@@ -79,7 +79,7 @@ public class RedWarehouseFSM extends LinearOpMode {
 
         chassis.setPoseEstimate(new Pose2d(10, -63, Math.toRadians(90)));
 
-        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(60.5, -68,0)).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
+        TrajectorySequence firstHubSplineSequence = chassis.trajectorySequenceBuilder(new Pose2d(59.5, -68,0)).addTemporalMarker(Utility_Constants.INTAKE_TIME,() -> {
             mechanisms.moveIntake(0);
         }).addSpatialMarker(new Vector2d(15.5,-60), () -> {
             mechanisms.moveIntake(0.4);
@@ -87,7 +87,7 @@ public class RedWarehouseFSM extends LinearOpMode {
         }).addSpatialMarker(new Vector2d(2.5,-40.5),() -> {
             mechanisms.releaseServoMove(0.3);
             mechanisms.moveIntake(0.0);
-        }).strafeTo(new Vector2d(12,-68)).lineToSplineHeading(new Pose2d(2.5,-40,Math.toRadians(-45))).build();
+        }).strafeTo(new Vector2d(12,-68.5)).lineToSplineHeading(new Pose2d(2,-40,Math.toRadians(-45))).build();
                 /*
                 .setReversed(true).splineTo(new Vector2d(16, -61),Math.toRadians(150)).splineTo(new Vector2d(11.5,-40.5),Math.toRadians(135))
                 .setReversed(false).build();
@@ -97,7 +97,7 @@ public class RedWarehouseFSM extends LinearOpMode {
         }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
                 /* .splineTo(new Vector2d(14, -62),Math.toRadians(-30))
                 .splineTo(new Vector2d(72,-63),Math.toRadians(0)) */
-                .lineToSplineHeading(new Pose2d(12,-69.5,0)).strafeTo(new Vector2d(60.5, -68.5))
+                .lineToSplineHeading(new Pose2d(12,-69.5,0)).strafeTo(new Vector2d(60, -68.5))
                 .build();
 
         telemetry.addData("Status","Finished loading Roadrunner splines");
@@ -118,7 +118,7 @@ public class RedWarehouseFSM extends LinearOpMode {
                 chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
                 chosenTrajectoryX = 2;
                 chosenTrajectoryY = -42;
-                telemetry.addData("OpenCV","First Level Detected");
+                telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
@@ -127,10 +127,11 @@ public class RedWarehouseFSM extends LinearOpMode {
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
                 chosenTrajectoryX = 3;
                 chosenTrajectoryY = -45;
-                telemetry.addData("OpenCV","Second Level Detected");
+                telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
             }
+            case ALLIANCE_THIRD:
             case NO_ALLIANCE: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
@@ -162,7 +163,7 @@ public class RedWarehouseFSM extends LinearOpMode {
         TrajectorySequence firstReturnSplineSequence = chassis.trajectorySequenceBuilder(SplineSequence.end()).addSpatialMarker(new Vector2d(20,-64), () -> {
             mechanisms.moveIntake(1.0);
         }).addSpatialMarker(new Vector2d(10, -50),() -> {mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);})
-                .lineToSplineHeading(new Pose2d(12,-69,0)).strafeTo(new Vector2d(60.5, -68))
+                .lineToSplineHeading(new Pose2d(12,-69,0)).strafeTo(new Vector2d(59.5, -68))
                 /*
                 .splineTo(new Vector2d(14, -62),Math.toRadians(-30))
                 .splineTo(new Vector2d(67,-62.5),Math.toRadians(0))
@@ -194,7 +195,7 @@ public class RedWarehouseFSM extends LinearOpMode {
                     break;
                 }
                 case DELIVERING_FREIGHT: {
-                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME) {
+                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME+100) {
                         telemetry.addData("State Machine","Moved to MOVING_TO_WAREHOUSE");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
