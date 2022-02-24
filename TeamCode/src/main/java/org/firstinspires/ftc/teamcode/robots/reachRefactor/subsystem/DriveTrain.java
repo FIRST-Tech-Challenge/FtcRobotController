@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.followers.RamseteFollower;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -61,7 +60,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 //    public static double ZETA = 0.0;
     public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(5, 0, 0);
     public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0.8, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.5, 0, 2);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(3.5, 0, 0.2);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
     public static double ROLL_ANTI_TIP_PID_TOLERANCE = 2;
@@ -71,6 +70,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients SWIVEL_PID = new PIDCoefficients(1, 0, 0.08);
     public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(4, 0,  0);
     public static double CHASSIS_LENGTH_TOLERANCE = 1;
+    public static PIDCoefficients MAINTAIN_HEADING_PID = new PIDCoefficients(6, 0, 0);
+    public static double MAINTAIN_HEADING_TOLERANCE = 1;
     public static double SWIVEL_TOLERANCE = 1;
 
     public final TrajectorySequenceRunner trajectorySequenceRunner;
@@ -83,7 +84,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private VoltageSensor batteryVoltageSensor;
     private final DistanceSensor chassisLengthDistanceSensor;
 
-    private final PIDController swivelPID, chassisLengthPID, rollAntiTipPID, pitchAntiTipPID;
+    private final PIDController swivelPID, chassisLengthPID, rollAntiTipPID, pitchAntiTipPID, maintainHeadingPID;
 
     private final boolean simulated;
 
@@ -94,7 +95,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private double leftPower, rightPower, swervePower;
     private boolean useMotorPowers;
     private double chassisLength, targetChassisLength, chassisLengthCorrection;
-    private boolean chassisLengthOnTarget,  duckSpinnerToggled, imuOffsetsInitialized;
+    private boolean maintainChassisLengthEnabled, maintainHeadingEnabled, duckSpinnerToggled, imuOffsetsInitialized, duckGameEnabled;
+    private boolean chassisLengthOnTarget, maintainHeadingOnTarget;
+    private double maintainHeading, maintainHeadingCorrection;
     private double heading, roll, pitch, pitchVelocity, angularVelocity;
     private double headingOffset, rollOffset, pitchOffset;
     private double rollCorrection, pitchCorrection;
@@ -105,8 +108,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private long lastLoopTime, loopTime;
 
-    private boolean duckGameEnabled;
-    private boolean maintainChassisLengthEnabled;
     private ChassisLengthMode chassisLengthMode;
     public enum ChassisLengthMode {
         SWERVE, DIFF, BOTH
@@ -115,7 +116,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public DriveTrain(HardwareMap hardwareMap, boolean simulated) {
         super(simulated);
         this.simulated = simulated;
-        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, 0.5), Double.MAX_VALUE);
+        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS, new Pose2d(0.5, 0.5, Math.toRadians(5)), Double.MAX_VALUE);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         if(simulated) {
@@ -175,6 +176,13 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         chassisLengthPID.setOutputRange(-100, 100);
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
         chassisLengthPID.enable();
+
+        maintainHeadingPID = new PIDController(MAINTAIN_HEADING_PID);
+        maintainHeadingPID.setInputRange(0, Math.toRadians(360));
+        maintainHeadingPID.setOutputRange(-100, 100);
+        maintainHeadingPID.setContinuous(true);
+        maintainHeadingPID.setTolerance(MAINTAIN_HEADING_TOLERANCE);
+        maintainHeadingPID.enable();
 
         rollAntiTipPID = new PIDController(ROLL_ANTI_TIP_PID);
         rollAntiTipPID.setInputRange(0, Math.toRadians(360));
@@ -245,6 +253,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
 
+        maintainHeadingPID.setPID(MAINTAIN_HEADING_PID);
+        maintainHeadingPID.setTolerance(MAINTAIN_HEADING_TOLERANCE);
+
         rollAntiTipPID.setPID(ROLL_ANTI_TIP_PID);
         rollAntiTipPID.setTolerance(ROLL_ANTI_TIP_PID_TOLERANCE);
 
@@ -314,13 +325,22 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         if(pitchAntiTipPID.onTarget())
             pitchCorrection = 0;
 
+        Pose2d effectiveDriveVelocity = driveVelocity;
+        if(maintainHeadingEnabled) {
+            maintainHeadingPID.setInput(poseEstimate.getHeading());
+            maintainHeadingPID.setSetpoint(maintainHeading);
+            maintainHeadingCorrection = maintainHeadingPID.performPID();
+            maintainHeadingOnTarget = maintainHeadingPID.onTarget();
+
+            effectiveDriveVelocity = effectiveDriveVelocity.plus(new Pose2d(0, 0, maintainHeadingCorrection));
+        }
         // sending corrections for chassis length
         chassisLengthOnTarget = chassisLengthPID.onTarget();
-        if(maintainChassisLengthEnabled && !simulated && !useMotorPowers) {
+        if(maintainChassisLengthEnabled && !useMotorPowers) {
             chassisLengthCorrection = getChassisLengthCorrection();
 
             List<Double> frontVelocities = TrikeKinematics.robotToWheelVelocities(
-                    driveVelocity.plus(
+                    effectiveDriveVelocity.plus(
                             new Pose2d(
                                     chassisLengthMode == ChassisLengthMode.DIFF || chassisLengthMode == ChassisLengthMode.BOTH ?
                                             chassisLengthCorrection : 0, 0, 0
@@ -328,7 +348,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                     ), TRACK_WIDTH, chassisLength
             );
             List<Double> backVelocities = TrikeKinematics.robotToWheelVelocities(
-                    driveVelocity.plus(
+                    effectiveDriveVelocity.plus(
                             new Pose2d(
                                     chassisLengthMode == ChassisLengthMode.SWERVE || chassisLengthMode == ChassisLengthMode.BOTH ?
                                             -chassisLengthCorrection : 0, 0, 0
@@ -342,7 +362,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                             !approxEquals(backVelocities.get(2), 0)
             )
                 setSwivelAngle(TrikeKinematics.robotToSwivelAngle(
-                        driveVelocity.plus(
+                        effectiveDriveVelocity.plus(
                                 new Pose2d(
                                         chassisLengthMode == ChassisLengthMode.SWERVE || chassisLengthMode == ChassisLengthMode.BOTH ?
                                                 -chassisLengthCorrection : 0, 0, 0
@@ -441,6 +461,11 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("chassis length mode", chassisLengthMode);
             telemetryMap.put("chassis length PID on target", chassisLengthOnTarget);
             telemetryMap.put("chassis length PID correction", chassisLengthCorrection);
+
+            telemetryMap.put("maintain heading enabled", maintainHeadingEnabled);
+            telemetryMap.put("maintain heading", Math.toDegrees(maintainHeading));
+            telemetryMap.put("maintain heading PID on target", maintainHeadingOnTarget);
+            telemetryMap.put("maintain heading PID correction", maintainHeadingCorrection);
 
             telemetryMap.put("angular velocity", Math.toDegrees(angularVelocity));
             telemetryMap.put("pitch velocity", Math.toDegrees(pitchVelocity));
@@ -669,5 +694,15 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public double getVoltage() {
         return compensatedBatteryVoltage;
+    }
+
+    public void setMaintainHeadingEnabled(boolean maintainHeadingEnabled) {
+        this.maintainHeadingEnabled = maintainHeadingEnabled;
+        if(maintainHeadingEnabled)
+            maintainHeading = poseEstimate.getHeading();
+    }
+
+    public boolean isMaintainHeadingEnabled() {
+        return maintainHeadingEnabled;
     }
 }

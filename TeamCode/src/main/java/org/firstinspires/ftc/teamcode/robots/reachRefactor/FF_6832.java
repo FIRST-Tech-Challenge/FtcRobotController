@@ -26,7 +26,6 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntConsumer;
@@ -374,6 +373,8 @@ public class FF_6832 extends OpMode {
             forward = (forward1 + forward2) * velocityBoost;
             rotate = (rotate1 + rotate2) * velocityBoost;
         }
+        if(!approxEquals(rotate, 0))
+            robot.driveTrain.setMaintainHeadingEnabled(false);
         if(antiTippingEnabled)
             robot.driveTrain.setDrivePowerSafe(new Pose2d(forward, 0, rotate));
         else
@@ -426,8 +427,11 @@ public class FF_6832 extends OpMode {
         if(!notTriggerDeadZone(gamepad1.left_trigger) && !notTriggerDeadZone(gamepad2.left_trigger))
             velocityBoost = 1;
 
-        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
-            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
+//        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
+//            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
+
+        if(stickyGamepad1.right_trigger)
+            robot.driveTrain.setMaintainHeadingEnabled(!robot.driveTrain.isMaintainHeadingEnabled());
 
         handleArcadeDrive(gamepad1);
         handleArcadeDriveReversed(gamepad2);
