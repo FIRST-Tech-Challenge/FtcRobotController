@@ -45,10 +45,11 @@ public abstract class Teleop extends LinearOpMode {
     int       freightArmTarget   = 0;         // Which arm position (encoder counts) to target
     double    freightArmServoPos = 0.0;       // Which servo setting to target once movement starts
 
-    final int FREIGHT_CYCLECOUNT_START = 20;  // Freight Arm just started moving (1st cycle)
-    final int FREIGHT_CYCLECOUNT_SERVO = 10;  // Freight Arm off the floor (safe to rotate box servo)
-    final int FREIGHT_CYCLECOUNT_CHECK = 1;   // Time to check if Freight Arm is still moving?
-    final int FREIGHT_CYCLECOUNT_DONE  = 0;   // Movement is complete (cycle count is reset)
+    final int FREIGHT_CYCLECOUNT_START  = 20;  // Freight Arm just started moving (1st cycle)
+    final int FREIGHT_CYCLECOUNT_SERVO  = 10;  // Freight Arm off the floor (safe to rotate box servo)
+    final int FREIGHT_CYCLECOUNT_CHECK  = 2;   // Time to check if Freight Arm is still moving?
+    final int FREIGHT_CYCLECOUNT_SETTLE = 1;   // Small delay to make sure things aren't bouncing around
+    final int FREIGHT_CYCLECOUNT_DONE   = 0;   // Movement is complete (cycle count is reset)
     int       freightArmCycleCount     = FREIGHT_CYCLECOUNT_DONE;
     boolean   freightArmTweaked        = false;  // Reminder to zero power when trigger released
 
@@ -600,18 +601,19 @@ public abstract class Teleop extends LinearOpMode {
                 // still moving; hold at this cycle count
             }
             else { // no longer busy; turn off motor power
-                freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;   // ensure we're reset
+                freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;   // ensure we're reset
+                autoCollectDelayTimer.reset();
+            }
+        } else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SETTLE) {
+            if( autoCollectDelayTimer.milliseconds() > 500 ) {
+                freightArmCycleCount--;
                 // If we stopped in COLLECT position then sweeper will be
                 // running so use that to restart our freight detection flags
-                if( !collectingFreight && sweeperRunning) {
-                    autoCollectDelayTimer.reset();
+                if( sweeperRunning && !collectingFreight ) {
                     freightPresent = false;
                     freightIsCube = false;
+                    collectingFreight = true;
                 }
-            }
-        } else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_DONE) {
-            if(sweeperRunning && !collectingFreight && (autoCollectDelayTimer.milliseconds() > 500) ) {
-                collectingFreight = true;
             }
         }
     } // processFreightArmControls
