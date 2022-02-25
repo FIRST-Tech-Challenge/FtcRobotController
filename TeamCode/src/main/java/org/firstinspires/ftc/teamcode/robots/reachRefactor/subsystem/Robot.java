@@ -151,6 +151,7 @@ public class Robot implements Subsystem {
 
     // Tele-Op articulations
     private StateMachine grabAndTransfer = getStateMachine(new Stage())
+            .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
             .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))

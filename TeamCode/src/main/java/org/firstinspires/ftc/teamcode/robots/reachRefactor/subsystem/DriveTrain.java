@@ -60,7 +60,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static double B = 0.005;
     public static double ZETA = 0.01;
     public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(6, 0, 0);
-    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0.004, 0, 0);
+    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0.9, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);

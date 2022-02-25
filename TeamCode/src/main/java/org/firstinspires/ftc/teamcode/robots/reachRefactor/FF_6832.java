@@ -388,8 +388,10 @@ public class FF_6832 extends OpMode {
 
     private void handleTeleOp() { // apple
         // gamepad 1
-        if (stickyGamepad1.x)
+        if (stickyGamepad1.x) {
             robot.gripper.set();
+            robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
+        }
         if(stickyGamepad1.b)
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad1.a)
@@ -432,8 +434,8 @@ public class FF_6832 extends OpMode {
         if(!notTriggerDeadZone(gamepad1.left_trigger) && !notTriggerDeadZone(gamepad2.left_trigger))
             velocityBoost = 1;
 
-//        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
-//            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
+        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
+            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
 
         handleArcadeDrive(gamepad1);
         handleArcadeDriveReversed(gamepad2);

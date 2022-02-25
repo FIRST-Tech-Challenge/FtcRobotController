@@ -87,8 +87,8 @@ public class Autonomous {
         
         TrajectorySequence backAndForthSequence =
                 robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(48)
-                        .forward(48)
+                        .back(96)
+                        .forward(96)
                         .build();
         backAndForth = trajectorySequenceToStateMachine(backAndForthSequence);
 
@@ -164,8 +164,7 @@ public class Autonomous {
                                 () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                         )
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-                        .addSingleState(() -> robot.crane.turret.setTargetHeading(90))
-                        .addState(() -> robot.turret.isTurretNearTarget())
+                        .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(90), () -> {})
                         .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                         .addSingleState(() ->
