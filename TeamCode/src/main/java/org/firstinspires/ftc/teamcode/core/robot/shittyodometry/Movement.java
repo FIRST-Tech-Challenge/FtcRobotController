@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,6 +21,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
+import java.util.Arrays;
+
 public class Movement {
     private final SampleMecanumDrive drive;
     private final GamepadEx moveGamepad;
@@ -28,7 +31,7 @@ public class Movement {
     private final Encoder leftEncoder, frontEncoder;
     private final AutoLift lift;
     private final ModernRoboticsI2cRangeSensor distanceSensor;
-
+    private final DcMotor[] motors;
     private double headingOffset = 0;
     private double forwardOffset = 0;
     private double sidewaysOffset = 0;
@@ -52,6 +55,14 @@ public class Movement {
         this.distanceSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range");
         distanceSensor.initialize();
         this.multiplier = red ? 1 : -1;
+
+
+        motors = new DcMotor[]{
+                hardwareMap.get(DcMotorEx.class, "front left wheel"),
+                hardwareMap.get(DcMotorEx.class, "back left wheel"),
+                hardwareMap.get(DcMotorEx.class, "back right wheel"),
+                hardwareMap.get(DcMotorEx.class, "front right wheel")
+        };
     }
     public SampleMecanumDrive getDrive() {
         return drive;
@@ -99,7 +110,11 @@ public class Movement {
 
     public void update() {
         yReader.readValue();
-        if (!yReader.getState()) {
+        if (moveGamepad.isDown(GamepadKeys.Button.X)) {
+            for (DcMotor motor : motors) {
+                motor.setPower(1);
+            }
+        } else if (!yReader.getState()) {
             firstTimeAuto = true;
             drive.setWeightedDrivePower(new Pose2d(
                     moveGamepad.getLeftY(),
