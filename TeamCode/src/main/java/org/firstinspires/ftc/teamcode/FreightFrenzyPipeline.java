@@ -112,10 +112,9 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     private static String directory;
 
     FreightFrenzyPipeline(boolean redAlliance, boolean duckySide) {
-        final String BASE_FOLDER_NAME = "FIRST";
-        String dateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        directory = Environment.getExternalStorageDirectory().getPath() + "/" +
-                BASE_FOLDER_NAME + "/" + dateTime;
+        // Create a subdirectory based on DATE
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
         this.redAlliance = redAlliance;
         this.duckySide = duckySide;
         if(redAlliance) {
@@ -163,8 +162,8 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     }
 
     public static void saveLastAutoImage() {
-        String dateTime = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
-        String directoryPath = directory + "/" + "AutoImage_" + dateTime + ".png";
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String directoryPath = directory + "/" + "AutoImage_" + timeString + ".png";
 
         new Thread(new Runnable()
         {

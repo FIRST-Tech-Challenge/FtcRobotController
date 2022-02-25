@@ -17,7 +17,7 @@ public class TeleopBlue extends Teleop {
     public void setAllianceSpecificBehavior() {
         // 435 rpm motor  = 384.5 encoder pulse/rev at output shaft 
         // 1150 rpm motor = 145.1 encoder pulse/rev at output shaft 
-        duckVelocityNow  = -18; //blue target counts per second (negative!)
-        duckVelocityStep = -18; //blue ramp-up step size (negative!)
+        duckVelocityNow  = -100; //blue target counts per second (negative!)
+        duckVelocityStep =  -90; //blue ramp-up step size (negative!)
     }
 } // TeleopBlue

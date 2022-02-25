@@ -93,6 +93,18 @@ public class HardwareBothHubs
     protected DcMotorEx duckMotor     = null;
     public double       duckMotorVel  = 0.0;           // encoder counts per second
 
+    // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
+    // motor performance we store data to memory until the movement is complete, then dump to a file.
+    public boolean          duckMotorLogging   = true; // only enable during development!!
+    public final static int DUCKMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
+    protected double[]      duckMotorLogTime   = new double[DUCKMOTORLOG_SIZE];  // msec
+    protected double[]      duckMotorLogVel    = new double[DUCKMOTORLOG_SIZE];  // counts/sec
+    protected double[]      duckMotorLogPwr    = new double[DUCKMOTORLOG_SIZE];  // Power
+    protected double[]      duckMotorLogAmps   = new double[DUCKMOTORLOG_SIZE];  // mAmp
+    protected boolean       duckMotorLogEnable = false;
+    protected int           duckMotorLogIndex  = 0;
+    protected ElapsedTime   duckMotorTimer     = new ElapsedTime();
+
     //====== CAPPING ARM MOTOR (RUN_USING_ENCODER) =====
     protected DcMotorEx cappingMotor     = null;
     public boolean      cappingMotorAuto = false;      // Automatic go-to-position in progress
@@ -107,7 +119,7 @@ public class HardwareBothHubs
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean        cappingMotorLogging = true;  // only enable during development!!
+    public boolean        cappingMotorLogging = false; // only enable during development!!
     public final static int CAPMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      capMotorLogTime   = new double[CAPMOTORLOG_SIZE];  // msec
     protected int[]         capMotorLogPos    = new int[CAPMOTORLOG_SIZE];     // encoder count
@@ -154,7 +166,7 @@ public class HardwareBothHubs
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean        freightMotorLogging = true;  // only enable during development!!
+    public boolean        freightMotorLogging = false; // only enable during development!!
     public final static int FRGMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      frgMotorLogTime   = new double[FRGMOTORLOG_SIZE];  // msec
     protected int[]         frgMotorLogPos    = new int[FRGMOTORLOG_SIZE];     // encoder count
@@ -171,7 +183,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 232;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
-//    public int          FREIGHT_ARM_POS_HUB_TOP    = 1670;  // For dumping into hub top level last
+//  public int          FREIGHT_ARM_POS_HUB_TOP    = 1670;  // For dumping into hub top level last
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level last
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
@@ -319,6 +331,8 @@ public class HardwareBothHubs
         duckMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         duckMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         duckMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        PIDFCoefficients duckPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
+        duckMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, duckPIDF );
 
         //Initialize capping arm motor
         cappingMotor = hwMap.get(DcMotorEx.class,"CappingMotor");
@@ -496,6 +510,17 @@ public class HardwareBothHubs
                frgMotorLogEnable = false;
         } // frgMotorLogEnable
 
+        // Do we need to capture duck motor instrumentation data?
+        if( duckMotorLogEnable ) {
+           duckMotorLogTime[duckMotorLogIndex] = duckMotorTimer.milliseconds();
+           duckMotorLogVel[duckMotorLogIndex]  = duckMotorVel;
+           duckMotorLogPwr[duckMotorLogIndex]  = duckMotor.getPower();
+           duckMotorLogAmps[duckMotorLogIndex] = duckMotor.getCurrent( MILLIAMPS );;
+           // If the log is now full, disable further logging
+           if( ++duckMotorLogIndex >= DUCKMOTORLOG_SIZE )
+               duckMotorLogEnable = false;
+        } // duckMotorLogEnable
+
     } // readBulkData
 
     /*--------------------------------------------------------------------------------------------*/
@@ -581,6 +606,45 @@ public class HardwareBothHubs
             e.printStackTrace();
         }
     } // writeFreightLog()
+    
+    /*--------------------------------------------------------------------------------------------*/
+    public void writeDuckLog() {
+        // Are we even logging these events?
+        if( !duckMotorLogging) return;
+        // If we didn't fill the buffer, then operator stopped the motor (disable further logging to memory)
+        duckMotorLogEnable = false;
+        // Create a subdirectory based on DATE
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String directoryPath = Environment.getExternalStorageDirectory().getPath() + "//FIRST//DuckMotor//" + dateString;
+        // Ensure that directory path exists
+        File directory = new File(directoryPath);
+        directory.mkdirs();
+        // Create a filename based on TIME
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String filePath = directoryPath + "/" + "duck_" + timeString + ".txt";
+        // Open the file
+        FileWriter duckLog;
+        try {
+            duckLog = new FileWriter(filePath, false);
+            // Log the current PIDF settings
+            PIDFCoefficients currPIDF = duckMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            duckLog.write("DuckMotor " + currPIDF.toString() + "\r\n");
+            // Log Column Headings
+            duckLog.write("msec,mAmp,pwr,cts/sec\r\n");
+            // Log all the data recorded
+            for( int i=0; i<duckMotorLogIndex; i++ ) {
+                String msecString = String.format("%.3f, ", duckMotorLogTime[i] );
+                String ampString  = String.format("%.0f, ", duckMotorLogAmps[i] );
+                String pwrString  = String.format("%.3f, ", duckMotorLogPwr[i]  );
+                String velString  = String.format("%.0f\r\n", duckMotorLogVel[i]);
+                duckLog.write( msecString + ampString + pwrString + velString );
+            }
+            duckLog.flush();
+            duckLog.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } // writeDuckLog()
     
     /*--------------------------------------------------------------------------------------------*/
     public void driveTrainMotors( double frontLeft, double frontRight, double rearLeft, double rearRight )
@@ -840,9 +904,9 @@ public class HardwareBothHubs
                 // Determine our min power:
                 // - Current ramping down implies motor/arm is coming to a stop (allow low power)
                 // - Current at zero or increasing means arm won't move unless given enough power
-                minPower = (freightMotorRamp)? 0.1 : 0.40;
+                minPower = (freightMotorRamp)? 0.35 : 0.40;
                 // Compute motor power (automatically reduce as we approach target)
-                freightMotorPower = ticksToGo / 720.0;  // 1620rpm = 103.8 counts per shaft revolution
+                freightMotorPower = ticksToGo / 624.0;  // 1620rpm = 103.8 counts per shaft revolution
                 freightMotorPower = Math.copySign( Math.min(Math.abs(freightMotorPower), maxPower), freightMotorPower );
                 freightMotorPower = Math.copySign( Math.max(Math.abs(freightMotorPower), minPower), freightMotorPower );
                 freightMotor.setPower( freightMotorPower );

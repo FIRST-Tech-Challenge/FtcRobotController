@@ -45,11 +45,11 @@ public abstract class Teleop extends LinearOpMode {
     int       freightArmTarget   = 0;         // Which arm position (encoder counts) to target
     double    freightArmServoPos = 0.0;       // Which servo setting to target once movement starts
 
-    final int FREIGHT_CYCLECOUNT_START  = 20;  // Freight Arm just started moving (1st cycle)
-    final int FREIGHT_CYCLECOUNT_SERVO  = 10;  // Freight Arm off the floor (safe to rotate box servo)
-    final int FREIGHT_CYCLECOUNT_CHECK  = 2;   // Time to check if Freight Arm is still moving?
-    final int FREIGHT_CYCLECOUNT_SETTLE = 1;   // Small delay to make sure things aren't bouncing around
-    final int FREIGHT_CYCLECOUNT_DONE   = 0;   // Movement is complete (cycle count is reset)
+    final int FREIGHT_CYCLECOUNT_START  = 20; // Freight Arm just started moving (1st cycle)
+    final int FREIGHT_CYCLECOUNT_SERVO  = 10; // Freight Arm off the floor (safe to rotate box servo)
+    final int FREIGHT_CYCLECOUNT_CHECK  = 2;  // Time to check if Freight Arm is still moving?
+    final int FREIGHT_CYCLECOUNT_SETTLE = 1;  // Small delay to make sure things aren't bouncing around
+    final int FREIGHT_CYCLECOUNT_DONE   = 0;  // Movement is complete (cycle count is reset)
     int       freightArmCycleCount     = FREIGHT_CYCLECOUNT_DONE;
     boolean   freightArmTweaked        = false;  // Reminder to zero power when trigger released
 
@@ -97,8 +97,6 @@ public abstract class Teleop extends LinearOpMode {
     double      duckVelocityNow;
     double      duckVelocityStep;
     
-//  ElapsedTime duckRamp = new ElapsedTime();
-
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
     int       rangeSensorIndex = 1;         // only send a new ping out every other control cycle, and rotate sensors
@@ -358,7 +356,7 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     // NOTE: There are two limits that govern our maximum velocity:
     // 1) Motor capability - We can't exceed the velocity associated with 100% power.
-    //    For a 435rpm motor,  100% power is 2360 counts/sec (single gecko wheel)
+    //    For a 435rpm motor,  100% power is 2360 counts/sec (single or dual gecko wheels)
     //    For a 1150rpm motor, 100% power is 2200 counts/sec (wall of wheels)
     // 2) Duck fly-off - Must remain below fly-off velocity until duck reaches the sweeper bar
     // The 1st limit is easily found with setPower(1.0) but the 2nd requires testing.
@@ -370,27 +368,28 @@ public abstract class Teleop extends LinearOpMode {
                 robot.duckMotor.setVelocity( 0.0 );
                 duckVelocityNow = duckVelocityStep;  // back to starting velocity;
                 duckMotorEnable = false;
+                robot.writeDuckLog();
             }
             // If stopped/disabled, turn ON at our initial velocity
             else {
 //              robot.duckMotor.setPower( 1.0 );  // to determine max counts/sec
                 robot.duckMotor.setVelocity( duckVelocityNow );
-//              duckRamp.reset(); // reset the ramp timer
                 duckMotorEnable = true;
+                // If logging instrumentation, begin a new dataset now:
+                if( robot.duckMotorLogging ) {
+                    robot.duckMotorLogIndex  = 0;     // reset for another log
+                    robot.duckMotorLogEnable = true;  // enable logging
+                    robot.duckMotorTimer.reset();     // reset timestamping
+                }
             }
         }
         // No operator change (either start/stop), but what about ramping?
         else if( duckMotorEnable ) {
-            // Has sufficient time passed to step up to the next velocity?
-//          if( duckRamp.milliseconds() >= 25 ) {  // 25 msec
-                // Have we already ramped up to the maximum velocity?
-                if( Math.abs(duckVelocityNow) < 2200 ) {  // allows 2200 cps max
-                   duckVelocityNow += duckVelocityStep;
-                   robot.duckMotor.setVelocity( duckVelocityNow );
-                }
-                // Whether we ramp up or not, go ahead and reset the timer
-//              duckRamp.reset();
-//          }
+            // Have we already ramped up to the maximum velocity?
+            if( Math.abs(duckVelocityNow) < 2300 ) {  // allows 2300 cps max
+                duckVelocityNow += duckVelocityStep;
+                robot.duckMotor.setVelocity( duckVelocityNow );
+            }
         }
     } // processDuckMotorControls
 
@@ -600,8 +599,8 @@ public abstract class Teleop extends LinearOpMode {
             if( robot.freightMotorAuto ) {
                 // still moving; hold at this cycle count
             }
-            else { // no longer busy; turn off motor power
-                freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;   // ensure we're reset
+            else { // arm motor is stopped, but arm may be bouncing
+                freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;
                 autoCollectDelayTimer.reset();
             }
         } else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SETTLE) {
@@ -619,8 +618,8 @@ public abstract class Teleop extends LinearOpMode {
     } // processFreightArmControls
 
     /*---------------------------------------------------------------------------------*/
-    /* The 1620rpm capping-arm motor requires a minimum of 10% power to RAISE the arm  */
-    /* and 5% power to LOWER the arm -- where RAISE and LOWER switch orientation as    */
+    /* The 1620rpm capping-arm motor requires a minimum of 30% power to RAISE the arm  */
+    /* and 20% power to LOWER the arm -- where RAISE and LOWER switch orientation as   */
     /* the arm rotates thru the full range of encoder counts. This function scales the */
     /* manual user input (left/right trigger) to allow fine control over the full      */
     /* range of motion.                                                                */
@@ -629,16 +628,15 @@ public abstract class Teleop extends LinearOpMode {
         double absPercentInput = Math.abs( percentInput );
         // The necessary min/max power range is determined by these inputs:
         // a) percentInput > 0 = rotation toward CAPPING_ARM_POS_GRAB (gamepad1.left_trigger) 
-        //      countsFromVertical >= 0 = LOWERING the capping arm (need 5%+ power)
-        //      countsFromVertical <  0 = RAISING the capping arm  (need 10%+ power)
+        //      countsFromVertical >= 0 = LOWERING the capping arm (need 20%+ power)
+        //      countsFromVertical <  0 = RAISING the capping arm  (need 30%+ power)
         // b) percentInput < 0 = rotation toward CAPPING_ARM_POS_START (gamepad1.right_trigger) 
-        //      countsFromVertical >= 0 = RAISING the capping arm  (need 10%+ power)
-        //      countsFromVertical <  0 = LOWERING the capping arm (need 5%+ power)
+        //      countsFromVertical >= 0 = RAISING the capping arm  (need 30%+ power)
+        //      countsFromVertical <  0 = LOWERING the capping arm (need 20%+ power)
         boolean raisingArm = ((percentInput > 0.0) && (countsFromVertical < 0)) ||
                              ((percentInput < 0.0) && (countsFromVertical >= 0));
         double minPower = (raisingArm)? 0.30 : 0.20;
-//      double maxPower = (raisingArm)? 0.80 : 0.70;
-//      double computedPower = minPower + absPercentInput * (maxPower - minPower);
+        // maxPower = minPower+0.25 (ie, 100% joystick input, minus the 75% before we start ramping up)
         double computedPower = (absPercentInput <= 0.75)? minPower : (minPower + absPercentInput-0.75);
         // Apply the positive/negative sign from percentInput
         computedPower *= (percentInput > 0.0)? 1.0 : -1.0;

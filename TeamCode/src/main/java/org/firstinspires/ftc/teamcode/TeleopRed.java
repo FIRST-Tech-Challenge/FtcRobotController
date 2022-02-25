@@ -17,7 +17,7 @@ public class TeleopRed extends Teleop {
     public void setAllianceSpecificBehavior() {
         // 435 rpm motor  = 384.5 encoder pulse/rev at output shaft 
         // 1150 rpm motor = 145.1 encoder pulse/rev at output shaft 
-        duckVelocityNow  =  18; //red target counts per second (positive!)
-        duckVelocityStep =  18; //red ramp-up step size (positive!)
+        duckVelocityNow  =  100; //red target counts per second (positive!)
+        duckVelocityStep =   90; //red ramp-up step size (positive!)
     }
 } // TeleopRed
