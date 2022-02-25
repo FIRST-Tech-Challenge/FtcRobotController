@@ -24,7 +24,7 @@ public class AutoLift {
         TOP(1473, 0.3D, true),
         MIDDLE(946, 0.3D, true),
         BOTTOM(703, 0.25D, true),
-        TSE(2264, 0.716D, false),
+        TSE(2230, 0.716D, false),
         SAFETOP(TOP.motorPos, SAFE.armPos, false),
         FUNNYDUMP(TSE.motorPos, 1, true),
         DUMPTSE(TOP.motorPos, FUNNYDUMP.armPos, true),

@@ -34,20 +34,19 @@ public abstract class ControllerToggleableTool<T extends DcMotorSimple> extends 
     }
 
     protected void run() {
-        if (currentState) {
-            this.off();
-        } else {
-            this.on();
+        reader.readValue();
+        if (reader.wasJustReleased()) {
+            if (currentState) {
+                this.off();
+            } else {
+                this.on();
+            }
         }
     }
 
     protected void makeEvent(@NonNull EventThread eventThread, ButtonReader reader) {
-        eventThread.addEvent(new RunListenerIndefinitelyEvent(this::run) {
-            @Override
-            public boolean shouldRun() {
-                reader.readValue();
-                return reader.wasJustReleased();
-            }
-        });
+        final Thread thread = new Thread(this::run);
+        thread.setPriority(Thread.NORM_PRIORITY);
+        thread.start();
     }
 }
