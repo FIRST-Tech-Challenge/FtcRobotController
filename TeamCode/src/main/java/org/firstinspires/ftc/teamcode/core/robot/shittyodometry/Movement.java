@@ -30,9 +30,10 @@ public class Movement {
 
     private States state = States.MOVEFORWARD;
     private boolean firstTimeAuto = true;
+    private final int multiplier;
 
 
-    public Movement(HardwareMap hardwareMap, GamepadEx gamepad, AutoLift lift) {
+    public Movement(HardwareMap hardwareMap, GamepadEx gamepad, AutoLift lift, boolean red) {
         this.imu = IMU.create(hardwareMap);
         this.drive = new SampleMecanumDrive(hardwareMap);
         this.moveGamepad = gamepad;
@@ -41,6 +42,7 @@ public class Movement {
         this.frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
         this.frontEncoder.setDirection(Encoder.Direction.REVERSE);
         this.lift = lift;
+        this.multiplier = red ? 1 : -1;
     }
     public SampleMecanumDrive getDrive() {
         return drive;
@@ -109,7 +111,7 @@ public class Movement {
                 case MOVEFORWARD:
                     if (forward < 19.5) {
                         drive.setWeightedDrivePower(new Pose2d(
-                                0.4,
+                                -0.4,
                                 0,
                                 0
                         ));
@@ -123,7 +125,7 @@ public class Movement {
                         drive.setWeightedDrivePower(new Pose2d(
                                 0,
                                 0,
-                                -0.4
+                                -0.4 * multiplier
                         ));
                     } else {
                         state = States.DUMP;
@@ -141,7 +143,7 @@ public class Movement {
                         drive.setWeightedDrivePower(new Pose2d(
                                 0,
                                 0,
-                                0.4
+                                0.4*multiplier
                         ));
                     } else {
                         state = States.MOVEBACK;
@@ -151,7 +153,7 @@ public class Movement {
                 case MOVEBACK:
                     if (forward > -19.5) {
                         drive.setWeightedDrivePower(new Pose2d(
-                                -0.4,
+                                0.4,
                                 0,
                                 0
                         ));

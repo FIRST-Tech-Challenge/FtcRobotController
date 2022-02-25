@@ -33,7 +33,7 @@ public abstract class ControllerToggleableTool<T extends DcMotorSimple> extends 
         makeEvent(eventThread, reader);
     }
 
-    protected void run() {
+    private void run() {
         reader.readValue();
         if (reader.wasJustReleased()) {
             if (currentState) {
@@ -45,7 +45,11 @@ public abstract class ControllerToggleableTool<T extends DcMotorSimple> extends 
     }
 
     protected void makeEvent(@NonNull EventThread eventThread, ButtonReader reader) {
-        final Thread thread = new Thread(this::run);
+        final Thread thread = new Thread(() -> {
+            while (!eventThread.isInterrupted()) {
+                run();
+            }
+        });
         thread.setPriority(Thread.NORM_PRIORITY);
         thread.start();
     }
