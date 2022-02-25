@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.util;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DelayStorage {
@@ -21,7 +23,7 @@ public class DelayStorage {
         }
     }
 
-    public static void waitForDelay(ElapsedTime timer) {
+    public static void waitForDelay(@NonNull ElapsedTime timer) {
         while (timer.seconds() < seconds) {
             // waiting...
         }
