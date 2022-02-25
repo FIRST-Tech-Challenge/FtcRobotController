@@ -271,9 +271,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         updatePIDCoefficients();
 
         // sensor readings
-        leftVelocity = 0.75 * diffEncoderTicksToInches(leftMotor.getVelocity());
-        rightVelocity = 0.75 * diffEncoderTicksToInches(rightMotor.getVelocity());
-        swerveVelocity = 0.75 * swerveEncoderTicksToInches(swerveMotor.getVelocity());
+        leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
+        rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
+        swerveVelocity = swerveEncoderTicksToInches(swerveMotor.getVelocity());
         if(simulated) {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
