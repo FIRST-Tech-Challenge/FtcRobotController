@@ -7,6 +7,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cDevice;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.IMU;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
@@ -41,7 +42,6 @@ public class Movement {
         this.frontEncoder.setDirection(Encoder.Direction.REVERSE);
         this.lift = lift;
     }
-
     public SampleMecanumDrive getDrive() {
         return drive;
     }

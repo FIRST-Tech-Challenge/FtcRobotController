@@ -75,7 +75,8 @@ public class AutoWarehouse extends LinearOpMode {
         // part 4: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
         final TrajectorySequence part4 = drive.trajectorySequenceBuilder(intakeReturnPoint)
                 .lineTo(new Vector2d(-3, nextToWall * multiplier))
-                .lineToLinearHeading(liftPosition)
+                .lineToLinearHeading(isRed ? new Pose2d(-4, -44, Math.toRadians(-65)) :
+                        new Pose2d(-3, 45, Math.toRadians(60)))
                 .build();
 
         final boolean[] liftUpdated = {false};
