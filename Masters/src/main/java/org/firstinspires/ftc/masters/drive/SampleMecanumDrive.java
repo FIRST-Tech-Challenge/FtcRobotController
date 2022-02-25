@@ -93,7 +93,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DcMotor carousel, intakeMotor, linearSlideMotor;
    // public DistanceSensor distanceSensorLeft, distanceSensorRight;
    public DistanceSensor distanceSensorIntake, distanceSensorTop;
-    public Servo linearSlideServo;
+    public Servo linearSlideServo, capServo;
     public DigitalChannel redLED, greenLED, redLED2, greenLED2;
     RevColorSensorV3 colorSensorLeft;
     RevColorSensorV3 colorSensorRight;
@@ -121,7 +121,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.2);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -153,6 +153,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         linearSlideServo = hardwareMap.servo.get("dumpServo");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        capServo = hardwareMap.servo.get("capServo");
+        capServo.setPosition(0.72);
 
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
@@ -295,7 +297,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             redLED2.setState(false);
             greenLED.setState(true);
             greenLED2.setState(true);
-            linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+           // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
             return true;
         } else
             return false;

@@ -266,15 +266,22 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             }
 
             if (Math.abs(gamepad2.left_stick_y)>0.2) {
+                telemetry.addData("left stick 2: ", gamepad2.left_stick_y);
+                telemetry.addData("servo pos", capServoPos);
                 if (gamepad2.left_stick_y<0) {
-                    if (capServoPos>capServoTop) {
-                        capServoPos=capServoPos-0.01;
-                    }
+                    if (capServoPos>capServoTop)
+                        if (capServoPos <0.5) {
+                            capServoPos = capServoPos - 0.01;
+                        } else {
+                            capServoPos = capServoPos-0.005;
+                        }
                     capServo.setPosition(capServoPos);
                 }
                 if (gamepad2.left_stick_y>0) {
                     if (capServoPos<capServoBottom) {
-                        capServoPos=capServoPos+0.01;
+
+                        capServoPos = capServoPos + 0.01;
+
                     }
                     capServo.setPosition(capServoPos);
                 }
@@ -447,17 +454,17 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
                 vel1Max = velocity;
                 carouselMotor.setVelocity(velocity);
-                telemetry.update();
+                //telemetry.update();
             } else if (encoderPos >= region1 && encoderPos < region2) {
                 velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (encoderPos - region1));
                 vel2Max = velocity;
                 carouselMotor.setVelocity(velocity);
-                telemetry.update();
+                //telemetry.update();
             }
             else if (encoderPos >= region2 && encoderPos < FreightFrenzyConstants.goal) {
                 velocity = vel2Max+Math.sqrt(2*FreightFrenzyConstants.accelerate3*(encoderPos-region2));
                 carouselMotor.setVelocity(velocity);
-                telemetry.update();
+                //telemetry.update();
             } else if (encoderPos >= FreightFrenzyConstants.goal) {
                 carouselOn = false;
                 carouselMotor.setVelocity(0);

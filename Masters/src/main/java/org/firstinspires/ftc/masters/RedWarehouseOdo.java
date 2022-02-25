@@ -33,12 +33,12 @@ public class RedWarehouseOdo extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-15, -43))
+                .strafeTo(new Vector2d(-12, -43))
                 .build();
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
                 .addTemporalMarker(1,()->{drive.retract();})
-                .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(2))
+                .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(-5))
                 .build();
         TrajectorySequence roomyWarehouse = drive.trajectorySequenceBuilder(fromHubToWarehouse.end())
                 .strafeRight(24)
@@ -56,7 +56,7 @@ public class RedWarehouseOdo extends LinearOpMode {
         long startTime = new Date().getTime();
         long time = 0;
 
-        while (time < 200 && opModeIsActive()) {
+        while (time < 100 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
             freightLocation = drive.analyze();
 
@@ -107,7 +107,7 @@ public class RedWarehouseOdo extends LinearOpMode {
                     .lineTo(new Vector2d(15, -66))
                     .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
                     .addDisplacementMarker(() -> {
-                        drive.intakeMotor.setPower(-0.8);
+                        drive.intakeMotor.setPower(0.9);
                         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -136,7 +136,7 @@ public class RedWarehouseOdo extends LinearOpMode {
                          .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
 
                          .addDisplacementMarker(() -> {
-                             drive.intakeMotor.setPower(-0.8);
+                             drive.intakeMotor.setPower(0.9);
                              drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                              drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                              drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
