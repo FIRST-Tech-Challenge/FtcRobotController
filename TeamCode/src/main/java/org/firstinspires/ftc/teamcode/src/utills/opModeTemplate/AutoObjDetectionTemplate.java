@@ -145,18 +145,18 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     }
 
-    /**
-     * Activates Tensorflow
-     *
-     * @throws InterruptedException Throws exception if the opMode is stopped during initialization
-     */
-    public void activateTF() throws InterruptedException {
-        checkStop();
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(1.4, 16.0 / 9.0);
+    public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
+        List<Recognition> recognitions = tfod.getRecognitions();
+        if (recognitions == null || (recognitions.size() == 0)) {
+            return BarcodePositions.NotSeen;
+        } else if (recognitions.size() == 2) { // Handles edge case where the object is phantom duplicated
+            if (BarcodePositions.getRecognitionLocation(recognitions.get(0)) == BarcodePositions.Center) {
+                return BarcodePositions.getRecognitionLocation(recognitions.get(1));
+            }
+            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
+        } else {
+            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
         }
-        checkStop();
     }
 
 
@@ -222,13 +222,18 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         }
     }
 
-    public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
-        List<Recognition> recognitions = tfod.getRecognitions();
-        if (recognitions == null || (recognitions.size() == 0)) {
-            return BarcodePositions.NotSeen;
-        } else {
-            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
+    /**
+     * Activates Tensorflow
+     *
+     * @throws InterruptedException Throws exception if the opMode is stopped during initialization
+     */
+    public void activateTF() throws InterruptedException {
+        checkStop();
+        if (tfod != null) {
+            tfod.activate();
+            tfod.setZoom(1.3, 16.0 / 9.0);
         }
+        checkStop();
     }
 
     /**
