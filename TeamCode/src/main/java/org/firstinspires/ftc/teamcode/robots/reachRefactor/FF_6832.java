@@ -98,6 +98,7 @@ public class FF_6832 extends OpMode {
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
     public static double ROTATE_SMOOTHING_FACTOR = 0.3;
     public static double CHASSIS_LENGTH_SCALING_FACTOR = 1;
+    public static double MAINTAIN_HEADING_DELAY = 1;
 
     private Robot robot;
     private Autonomous auto;
@@ -121,6 +122,8 @@ public class FF_6832 extends OpMode {
     private boolean dynamicChassisLengthEnabled, endGameHandled;
     private double forward1, rotate1, forward2, rotate2;
     private double velocityBoost;
+    private boolean maintainHeadingTriggered;
+    private long turningStopTime;
     public static double MAX_VELOCITY_BOOST = 1;
 
     // diagnostic state
@@ -374,12 +377,17 @@ public class FF_6832 extends OpMode {
             forward = (forward1 + forward2) * velocityBoost;
             rotate = (rotate1 + rotate2) * velocityBoost;
         }
+
         if(!approxEquals(rotate, 0)) {
             robot.driveTrain.setMaintainHeadingEnabled(false);
-            robot.driveTrain.setMaintainHeading(robot.driveTrain.getPoseEstimate().getHeading());
-        } else {
+            turningStopTime = System.nanoTime();
+            maintainHeadingTriggered = false;
+        } else if((System.nanoTime() - turningStopTime) * 1e-9 > MAINTAIN_HEADING_DELAY && !maintainHeadingTriggered) {
             robot.driveTrain.setMaintainHeadingEnabled(true);
+            robot.driveTrain.setMaintainHeading(robot.driveTrain.getPoseEstimate().getHeading());
+            maintainHeadingTriggered = true;
         }
+
         if(antiTippingEnabled)
             robot.driveTrain.setDrivePowerSafe(new Pose2d(forward, 0, rotate));
         else
