@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.opmodes.util.DelayStorage;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.opmodes.util.WallSmash;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -86,6 +87,7 @@ public class AutoWarehouse extends LinearOpMode {
         });
 
         waitForStart();
+        toolTimer.reset();
         liftThread.start();
         eventThread.start();
 
@@ -94,6 +96,8 @@ public class AutoWarehouse extends LinearOpMode {
         intake.lightsOn();
         goodTelemetry.addData("height", height);
         goodTelemetry.update();
+
+        DelayStorage.waitForDelay(toolTimer);
 
         drive.followTrajectorySequenceAsync(part1);
         updateLoop(drive);
