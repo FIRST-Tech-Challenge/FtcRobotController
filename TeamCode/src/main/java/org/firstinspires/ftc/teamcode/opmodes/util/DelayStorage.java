@@ -23,6 +23,9 @@ public class DelayStorage {
         }
     }
 
+    /**
+     * Waits for the delay to be elapsed. Assumes you reset the timer.
+     */
     public static void waitForDelay(@NonNull ElapsedTime timer) {
         while (timer.seconds() < seconds) {
             // waiting...

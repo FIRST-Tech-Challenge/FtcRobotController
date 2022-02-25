@@ -11,6 +11,7 @@ public class DelaySetToZeroSeconds extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry.addLine("Warning: doing this while queued BREAKS TOURNAMENT RULES!");
         telemetry.addLine("DO NOT RUN THIS WHILE QUEUED.");
+        telemetry.update();
         waitForStart();
         DelayStorage.setSeconds(0);
         telemetry.addLine("Current seconds: " + DelayStorage.seconds);
