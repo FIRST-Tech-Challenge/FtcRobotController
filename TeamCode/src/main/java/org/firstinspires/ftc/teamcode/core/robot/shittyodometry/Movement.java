@@ -4,11 +4,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.robot.tools.IMU;
 import org.firstinspires.ftc.teamcode.core.robot.tools.UltrasonicDistance;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
@@ -25,7 +27,7 @@ public class Movement {
     private final BNO055IMU imu;
     private final Encoder leftEncoder, frontEncoder;
     private final AutoLift lift;
-    //private final UltrasonicDistance distanceSensor;
+    private final ModernRoboticsI2cRangeSensor distanceSensor;
 
     private double headingOffset = 0;
     private double forwardOffset = 0;
@@ -47,8 +49,8 @@ public class Movement {
         this.frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
         this.frontEncoder.setDirection(Encoder.Direction.REVERSE);
         this.lift = lift;
-        //this.distanceSensor = new UltrasonicDistance(hardwareMap, eventThread);
-        //this.distanceSensor.init();
+        this.distanceSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range");
+        distanceSensor.initialize();
         this.multiplier = red ? 1 : -1;
     }
     public SampleMecanumDrive getDrive() {
@@ -109,11 +111,11 @@ public class Movement {
                 zeroMotors();
                 resetForwardMovement();
                 firstTimeAuto = false;
+                distance = 19.5 - (distanceSensor.cmUltrasonic() * 0.393701);
                 state = States.MOVEFORWARD;
             }
             double heading = getHeading();
             double forward = getForwardMovement();
-
             switch (state) {
                 case MOVEFORWARD:
 
