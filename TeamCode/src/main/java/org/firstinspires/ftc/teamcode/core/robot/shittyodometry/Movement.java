@@ -139,6 +139,7 @@ public class Movement {
                         ));
                     } else {
                         state = States.DUMP;
+                        zeroMotors();
                         resetHeading();
                         lift.setPosition(AutoLift.Positions.DUMPTSE);
                     }
@@ -158,6 +159,7 @@ public class Movement {
                     } else {
                         state = States.MOVEBACK;
                         resetForwardMovement();
+                        zeroMotors();
                     }
                     break;
                 case MOVEBACK:
