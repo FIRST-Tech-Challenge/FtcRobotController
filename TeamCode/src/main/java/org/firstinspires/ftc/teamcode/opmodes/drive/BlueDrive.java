@@ -85,7 +85,7 @@ public class BlueDrive extends LinearOpMode {
         final GamepadEx moveGamepad = new GamepadEx(gamepad1);
         final GamepadEx toolGamepad = new GamepadEx(gamepad2);
         final ControllerLift lift = new ControllerLift(eventThread, hardwareMap, toolGamepad, null);
-        final Movement move = new Movement(hardwareMap, moveGamepad, lift, power != 1);
+        final Movement move = new Movement(hardwareMap, eventThread, moveGamepad, lift, power != 1);
         final SampleMecanumDrive drive = move.getDrive();
 
         // will automatically run update method

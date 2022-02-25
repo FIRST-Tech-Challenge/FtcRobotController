@@ -37,7 +37,7 @@ public class UltrasonicDistance {
      */
     public void update() {
         byte[] range1Cache = RANGE1Reader.read(0x04, 2);
-        curMM = range1Cache[0] & 0xFF;
+        curMM = (range1Cache[0] & 0xFF) * 10;
     }
 
     public void init() {

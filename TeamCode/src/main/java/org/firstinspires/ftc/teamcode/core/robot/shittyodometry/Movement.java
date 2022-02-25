@@ -10,7 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.IMU;
+import org.firstinspires.ftc.teamcode.core.robot.tools.UltrasonicDistance;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
+import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.MyToggleButtonReader;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
@@ -23,17 +25,20 @@ public class Movement {
     private final BNO055IMU imu;
     private final Encoder leftEncoder, frontEncoder;
     private final AutoLift lift;
+    //private final UltrasonicDistance distanceSensor;
 
     private double headingOffset = 0;
     private double forwardOffset = 0;
     private double sidewaysOffset = 0;
+
+    private double distance = 19.5;
 
     private States state = States.MOVEFORWARD;
     private boolean firstTimeAuto = true;
     private final int multiplier;
 
 
-    public Movement(HardwareMap hardwareMap, GamepadEx gamepad, AutoLift lift, boolean red) {
+    public Movement(HardwareMap hardwareMap, EventThread eventThread, GamepadEx gamepad, AutoLift lift, boolean red) {
         this.imu = IMU.create(hardwareMap);
         this.drive = new SampleMecanumDrive(hardwareMap);
         this.moveGamepad = gamepad;
@@ -42,6 +47,8 @@ public class Movement {
         this.frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backEncoder"));
         this.frontEncoder.setDirection(Encoder.Direction.REVERSE);
         this.lift = lift;
+        //this.distanceSensor = new UltrasonicDistance(hardwareMap, eventThread);
+        //this.distanceSensor.init();
         this.multiplier = red ? 1 : -1;
     }
     public SampleMecanumDrive getDrive() {
@@ -109,9 +116,10 @@ public class Movement {
 
             switch (state) {
                 case MOVEFORWARD:
-                    if (forward < 19.5) {
+
+                    if (forward > -distance) {
                         drive.setWeightedDrivePower(new Pose2d(
-                                -0.4,
+                                -0.5,
                                 0,
                                 0
                         ));
@@ -151,9 +159,9 @@ public class Movement {
                     }
                     break;
                 case MOVEBACK:
-                    if (forward > -19.5) {
+                    if (forward < distance) {
                         drive.setWeightedDrivePower(new Pose2d(
-                                0.4,
+                                0.5,
                                 0,
                                 0
                         ));
