@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.masters;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
+import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous (name="test find duck with robot")
-public class TestDuckRobot extends LinearOpMode {
+@TeleOp(name="Fblthp")
+public class TestWarehouseCV extends LinearOpMode {
 
+    SampleMecanumDrive drive;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
         drive.openCVInnitShenanigans("blue");
-        MultipleCameraCV.DuckDeterminationPipeline.DuckPosition freightPosition = drive.analyzeDuck();
+        MultipleCameraCV.WarehousePipeline.FreightPosition freightPosition = drive.analyzeWarehouse();
         waitForStart();
-      //  drive.CV.webcam.stopStreaming();
 
-        drive.findDuckBlue();
+        drive.getWarehouseFreight();
     }
 }
