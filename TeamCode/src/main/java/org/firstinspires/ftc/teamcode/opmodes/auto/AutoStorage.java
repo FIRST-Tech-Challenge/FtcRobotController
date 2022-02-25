@@ -67,7 +67,7 @@ public class AutoStorage extends LinearOpMode {
 
         // Part 2: carousel
         final Trajectory part2 = drive.trajectoryBuilder(part1.end())
-            .splineToSplineHeading(new Pose2d(-60.5, 60 * multiplier,
+            .splineToLinearHeading(new Pose2d(-60.5, 60 * multiplier,
                     Math.toRadians(!isRed ? 240 : 330)), Math.toRadians(180 - 10 * multiplier))
             .build();
 
