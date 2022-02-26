@@ -28,7 +28,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 @Config(value = "FFRobot")
 public class Robot implements Subsystem {
 
-    public static double BUCKET_TRIGGER_DISTANCE = 5;
+    public static double BUCKET_TRIGGER_DISTANCE = 7;
 
     public DriveTrain driveTrain;
     public Turret turret;
@@ -200,8 +200,9 @@ public class Robot implements Subsystem {
             )
             .build();
 
+
     private StateMachine startEnd = getStateMachine(new Stage())
-            .addTimedState(2, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
+            .addTimedState(1f, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
             .build();
 
     private boolean handleAutoCrane(Position targetPosition, double targetHeight, double hubRadius) {

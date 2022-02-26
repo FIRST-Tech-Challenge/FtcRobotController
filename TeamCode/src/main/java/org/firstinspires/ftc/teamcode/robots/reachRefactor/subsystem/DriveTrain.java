@@ -60,7 +60,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static double B = 0.005;
     public static double ZETA = 0.01;
     public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(6, 0, 0);
-    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0.9, 0, 0);
+    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -74,6 +74,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients MAINTAIN_HEADING_PID = new PIDCoefficients(1, 0, 0.5);
     public static double MAINTAIN_HEADING_TOLERANCE = 2.5;
     public static double SWIVEL_TOLERANCE = 1;
+    public static double DUCK_SPINNER_POWER = 0.5;
 
     public final TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -90,7 +91,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private final boolean simulated;
 
-    private double leftPosition, rightPosition, swervePosition, swivelPosition;
+    private double leftPosition, rightPosition, swervePosition, swivelPosition, duckSpinnerPosition;
     private double swivelAngle, targetSwivelAngle;
     private double leftVelocity, rightVelocity, swerveVelocity;
     private double targetLeftVelocity, targetRightVelocity, targetSwerveVelocity, swivelPower, duckSpinnerPower;
@@ -289,6 +290,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition());
             swervePosition = swerveEncoderTicksToInches(swerveMotor.getCurrentPosition());
             swivelPosition = swivelMotor.getCurrentPosition();
+            duckSpinnerPosition = duckSpinner.getCurrentPosition();
             swivelAngle = wrapAngleRad(swivelPosition / SWIVEL_TICKS_PER_REVOLUTION * Math.toRadians(360));
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE
                     + DISTANCE_TARGET_TO_BACK_WHEEL;
@@ -470,6 +472,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("target right velocity", targetRightVelocity);
             telemetryMap.put("target swerve velocity", targetSwerveVelocity);
             telemetryMap.put("swivel power", swivelPower);
+            telemetryMap.put("duck spinner position", duckSpinnerPosition);
             telemetryMap.put("duck spinner power", duckSpinnerPower);
 
             telemetryMap.put("chassis length", chassisLength);
@@ -663,7 +666,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public void toggleDuckSpinner(int mod) {
         duckSpinnerToggled = !duckSpinnerToggled;
         if (duckSpinnerToggled)
-            duckSpinnerPower = 0.5 * mod;
+            duckSpinnerPower = DUCK_SPINNER_POWER * mod;
         else
             duckSpinnerPower = 0;
     }

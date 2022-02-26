@@ -144,7 +144,7 @@ public class Autonomous {
         switch(startingPosition) {
             case START_BLUE_UP:
                 TrajectorySequence blueUp1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(33.67)
+                        .back(29.67)
                         .build();
                 TrajectorySequence blueUp2 = robot.driveTrain.trajectorySequenceBuilder(blueUp1.end())
                         .turn(-Math.toRadians(60))
@@ -178,7 +178,7 @@ public class Autonomous {
                 break;
             case START_RED_UP:
                 TrajectorySequence redUp1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(33.67)
+                        .back(29.67)
                         .build();
                 TrajectorySequence redUp2 = robot.driveTrain.trajectorySequenceBuilder(redUp1.end())
                         .turn(Math.toRadians(60))
@@ -213,7 +213,7 @@ public class Autonomous {
                 break;
             case START_BLUE_DOWN:
                 TrajectorySequence blueDown1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(33.67)
+                        .back(29.67)
                         .build();
                 TrajectorySequence blueDown2 = robot.driveTrain.trajectorySequenceBuilder(blueDown1.end())
                         .splineTo(new Vector2d(-68, 68), Math.toRadians(135))
@@ -264,7 +264,7 @@ public class Autonomous {
                 break;
             case START_RED_DOWN:
                 TrajectorySequence redDown1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(33.67)
+                        .back(29.67)
                         .build();
                 TrajectorySequence redDown2 = robot.driveTrain.trajectorySequenceBuilder(redDown1.end())
                         .splineTo(new Vector2d(-68, -68), Math.toRadians(215))
@@ -323,7 +323,7 @@ public class Autonomous {
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
                             robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(33.67)
+                                    .back(29.67)
                                     .build()
                     );
                 })
@@ -354,7 +354,7 @@ public class Autonomous {
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
                             robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(33.67)
+                                    .back(29.67)
                                     .build()
                     );
                 })
@@ -386,7 +386,7 @@ public class Autonomous {
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
                             robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(33.67)
+                                    .back(29.67)
                                     .build()
                     );
                 })
@@ -423,7 +423,7 @@ public class Autonomous {
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
                             robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(33.67)
+                                    .back(29.67)
                                     .build()
                     );
                 })

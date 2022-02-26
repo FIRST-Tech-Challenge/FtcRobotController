@@ -30,8 +30,8 @@ public class Gripper implements Subsystem {
     public static int PITCH_TRANSFER = 2100;
     public static int PITCH_DOWN = 800;
     public static int PITCH_VERTICAL = 1800;
-    public static int FREIGHT_TRIGGER = 26; //mm distance to trigger Lift articulation
-    public static double INTAKE_POWER = 0.5;
+    public static int FREIGHT_TRIGGER = 40; //mm distance to trigger Lift articulation
+    public static double INTAKE_POWER = 0.3;
 
     private final Servo pitchServo, servo;
     private final CRServo intakeServo;

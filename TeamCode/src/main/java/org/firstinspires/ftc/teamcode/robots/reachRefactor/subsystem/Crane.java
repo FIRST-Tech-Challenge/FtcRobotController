@@ -31,7 +31,7 @@ public class Crane implements Subsystem {
 
     public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
                                                  // of the robot
-    public static double ELBOW_DEG_MIN = -60;
+    public static double ELBOW_DEG_MIN = -80;
     public static double WRIST_DEG_MIN = -180;
 
     public static double SHOULDER_DEG_MAX = 90;
@@ -75,31 +75,26 @@ public class Crane implements Subsystem {
 
         LOWEST_TIER(75, 130, 20, 1.5f, 130),
         MIDDLE_TIER(60, 130, 40, 1f, 150),
-        HIGH_TIER(15, 125, 70, 1f, 170),
-        HIGH_TIER_LEFT(15, 125, 70, -80, 0.25f, 170),
-        HIGH_TIER_RIGHT(15, 125, 70, 80, 0.25f, 170),
+        HIGH_TIER(14.57741692662239, 87, 50.37986606359482, 1f, 170),
+        HIGH_TIER_LEFT(14.57741692662239, 87, 50.37986606359482, -80, 1f, 180),
+        HIGH_TIER_RIGHT(14.57741692662239, 87, 50.37986606359482, 80, 1f, 170),
         TRANSFER(-45, -50, -20, 0, 0.4f, 0),
 
-        CAP(30, 140, 0, 0, 1, 170),
+        SHARED_SHIPPING_HUB(75, 130, 20, 1.5f, 130),
 
-        // these articulations are meant to observe the motions and angles to check for
-        // belt skips
-        VALIDATE_ELBOW90(0, 90, 90, 0, .5f, 0),
-        VALIDATE_SHOULDER90(90, 15, -90 + 15, 0, .5f, 0),
-        VALIDATE_TURRET90R(0, 0, 0, 45, 2.5f, 0),
-        VALIDATE_TURRET90L(0, 0, 0, -45, 2.5f, 0),
+        CAP(30, 140, 0, 0, 1, 170),
 
         // auton articulations
         AUTON_REACH_RIGHT(40, 130, 70, 30, 1, 170),
         AUTON_REACH_LEFT(40, 130, 70, -30, 1, 170);
 
-        public int shoulderPos, elbowPos, wristPos;
+        public double shoulderPos, elbowPos, wristPos;
         public double turretAngle;
         public float toHomeTime;
-        public int dumpPos;
+        public double dumpPos;
         public boolean turret;
 
-        Articulation(int shoulderPos, int elbowPos, int wristPos, double turretAngle, float toHomeTime, int dumpPos) {
+        Articulation(double shoulderPos, double elbowPos, double wristPos, double turretAngle, float toHomeTime, double dumpPos) {
             this.shoulderPos = shoulderPos;
             this.elbowPos = elbowPos;
             this.wristPos = wristPos;
@@ -109,7 +104,7 @@ public class Crane implements Subsystem {
             turret = true;
         }
 
-        Articulation(int shoulderPos, int elbowPos, int wristPos, float toHomeTime, int dumpPos) {
+        Articulation(double shoulderPos, double elbowPos, double wristPos, float toHomeTime, double dumpPos) {
             this.shoulderPos = shoulderPos;
             this.elbowPos = elbowPos;
             this.wristPos = wristPos;
@@ -118,13 +113,13 @@ public class Crane implements Subsystem {
             turret = false;
         }
     }
-
-    private boolean checkTargetPositions(Articulation articulation) {
-        return shoulderTargetAngle == articulation.shoulderPos &&
-                elbowTargetAngle == articulation.elbowPos &&
-                wristTargetAngle == articulation.wristPos &&
-                (!articulation.turret || turret.getTargetHeading() == articulation.turretAngle);
-    }
+//
+//    private boolean checkTargetPositions(Articulation articulation) {
+//        return shoulderTargetAngle == articulation.shoulderPos &&
+//                elbowTargetAngle == articulation.elbowPos &&
+//                wristTargetAngle == articulation.wristPos &&
+//                (!articulation.turret || turret.getTargetHeading() == articulation.turretAngle);
+//    }
 
     private float currentToHomeTime = Articulation.HOME.toHomeTime;
     private double currentDumpPos = 0;
@@ -137,7 +132,8 @@ public class Crane implements Subsystem {
             })
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {
             })
-            .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation),
+            .addTimedState(() -> articulation.toHomeTime / 4, () -> setIntermediatePositions(articulation), () -> {})
+            .addTimedState(() -> articulation.toHomeTime / 2 , () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
                         if (articulation.dumpPos != 0)
@@ -232,6 +228,18 @@ public class Crane implements Subsystem {
     public void dump() {
         setWristTargetAngle(currentDumpPos);
         dumping = true;
+    }
+
+    private void setIntermediatePositions(Articulation articulation) {
+        double shoulderAngle = (articulation.shoulderPos - Articulation.HOME.shoulderPos) / 2.0;
+        double elbowAngle = (articulation.elbowPos - Articulation.HOME.elbowPos) / 2.0;
+
+        setShoulderTargetAngle(shoulderAngle);
+        setElbowTargetAngle(elbowAngle);
+        setWristTargetAngle(articulation.wristPos);
+
+        if (articulation.turret)
+            turret.setTargetHeading(articulation.turretAngle);
     }
 
     private void setTargetPositions(Articulation articulation) {

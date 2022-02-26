@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.MovingStatistics;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.StickyGamepad;
@@ -84,8 +85,8 @@ public class FF_6832 extends OpMode {
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.2;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
-    public static double FORWARD_SCALING_FACTOR = 36; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = 3; // scales the target angular robot velocity from tele-op controls
+    public static double FORWARD_SCALING_FACTOR = 24; // scales the target linear robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 2; // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             MIN_CHASSIS_LENGTH,
             MIN_CHASSIS_LENGTH + (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,
@@ -402,6 +403,7 @@ public class FF_6832 extends OpMode {
             robot.driveTrain.setDriveVelocity(new Pose2d(forward, 0, rotate));
     }
 
+    private boolean duckSpinnerPowerResetHandled = false;
     private void handleTeleOp() { // apple
         // gamepad 1
         if (stickyGamepad1.x) {
@@ -410,27 +412,30 @@ public class FF_6832 extends OpMode {
         }
         if(stickyGamepad1.b)
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
-        if(stickyGamepad1.a)
-            robot.driveTrain.toggleDuckSpinner(alliance.getMod());
+        if(gamepad1.a || gamepad2.a) {
+            robot.driveTrain.setDuckSpinnerPower(DriveTrain.DUCK_SPINNER_POWER * alliance.getMod());
+            duckSpinnerPowerResetHandled = false;
+        } else if(!duckSpinnerPowerResetHandled) {
+            robot.driveTrain.setDuckSpinnerPower(0);
+            duckSpinnerPowerResetHandled = true;
+        }
 
         // gamepad 2
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
-        if(stickyGamepad2.a) //spin carousel
-            robot.driveTrain.toggleDuckSpinner(alliance.getMod());
 
         // joint gamepad controls
-        if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
+        if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
-        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
-            robot.crane.articulate(Crane.Articulation.LOWEST_TIER);
-        if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
+//        if((stickyGamepad1.dpad_down || stickyGamepad2.dpad_down) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+//            robot.crane.articulate(Crane.Articulation.SHARED_SHIPPING_HUB);
+        if((stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
-        if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
+        if((stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
             robot.crane.articulate(Crane.Articulation.HOME);
-        if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
+        if((stickyGamepad1.y || stickyGamepad2.y) && robot.crane.getArticulation() == Crane.Articulation.MANUAL) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
             robot.articulate(Robot.Articulation.TRANSFER);
 
         if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper) {
