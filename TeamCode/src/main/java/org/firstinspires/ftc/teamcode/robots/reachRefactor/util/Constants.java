@@ -33,7 +33,7 @@ public class Constants {
     public static double SWERVE_WHEEL_RADIUS = 6.5 / 16.0 + 3.175;
 
     // ratios
-    public static double SWIVEL_TICKS_PER_REVOLUTION = 1740;
+    public static double SWIVEL_TICKS_PER_REVOLUTION = 1696.5;
     public static double DIFF_TICKS_PER_REV = 768;
     public static double SWERVE_TICKS_PER_REV = 768;
     public static double DIFF_TICKS_PER_INCH = 30.7708333333;
@@ -68,6 +68,7 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
     // Enums
     //----------------------------------------------------------------------------------------------
+    public static Alliance ALLIANCE;
     public enum Alliance {
         RED(1), BLUE(-1);
 

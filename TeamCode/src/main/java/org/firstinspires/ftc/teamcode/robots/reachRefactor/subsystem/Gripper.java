@@ -31,6 +31,7 @@ public class Gripper implements Subsystem {
     public static int PITCH_DOWN = 800;
     public static int PITCH_VERTICAL = 1800;
     public static int FREIGHT_TRIGGER = 26; //mm distance to trigger Lift articulation
+    public static double INTAKE_POWER = 0.5;
 
     private final Servo pitchServo, servo;
     private final CRServo intakeServo;
@@ -116,7 +117,7 @@ public class Gripper implements Subsystem {
             .addSingleState(()->{setTargetPos(CLOSED);}) //close the gripper so it's less likely to catch something
             .addTimedState(.25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
             .addTimedState(.5f, ()->{setTargetPos(OPEN);}, () -> {})
-            .addSingleState(() -> setIntakePower(1.0))
+            .addSingleState(() -> setIntakePower(INTAKE_POWER))
             .build();
 
     //Gripper closes and lifts to the Transfer-ready position
@@ -124,16 +125,18 @@ public class Gripper implements Subsystem {
     private final Stage liftStage = new Stage();
     private final StateMachine lift = getStateMachine(liftStage)
             .addSingleState(() -> setIntakePower(0))
-            .addTimedState(() -> .5f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
-            .addTimedState(() -> .5f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
+            .addTimedState(() -> .2f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
+            .addTimedState(() -> .2f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
 
     private final Stage transferStage = new Stage();
     private final StateMachine transfer = getStateMachine(transferStage)
             .addTimedState(() -> .1f, () -> setPitchTargetPos(PITCH_TRANSFER), () -> {})//give freight last-second momentum toward the bucket
-            .addTimedState(() -> .75f, () -> setTargetPos(RELEASE), () -> {})
-            .addTimedState(() -> 0, () -> setTargetPos(CLOSED), () -> {})
-            .addTimedState(() -> 0, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
+            .addTimedState(() -> .25f, () -> setTargetPos(RELEASE), () -> {})
+            .addSimultaneousStates(
+                    () -> { setTargetPos(CLOSED); return true; },
+                    () -> { setPitchTargetPos(PITCH_VERTICAL); return true; }
+            )
             .build();
 
     //Prepare for intake

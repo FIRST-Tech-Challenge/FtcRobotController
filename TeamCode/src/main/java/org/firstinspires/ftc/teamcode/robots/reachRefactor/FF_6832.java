@@ -99,6 +99,7 @@ public class FF_6832 extends OpMode {
     public static double ROTATE_SMOOTHING_FACTOR = 0.3;
     public static double CHASSIS_LENGTH_SCALING_FACTOR = 1;
     public static double MAINTAIN_HEADING_DELAY = 1;
+    public static double RUMBLE_DURATION = 0.5;
 
     private Robot robot;
     private Autonomous auto;
@@ -107,7 +108,7 @@ public class FF_6832 extends OpMode {
 
     // global state
     private boolean active, initializing, debugTelemetryEnabled, numericalDashboardEnabled, smoothingEnabled, antiTippingEnabled;
-    private Alliance alliance;
+    private Alliance ALLIANCE;
     private Position startingPosition;
     private GameState gameState;
     private int gameStateIndex;
@@ -221,7 +222,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
         robot = new Robot(hardwareMap, false);
-        alliance = Alliance.BLUE;
+        ALLIANCE = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
         auto = new Autonomous(robot);
@@ -255,7 +256,7 @@ public class FF_6832 extends OpMode {
             gameState = GameState.getGameState(gameStateIndex);
         }
 
-        if (stickyGamepad1.start || stickyGamepad2.start)
+        if (stickyGamepad1.back || stickyGamepad2.back)
             active = !active;
     }
 
@@ -286,19 +287,19 @@ public class FF_6832 extends OpMode {
     private void handlePregameControls() {
         Position previousStartingPosition = startingPosition;
         if(stickyGamepad1.x || stickyGamepad2.x) {
-            alliance = Alliance.BLUE;
+            ALLIANCE = Alliance.BLUE;
             startingPosition = Position.START_BLUE_UP;
         }
         if(stickyGamepad1.a || stickyGamepad2.a) {
-            alliance = Alliance.BLUE;
+            ALLIANCE = Alliance.BLUE;
             startingPosition = Position.START_BLUE_DOWN;
         }
         if(stickyGamepad1.b || stickyGamepad2.b) {
-            alliance = Alliance.RED;
+            ALLIANCE = Alliance.RED;
             startingPosition = Position.START_RED_DOWN;
         }
         if(stickyGamepad1.y || stickyGamepad2.y) {
-            alliance = Alliance.RED;
+            ALLIANCE = Alliance.RED;
             startingPosition = Position.START_RED_UP;
         }
         if(previousStartingPosition != startingPosition) {
@@ -330,6 +331,11 @@ public class FF_6832 extends OpMode {
         update();
     }
 
+    private void rumble() {
+        gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
+        gamepad2.rumble((int) (RUMBLE_DURATION * 1000));
+    }
+
     //Code that runs ONCE after the driver hits PLAY
     @Override
     public void start() {
@@ -356,6 +362,8 @@ public class FF_6832 extends OpMode {
         }
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
+
+        rumble();
     }
 
     private void handleArcadeDrive(Gamepad gamepad) {
@@ -403,7 +411,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.b)
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad1.a)
-            robot.driveTrain.toggleDuckSpinner(alliance.getMod());
+            robot.driveTrain.toggleDuckSpinner(ALLIANCE.getMod());
 
         // gamepad 2
         if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
@@ -411,7 +419,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad2.a) //spin carousel
-            robot.driveTrain.toggleDuckSpinner(alliance.getMod());
+            robot.driveTrain.toggleDuckSpinner(ALLIANCE.getMod());
 
         // joint gamepad controls
         if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)
@@ -443,7 +451,7 @@ public class FF_6832 extends OpMode {
             velocityBoost = 1;
 
         if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
-            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
+            robot.articulate(ALLIANCE == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
 
         handleArcadeDrive(gamepad1);
         handleArcadeDriveReversed(gamepad2);
@@ -565,6 +573,7 @@ public class FF_6832 extends OpMode {
             if (!endGameHandled && gameState == GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
                 robot.articulate(Robot.Articulation.START_END_GAME);
                 endGameHandled = true;
+                rumble();
             }
             switch(gameState) {
                 case TELE_OP:

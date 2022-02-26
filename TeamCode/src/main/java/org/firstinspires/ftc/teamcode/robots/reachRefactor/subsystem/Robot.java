@@ -66,7 +66,8 @@ public class Robot implements Subsystem {
         articulationMap.put(Articulation.START_END_GAME, startEnd);
         articulationMap.put(Articulation.TRANSFER, transfer);
         articulationMap.put(Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER, dumpAndSetCraneForTransfer);
-        articulationMap.put(Articulation.GRAB_AND_TRANSFER, grabAndTransfer);
+        articulationMap.put(Articulation.GRAB_TRANSFER_AND_HIGH_TIER_BLUE, grabTransferAndHighTierBlue);
+        articulationMap.put(Articulation.GRAB_TRANSFER_AND_HIGH_TIER_RED, grabTransferAndHighTierRed);
 
         articulationMap.put(Articulation.AUTO_HIGH_TIER_RED, autoHighTierRed);
         articulationMap.put(Articulation.AUTO_HIGH_TIER_BLUE, autoHighTierBlue);
@@ -100,10 +101,10 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != Articulation.GRAB_AND_TRANSFER)
-            articulation = Articulation.GRAB_AND_TRANSFER;
+        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != (ALLIANCE == Alliance.BLUE ? Articulation.GRAB_TRANSFER_AND_HIGH_TIER_BLUE : Articulation.GRAB_TRANSFER_AND_HIGH_TIER_RED))
+            articulation = ALLIANCE == Alliance.BLUE ? Articulation.GRAB_TRANSFER_AND_HIGH_TIER_BLUE : Articulation.GRAB_TRANSFER_AND_HIGH_TIER_RED;
 
-        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation != Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER && turret.isTurretNearTarget())
+        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation != Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER)
             articulation = Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER;
 
         articulate(articulation);
@@ -139,7 +140,8 @@ public class Robot implements Subsystem {
         // tele-op articulations
         TRANSFER,
         DUMP_AND_SET_CRANE_FOR_TRANSFER,
-        GRAB_AND_TRANSFER,
+        GRAB_TRANSFER_AND_HIGH_TIER_RED,
+        GRAB_TRANSFER_AND_HIGH_TIER_BLUE,
 
         AUTO_HIGH_TIER_RED,
         AUTO_HIGH_TIER_BLUE,
@@ -150,7 +152,7 @@ public class Robot implements Subsystem {
     }
 
     // Tele-Op articulations
-    private StateMachine grabAndTransfer = getStateMachine(new Stage())
+    private StateMachine grabTransferAndHighTierBlue = getStateMachine(new Stage())
             .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
             .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
@@ -160,7 +162,21 @@ public class Robot implements Subsystem {
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
             .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(0.0))
-            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .build();
+
+    private StateMachine grabTransferAndHighTierRed = getStateMachine(new Stage())
+            .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addSingleState(() -> gripper.setIntakePower(1.0))
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .addSingleState(() -> gripper.setIntakePower(0.0))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HIGH_TIER_LEFT))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .build();
 

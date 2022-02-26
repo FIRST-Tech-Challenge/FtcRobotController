@@ -24,6 +24,7 @@ public class Turret implements Subsystem {
 
     public static final double TICKS_PER_DEGREE = 160.0 / 90.0;
     public static double TURRET_TOLERANCE = 10;
+    public static double TURRET_P = 4.0;
 
     private final boolean simulated;
 
@@ -37,6 +38,7 @@ public class Turret implements Subsystem {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setTargetPosition(motor.getCurrentPosition());
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPositionPIDFCoefficients(TURRET_P);
         motor.setPower(1);
     }
 
@@ -48,6 +50,7 @@ public class Turret implements Subsystem {
         targetHeading = Range.clip(targetHeading, -90, 90);
         heading = simulated ? targetHeading : Range.clip(heading, -90, 90);
 
+        motor.setPositionPIDFCoefficients(TURRET_P);
         motor.setTargetPosition((int)((targetHeading * TICKS_PER_DEGREE)));
     }
 
