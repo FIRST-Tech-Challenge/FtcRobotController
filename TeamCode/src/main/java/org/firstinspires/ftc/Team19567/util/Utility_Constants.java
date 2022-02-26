@@ -8,7 +8,7 @@ public class Utility_Constants {
     //GENERAL_CONSTANTS
     public static double PPR_RATIO = 1.95509087; //ratio of old encoder values to current encoder values
     public static double INTAKE_SPEED = 1.0; //speed to set the intake motor to when intaking freight
-    public static double EJECTION_SPEED = -0.6; //speed to eject freight at
+    public static double EJECTION_SPEED = -0.7; //speed to eject freight at
     //MULTIPLIERS/SENSITIVITIES
     public static double TURN_SENSITIVITY = 0.9; //driver-controlled sensitivity for turning
     public static double STRAFE_SENSITIVITY = 1.0; //driver-controlled sensitivity for strafing

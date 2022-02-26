@@ -242,7 +242,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
             else mechanisms.moveIntake(0.1);
         }
-        else if(intakeTimeout.milliseconds() >= 100 && intakeTimeout.milliseconds() <= INTAKE_TIME) mechanisms.moveIntake(EJECTION_SPEED);
+        else if(intakeTimeout.milliseconds() >= 75 && intakeTimeout.milliseconds() <= INTAKE_TIME) mechanisms.moveIntake(EJECTION_SPEED);
         else mechanisms.moveIntake(0);
 
         //CAROUSEL
@@ -284,6 +284,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             presetState = PRESET_STATE.GOING_DOWN;
         }
 
+        if(presetState != PRESET_STATE.NO_PRESET) {
+            mechanisms.moveIntake(0.4);
+        }
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
@@ -312,6 +315,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
             case GOING_DOWN: {
                 releaseServoPos = Utility_Constants.RELEASE_SERVO_DEFAULT;
+                mechanisms.moveIntake(-0.2);
                 armPower = GOING_DOWN_POWER;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
