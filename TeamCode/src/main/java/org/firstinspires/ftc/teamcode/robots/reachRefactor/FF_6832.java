@@ -99,6 +99,7 @@ public class FF_6832 extends OpMode {
     public static double ROTATE_SMOOTHING_FACTOR = 0.3;
     public static double CHASSIS_LENGTH_SCALING_FACTOR = 1;
     public static double MAINTAIN_HEADING_DELAY = 1;
+    public static double RUMBLE_DURATION = 0.5;
 
     private Robot robot;
     private Autonomous auto;
@@ -255,7 +256,7 @@ public class FF_6832 extends OpMode {
             gameState = GameState.getGameState(gameStateIndex);
         }
 
-        if (stickyGamepad1.start || stickyGamepad2.start)
+        if (stickyGamepad1.back || stickyGamepad2.back)
             active = !active;
     }
 
@@ -330,6 +331,11 @@ public class FF_6832 extends OpMode {
         update();
     }
 
+    private void rumble() {
+        gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
+        gamepad2.rumble((int) (RUMBLE_DURATION * 1000));
+    }
+
     //Code that runs ONCE after the driver hits PLAY
     @Override
     public void start() {
@@ -356,6 +362,8 @@ public class FF_6832 extends OpMode {
         }
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
+
+        rumble();
     }
 
     private void handleArcadeDrive(Gamepad gamepad) {
@@ -565,6 +573,7 @@ public class FF_6832 extends OpMode {
             if (!endGameHandled && gameState == GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
                 robot.articulate(Robot.Articulation.START_END_GAME);
                 endGameHandled = true;
+                rumble();
             }
             switch(gameState) {
                 case TELE_OP:

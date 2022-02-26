@@ -72,7 +72,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(4, 0,  0);
     public static double CHASSIS_LENGTH_TOLERANCE = 1;
     public static PIDCoefficients MAINTAIN_HEADING_PID = new PIDCoefficients(1, 0, 0.5);
-    public static double MAINTAIN_HEADING_TOLERANCE = 1;
+    public static double MAINTAIN_HEADING_TOLERANCE = 2.5;
     public static double SWIVEL_TOLERANCE = 1;
 
     public final TrajectorySequenceRunner trajectorySequenceRunner;
@@ -337,7 +337,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             maintainHeadingCorrection = maintainHeadingPID.performPID();
             maintainHeadingOnTarget = maintainHeadingPID.onTarget();
 
-            effectiveDriveVelocity = effectiveDriveVelocity.plus(new Pose2d(0, 0, maintainHeadingCorrection));
+            if(!maintainHeadingOnTarget)
+                effectiveDriveVelocity = effectiveDriveVelocity.plus(new Pose2d(0, 0, maintainHeadingCorrection));
         }
         // sending corrections for chassis length
         chassisLengthOnTarget = chassisLengthPID.onTarget();

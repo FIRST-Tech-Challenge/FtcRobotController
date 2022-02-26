@@ -17,7 +17,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
-@Config
+@Config(value = "FFCrane")
 public class Crane implements Subsystem {
     public static int SHOULDER_HOME_PWM = 1550;
     public static int ELBOW_HOME_PWM = 1500;
@@ -73,9 +73,9 @@ public class Crane implements Subsystem {
         LOWEST_TIER(75,130,20, 1.5f, 130),
         MIDDLE_TIER(60,130,40, 1f, 150),
         HIGH_TIER(15, 125,70, 1f, 170),
-        HIGH_TIER_LEFT(15, 125,70,-80, 1f, 170),
-        HIGH_TIER_RIGHT(15, 125,70,80, 1f, 170),
-        TRANSFER(-45,-50,-20,0, 0.75f,0),
+        HIGH_TIER_LEFT(15, 125,70,-80, 0.25f, 170),
+        HIGH_TIER_RIGHT(15, 125,70,80, 0.25f, 170),
+        TRANSFER(-45,-50,-20,0, 0.4f,0),
 
         CAP(30, 140,0,0, 1, 170),
       
@@ -128,11 +128,7 @@ public class Crane implements Subsystem {
     private final Stage mainStage = new Stage();
     private final StateMachine main = getStateMachine(mainStage)
             .addSingleState(() -> { dumping = false; goingHome = false; })
-            .addConditionalState(() -> checkTargetPositions(articulation), () -> true, () -> { setTargetPositions(Articulation.HOME); goingHome = true; return true; })
-            .addTimedState(() -> goingHome ? currentToHomeTime : 0, () -> {
-                if(goingHome)
-                    setTargetPositions(Articulation.HOME);
-            }, () -> {})
+            .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
             .addTimedState(() -> articulation.toHomeTime, () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
