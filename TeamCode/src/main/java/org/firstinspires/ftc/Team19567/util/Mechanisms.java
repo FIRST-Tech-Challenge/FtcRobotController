@@ -26,7 +26,7 @@ public class Mechanisms {
     public Servo releaseServo;
     public AnalogInput potentiometer;
     public Telemetry telemetry;
-    //dsfkaj
+
     public Mechanisms(@NonNull HardwareMap hardwareMap, Telemetry t) {
         armDC = hardwareMap.get(DcMotor.class,"armDC");
         carouselLeft = hardwareMap.get(DcMotor.class,"carouselLeft");
