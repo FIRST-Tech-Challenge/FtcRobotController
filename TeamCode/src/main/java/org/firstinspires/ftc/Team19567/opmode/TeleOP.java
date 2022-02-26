@@ -284,9 +284,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             presetState = PRESET_STATE.GOING_DOWN;
         }
 
-        if(presetState != PRESET_STATE.NO_PRESET) {
-            mechanisms.moveIntake(0.4);
-        }
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
@@ -315,7 +312,6 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
             case GOING_DOWN: {
                 releaseServoPos = Utility_Constants.RELEASE_SERVO_DEFAULT;
-                mechanisms.moveIntake(-0.4);
                 armPower = GOING_DOWN_POWER;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
@@ -338,10 +334,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
             gamepad1.runRumbleEffect(endGameRumble);
         }
-        else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        else if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+        else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+        else if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
         else {
-            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.RED;
         }
         if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD && forceSensorTimeout.milliseconds() >= 50) {
             if(!isIntaked) {
