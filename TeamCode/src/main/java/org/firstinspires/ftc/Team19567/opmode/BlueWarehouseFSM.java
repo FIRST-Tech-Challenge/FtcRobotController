@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.Team19567.opmode;
 
+import com.acmerobotics.dashboard.canvas.Spline;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -35,6 +36,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
     private DistanceSensor distanceSensor = null;
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private RevBlinkinLedDriver blinkin = null;
+    private TouchSensor limitSwitch = null;
     private AUTO_STATE currentState = AUTO_STATE.DETECTING_OPENCV;
     private int chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
     private double chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
@@ -55,6 +57,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
 
+        limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
         forceSensor = hardwareMap.get(AnalogInput.class,"forceSensor");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class,"blinkin");
@@ -170,11 +173,11 @@ public class BlueWarehouseFSM extends LinearOpMode {
                  */
                 .build();
 
-        currentState = AUTO_STATE.MOVING_TO_HUB;
+        currentState = AUTO_STATE.SETTING_INTAKE;
 
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
-        chassis.followTrajectorySequenceAsync(SplineSequence);
+        timeout.reset();
 
         master:while(opModeIsActive()) {
             Pose2d poseEstimate = chassis.getPoseEstimate();
@@ -183,6 +186,15 @@ public class BlueWarehouseFSM extends LinearOpMode {
             telemetry.addData("Pose Heading",poseEstimate.getHeading());
 
             switch(currentState) {
+                case SETTING_INTAKE: {
+                    if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
+                    else mechanisms.moveIntake(0.1);
+                    if(timeout.milliseconds() >= Utility_Constants.INTAKE_RESET_TIME) {
+                        currentState = AUTO_STATE.MOVING_TO_HUB;
+                        mechanisms.moveIntake(0);
+                        chassis.followTrajectorySequenceAsync(SplineSequence);
+                    }
+                }
                 case MOVING_TO_HUB: {
                     if(!chassis.isBusy()) {
                         timeout.reset();

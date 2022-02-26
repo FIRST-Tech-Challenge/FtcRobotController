@@ -52,6 +52,7 @@ public class Utility_Constants {
     public static double FORCE_SENSOR_THRESHOLD = 0.01; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
     public static int DEBOUNCE_TIME = 250; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
     public static int INTAKE_TIME = 500; //Milliseconds to run the intake in reverse after a freight has been detected
+    public static int INTAKE_RESET_TIME = 500; //Milliseconds it takes to reset the intake
     //MISC
     public static Gamepad.RumbleEffect END_GAME_RUMBLE = new Gamepad.RumbleEffect.Builder()
             .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec

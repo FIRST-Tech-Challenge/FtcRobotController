@@ -121,7 +121,7 @@ public class RedDepotFSM extends LinearOpMode {
                 telemetry.update();
             }
         }
-        currentState = AUTO_STATE.MOVING_TO_HUB;
+        currentState = AUTO_STATE.SETTING_INTAKE;
 
         TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
                 .addDisplacementMarker(() -> {
@@ -142,7 +142,7 @@ public class RedDepotFSM extends LinearOpMode {
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
-        chassis.followTrajectorySequenceAsync(preloadSequence);
+        timeout.reset();
 
         master:while(opModeIsActive() && !isStopRequested()) {
             Pose2d poseEstimate = chassis.getPoseEstimate();
@@ -151,6 +151,15 @@ public class RedDepotFSM extends LinearOpMode {
             telemetry.addData("Pose Heading",poseEstimate.getHeading());
 
             switch(currentState) {
+                case SETTING_INTAKE: {
+                    if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
+                    else mechanisms.moveIntake(0.1);
+                    if(timeout.milliseconds() >= Utility_Constants.INTAKE_RESET_TIME) {
+                        currentState = AUTO_STATE.MOVING_TO_HUB;
+                        mechanisms.moveIntake(0);
+                        chassis.followTrajectorySequenceAsync(preloadSequence);
+                    }
+                }
                 case MOVING_TO_HUB: {
                     if(!chassis.isBusy()) {
                         timeout.reset();
