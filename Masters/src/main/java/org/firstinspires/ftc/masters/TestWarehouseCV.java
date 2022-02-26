@@ -16,6 +16,8 @@ public class TestWarehouseCV extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
         drive.openCVInnitShenanigans("blue");
+        telemetry.addData("after open cv", "test");
+        telemetry.update();
         MultipleCameraCV.WarehousePipeline.FreightPosition freightPosition = drive.analyzeWarehouse();
         waitForStart();
 
