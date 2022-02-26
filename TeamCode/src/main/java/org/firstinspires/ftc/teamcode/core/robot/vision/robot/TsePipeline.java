@@ -38,11 +38,11 @@ public class TsePipeline extends OpenCvPipeline {
     public TsePipeline(boolean isRed) {
         if (isRed) {
             bottomRectHeightPercentage = 0.15D;
-            bottomRectWidthPercentage = 0.76D;
+            bottomRectWidthPercentage = 0.79D;
             middleRectHeightPercentage = 0.23D;
-            middleRectWidthPercentage = 0.51D;
+            middleRectWidthPercentage = 0.56D;
             topRectHeightPercentage = 0.35D;
-            topRectWidthPercentage = 0.16D;
+            topRectWidthPercentage = 0.2D;
         } else {
             bottomRectHeightPercentage = 0.31D;
             bottomRectWidthPercentage = 0.72D;
