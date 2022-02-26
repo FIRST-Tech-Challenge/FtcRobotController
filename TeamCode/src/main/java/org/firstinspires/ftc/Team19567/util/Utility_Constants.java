@@ -8,7 +8,7 @@ public class Utility_Constants {
     //GENERAL_CONSTANTS
     public static double PPR_RATIO = 1.95509087; //ratio of old encoder values to current encoder values
     public static double INTAKE_SPEED = 1.0; //speed to set the intake motor to when intaking freight
-    public static double EJECTION_SPEED = -0.7; //speed to eject freight at
+    public static double EJECTION_SPEED = -0.6; //speed to eject freight at
     //MULTIPLIERS/SENSITIVITIES
     public static double TURN_SENSITIVITY = 0.9; //driver-controlled sensitivity for turning
     public static double STRAFE_SENSITIVITY = 1.0; //driver-controlled sensitivity for strafing
@@ -30,13 +30,13 @@ public class Utility_Constants {
     public static double INIT_POWER = -0.6; //Initial power for carousel
     public static double FINAL_POWER = -1.0; //Final power for carousel
     //ARM POWERS
-    public static double FIRST_LEVEL_POWER= 0.45;
+    public static double FIRST_LEVEL_POWER= 0.5;
     public static double SECOND_LEVEL_POWER = 0.5;
     public static double THIRD_LEVEL_POWER = 0.65;
     public static double GOING_DOWN_POWER = 0.3;
     //POSITIONS
     public static double RELEASE_SERVO_DEFAULT = 0.71;
-    public static double BALANCE_SERVO_DEFAULT = 0.04;
+    public static double BALANCE_SERVO_DEFAULT = 0.07;
     //TIMINGS
     public static int MILLI_ACC = 1100; //Milliseconds after carousel has been engaged to begin accelerating the carousel
     public static int MILLI_FINAL = 1100; //Milliseconds after carousel has been engaged to reach the final speed
@@ -52,7 +52,6 @@ public class Utility_Constants {
     public static double FORCE_SENSOR_THRESHOLD = 0.01; //Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0)
     public static int DEBOUNCE_TIME = 250; //Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement)
     public static int INTAKE_TIME = 500; //Milliseconds to run the intake in reverse after a freight has been detected
-    public static int INTAKE_RESET_TIME = 500; //Milliseconds it takes to reset the intake
     //MISC
     public static Gamepad.RumbleEffect END_GAME_RUMBLE = new Gamepad.RumbleEffect.Builder()
             .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
