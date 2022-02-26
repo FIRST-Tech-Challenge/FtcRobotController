@@ -311,7 +311,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
-            robot.articulate(Robot.Articulation.START); //stow crane to the starting position
+            robot.articulate(Robot.Articulation.START_DOWN); //stow crane to the starting position
         if(stickyGamepad1.left_trigger || stickyGamepad2.left_trigger)
             numericalDashboardEnabled = !numericalDashboardEnabled;
         if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)

@@ -85,8 +85,8 @@ public class Crane implements Subsystem {
         CAP(30, 140, 0, 0, 1, 170),
 
         // auton articulations
-        AUTON_REACH_RIGHT(40, 130, 70, 30, 1, 170),
-        AUTON_REACH_LEFT(40, 130, 70, -30, 1, 170);
+        AUTON_REACH_RIGHT(17.45, 103.6, 69.13, 90, 1, -69.13),
+        AUTON_REACH_LEFT(40, 130, 70, -90, 1, 170);
 
         public double shoulderPos, elbowPos, wristPos;
         public double turretAngle;

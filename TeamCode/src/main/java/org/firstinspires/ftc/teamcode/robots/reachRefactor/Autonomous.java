@@ -161,7 +161,7 @@ public class Autonomous {
                                 () -> visionProvider.getMostFrequentPosition().getIndex(),
                                 () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
                                 () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
-                                () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+                                () -> { robot.crane.articulate(Crane.Articulation.AUTON_REACH_RIGHT); return true; }
                         )
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                         .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(90), () -> {})
