@@ -96,17 +96,17 @@ public class RedDepotFSM extends LinearOpMode {
             case ALLIANCE_SECOND: {
                 chosenArmPos = Utility_Constants.SECOND_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
-                chosenTrajectoryX = -25.5;
-                chosenTrajectoryY = -43.5;
+                chosenTrajectoryX = -26.25;
+                chosenTrajectoryY = -44.25;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_THIRD: {
-                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-50;
+                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
-                chosenTrajectoryX = -27.5;
-                chosenTrajectoryY = -44.5;
+                chosenTrajectoryX = -29.5;
+                chosenTrajectoryY = -47;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -123,10 +123,10 @@ public class RedDepotFSM extends LinearOpMode {
         currentState = AUTO_STATE.MOVING_TO_HUB;
 
         TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
-                .addDisplacementMarker(() -> {
+                .addSpatialMarker(new Vector2d(chosenTrajectoryX-12,chosenTrajectoryY-14),() -> {
                     mechanisms.moveIntake(0.4);
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
-                }).addSpatialMarker(new Vector2d(chosenTrajectoryX, chosenTrajectoryY-0.25), () -> {
+                }).addSpatialMarker(new Vector2d(chosenTrajectoryX, chosenTrajectoryY-0.5), () -> {
                     mechanisms.moveIntake(0);
                     mechanisms.releaseServoMove(0.3);
                 }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,chosenTrajectoryY,Math.toRadians(225)))
@@ -135,8 +135,7 @@ public class RedDepotFSM extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-64,-57,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .splineToConstantHeading(new Vector2d(-20,-40),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(60,-35),Math.toRadians(0)).build();
+                .splineToConstantHeading(new Vector2d(60,-30),Math.toRadians(0)).build();
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
@@ -160,7 +159,7 @@ public class RedDepotFSM extends LinearOpMode {
                     break;
                 }
                 case DELIVERING_FREIGHT: {
-                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME+300) {
+                    if(timeout.milliseconds() >= Utility_Constants.FLICKER_TIME+200) {
                         telemetry.addData("State Machine","Moved to MOVING_TO_CAROUSEL");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_CAROUSEL;

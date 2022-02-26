@@ -87,8 +87,8 @@ public class BlueDepotFSM extends LinearOpMode {
             case ALLIANCE_FIRST: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
-                chosenTrajectoryX = -21.75;
-                chosenTrajectoryY = 38.5;
+                chosenTrajectoryX = -22;
+                chosenTrajectoryY = 40;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -106,8 +106,8 @@ public class BlueDepotFSM extends LinearOpMode {
             case ALLIANCE_THIRD: {
                 chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-25;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
-                chosenTrajectoryX = -29;
-                chosenTrajectoryY = 45.5;
+                chosenTrajectoryX = -29.5;
+                chosenTrajectoryY = 46.75;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -125,7 +125,7 @@ public class BlueDepotFSM extends LinearOpMode {
         currentState = AUTO_STATE.MOVING_TO_HUB;
 
         TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-42.5, 64, Math.toRadians(-90)))
-                .addDisplacementMarker(() -> {
+                .addSpatialMarker(new Vector2d(chosenTrajectoryX-12,chosenTrajectoryY+14),() -> {
                     mechanisms.moveIntake(0.4);
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
                 }).addSpatialMarker( new Vector2d(chosenTrajectoryX, chosenTrajectoryY+0.5), () -> {
@@ -134,12 +134,10 @@ public class BlueDepotFSM extends LinearOpMode {
                 }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,chosenTrajectoryY,Math.toRadians(-225)))
                 .build();
         TrajectorySequence moveToCarouselSequence = chassis.trajectorySequenceBuilder(preloadSequence.end())
-                .lineToSplineHeading(new Pose2d(-64.5,59,Math.toRadians(0))).build();
+                .lineToSplineHeading(new Pose2d(-64,57,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .splineToConstantHeading(new Vector2d(-20,40),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0))
-                .build();
+                .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0)).build();
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
