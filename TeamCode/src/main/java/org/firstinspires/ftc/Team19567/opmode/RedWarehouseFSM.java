@@ -33,7 +33,6 @@ public class RedWarehouseFSM extends LinearOpMode {
     private greenPipeline pipeline = new greenPipeline(telemetry); //Team shipping element OpenCV Pipeline
     private AnalogInput forceSensor = null;
     private DistanceSensor distanceSensor = null;
-    private TouchSensor limitSwitch = null;
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     private RevBlinkinLedDriver blinkin = null;
     private AUTO_STATE currentState = AUTO_STATE.DETECTING_OPENCV;
@@ -59,7 +58,6 @@ public class RedWarehouseFSM extends LinearOpMode {
         forceSensor = hardwareMap.get(AnalogInput.class,"forceSensor");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class,"blinkin");
-        limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName);
@@ -172,11 +170,11 @@ public class RedWarehouseFSM extends LinearOpMode {
                  */
                 .build();
 
-        currentState = AUTO_STATE.SETTING_INTAKE;
+        currentState = AUTO_STATE.MOVING_TO_HUB;
 
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
-        timeout.reset();
+        chassis.followTrajectorySequenceAsync(SplineSequence);
 
         master:while(opModeIsActive()) {
             Pose2d poseEstimate = chassis.getPoseEstimate();
@@ -185,15 +183,6 @@ public class RedWarehouseFSM extends LinearOpMode {
             telemetry.addData("Pose Heading",poseEstimate.getHeading());
 
             switch(currentState) {
-                case SETTING_INTAKE: {
-                    if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
-                    else mechanisms.moveIntake(0.1);
-                    if(timeout.milliseconds() >= Utility_Constants.INTAKE_RESET_TIME) {
-                        currentState = AUTO_STATE.MOVING_TO_HUB;
-                        mechanisms.moveIntake(0);
-                        chassis.followTrajectorySequenceAsync(SplineSequence);
-                    }
-                }
                 case MOVING_TO_HUB: {
                     if(!chassis.isBusy()) {
                         timeout.reset();

@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
-import org.firstinspires.ftc.Team19567.drive.SlowSampleMecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
@@ -47,7 +46,7 @@ public class BlueDepotFSM extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SlowSampleMecanumDriveCancelable chassis = new SlowSampleMecanumDriveCancelable(hardwareMap);
+        SampleMecanumDriveCancelable chassis = new SampleMecanumDriveCancelable(hardwareMap);
 
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
@@ -123,7 +122,7 @@ public class BlueDepotFSM extends LinearOpMode {
             }
         }
 
-        currentState = AUTO_STATE.SETTING_INTAKE;
+        currentState = AUTO_STATE.MOVING_TO_HUB;
 
         TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-42.5, 64, Math.toRadians(-90)))
                 .addDisplacementMarker(() -> {
@@ -138,14 +137,13 @@ public class BlueDepotFSM extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-64.5,59,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .waitSeconds(7)
                 .splineToConstantHeading(new Vector2d(-20,40),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0))
                 .build();
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
-        timeout.reset();
+        chassis.followTrajectorySequenceAsync(preloadSequence);
 
         master:while(opModeIsActive() && !isStopRequested()) {
             Pose2d poseEstimate = chassis.getPoseEstimate();
@@ -154,15 +152,6 @@ public class BlueDepotFSM extends LinearOpMode {
             telemetry.addData("Pose Heading",poseEstimate.getHeading());
 
             switch(currentState) {
-                case SETTING_INTAKE: {
-                    if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
-                    else mechanisms.moveIntake(0.1);
-                    if(timeout.milliseconds() >= Utility_Constants.INTAKE_RESET_TIME) {
-                        currentState = AUTO_STATE.MOVING_TO_HUB;
-                        mechanisms.moveIntake(0);
-                        chassis.followTrajectorySequenceAsync(preloadSequence);
-                    }
-                }
                 case MOVING_TO_HUB: {
                     if(!chassis.isBusy()) {
                         timeout.reset();

@@ -241,11 +241,8 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.5);
             else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
             else mechanisms.moveIntake(0.1);
-
-            if (gamepad1.a || gamepad2.a) mechanisms.moveIntake(0.4);
-            if (gamepad1.b || gamepad2.b) mechanisms.moveIntake(-0.3);
         }
-        else if(intakeTimeout.milliseconds() >= 75 && intakeTimeout.milliseconds() <= INTAKE_TIME) mechanisms.moveIntake(EJECTION_SPEED);
+        else if(intakeTimeout.milliseconds() >= 100 && intakeTimeout.milliseconds() <= INTAKE_TIME) mechanisms.moveIntake(EJECTION_SPEED);
         else mechanisms.moveIntake(0);
 
         //CAROUSEL
@@ -287,6 +284,9 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             presetState = PRESET_STATE.GOING_DOWN;
         }
 
+        if(presetState != PRESET_STATE.NO_PRESET) {
+            mechanisms.moveIntake(0.4);
+        }
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
@@ -315,6 +315,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             }
             case GOING_DOWN: {
                 releaseServoPos = Utility_Constants.RELEASE_SERVO_DEFAULT;
+                mechanisms.moveIntake(-0.4);
                 armPower = GOING_DOWN_POWER;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
@@ -331,16 +332,16 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         //SERVOS
         if(gamepad1.dpad_down) releaseServoPos = Range.clip(releaseServoPos-Utility_Constants.SERVO_SENSITIVITY,releaseServo.MIN_POSITION,Utility_Constants.RELEASE_SERVO_DEFAULT);
         else if(gamepad1.dpad_up || gamepad2.dpad_up) releaseServoPos = Range.clip(releaseServoPos+Utility_Constants.SERVO_SENSITIVITY,releaseServo.MIN_POSITION,Utility_Constants.RELEASE_SERVO_DEFAULT);
-        if(gamepad2.right_bumper) releaseServoPos = 0.65;
+        if(gamepad2.right_bumper) releaseServoPos = 0.64;
         else if(gamepad2.dpad_down) releaseServoPos = 0.38;
         if((runtime.milliseconds() >= 85000 && runtime.milliseconds() <= 90000) || (runtime.milliseconds() >= 115000 && runtime.milliseconds() <= 120000)) {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
             gamepad1.runRumbleEffect(endGameRumble);
         }
-        else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
-        else if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+        else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
+        else if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
         else {
-            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
         }
         if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD && forceSensorTimeout.milliseconds() >= 50) {
             if(!isIntaked) {
