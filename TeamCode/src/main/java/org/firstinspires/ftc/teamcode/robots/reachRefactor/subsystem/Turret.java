@@ -25,6 +25,7 @@ public class Turret implements Subsystem {
     public static double TURRET_P = 4.0;
     public static final double TICKS_PER_DEGREE = 160.0 / 90.0;
     public static double TURRET_TOLERANCE = 10;
+    public static double TURRET_P = 4.0;
 
     private final boolean simulated;
 
