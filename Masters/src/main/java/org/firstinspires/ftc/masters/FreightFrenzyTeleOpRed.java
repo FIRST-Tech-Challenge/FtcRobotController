@@ -71,14 +71,12 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     protected boolean carouselPushed = false;
     protected int encoderPos=0;
     protected double velocity=0;
-//    boolean start=false;
-//    boolean startCarousel = true;
     protected ElapsedTime elapsedTimeCarousel;
     protected double vel2Max=0;
     protected double vel1Max=0;
 
     protected final double capServoBottom = 0.72;
-    protected final double capServoTop = 0.1;
+    protected final double capServoTop = 0.05;
     protected double capServoPos = capServoBottom;
 
     Trajectory toHub;
@@ -102,8 +100,10 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        //robot = new RobotClass(hardwareMap, telemetry, this);
         drive = new SampleMecanumDriveCancelable(hardwareMap, this, telemetry);
+
+        Pose2d startPose =new Pose2d(new Vector2d(26, -66),Math.toRadians(180));
+        drive.setPoseEstimate(startPose);
 
         /* Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -159,11 +159,6 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
         toHub= getHubTrajectory();
 
-                drive.trajectoryBuilder(new Pose2d(new Vector2d(26, -66),Math.toRadians(180)))
-                .lineTo(new Vector2d(10, -65))
-                .splineToSplineHeading(new Pose2d(-12, -45, Math.toRadians(90)), Math.toRadians(90))
-                //  .addDisplacementMarker(()->drive.followTrajectoryAsync(toHubRed))
-                .build();
         // Wait for the game to start (driver presses PLAY)
         capServo.setPosition(capServoBottom);
         waitForStart();
@@ -243,7 +238,9 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     if (gamepad1.right_trigger > .35) {
                         currentMode = DriveMode.TO_HUB;
                         boolean foundWhite = toLineTeleop(1.5);
+                        telemetry.addData("found white", foundWhite);
                         if (foundWhite) {
+
                             drive.followTrajectoryAsync(toHub);
                         }
                     }
@@ -251,6 +248,11 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 case TO_HUB:
 
                     if (!drive.isBusy()) {
+                        currentMode = DriveMode.NORMAL;
+                    }
+
+                    if (gamepad1.x){
+                        drive.breakFollowing();
                         currentMode = DriveMode.NORMAL;
                     }
 
@@ -264,6 +266,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     break;
 
             }
+
+            drive.update();
 
             if (Math.abs(gamepad2.left_stick_y)>0.2) {
                 telemetry.addData("left stick 2: ", gamepad2.left_stick_y);
@@ -425,11 +429,6 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 }
 
 
-//            if (gamepad2.dpad_right) {
-//                //Thing that will be doing to find the thing
-//                drive.distanceSensorStuff();
-//            }
-
         }
     }
     protected void rotateCarousel(){
@@ -481,9 +480,9 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         }
 
     protected Trajectory getHubTrajectory(){
-        return    drive.trajectoryBuilder(new Pose2d(new Vector2d(26, -66),Math.toRadians(180)))
+        return  drive.trajectoryBuilder(new Pose2d(new Vector2d(26, -66),Math.toRadians(180)))
                 .lineTo(new Vector2d(10, -65))
-                .splineToSplineHeading(new Pose2d(-12, -45, Math.toRadians(90)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-10, -45, Math.toRadians(90)), Math.toRadians(90))
                 .build();
     }
 

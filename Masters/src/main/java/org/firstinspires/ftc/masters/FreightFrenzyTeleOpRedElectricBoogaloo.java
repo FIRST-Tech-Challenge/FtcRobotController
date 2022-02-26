@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region1;
 import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region2;
-
+@Disabled
 @TeleOp(name="Freight Frenzy Red 2: Electric Boogaloo", group = "competition")
 public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
 

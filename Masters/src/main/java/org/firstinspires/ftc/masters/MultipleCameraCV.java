@@ -92,7 +92,7 @@ public class MultipleCameraCV {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));
         pipeline = new ShippingElementDeterminationPipeline(telemetry);
 
-
+        warehousePipeline = new WarehousePipeline(telemetry);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming
@@ -123,6 +123,7 @@ public class MultipleCameraCV {
                  * away from the user.
                  */
                 telemetry.addData("Duck Webcam Opened", "Yes");
+
                 duckWebcam.setPipeline(duckPipeline);
                 duckWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("duck webcam startStreaming", "yes");
@@ -751,7 +752,7 @@ public class MultipleCameraCV {
             } else if (middleRow.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new) > DUCK_PRESENT_THRESHOLD) {
                 indexOfMaximumBAvg = 0;
                 for (int i = 0; i<9; i++) {
-                    if (nearRow.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                    if (middleRow.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
                         indexOfMaximumBAvg = i;
                     }
                 }
@@ -760,7 +761,7 @@ public class MultipleCameraCV {
             } else if (farRow.stream().mapToInt(v -> v).max().orElseThrow(NoSuchElementException::new) > DUCK_PRESENT_THRESHOLD) {
                 indexOfMaximumBAvg = 0;
                 for (int i = 0; i<9; i++) {
-                    if (nearRow.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                    if (farRow.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
                         indexOfMaximumBAvg = i;
                     }
                 }
@@ -771,8 +772,8 @@ public class MultipleCameraCV {
             }
 
 
-            telemetry.addData("Position", freightPosition);
-            telemetry.addData("Distance", freightDistance);
+            telemetry.addData("Freight Position", freightPosition);
+            telemetry.addData("Freight Distance", freightDistance);
             telemetry.update();
 
             return input;

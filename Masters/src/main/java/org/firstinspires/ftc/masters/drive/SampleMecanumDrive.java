@@ -49,7 +49,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.masters.drive.DriveConstants.MAX_ANG_ACCEL;
@@ -109,6 +111,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
+    Queue<Double> voltageQueue = new LinkedList<>();
+    double sum= 0;
+    int MAX_SIZE= 500;
+
     public Pose2d position;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
@@ -159,8 +165,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
 
-//        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
-//        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
         distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
 
@@ -210,6 +214,16 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+    }
+
+    public void updateVoltage(){
+        double voltage = batteryVoltageSensor.getVoltage();
+        voltageQueue.add(voltage);
+
+        sum= sum + voltage;
+        if (voltageQueue.size()>=MAX_SIZE){
+            sum =sum - voltageQueue.remove();
+        }
     }
 
 //    public boolean getDuck(){
@@ -298,6 +312,73 @@ public class SampleMecanumDrive extends MecanumDrive {
             greenLED.setState(true);
             greenLED2.setState(true);
            // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+            return true;
+        } else
+            return false;
+    }
+
+    public boolean getCubeVoltage () {
+
+        double voltage;
+        voltageQueue = new LinkedList<>();
+
+
+        lightSet();
+        frontLeft.setPower(-.35);
+        frontRight.setPower(-.35);
+        backLeft.setPower(-.35);
+        backRight.setPower(-.35);
+        intakeMotor.setPower(1);
+
+        double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+
+        redLED.setState(true);
+        boolean found = false;
+        while (this.opmode.opModeIsActive() && voltageQueue.size()<100){
+            updateVoltage();
+        }
+        ElapsedTime elapsedTime = new ElapsedTime();
+
+        while ((intakeDistance>9 && ! found) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
+            voltage= batteryVoltageSensor.getVoltage();
+
+            voltageQueue.add(voltage);
+
+            double avg = sum/voltageQueue.size();
+            telemetry.addData("avg", avg);
+            telemetry.addData("diff", voltage/avg);
+            if (voltage/ avg <0.90) {
+                found = true;
+                pauseButInSecondsForThePlebeians(0.35);
+                intakeMotor.setPower(0);
+                telemetry.addData("detected", true);
+            }
+            sum= sum + voltage;
+            if (voltageQueue.size()>=MAX_SIZE){
+                sum =sum - voltageQueue.remove();
+            }
+            intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
+            if (intakeDistance<9){
+                found = true;
+            }
+
+            telemetry.addData("intake", intakeDistance);
+            telemetry.update();
+        }
+        stopMotors();
+        telemetry.addData("top distance", distanceSensorTop.getDistance(DistanceUnit.CM));
+        telemetry.update();
+
+        if (found){
+            pauseButInSecondsForThePlebeians(.3);
+            intakeMotor.setPower(-.8);
+            pauseButInSecondsForThePlebeians(.5);
+            intakeMotor.setPower(0);
+            redLED.setState(false);
+            redLED2.setState(false);
+            greenLED.setState(true);
+            greenLED2.setState(true);
+            // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
             return true;
         } else
             return false;
@@ -599,6 +680,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public MultipleCameraCV.WarehousePipeline.FreightPosition analyzeWarehouse() {
+        telemetry.addData("is CvV null", CV==null?"null": "not null");
+        telemetry.addData("is pipeline null", CV==null || CV.warehousePipeline==null?"null":" not null");
+        telemetry.update();
         return CV.warehousePipeline.freightPosition;
     }
 
@@ -654,6 +738,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
+        telemetry.addData("following", "2");
+        telemetry.update();
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(trajectory.start())
                         .addTrajectory(trajectory)
@@ -686,8 +772,9 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void waitForIdle() {
-        while (!Thread.currentThread().isInterrupted() && isBusy())
+        while (!Thread.currentThread().isInterrupted() && isBusy()) {
             update();
+        }
     }
 
     public boolean isBusy() {
@@ -835,7 +922,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 position = new Pose2d(new Vector2d(31, -66),Math.toRadians(180));
                 setPoseEstimate(position);
                 found= true;
-                //setMotorPowers(0,0,0,0);
+                setMotorPowers(0,0,0,0);
                 break;
             }
         }

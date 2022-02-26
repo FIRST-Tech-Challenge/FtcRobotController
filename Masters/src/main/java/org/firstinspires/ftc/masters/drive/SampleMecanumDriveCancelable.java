@@ -5,8 +5,6 @@ import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -50,6 +48,8 @@ public class SampleMecanumDriveCancelable extends SampleMecanumDrive {
 
 
     public void followTrajectoryAsync(Trajectory trajectory) {
+        telemetry.addData("following", "1");
+        telemetry.update();
         trajectorySequenceRunnerCancelable.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(trajectory.start())
                         .addTrajectory(trajectory)
