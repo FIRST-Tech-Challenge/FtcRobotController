@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.Team19567.drive.SlowSampleMecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
@@ -46,7 +47,7 @@ public class BlueDepotFSM extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SampleMecanumDriveCancelable chassis = new SampleMecanumDriveCancelable(hardwareMap);
+        SlowSampleMecanumDriveCancelable chassis = new SlowSampleMecanumDriveCancelable(hardwareMap);
 
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
@@ -137,6 +138,7 @@ public class BlueDepotFSM extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-64.5,59,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
+                .waitSeconds(10)
                 .splineToConstantHeading(new Vector2d(-20,40),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0))
                 .build();
