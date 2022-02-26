@@ -138,7 +138,7 @@ public class BlueDepotFSM extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-64.5,59,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .waitSeconds(10)
+                .waitSeconds(7)
                 .splineToConstantHeading(new Vector2d(-20,40),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0))
                 .build();

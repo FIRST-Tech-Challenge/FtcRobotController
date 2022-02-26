@@ -136,7 +136,7 @@ public class RedDepotFSM extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-64,-57,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .waitSeconds(10)
+                .waitSeconds(7)
                 .splineToConstantHeading(new Vector2d(-20,-40),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(60,-35),Math.toRadians(0)).build();
 
