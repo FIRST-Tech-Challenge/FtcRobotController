@@ -36,6 +36,8 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
+//        Mecha Knight Changes: ALERT
+        drive.pause(1000);
 
         elapsedTime = new ElapsedTime();
 
@@ -69,11 +71,24 @@ public class RedCarouselOdo extends LinearOpMode {
 
 //      Deposit initial freight
         Pose2d hubPosition = new Pose2d(new Vector2d(-23, -38), Math.toRadians(45));
-        TrajectorySequence toHub = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence toHubHigh = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(hubPosition)
                 .build();
-        drive.followTrajectorySequence(toHub);
+        TrajectorySequence toHubLow = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(new Vector2d(-22.3, -37.3), Math.toRadians(45)))
+                .build();
 
+        switch (freightLocation) {
+            case LEFT:
+                drive.followTrajectorySequence(toHubLow);
+                break;
+            case MIDDLE:
+                drive.followTrajectorySequence(toHubHigh);
+                break;
+            case RIGHT:
+                drive.followTrajectorySequence(toHubHigh);
+                break;
+        }
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
@@ -91,8 +106,8 @@ public class RedCarouselOdo extends LinearOpMode {
                 .build();
         drive.followTrajectorySequence(toCarousel);
 
-        drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(.5, 4); //can we go faster?
+        drive.intakeMotor.setPower(1);
+        drive.jevilTurnCarousel(.57, 4); //can we go faster?
 
 
         TrajectorySequence getOffCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())

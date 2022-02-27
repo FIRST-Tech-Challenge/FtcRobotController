@@ -351,6 +351,7 @@ public class MultipleCameraCV {
 
 
             telemetry.addData("Position", position);
+            telemetry.update();
 
 
             return input;
@@ -560,9 +561,7 @@ public class MultipleCameraCV {
                 }
             }
             telemetry.addData("Blue Averages", hubRegionAvgBlue);
-
             telemetry.update();
-
 
             return input;
         }
@@ -774,6 +773,7 @@ public class MultipleCameraCV {
 
             telemetry.addData("Freight Position", freightPosition);
             telemetry.addData("Freight Distance", freightDistance);
+
             telemetry.update();
 
             return input;

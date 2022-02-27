@@ -566,7 +566,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         intakeMotor.setPower(0.8);
-        forward(0.4, -1);
+        forward(0.4, -1.6);
 
         stopMotors();
     }

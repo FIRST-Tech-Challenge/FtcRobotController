@@ -29,11 +29,14 @@ public class BlueWarehouseOdo extends LinearOpMode {
         Pose2d startPose = new Pose2d(new Vector2d(13.5, 63),Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
-        TrajectorySequence fromStartToHub = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence fromStartToHubHigh = drive.trajectorySequenceBuilder(startPose)
                 .strafeTo(new Vector2d(-13, 42))
                 .build();
+        TrajectorySequence fromStartToHubLow = drive.trajectorySequenceBuilder(startPose)
+                .strafeTo(new Vector2d(-13, 40.7))
+                .build();
 
-        TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHub.end())
+        TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHubHigh.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
                 .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
                 .build();
@@ -74,8 +77,17 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        drive.followTrajectorySequence(fromStartToHub);
-
+        switch (freightLocation) {
+            case LEFT:
+                drive.followTrajectorySequence(fromStartToHubLow);
+                break;
+            case MIDDLE:
+                drive.followTrajectorySequence(fromStartToHubHigh);
+                break;
+            case RIGHT:
+                drive.followTrajectorySequence(fromStartToHubHigh);
+                break;
+        }
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
@@ -101,7 +113,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
                     .lineTo(new Vector2d(15, 66))
                     .addDisplacementMarker(() -> {
-                        drive.intakeMotor.setPower(-0.8);
+                        drive.intakeMotor.setPower(-1);
                         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -129,7 +141,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
                         .lineTo(new Vector2d(15, 66))
                         .addDisplacementMarker(() -> {
-                            drive.intakeMotor.setPower(-0.8);
+                            drive.intakeMotor.setPower(-1);
                             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                             drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

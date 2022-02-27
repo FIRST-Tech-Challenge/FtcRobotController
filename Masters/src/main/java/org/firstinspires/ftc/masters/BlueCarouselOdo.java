@@ -67,10 +67,25 @@ public class BlueCarouselOdo extends LinearOpMode {
 
 //      Deposit initial freight
         Pose2d hubPosition = new Pose2d(new Vector2d(-11.5, 43), Math.toRadians(270));
-        TrajectorySequence toHub = drive.trajectorySequenceBuilder(startPose)
+
+        TrajectorySequence toHubHigh = drive.trajectorySequenceBuilder(startPose)
                 .lineToSplineHeading(hubPosition)
                 .build();
-        drive.followTrajectorySequence(toHub);
+        TrajectorySequence toHubLow = drive.trajectorySequenceBuilder(startPose)
+                .lineToSplineHeading(new Pose2d(new Vector2d(-11.5, 41.7), Math.toRadians(270)))
+                .build();
+
+        switch (freightLocation) {
+            case LEFT:
+                drive.followTrajectorySequence(toHubLow);
+                break;
+            case MIDDLE:
+                drive.followTrajectorySequence(toHubHigh);
+                break;
+            case RIGHT:
+                drive.followTrajectorySequence(toHubHigh);
+                break;
+        }
 
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
@@ -90,8 +105,8 @@ public class BlueCarouselOdo extends LinearOpMode {
                 .build();
         drive.followTrajectorySequence(toCarousel);
 
-        drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(-.4, 4);
+        drive.intakeMotor.setPower(1);
+        drive.jevilTurnCarousel(-.47, 4);
 
         TrajectorySequence leaveCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(-55, 47))
