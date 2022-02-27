@@ -105,7 +105,7 @@ public class BlueDepotFSM extends LinearOpMode {
             }
             case NO_ALLIANCE:
             case ALLIANCE_THIRD: {
-                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-25;
+                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-60;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
                 chosenTrajectoryX = -29;
                 chosenTrajectoryY = 45.5;
@@ -126,6 +126,7 @@ public class BlueDepotFSM extends LinearOpMode {
         currentState = AUTO_STATE.MOVING_TO_HUB;
 
         TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-42.5, 64, Math.toRadians(-90)))
+                .waitSeconds(5.0)
                 .addDisplacementMarker(() -> {
                     mechanisms.moveIntake(0.4);
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
@@ -138,9 +139,9 @@ public class BlueDepotFSM extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-64.5,59,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .waitSeconds(7)
-                .splineToConstantHeading(new Vector2d(-20,40),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0))
+                .strafeTo(new Vector2d(-70,34))
+                /* .splineToConstantHeading(new Vector2d(-20,40),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(60,35),Math.toRadians(0)) */
                 .build();
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);

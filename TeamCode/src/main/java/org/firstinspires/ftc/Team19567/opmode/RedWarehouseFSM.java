@@ -87,7 +87,7 @@ public class RedWarehouseFSM extends LinearOpMode {
         }).addSpatialMarker(new Vector2d(2.5,-40.5),() -> {
             mechanisms.releaseServoMove(0.3);
             mechanisms.moveIntake(0.0);
-        }).strafeTo(new Vector2d(12,-68.5)).lineToSplineHeading(new Pose2d(2,-40,Math.toRadians(-45))).build();
+        }).strafeTo(new Vector2d(12,-68.5)).lineToSplineHeading(new Pose2d(0.5,-40,Math.toRadians(-45))).build();
                 /*
                 .setReversed(true).splineTo(new Vector2d(16, -61),Math.toRadians(150)).splineTo(new Vector2d(11.5,-40.5),Math.toRadians(135))
                 .setReversed(false).build();
@@ -116,17 +116,17 @@ public class RedWarehouseFSM extends LinearOpMode {
             case ALLIANCE_FIRST: {
                 chosenArmPos = Utility_Constants.SECOND_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.SECOND_LEVEL_POWER;
-                chosenTrajectoryX = 2;
-                chosenTrajectoryY = -42;
+                chosenTrajectoryX = 1.5;
+                chosenTrajectoryY = -41;
                 telemetry.addData("OpenCV","Second Level Detected");
                 telemetry.update();
                 break;
             }
             case ALLIANCE_SECOND: {
-                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS;
+                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-50;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
-                chosenTrajectoryX = 3;
-                chosenTrajectoryY = -45;
+                chosenTrajectoryX = 1.5;
+                chosenTrajectoryY = -43.5;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -135,8 +135,8 @@ public class RedWarehouseFSM extends LinearOpMode {
             case NO_ALLIANCE: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
-                chosenTrajectoryX = -1.5;
-                chosenTrajectoryY = -40.5;
+                chosenTrajectoryX = -2.5;
+                chosenTrajectoryY = -38.5;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -144,8 +144,8 @@ public class RedWarehouseFSM extends LinearOpMode {
             default: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
-                chosenTrajectoryX = -1.5;
-                chosenTrajectoryY = -40.5;
+                chosenTrajectoryX = -2.5;
+                chosenTrajectoryY = -38.5;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
             }
@@ -188,8 +188,7 @@ public class RedWarehouseFSM extends LinearOpMode {
                         timeout.reset();
                         telemetry.addData("State Machine","Moved to DELIVERING_FREIGHT");
                         telemetry.update();
-                        chassis.followTrajectorySequenceAsync(firstReturnSplineSequence);
-                        currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
+                        currentState = AUTO_STATE.DELIVERING_FREIGHT;
                         freightCount++;
                     }
                     break;
@@ -199,6 +198,7 @@ public class RedWarehouseFSM extends LinearOpMode {
                         telemetry.addData("State Machine","Moved to MOVING_TO_WAREHOUSE");
                         telemetry.update();
                         currentState = AUTO_STATE.MOVING_TO_WAREHOUSE;
+                        chassis.followTrajectorySequenceAsync(firstReturnSplineSequence);
                     }
                     break;
                 }

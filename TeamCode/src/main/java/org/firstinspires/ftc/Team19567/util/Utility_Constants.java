@@ -16,9 +16,9 @@ public class Utility_Constants {
     public static double SLOWMODE_MULT = 0.3; //speed multiplier during SlowMode
     public static double SERVO_SENSITIVITY = 0.05; //sensitivity for release servo during manual operation
     //INTERNAL ARM VALUES
-    private static double _firstLevelPos = 850; //original encoder values for first level of alliance hub/shared hub
-    private static double _secondLevelPos = 750; //original encoder values for second level of alliance hub/shared hub
-    private static double _thirdLevelPos = 580; //original encoder values for third level of alliance hub/shared hub
+    private static double _firstLevelPos = 820; //original encoder values for first level of alliance hub/shared hub
+    private static double _secondLevelPos = 700; //original encoder values for second level of alliance hub/shared hub
+    private static double _thirdLevelPos = 550; //original encoder values for third level of alliance hub/shared hubr
     private static double _maxPos = 1000; //original encoder values for maximum rotatable position of the arm
     //EXTERNAL ARM VALUES
     //Tune the previous values, not these values

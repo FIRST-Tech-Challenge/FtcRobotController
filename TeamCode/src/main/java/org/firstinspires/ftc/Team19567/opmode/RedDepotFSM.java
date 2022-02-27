@@ -88,8 +88,8 @@ public class RedDepotFSM extends LinearOpMode {
             case ALLIANCE_FIRST: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
-                chosenTrajectoryX = -22;
-                chosenTrajectoryY = -40;
+                chosenTrajectoryX = -23;
+                chosenTrajectoryY = -39.5;
                 telemetry.addData("OpenCV","Third Level Detected");
                 telemetry.update();
                 break;
@@ -104,10 +104,10 @@ public class RedDepotFSM extends LinearOpMode {
                 break;
             }
             case ALLIANCE_THIRD: {
-                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-50;
+                chosenArmPos = Utility_Constants.FIRST_LEVEL_POS-60;
                 chosenArmSpeed = Utility_Constants.FIRST_LEVEL_POWER;
                 chosenTrajectoryX = -27.5;
-                chosenTrajectoryY = -44.5;
+                chosenTrajectoryY = -44;
                 telemetry.addData("OpenCV","First Level Detected");
                 telemetry.update();
                 break;
@@ -115,8 +115,8 @@ public class RedDepotFSM extends LinearOpMode {
             default: {
                 chosenArmPos = Utility_Constants.THIRD_LEVEL_POS;
                 chosenArmSpeed = Utility_Constants.THIRD_LEVEL_POWER;
-                chosenTrajectoryX = -22;
-                chosenTrajectoryY = -40;
+                chosenTrajectoryX = -23;
+                chosenTrajectoryY = -39.5;
                 telemetry.addData("OpenCV","Defaulted to Third Level");
                 telemetry.update();
             }
@@ -124,6 +124,7 @@ public class RedDepotFSM extends LinearOpMode {
         currentState = AUTO_STATE.MOVING_TO_HUB;
 
         TrajectorySequence preloadSequence = chassis.trajectorySequenceBuilder(new Pose2d(-34, -63, Math.toRadians(90)))
+                .waitSeconds(5)
                 .addDisplacementMarker(() -> {
                     mechanisms.moveIntake(0.4);
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed);
@@ -136,9 +137,11 @@ public class RedDepotFSM extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(-64,-57,Math.toRadians(0))).build();
         chassis.followTrajectorySequenceAsync(moveToCarouselSequence);
         TrajectorySequence warehouseSequence = chassis.trajectorySequenceBuilder(moveToCarouselSequence.end())
-                .waitSeconds(7)
+                .strafeTo(new Vector2d(-70,-34))
+                /* .waitSeconds(7)
                 .splineToConstantHeading(new Vector2d(-20,-40),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(60,-35),Math.toRadians(0)).build();
+                .splineToConstantHeading(new Vector2d(60,-35),Math.toRadians(0)) */
+                .build();
 
         mechanisms.releaseServoMove(Utility_Constants.RELEASE_SERVO_DEFAULT);
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);

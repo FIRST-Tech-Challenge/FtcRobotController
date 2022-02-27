@@ -28,6 +28,7 @@ import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 import org.opencv.core.Mat;
 
 //Custom constants
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.DISTANCE_SENSOR_THRESHOLD;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.EJECTION_SPEED;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FORCE_SENSOR_THRESHOLD;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INIT_POWER;
@@ -67,7 +68,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private Servo releaseServo = null;
     private Servo balanceServo = null;
     private TouchSensor limitSwitch = null;
-    //private DistanceSensor distanceSensor = null;
+    private DistanceSensor distanceSensor = null;
     private RevBlinkinLedDriver blinkin = null;
     private AnalogInput forceSensor = null;
 
@@ -89,7 +90,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     private boolean redAlliance = true;
 
     //Objects
-    private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+    private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE;
     private Mechanisms mechanisms = null;
     SampleMecanumDriveCancelable chassis;
 
@@ -110,7 +111,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         balanceServo = hardwareMap.get(Servo.class, "balanceServo");
         limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        //distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
         forceSensor = hardwareMap.get(AnalogInput.class,"forceSensor");
 
         chassis = new SampleMecanumDriveCancelable(hardwareMap);
@@ -246,7 +247,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         else mechanisms.moveIntake(0);
 
         //CAROUSEL
-        if(gamepad2.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
+        /* if(gamepad2.dpad_left && carouselDebounceTime.milliseconds() >= Utility_Constants.DEBOUNCE_TIME) {
             carouselDebounceTime.reset();
             carouselTime.reset();
             isCarouselEngaged = !isCarouselEngaged;
@@ -263,9 +264,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 carouselPower = Utility_Constants.FINAL_POWER;
             }
         }
-        else carouselPower = 0.0;
+        else carouselPower = 0.0; */
 
-        if(gamepad1.dpad_left || gamepad1.dpad_right || gamepad2.dpad_right) carouselPower = INIT_POWER;
+        if(gamepad1.dpad_left || gamepad1.dpad_right || gamepad2.dpad_right) carouselPower = INIT_POWER+0.2;
+        else carouselPower = 0.0;
 
         //ARM
         if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*8,0,MAX_POS);
@@ -338,12 +340,12 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
             gamepad1.runRumbleEffect(endGameRumble);
         }
-        else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.TWINKLES_PARTY_PALETTE;
-        else if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+        else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
+        else if(distanceSensor.getDistance(DistanceUnit.MM) <= DISTANCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN;
         else {
-            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY;
+            blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE;
         }
-        if(forceSensor.getVoltage() >= FORCE_SENSOR_THRESHOLD && forceSensorTimeout.milliseconds() >= 50) {
+        if(distanceSensor.getDistance(DistanceUnit.MM) <= DISTANCE_SENSOR_THRESHOLD) {
             if(!isIntaked) {
                 gamepad1.runRumbleEffect(boxSecured);
                 intakeTimeout.reset();
