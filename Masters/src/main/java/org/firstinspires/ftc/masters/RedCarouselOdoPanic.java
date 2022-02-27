@@ -64,7 +64,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         if (isStopRequested()) return;
 
 //      Deposit initial freight
-        Pose2d hubPosition = new Pose2d(new Vector2d(-32, -23), Math.toRadians(0));
+        Pose2d hubPosition = new Pose2d(new Vector2d(-30.5, -23), Math.toRadians(0));
         TrajectorySequence toHub = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(hubPosition)
                 .build();
