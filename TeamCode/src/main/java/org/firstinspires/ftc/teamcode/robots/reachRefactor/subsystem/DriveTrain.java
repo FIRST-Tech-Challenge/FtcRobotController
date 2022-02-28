@@ -69,7 +69,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static double PITCH_ANTI_TIP_PID_TOLERANCE = 5;
 
     public static PIDCoefficients SWIVEL_PID = new PIDCoefficients(1, 0, 0.08);
-    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(4, 0, 0);
+    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(3, 0, 2);
     public static double CHASSIS_LENGTH_TOLERANCE = 1;
     public static PIDCoefficients MAINTAIN_HEADING_PID = new PIDCoefficients(1, 0, 0.5);
     public static double MAINTAIN_HEADING_TOLERANCE = 2.5;
@@ -124,7 +124,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         // TrajectoryFollower follower = new RamseteFollower(B, ZETA, new Pose2d(0.5,
         // 0.5, Math.toRadians(5)), 3);
         TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS,
-                new Pose2d(0.5, 0.5, Math.toRadians(5)), 3);
+                new Pose2d(0.5, 0.5, Math.toRadians(5)), 1.5);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
         if (simulated) {

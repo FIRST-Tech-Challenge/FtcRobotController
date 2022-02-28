@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.DriveTrain;
@@ -319,141 +320,145 @@ public class Autonomous {
         // Linear Routines
         //----------------------------------------------------------------------------------------------
 
+        TrajectorySequence blueUpLinear1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                .back(25)
+                .build();
+        TrajectorySequence blueUpLinear2 = robot.driveTrain.trajectorySequenceBuilder(blueUpLinear1.end())
+                .forward(14)
+                .turn(-Math.toRadians(90))
+                .forward(50)
+                .build();
+
         blueUpLinear = Utils.getStateMachine(new Stage())
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
-                            robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(29.67)
-                                    .build()
+                        blueUpLinear1
                     );
                 })
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .addMineralState(
                         () -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; }
                 )
                 .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-                .addSingleState(() -> robot.crane.turret.setTargetHeading(90))
-                .addState(() -> robot.turret.isTurretNearTarget())
+                .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(90), () -> {})
                 .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
                 .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                 .addSingleState(() ->
                         robot.driveTrain.followTrajectorySequenceAsync(
-                                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                        .turn(-Math.toRadians(60))
-                                        .forward(50)
-                                        .build()
+                            blueUpLinear2
                         )
                 )
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                .addSingleState(() -> robot.crane.articulate(Crane.Articulation.TRANSFER))
+                .build();
+
+        TrajectorySequence redUpLinear1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                .back(25)
+                .build();
+        TrajectorySequence redUpLinear2 = robot.driveTrain.trajectorySequenceBuilder(redUpLinear1.end())
+                .forward(14)
+                .turn(Math.toRadians(90))
+                .forward(50)
                 .build();
         redUpLinear = Utils.getStateMachine(new Stage())
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
-                            robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(29.67)
-                                    .build()
+                        redUpLinear1
                     );
                 })
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .addMineralState(
                         () -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; }
                 )
                 .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-                .addSingleState(() -> robot.crane.turret.setTargetHeading(-90))
-                .addState(() -> robot.turret.isTurretNearTarget())
+                .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(-90), () -> {})
                 .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
                 .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                 .addSingleState(() ->
                         robot.driveTrain.followTrajectorySequenceAsync(
-                                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                        .turn(Math.toRadians(60))
-                                        .forward(50)
-                                        .build()
+                            redUpLinear2
                         )
                 )
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                .addSingleState(() -> robot.crane.articulate(Crane.Articulation.TRANSFER))
                 .build();
 
+        TrajectorySequence blueDownLinear1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                .back(31.67)
+                .build();
+        TrajectorySequence blueDownLinear2 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                .back(38.33)
+                .turn(-Math.toRadians(90))
+                .forward(48)
+                .turn(Math.toRadians(90))
+                .forward(36)
+                .turn(-Math.toRadians(90))
+                .forward(36)
+                .build();
         blueDownLinear = Utils.getStateMachine(new Stage())
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
-                            robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(29.67)
-                                    .build()
+                        blueDownLinear1
                     );
                 })
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .addMineralState(
                         () -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; }
                 )
                 .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-                .addSingleState(() -> robot.crane.turret.setTargetHeading(-90))
-                .addState(() -> robot.turret.isTurretNearTarget())
+                .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(-90), () -> {})
                 .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
                 .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                 .addSingleState(() ->
                         robot.driveTrain.followTrajectorySequenceAsync(
-                                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                        .back(38.33)
-                                        .turn(-Math.toRadians(90))
-                                        .forward(48)
-                                        .turn(Math.toRadians(90))
-                                        .forward(36)
-                                        .turn(-Math.toRadians(90))
-                                        .forward(36)
-                                        .build()
+                                blueDownLinear2
                         )
                 )
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                .addSingleState(() -> robot.crane.articulate(Crane.Articulation.TRANSFER))
+                .build();
+
+        TrajectorySequence redDownLinear1 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                .back(31.67)
+                .build();
+        TrajectorySequence redDownLinear2 = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
+                .back(38.33)
+                .turn(Math.toRadians(90))
+                .forward(48)
+                .turn(-Math.toRadians(90))
+                .forward(36)
+                .turn(Math.toRadians(90))
+                .forward(36)
                 .build();
 
         redDownLinear = Utils.getStateMachine(new Stage())
                 .addSingleState(() -> {
                     robot.driveTrain.followTrajectorySequenceAsync(
-                            robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                    .back(29.67)
-                                    .build()
+                        redDownLinear1
                     );
                 })
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .addMineralState(
                         () -> visionProvider.getMostFrequentPosition().getIndex(),
-                        () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
-                        () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_MIDDLE_TIER); return true; },
+                        () -> { robot.crane.articulate(Crane.Articulation.AUTO_HIGH_TIER); return true; }
                 )
                 .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-                .addSingleState(() -> robot.crane.turret.setTargetHeading(90))
-                .addState(() -> robot.turret.isTurretNearTarget())
+                .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(90), () -> {})
                 .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
-                .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                 .addSingleState(() ->
                         robot.driveTrain.followTrajectorySequenceAsync(
-                                robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                                        .back(38.33)
-                                        .turn(Math.toRadians(90))
-                                        .forward(48)
-                                        .turn(-Math.toRadians(90))
-                                        .forward(36)
-                                        .turn(Math.toRadians(90))
-                                        .forward(36)
-                                        .build()
+                                redDownLinear2
                         )
                 )
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                .addSingleState(() -> robot.crane.articulate(Crane.Articulation.TRANSFER))
                 .build();
 
         //----------------------------------------------------------------------------------------------
@@ -487,8 +492,8 @@ public class Autonomous {
                 .back(20)
                 .build();
         TrajectorySequence redUp2Simple = robot.driveTrain.trajectorySequenceBuilder(redUp1Simple.end())
-                .turn(Math.toRadians(90))
-                .forward(50)
+                .turn(Math.toRadians(-90))
+                .back(70)
                 .build();
         redUpSimple = Utils.getStateMachine(new Stage())
                 .addSingleState(() -> {

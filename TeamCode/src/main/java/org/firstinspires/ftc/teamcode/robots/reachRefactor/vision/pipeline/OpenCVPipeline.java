@@ -48,9 +48,9 @@ public class OpenCVPipeline extends OpenCvPipeline
     // Constants
     public static int VIEW_OPEN_CV_PIPELINE_STAGE = 6;
     public static int TOP_LEFT_X = 0;
-    public static int TOP_LEFT_Y = 40;
+    public static int TOP_LEFT_Y = 80;
     public static int BOTTOM_RIGHT_X = 320;
-    public static int BOTTOM_RIGHT_Y = 140;
+    public static int BOTTOM_RIGHT_Y = 180;
     public static double NORMALIZE_ALPHA = 51.0;
     public static double NORMALIZE_BETA = 261.0;
     public static double BLUR_RADIUS = 7;
@@ -60,7 +60,7 @@ public class OpenCVPipeline extends OpenCvPipeline
     public static double SATURATION_MAX = 255;
     public static double VALUE_MIN = 120;
     public static double VALUE_MAX = 255;
-    public static double MIN_CONTOUR_AREA = 1000;
+    public static double MIN_CONTOUR_AREA = 700;
     public static String BLUR = "Box Blur";
 
     public static int LEFT_THRESHOLD = 142;
@@ -74,106 +74,108 @@ public class OpenCVPipeline extends OpenCvPipeline
     }
 
     @Override
-    public Mat processFrame(Mat input)
-    {
-        // Step crop (stage 1):
-        cropOutput = crop(input, new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y));
+    public Mat processFrame(Mat input) {
+        if(lastPosition == Position.HOLD) {
+            // Step crop (stage 1):
+            cropOutput = crop(input, new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y));
 
-        // Step Normalize0 (stage 2):
-        normalizeInput = cropOutput;
-        int normalizeType = Core.NORM_MINMAX;
-        double normalizeAlpha = NORMALIZE_ALPHA;
-        double normalizeBeta = NORMALIZE_BETA;
-        normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
+            // Step Normalize0 (stage 2):
+            normalizeInput = cropOutput;
+            int normalizeType = Core.NORM_MINMAX;
+            double normalizeAlpha = NORMALIZE_ALPHA;
+            double normalizeBeta = NORMALIZE_BETA;
+            normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
 
-        // Step Blur0 (stage 3):
-        blurInput = normalizeOutput;
-        BlurType blurType = BlurType.get(BLUR);
-        double blurRadius = BLUR_RADIUS;
-        blur(blurInput, blurType, blurRadius, blurOutput);
+            // Step Blur0 (stage 3):
+            blurInput = normalizeOutput;
+            BlurType blurType = BlurType.get(BLUR);
+            double blurRadius = BLUR_RADIUS;
+            blur(blurInput, blurType, blurRadius, blurOutput);
 
-        // Step HSV_Threshold0  (stage 4):
-        hsvThresholdInput = blurOutput;
-        double[] hsvThresholdHue = {HUE_MIN, HUE_MAX};
-        double[] hsvThresholdSaturation = {SATURATION_MIN, SATURATION_MAX};
-        double[] hsvThresholdValue = {VALUE_MIN, VALUE_MAX};
-        hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
+            // Step HSV_Threshold0  (stage 4):
+            hsvThresholdInput = blurOutput;
+            double[] hsvThresholdHue = {HUE_MIN, HUE_MAX};
+            double[] hsvThresholdSaturation = {SATURATION_MIN, SATURATION_MAX};
+            double[] hsvThresholdValue = {VALUE_MIN, VALUE_MAX};
+            hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
-        // Step Find_Contours0 (stage 5):
-        findContoursInput = hsvThresholdOutput;
-        findContours(findContoursInput, findContoursOutput);
-        findContoursOutputMat = cropOutput.clone();
-        for(int i = 0; i < findContoursOutput.size(); i++) {
-            Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
-        }
-
-        // Finding largest contour (stage 6):
-        finalContourOutputMat = cropOutput.clone();
-        largestArea = -1;
-        largestX = -1;
-        largestY = -1;
-        int largestContourIndex = -1;
-        for(int i = 0; i < findContoursOutput.size(); i++) {
-            MatOfPoint contour = findContoursOutput.get(i);
-            double contourArea = Imgproc.contourArea(contour);
-            if(contourArea > MIN_CONTOUR_AREA && contourArea > largestArea) {
-                Moments p = Imgproc.moments(contour, false);
-                int x = (int) (p.get_m10() / p.get_m00());
-                int y = (int) (p.get_m01() / p.get_m00());
-
-                largestContourIndex = i;
-                largestX = x;
-                largestY = y;
-                largestArea = contourArea;
+            // Step Find_Contours0 (stage 5):
+            findContoursInput = hsvThresholdOutput;
+            findContours(findContoursInput, findContoursOutput);
+            findContoursOutputMat = cropOutput.clone();
+            for (int i = 0; i < findContoursOutput.size(); i++) {
+                Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
             }
-        }
-        if(largestContourIndex != -1) {
-            Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
-            Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(255, 255, 255));
-        }
-        Imgproc.line(finalContourOutputMat, new Point(RIGHT_THRESHOLD, 0), new Point(RIGHT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
-        Imgproc.line(finalContourOutputMat, new Point(LEFT_THRESHOLD, 0), new Point(LEFT_THRESHOLD  , finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
 
-        if(largestX > 0 && largestX < LEFT_THRESHOLD) {
-            lastPosition = Position.LEFT;
-        } else if(largestX > LEFT_THRESHOLD && largestX < RIGHT_THRESHOLD) {
-            lastPosition = Position.MIDDLE;
-        } else if(largestX > RIGHT_THRESHOLD && largestX < cropOutput.width()) {
-            lastPosition = Position.RIGHT;
-        } else
-            lastPosition = Position.NONE_FOUND;
+            // Finding largest contour (stage 6):
+            finalContourOutputMat = cropOutput.clone();
+            largestArea = -1;
+            largestX = -1;
+            largestY = -1;
+            int largestContourIndex = -1;
+            for (int i = 0; i < findContoursOutput.size(); i++) {
+                MatOfPoint contour = findContoursOutput.get(i);
+                double contourArea = Imgproc.contourArea(contour);
+                if (contourArea > MIN_CONTOUR_AREA && contourArea > largestArea) {
+                    Moments p = Imgproc.moments(contour, false);
+                    int x = (int) (p.get_m10() / p.get_m00());
+                    int y = (int) (p.get_m01() / p.get_m00());
 
-        switch(VIEW_OPEN_CV_PIPELINE_STAGE) {
-            case 0:
-                dashboardMat = cropOutput;
-                break;
-            case 1:
-                dashboardMat = normalizeOutput;
-                break;
-            case 2:
-                dashboardMat = blurInput;
-                break;
-            case 3:
-                dashboardMat = blurOutput;
-                break;
-            case 4:
-                dashboardMat = hsvThresholdOutput;
-                break;
-            case 5:
-                dashboardMat = findContoursOutputMat;
-                break;
-            case 6:
-                dashboardMat = finalContourOutputMat;
-                break;
-            default:
-                dashboardMat = input;
-                break;
-        }
-        if(dashboardMat != null && !dashboardMat.empty()) {
-            dashboardBitmap = Bitmap.createBitmap(dashboardMat.width(), dashboardMat.height(), Bitmap.Config.RGB_565);
-            Utils.matToBitmap(dashboardMat, dashboardBitmap);
-        }
+                    largestContourIndex = i;
+                    largestX = x;
+                    largestY = y;
+                    largestArea = contourArea;
+                }
+            }
+            if (largestContourIndex != -1) {
+                Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
+                Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(255, 255, 255));
+            }
+            Imgproc.line(finalContourOutputMat, new Point(RIGHT_THRESHOLD, 0), new Point(RIGHT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
+            Imgproc.line(finalContourOutputMat, new Point(LEFT_THRESHOLD, 0), new Point(LEFT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
 
+            if (largestX > 0 && largestX < LEFT_THRESHOLD) {
+                lastPosition = Position.LEFT;
+            } else if (largestX > LEFT_THRESHOLD && largestX < RIGHT_THRESHOLD) {
+                lastPosition = Position.MIDDLE;
+            } else if (largestX > RIGHT_THRESHOLD && largestX < cropOutput.width()) {
+                lastPosition = Position.RIGHT;
+            } else
+                lastPosition = Position.NONE_FOUND;
+
+            switch (VIEW_OPEN_CV_PIPELINE_STAGE) {
+                case 0:
+                    dashboardMat = cropOutput;
+                    break;
+                case 1:
+                    dashboardMat = normalizeOutput;
+                    break;
+                case 2:
+                    dashboardMat = blurInput;
+                    break;
+                case 3:
+                    dashboardMat = blurOutput;
+                    break;
+                case 4:
+                    dashboardMat = hsvThresholdOutput;
+                    break;
+                case 5:
+                    dashboardMat = findContoursOutputMat;
+                    break;
+                case 6:
+                    dashboardMat = finalContourOutputMat;
+                    break;
+                default:
+                    dashboardMat = input;
+                    break;
+            }
+            if (dashboardMat != null && !dashboardMat.empty()) {
+                dashboardBitmap = Bitmap.createBitmap(dashboardMat.width(), dashboardMat.height(), Bitmap.Config.RGB_565);
+                Utils.matToBitmap(dashboardMat, dashboardBitmap);
+            }
+
+            return input;
+        }
         return input;
     }
 

@@ -68,15 +68,15 @@ public class OpenCVProvider extends VisionProvider {
 
     @Override
     public void shutdownVision() {
-        if(cameraOpened) {
+//        if(cameraOpened) {
             try {
                 camera.stopStreaming();
                 camera.closeCameraDevice();
             } catch(Exception e) {
 
             }
-        }
-        cameraOpened = false;
+//        }
+//        cameraOpened = false;
     }
 
     @Override
