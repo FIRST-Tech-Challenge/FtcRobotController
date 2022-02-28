@@ -15,7 +15,7 @@ public class WallSmash {
     public static ElapsedTime wallSmashTimer = new ElapsedTime();
 
     public static void smashIntoWallSideways(@NonNull SampleMecanumDrive drive, int multiplier, double milliseconds, double direction) {
-        drive.setWeightedDrivePower(new Pose2d(0, multiplier, 0));
+        drive.setWeightedDrivePower(new Pose2d(0, multiplier * 0.5, 0));
         wallSmashTimer.reset();
         while (wallSmashTimer.milliseconds() < milliseconds) {
             drive.update();

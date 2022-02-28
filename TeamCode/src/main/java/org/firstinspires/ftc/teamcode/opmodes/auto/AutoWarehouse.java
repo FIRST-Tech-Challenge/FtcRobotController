@@ -46,7 +46,7 @@ public class AutoWarehouse extends LinearOpMode {
         final Pose2d initial = new Pose2d(0, multiplier * (70 - inchesToCoordinate(9)),
                 Math.toRadians(90 * multiplier));
         drive.setPoseEstimate(initial);
-        final Pose2d liftPosition = isRed ? new Pose2d(-4, -44, Math.toRadians(-65)) :
+        final Pose2d liftPosition = isRed ? new Pose2d(-4, -43.3, Math.toRadians(-65)) :
                 new Pose2d(-3, 45, Math.toRadians(65));
 
         ElapsedTime toolTimer = new ElapsedTime();
@@ -75,7 +75,7 @@ public class AutoWarehouse extends LinearOpMode {
         // part 4: move back to Alliance Shipping hub. then you can go back to part 2 as needed.
         final TrajectorySequence part4 = drive.trajectorySequenceBuilder(intakeReturnPoint)
                 .lineTo(new Vector2d(-3, nextToWall * multiplier))
-                .lineToLinearHeading(isRed ? new Pose2d(-4, -44, Math.toRadians(-65)) :
+                .lineToLinearHeading(isRed ? new Pose2d(-4, -44, Math.toRadians(-62)) :
                         new Pose2d(-3, 45, Math.toRadians(60)))
                 .build();
 
@@ -147,7 +147,7 @@ public class AutoWarehouse extends LinearOpMode {
         drive.followTrajectoryAsync(part2);
         updateLoop(drive);
 
-        WallSmash.smashIntoWallSideways(drive, multiplier, 250);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 500);
         driveToPose(drive, part2.end());
         if (isStopRequested()) return;
 
@@ -167,7 +167,7 @@ public class AutoWarehouse extends LinearOpMode {
     public void intake(ElapsedTime timer, @NonNull SampleMecanumDrive drive, @NonNull AutoIntake intake) {
         // intake a block
         intake.backward();
-        drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
+        drive.setWeightedDrivePower(new Pose2d(0.4, 0, 0));
         while (intake.noObject()) {
             if (isStopRequested()) {
                 return;
