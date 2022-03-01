@@ -225,10 +225,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     }
 
                     if (gamepad1.b) {
-                        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-                        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-                        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
-                        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+                        maxPowerConstraint = 0.25;
                     }
 
                     if (gamepad1.y) {
