@@ -199,21 +199,21 @@ public class AutonomousRwarehouse extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "collectTeamElement");
             telemetry.update();
-            collectTeamElement(hubLevel);
+            collectTeamElement( hubLevel );
         }
 
         // Drive to the alliance hub to deposit freight
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "moveToHub");
             telemetry.update();
-            moveToHub(hubLevel);
+            moveToHub( hubLevel );
         }
 
         // Deposit freight in top/middle/bottom
         if( opModeIsActive() ) {
             telemetry.addData("Skill", "dumpFreight");
             telemetry.update();
-            dumpFreight(hubLevel);
+            dumpFreight( hubLevel );
         }
 
         // Drive into warehouse
@@ -257,36 +257,46 @@ public class AutonomousRwarehouse extends AutonomousBase {
         double strafeDist1 = 0.0;
         double distanceToGrab = 3.2;
         double strafeDist2 = 0.0;
-        long armSleep = 0;
 
         switch( level ) {
             case 3 : strafeDist1 = 0.0;      // right/top
                      distanceToGrab = -2.0;
                      strafeDist2 = 3.0;
-                     armSleep = 1500;
                      break;
             case 2 : strafeDist1 = 7.0;     // middle/middle
                      distanceToGrab = -2.0;
                      strafeDist2 = 0.0;
-                     armSleep = 500;
                      break;
             case 1 : strafeDist1 = 14.5;
                      distanceToGrab = -2.5; // left/bottom
                      strafeDist2 = 0.0;
-                     armSleep = 0;
                      break;
         } // switch()
 
         // Move forward away from field wall so it's safe to raise the arms
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
-        // Rotate the capping arm into the grabbing position
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
-        sleep( 750);   // wait for capping arm to clear the field wall before rotating wrist
+        // Command capping arm into the grabbing position
+        robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_SPIN );
+
+        // Process the first 750 msec of motion
+        ElapsedTime fieldWallTimer = new ElapsedTime();
+        fieldWallTimer.reset();  // start now
+        while( opModeIsActive() && (fieldWallTimer.milliseconds() < 750) ) {
+            performEveryLoop();
+        }
+
+        // We're now a safe distance from the wall to rotate the wrist and open the claw
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
+
+        // Finish both arm movements before continuing
+        while( opModeIsActive() &&
+                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
+            performEveryLoop();
+        }
 
         // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
         if( Math.abs(strafeDist1) > 0.10 ) {
@@ -294,70 +304,74 @@ public class AutonomousRwarehouse extends AutonomousBase {
             robot.stopMotion();
         }
 
-        sleep( armSleep);   // wait for arm to reach final position
-
         // Drive forward to collect the element
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
 
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_LIBERTY, 0.40 );
+        // With the team element in hand, raise both arms (opposite directions)
+        robot.cappingArmPosInit( robot.CAPPING_ARM_POS_LIBERTY );
         robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.40 );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_VERTICAL );
 
         // Strafe sideways (can't ROTATE because rear wheels will hit the barrier)
         if( Math.abs(strafeDist2) > 0.10 ) {
             gyroDrive(DRIVE_SPEED_30, DRIVE_X, strafeDist2, 0.0, DRIVE_THRU );
             robot.stopMotion();
         }
+
+        // Finish both arm movements before continuing
+        while( opModeIsActive() &&
+                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
+            performEveryLoop();
+        }
+
     } // collectTeamElement
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToHub( int level ) {
-
         double angleToHub = 0.0;
         double distanceToHub = 0.0;
         double finalDistanceToHub = 0.0;
-
         int    freightArmPos = 0;
-        long   armSleep = 0;
 
         switch( level ) {
             case 3 : angleToHub = -35.0;    // top
                      distanceToHub = -6.2;
                      finalDistanceToHub = 0.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
-                     armSleep = 0;
                      break;
             case 2 : angleToHub = -35.0;
                      distanceToHub = -3.0;  // middle
                      finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
-                     armSleep = 750;  // 750 msec
                      break;
             case 1 : angleToHub = -27.0;
                      distanceToHub = 0.0;  // bottom
                      finalDistanceToHub = -5.5;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
-                     armSleep = 1500;   // 1.5 sec
                      break;
         } // switch()
 
+        // Start arm motion
+        robot.freightArmPosInit( freightArmPos );
+
+        // Turn toward hub
         double currentAngle = robot.headingIMU();
-
-        robot.freightArmPosition( freightArmPos, 0.50 );
-
         if( Math.abs(angleToHub-currentAngle) > 2.0 )
             gyroTurn(TURN_SPEED_20, angleToHub );
 
+        // Drive partially forward
         if( Math.abs(distanceToHub) > 0.0 ) {
             gyroDrive(DRIVE_SPEED_30, DRIVE_Y, distanceToHub, angleToHub, DRIVE_TO);
         }
 
-        if( armSleep > 0 ) {
-            sleep( armSleep );
+        // Ensure arm has reached it's final position
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
         }
 
+        // Drive forward the final amount
         if( Math.abs(finalDistanceToHub) > 0 ) {
             gyroDrive(DRIVE_SPEED_30, DRIVE_Y, finalDistanceToHub, angleToHub, DRIVE_TO );
         }
@@ -378,11 +392,14 @@ public class AutonomousRwarehouse extends AutonomousBase {
         } // switch()
 
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
-        sleep( 500 );                    // let cube drop out
+        sleep( 500 );                               // let cube drop out
         // back away and store arm
 
         gyroTurn(TURN_SPEED_20, -90.0 );   // Turn toward the freight warehouse
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
+        }
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
 
         robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.40 );

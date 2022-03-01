@@ -95,7 +95,7 @@ public class HardwareBothHubs
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean          duckMotorLogging   = true; // only enable during development!!
+    public boolean          duckMotorLogging   = false; // only enable during development!!
     public final static int DUCKMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      duckMotorLogTime   = new double[DUCKMOTORLOG_SIZE];  // msec
     protected double[]      duckMotorLogVel    = new double[DUCKMOTORLOG_SIZE];  // counts/sec
@@ -159,6 +159,7 @@ public class HardwareBothHubs
     public int          freightMotorCycl = 0;          // go-to-position cycle count
     public int          freightMotorWait = 0;          // go-to-position wait count (truly there! not just passing thru)
     public int          freightMotorPos  = 0;          // current encoder count
+    public double       freightMotorDiv  = 624.0;      // Divider value for power computation
     public double       freightMotorVel  = 0.0;        // encoder counts per second
     public double       freightMotorPwr  = 0.0;        // motor power setpoint (-1.0 to +1.0)
     public double       freightMotorAmps = 0.0;        // current power draw (Amps)
@@ -1014,6 +1015,11 @@ public class HardwareBothHubs
     } // stdevSonarRangeF
 
     /*--------------------------------------------------------------------------------------------*/
+    public double singleSonarRangeB() {
+        // Query the current range sensor reading and wait for a response
+        return sonarRangeB.getDistanceSync();
+    } // singleSonarRangeB
+
     public double updateSonarRangeB() {
         // Query the current range sensor reading as the next sample to our BACK range dataset
 //      sonarRangeBSamples[ sonarRangeBIndex ] = sonarRangeB.getDistanceSync();

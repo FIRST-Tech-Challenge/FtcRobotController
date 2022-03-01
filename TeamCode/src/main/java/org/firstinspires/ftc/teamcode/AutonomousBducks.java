@@ -3,6 +3,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -215,14 +216,27 @@ public class AutonomousBducks extends AutonomousBase {
         // Move forward away from field wall so it's safe to raise the arms
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
 
-        // Rotate the capping arm into the grabbing position
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_GRAB, 0.70 );
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_SPIN, 0.50 );
-        sleep( 750 );  // wait for capping arm to clear the field wall before rotating wrist
+        // Command capping arm into the grabbing position
+        robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_SPIN );
+
+        // Process the first 750 msec of motion
+        ElapsedTime fieldWallTimer = new ElapsedTime();
+        fieldWallTimer.reset();  // start now
+        while( opModeIsActive() && (fieldWallTimer.milliseconds() < 750) ) {
+            performEveryLoop();
+        }
+
+        // We're now a safe distance from the wall to rotate the wrist and open the claw
         robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
-        sleep( 2000);   // wait for arm to reach final position
+
+        // Finish both arm movements before continuing
+        while( opModeIsActive() &&
+                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
+            performEveryLoop();
+        }
 
         // Turn toward the team element
         if( Math.abs(turnAngle) > 0.10 )
@@ -233,48 +247,61 @@ public class AutonomousBducks extends AutonomousBase {
         robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
         sleep( 500 );   // wait for claw to close
 
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_LIBERTY, 0.40 );
+        // With the team element in hand, raise both arms (opposite directions)
+        robot.cappingArmPosInit( robot.CAPPING_ARM_POS_LIBERTY );
         robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_VERTICAL, 0.40 );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_VERTICAL );
+        // Finish both arm movements before continuing
+        while( opModeIsActive() &&
+                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
+            performEveryLoop();
+        }
     } // collectTeamElement
 
     /*--------------------------------------------------------------------------------------------*/
     private void moveToHub( int level ) {
         double angleToHub = 0.0;
         double distanceToHub = 0.0;
+        double finalDistanceToHub = 0.0;
         int    freightArmPos = 0;
-        long   armSleep = 0;
 
         switch( level ) {
             case 3 : angleToHub = -40.0;    // top
                      distanceToHub = -10.0;
+                     finalDistanceToHub = 0.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
-                     armSleep = 0;
                      break;
             case 2 : angleToHub = -40.0;
                      distanceToHub = -6.0;  // middle
+                     finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
-                     armSleep = 750;  // 750 msec
                      break;
             case 1 : angleToHub = -38.0;
                      distanceToHub = -5.0;  // bottom
+                     finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
-                     armSleep = 1250;   // 1.25 sec
                      break;
         } // switch()
 
+        // Start arm motion
+        robot.freightArmPosInit( freightArmPos );
+
+        // Turn toward hub
         double currentAngle = robot.headingIMU();
-
-        robot.freightArmPosition( freightArmPos, 0.50 );
-
         if( Math.abs(angleToHub-currentAngle) > 2.0 )
             gyroTurn(TURN_SPEED_20, angleToHub );
 
+        // Drive partially forward
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, distanceToHub, angleToHub, DRIVE_TO );
 
-        if( armSleep > 0 ) {
-            sleep( armSleep );
-            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, -3.0, angleToHub, DRIVE_TO );
+        // Ensure arm has reached it's final position
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
+        }
+
+        // Drive forward the final amount
+        if( Math.abs(finalDistanceToHub) > 0 ) {
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, finalDistanceToHub, angleToHub, DRIVE_TO );
         }
 
   } // moveToHub
@@ -297,10 +324,13 @@ public class AutonomousBducks extends AutonomousBase {
         } // switch()
 
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
-        sleep( 1500 );                    // let cube drop out
+        sleep( 500 );                               // let cube drop out
         // back away and store arm
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50 );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
+        }
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
     } // dumpFreight
 
@@ -314,6 +344,7 @@ public class AutonomousBducks extends AutonomousBase {
         } // switch()
         gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward wall
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, 90.0, DRIVE_TO );
+//      driveToBackDistance( 7.5, 1.0, 0.20, 10000 );
         double wallDistance = backRangeSensor()/2.54 - 7.5;
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance, 90.0, DRIVE_TO );
         gyroTurn(TURN_SPEED_20, 135.0 );   // Turn toward corner
@@ -341,7 +372,10 @@ public class AutonomousBducks extends AutonomousBase {
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );
         // Don't lower arm to floor until we get into the square, in case the freight box has rotated
         // (the front edge will catch on the floor tile when we try to drive forward)
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.20 );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_COLLECT );
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
+        }
         gyroDrive(DRIVE_SPEED_40, DRIVE_X, 5.0, 999.9, DRIVE_TO );
         // Until Autonomous ends (30 seconds), wait for arm to come down
         while( opModeIsActive() ) {

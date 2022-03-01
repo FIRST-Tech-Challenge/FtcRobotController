@@ -20,6 +20,16 @@ public abstract class AutonomousBase extends LinearOpMode {
      * getAngle queries the current gyro angle
      * @return  current gyro angle (-179.9 to +180.0)
      */
+    public void performEveryLoop() {
+        robot.readBulkData();
+        robot.cappingArmPosRun();
+        robot.freightArmPosRun();
+    }
+
+    /*---------------------------------------------------------------------------------------------
+     * getAngle queries the current gyro angle
+     * @return  current gyro angle (-179.9 to +180.0)
+     */
     protected double getAngle() {
         // calculate error in -179.99 to +180.00 range  (
         double gryoAngle = robot.headingIMU();
@@ -68,7 +78,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // keep looping while we are still active, and not on heading.
         while( opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF, 0.0,0.0) ) {
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
-            robot.readBulkData();
+            performEveryLoop();
 
             // update range sensor data
 //          robot.updateRangeL();
@@ -99,7 +109,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         holdTimer.reset();
         while (opModeIsActive() && (holdTimer.time() < holdTime)) {
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
-            robot.readBulkData();
+            performEveryLoop();
             // Update telemetry & Allow time for other processes to run.
             onHeading(speed, angle, P_TURN_COEFF, 0.0,0.0);
 //          telemetry.update();
@@ -223,7 +233,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
-            robot.readBulkData();
+            performEveryLoop();
 
             // range check the provided angle
             if( (angle > 360.0) || (angle < -360.0) ) {
@@ -247,7 +257,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             while( opModeIsActive() ) {
 
                 // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
-                robot.readBulkData();
+                performEveryLoop();
 
                 int frontLeftError  = Math.abs(robot.frontLeftMotorTgt - robot.frontLeftMotorPos);
                 int frontRightError = Math.abs(robot.frontRightMotorTgt - robot.frontRightMotorPos);
@@ -333,17 +343,24 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // gyroDrive()
 
     // Drives to a distance returned by the back sensor allowing for specified error
-    // Units are CM.
-    public void driveToBackDistance(double distance, double error, double maxSpeed, int timeout) {
-        double actualDistance = robot.updateSonarRangeB();
-        double distanceError = distance - actualDistance;
-        ElapsedTime rangeTimer = new ElapsedTime();
-        // keep looping while we are still active, and ALL motors are running.
-        while( opModeIsActive() ) {
-            if (Math.abs(distanceError) > error) {
-            } else {
-                robot.stopMotion();
-            }
-        }
-    }
-}
+    // Units are INCHES.
+    public void driveToBackDistance( double endDistance, double distanceTol, double drivePwr, int msecTimeout ) {
+        ElapsedTime driveTimer = new ElapsedTime();
+        driveTimer.reset();
+        // Keep driving until we reach the desired end-distance, or timeout
+        while( opModeIsActive() && (driveTimer.milliseconds() < msecTimeout) ) {
+           // Where are we now?
+           double actualDistance = robot.singleSonarRangeB()/2.54;
+           double distanceError  = endDistance - actualDistance;
+           // Are we within tolerance?
+           if( Math.abs(distanceError) <= distanceTol) break;
+           // Do we need to drive backward or forward to get there?
+           double motorPower = (distanceError > 0.0)? -drivePwr:drivePwr;           
+           robot.driveTrainMotors( motorPower, motorPower, motorPower, motorPower );
+           // Sleep 100 msec before measuring again
+           sleep( 100 );
+        } // while
+        robot.stopMotion();
+    } // driveToBackDistance()
+    
+} // AutonomousBase
