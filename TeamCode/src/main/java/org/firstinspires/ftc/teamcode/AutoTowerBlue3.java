@@ -12,16 +12,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.BatteryChecker;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
-@Autonomous(name="AutoRed2", group="Autonomous")
+@Autonomous(name="AutoTowerBlue3", group="Autonomous")
 //@Disabled
 
-public class AutoRed2 extends LinearOpMode {
+public class AutoTowerBlue3 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf = null;  //left front wheel
     private DcMotor rf = null;  //right front wheel
@@ -58,6 +59,7 @@ public class AutoRed2 extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double batteryMult = 0.9;
 
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
@@ -70,7 +72,7 @@ public class AutoRed2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(450); //Go forwards to side of goal
+            sleep(500); //Go forwards to side of goal
 
             tower1.setPower(0.5);
             tower2.setPower(0.5);
@@ -81,7 +83,7 @@ public class AutoRed2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(800); //Lower arm
+            sleep(900); //Lower arm
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -136,7 +138,18 @@ public class AutoRed2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(350); //Go backwards
+            sleep(100); //Go backwards
+
+            tower1.setPower(0);
+            tower2.setPower(0);
+            lf.setPower(0.75);
+            rf.setPower(-0.75);
+            lb.setPower(1.0);
+            rb.setPower(-1.0);
+            clawservo.setPosition(0);
+            duckspinnerL.setPower(0);
+            duckspinnerR.setPower(0);
+            sleep(875); //turn right
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -151,32 +164,10 @@ public class AutoRed2 extends LinearOpMode {
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(-0.75);
-            rf.setPower(0.75);
-            lb.setPower(-1.0);
-            rb.setPower(1.0);
-            clawservo.setPosition(0);
-            duckspinnerL.setPower(0);
-            duckspinnerR.setPower(0);
-            sleep(600); //turn left
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(0);
-            rf.setPower(0);
-            lb.setPower(0);
-            rb.setPower(0);
-            clawservo.setPosition(0);
-            duckspinnerL.setPower(0);
-            duckspinnerR.setPower(0);
-            sleep(500); //quick stop
-
-            tower1.setPower(0);
-            tower2.setPower(0);
-            lf.setPower(0.8);
-            rf.setPower(0.8);
-            lb.setPower(0.8);
-            rb.setPower(0.8);
+            lf.setPower(0.35);
+            rf.setPower(0.35);
+            lb.setPower(0.35);
+            rb.setPower(0.35);
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
@@ -192,8 +183,6 @@ public class AutoRed2 extends LinearOpMode {
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
             sleep(25000); //quick stop
-
-
         }
     }
 }

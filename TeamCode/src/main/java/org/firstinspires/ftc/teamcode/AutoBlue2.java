@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.BatteryChecker;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -58,7 +59,6 @@ public class AutoBlue2 extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
 
@@ -71,7 +71,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(500); //Go forwards to side of goal
+            sleep(450); //Go forwards to side of goal
 
             tower1.setPower(0.5);
             tower2.setPower(0.5);
@@ -82,7 +82,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1000); //Lower arm
+            sleep(800); //Lower arm
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -148,7 +148,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(30000); //quick stop
+            sleep(500); //quick stop
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -159,7 +159,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1500); //turn left
+            sleep(600); //turn left
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -181,7 +181,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1250); //Go forward
+            sleep(1150); //Go forward
 
             tower1.setPower(0);
             tower2.setPower(0);
