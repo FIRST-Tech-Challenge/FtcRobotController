@@ -13,11 +13,24 @@ public class TestGetCube extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot = new SampleMecanumDrive(hardwareMap,this, telemetry);
+        robot = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
         waitForStart();
 
-        robot.lightSet();
-        robot.getCube();
+
+            robot.lightSet();
+
+            boolean found = robot.getCube();
+
+            if (found) {
+
+                robot.pause(500);
+            }
+
+
+
+
     }
+
+
 }
