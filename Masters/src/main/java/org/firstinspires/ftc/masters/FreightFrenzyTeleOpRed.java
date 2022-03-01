@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,7 +38,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     Servo dumpServo = null;
     Servo capServo = null;
 
-    DistanceSensor distanceSensorIntake, distanceSensorTop;
+    DistanceSensor distanceSensorIntake;
 
     DcMotorEx carouselMotor = null;
     // declare motor speed variables
@@ -78,6 +79,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     protected final double capServoBottom = 0.72;
     protected final double capServoTop = 0.05;
     protected double capServoPos = capServoBottom;
+    protected RevColorSensorV3 intakeColor;
 
     Trajectory toHub;
 
@@ -122,7 +124,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         dumpServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
 
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
-        distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
+        //distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
+        intakeColor = hardwareMap.get(RevColorSensorV3.class, "intakeColor");
 
         // Set the drive motor direction:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -391,42 +394,29 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-            if (gamepad1.b) {
-                leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-                rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-                leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
-                rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
-            }
-
-            if (gamepad1.y) {
-                leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-                rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-                leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
-                rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-            }
-
             rotateCarousel();
 
             double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
 
-                if (intakeOn && (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM) < 13.5) ) {
+                if (intakeOn && (intakeDistance<10 || intakeColor.getDistance(DistanceUnit.CM)<8 ) ) {
 
                     drive.pauseButInSecondsForThePlebeians(.1);
-                    intakeMotor.setPower(0);
+
                     drive.redLED.setState(false);
                     drive.greenLED.setState(true);
                     drive.redLED2.setState(false);
                     drive.greenLED2.setState(true);
                     intakeOn= false;
-                    //drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+                    drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+                    intakeMotor.setPower(0);
                 }
 
-                if (distanceSensorTop.getDistance(DistanceUnit.CM)>13.5){
-                    drive.redLED.setState(true);
-                    drive.greenLED.setState(false);
-                    drive.redLED2.setState(true);
-                    drive.greenLED2.setState(false);
-                }
+//                if (distanceSensorTop.getDistance(DistanceUnit.CM)>13.5){
+//                    drive.redLED.setState(true);
+//                    drive.greenLED.setState(false);
+//                    drive.redLED2.setState(true);
+//                    drive.greenLED2.setState(false);
+//                }
 
 
         }

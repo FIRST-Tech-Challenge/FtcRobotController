@@ -99,6 +99,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public DigitalChannel redLED, greenLED, redLED2, greenLED2;
     RevColorSensorV3 colorSensorLeft;
     RevColorSensorV3 colorSensorRight;
+    RevColorSensorV3 intakeColor;
 
     protected final List<DcMotorEx> motors;
 
@@ -166,6 +167,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
 
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");
+        intakeColor = hardwareMap.get(RevColorSensorV3.class, "intakeColor");
         distanceSensorTop = (DistanceSensor) hardwareMap.get("topDistanceSensor");
 
         redLED = (DigitalChannel) hardwareMap.get("red");
@@ -288,24 +290,24 @@ public class SampleMecanumDrive extends MecanumDrive {
         backRight.setPower(-.25);
         intakeMotor.setPower(1);
         double intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-        double bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
+        double intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while ((intakeDistance>10 && bucketdistance>13.5) && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
+        while ((intakeDistance>8 || intakeDistance2>7.5)  && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
-            bucketdistance = distanceSensorTop.getDistance(DistanceUnit.CM);
-            telemetry.addData("top distance", bucketdistance);
+            intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
+            telemetry.addData("intake color", intakeDistance2);
             telemetry.addData("intake", intakeDistance);
             telemetry.update();
         }
         stopMotors();
-        telemetry.addData("top distance", distanceSensorTop.getDistance(DistanceUnit.CM));
+
         telemetry.update();
 
-        if (intakeDistance<10 || distanceSensorTop.getDistance(DistanceUnit.CM)<13.5){
-            pauseButInSecondsForThePlebeians(.3);
+        if (intakeDistance<8 || intakeDistance2 <7.5){
+            pauseButInSecondsForThePlebeians(.2);
             intakeMotor.setPower(-.8);
-            pauseButInSecondsForThePlebeians(.5);
+            pauseButInSecondsForThePlebeians(.3);
             intakeMotor.setPower(0);
             redLED.setState(false);
             redLED2.setState(false);
@@ -316,6 +318,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else
             return false;
     }
+
 
     public boolean getCubeVoltage () {
 

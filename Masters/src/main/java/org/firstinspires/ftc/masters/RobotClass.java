@@ -40,6 +40,7 @@ public class RobotClass {
     public Telemetry telemetry;
     RevColorSensorV3 colorSensorLeft;
     RevColorSensorV3 colorSensorRight;
+    RevColorSensorV3 intakeColor;
 
 //    public DistanceSensor distanceSensorLeft;
 //    public DistanceSensor distanceSensorRight;
@@ -76,6 +77,7 @@ public class RobotClass {
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         linearSlideServo = hardwareMap.servo.get("dumpServo");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeColor = hardwareMap.get(RevColorSensorV3.class, "intakeColor");
 //        distanceSensorLeft = (DistanceSensor) hardwareMap.get("distanceSensorLeft");
 //        distanceSensorRight = (DistanceSensor) hardwareMap.get("distanceSensorRight");
         distanceSensorIntake = (DistanceSensor) hardwareMap.get("intakeSensor");

@@ -19,7 +19,7 @@ public class TestDistanceSensors extends LinearOpMode {
 
         while (true && opModeIsActive()) {
             telemetry.addData("intake", robot.distanceSensorIntake.getDistance(DistanceUnit.CM));
-            telemetry.addData("top sensor distance = ", robot.distanceSensorTop.getDistance(DistanceUnit.CM));
+            telemetry.addData("top sensor distance = ", robot.intakeColor.getDistance(DistanceUnit.CM));
             telemetry.update();
             sleep(50);
         }
