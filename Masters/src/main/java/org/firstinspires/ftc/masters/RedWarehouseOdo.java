@@ -2,6 +2,7 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -105,13 +106,11 @@ public class RedWarehouseOdo extends LinearOpMode {
         drive.followTrajectorySequence(fromHubToWarehouse);
 
         //pick up cube
-        boolean gotCube= drive.getCubeVoltage();
+        boolean gotCube= drive.getCube();
         if (!gotCube){
-            TrajectorySequence trajBack = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                    .lineTo(fromHubToWarehouse.end().vec())
-                    .build();
-            drive.followTrajectorySequence(trajBack);
-            gotCube = drive.getCubeVoltage();
+            drive.forward(-.5, .3);
+            drive.strafeRight(.5,.35);
+            gotCube = drive.getCube();
         }
         if (gotCube) {
             TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
@@ -140,7 +139,7 @@ public class RedWarehouseOdo extends LinearOpMode {
             drive.retract();
 
             drive.followTrajectorySequence(fromHubToWarehouse);
-             if (drive.getCubeVoltage()) {
+             if (drive.getCube()) {
 
                  trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
 
@@ -170,7 +169,7 @@ public class RedWarehouseOdo extends LinearOpMode {
                  drive.retract();
 
                  drive.followTrajectorySequence(fromHubToWarehouse);
-                 drive.getCubeVoltage();
+                 drive.getCube();
              }
         }
 

@@ -109,9 +109,10 @@ public class RedCarouselOdoPanic extends LinearOpMode {
 
         drive.pause(250);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+        drive.pause(250);
         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        drive.linearSlideMotor.setPower(.8);
+        drive.linearSlideMotor.setPower(.7);
 
         position = drive.getLocalizer().getPoseEstimate();
         TrajectorySequence trajSeq6 = drive.trajectorySequenceBuilder(position)

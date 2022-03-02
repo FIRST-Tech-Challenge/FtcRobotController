@@ -98,13 +98,11 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
         drive.followTrajectorySequence(fromHubToWarehouse);
         //pick up cube
-        boolean gotCube= drive.getCubeVoltage();
+        boolean gotCube= drive.getCube();
         if (!gotCube){
-            TrajectorySequence trajBack = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                    .lineTo(fromHubToWarehouse.end().vec())
-                    .build();
-            drive.followTrajectorySequence(trajBack);
-            gotCube = drive.getCubeVoltage();
+            drive.forward(-.5, .3);
+            drive.strafeLeft(.5,.35);
+            gotCube = drive.getCube();
         }
 
 
@@ -135,7 +133,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
 
             drive.followTrajectorySequence(fromHubToWarehouse);
-            if (drive.getCubeVoltage()) {
+            if (drive.getCube()) {
 
                 trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
 
@@ -161,7 +159,7 @@ public class BlueWarehouseOdo extends LinearOpMode {
                 drive.retract();
 
                 drive.followTrajectorySequence(fromHubToWarehouse);
-                drive.getCubeVoltage();
+                drive.getCube();
             }
         }
 

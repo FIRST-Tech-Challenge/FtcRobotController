@@ -102,11 +102,12 @@ public class BlueCarouselOdoPanic extends LinearOpMode {
 
         position = drive.getLocalizer().getPoseEstimate();
 
-        drive.pause(200);
+        drive.pause(350);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+        drive.pause(250);
         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        drive.linearSlideMotor.setPower(.8);
+        drive.linearSlideMotor.setPower(.7);
 
         TrajectorySequence depositDuck = drive.trajectorySequenceBuilder(position)
                 .lineTo(new Vector2d(-50, 55))

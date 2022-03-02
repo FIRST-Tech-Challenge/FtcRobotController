@@ -37,7 +37,7 @@ public class RedCarouselOdo extends LinearOpMode {
 
         waitForStart();
 //        Mecha Knight Changes: ALERT
-        drive.pause(1000);
+//        drive.pause(1000);
 
         elapsedTime = new ElapsedTime();
 
@@ -75,7 +75,7 @@ public class RedCarouselOdo extends LinearOpMode {
                 .lineToLinearHeading(hubPosition)
                 .build();
         TrajectorySequence toHubLow = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(new Vector2d(-22.3, -37.3), Math.toRadians(45)))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-22.3, -36.8), Math.toRadians(45)))
                 .build();
 
         switch (freightLocation) {
@@ -127,12 +127,12 @@ public class RedCarouselOdo extends LinearOpMode {
 
         drive.CV.duckWebcam.stopStreaming();
 
-        drive.pause(250);
+        drive.pause(350);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-        drive.pause(200);
+        drive.pause(250);
         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        drive.linearSlideMotor.setPower(.8);
+        drive.linearSlideMotor.setPower(.7);
 
         position = drive.getLocalizer().getPoseEstimate();
         TrajectorySequence trajSeq6 = drive.trajectorySequenceBuilder(position)
