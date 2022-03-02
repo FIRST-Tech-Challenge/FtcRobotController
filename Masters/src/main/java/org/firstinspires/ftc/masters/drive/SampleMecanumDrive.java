@@ -293,7 +293,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         double intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while ((intakeDistance>8 || intakeDistance2>7.5)  && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<3000) {
+        while ((intakeDistance>8 || intakeDistance2>7.5)  && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<1400) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
             intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
             telemetry.addData("intake color", intakeDistance2);
