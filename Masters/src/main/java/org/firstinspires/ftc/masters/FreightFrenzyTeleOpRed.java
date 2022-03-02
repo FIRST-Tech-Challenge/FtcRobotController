@@ -70,7 +70,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     DriveMode currentMode = DriveMode.NORMAL;
     protected boolean carouselOn = false; //Outside of loop()
     protected boolean carouselPushed = false;
-    protected int encoderPos=0;
+    protected double encoderPos=0;
     protected double velocity=0;
     protected ElapsedTime elapsedTimeCarousel;
     protected double vel2Max=0;
@@ -82,6 +82,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     protected RevColorSensorV3 intakeColor;
 
     Trajectory toHub;
+    double encoderCorrection =0;
+    boolean start = true;
 
     @Override
     public void runOpMode() {
@@ -146,7 +148,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carouselMotor.setVelocityPIDFCoefficients(10,0,0.01,14);
-
+        carouselMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         drive.lightSet();
         drive.redLED.setState(true);
@@ -164,6 +166,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         capServo.setPosition(capServoBottom);
+
         waitForStart();
         runtime.reset();
 
@@ -228,12 +231,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                         maxPowerConstraint = 0.25;
                     }
 
-                    if (gamepad1.y) {
-                        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-                        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-                        leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
-                        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-                    }
+
 
                     if (gamepad1.right_trigger > .35) {
                         currentMode = DriveMode.TO_HUB;
@@ -275,7 +273,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 if (gamepad2.left_stick_y<0) {
                     if (capServoPos>capServoTop)
                         if (capServoPos <0.5) {
-                            capServoPos = capServoPos - 0.01;
+                            capServoPos = capServoPos - 0.005;
                         } else {
                             capServoPos = capServoPos-0.005;
                         }
@@ -291,6 +289,11 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 }
             }
             telemetry.addData("Cap Servo Pos = ", capServoPos);
+
+            if (gamepad2.right_bumper){
+                capServoPos= capServoBottom;
+                capServo.setPosition(capServoPos);
+            }
 
             if(gamepad2.a) {
                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
@@ -397,14 +400,14 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
                 if (intakeOn && (intakeDistance<10 || intakeColor.getDistance(DistanceUnit.CM)<8 ) ) {
 
-                    drive.pauseButInSecondsForThePlebeians(.1);
+                    drive.pauseButInSecondsForThePlebeians(.2);
 
                     drive.redLED.setState(false);
                     drive.greenLED.setState(true);
                     drive.redLED2.setState(false);
                     drive.greenLED2.setState(true);
                     intakeOn= false;
-                    drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+                   // drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                     intakeMotor.setPower(0);
                 }
 
@@ -419,14 +422,18 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
         }
     }
     protected void rotateCarousel(){
-        if (gamepad2.y && !carouselPushed)  {
+        if (gamepad2.y && ! carouselPushed)  {
+            carouselPushed = true;
+
             if (carouselOn){
                 carouselOn = false;
                 carouselMotor.setVelocity(0);
+                carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             } else {
                 carouselOn = true;
+                encoderCorrection= carouselMotor.getCurrentPosition();
+                carouselMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-            carouselPushed= true;
 
         } else if (!gamepad2.y) {
             carouselPushed = false;
@@ -434,7 +441,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
         if (carouselOn) {
 
-            encoderPos = carouselMotor.getCurrentPosition();
+            encoderPos = carouselMotor.getCurrentPosition()-encoderCorrection;
 
             if (encoderPos < region1) {
                 velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
@@ -455,6 +462,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                 carouselOn = false;
                 carouselMotor.setVelocity(0);
                 carouselMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                carouselPushed=false;
 
             }
 

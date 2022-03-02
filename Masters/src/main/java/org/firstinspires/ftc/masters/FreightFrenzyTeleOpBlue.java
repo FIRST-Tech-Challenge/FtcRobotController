@@ -22,6 +22,8 @@ public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
                 carouselMotor.setVelocity(0);
             } else {
                 carouselOn = true;
+                encoderCorrection = carouselMotor.getCurrentPosition();
+                carouselMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             carouselPushed= true;
 
@@ -31,7 +33,7 @@ public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
 
         if (carouselOn) {
 
-            encoderPos = carouselMotor.getCurrentPosition();
+            encoderPos = carouselMotor.getCurrentPosition()-encoderCorrection;
 
             if (encoderPos > -region1) {
                 velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*-encoderPos)+FreightFrenzyConstants.startVelocity;

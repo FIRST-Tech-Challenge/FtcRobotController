@@ -15,12 +15,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "carousel test quick duck")
 public class CarouselMotionProfile extends LinearOpMode {
 
-    public static int accelerate1 = 600;
-    public static int accelerate2= 65;
-    public static int accelerate3 = 300;
-    public static  int startVelocity= 620;
-    public static int region1 = 750;
-    public static int region2 = 2000;
+    public static int accelerate1 = 75;
+    public static int accelerate2= 75;
+    public static int accelerate3 = 800;
+    public static  int startVelocity= 1300;
+    public static int region1 = 1200;
+    public static int region2 = 2100;
+    public static int goal = 2600;
     public DcMotorEx carousel;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -33,6 +34,7 @@ public class CarouselMotionProfile extends LinearOpMode {
         carousel = hardwareMap.get(DcMotorEx.class, "carouselMotor");
         carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         carousel.setVelocityPIDFCoefficients(10,0,0.01,14);
+        carousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int encoderPos=0;
         double velocity=0;
@@ -45,16 +47,22 @@ public class CarouselMotionProfile extends LinearOpMode {
         double vel2Max=0;
         double vel1Max=0;
 
+        double time=0;
+        int encoderCorrection= 0;
         while (opModeIsActive()) {
             //telemetry.addData("carousel test", "1");
             telemetry.addData("velocity", carousel.getVelocity());
             telemetry.addData("encoder", carousel.getCurrentPosition());
-            telemetry.addData("time", elapsedTime.milliseconds());
+            telemetry.addData("time", time);
+
 
 
             if (gamepad1.a) {
                 carouselOn = true;
                 if (start) {
+                    encoderCorrection= carousel.getCurrentPosition();
+
+                    carousel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     elapsedTime.reset();
                     start= false;
                 }
@@ -67,10 +75,12 @@ public class CarouselMotionProfile extends LinearOpMode {
 
             if (carouselOn) {
 
-                encoderPos = carousel.getCurrentPosition();
+                encoderPos = carousel.getCurrentPosition()-encoderCorrection;
+                time= elapsedTime.milliseconds();
+
 
                 if (encoderPos < region1) {
-                    velocity = Math.sqrt(2*accelerate1*encoderPos)+startVelocity;
+                    velocity = Math.sqrt(2*accelerate1*(encoderPos))+startVelocity;
                     vel1Max = velocity;
                     carousel.setVelocity(velocity);
                     telemetry.update();
@@ -78,13 +88,13 @@ public class CarouselMotionProfile extends LinearOpMode {
                     velocity = vel1Max + Math.sqrt(2 * accelerate2 * (encoderPos - region1));
                     vel2Max = velocity;
                     carousel.setVelocity(velocity);
-                    telemetry.update();
+                  //  telemetry.update();
                 }
-                 else if (encoderPos >= region2 && encoderPos < FreightFrenzyConstants.goal) {
+                 else if (encoderPos >= region2 && encoderPos < goal) {
                     velocity = vel2Max+Math.sqrt(2*accelerate3*(encoderPos-region2));
                     carousel.setVelocity(velocity);
-                    telemetry.update();
-                } else if (encoderPos >= FreightFrenzyConstants.goal) {
+                    //telemetry.update();
+                } else if (encoderPos >= goal) {
                     carouselOn = false;
                     carousel.setVelocity(0);
                     carousel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -94,7 +104,7 @@ public class CarouselMotionProfile extends LinearOpMode {
 
             }
 
-
+telemetry.update();
 
 
         }
