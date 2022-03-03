@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.1 (12/16/2021)
+/* FTC Team 7572 - Version 1.2 (03/02/2022)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -354,18 +354,17 @@ public class AutonomousRducks extends AutonomousBase {
         gyroTurn(TURN_SPEED_20, -145.0 );  // Turn toward corner
         robot.duckMotor.setPower( 0.48 );  // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
-        for( int loop=0; loop<6; loop++ ) {
+        for( int loop=0; loop<5; loop++ ) {
             double barelyPressSpeed = 0.07;
             switch(loop) {
                 case 0 : barelyPressSpeed = 0.07; break;
                 case 1 : barelyPressSpeed = 0.06; break;
-                case 2 : barelyPressSpeed = 0.04; break;
+                case 2 : barelyPressSpeed = 0.03; break;
                 case 3 : barelyPressSpeed = 0.02; break;
                 case 4 : barelyPressSpeed = 0.02; break;
-                case 5 : barelyPressSpeed = 0.02; break;
             }
             robot.driveTrainMotors( -barelyPressSpeed, -barelyPressSpeed, -barelyPressSpeed, -barelyPressSpeed );
-            sleep( 1000 );   // Spin the carousel for 6 seconds total
+            sleep( 1000 );   // Spin the carousel for 5 seconds total
         } // loop
         robot.duckMotor.setPower( 0.0 );  // Disable carousel motor
     } // spinDuckCarousel

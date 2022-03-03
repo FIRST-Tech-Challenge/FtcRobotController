@@ -665,8 +665,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
         if( gamepad1_triangle_now && !gamepad1_triangle_last)
         {
-            // <MIN> STORE ... midpoint1 ... CAP ... midpoint2 ... GRAB <MAX>
-            int midpoint1 = (robot.CAPPING_ARM_POS_STORE + robot.CAPPING_ARM_POS_CAP)/2;
+            // <MIN> STORE ... LIBERTY ... VERTICAL ... CAP ... GRAB <MAX>
+            int midpoint1 = (robot.CAPPING_ARM_POS_STORE + robot.CAPPING_ARM_POS_LIBERTY)/2;
             int midpoint2 = (robot.CAPPING_ARM_POS_CAP   + robot.CAPPING_ARM_POS_GRAB)/2;
             // toggle into and out of CAP position (use current arm position to decide)
             if( (robot.cappingMotorPos < midpoint1) ||   /* currently STORE */

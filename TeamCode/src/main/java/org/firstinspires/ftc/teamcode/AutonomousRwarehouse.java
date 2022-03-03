@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.1 (12/16/2021)
+/* FTC Team 7572 - Version 1.2 (03/02/2022)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -232,13 +232,11 @@ public class AutonomousRwarehouse extends AutonomousBase {
             freightCollectAngle += 5.0;  // try again at a slightly different angle
         }
 
-        //!!!!! ILLEGAL TO INTERACT WITH SHARED HUB DURING AUTONOMOUS !!!!!
-
         // Score the freight if we have collected one, and we have enough time.
 //      if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
-//         telemetry.addData("Skill", "scoreFreightSharedHub");
+//         telemetry.addData("Skill", "scoreFreightAllianceHub");
 //         telemetry.update();
-//         freightCollected = !scoreFreightSharedHub(hubLevel);
+//         freightCollected = !scoreFreightAllianceHub(hubLevel);
 //         freightCollectAngle = -35.0;
 //      }
 
@@ -393,30 +391,32 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
         sleep( 500 );                               // let cube drop out
+
         // back away and store arm
-
         gyroTurn(TURN_SPEED_20, -90.0 );   // Turn toward the freight warehouse
-        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
-        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
-            performEveryLoop();
-        }
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
-
-        robot.cappingArmPosition( robot.CAPPING_ARM_POS_STORE, 0.40 );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
+        robot.cappingArmPosInit( robot.CAPPING_ARM_POS_STORE );
         robot.wristPositionAuto( robot.WRIST_SERVO_STORE );  // store position (handles unpowered!)
+
     } // dumpFreight
 
     /*--------------------------------------------------------------------------------------------*/
     private void driveToWarehouse( int level  ) {
         double warehouseDistance = 0.0;
         switch( level ) {
-            case 3 : warehouseDistance = 36.0;  break; // Top
+            case 3 : warehouseDistance = 38.0;  break; // Top
             case 2 : warehouseDistance = 41.0;  break; // Middle
-            case 1 : warehouseDistance = 45.0;  break; // Bottom
+            case 1 : warehouseDistance = 47.0;  break; // Bottom
         } // switch()
 
         gyroDrive(DRIVE_SPEED_40, DRIVE_Y, warehouseDistance, 999.9, DRIVE_THRU );
         robot.stopMotion();
+        // Ensure the arm motion has completed before continuing
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
+        }
+
     } // driveToWarehouse
 
     /*--------------------------------------------------------------------------------------------*/
@@ -427,10 +427,13 @@ public class AutonomousRwarehouse extends AutonomousBase {
         ElapsedTime freightTimeout = new ElapsedTime();
 
         robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
-        robot.freightArmPosition( robot.FREIGHT_ARM_POS_COLLECT, 0.50 );
+        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_COLLECT );
         gyroTurn(TURN_SPEED_20, angle );   // Turn toward the freight
-        // Turning time should be plenty of time for arm to reach collect position so we
-        // can lower the intake.
+        // If the arm didn't reach COLLECT during the turn, wait a little longer
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
+        }
+        // With freight-arm down, it's safe to lower the intake
         robot.linkServo.setPosition(robot.LINK_SERVO_LOWERED);
         robot.sweepMotor.setPower(1.0);
         robot.driveTrainMotors( (slowlyCollectMyPrecious + 0.02), slowlyCollectMyPrecious,
@@ -448,22 +451,39 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.sweepMotor.setPower(0.0);
         if(freightDetections >= 1) {
             collected = true;
-            robot.linkServo.setPosition(robot.LINK_SERVO_RAISED);
-            robot.boxServo.setPosition(robot.BOX_SERVO_STORED);
+            // Raise the sweeper so that we are free to lift the arm
+            robot.linkServo.setPosition( robot.LINK_SERVO_RAISED );
+            // Partially rotate the box servo toward the  transport position
+            // (allows any 2nd piece of freight to fall off before we rotate
+            //  so far that the keep-it-in-erator bar could trap it.
+            robot.boxServo.setPosition( robot.BOX_SERVO_STORED );
+            // Wait for collector arm to move out of the way
             sleep(300);
-            robot.freightArmPosition(robot.FREIGHT_ARM_POS_TRANSPORT1, 0.50);
-            sleep(300);
+            // Lift the freight-arm so we're clear to drive over the barrier
+            robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
+            // Process the first 300 msec of freight-arm lifting motion
+            ElapsedTime armLiftTimer = new ElapsedTime();
+            armLiftTimer.reset();  // start now
+            while( opModeIsActive() && (armLiftTimer.milliseconds() < 300) ) {
+                performEveryLoop();
+            }
+            // Now fully rotate the box servo into transport position
             robot.boxServo.setPosition(robot.BOX_SERVO_TRANSPORT);
-            sleep(450);
         }
 
+        // Drive backward away from the pile
         timeDriveStraight(-DRIVE_SPEED_30, backupTime);
 
+        // Wait for any arm-lifting motion to complete
+        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+            performEveryLoop();
+        }
+        
         return collected;
     } // collectFreight
 
     /*--------------------------------------------------------------------------------------------*/
-    boolean scoreFreightSharedHub(int level) {
+    boolean scoreFreightAllianceHub(int level) {
         boolean scored = false;
         final double RAMMING_SPEED = DRIVE_SPEED_30;
 
@@ -517,7 +537,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         } // walldistance2
 
         return scored;
-    } // scoreFreightSharedHub
+    } // scoreFreightAllianceHub
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Capture range-sensor data (one reading! call from main control loop)  */

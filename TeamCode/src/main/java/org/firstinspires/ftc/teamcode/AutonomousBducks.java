@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.1 (12/16/2021)
+/* FTC Team 7572 - Version 1.2 (03/02/2022)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -209,7 +209,7 @@ public class AutonomousBducks extends AutonomousBase {
                      distanceToGrab = -1.8;
                      break;
             case 1 : turnAngle = -42.0;
-                     distanceToGrab = -4.8; // left/bottom
+                     distanceToGrab = -4.0; // left/bottom
                      break;
         } // switch()
 
@@ -251,11 +251,13 @@ public class AutonomousBducks extends AutonomousBase {
         robot.cappingArmPosInit( robot.CAPPING_ARM_POS_LIBERTY );
         robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
         robot.freightArmPosInit( robot.FREIGHT_ARM_POS_VERTICAL );
+
         // Finish both arm movements before continuing
         while( opModeIsActive() &&
                 ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
             performEveryLoop();
         }
+
     } // collectTeamElement
 
     /*--------------------------------------------------------------------------------------------*/
@@ -277,7 +279,7 @@ public class AutonomousBducks extends AutonomousBase {
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      break;
             case 1 : angleToHub = -38.0;
-                     distanceToHub = -5.0;  // bottom
+                     distanceToHub = -6.0;  // bottom
                      finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
                      break;
@@ -292,7 +294,9 @@ public class AutonomousBducks extends AutonomousBase {
             gyroTurn(TURN_SPEED_20, angleToHub );
 
         // Drive partially forward
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, distanceToHub, angleToHub, DRIVE_TO );
+        if( Math.abs(distanceToHub) > 0.0 ) {
+            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, distanceToHub, angleToHub, DRIVE_TO);
+        }
 
         // Ensure arm has reached it's final position
         while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
@@ -316,10 +320,10 @@ public class AutonomousBducks extends AutonomousBase {
                      backDistance = 5.2;
                      break;
             case 2 : servoPos = robot.BOX_SERVO_DUMP_MIDDLE;
-                     backDistance = 3.5;
+                     backDistance = 5.0;
                      break;
             case 1 : servoPos = robot.BOX_SERVO_DUMP_BOTTOM;
-                     backDistance = 3.5;
+                     backDistance = 6.0;
                      break;
         } // switch()
 
@@ -340,7 +344,7 @@ public class AutonomousBducks extends AutonomousBase {
         switch( level ) {
             case 3 : towardWall = 18.0; break; // top
             case 2 : towardWall = 19.0; break; // middle
-            case 1 : towardWall = 18.0; break; // bottom
+            case 1 : towardWall = 16.5; break; // bottom
         } // switch()
         gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward wall
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, 90.0, DRIVE_TO );
@@ -351,10 +355,10 @@ public class AutonomousBducks extends AutonomousBase {
         robot.duckMotor.setPower( -0.48 ); // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
-            double barelyPressSpeed = 0.05;
+            double barelyPressSpeed = 0.07;
             switch(loop) {
-                case 0 : barelyPressSpeed = 0.05; break;
-                case 1 : barelyPressSpeed = 0.04; break;
+                case 0 : barelyPressSpeed = 0.07; break;
+                case 1 : barelyPressSpeed = 0.06; break;
                 case 2 : barelyPressSpeed = 0.03; break;
                 case 3 : barelyPressSpeed = 0.02; break;
                 case 4 : barelyPressSpeed = 0.02; break;
@@ -368,7 +372,13 @@ public class AutonomousBducks extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void driveToSquare( int level ) {
         gyroTurn(TURN_SPEED_20, 180.0 );   // Turn square to side wall
-        double squareDistance = 29.0 - backRangeSensor()/2.54;
+        double driveAwayFromWall = 29.0;
+        switch( level ) {
+            case 3 : driveAwayFromWall = 29.0; break; // top
+            case 2 : driveAwayFromWall = 25.0; break; // middle
+            case 1 : driveAwayFromWall = 25.2; break; // bottom
+        } // switch()
+        double squareDistance = driveAwayFromWall - backRangeSensor()/2.54;
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );
         // Don't lower arm to floor until we get into the square, in case the freight box has rotated
         // (the front edge will catch on the floor tile when we try to drive forward)
