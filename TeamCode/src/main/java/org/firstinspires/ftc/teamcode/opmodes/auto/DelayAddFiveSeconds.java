@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.opmodes.util.DelayStorage;
 public class DelayAddFiveSeconds extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry.addLine("Current seconds: " + DelayStorage.seconds);
         telemetry.update();
         waitForStart();
         DelayStorage.addSeconds(5);

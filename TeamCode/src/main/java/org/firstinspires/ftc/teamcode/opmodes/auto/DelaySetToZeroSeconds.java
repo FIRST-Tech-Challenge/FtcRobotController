@@ -9,8 +9,7 @@ import org.firstinspires.ftc.teamcode.opmodes.util.DelayStorage;
 public class DelaySetToZeroSeconds extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry.addLine("Warning: doing this while queued BREAKS TOURNAMENT RULES!");
-        telemetry.addLine("DO NOT RUN THIS WHILE QUEUED.");
+        telemetry.addLine("Current seconds: " + DelayStorage.seconds);
         telemetry.update();
         waitForStart();
         DelayStorage.setSeconds(0);
