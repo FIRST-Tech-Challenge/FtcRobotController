@@ -147,7 +147,7 @@ public class AutoWarehouse extends LinearOpMode {
         drive.followTrajectoryAsync(part2);
         updateLoop(drive);
 
-        WallSmash.smashIntoWallSideways(drive, multiplier, 500);
+        WallSmash.smashIntoWallSideways(drive, multiplier, 250);
         driveToPose(drive, part2.end());
         if (isStopRequested()) return;
 
