@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.opmodes.util.AutoLED;
 import org.firstinspires.ftc.teamcode.opmodes.util.DelayStorage;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.opmodes.util.WallSmash;
@@ -79,15 +80,15 @@ public class AutoWarehouse extends LinearOpMode {
                         new Pose2d(-3, 45, Math.toRadians(60)))
                 .build();
 
-        final boolean[] liftUpdated = {false};
         Thread liftThread = new Thread(() -> {
             while (!isStopRequested()) {
                 lift.update();
-                liftUpdated[0] = true;
             }
         });
 
+        AutoLED led = new AutoLED(hardwareMap, detector);
         waitForStart();
+        led.stop();
         toolTimer.reset();
         liftThread.start();
         eventThread.start();
@@ -102,7 +103,6 @@ public class AutoWarehouse extends LinearOpMode {
 
         drive.followTrajectorySequenceAsync(part1);
         updateLoop(drive);
-        liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
         while (lift.getPosition() != AutoLift.Positions.INTAKING && /* Ethan doodoohead */ toolTimer.seconds() < 5) {

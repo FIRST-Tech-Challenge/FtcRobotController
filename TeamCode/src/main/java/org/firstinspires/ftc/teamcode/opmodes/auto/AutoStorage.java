@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.opmodes.util.AutoLED;
 import org.firstinspires.ftc.teamcode.opmodes.util.DelayStorage;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -48,11 +49,9 @@ public class AutoStorage extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
         drive.setPoseEstimate(initial);
 
-        final boolean[] liftUpdated = {false};
         Thread liftThread = new Thread(() -> {
             while (!isStopRequested()) {
                 lift.update();
-                liftUpdated[0] = true;
             }
         });
 
@@ -78,7 +77,9 @@ public class AutoStorage extends LinearOpMode {
                         Math.toRadians(90 * multiplier)))
                 .build();
 
+        AutoLED led = new AutoLED(hardwareMap, detector);
         waitForStart();
+        led.stop();
         toolTimer.reset();
         liftThread.start();
         eventThread.start();
@@ -96,7 +97,6 @@ public class AutoStorage extends LinearOpMode {
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
         while (lift.getPosition() != AutoLift.Positions.INTAKING && /* Ethan doodoohead */ toolTimer.seconds() < 5) {
