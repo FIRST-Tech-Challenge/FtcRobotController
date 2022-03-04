@@ -67,14 +67,13 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
 
 
 //      Deposit initial freight
-        Pose2d hubPosition = new Pose2d(new Vector2d(-11.5, 43), Math.toRadians(270));
+        Pose2d hubPosition = new Pose2d(new Vector2d(-23, 38), Math.toRadians(360-47));
 
         TrajectorySequence toHubHigh = drive.trajectorySequenceBuilder(startPose)
                 .lineToSplineHeading(hubPosition)
                 .build();
-
         TrajectorySequence toHubLow = drive.trajectorySequenceBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(new Vector2d(-11.5, 41.7), Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(new Vector2d(-22, 36.5), Math.toRadians(360-47)))
                 .build();
 
         switch (freightLocation) {
@@ -137,10 +136,10 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
         drive.linearSlideMotor.setPower(.7);
         drive.intakeMotor.setPower(0);
 
-        //position = position.minus(new Pose2d(12,0,0));
+        position = position.minus(new Pose2d(12,0,0));
         TrajectorySequence depositDuck = drive.trajectorySequenceBuilder(position)
                 .lineTo(new Vector2d(-50, 55))
-                .splineToLinearHeading(new Pose2d(-11, 43, Math.toRadians(270)), Math.toRadians(270))
+                .splineToLinearHeading(hubPosition, Math.toRadians(360-47))
                 .build();
         drive.followTrajectorySequence(depositDuck);
 
