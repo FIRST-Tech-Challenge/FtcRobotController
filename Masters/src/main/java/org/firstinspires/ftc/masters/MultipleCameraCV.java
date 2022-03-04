@@ -92,7 +92,7 @@ public class MultipleCameraCV {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));
         pipeline = new ShippingElementDeterminationPipeline(telemetry);
 
-        warehousePipeline = new WarehousePipeline(telemetry);
+        //warehousePipeline = new WarehousePipeline(telemetry);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
         // out when the RC activity is in portrait. We do our actual image processing assuming

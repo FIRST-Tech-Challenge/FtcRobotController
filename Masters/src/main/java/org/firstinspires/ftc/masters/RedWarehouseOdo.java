@@ -106,11 +106,11 @@ public class RedWarehouseOdo extends LinearOpMode {
         drive.followTrajectorySequence(fromHubToWarehouse);
 
         //pick up cube
-        boolean gotCube= drive.getCube();
+        boolean gotCube= drive.getCube(1400);
         if (!gotCube){
             drive.forward(-.5, .3);
             drive.strafeRight(.5,.35);
-            gotCube = drive.getCube();
+            gotCube = drive.getCube(1400);
         }
         if (gotCube) {
             TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
@@ -139,7 +139,7 @@ public class RedWarehouseOdo extends LinearOpMode {
             drive.retract();
 
             drive.followTrajectorySequence(fromHubToWarehouse);
-             if (drive.getCube()) {
+             if (drive.getCube(2000)) {
 
                  trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
 
@@ -169,11 +169,11 @@ public class RedWarehouseOdo extends LinearOpMode {
                  drive.retract();
 
                  drive.followTrajectorySequence(fromHubToWarehouse);
-                 drive.getCube();
+                 drive.getCube(2000);
              }
         }
 
-        drive.followTrajectorySequence(roomyWarehouse);
+        //drive.followTrajectorySequence(roomyWarehouse);
 
     }
 }

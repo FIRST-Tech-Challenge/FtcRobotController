@@ -92,7 +92,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     protected final DcMotorEx backLeft;
     protected final DcMotorEx backRight;
     protected final DcMotorEx frontRight;
-    public DcMotor carousel, intakeMotor, linearSlideMotor;
+    protected final DcMotorEx carousel;
+    public DcMotor intakeMotor, linearSlideMotor;
    // public DistanceSensor distanceSensorLeft, distanceSensorRight;
    public DistanceSensor distanceSensorIntake, distanceSensorTop;
     public Servo linearSlideServo, capServo;
@@ -155,13 +156,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
 
-        carousel = hardwareMap.get(DcMotor.class, "carouselMotor");
+        carousel = hardwareMap.get(DcMotorEx.class, "carouselMotor");
         intakeMotor = hardwareMap.dcMotor.get("intake");
         linearSlideMotor = hardwareMap.dcMotor.get("linearSlide");
         linearSlideServo = hardwareMap.servo.get("dumpServo");
         linearSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         capServo = hardwareMap.servo.get("capServo");
-        capServo.setPosition(0.72);
+        capServo.setPosition(0.79);
 
         colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
         colorSensorRight = hardwareMap.get(RevColorSensorV3.class,"colorSensorRight");
@@ -205,8 +206,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
 
-    public void jevilTurnCarousel(double speed, double seconds) {
-        carousel.setPower(speed);
+    public void jevilTurnRedCarousel(double seconds) {
+        carousel.setVelocity(FreightFrenzyConstants.startVelocity+45);
+        pauseButInSecondsForThePlebeians(seconds);
+        carousel.setPower(0);
+    }
+
+    public void jevilTurnBlueCarousel(double seconds) {
+        carousel.setVelocity(-FreightFrenzyConstants.startVelocity+35);
         pauseButInSecondsForThePlebeians(seconds);
         carousel.setPower(0);
     }
@@ -281,7 +288,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         greenLED2.setMode(DigitalChannel.Mode.OUTPUT);
     }
 
-    public boolean getCube () {
+    public boolean getCube (int searchTime) {
         ElapsedTime elapsedTime = new ElapsedTime();
         lightSet();
         frontLeft.setPower(-.25);
@@ -293,7 +300,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         double intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
         redLED.setState(true);
 
-        while ((intakeDistance>8 || intakeDistance2>7.5)  && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<1400) {
+        while ((intakeDistance>8 || intakeDistance2>7.5)  && this.opmode.opModeIsActive() && elapsedTime.milliseconds()<searchTime) {
             intakeDistance = distanceSensorIntake.getDistance(DistanceUnit.CM);
             intakeDistance2 = intakeColor.getDistance(DistanceUnit.CM);
             telemetry.addData("intake color", intakeDistance2);
@@ -316,6 +323,7 @@ public class SampleMecanumDrive extends MecanumDrive {
            // linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
             return true;
         } else
+
             return false;
     }
 
@@ -648,17 +656,37 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void findDuckBlue(){
 
         //strafe right
-        double speed = 0.35;
+        double speed = 0.35 * 2792;
         ElapsedTime elapsedTime= new ElapsedTime();
+
+        frontLeft.setVelocity(-speed);
+        frontRight.setVelocity(speed);
+        backLeft.setVelocity(speed);
+        backRight.setVelocity(-speed);
 
         while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
                 analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
                 && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
-            frontLeft.setPower(-speed);
-            frontRight.setPower(speed);
-            backLeft.setPower(speed);
-            backRight.setPower(-speed);
+
         }
+
+
+//        Trajectory findDuck = trajectoryBuilder(getLocalizer().getPoseEstimate())
+//                .strafeLeft(24, getVelocityConstraint(MAX_VEL/4, MAX_ANG_VEL/2, TRACK_WIDTH), getAccelerationConstraint(MAX_ACCEL/2))
+//                .build();
+//        followTrajectoryAsync(findDuck);
+//
+//        while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
+//                analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
+//                && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && isBusy()){
+//            update();
+//            telemetry.addData("duck", analyzeDuck());
+//            telemetry.update();
+//        }
+//
+//        if (isBusy()){
+//            breakFollowing();
+//        }
 
         intakeMotor.setPower(0.8);
         forward(0.4, -1.6);
@@ -988,6 +1016,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         forward(0.4, -2);
 
         stopMotors();
+    }
+
+    public void breakFollowing() {
+
     }
 
 }

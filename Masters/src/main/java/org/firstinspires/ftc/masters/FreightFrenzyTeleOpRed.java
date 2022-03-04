@@ -76,7 +76,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     protected double vel2Max=0;
     protected double vel1Max=0;
 
-    protected final double capServoBottom = 0.72;
+    protected final double capServoBottom = 0.79;
     protected final double capServoTop = 0.05;
     protected double capServoPos = capServoBottom;
     protected RevColorSensorV3 intakeColor;
@@ -84,6 +84,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
     Trajectory toHub;
     double encoderCorrection =0;
     boolean start = true;
+
+    int strafeConstant=1;
 
     @Override
     public void runOpMode() {
@@ -196,10 +198,10 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                         rx = gamepad1.right_stick_x;
                     }
 
-                    double leftFrontPower = y + x + rx;
-                    double leftRearPower = y - x + rx;
-                    double rightFrontPower = y - x - rx;
-                    double rightRearPower = y + x - rx;
+                    double leftFrontPower = y + strafeConstant* x + rx;
+                    double leftRearPower = y - strafeConstant* x + rx;
+                    double rightFrontPower = y - strafeConstant* x - rx;
+                    double rightRearPower = y + strafeConstant*x - rx;
 
                     if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
