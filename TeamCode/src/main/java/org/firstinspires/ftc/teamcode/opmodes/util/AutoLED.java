@@ -29,7 +29,7 @@ public class AutoLED {
                         break;
                     case 2:
                         redLED.setState(true);
-                        greenLed.setState(true);
+                        greenLED.setState(true);
                         break;
                     case 3:
                         redLED.setState(false);
