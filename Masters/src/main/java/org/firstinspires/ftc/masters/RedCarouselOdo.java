@@ -70,12 +70,12 @@ public class RedCarouselOdo extends LinearOpMode {
         if (isStopRequested()) return;
 
 //      Deposit initial freight
-        Pose2d hubPosition = new Pose2d(new Vector2d(-23, -38), Math.toRadians(45));
+        Pose2d hubPosition = new Pose2d(new Vector2d(-23, -38), Math.toRadians(47));
         TrajectorySequence toHubHigh = drive.trajectorySequenceBuilder(startPose)
                 .lineToLinearHeading(hubPosition)
                 .build();
         TrajectorySequence toHubLow = drive.trajectorySequenceBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(new Vector2d(-22.3, -36.8), Math.toRadians(45)))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-22, -36.5), Math.toRadians(47)))
                 .build();
 
         switch (freightLocation) {
@@ -107,7 +107,7 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(1);
-        drive.jevilTurnCarousel(.57, 4); //can we go faster?
+        drive.jevilTurnRedCarousel(3); //can we go faster?
 
 
         TrajectorySequence getOffCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
@@ -118,23 +118,19 @@ public class RedCarouselOdo extends LinearOpMode {
 
         drive.findDuckRed();
 
-//        TrajectorySequence acquireDuck = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-//                .lineTo(new Vector2d(-55,-64))
-//                .build();
-//        drive.followTrajectorySequence(acquireDuck);
-
-//        boolean hasDuck = drive
 
         drive.CV.duckWebcam.stopStreaming();
 
         drive.pause(350);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
         drive.pause(250);
+        drive.intakeMotor.setPower(0);
         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         drive.linearSlideMotor.setPower(.7);
 
         position = drive.getLocalizer().getPoseEstimate();
+        position.minus(new Pose2d(12,0,0));
         TrajectorySequence trajSeq6 = drive.trajectorySequenceBuilder(position)
                 .lineToLinearHeading(hubPosition)
                 .build();

@@ -30,15 +30,15 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence fromStartToHubHigh = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-13, 42))
+                .strafeTo(new Vector2d(-12, 43))
                 .build();
         TrajectorySequence fromStartToHubLow = drive.trajectorySequenceBuilder(startPose)
-                .strafeTo(new Vector2d(-13, 40.7))
+                .strafeTo(new Vector2d(-12, 41.7))
                 .build();
 
         TrajectorySequence fromHubToWarehouse = drive.trajectorySequenceBuilder(fromStartToHubHigh.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
-                .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d( new Vector2d(48, 66), Math.toRadians(180)), Math.toRadians(0))
                 .build();
         TrajectorySequence roomyWarehouse = drive.trajectorySequenceBuilder(fromHubToWarehouse.end())
                 .strafeLeft(24)
@@ -98,27 +98,27 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
         drive.followTrajectorySequence(fromHubToWarehouse);
         //pick up cube
-        boolean gotCube= drive.getCube();
+        boolean gotCube= drive.getCube(1400);
         if (!gotCube){
             drive.forward(-.5, .3);
             drive.strafeLeft(.5,.35);
-            gotCube = drive.getCube();
+            gotCube = drive.getCube(1400);
         }
 
 
         if (gotCube) {
             TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-
+                    //.addDisplacementMarker(()-> drive.intakeMotor.setPower(1))
                     .lineTo(new Vector2d(15, 66))
                     .addDisplacementMarker(() -> {
-                        drive.intakeMotor.setPower(-1);
+                        drive.intakeMotor.setPower(1);
                         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                         drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.linearSlideMotor.setPower(.8);
                         drive.intakeMotor.setPower(0);
                     })
-                    .splineToSplineHeading(new Pose2d(-6, 45, Math.toRadians(270)), Math.toRadians(270))
+                    .splineToSplineHeading(new Pose2d(-10, 45, Math.toRadians(270)), Math.toRadians(270))
 //                    -14, 46
                     .build();
             drive.followTrajectorySequence(trajSeq3);
@@ -133,20 +133,20 @@ public class BlueWarehouseOdo extends LinearOpMode {
 
 
             drive.followTrajectorySequence(fromHubToWarehouse);
-            if (drive.getCube()) {
+            if (drive.getCube(2000)) {
 
                 trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-
+                        //.addDisplacementMarker(()-> drive.intakeMotor.setPower(1))
                         .lineTo(new Vector2d(15, 66))
                         .addDisplacementMarker(() -> {
-                            drive.intakeMotor.setPower(-1);
+                            drive.intakeMotor.setPower(1);
                             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
                             drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             drive.linearSlideMotor.setPower(.8);
                             drive.intakeMotor.setPower(0);
                         })
-                        .splineToSplineHeading(new Pose2d(-6, 46, Math.toRadians(270)), Math.toRadians(270))
+                        .splineToSplineHeading(new Pose2d(-10, 46, Math.toRadians(270)), Math.toRadians(270))
                         .build();
                 drive.followTrajectorySequence(trajSeq3);
                 fromHubToWarehouse= drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
@@ -159,11 +159,11 @@ public class BlueWarehouseOdo extends LinearOpMode {
                 drive.retract();
 
                 drive.followTrajectorySequence(fromHubToWarehouse);
-                drive.getCube();
+                drive.getCube(2000);
             }
         }
 
-        drive.followTrajectorySequence(roomyWarehouse);
+        //drive.followTrajectorySequence(roomyWarehouse);
 
     }
 

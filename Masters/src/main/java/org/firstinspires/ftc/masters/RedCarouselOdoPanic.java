@@ -87,7 +87,7 @@ public class RedCarouselOdoPanic extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(.5, 4); //can we go faster?
+        drive.jevilTurnRedCarousel(3); //can we go faster?
 
 
 

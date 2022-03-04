@@ -20,7 +20,7 @@ public class TestGetCube extends LinearOpMode {
 
             robot.lightSet();
 
-            boolean found = robot.getCube();
+            boolean found = robot.getCube(1400);
 
             if (found) {
 

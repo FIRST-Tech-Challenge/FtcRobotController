@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
@@ -20,7 +21,7 @@ public class BlueCarouselOdo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
+        SampleMecanumDriveCancelable drive = new SampleMecanumDriveCancelable(hardwareMap, this, telemetry);
 
         drive.openCVInnitShenanigans("red");
         MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition freightLocation = null;
@@ -106,7 +107,7 @@ public class BlueCarouselOdo extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(1);
-        drive.jevilTurnCarousel(-.47, 4);
+        drive.jevilTurnBlueCarousel(3);
 
         TrajectorySequence leaveCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(-55, 47))
@@ -125,6 +126,7 @@ public class BlueCarouselOdo extends LinearOpMode {
 
 
         position = drive.getLocalizer().getPoseEstimate();
+        //position.minus(new Pose2d(12,0,0));
 
         drive.pause(350);
         drive.intakeMotor.setPower(-0.8);

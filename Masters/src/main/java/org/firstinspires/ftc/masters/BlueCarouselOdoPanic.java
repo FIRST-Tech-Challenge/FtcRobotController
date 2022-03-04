@@ -85,7 +85,7 @@ public class BlueCarouselOdoPanic extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(0.8);
-        drive.jevilTurnCarousel(-.4, 4);
+        drive.jevilTurnBlueCarousel(3);
 
         TrajectorySequence leaveCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(-55, 55))

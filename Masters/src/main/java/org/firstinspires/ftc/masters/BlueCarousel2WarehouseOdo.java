@@ -29,12 +29,7 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
         Pose2d startPose = new Pose2d(new Vector2d(-35, 63), Math.toRadians(270));
 
         drive.setPoseEstimate(startPose);
-        TrajectorySequence fromHubToWaitPos = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(new Vector2d(5, 60), Math.toRadians(180)))
-                .build();
-        TrajectorySequence fromWaitPosToWarehouse = drive.trajectorySequenceBuilder(fromHubToWaitPos.end())
-                .splineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)), Math.toRadians(0))
-                .build();
+
         drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
@@ -113,7 +108,7 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
         drive.followTrajectorySequence(toCarousel);
 
         drive.intakeMotor.setPower(1);
-        drive.jevilTurnCarousel(-.65, 4);
+        drive.jevilTurnBlueCarousel(3);
 
         TrajectorySequence leaveCarousel = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
                 .lineTo(new Vector2d(-55, 47))
@@ -142,6 +137,7 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
         drive.linearSlideMotor.setPower(.7);
         drive.intakeMotor.setPower(0);
 
+        //position = position.minus(new Pose2d(12,0,0));
         TrajectorySequence depositDuck = drive.trajectorySequenceBuilder(position)
                 .lineTo(new Vector2d(-50, 55))
                 .splineToLinearHeading(new Pose2d(-11, 43, Math.toRadians(270)), Math.toRadians(270))
@@ -162,6 +158,13 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
 //                .splineToLinearHeading (new Pose2d(new Vector2d(-62, 35),Math.toRadians(270)), Math.toRadians(180))
 //                .build();
 //        drive.followTrajectorySequence(trajSeq7);
+        TrajectorySequence fromHubToWaitPos = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+                .lineToSplineHeading(new Pose2d(new Vector2d(-24, 60), Math.toRadians(180)))
+                .build();
+        TrajectorySequence fromWaitPosToWarehouse = drive.trajectorySequenceBuilder(fromHubToWaitPos.end())
+                .lineToLinearHeading(new Pose2d( new Vector2d(48, 67), Math.toRadians(180)))
+                .build();
+
 
         drive.followTrajectorySequence(fromHubToWaitPos);
         double seconds = elapsedTime.seconds();
@@ -169,7 +172,7 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
             seconds = elapsedTime.seconds();
         }
         drive.followTrajectorySequence(fromWaitPosToWarehouse);
-        drive.getCube();
+      //  drive.getCube(2000);
 
     }
 

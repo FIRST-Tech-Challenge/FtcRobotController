@@ -15,6 +15,12 @@ import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region2;
 @TeleOp(name="freightFrenzy Blue", group = "competition")
 public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
 
+    public FreightFrenzyTeleOpBlue(){
+        super();
+        strafeConstant = -1;
+    }
+
+
     protected void rotateCarousel(){
         if (gamepad2.y && !carouselPushed)  {
             if (carouselOn){
@@ -63,7 +69,7 @@ public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
     protected Trajectory getHubTrajectory(){
         return    drive.trajectoryBuilder(new Pose2d(new Vector2d(26, 66),Math.toRadians(180)))
                 .lineTo(new Vector2d(10, 65))
-                .splineToSplineHeading(new Pose2d(-12, 45, Math.toRadians(270)), Math.toRadians(270))
+                .splineToSplineHeading(new Pose2d(-10, 45, Math.toRadians(270)), Math.toRadians(270))
                 .build();
     }
 
