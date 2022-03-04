@@ -25,15 +25,22 @@ public class AutoLED {
                 switch (detector.run()) {
                     case 1:
                         redLED.setState(true);
+                        greenLED.setState(false);
                         break;
                     case 2:
                         redLED.setState(true);
+                        greenLed.setState(true);
+                        break;
                     case 3:
+                        redLED.setState(false);
                         greenLED.setState(true);
                         break;
                 }
             }
         });
+        
+        this.updateThread.setPriority(Thread.NORM_PRIORITY);
+        this.updateThread.start();
     }
 
     public void stop() {
