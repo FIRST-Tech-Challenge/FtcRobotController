@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
 import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.opmodes.util.AutoLED;
 import org.firstinspires.ftc.teamcode.opmodes.util.DelayStorage;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -78,7 +79,9 @@ public class AutoStorage extends LinearOpMode {
                         Math.toRadians(90 * multiplier)))
                 .build();
 
+        AutoLED led = new AutoLED(hardwareMap, detector);
         waitForStart();
+        led.stop();
         toolTimer.reset();
         liftThread.start();
         eventThread.start();
