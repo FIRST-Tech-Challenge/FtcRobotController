@@ -45,5 +45,7 @@ public class AutoLED {
 
     public void stop() {
         this.updateThread.interrupt();
+        redLED.setState(false);
+        greenLED.setState(false);
     }
 }
