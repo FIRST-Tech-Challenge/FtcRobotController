@@ -80,11 +80,9 @@ public class AutoWarehouse extends LinearOpMode {
                         new Pose2d(-3, 45, Math.toRadians(60)))
                 .build();
 
-        final boolean[] liftUpdated = {false};
         Thread liftThread = new Thread(() -> {
             while (!isStopRequested()) {
                 lift.update();
-                liftUpdated[0] = true;
             }
         });
 
@@ -105,7 +103,6 @@ public class AutoWarehouse extends LinearOpMode {
 
         drive.followTrajectorySequenceAsync(part1);
         updateLoop(drive);
-        liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
         while (lift.getPosition() != AutoLift.Positions.INTAKING && /* Ethan doodoohead */ toolTimer.seconds() < 5) {

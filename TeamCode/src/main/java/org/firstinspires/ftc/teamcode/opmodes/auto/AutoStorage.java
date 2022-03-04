@@ -49,11 +49,9 @@ public class AutoStorage extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
         drive.setPoseEstimate(initial);
 
-        final boolean[] liftUpdated = {false};
         Thread liftThread = new Thread(() -> {
             while (!isStopRequested()) {
                 lift.update();
-                liftUpdated[0] = true;
             }
         });
 
@@ -99,7 +97,6 @@ public class AutoStorage extends LinearOpMode {
         updateLoop(drive);
         if (isStopRequested()) return;
 
-        liftUpdated[0] = false;
         lift.setPosition(getPosition(height));
         toolTimer.reset();
         while (lift.getPosition() != AutoLift.Positions.INTAKING && /* Ethan doodoohead */ toolTimer.seconds() < 5) {
