@@ -5,17 +5,17 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class DelayStorage {
-    public static int seconds = 0;
+    public static double seconds = 0;
 
-    public static void setSeconds(int seconds) {
+    public static void setSeconds(double seconds) {
         DelayStorage.seconds = seconds;
     }
 
-    public static void addSeconds(int seconds) {
+    public static void addSeconds(double seconds) {
         DelayStorage.seconds += seconds;
     }
 
-    public static void subtractSeconds(int seconds) {
+    public static void subtractSeconds(double seconds) {
         if (DelayStorage.seconds - seconds < 0) {
             DelayStorage.seconds = 0;
         } else {
