@@ -12,8 +12,13 @@ public class TseDepositorTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         tseDepositor tse = new tseDepositor(this);
-        tse.moveTseDepositerTape("Time Based",69,  1);
+        /*tse.moveTseDepositerTape("Time Based",69,  1);
         sleep(10000);
-        tse.moveTseDepositerTape("Time Based",69,  0);
+        tse.moveTseDepositerTape("Time Based",69,  0);*/
+        tse.setTseCrServoPower(0.5);
+        sleep(9000);
+        tse.setTseCrServoPower(0.0);
+        tse.retract();
+        sleep(5000);
     }
 }
