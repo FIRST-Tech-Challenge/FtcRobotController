@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
@@ -111,13 +112,13 @@ public class Turret {
     public void updateTurretPositions(){
         extendPosition = turret_Extension.getCurrentPosition();
         rotatePosition = turret_Rotation.getCurrentPosition();
-        if (abs(rotatePosition) < 20) {
+        if (abs(rotatePosition) < 40) {
             turretStraight = true;
         }
         else{
             turretStraight=false;
         }
-        if (abs(extendPosition) < 20) {
+        if (abs(extendPosition) < 40) {
             turretDown = true;
         }
         else{
@@ -247,7 +248,7 @@ public class Turret {
         double willygay = x;
         x=y;
         y=willygay;
-        double rotation_angle = Math.atan(y/x) * (180 / Math.PI);
+        double rotation_angle = Math.atan(y/x) * (180 / PI);
         turret_Rotation.setTargetPosition((int) (rotation_angle/DEG_PER_TICK_MOTOR));
         turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret_Rotation.setPower(power);
@@ -271,7 +272,7 @@ public class Turret {
         turret_Extension.setPower(power);
 
 
-        double elevation_angle = Math.atan(z/extension_length_flat) * (180 / Math.PI);
+        double elevation_angle = Math.atan(z/extension_length_flat) * (180 / PI);
 
         op.telemetry.addData("angle control angle", elevation_angle / ANGLE_CONTROL_SERVO_TOTAL_DEGREES);
         if(elevation_angle<0){
@@ -319,7 +320,6 @@ public class Turret {
         updateTurretPositions();
 
         if(basketDown&&areTeleop) {
-            SavePosition(up);
             basketActuationServo.setPosition(0.97-.2);
         }
         else{
@@ -364,9 +364,9 @@ public class Turret {
         turret_saved_positions[up][0][1] = turret_saved_positions[up][1][1];
         turret_saved_positions[up][0][2] = turret_saved_positions[up][1][2];
 
-        turret_saved_positions[up][1][2] = Math.sin(turret_Angle_Control.getPosition() * DEG_PER_TICK_SERVO * Math.PI/180) * extendPosition/TICKS_PER_INCH;
-        turret_saved_positions[up][1][0] = xpos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin(( rotatePosition * DEG_PER_TICK_MOTOR - angle) * Math.PI/180);
-        turret_saved_positions[up][1][1] = ypos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.cos((rotatePosition * DEG_PER_TICK_MOTOR - angle) * Math.PI/180);
+        turret_saved_positions[up][1][2] = Math.sin(turret_Angle_Control.getPosition() * DEG_PER_TICK_SERVO * PI/180) * extendPosition/TICKS_PER_INCH;
+        turret_saved_positions[up][1][0] = xpos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin(( rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
+        turret_saved_positions[up][1][1] = ypos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.cos((rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
 
     }
 
@@ -397,14 +397,14 @@ public class Turret {
     public boolean TurretReset (double power) {
         boolean isReset = true;
         if(!turretDown){
-            turret_Extension.setPower(-.3);
+            turret_Extension.setPower(-.5);
         }
         else{
             turret_Extension.setPower(0);
         }
 
         if(!turretStraight){
-            turret_Rotation.setPower(-rotatePosition/abs(rotatePosition)*.3);
+            turret_Rotation.setPower(-rotatePosition/abs(rotatePosition)*.5);
         }
         else{
             turret_Rotation.setPower(0);

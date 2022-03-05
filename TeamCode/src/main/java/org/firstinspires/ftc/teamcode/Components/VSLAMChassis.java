@@ -148,12 +148,15 @@ public class VSLAMChassis extends BasicChassis {
         double newAngle =0;
         T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
         if (up != null) {
-            xpos = -(float)(up.pose.getX()/ 0.0254);
-            ypos = -(float)(up.pose.getY()/ 0.0254);
-            angle = -(float)(up.pose.getHeading()*180/PI);
             xVelocity = -(float)(up.velocity.vxMetersPerSecond/ 0.0254);
             yVelocity = -(float)(up.velocity.vyMetersPerSecond/ 0.0254);
             Velocity = sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
+            if(Velocity>100){
+                return new double[] {xpos,ypos,angle};
+            }
+            xpos = -(float)(up.pose.getX()/ 0.0254);
+            ypos = -(float)(up.pose.getY()/ 0.0254);
+            angle = -(float)(up.pose.getHeading()*180/PI);
             aVelocity = -(float)up.velocity.omegaRadiansPerSecond*180/PI;
             if(Velocity>maxVelocity){
                 maxVelocity=Velocity;
@@ -395,7 +398,7 @@ public class VSLAMChassis extends BasicChassis {
             //double angleCorrectPower[] = {sin(angleInCorrection + PI / 4), sin(angleInCorrection - PI / 4), sqrt(pow(yCorrection, 2) + pow(xCorrection, 2))};
             //error+=(angleInCorrection-currentPosition[2])/2;
             double targetaVelocity = (error)*2;
-            anglecorrection=(error*2+(targetaVelocity-aVelocity)/10)/192;
+            anglecorrection=(error*2+(targetaVelocity+aVelocity)/10)/192;
             if(abs(anglecorrection)*power>0.6){
                 anglecorrection/=(abs(anglecorrection)*power)/0.6;
             }
@@ -2832,7 +2835,7 @@ public class VSLAMChassis extends BasicChassis {
                 error+=360;
             }
             double targetaVelocity = (error)*2;
-            double angleConst=(error*2+(targetaVelocity-aVelocity)/10)/192;
+            double angleConst=(error*2+(targetaVelocity+aVelocity)/10)/192;
             if(abs(angleConst)*power<0.2){
                 angleConst/=(abs(angleConst)*power)/0.2;
             }

@@ -36,7 +36,7 @@ public class Robot {
     boolean isReversing=false;
     boolean isFlipping = false;
     double flipDelay=.3, reverseDelay=.7;
-    double[] startTime = {0,0,0,0,0,0};
+    double[] startTime = {-2,0,0,0,0,0};
     double magnitude;
     double angleInRadian;
     double angleInDegree;
@@ -251,7 +251,7 @@ public class Robot {
         if (turretTurn != 0) {
             TurretManualRotation(turretTurn);
         }
-        else{
+        else if (!retracting&&!autoAiming){
             turret.stopTurn();
         }
 
@@ -289,6 +289,7 @@ public class Robot {
         if (basket&&time>startTime[4]+.3) {
             startTime[4]=time;
             FlipBasket(up);
+            op.sleep(200);
             SavePosition(up);
         }
 
@@ -363,23 +364,27 @@ public class Robot {
                 startTime[0] = op.getRuntime();
                 startTime[1] = startTime[0] + 1;
             }
-            op.telemetry.addData("time", op.getRuntime() - startTime[1]);
             if (op.getRuntime() > startTime[0] + 1 && !isReversing) {
                 isReversing = true;
                 op.telemetry.addData("reversing ", "intake");
                 startTime[1] = op.getRuntime();
-                intake.reverseIntake(0.7);
+                intake.reverseIntake(.7);
             }
-            if (op.getRuntime() > startTime[1] + 0.8) {
+            if(op.getRuntime() > startTime[1]+.8){
+                intake.stopIntake();
+            }
+            if (op.getRuntime() > startTime[1] + 1.4) {
                 op.telemetry.addData("flippedy do ", "back down");
                 intake.stopIntake();
                 if (shared_shipping_hub) {
-                    FlipBasketArmLow();
                     turret.FlipBasketToPosition(.6);
+                    op.sleep(100);
+                    FlipBasketArmLow();
                 }
                 else {
-                    FlipBasketArmHigh();
                     turret.FlipBasketToPosition(.6);
+                    op.sleep(100);
+                    FlipBasketArmHigh();
                 }
                 shouldFlipIntake = false;
                 shouldIntake = true;
@@ -391,6 +396,9 @@ public class Robot {
         }
         if(autoretractTurret||retracting){
             autoAiming = false;
+            if(autoretractTurret){
+                intake.flipIntake();
+            }
             retracting = TurretReset(0.5);
         }
 
@@ -399,7 +407,7 @@ public class Robot {
     }
 
     public void autoAim (double [][]turret_saved_positions) {
-        double angle = Math.atan2((-turret_saved_positions[1][0] + xpos),(turret_saved_positions[1][1]+ypos))*180/PI- VSLAMChassis.angle;
+        double angle = Math.atan2((turret_saved_positions[1][0] + xpos),(turret_saved_positions[1][1]+ypos))*180/PI- VSLAMChassis.angle;
         turret.TurretRotate(angle);
         op.telemetry.addData("angle",angle);
         double turret_angle_control_pos = Math.atan2(turret_saved_positions[1][2], Math.sqrt(Math.pow(xpos - turret_saved_positions[1][0], 2) + Math.pow(ypos - turret_saved_positions[1][1], 2)));
@@ -428,6 +436,7 @@ public class Robot {
         turret.TurretAngleControlRotating(target_point);
     }
     public void TurretSlidesToPosition (double x, double y, double z, double power) {
+        turret.FlipBasketToPosition(.5);
         turret.TurretSlidesToPosition(x, y, z, power);
     }
     public void TurretManualRotation(double rotation) {
