@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.qualcomm.ftcrobotcontroller"
-          android:versionCode="40"
-          android:versionName="6.2">
+          android:versionCode="44"
+          android:versionName="7.1">
 
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -60,6 +60,21 @@
     <service
       android:name="com.qualcomm.ftccommon.FtcRobotControllerService"
       android:enabled="true" />
+
+
+    <!-- Assistant that autostarts the robot controller on android boot (if it's supposed to) -->
+    <receiver
+      android:enabled="true"
+      android:exported="true"
+      android:name="org.firstinspires.ftc.ftccommon.internal.RunOnBoot"
+      android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+
+      <intent-filter>
+        <category android:name="android.intent.category.DEFAULT" />
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+      </intent-filter>
+    </receiver>
 
   </application>
 
