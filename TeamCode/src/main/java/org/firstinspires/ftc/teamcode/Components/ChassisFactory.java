@@ -12,6 +12,9 @@ public class ChassisFactory {
         else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
             return new OdometryChassis(op,navigator,isCorgi);
         }
+         else if(chassisType==BasicChassis.ChassisType.VSLAM){
+             return new VSLAMChassis(op,navigator,isCorgi);
+         }
         return null;
     }
 }

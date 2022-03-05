@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class EncoderChassis extends BasicChassis {
 
@@ -391,16 +391,17 @@ public class EncoderChassis extends BasicChassis {
 
     }
 
-
     @Override
-    public void goToPosition(double xPosition, double yPosition, double newangle, double power) {
+    public void goToPosition(int direction, double xPosition, double yPosition, double newangle, double power) {
 
     }
 
     @Override
-    public void goToPositionWithoutStop(double xPosition, double yPosition, double newangle, double power) {
+    public void goToPositionWithoutStop(int direction, double xPosition, double yPosition, double power) {
 
     }
+
+
 
     @Override
     public void navigate() {
@@ -409,7 +410,7 @@ public class EncoderChassis extends BasicChassis {
 
     @Override
     public boolean goToPositionTeleop(double xPosition, double yPosition, double newangle, double power) {
-return false;
+        return false;
     }
 
     @Override

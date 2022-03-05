@@ -9,6 +9,13 @@
 
 package org.firstinspires.ftc.teamcode.Components;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,19 +25,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-
 public class IMUChassis extends BasicChassis {
 
     /* local OpMode members. */
 
     private final BNO055IMU imu;
-    private Orientation             lastAngles = new Orientation();
+    private Orientation lastAngles = new Orientation();
     private double globalAngle;
     private double correction;
     private final double IMUgain = -0.15;
@@ -463,14 +463,16 @@ public class IMUChassis extends BasicChassis {
     }
 
     @Override
-    public void goToPosition(double xPosition, double yPosition, double newangle, double power) {
+    public void goToPosition(int direction, double xPosition, double yPosition, double newangle, double power) {
 
     }
 
     @Override
-    public void goToPositionWithoutStop(double xPosition, double yPosition, double newangle, double power) {
+    public void goToPositionWithoutStop(int direction, double xPosition, double yPosition, double power) {
 
     }
+
+
 
     @Override
     public void navigate() {
