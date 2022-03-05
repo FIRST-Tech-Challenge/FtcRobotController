@@ -54,7 +54,7 @@ android {
     defaultConfig {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
-        minSdkVersion 23
+        minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
 
@@ -125,6 +125,7 @@ android {
 repositories {
     flatDir {
         dirs rootProject.file('libs')
+        maven { url = "https://maven.0x778.tk" }
     }
 }
 
