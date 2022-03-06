@@ -148,14 +148,14 @@ public class VSLAMChassis extends BasicChassis {
         double newAngle =0;
         T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
         if (up != null) {
-            xVelocity = -(float)(up.velocity.vxMetersPerSecond/ 0.0254);
-            yVelocity = -(float)(up.velocity.vyMetersPerSecond/ 0.0254);
+             yVelocity = (float)(up.velocity.vxMetersPerSecond/ 0.0254);
+            xVelocity = (float)(up.velocity.vyMetersPerSecond/ 0.0254);
             Velocity = sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
             if(Velocity>100){
                 return new double[] {xpos,ypos,angle};
             }
-            xpos = -(float)(up.pose.getX()/ 0.0254);
-            ypos = -(float)(up.pose.getY()/ 0.0254);
+            ypos = (float)(up.pose.getX()/ 0.0254);
+            xpos = (float)(up.pose.getY()/ 0.0254);
             angle = -(float)(up.pose.getHeading()*180/PI);
             aVelocity = -(float)up.velocity.omegaRadiansPerSecond*180/PI;
             if(Velocity>maxVelocity){
