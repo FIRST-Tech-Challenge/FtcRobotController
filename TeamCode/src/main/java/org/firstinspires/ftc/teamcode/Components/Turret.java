@@ -27,7 +27,7 @@ public class Turret {
     private final double TICKS_PER_INCH = 100.0;
     private final double MAX_EXTENSION_TICKS = 3200;
     private final double MIN_EXTENSION_TICKS = 15;
-    private final double MAX_ROTATION_TICKS = 400;
+    private final double MAX_ROTATION_TICKS = 467.5;
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
@@ -365,7 +365,7 @@ public class Turret {
         turret_saved_positions[up][0][2] = turret_saved_positions[up][1][2];
 
         turret_saved_positions[up][1][2] = Math.sin(turret_Angle_Control.getPosition() * DEG_PER_TICK_SERVO * PI/180) * extendPosition/TICKS_PER_INCH;
-        turret_saved_positions[up][1][0] = xpos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin(( rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
+        turret_saved_positions[up][1][0] = xpos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin((rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
         turret_saved_positions[up][1][1] = ypos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.cos((rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
 
     }
@@ -410,7 +410,7 @@ public class Turret {
             turret_Rotation.setPower(0);
         }
         if(!arming) {
-            basketArmServo.setPosition(0.02);
+            basketArmServo.setPosition(0.00);
             arming=true;
         }
         if(turretDown&&turretStraight&&!basketing){
