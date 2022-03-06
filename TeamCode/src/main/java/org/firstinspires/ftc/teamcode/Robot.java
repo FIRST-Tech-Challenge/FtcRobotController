@@ -407,7 +407,14 @@ public class Robot {
     }
 
     public void autoAim (double [][]turret_saved_positions) {
-        double angle = Math.atan2((turret_saved_positions[1][0] + xpos),(turret_saved_positions[1][1]+ypos))*180/PI- VSLAMChassis.angle;
+        double angle = Math.atan2((turret_saved_positions[1][0] - xpos),(turret_saved_positions[1][1]-ypos))*180/PI-180- VSLAMChassis.angle;
+        angle%=360;
+        if(angle>180){
+            angle-=360;
+        }
+        if(angle<-180){
+            angle+=360;
+        }
         turret.TurretRotate(angle);
         op.telemetry.addData("angle",angle);
         double turret_angle_control_pos = Math.atan2(turret_saved_positions[1][2], Math.sqrt(Math.pow(xpos - turret_saved_positions[1][0], 2) + Math.pow(ypos - turret_saved_positions[1][1], 2)));
