@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.followers.RamseteFollower;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -56,11 +55,11 @@ import java.util.Map;
 public class DriveTrain extends TrikeDrive implements Subsystem {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
-    //
+
     public static double B = 0.005;
     public static double ZETA = 0.01;
-    public static PIDCoefficients AXIAL_PID_COEFFICIENTS = new PIDCoefficients(6, 0, 0);
-    public static PIDCoefficients CROSS_AXIAL_PID_COEFFICIENTS = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(6, 0, 0);
+    public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -70,6 +69,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public static PIDCoefficients SWIVEL_PID = new PIDCoefficients(1, 0, 0.08);
     public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(3, 0, 2);
+    public static PIDCoefficients AUTON_CHASSIS_LENGTH_PID = new PIDCoefficients(0.75, 0, 0);
     public static double CHASSIS_LENGTH_TOLERANCE = 1;
     public static PIDCoefficients MAINTAIN_HEADING_PID = new PIDCoefficients(1, 0, 0.5);
     public static double MAINTAIN_HEADING_TOLERANCE = 2.5;
@@ -99,7 +99,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private boolean useMotorPowers;
     private double chassisLength, targetChassisLength, chassisLengthCorrection;
     private boolean maintainChassisLengthEnabled, maintainHeadingEnabled, duckSpinnerToggled, imuOffsetsInitialized,
-            duckGameEnabled;
+            duckGameEnabled, useAutonChassisLengthPID;
     private boolean chassisLengthOnTarget, maintainHeadingOnTarget;
     private double maintainHeading, maintainHeadingCorrection;
     private double heading, roll, pitch, pitchVelocity, angularVelocity;
@@ -123,7 +123,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         this.simulated = simulated;
         // TrajectoryFollower follower = new RamseteFollower(B, ZETA, new Pose2d(0.5,
         // 0.5, Math.toRadians(5)), 3);
-        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID_COEFFICIENTS, CROSS_AXIAL_PID_COEFFICIENTS,
+        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID, CROSS_AXIAL_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5)), 1.5);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
@@ -256,7 +256,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         swivelPID.setPID(SWIVEL_PID);
         swivelPID.setTolerance(SWIVEL_TOLERANCE);
 
-        chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
+        chassisLengthPID.setPID(useAutonChassisLengthPID ? AUTON_CHASSIS_LENGTH_PID : CHASSIS_LENGTH_PID);
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
 
         maintainHeadingPID.setPID(MAINTAIN_HEADING_PID);
@@ -724,5 +724,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public double getMaintainHeading() {
         return maintainHeading;
+    }
+
+    public void setUseAutonChassisLengthPID(boolean useAutonChassisLengthPID) {
+        this.useAutonChassisLengthPID = useAutonChassisLengthPID;
     }
 }

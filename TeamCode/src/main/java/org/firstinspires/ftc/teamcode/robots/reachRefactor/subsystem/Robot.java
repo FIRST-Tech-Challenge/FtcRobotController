@@ -28,8 +28,6 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 @Config(value = "FFRobot")
 public class Robot implements Subsystem {
 
-    public static double BUCKET_TRIGGER_DISTANCE = 7;
-
     public DriveTrain driveTrain;
     public Turret turret;
     public Crane crane;
@@ -102,7 +100,7 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != Articulation.GRAB_AND_TRANSFER)
+        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getTargetPos() == Gripper.OPEN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != Articulation.GRAB_AND_TRANSFER)
             articulation = Articulation.GRAB_AND_TRANSFER;
 //
 //        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation != Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER)
@@ -212,7 +210,7 @@ public class Robot implements Subsystem {
             .addTimedState(1f, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
             .build();
 
-    private boolean handleAutoCrane(Position targetPosition, double targetHeight, double hubRadius) {
+    private boolean handleAutoCrane(Position targetPosition, double targetHeight) {
         Pose2d pose = driveTrain.getPoseEstimate();
         Vector2d turretPose = pose.vec().minus(
                 new Vector2d(
@@ -247,22 +245,22 @@ public class Robot implements Subsystem {
     }
 
     private StateMachine autoHighTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT, HIGH_TIER_RADIUS))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT))
             .build();
     private StateMachine autoHighTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT, HIGH_TIER_RADIUS))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT))
             .build();
     private StateMachine autoMiddleTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT, MIDDLE_TIER_RADIUS))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT))
             .build();
     private StateMachine autoMiddleTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT, MIDDLE_TIER_RADIUS))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT))
             .build();
     private StateMachine autoLowTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT, LOW_TIER_RADIUS))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT))
             .build();
     private StateMachine autoLowTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT, LOW_TIER_RADIUS))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT))
             .build();
 
     public boolean articulate(Articulation articulation) {

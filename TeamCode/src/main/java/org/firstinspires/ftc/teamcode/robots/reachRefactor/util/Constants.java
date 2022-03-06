@@ -44,7 +44,7 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
 
     public static double EPSILON = 1e-6; // small value used for the approximately equal calculation in MathUtils
-    public static double TRIGGER_DEADZONE = 0.2; // gamepad trigger values below this threshold will be ignored
+    public static double TRIGGER_DEADZONE = 0.1; // gamepad trigger values below this threshold will be ignored
     public static double JOYSTICK_DEADZONE = 0.05;
     public static double LOW_BATTERY_VOLTAGE = 12.5;
 

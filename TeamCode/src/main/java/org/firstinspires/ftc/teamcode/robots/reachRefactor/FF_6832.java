@@ -93,8 +93,8 @@ public class FF_6832 extends OpMode {
             MIN_CHASSIS_LENGTH + 2 * (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,
             MAX_CHASSIS_LENGTH
     };
-    public static double DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW = 10;
-    public static double DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST = 60;
+    public static double DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW = 1;
+    public static double DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST = 5;
     public static double DRIVE_VELOCITY_EXPONENT = 1;
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
     public static double ROTATE_SMOOTHING_FACTOR = 0.3;
@@ -231,9 +231,9 @@ public class FF_6832 extends OpMode {
         forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
-//        auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
-//        auto.visionProvider.initializeVision(hardwareMap);
-//        visionProviderFinalized = true;
+        auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+        auto.visionProvider.initializeVision(hardwareMap);
+        visionProviderFinalized = true;
 
         auto.build(startingPosition);
 
@@ -326,7 +326,7 @@ public class FF_6832 extends OpMode {
     @Override
     public void init_loop() {
         handleStateSwitch();
-//        handleVisionProviderSwitch();
+        handleVisionProviderSwitch();
         handlePregameControls();
 
         update();
@@ -353,7 +353,7 @@ public class FF_6832 extends OpMode {
                 .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                 .addTimedState(() -> TRACK_WIDTH_TUNER_DELAY, () -> {}, () -> {})
                 .build();
-//        auto.visionProvider.shutdownVision();
+        auto.visionProvider.shutdownVision();
 
         robot.articulate(Robot.Articulation.START);
         if(!gameState.equals(GameState.MANUAL_DIAGNOSTIC)) {
@@ -494,7 +494,7 @@ public class FF_6832 extends OpMode {
         if(notJoystickDeadZone(gamepad1.right_stick_y))
             setTargetAngle.accept(Range.clip(getTargetPosAngle.getAsDouble() - gamepad1.right_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW, minAngle, maxAngle));
         else if(notJoystickDeadZone(gamepad1.left_stick_y))
-            setTargetAngle.accept(Range.clip(getTargetPosAngle.getAsDouble() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLIER_SLOW, minAngle, maxAngle));
+            setTargetAngle.accept(Range.clip(getTargetPosAngle.getAsDouble() - gamepad1.left_stick_y * DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST, minAngle, maxAngle));
     }
 
     private void handleManualDiagnostic() {
@@ -769,16 +769,16 @@ public class FF_6832 extends OpMode {
         handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
 
         // handling vision telemetry
-//        Map<String, Object> visionTelemetryMap = auto.visionProvider.getTelemetry(debugTelemetryEnabled);
-//        visionTelemetryMap.put("Backend",
-//                Misc.formatInvariant("%s (%s)",
-//                        VisionProviders.VISION_PROVIDERS[visionProviderIndex].getSimpleName(),
-//                        visionProviderFinalized ?
-//                                "finalized" :
-//                                System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : "  NOT FINALIZED  "
-//                )
-//        );
-//        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
+        Map<String, Object> visionTelemetryMap = auto.visionProvider.getTelemetry(debugTelemetryEnabled);
+        visionTelemetryMap.put("Backend",
+                Misc.formatInvariant("%s (%s)",
+                        VisionProviders.VISION_PROVIDERS[visionProviderIndex].getSimpleName(),
+                        visionProviderFinalized ?
+                                "finalized" :
+                                System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : "  NOT FINALIZED  "
+                )
+        );
+        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
 
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();

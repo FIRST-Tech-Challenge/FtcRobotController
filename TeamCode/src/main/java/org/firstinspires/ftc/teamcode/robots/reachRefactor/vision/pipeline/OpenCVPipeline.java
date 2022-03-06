@@ -47,19 +47,13 @@ public class OpenCVPipeline extends OpenCvPipeline
     
     // Constants
     public static int VIEW_OPEN_CV_PIPELINE_STAGE = 6;
-    public static int TOP_LEFT_X = 0;
-    public static int TOP_LEFT_Y = 80;
-    public static int BOTTOM_RIGHT_X = 320;
-    public static int BOTTOM_RIGHT_Y = 180;
-    public static double NORMALIZE_ALPHA = 51.0;
-    public static double NORMALIZE_BETA = 261.0;
+    public static int TOP_LEFT_X = 0, TOP_LEFT_Y = 80;
+    public static int BOTTOM_RIGHT_X = 320, BOTTOM_RIGHT_Y = 180;
+    public static double NORMALIZE_ALPHA = 51.0, NORMALIZE_BETA = 261.0;
     public static double BLUR_RADIUS = 7;
-    public static double HUE_MIN = 100;
-    public static double HUE_MAX = 150;
-    public static double SATURATION_MIN = 80;
-    public static double SATURATION_MAX = 255;
-    public static double VALUE_MIN = 120;
-    public static double VALUE_MAX = 255;
+    public static double HUE_MIN = 100, HUE_MAX = 150;
+    public static double SATURATION_MIN = 80, SATURATION_MAX = 255;
+    public static double VALUE_MIN = 120, VALUE_MAX = 255;
     public static double MIN_CONTOUR_AREA = 700;
     public static String BLUR = "Box Blur";
 

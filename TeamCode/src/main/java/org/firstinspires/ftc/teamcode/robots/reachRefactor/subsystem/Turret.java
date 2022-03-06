@@ -22,24 +22,30 @@ import java.util.Map;
 @Config(value = "FFTurret")
 public class Turret implements Subsystem {
 
-    public static double TURRET_P = 4.0;
+    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0, 0);
     public static final double TICKS_PER_DEGREE = 160.0 / 90.0;
-    public static double TURRET_TOLERANCE = 10;
+    public static double TURRET_TOLERANCE = 2;
 
     private final boolean simulated;
 
     private DcMotorEx motor;
 
-    private double heading, targetHeading;
+    private PIDController turretPID;
+
+    private double heading, targetHeading, power;
 
     public Turret(HardwareMap hardwareMap, boolean simulated) {
         this.simulated = simulated;
         motor = simulated ? new DcMotorExSim(USE_MOTOR_SMOOTHING) : hardwareMap.get(DcMotorEx.class, "turret");
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setTargetPosition(motor.getCurrentPosition());
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPositionPIDFCoefficients(TURRET_P);
-        motor.setPower(1);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        turretPID = new PIDController(TURRET_PID);
+        turretPID.setInputRange(-90, 90);
+        turretPID.setOutputRange(-1.0, 1.0);
+        turretPID.setTolerance(TURRET_TOLERANCE);
+        turretPID.enable();
     }
 
     public void update(Canvas fieldOverlay) {
@@ -50,20 +56,22 @@ public class Turret implements Subsystem {
         targetHeading = Range.clip(targetHeading, -90, 90);
         heading = simulated ? targetHeading : Range.clip(heading, -90, 90);
 
-        motor.setPositionPIDFCoefficients(TURRET_P);
-        motor.setTargetPosition((int)((targetHeading * TICKS_PER_DEGREE)));
+        turretPID.setPID(TURRET_PID);
+        turretPID.setTolerance(TURRET_TOLERANCE);
+        turretPID.setSetpoint(targetHeading);
+        turretPID.setInput(heading);
+        double correction = turretPID.performPID();
+        power = turretPID.onTarget() ? 0 : correction;
+        motor.setPower(power);
     }
 
     public void stop() {
         setTargetHeading(heading);
-    }
-
-    public void setTargetHeading(double targetHeading){
+    }    public void setTargetHeading(double targetHeading){
         targetHeading = wrapAngle(targetHeading);
         if(targetHeading > 180)
             targetHeading -= 360;
         this.targetHeading = targetHeading;
-        isTurretNearTarget();
     }
 
     public double getTargetHeading() {
@@ -75,7 +83,7 @@ public class Turret implements Subsystem {
     }
 
     public boolean isTurretNearTarget(){
-        return between360Clockwise(heading, targetHeading - TURRET_TOLERANCE, heading + TURRET_TOLERANCE);
+        return turretPID.onTarget();
     }
 
     @Override
@@ -86,6 +94,7 @@ public class Turret implements Subsystem {
             telemetryMap.put("target turret heading", targetHeading);
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turret near target", isTurretNearTarget());
+            telemetryMap.put("turret correction", power);
         }
 
         return telemetryMap;

@@ -46,6 +46,7 @@ public class Crane implements Subsystem {
     private double bucketDistance;
     private double shoulderTargetAngle, elbowTargetAngle, wristTargetAngle;
     private boolean dumping;
+    private boolean toHomeEnabled;
 
     private Articulation articulation;
 
@@ -64,6 +65,7 @@ public class Crane implements Subsystem {
 
         this.turret = turret;
         articulation = Articulation.MANUAL;
+        toHomeEnabled = true;
     }
 
     public enum Articulation {
@@ -76,21 +78,26 @@ public class Crane implements Subsystem {
         LOWEST_TIER(75, 130, 20, 1.5f, 130),
         MIDDLE_TIER(60, 130, 40, 1f, 150),
         HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
-        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -80, 1f, 180),
-        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 80, 1f, 170),
+        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
+        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
         TRANSFER(-45, -50, -20, 0, 0.4f, 0),
 
-        AUTO_LOWEST_TIER(45.957, 47.5, 44.253, 1.5f, 110),
-        AUTO_MIDDLE_TIER(29.9, 71.69, 55, 1f, 120),
-        AUTO_HIGH_TIER(22.07, 110, 62.1226, 1f, 180),
+        AUTON_LOWEST_TIER(45.957, 47.5, 44.253, 1.5f, 110),
+        AUTON_MIDDLE_TIER(29.9, 71.69, 55, 1f, 120),
+        AUTON_HIGH_TIER(22.07, 110, 62.1226, 1f, 180),
 
         SHARED_SHIPPING_HUB(75, 130, 20, 1.5f, 130),
 
-        CAP(30, 140, 0, 0, 1, 170),
+        AUTON_FFUTSE_UP(0, 0, 0, 0, 0, 0),
+        AUTON_FFUTSE_HOME(0, 0, -90, 0, 0, 0),
+        STOW_FFUTSE(0, 0, -90, 0, 0, 0),
+        RELEASE_FFUTSE(0, 0, -90, 0, 0, 0),
 
-        // auton articulations
-        AUTON_REACH_RIGHT(17.45, 103.6, 69.13, 90, 1, -69.13),
-        AUTON_REACH_LEFT(40, 130, 70, -90, 1, 170);
+        AUTON_FFUTSE_LEFT(75, 130, 20, -30, 1.5f, 130),
+        AUTON_FFUTSE_MIDDLE(75, 130, 20, 0, 1.5f, 130),
+        AUTON_FFUTSE_RIGHT(75, 130, 20, 30, 1.5f, 130),
+
+        CAP(30, 140, 0, 0, 1, 170);
 
         public double shoulderPos, elbowPos, wristPos;
         public double turretAngle;
@@ -117,22 +124,12 @@ public class Crane implements Subsystem {
             turret = false;
         }
     }
-//
-//    private boolean checkTargetPositions(Articulation articulation) {
-//        return shoulderTargetAngle == articulation.shoulderPos &&
-//                elbowTargetAngle == articulation.elbowPos &&
-//                wristTargetAngle == articulation.wristPos &&
-//                (!articulation.turret || turret.getTargetHeading() == articulation.turretAngle);
-//    }
 
     private float currentToHomeTime = Articulation.HOME.toHomeTime;
     private double currentDumpPos = 0;
-    private boolean goingHome;
-    private final Stage mainStage = new Stage();
-    private final StateMachine main = getStateMachine(mainStage)
+    private final StateMachine main = getStateMachine(new Stage())
             .addSingleState(() -> {
                 dumping = false;
-                goingHome = false;
             })
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {
             })
@@ -145,9 +142,19 @@ public class Crane implements Subsystem {
                     })
 
             .build();
+    private final StateMachine mainNoHome = getStateMachine(new Stage())
+            .addSingleState(() -> {
+                dumping = false;
+            })
+            .addTimedState(() -> articulation.toHomeTime, () -> {
+                setTargetPositions(articulation);
+                currentToHomeTime = articulation.toHomeTime;
+                if (articulation.dumpPos != 0)
+                    currentDumpPos = articulation.dumpPos;
+            }, () -> {})
+            .build();
 
-    private final Stage initStage = new Stage();
-    private final StateMachine init = getStateMachine(initStage)
+    private final StateMachine init = getStateMachine(new Stage())
             .addTimedState(2f, () -> setTargetPositions(Articulation.INIT), () -> {
             })
             .build();
@@ -163,7 +170,7 @@ public class Crane implements Subsystem {
             }
         } else {
             this.articulation = articulation;
-            if (main.execute()) {
+            if (toHomeEnabled ? main.execute() : mainNoHome.execute()) {
                 this.articulation = Articulation.MANUAL;
                 return true;
             }
@@ -317,5 +324,9 @@ public class Crane implements Subsystem {
 
     public double getBucketDistance() {
         return bucketDistance;
+    }
+
+    public void setToHomeEnabled(boolean toHomeEnabled) {
+        this.toHomeEnabled = toHomeEnabled;
     }
 }
