@@ -34,16 +34,20 @@ public class ScrimAuto extends LinearOpMode {
 //        robot.FlipBasketToPosition(1.0);
         robot.spinCarouselAutonomousBlue();
         /** 3, -49; 19.5, -62.3; 36, -31; **/
-        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,-25.5,-5.6,2,-50,20,-62,true,true,0.5);
-        robot.partOfPolySplineToPositionHead(0,-25.6,-5.6, 2,-50,20,-62,36,-28,true,true,0.5);
-        robot.partOfPolySplineToPositionHead(0, 2,-50,20,-62,36,-28,36,0,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,-25.5,-5.6,2,-52,20,-62,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(0,-25.6,-5.6, 2,-52,27,-64,36,-32,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(0, 2,-52,27,-64,36,-32,36,0,true,true,0.5);
         robot.turnInPlace(90,0.5);
-        robot.goToPositionTeleop(1,-25,81,1.0);
+        sleep(1000);
+        if(!robot.goToPositionTeleop(1, 52, -29, 1.0)) {
+            stop();
+        }
         robot.partOfPolySplineToPositionHead(1,40,-27, 81,-27,99,-21,99,-12,true,true,0.5);
-        robot.partOfPolySplineToPositionHead(1, 81,-27,99,-21,99,-12, 99,0,true,true,0.5);
-        //intake
+        robot.partOfPolySplineToPositionHead(1, 81,-27,99,-21,99,-16, 99,0,true,true,0.5);
+        if(!robot.autoIntake(0.2,20)){
+            stop();
+        }
         sleep(2000);
-        //16,-60,-79   48,-24,-176    90,     81,-24,90    92,-24   92,-12
         stop();
     }
 }

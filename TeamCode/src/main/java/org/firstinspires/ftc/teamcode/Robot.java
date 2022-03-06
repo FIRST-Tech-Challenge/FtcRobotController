@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
+import static java.lang.Math.random;
 import static java.lang.Math.tan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -298,7 +299,7 @@ public class Robot {
             startTime[4]=time;
             FlipBasket(up);
             op.sleep(200);
-            SavePosition(up);
+//            SavePosition(up);
         }
 
         if (basketArm) {
@@ -528,13 +529,40 @@ public class Robot {
     public void goToPosition(int direction, double yPosition, double xPosition, double newAngle, double power) {
         drivetrain.goToPosition(direction, yPosition, xPosition, newAngle, power);
     }
-    public void goToPositionTeleop(int direction,double yPosition, double xPosition,double power){
-        drivetrain.goToPositionTeleop(direction,yPosition,xPosition,power);
+    public boolean goToPositionTeleop(int direction,double yPosition, double xPosition,double power){
+       return drivetrain.goToPositionTeleop(direction,yPosition,xPosition,power);
     }
     public void turnInPlace(double target, double power) {
         drivetrain.turnInPlace(target, power);
     }
-
+    public boolean autoIntake(double power, double randRange){
+        double starterTime =op.getRuntime();
+        boolean block = false;
+        while(block==false&&op.getRuntime()<25) {
+            while (op.getRuntime() - starterTime < 2.5) {
+                drivetrain.setMotorPowers(power);
+                if(!intake.isSwitched()){
+                    drivetrain.stopAllMotors();
+                    intake.stopIntake();
+                    intake.flipIntake();
+                    op.sleep(1000);
+                    intake.reverseIntake(.7);
+                    op.sleep(800);
+                    intake.stopIntake();
+                    op.sleep(600);
+                    intake.flipIntakeToPosition(0.5);
+                    block=true;
+                    break;
+                }
+            }
+            drivetrain.setMotorPowers(-power);
+            op.sleep(2500);
+            drivetrain.stopAllMotors();
+            drivetrain.turnInPlace((0.5 - random()) * 2 * randRange, 0.5);
+        }
+        stopAllMotors();
+        return block;
+    }
     /**
      * LEDs
      **/

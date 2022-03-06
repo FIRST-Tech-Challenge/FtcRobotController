@@ -54,7 +54,7 @@ public abstract class BasicChassis {
         motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-
+    abstract public void setMotorPowers(double power);
     abstract public void stopAllMotors();
     abstract public void turnInPlace(double target, double power);
     abstract public void moveForward(double distance, double power) ;
@@ -64,10 +64,9 @@ public abstract class BasicChassis {
     abstract public void moveAngle(double x, double y, double power);
     abstract public void setPosition(float xPosition, float yPosition, float newangle);
     abstract public void goToPosition(int direction, double xPosition, double yPosition, double newangle, double power);
-    abstract public void goToPositionTeleop(int direction, double xPosition, double yPosition, double power);
+    abstract public boolean goToPositionTeleop(int direction, double xPosition, double yPosition, double power);
     abstract public void goToPositionWithoutStop(int direction, double xPosition, double yPosition, double power);
     abstract public void navigate();
-    abstract public boolean goToPositionTeleop(double xPosition, double yPosition, double newangle, double power);
     abstract public void navigateTeleOp();
     abstract public double[] track();
     abstract public void tripleSplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power, double targetAnglu);
