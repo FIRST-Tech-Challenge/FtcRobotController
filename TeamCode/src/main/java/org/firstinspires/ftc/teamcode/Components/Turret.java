@@ -112,13 +112,13 @@ public class Turret {
     public void updateTurretPositions(){
         extendPosition = turret_Extension.getCurrentPosition();
         rotatePosition = turret_Rotation.getCurrentPosition();
-        if (abs(rotatePosition) < 40) {
+        if (abs(rotatePosition) < 20) {
             turretStraight = true;
         }
         else{
             turretStraight=false;
         }
-        if (abs(extendPosition) < 40) {
+        if (abs(extendPosition) < 20) {
             turretDown = true;
         }
         else{
@@ -353,6 +353,7 @@ public class Turret {
         }
         else{
             basketArmServo.setPosition(0.01);
+            basketArmServo.setPosition(0.01);
         }
         servoPos = !servoPos;
 
@@ -365,8 +366,8 @@ public class Turret {
         turret_saved_positions[up][0][2] = turret_saved_positions[up][1][2];
 
         turret_saved_positions[up][1][2] = Math.sin(turret_Angle_Control.getPosition() * DEG_PER_TICK_SERVO * PI/180) * extendPosition/TICKS_PER_INCH;
-        turret_saved_positions[up][1][0] = xpos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin((rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
-        turret_saved_positions[up][1][1] = ypos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.cos((rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
+        turret_saved_positions[up][1][0] = xpos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
+        turret_saved_positions[up][1][1] = ypos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.cos(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
 
     }
 

@@ -111,6 +111,68 @@ public class VSLAMChassis extends BasicChassis {
     public void navigate() {//navigation.navigate(op);
     }
 
+    @Override
+    public boolean goToPositionTeleop(double xPosition, double yPosition, double newangle, double power) {
+        double x =xPosition;
+        double y= yPosition;
+        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
+        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
+        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double[] currentPosition = track();
+        double[] target_position = {0, 0, 0};
+        double anglecorrection = 0;
+        double maxpower = 0.2;
+        double time = op.getRuntime();
+        double difftime = 0;
+        double diffpos = 0;
+        double sped = 0;
+        double stoptime = 0;
+        target_position[0] = x;
+        target_position[1] = y;
+        double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
+        boolean maxspeed = false;
+        if (difference > 60 && power > 0.7) {
+            maxspeed = true;
+        }
+        double slowdistance = 22;
+        if (maxspeed) {
+            slowdistance = 28;
+        }
+        double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
+        double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
+        double startpower = power;
+        double error = 0;
+        double max = 0.15;
+        double startTime = op.getRuntime();
+        while (op.opModeIsActive() && (abs(difference) >= 0.5) ) {
+            currentPosition = track();
+            time = op.getRuntime()-startTime;
+            x=target_position[0]-x;
+            difference = abs(x);
+            if(difference>10) {
+                motorRightBack.setPower(power);
+                motorRightFront.setPower(power);
+                motorLeftBack.setPower(power);
+                motorLeftFront.setPower(power);
+            }
+            else{
+                double controlboy = pow((10-difference)/10,2);
+                motorRightBack.setPower(power*(1-controlboy));
+                motorRightFront.setPower(power*(1-controlboy));
+                motorLeftBack.setPower(power*(1-controlboy));
+                motorLeftFront.setPower(power*(1-controlboy));
+            }
+            x = currentPosition[0];
+        }
+        stopAllMotors();
+        return false;
+    }
+
     public void navigateTeleOp() {//navigation.navigateTeleOp(op);
     }
 
@@ -148,13 +210,13 @@ public class VSLAMChassis extends BasicChassis {
         double newAngle =0;
         T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
         if (up != null) {
-             yVelocity = (float)(up.velocity.vxMetersPerSecond/ 0.0254);
+             yVelocity = -(float)(up.velocity.vxMetersPerSecond/ 0.0254);
             xVelocity = (float)(up.velocity.vyMetersPerSecond/ 0.0254);
             Velocity = sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
             if(Velocity>100){
                 return new double[] {xpos,ypos,angle};
             }
-            ypos = (float)(up.pose.getX()/ 0.0254);
+            ypos = -(float)(up.pose.getX()/ 0.0254);
             xpos = (float)(up.pose.getY()/ 0.0254);
             angle = -(float)(up.pose.getHeading()*180/PI);
             aVelocity = -(float)up.velocity.omegaRadiansPerSecond*180/PI;
@@ -177,67 +239,8 @@ public class VSLAMChassis extends BasicChassis {
         //return navigation.getPosition();
     }
 
-    public boolean goToPositionTeleop(double y, double x, double a, double power) {
-        double f = x;
-        x = y;
-        y = f;
-        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double[] currentPosition = track();
-        double[] target_position = {0, 0, 0};
-        double anglecorrection = 0;
-        double maxpower = 0.2;
-        double time = op.getRuntime();
-        double difftime = 0;
-        double diffpos = 0;
-        double sped = 0;
-        double stoptime = 0;
-        target_position[0] = x;
-        target_position[1] = y;
-        target_position[2] = a;
-        double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        boolean maxspeed = false;
-        if (difference > 60 && power > 0.7) {
-            maxspeed = true;
-        }
-        double slowdistance = 22;
-        if (maxspeed) {
-            slowdistance = 28;
-        }
-        double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
-        double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
-        double startpower = power;
-        double error = 0;
-        double max = 0.15;
-        double startTime = op.getRuntime();
-        while (op.opModeIsActive() && (abs(difference) >= 0.5) ) {
-            currentPosition = track();
-            time = op.getRuntime()-startTime;
-            x=target_position[0]-x;
-            difference = abs(x);
-            if(difference>10) {
-                motorRightBack.setPower(power);
-                motorRightFront.setPower(power);
-                motorLeftBack.setPower(power);
-                motorLeftFront.setPower(power);
-            }
-            else{
-                double controlboy = pow((10-difference)/10,2);
-                motorRightBack.setPower(power*(1-controlboy));
-                motorRightFront.setPower(power*(1-controlboy));
-                motorLeftBack.setPower(power*(1-controlboy));
-                motorLeftFront.setPower(power*(1-controlboy));
-            }
-            x = currentPosition[0];
-        }
-        stopAllMotors();
-        return true;
+    public void goToPositionTeleop(int direction, double xPosition, double yPosition, double power) {
+
     }
     public void moveTester(){
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -2358,7 +2361,7 @@ public class VSLAMChassis extends BasicChassis {
                     if (error2 < -180) {
                         error2 += 360;
                     }
-                    double controlconst=(t*t*t);
+                    double controlconst=(t*t);
                     op.telemetry.addData("erro2r", error2);
                     error=controlconst*error2+((1-controlconst)*error);
                     error %= 360;

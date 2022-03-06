@@ -66,7 +66,7 @@ public class Intake {
 
     public void flipIntake(){
         if (Turret.turretDown && Turret.turretStraight && Turret.basketDown) {
-            if (!intakeUp) {
+            if (intakeServo.getPosition()<0.5) {
                 intakeServo.setPosition(1);
                 intakeServo2.setPosition(0.3);
                 intakeUp = true;

@@ -20,16 +20,25 @@ public class ScrimAuto extends LinearOpMode {
         }
         robot.setPosition(0,0,0);
         waitForStart();
-        //turretExtendToPosition(turretTarget,0.5);
-        robot.goToPosition(0,-16.2,-10.6,-53,0.5);
-        //dorp
-        sleep(2000);
-        robot.goToPosition(1,-6.6,-25.5,-42,0.5);
+//        robot.TurretSlidesToPosition(-11.5,10.0,0,0.5);
+        robot.goToPosition(0,-28,-10,-15,0.5);
+//        robot.FlipBasketArmToPosition(.5);
+//        sleep(1000);
+//        robot.FlipBasketToPosition(0.01);
+//        sleep(1000);
+//        robot.FlipBasketToPosition(0.5);
+//        sleep(500);
+//        robot.TurretSlidesToPosition(0,0,0,0.5);
+        robot.goToPosition(1,-9.4,-27.2,-30,0.4);
+//        robot.FlipBasketArmToPosition(0.00);
+//        robot.FlipBasketToPosition(1.0);
         robot.spinCarouselAutonomousBlue();
-        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,-25.5,-5.6,12,-50,16,-38,true,true,0.5);
-        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,12,-50,35,-27,16,-38,true,true,0.5);
+        /** 3, -49; 19.5, -62.3; 36, -31; **/
+        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,-25.5,-5.6,2,-50,20,-62,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(0,-25.6,-5.6, 2,-50,20,-62,36,-28,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(0, 2,-50,20,-62,36,-28,36,0,true,true,0.5);
         robot.turnInPlace(90,0.5);
-        robot.goToPosition(1,-25,81,90,1.0);
+        robot.goToPositionTeleop(1,-25,81,1.0);
         robot.partOfPolySplineToPositionHead(1,40,-27, 81,-27,99,-21,99,-12,true,true,0.5);
         robot.partOfPolySplineToPositionHead(1, 81,-27,99,-21,99,-12, 99,0,true,true,0.5);
         //intake

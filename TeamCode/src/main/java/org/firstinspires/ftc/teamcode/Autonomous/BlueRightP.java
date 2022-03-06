@@ -13,7 +13,7 @@ public class BlueRightP extends LinearOpMode {
     @Override
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false, false);
-//        int partOfPolySplineToPositionHeadition = robot.BlueElemTest(this,0,0);
+//        int position = robot.BlueElemTest(this,0,0);
         double[] turretTarget = {12+10.6,-24+16.2,0};//{hubx-position*3/2,huby-position*3/2,1+7*position}
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

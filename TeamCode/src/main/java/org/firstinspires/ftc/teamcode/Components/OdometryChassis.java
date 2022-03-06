@@ -571,6 +571,11 @@ public class OdometryChassis extends BasicChassis {
         stopAllMotors();
     }
 
+    @Override
+    public void goToPositionTeleop(int direction, double xPosition, double yPosition, double power) {
+
+    }
+
     public void goToPositionWithoutStop(int direction, double y, double x, double power) { //1 for forward, 0 for backward
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
