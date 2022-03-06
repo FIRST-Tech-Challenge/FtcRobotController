@@ -150,6 +150,11 @@ public class OdometryChassis extends BasicChassis {
         //navigation.setPosition(x,y,newAngle);
     }
 
+    @Override
+    public void setMotorPowers(double power) {
+
+    }
+
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
         motorRightBack.setPower(0);
@@ -569,6 +574,11 @@ public class OdometryChassis extends BasicChassis {
         stopAllMotors();
 
         stopAllMotors();
+    }
+
+    @Override
+    public boolean goToPositionTeleop(int direction, double xPosition, double yPosition, double power) {
+return false;
     }
 
     public void goToPositionWithoutStop(int direction, double y, double x, double power) { //1 for forward, 0 for backward

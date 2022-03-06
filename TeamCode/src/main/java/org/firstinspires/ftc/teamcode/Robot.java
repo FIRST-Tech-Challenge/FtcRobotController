@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
+import static java.lang.Math.random;
 import static java.lang.Math.tan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -35,8 +36,9 @@ public class Robot {
     boolean shouldFlipIntake = false;
     boolean isReversing=false;
     boolean isFlipping = false;
+    boolean isExtending = false;
     double flipDelay=.3, reverseDelay=.7;
-    double[] startTime = {-2,0,0,0,0,0};
+    double[] startTime = {-2,0,0,0,0,0,0,-10};
     double magnitude;
     double angleInRadian;
     double angleInDegree;
@@ -186,7 +188,7 @@ public class Robot {
             float turretUpNDown = op.gamepad2.left_stick_y;
             float manualretractTurret = op.gamepad2.left_trigger;
             float extendTurret = op.gamepad2.right_trigger;
-
+            boolean extendAutoTSE = op.gamepad2.dpad_up;
             boolean autoretractTurret = op.gamepad2.y;
             boolean basketArm = op.gamepad2.right_bumper;
             boolean autoAim = op.gamepad2.left_bumper;
@@ -254,8 +256,15 @@ public class Robot {
         else if (!retracting&&!autoAiming){
             turret.stopTurn();
         }
-
-        if (extendTurret != 0 || manualretractTurret != 0) {
+        if(extendAutoTSE){
+            startTime[6]=op.getRuntime();
+            TSE.setTseCrServoPower(1.0);
+            isExtending=true;
+        }
+        if(op.getRuntime()>.147*44+startTime[6]){
+            isExtending=false;
+        }
+        if (extendTurret != 0 || manualretractTurret != 0 || !retracting) {
             TurretManualExtension(extendTurret, manualretractTurret);
         }
         else{
@@ -290,7 +299,7 @@ public class Robot {
             startTime[4]=time;
             FlipBasket(up);
             op.sleep(200);
-            SavePosition(up);
+//            SavePosition(up);
         }
 
         if (basketArm) {
@@ -307,7 +316,7 @@ public class Robot {
         if (extendTSE) {
             TSE.setTseCrServoPower(1);
         }
-        if(!extendTSE&&!manualretractTSE&&!autoretractTSE){
+        if(!extendTSE&&!manualretractTSE&&!autoretractTSE&&!isExtending){
             TSE.setTseCrServoPower(0.0);
         }
 
@@ -520,11 +529,40 @@ public class Robot {
     public void goToPosition(int direction, double yPosition, double xPosition, double newAngle, double power) {
         drivetrain.goToPosition(direction, yPosition, xPosition, newAngle, power);
     }
-
+    public boolean goToPositionTeleop(int direction,double yPosition, double xPosition,double power){
+       return drivetrain.goToPositionTeleop(direction,yPosition,xPosition,power);
+    }
     public void turnInPlace(double target, double power) {
         drivetrain.turnInPlace(target, power);
     }
-
+    public boolean autoIntake(double power, double randRange){
+        double starterTime =op.getRuntime();
+        boolean block = false;
+        while(block==false&&op.getRuntime()<25) {
+            while (op.getRuntime() - starterTime < 2.5) {
+                drivetrain.setMotorPowers(power);
+                if(!intake.isSwitched()){
+                    drivetrain.stopAllMotors();
+                    intake.stopIntake();
+                    intake.flipIntake();
+                    op.sleep(1000);
+                    intake.reverseIntake(.7);
+                    op.sleep(800);
+                    intake.stopIntake();
+                    op.sleep(600);
+                    intake.flipIntakeToPosition(0.5);
+                    block=true;
+                    break;
+                }
+            }
+            drivetrain.setMotorPowers(-power);
+            op.sleep(2500);
+            drivetrain.stopAllMotors();
+            drivetrain.turnInPlace((0.5 - random()) * 2 * randRange, 0.5);
+        }
+        stopAllMotors();
+        return block;
+    }
     /**
      * LEDs
      **/

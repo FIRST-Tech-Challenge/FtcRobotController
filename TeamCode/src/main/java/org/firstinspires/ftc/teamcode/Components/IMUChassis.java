@@ -74,6 +74,11 @@ public class IMUChassis extends BasicChassis {
         // Chassis Motors
     }
 
+    @Override
+    public void setMotorPowers(double power) {
+
+    }
+
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
         motorRightBack.setPower(0);
@@ -468,6 +473,11 @@ public class IMUChassis extends BasicChassis {
     }
 
     @Override
+    public boolean goToPositionTeleop(int direction, double xPosition, double yPosition, double power) {
+return false;
+    }
+
+    @Override
     public void goToPositionWithoutStop(int direction, double xPosition, double yPosition, double power) {
 
     }
@@ -479,7 +489,6 @@ public class IMUChassis extends BasicChassis {
 
     }
 
-    @Override
     public boolean goToPositionTeleop(double xPosition, double yPosition, double newangle, double power) {
         return false;
     }
