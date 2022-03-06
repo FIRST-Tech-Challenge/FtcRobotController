@@ -22,9 +22,9 @@ import java.util.Map;
 @Config(value = "FFTurret")
 public class Turret implements Subsystem {
 
-    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0, 0);
+    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0.0001, 0.09);
     public static final double TICKS_PER_DEGREE = 160.0 / 90.0;
-    public static double TURRET_TOLERANCE = 2;
+    public static double TURRET_TOLERANCE = 1;
 
     private final boolean simulated;
 

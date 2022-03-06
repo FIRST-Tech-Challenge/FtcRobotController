@@ -69,7 +69,6 @@ public class OpenCVPipeline extends OpenCvPipeline
 
     @Override
     public Mat processFrame(Mat input) {
-        if(lastPosition == Position.HOLD) {
             // Step crop (stage 1):
             cropOutput = crop(input, new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y));
 
@@ -169,8 +168,6 @@ public class OpenCVPipeline extends OpenCvPipeline
             }
 
             return input;
-        }
-        return input;
     }
 
     public int[] getPosition() {
