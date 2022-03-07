@@ -274,12 +274,12 @@ public class Robot {
         else if (!retracting&&!autoAiming){
             turret.stopTurn();
         }
-//        if(extendAutoTSE){
-//            startTime[6]=op.getRuntime();
-//            TSE.setTseCrServoPower(1.0);
-//            isExtending=true;
-//            isExtended=true;
-//        }
+        if(extendAutoTSE){
+            startTime[6]=op.getRuntime();
+            TSE.setTseCrServoPower(1.0);
+            isExtending=true;
+            isExtended=true;
+        }
         if(op.getRuntime()>.147*44+startTime[6]){
             isExtending=false;
         }
@@ -371,7 +371,7 @@ public class Robot {
 //            }
 
         /** add stuff u want to do with intake when switch is on HERE **/
-        if (!intake.isSwitched()) {
+        if (!intake.isSwitched()||isFlipping) {
             op.telemetry.addData("el button", "is not clicked");
             if (!intake.isSwitched() && turretStraight && turretDown && basketDown && basketActuationDown || isFlipping) {
                 //
@@ -561,6 +561,7 @@ public class Robot {
         boolean block = false;
         intake.flipIntake();
         intake.startIntake();
+
         while(!block &&op.getRuntime()<25) {
             starterTime =op.getRuntime();
             while (op.getRuntime() - starterTime < 2.5) {
