@@ -34,6 +34,7 @@ public class BlueLeftP extends LinearOpMode {
         robot.partOfPolySplineToPositionHead(1,0,-15,0,-15,1,-2, 25,0,true,true,0.5);
         robot.partOfPolySplineToPositionHead(1,0,-15,1,-2, 25,0,50,0,true,true,0.5);
         robot.turnInPlace(90,0.5);
+        robot.TurretReset(0.5);
         robot.autoIntake(0.3,5);
         while(getRuntime()<24) {
             robot.goToPosition(0, -1, 5, 90, 0.5);

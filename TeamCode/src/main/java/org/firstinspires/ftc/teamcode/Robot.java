@@ -274,12 +274,12 @@ public class Robot {
         else if (!retracting&&!autoAiming){
             turret.stopTurn();
         }
-        if(extendAutoTSE){
-            startTime[6]=op.getRuntime();
-            TSE.setTseCrServoPower(1.0);
-            isExtending=true;
-            isExtended=true;
-        }
+//        if(extendAutoTSE){
+//            startTime[6]=op.getRuntime();
+//            TSE.setTseCrServoPower(1.0);
+//            isExtending=true;
+//            isExtended=true;
+//        }
         if(op.getRuntime()>.147*44+startTime[6]){
             isExtending=false;
         }
@@ -318,7 +318,7 @@ public class Robot {
             startTime[4]=time;
             FlipBasket(up);
             op.sleep(200);
-//            SavePosition(up);
+            SavePosition(1);
         }
 
         if (basketArm) {
@@ -561,7 +561,7 @@ public class Robot {
         boolean block = false;
         intake.flipIntake();
         intake.startIntake();
-        while(block==false&&op.getRuntime()<25) {
+        while(!block &&op.getRuntime()<25) {
             starterTime =op.getRuntime();
             while (op.getRuntime() - starterTime < 2.5) {
                 drivetrain.setMotorPowers(power);

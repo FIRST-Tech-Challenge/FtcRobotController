@@ -33,8 +33,7 @@ public class BlueRightP extends LinearOpMode {
         robot.FlipBasketArmToPosition(0.00);
         robot.FlipBasketToPosition(1.0);
         robot.spinCarouselAutonomousBlue();
-        robot.goToPosition(0,-24,-24,2
-                ,0.4);
+        robot.goToPosition(0,-24,-24,2,0.4);
 //        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,-25.5,-5.6,12,-50,16,-38,true,true,0.5);
 //        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,12,-50,35,-27,16,-38,true,true,0.5);
 //        robot.turnInPlace(90,0.5);
