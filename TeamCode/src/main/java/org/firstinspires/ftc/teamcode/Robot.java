@@ -562,6 +562,7 @@ public class Robot {
         intake.flipIntake();
         intake.startIntake();
         while(block==false&&op.getRuntime()<25) {
+            starterTime =op.getRuntime();
             while (op.getRuntime() - starterTime < 2.5) {
                 drivetrain.setMotorPowers(power);
                 if(!intake.isSwitched()){
