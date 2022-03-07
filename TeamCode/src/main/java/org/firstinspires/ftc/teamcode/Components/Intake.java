@@ -64,7 +64,7 @@ public class Intake {
 //        stopperServo.setPosition(0);
 //    }
 
-    public void flipIntake(){
+    public boolean flipIntake(){
         if (Turret.turretDown && Turret.turretStraight && Turret.basketDown) {
             if (intakeServo.getPosition()<0.5) {
                 intakeServo.setPosition(1);
@@ -75,6 +75,10 @@ public class Intake {
                 intakeServo2.setPosition(1.0);
                 intakeUp = false;
             }
+            return true;
+        }
+        else{
+            return false;
         }
     }
     public void flipIntakeToPosition(double torget){

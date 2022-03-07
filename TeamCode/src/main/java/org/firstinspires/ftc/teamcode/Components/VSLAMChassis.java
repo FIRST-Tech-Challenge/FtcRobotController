@@ -48,6 +48,7 @@ public class VSLAMChassis extends BasicChassis {
     public static float xpos = 0;
     public static float ypos = 0;
     public static float angle=0;
+    public static boolean barrier = false;
     double differtime=0.002;
     final double[] velocity = {0,0,0};
     double power = .30, correction;
@@ -135,19 +136,10 @@ public class VSLAMChassis extends BasicChassis {
             }
             x=target_position[0]-currentPosition[0];
             difference = abs(x);
-            if(difference>10) {
-                motorRightBack.setPower(power);
-                motorRightFront.setPower(power);
-                motorLeftBack.setPower(power);
-                motorLeftFront.setPower(power);
-            }
-            else{
-                double controlboy = pow(1-((10-difference)/10),2);
-                motorRightBack.setPower(power*(1-controlboy));
-                motorRightFront.setPower(power*(1-controlboy));
-                motorLeftBack.setPower(power*(1-controlboy));
-                motorLeftFront.setPower(power*(1-controlboy));
-            }
+            motorRightBack.setPower(power);
+            motorRightFront.setPower(power);
+            motorLeftBack.setPower(power);
+            motorLeftFront.setPower(power);
             x = currentPosition[0];
         }
         stopAllMotors();
@@ -194,9 +186,6 @@ public class VSLAMChassis extends BasicChassis {
              yVelocity = -(float)(up.velocity.vxMetersPerSecond/ 0.0254);
             xVelocity = (float)(up.velocity.vyMetersPerSecond/ 0.0254);
             Velocity = sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
-            if(Velocity>100){
-                return new double[] {xpos,ypos,angle};
-            }
             ypos = -(float)(up.pose.getX()/ 0.0254);
             xpos = (float)(up.pose.getY()/ 0.0254);
             angle = -(float)(up.pose.getHeading()*180/PI);
@@ -470,34 +459,34 @@ public class VSLAMChassis extends BasicChassis {
         double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
         boolean maxspeed = false;
         double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
+        x=target_position[0]-currentPosition[0];
+        y=target_position[1]-currentPosition[1];
+//        turnInPlace(atan2(x,y)*180/PI-(direction-1)*180,0.5);
         double startpower = power;
         double error = 0;
         double max = 0.15;
         double startTime = op.getRuntime();
+        barrier = false;
+        if(direction==0){
+            power*=-1;
+        }
         while (op.opModeIsActive() && (currentPosition[0]<target_position[0]-2) ) {
             currentPosition = track();
             time = op.getRuntime()-startTime;
             if(time>5){
                 stopAllMotors();
+                barrier = false;
                 return false;
             }
             x=target_position[0]-currentPosition[0];
             difference = abs(x);
-            if(difference>10) {
                 motorRightBack.setPower(power);
                 motorRightFront.setPower(power);
                 motorLeftBack.setPower(power);
                 motorLeftFront.setPower(power);
-            }
-            else{
-                double controlboy = pow(1-(10-difference)/10,2);
-                motorRightBack.setPower(power*(1-controlboy));
-                motorRightFront.setPower(power*(1-controlboy));
-                motorLeftBack.setPower(power*(1-controlboy));
-                motorLeftFront.setPower(power*(1-controlboy));
-            }
             x = currentPosition[0];
         }
+        barrier = true;
         stopAllMotors();
         return true;
     }
@@ -2183,7 +2172,7 @@ public class VSLAMChassis extends BasicChassis {
                         if(op.getRuntime()<startTime) {
                             startTime = op.getRuntime();
                         }
-                        if(op.getRuntime()>startTime+1){
+                        if(op.getRuntime()>startTime+1.5){
                             break;
                         }
                         t = 1;
@@ -2857,26 +2846,30 @@ public class VSLAMChassis extends BasicChassis {
 
     public void turnInPlace(double target, double power) {
         double currentPosition[]=track();
-        double time=0;
+        double time=op.getRuntime();
+        double minPower = 0.3;
         while(abs(currentPosition[2]-target)>1.5) {
+            minPower = 0.3;
             currentPosition=track();
-            time+=differtime;
-            if(time>2.5){
+            if(op.getRuntime()-time>2.5){
                 break;
             }
             double error=currentPosition[2]-target;
             while(error>180){
                 error-=360;
             }
-            while(error<180){
+            while(error<-180){
                 error+=360;
             }
             double targetaVelocity = (error)*2;
-            double angleConst=(error*2+(targetaVelocity+aVelocity)/10)/192;
-            if(abs(angleConst)*power<0.18){
-                angleConst/=(abs(angleConst)*power)/0.18;
+            double angleConst=(error*4+(targetaVelocity+aVelocity)*.4)/192;
+            if(aVelocity<1){
+                minPower = 0.4;
             }
-            if(abs(aVelocity)>260){
+            if(abs(angleConst)*power<minPower){
+                angleConst/=(abs(angleConst)*power)/minPower;
+            }
+            if(abs(aVelocity)>300){
                 angleConst=0;
             }
             op.telemetry.addData("angleconst", angleConst);
