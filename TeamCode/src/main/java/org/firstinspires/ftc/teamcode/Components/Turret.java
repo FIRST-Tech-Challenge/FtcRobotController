@@ -70,7 +70,7 @@ public class Turret {
         turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         basketActuationServo.setPosition(1.0-.3);
-        basketArmServo.setPosition(0.0);
+        basketArmServo.setPosition(0.05);
         turret_saved_positions[0][1][0] = 84;//-36
         turret_saved_positions[0][1][1] = -48;//-60
         turret_saved_positions[0][1][2] = 0;
@@ -118,7 +118,7 @@ public class Turret {
         else{
             turretStraight=false;
         }
-        if (abs(extendPosition) < 20) {
+        if (extendPosition < 30) {
             turretDown = true;
         }
         else{
@@ -405,7 +405,7 @@ public class Turret {
         }
 
         if(!turretStraight){
-            turret_Rotation.setPower(-rotatePosition/abs(rotatePosition)*.5);
+            turret_Rotation.setPower(-rotatePosition/abs(rotatePosition)*.5*abs(rotatePosition-20)/60);
         }
         else{
             turret_Rotation.setPower(0);
