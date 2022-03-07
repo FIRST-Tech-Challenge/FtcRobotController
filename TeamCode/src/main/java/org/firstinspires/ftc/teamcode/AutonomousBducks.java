@@ -348,8 +348,8 @@ public class AutonomousBducks extends AutonomousBase {
         } // switch()
         gyroTurn(TURN_SPEED_20, 90.0 );   // Turn toward wall
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, 90.0, DRIVE_TO );
-//      driveToBackDistance( 7.5, 1.0, 0.20, 10000 );
-        double wallDistance = backRangeSensor()/2.54 - 7.5;
+//      driveToBackDistance( 8.5, 1.0, 0.20, 10000 );
+        double wallDistance = backRangeSensor()/2.54 - 8.5;
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance, 90.0, DRIVE_TO );
         gyroTurn(TURN_SPEED_20, 135.0 );   // Turn toward corner
         robot.duckMotor.setPower( -0.48 ); // Enable the carousel motor
@@ -372,11 +372,11 @@ public class AutonomousBducks extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     private void driveToSquare( int level ) {
         gyroTurn(TURN_SPEED_20, 180.0 );   // Turn square to side wall
-        double driveAwayFromWall = 29.0;
+        double driveAwayFromWall = 27.0;
         switch( level ) {
-            case 3 : driveAwayFromWall = 29.0; break; // top
-            case 2 : driveAwayFromWall = 25.0; break; // middle
-            case 1 : driveAwayFromWall = 25.2; break; // bottom
+            case 3 : driveAwayFromWall = 27.0; break; // top
+            case 2 : driveAwayFromWall = 26.0; break; // middle
+            case 1 : driveAwayFromWall = 24.5; break; // bottom
         } // switch()
         double squareDistance = driveAwayFromWall - backRangeSensor()/2.54;
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );

@@ -29,7 +29,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Freight Arm (Collect height)
     boolean gamepad2_square_last,     gamepad2_square_now     = false;  // Intake reverse
     boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Freight Arm (Hub-Top)
-    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Freight Arm (Hub-Bottom) 
+    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Freight Arm (Hub-Bottom)
     boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Freight Arm (Hub-Middle)
     boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Freight Arm (score FRONT)
     boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // (unused)
@@ -96,7 +96,7 @@ public abstract class Teleop extends LinearOpMode {
     // These are set in the alliance-specific teleops
     double      duckVelocityNow;
     double      duckVelocityStep;
-    
+
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
     int       rangeSensorIndex = 1;         // only send a new ping out every other control cycle, and rotate sensors
@@ -461,7 +461,8 @@ public abstract class Teleop extends LinearOpMode {
      
     } // processCollectorArmControl
 
-    ElapsedTime autoCollectDelayTimer = new ElapsedTime();
+    ElapsedTime freightArmDelayTimer = new ElapsedTime();
+    boolean waitForServo = false;
     /*---------------------------------------------------------------------------------*/
     void processFreightArmControls() {
         boolean safeToManuallyLower  = collectorArmRaised && (robot.freightMotorPos > robot.FREIGHT_ARM_POS_TRANSPORT1);
@@ -514,7 +515,15 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button ()
         else if( gamepad2_cross_now && !gamepad2_cross_last)
         {
+            // We lower from front-dump really fast.  Get the servo moving
+            // so the front edge of box isn't pointing down!
+            robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
             needCollectorLowered = true; // at the END! (AFTER freight-arm is in place)
+            if(robot.freightMotorPos < 500) {
+                waitForServo = true;
+                // Hold for 500ms if we are going front dump to collect
+                freightArmDelayTimer.reset();
+            }
             freightArmTarget     = robot.FREIGHT_ARM_POS_COLLECT;
             freightArmServoPos   = robot.BOX_SERVO_COLLECT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
@@ -576,8 +585,18 @@ public abstract class Teleop extends LinearOpMode {
         if( freightArmCycleCount >= FREIGHT_CYCLECOUNT_START ) {
             // Collector arm must be raised before any freight arm motion is commanded
             if( collectorArmRaised ) {
-               robot.freightArmPosInit( freightArmTarget );
-               freightArmCycleCount--;      // exit this state
+                if(waitForServo) {
+                    if(freightArmDelayTimer.milliseconds() >= 300) {
+                        waitForServo = false;
+                    }
+                    else {
+                        // Do nothing (wait for servo to rotate back upward
+                        // before lowering the arm to the field floor.
+                    }
+                } else {
+                    robot.freightArmPosInit( freightArmTarget );
+                    freightArmCycleCount--;      // exit this state
+                }
             }
             else {
                // wait for collector arm!
@@ -601,10 +620,10 @@ public abstract class Teleop extends LinearOpMode {
             }
             else { // arm motor is stopped, but arm may be bouncing
                 freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;
-                autoCollectDelayTimer.reset();
+                freightArmDelayTimer.reset();
             }
         } else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SETTLE) {
-            if( autoCollectDelayTimer.milliseconds() > 500 ) {
+            if( freightArmDelayTimer.milliseconds() > 500 ) {
                 freightArmCycleCount--;
                 // If we stopped in COLLECT position then sweeper will be
                 // running so use that to restart our freight detection flags

@@ -233,21 +233,12 @@ public class AutonomousRwarehouse extends AutonomousBase {
         }
 
         // Score the freight if we have collected one, and we have enough time.
-//      if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
+//      if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= HUB_SCORE_TIME_THRESHOLD)) {
 //         telemetry.addData("Skill", "scoreFreightAllianceHub");
 //         telemetry.update();
 //         freightCollected = !scoreFreightAllianceHub(hubLevel);
-//         freightCollectAngle = -35.0;
 //      }
 
-        // Collect second freight if we're not still holding the first one
-//      while( opModeIsActive() && !freightCollected) {
-//          // Drive into freight pile to collect
-//          telemetry.addData("Skill", "collectFreight " + freightCollectAngle);
-//          telemetry.update();
-//          freightCollected = collectFreight(hubLevel, freightCollectAngle, 250 );
-//          freightCollectAngle += 5.0;  // try again at a slightly different angle
-//      }
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
@@ -407,7 +398,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         switch( level ) {
             case 3 : warehouseDistance = 38.0;  break; // Top
             case 2 : warehouseDistance = 41.0;  break; // Middle
-            case 1 : warehouseDistance = 47.0;  break; // Bottom
+            case 1 : warehouseDistance = 49.0;  break; // Bottom
         } // switch()
 
         gyroDrive(DRIVE_SPEED_40, DRIVE_Y, warehouseDistance, 999.9, DRIVE_THRU );
@@ -485,53 +476,54 @@ public class AutonomousRwarehouse extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     boolean scoreFreightAllianceHub(int level) {
         boolean scored = false;
-        final double RAMMING_SPEED = DRIVE_SPEED_30;
+        final double RAMMING_SPEED = -DRIVE_SPEED_30;
 
-        // Not sure what value this should be. This is the minimum distance we want.
-        final double MIN_WALL_DISTANCE = 10.0;  // 16", but we're at an angle and there's some error
+        gyroTurn(TURN_SPEED_20, -90.0 ); // Turn toward alliance hub barrier
 
-        gyroTurn(TURN_SPEED_20, 175.0 ); // Turn toward shared hub (angled away from triangle)
-
-        double wallDistance1 = rightRangeSensor()/2.54;
+        // This is the minimum distance we want.
+        final double MIN_WALL_DISTANCE = 10.0;  // 16", but there's some error
+        final double MAX_WALL_DISTANCE = 30.0;  // ??", but there's some error
+        double wallDistance1 = leftRangeSensor()/2.54;
         telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
         telemetry.update();
 
-        if(wallDistance1 < MIN_WALL_DISTANCE) {
+        if( (wallDistance1 < MIN_WALL_DISTANCE) || (wallDistance1 > MAX_WALL_DISTANCE) ) {
             // This is the optimal distance we want. If we are moving, lets make it count.
             double distanceToGo = (MIN_WALL_DISTANCE + 2.0) - wallDistance1;
             distanceToGo = Math.max( distanceToGo, 10.0 ); // don't go more than 10"
-            // Need to verify which way to strafe.
+            // Strafe sideways to the correct side-to-side distance.
             gyroDrive(DRIVE_SPEED_40, DRIVE_X, -distanceToGo, 999.9, DRIVE_THRU);
             robot.stopMotion();
         }
 
-        // Make sure there isn't something wrong where the robot can't move properly.
+        // Let's verify where we ended up
         double wallDistance2 = rightRangeSensor()/2.54;
         telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
         telemetry.addData("wallDistance2", "%.1f  in", wallDistance2 );
         telemetry.update();
 
+        // Make sure there isn't something wrong where the robot can't move properly.
         if(wallDistance2 > MIN_WALL_DISTANCE) {
             // Update our tilt angle information
             robot.driveTrainMotors(RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED);
             robot.headingIMU();
-            while (opModeIsActive() && (robot.tiltAngle >= HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_AUTO)) {
+            while (opModeIsActive() && (robot.tiltAngle <= -HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_AUTO)) {
                 robot.headingIMU();
             }
             // stop and wait for it to settle
             robot.stopMotion();
             sleep(250);
 
-            // We should be nestled, strafe over and dump freight
+            // We should be nestled, strafe over to the barrier triangle (a known left/right distance)
             if (opModeIsActive()) {
-                timeDriveStrafe(-DRIVE_SPEED_30, 1000);
+                timeDriveStrafe(DRIVE_SPEED_30, 1000);
 
-                robot.boxServo.setPosition(robot.BOX_SERVO_DUMP_FRONT);
-                sleep(500);
+                // Add turn/dump/turn here...
+                sleep(2000);
                 scored = true;
 
                 // Backup into warehouse
-                gyroDrive(DRIVE_SPEED_40, DRIVE_Y, -23.0, 999.9, DRIVE_THRU);
+                gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 23.0, 999.9, DRIVE_THRU);
                 robot.stopMotion();
             }
         } // walldistance2

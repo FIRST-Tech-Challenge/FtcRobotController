@@ -233,7 +233,7 @@ public class AutonomousBwarehouse extends AutonomousBase {
         }
 
         // Score the freight if we have collected one, and we have enough time.
-//      if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= SHARED_HUB_SCORE_TIME_THRESHOLD)) {
+//      if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= HUB_SCORE_TIME_THRESHOLD)) {
 //         telemetry.addData("Skill", "scoreFreightAllianceHub");
 //         telemetry.update();
 //         freightCollected = !scoreFreightAllianceHub(hubLevel);
