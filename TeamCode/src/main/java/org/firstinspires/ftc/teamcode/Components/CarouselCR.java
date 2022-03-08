@@ -59,12 +59,7 @@ public class CarouselCR
 
         }
 
-        public  void spinCarouselAutonomousBlue (){
-            crServo.setPower(0.5);
-            op.sleep(2500);
-            crServo.setPower(0);
-        }
-    public  void spinCarouselAutonomousRed (){
+    public  void spinCarouselAutonomousBlue (){
         speed =CAROUSEL_STOP - CAROUSEL_SPEED ;
         op.telemetry.addData("Running in Autonomous for the Red Field with speed",
                 "%5.2f", speed);
@@ -82,6 +77,13 @@ public class CarouselCR
         crServo.setPower(-speed-.2);
 
     }
+
+        public  void spinCarouselAutonomousRed (){
+            crServo.setPower(0.5);
+            op.sleep(2500);
+            crServo.setPower(0);
+        }
+
 
 }
 

@@ -29,7 +29,7 @@ public class Turret {
     private final double TICKS_PER_INCH = 100.0;
     private final double MAX_EXTENSION_TICKS = 3200;
     private final double MIN_EXTENSION_TICKS = 15;
-    private final double MAX_ROTATION_TICKS = 467.5;
+    private final double MAX_ROTATION_TICKS = 500;
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
@@ -71,6 +71,7 @@ public class Turret {
         turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         basketActuationServo.setPosition(1.0-.3);
         basketArmServo.setPosition(0.05);
         turret_saved_positions[0][1][0] = 84;//-36
@@ -387,8 +388,8 @@ public class Turret {
         double x = cos((-angle * Math.PI / 180));
         double y = sin((-angle * Math.PI / 180));
         double[] diff = {Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180),Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180)};
-        turret_saved_positions[up][1][0] = xpos - (y*diff[1]-x*diff[0]);
-        turret_saved_positions[up][1][1] = ypos - (-x*diff[1]-y*diff[0]);
+        turret_saved_positions[up][1][0] = xpos + (y*diff[1]+x*diff[0]);
+        turret_saved_positions[up][1][1] = ypos + (x*diff[1]-y*diff[0]);
         op.telemetry.addData("x", turret_saved_positions[up][1][0]);
         op.telemetry.addData("y", turret_saved_positions[up][1][1]);
         op.telemetry.update();
