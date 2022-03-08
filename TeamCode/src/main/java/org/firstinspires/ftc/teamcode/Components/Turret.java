@@ -428,7 +428,7 @@ public class Turret {
             turret_Extension.setPower(0);
         }
 
-        if(!turretStraight){
+        if(!turretStraight&&turretDown){
             turret_Rotation.setPower(-rotatePosition/abs(rotatePosition)*.5*abs(rotatePosition-20)/60);
         }
         else{
