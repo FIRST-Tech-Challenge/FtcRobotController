@@ -5,7 +5,9 @@ import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
 import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,7 +33,7 @@ public class Turret {
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
-    public static double [][][]turret_saved_positions={{{0,0,0},{0,0,0}},{{0,0,0},{0,0,0}}};
+    public static double [][][]turret_saved_positions={{{84,-48,0},{84,-48,0}},{{12,-24,15},{12,-24,15}}};
 
     boolean hardware_present = true;
     boolean servoPos = false;
@@ -367,15 +369,29 @@ public class Turret {
     }
 
     public void SavePosition (int up) {
+        double armLength = 17;
+        if(up==1){
+            armLength=12.5;
+        }
+        double outLength = extendPosition/TICKS_PER_INCH+armLength;
 
         turret_saved_positions[up][0][0] = turret_saved_positions[up][1][0];
         turret_saved_positions[up][0][1] = turret_saved_positions[up][1][1];
         turret_saved_positions[up][0][2] = turret_saved_positions[up][1][2];
 
-        turret_saved_positions[up][1][2] = Math.sin(turret_Angle_Control.getPosition() * DEG_PER_TICK_SERVO * PI/180) * extendPosition/TICKS_PER_INCH;
-        turret_saved_positions[up][1][0] = xpos - (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
-        turret_saved_positions[up][1][1] = ypos + (Math.sqrt(Math.pow(extendPosition/TICKS_PER_INCH, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.cos(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180);
-
+        turret_saved_positions[up][1][2] = Math.sin(turret_Angle_Control.getPosition() * DEG_PER_TICK_SERVO * PI/180) * outLength;
+        stopExtend();
+        stopTurn();
+        op.telemetry.addData("height", turret_saved_positions[up][1][2]);
+        op.telemetry.addData("xdiff", (Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180));
+        double x = cos((-angle * Math.PI / 180));
+        double y = sin((-angle * Math.PI / 180));
+        double[] diff = {Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180),Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180)};
+        turret_saved_positions[up][1][0] = xpos - (y*diff[1]-x*diff[0]);
+        turret_saved_positions[up][1][1] = ypos - (-x*diff[1]-y*diff[0]);
+        op.telemetry.addData("x", turret_saved_positions[up][1][0]);
+        op.telemetry.addData("y", turret_saved_positions[up][1][1]);
+        op.telemetry.update();
     }
 
     public void UnsavePosition () {

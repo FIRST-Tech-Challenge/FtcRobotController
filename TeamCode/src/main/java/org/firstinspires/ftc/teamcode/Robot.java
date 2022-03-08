@@ -267,7 +267,7 @@ public class Robot {
 
         if (turretTurn != 0) {
             if(isExtended){
-                turretTurn*=6/10;
+                turretTurn*=9/10;
             }
             TurretManualRotation(turretTurn);
         }
@@ -312,13 +312,13 @@ public class Robot {
                 autoAim(turret_saved_positions[1], red);
             }
         }
-        op.telemetry.addData("autoaiming", autoAiming);
+        op.telemetry.addData("autoaiming", autoAiming);op.telemetry.addData("up",up);
 
         if (basket&&time>startTime[4]+.3) {
             startTime[4]=time;
             FlipBasket(up);
             op.sleep(200);
-            SavePosition(1);
+            SavePosition(up);
         }
 
         if (basketArm) {
@@ -437,7 +437,7 @@ public class Robot {
     }
 
     public void autoAim (double [][]turret_saved_positions, int red) {
-        double angle = Math.atan2((turret_saved_positions[1][0]*red - xpos),(turret_saved_positions[1][1]-ypos))*180/PI-180- VSLAMChassis.angle;
+        double angle = 180-Math.atan2(-(turret_saved_positions[1][0]*red - xpos),(turret_saved_positions[1][1]-ypos))*180/PI- VSLAMChassis.angle;
         angle%=360;
         if(angle>180){
             angle-=360;
@@ -447,6 +447,9 @@ public class Robot {
         }
         turret.TurretRotate(angle);
         op.telemetry.addData("angle",angle);
+        op.telemetry.addData("trutx", turret_saved_positions[1][0]);
+        op.telemetry.addData("truty", turret_saved_positions[1][1]);
+
         double turret_angle_control_pos = Math.atan2(turret_saved_positions[1][2], Math.sqrt(Math.pow(xpos - turret_saved_positions[1][0]*red, 2) + Math.pow(ypos - turret_saved_positions[1][1], 2)));
         turret.AutoAngleControlRotating(turret_angle_control_pos);
     }
