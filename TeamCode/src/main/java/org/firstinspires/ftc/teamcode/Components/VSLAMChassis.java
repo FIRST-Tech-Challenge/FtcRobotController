@@ -76,6 +76,8 @@ public class VSLAMChassis extends BasicChassis {
         if(!slamra.isStarted()) {
             slamra.start();
         }
+        op.sleep(1000);
+        track();
 
     }
 
@@ -271,14 +273,30 @@ public class VSLAMChassis extends BasicChassis {
         double startpower = power;
         double error = 0;
         double max = 0.15;
-        double p=.2; double pd = .2; double D=.02; double I =0;
+        double p=.2; double pd = .2; double D=.01; double I =0;
         double xAngle, yAngle;
+        double t=0, t2;
         double yInt=0,xInt=0,pxError=0,pyError=0,pposxError=0,pposyError=0;
+        double sstarttertime = 0;
         while ((abs(difference) >= 2.5)) {
+
             currentPosition = track();
             op.telemetry.addData("distance", difference);
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
+            double twoDistance = sqrt(pow(y - currentPosition[1], 2) + pow(x - currentPosition[0], 2));
+            double oneDistance = sqrt(pow(startposition[1] - currentPosition[1], 2) + pow(startposition[0] - currentPosition[0], 2));
+            if ((oneDistance + Velocity/2+1/4) / (oneDistance + twoDistance) > t) {
+                t = (oneDistance + Velocity/2+1/4) / (oneDistance + twoDistance);
+            }
+            if(t>1){
+                if(sstarttertime<op.getRuntime()){
+                    sstarttertime=op.getRuntime();
+                }
+                if(op.getRuntime()>sstarttertime+0.5){
+                    break;
+                }
+            }
             if(x==0){
                 x=0.0001;
             }

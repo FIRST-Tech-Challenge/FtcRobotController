@@ -222,12 +222,12 @@ public class Robot {
                 changed = true;
             }
             if(red==1) {
-                alliance_shipping_hub = false;
-                shared_shipping_hub = true;
-            }
-            else{
                 alliance_shipping_hub = true;
                 shared_shipping_hub = false;
+            }
+            else{
+                alliance_shipping_hub = false;
+                shared_shipping_hub = true;
             }
             up = 1;
         }
@@ -283,7 +283,7 @@ public class Robot {
         if(op.getRuntime()>.147*44+startTime[6]){
             isExtending=false;
         }
-        if (extendTurret != 0 || manualretractTurret != 0 || !retracting) {
+        if (extendTurret != 0 || manualretractTurret != 0 || retracting) {
             TurretManualExtension(extendTurret, manualretractTurret);
         }
         else{
@@ -476,8 +476,10 @@ public class Robot {
         turret.TurretAngleControlRotating(target_point);
     }
     public void TurretSlidesToPosition (double x, double y, double z, double power) {
-        turret.FlipBasketToPosition(.5);
         turret.TurretSlidesToPosition(x, y, z, power);
+    }
+    public void setMotorPowers(double power){
+        drivetrain.setMotorPowers(power);
     }
     public void TurretManualRotation(double rotation) {
         turret.TurretManualRotation(rotation);
@@ -526,7 +528,9 @@ public class Robot {
         double turret_target_rotation_angle = atan((robot_position[0] - shipping_hub_x)/(robot_position[1] - shipping_hub_y)) + turret_relative_rotation_angle;
         turret.TurretRotate(turret_target_rotation_angle);
     }
-
+    public void AngleControlRotation(double degrees){
+        turret.AngleControlRotating(degrees);
+    }
     public void spinCarousel() {rotation.spinCarousel();}
     public void spinCarouselAutonomousBlue() { rotation.spinCarouselAutonomousBlue();}
     public void spinCarouselAutonomousRed() { rotation.spinCarouselAutonomousRed();}

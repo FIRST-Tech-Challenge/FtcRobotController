@@ -29,7 +29,7 @@ public class TwoGPTeleop extends LinearOpMode {
         }
 
         while (!isStopRequested()) {
-            robot.teleopLoop(1);
+            robot.teleopLoop(-1);
         }
 
         idle();

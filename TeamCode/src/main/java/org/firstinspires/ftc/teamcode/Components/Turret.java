@@ -72,8 +72,8 @@ public class Turret {
         turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        basketActuationServo.setPosition(1.0-.3);
-        basketArmServo.setPosition(0.05);
+        basketActuationServo.setPosition(0.2);
+        basketArmServo.setPosition(0.0);
         turret_saved_positions[0][1][0] = 84;//-36
         turret_saved_positions[0][1][1] = -48;//-60
         turret_saved_positions[0][1][2] = 0;
@@ -86,7 +86,7 @@ public class Turret {
         turret_saved_positions[1][0][0] = 12;//-36
         turret_saved_positions[1][0][1] = -24;//-60
         turret_saved_positions[1][0][2] = 15;
-        op.sleep(500);
+        op.sleep(1000);
     }
 
     public int turret_extension_pos;
@@ -252,7 +252,21 @@ public class Turret {
 //        op.telemetry.addData("difference", target_point - turret_Angle_Control.getPosition());
 
     }
+    public void AngleControlRotating (double torget_point) {
+        torget_point*=DEG_PER_TICK_SERVO;
+        if (torget_point > 1) {
+            torget_point = 1;
+        }
+        else if (torget_point < 0) {
+            torget_point = 0;
+        }
+            turret_Angle_Control.setPosition(torget_point);
+            turret_Angle_Control2.setPosition(1-torget_point);
+//        turret_Angle_Control.setPosition(-.5);
+//        turret_Angle_Control2.setPosition(.5);
+//        op.telemetry.addData("difference", target_point - turret_Angle_Control.getPosition());
 
+    }
     public void TurretSlidesToPosition (double x, double y, double z, double power) {
         updateTurretPositions();
         double willygay = x;
@@ -282,7 +296,7 @@ public class Turret {
         turret_Extension.setPower(power);
 
 
-        double elevation_angle = Math.atan(z/extension_length_flat) * (180 / PI);
+        double elevation_angle = Math.atan2(z,extension_length_flat) * (180 / PI);
 
         op.telemetry.addData("angle control angle", elevation_angle / ANGLE_CONTROL_SERVO_TOTAL_DEGREES);
         if(elevation_angle<0){
@@ -291,7 +305,7 @@ public class Turret {
         if(elevation_angle>35){
             elevation_angle=35;
         }
-        AutoAngleControlRotating(elevation_angle);
+        AngleControlRotating(elevation_angle);
     }
 
     public void TurretManualRotation (double rotation) { //stick_x
@@ -333,14 +347,13 @@ public class Turret {
             basketActuationServo.setPosition(0.97-.2);
         }
         else{
-            basketActuationServo.setPosition(0.3-.2);
+            basketActuationServo.setPosition(0.0);
         }
     }
     public void FlipBasketToPosition (double torget) {
         updateTurretPositions();
-
         if(basketActuationDown||!areTeleop) {
-            basketActuationServo.setPosition(torget-.2);
+            basketActuationServo.setPosition(torget);
         }
     }
     public void FlipBasketArmToPosition (double torget) {
@@ -349,10 +362,10 @@ public class Turret {
     }
     public void FlipBasketArmLow () {
         if(basketDown) {
-            basketArmServo.setPosition(0.9);
+            basketArmServo.setPosition(0.75);
         }
         else{
-            basketArmServo.setPosition(0.01);
+            basketArmServo.setPosition(0.00);
         }
         servoPos = !servoPos;
     }
@@ -422,7 +435,7 @@ public class Turret {
     public boolean TurretReset (double power) {
         boolean isReset = true;
         if(!turretDown){
-            turret_Extension.setPower(-.5);
+            turret_Extension.setPower(-.7);
         }
         else{
             turret_Extension.setPower(0);
