@@ -20,6 +20,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+    ndkVersion '21.3.6528147'
 }
 
 apply from: '../build.dependencies.gradle'
