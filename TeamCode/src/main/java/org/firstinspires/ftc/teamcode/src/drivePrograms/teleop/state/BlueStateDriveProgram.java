@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDista
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "Blue State Drive Program")
+@TeleOp(name = "\uD83D\uDFE6 Blue State Drive Program \uD83D\uDFE6")
 public class BlueStateDriveProgram extends TeleOpTemplate {
     final BlinkinPattern defaultColor = BlinkinPattern.BLUE;
     private final ElapsedTime yTimer = new ElapsedTime();
