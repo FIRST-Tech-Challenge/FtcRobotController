@@ -58,7 +58,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
     OpenCvCamera webcam;
     public int hubLevel = 0;   // dynamic (gets updated every cycle during INIT)
-    public static double collisionDelay = 4.0;  // wait 4 seconds before moving (to avoid collision)
+    public static double collisionDelay = 0.0;  // wait 4 seconds before moving (to avoid collision)
     private ElapsedTime autoTimer = new ElapsedTime();
 
     boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
@@ -233,11 +233,11 @@ public class AutonomousRwarehouse extends AutonomousBase {
         }
 
         // Score the freight if we have collected one, and we have enough time.
-//      if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= HUB_SCORE_TIME_THRESHOLD)) {
-//         telemetry.addData("Skill", "scoreFreightAllianceHub");
-//         telemetry.update();
-//         freightCollected = !scoreFreightAllianceHub(hubLevel);
-//      }
+        if(opModeIsActive() && freightCollected && (autoTimer.milliseconds() <= HUB_SCORE_TIME_THRESHOLD)) {
+           telemetry.addData("Skill", "scoreFreightAllianceHub");
+           telemetry.update();
+           scoreFreightAllianceHub( hubLevel );
+        }
 
     } // mainAutonomous
 
@@ -267,7 +267,6 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
         // Command capping arm into the grabbing position
         robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
-        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_SPIN );
 
         // Process the first 750 msec of motion
         ElapsedTime fieldWallTimer = new ElapsedTime();
@@ -281,9 +280,8 @@ public class AutonomousRwarehouse extends AutonomousBase {
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
 
-        // Finish both arm movements before continuing
-        while( opModeIsActive() &&
-                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
+        // Finish capping arm movement before continuing
+        while( opModeIsActive() && (robot.cappingMotorAuto == true) ) {
             performEveryLoop();
         }
 
@@ -476,57 +474,83 @@ public class AutonomousRwarehouse extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     boolean scoreFreightAllianceHub(int level) {
         boolean scored = false;
-        final double RAMMING_SPEED = -DRIVE_SPEED_30;
+        double RAMMING_SPEED = DRIVE_SPEED_30;
 
         gyroTurn(TURN_SPEED_20, -90.0 ); // Turn toward alliance hub barrier
 
         // This is the minimum distance we want.
-        final double MIN_WALL_DISTANCE = 10.0;  // 16", but there's some error
-        final double MAX_WALL_DISTANCE = 30.0;  // ??", but there's some error
-        double wallDistance1 = leftRangeSensor()/2.54;
+        final double MIN_WALL_DISTANCE = 15.5;  // 16", but there could be some angular error
+        final double MAX_WALL_DISTANCE = 25.0;  // 25"
+        double wallDistance1 = rightRangeSensor()/2.54;
         telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
         telemetry.update();
 
         if( (wallDistance1 < MIN_WALL_DISTANCE) || (wallDistance1 > MAX_WALL_DISTANCE) ) {
             // This is the optimal distance we want. If we are moving, lets make it count.
             double distanceToGo = (MIN_WALL_DISTANCE + 2.0) - wallDistance1;
-            distanceToGo = Math.max( distanceToGo, 10.0 ); // don't go more than 10"
+            distanceToGo = Math.min( distanceToGo, 10.0  ); // don't go more than +10"
+            distanceToGo = Math.max( -10.0, distanceToGo ); // don't go more than -10"
             // Strafe sideways to the correct side-to-side distance.
             gyroDrive(DRIVE_SPEED_40, DRIVE_X, -distanceToGo, 999.9, DRIVE_THRU);
             robot.stopMotion();
         }
 
         // Let's verify where we ended up
+        sleep( 1000 );
         double wallDistance2 = rightRangeSensor()/2.54;
-        telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
-        telemetry.addData("wallDistance2", "%.1f  in", wallDistance2 );
-        telemetry.update();
 
         // Make sure there isn't something wrong where the robot can't move properly.
-        if(wallDistance2 > MIN_WALL_DISTANCE) {
+        if( (wallDistance2 >= MIN_WALL_DISTANCE) && (wallDistance2 <= MAX_WALL_DISTANCE) ) {
             // Update our tilt angle information
-            robot.driveTrainMotors(RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED, RAMMING_SPEED);
             robot.headingIMU();
-            while (opModeIsActive() && (robot.tiltAngle <= -HardwareBothHubs.BARRIER_NESTED_ROBOT_TILT_AUTO)) {
+            robot.driveTrainMotors( -RAMMING_SPEED, -RAMMING_SPEED, -RAMMING_SPEED, -RAMMING_SPEED );
+            while ( opModeIsActive() && (robot.tiltAngle <= 6.8)) {
                 robot.headingIMU();
             }
             // stop and wait for it to settle
             robot.stopMotion();
-            sleep(250);
+            sleep(500);
 
             // We should be nestled, strafe over to the barrier triangle (a known left/right distance)
             if (opModeIsActive()) {
-                timeDriveStrafe(DRIVE_SPEED_30, 1000);
-
-                // Add turn/dump/turn here...
-                sleep(2000);
-                scored = true;
-
-                // Backup into warehouse
-                gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 23.0, 999.9, DRIVE_THRU);
+                timeDriveStrafe( DRIVE_SPEED_30, 750);
+                gyroDrive( DRIVE_SPEED_40, DRIVE_Y, -5.0, -90.0, DRIVE_THRU );
                 robot.stopMotion();
-            }
-        } // walldistance2
+            } // over barrier
+
+            // We're over the barrier, rotate the arm forward while we turn, and then dump
+            if (opModeIsActive()) {
+                robot.freightArmPosInit( robot.FREIGHT_ARM_POS_HUB_TOP_AUTO );
+                gyroTurn(TURN_SPEED_20, -60.0 );
+                while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+                    performEveryLoop();
+                }
+                robot.boxServo.setPosition( robot.BOX_SERVO_DUMP_TOP );
+                sleep( 300 );
+                scored = true;
+            } // fright dumped
+
+            // Store the arm and turn back toward the warehouse
+            if (opModeIsActive()) {
+                robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
+                robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
+                gyroTurn(TURN_SPEED_20, -85.0 );
+                gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 40.0, -85.0, DRIVE_THRU);
+                robot.stopMotion();
+                // let arms finish storing
+                while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
+                    performEveryLoop();
+                }
+            }  // back in warehouse
+
+        } // walldistance
+        else {
+            telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
+            telemetry.addData("wallDistance2", "%.1f  in", wallDistance2 );
+            telemetry.update();
+            // don't exit immediately; allow us to see the two readings!
+            sleep( 5000 );
+        }
 
         return scored;
     } // scoreFreightAllianceHub
