@@ -222,12 +222,12 @@ public class Robot {
                 changed = true;
             }
             if(red==1) {
-                alliance_shipping_hub = false;
-                shared_shipping_hub = true;
-            }
-            else{
                 alliance_shipping_hub = true;
                 shared_shipping_hub = false;
+            }
+            else{
+                alliance_shipping_hub = false;
+                shared_shipping_hub = true;
             }
             up = 1;
         }
@@ -267,7 +267,7 @@ public class Robot {
 
         if (turretTurn != 0) {
             if(isExtended){
-                turretTurn*=6/10;
+                turretTurn*=9/10;
             }
             TurretManualRotation(turretTurn);
         }
@@ -283,7 +283,7 @@ public class Robot {
         if(op.getRuntime()>.147*44+startTime[6]){
             isExtending=false;
         }
-        if (extendTurret != 0 || manualretractTurret != 0 || !retracting) {
+        if (extendTurret != 0 || manualretractTurret != 0 || retracting) {
             TurretManualExtension(extendTurret, manualretractTurret);
         }
         else{
@@ -312,13 +312,13 @@ public class Robot {
                 autoAim(turret_saved_positions[1], red);
             }
         }
-        op.telemetry.addData("autoaiming", autoAiming);
+        op.telemetry.addData("autoaiming", autoAiming);op.telemetry.addData("up",up);
 
         if (basket&&time>startTime[4]+.3) {
             startTime[4]=time;
             FlipBasket(up);
             op.sleep(200);
-//            SavePosition(up);
+            SavePosition(up);
         }
 
         if (basketArm) {
@@ -371,7 +371,7 @@ public class Robot {
 //            }
 
         /** add stuff u want to do with intake when switch is on HERE **/
-        if (!intake.isSwitched()) {
+        if (!intake.isSwitched()||isFlipping) {
             op.telemetry.addData("el button", "is not clicked");
             if (!intake.isSwitched() && turretStraight && turretDown && basketDown && basketActuationDown || isFlipping) {
                 //
@@ -437,7 +437,7 @@ public class Robot {
     }
 
     public void autoAim (double [][]turret_saved_positions, int red) {
-        double angle = Math.atan2((turret_saved_positions[1][0]*red - xpos),(turret_saved_positions[1][1]-ypos))*180/PI-180- VSLAMChassis.angle;
+        double angle = 180-Math.atan2(-(turret_saved_positions[1][0]*red - xpos),(turret_saved_positions[1][1]-ypos))*180/PI- VSLAMChassis.angle;
         angle%=360;
         if(angle>180){
             angle-=360;
@@ -447,6 +447,9 @@ public class Robot {
         }
         turret.TurretRotate(angle);
         op.telemetry.addData("angle",angle);
+        op.telemetry.addData("trutx", turret_saved_positions[1][0]);
+        op.telemetry.addData("truty", turret_saved_positions[1][1]);
+
         double turret_angle_control_pos = Math.atan2(turret_saved_positions[1][2], Math.sqrt(Math.pow(xpos - turret_saved_positions[1][0]*red, 2) + Math.pow(ypos - turret_saved_positions[1][1], 2)));
         turret.AutoAngleControlRotating(turret_angle_control_pos);
     }
@@ -473,8 +476,10 @@ public class Robot {
         turret.TurretAngleControlRotating(target_point);
     }
     public void TurretSlidesToPosition (double x, double y, double z, double power) {
-        turret.FlipBasketToPosition(.5);
         turret.TurretSlidesToPosition(x, y, z, power);
+    }
+    public void setMotorPowers(double power){
+        drivetrain.setMotorPowers(power);
     }
     public void TurretManualRotation(double rotation) {
         turret.TurretManualRotation(rotation);
@@ -523,7 +528,9 @@ public class Robot {
         double turret_target_rotation_angle = atan((robot_position[0] - shipping_hub_x)/(robot_position[1] - shipping_hub_y)) + turret_relative_rotation_angle;
         turret.TurretRotate(turret_target_rotation_angle);
     }
-
+    public void AngleControlRotation(double degrees){
+        turret.AngleControlRotating(degrees);
+    }
     public void spinCarousel() {rotation.spinCarousel();}
     public void spinCarouselAutonomousBlue() { rotation.spinCarouselAutonomousBlue();}
     public void spinCarouselAutonomousRed() { rotation.spinCarouselAutonomousRed();}
@@ -561,7 +568,8 @@ public class Robot {
         boolean block = false;
         intake.flipIntake();
         intake.startIntake();
-        while(block==false&&op.getRuntime()<25) {
+
+        while(!block &&op.getRuntime()<25) {
             starterTime =op.getRuntime();
             while (op.getRuntime() - starterTime < 2.5) {
                 drivetrain.setMotorPowers(power);

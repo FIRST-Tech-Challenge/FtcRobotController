@@ -68,13 +68,13 @@ public class OpenCVMasterclass {
         op.waitForStart();
         backWebcam.stopStreaming();
         if(opencv.getLocation()== BlueTeamElem.Location.NOT_FOUND) {
-            return 0;
+            return 2;
         }
         else if(opencv.getLocation()== BlueTeamElem.Location.MID) {
             return 1;
         }
         else if(opencv.getLocation()== BlueTeamElem.Location.RIGHT) {
-            return 2;
+            return 0;
         }
         else{
             return 0;

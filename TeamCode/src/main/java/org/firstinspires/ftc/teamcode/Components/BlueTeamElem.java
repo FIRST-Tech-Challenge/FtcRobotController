@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
+import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
+import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -85,6 +89,9 @@ public class BlueTeamElem extends OpenCvPipeline {
             location = Location.MID;
             telemetry.addData("Object Location","Mid");
         }
+        telemetry.addData("x",xpos);
+        telemetry.addData("y",ypos);
+        telemetry.addData("a",angle);
         telemetry.update();
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 
