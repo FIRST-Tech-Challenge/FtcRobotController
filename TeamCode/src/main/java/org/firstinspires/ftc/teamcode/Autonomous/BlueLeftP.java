@@ -19,17 +19,17 @@ public class BlueLeftP extends LinearOpMode {
         }
         robot.setPosition(0,0,0);
         waitForStart();
-//        robot.TurretSlidesToPosition(-11.5,10.0,0,0.5);
+        robot.TurretSlidesToPosition(11.5,5.0,0,0.5);
         robot.goToPosition(0,-15,0,15,0.5);
         //Turret extension combined with rotation in such a way to achieve the current location to drop the loaded freight into the correct position by barcode
         sleep(2000);
-//        robot.FlipBasketArmToPosition(.5);
-//        sleep(1000);
-//        robot.FlipBasketToPosition(0.01);
-//        sleep(1000);
-//        robot.FlipBasketToPosition(0.5);
-//        sleep(500);
-//        robot.TurretSlidesToPosition(0,0,0,0.5);
+        robot.FlipBasketArmToPosition(.5);
+        sleep(1000);
+        robot.FlipBasketToPosition(0.01);
+        sleep(1000);
+        robot.FlipBasketToPosition(0.5);
+        sleep(500);
+        robot.TurretSlidesToPosition(0,0,0,0.5);
         robot.goToPosition(1,-5,0,80,0.5);
         robot.partOfPolySplineToPositionHead(1,0,-15,0,-15,1,-2, 25,0,true,true,0.5);
         robot.partOfPolySplineToPositionHead(1,0,-15,1,-2, 25,0,50,0,true,true,0.5);
