@@ -277,7 +277,7 @@ public class VSLAMChassis extends BasicChassis {
         double xAngle, yAngle;
         double t=0, t2;
         double yInt=0,xInt=0,pxError=0,pyError=0,pposxError=0,pposyError=0;
-        double sstarttertime = 0;
+        double sstarttertime = 100;
         while ((abs(difference) >= 2.5)) {
 
             currentPosition = track();
@@ -290,7 +290,7 @@ public class VSLAMChassis extends BasicChassis {
                 t = (oneDistance + Velocity/2+1/4) / (oneDistance + twoDistance);
             }
             if(t>1){
-                if(sstarttertime<op.getRuntime()){
+                if(sstarttertime>op.getRuntime()){
                     sstarttertime=op.getRuntime();
                 }
                 if(op.getRuntime()>sstarttertime+0.5){

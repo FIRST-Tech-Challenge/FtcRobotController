@@ -28,8 +28,8 @@ public class TurTest extends LinearOpMode {
         double servoRange = 0.4;
         boolean servoPos=false, servoPos2 = false;
 //        basketArmServo.setPosition(0.0);
-        basketActuationServo.setPosition(1.0);
-        basketArmServo.setPosition(0.0);
+        basketActuationServo.setPosition(0.0);
+        basketArmServo.setPosition(0.4);
         //Aiden - during competition day robot disconnected so we are trying this code
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("status", "waiting for start command...");
@@ -57,7 +57,7 @@ public class TurTest extends LinearOpMode {
             }
             if(gamepad1.b){
                 if(servoPos) {
-                    basketArmServo.setPosition(0.02);
+                    basketArmServo.setPosition(0.00);
                 }
                 else{
                     basketArmServo.setPosition(0.45);
