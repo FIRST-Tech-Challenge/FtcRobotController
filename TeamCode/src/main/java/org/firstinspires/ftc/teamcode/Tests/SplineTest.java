@@ -18,21 +18,21 @@ public class SplineTest extends LinearOpMode {
         }
         robot.setPosition(0,0,0);
         waitForStart();//robot.goToPosition(72,0,0,0.3);
-        for(int i =0 ; i<4;i++){
-            robot.turnInPlace(76,0.5);
-            robot.turnInPlace(-45,0.5);
-        }
+//        for(int i =0 ; i<4;i++){
+//            robot.turnInPlace(76,0.5);
+//            robot.turnInPlace(-45,0.5);
+//        }
 //        amogus
-//        robot.partOfPolySplineToPositionHead(1,0,0,0,0,0,30,13.0/1.5,50,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(1,0,0,0,30,13.0/1.5,50,30.0/1.5,60,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(1,0,30,13.0/1.5,50,30.0/1.5,60,47.0/1.5,50,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(1,13.0/1.5,50,30.0/1.5,60,47.0/1.5,50,60.0/1.5,30,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(1,30.0/1.5,60,47.0/1.5,50,60.0/1.5,30, 60.0/1.5, 0,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(1,47.0/1.5,50,60.0/1.5,30, 60.0/1.5, 0,60.0/1.5,-20,true,true,0.5);
-//        sleep(3000);
-//        robot.partOfPolySplineToPositionHead(0,40,0,40,0,20,20,40,0,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(0,40,0,20,20,0,0,0,-10,true,true,0.5);
-//        sleep(3000);
+        robot.partOfPolySplineToPositionHead(1,0,0,0,0,0,30,13.0/1.5,50,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(1,0,0,0,30,13.0/1.5,50,30.0/1.5,60,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(1,0,30,13.0/1.5,50,30.0/1.5,60,47.0/1.5,50,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(1,13.0/1.5,50,30.0/1.5,60,47.0/1.5,50,60.0/1.5,30,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(1,30.0/1.5,60,47.0/1.5,50,60.0/1.5,30, 60.0/1.5, 0,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(1,47.0/1.5,50,60.0/1.5,30, 60.0/1.5, 0,60.0/1.5,-20,true,true,0.5);
+        sleep(3000);
+        robot.partOfPolySplineToPositionHead(0,40,0,40,0,20,20,40,0,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(0,40,0,20,20,0,0,0,-10,true,true,0.5);
+        sleep(3000);
         //barrier pass run demo, start facing forward with left side of chassis alligned with the tile edge one tile from the barrier.
 //        robot.goToPosition(1,12,-5,0,0.3);
 //        robot.goToPosition(1,2,-5,-97,0.2);

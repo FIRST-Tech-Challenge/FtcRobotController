@@ -233,9 +233,22 @@ public class Robot {
         }
 
         if (changed) {
+            if(!basketDown){
+                if(alliance_shipping_hub){
+                    turret.FlipBasketArmHigh();
+                }
+                if(shared_shipping_hub){
+                    turret.FlipBasketArmLow();
+                }
+            }
             //according to blue side left auto next to barrier
         }
-
+        if(isExtended){
+            retracting=false;
+            autoretractTurret=false;
+            autoAim=false;
+            autoAiming=false;
+        }
         turret_angle_control_distance -= turretUpNDown/300;
         if(turret_angle_control_distance>1){
             turret_angle_control_distance=1;
@@ -266,9 +279,6 @@ public class Robot {
         }
 
         if (turretTurn != 0) {
-            if(isExtended){
-                turretTurn*=9/10;
-            }
             TurretManualRotation(turretTurn);
         }
         else if (!retracting&&!autoAiming){
@@ -276,7 +286,7 @@ public class Robot {
         }
         if(extendAutoTSE){
             startTime[6]=op.getRuntime();
-            TSE.setTseCrServoPower(1.0);
+//            TSE.setTseCrServoPower(1.0);
             isExtending=true;
             isExtended=true;
         }
@@ -320,7 +330,6 @@ public class Robot {
             op.sleep(200);
             SavePosition(up);
         }
-
         if (basketArm) {
             if (time > startTime[5] + 0.3) {
                 startTime[5] = time;
@@ -387,6 +396,8 @@ public class Robot {
                     intake.stopIntake();
                     op.telemetry.addData("flip ", "da boi");
                     intake.flipIntake();
+                    turret.FlipBasketToPosition(.7);
+                    turret.FlipBasketArmToPosition(0.03);
                     shouldFlipIntake = true;
                     startTime[0] = op.getRuntime();
                     startTime[1] = startTime[0] + 1;
@@ -404,11 +415,11 @@ public class Robot {
                     op.telemetry.addData("flippedy do ", "back down");
                     intake.stopIntake();
                     if (shared_shipping_hub) {
-                        turret.FlipBasketToPosition(.6);
+                        turret.FlipBasketToPosition(.5);
                         op.sleep(100);
                         FlipBasketArmLow();
                     } else {
-                        turret.FlipBasketToPosition(.6);
+                        turret.FlipBasketToPosition(.5);
                         op.sleep(100);
                         FlipBasketArmHigh();
                     }
