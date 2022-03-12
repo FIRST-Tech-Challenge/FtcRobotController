@@ -74,10 +74,10 @@ public class Turret {
         turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         basketActuationServo.setPosition(0.4);
         basketArmServo.setPosition(0.0);
-        turret_saved_positions[0][1][0] = 84;//-36
+        turret_saved_positions[0][1][0] = 80;//-36
         turret_saved_positions[0][1][1] = -48;//-60
         turret_saved_positions[0][1][2] = 0;
-        turret_saved_positions[0][0][0] = 84;//-36
+        turret_saved_positions[0][0][0] = 80;//-36
         turret_saved_positions[0][0][1] = -48;//-60
         turret_saved_positions[0][0][2] = 0;
         turret_saved_positions[1][1][0] = 12;//-36
@@ -383,9 +383,9 @@ public class Turret {
     }
 
     public void SavePosition (int up) {
-        double armLength = 17;
+        double armLength = 10.5;
         if(up==1){
-            armLength=12.5;
+            armLength=10.5;
         }
         double outLength = extendPosition/TICKS_PER_INCH+armLength;
 
@@ -401,8 +401,8 @@ public class Turret {
         double x = cos((-angle * Math.PI / 180));
         double y = sin((-angle * Math.PI / 180));
         double[] diff = {Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180),Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180)};
-        turret_saved_positions[up][1][0] = xpos + (y*diff[1]+x*diff[0]);
-        turret_saved_positions[up][1][1] = ypos + (x*diff[1]-y*diff[0]);
+        turret_saved_positions[up][1][0] = xpos + (-y*diff[1]+x*diff[0]);
+        turret_saved_positions[up][1][1] = ypos + (-x*diff[1]-y*diff[0]);
         op.telemetry.addData("x", turret_saved_positions[up][1][0]);
         op.telemetry.addData("y", turret_saved_positions[up][1][1]);
         op.telemetry.update();
@@ -448,12 +448,12 @@ public class Turret {
             turret_Rotation.setPower(0);
         }
         if(!arming) {
-            basketActuationServo.setPosition(0.4);
+            basketActuationServo.setPosition(0.55);
             basketArmServo.setPosition(0.00);
             arming=true;
         }
         if(basketDown&&turretDown&&turretStraight&&!basketing){
-            basketActuationServo.setPosition(.5);
+            basketActuationServo.setPosition(.55);
             basketing = true;
         }
         if(!angleControlling) {

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Components.Turret.basketDown;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turretDown;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turretStraight;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
+import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.Velocity;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
@@ -396,7 +397,7 @@ public class Robot {
                     intake.stopIntake();
                     op.telemetry.addData("flip ", "da boi");
                     intake.flipIntake();
-                    turret.FlipBasketToPosition(.7);
+                    turret.FlipBasketToPosition(.6);
                     turret.FlipBasketArmToPosition(0.03);
                     shouldFlipIntake = true;
                     startTime[0] = op.getRuntime();
@@ -406,7 +407,7 @@ public class Robot {
                     isReversing = true;
                     op.telemetry.addData("reversing ", "intake");
                     startTime[1] = op.getRuntime();
-                    intake.reverseIntake(.6);
+                    intake.reverseIntake(.5-Velocity/100);
                 }
                 if (op.getRuntime() > startTime[1] + .6) {
                     intake.stopIntake();
@@ -417,7 +418,7 @@ public class Robot {
                     if (shared_shipping_hub) {
                         turret.FlipBasketToPosition(.5);
                         op.sleep(100);
-                        FlipBasketArmLow();
+                        turret.FlipBasketArmToPosition(0.9);
                     } else {
                         turret.FlipBasketToPosition(.5);
                         op.sleep(100);

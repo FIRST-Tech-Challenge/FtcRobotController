@@ -35,7 +35,7 @@ public class VSLAMChassis extends BasicChassis {
     double xVelocity = 0;
     double yVelocity = 0;
     double aVelocity = 0;
-    double Velocity=0;
+    public static double Velocity=0;
     double maxVelocity=0;
     boolean bad = false;
     public static final boolean vuforia_on = false;
@@ -289,7 +289,7 @@ public class VSLAMChassis extends BasicChassis {
             if ((oneDistance + Velocity/2+1/4) / (oneDistance + twoDistance) > t) {
                 t = (oneDistance + Velocity/2+1/4) / (oneDistance + twoDistance);
             }
-            if(t>1){
+            if(t>0.9){
                 if(sstarttertime>op.getRuntime()){
                     sstarttertime=op.getRuntime();
                 }
@@ -521,7 +521,7 @@ public class VSLAMChassis extends BasicChassis {
         track();
         double[] currentPosition = track();
         double[] startposition = currentPosition;
-        double[] target_position = {x, y, atan2(x,y)*180/PI-(direction-1)*180};
+        double[] target_position = {0, 0, 0};
         double anglecorrection = 0;
         double xCorrection=0;
         double yCorrection=0;
@@ -533,7 +533,7 @@ public class VSLAMChassis extends BasicChassis {
         double stoptime = 0;
         double truestartpower=power;
         double powerconst=1;
-        double targetspeed = 30*power;
+        double targetspeed = 40*power;
         target_position[0] = x;
         target_position[1] = y;
         target_position[2] = currentPosition[2];
@@ -545,27 +545,36 @@ public class VSLAMChassis extends BasicChassis {
         double startpower = power;
         double error = 0;
         double max = 0.15;
-        double p=0.0001,I=0.0000,D=0.0000;
+        double p=.2; double pd = .2; double D=.01; double I =0;
         double xAngle, yAngle;
+        double t=0, t2;
         double yInt=0,xInt=0,pxError=0,pyError=0,pposxError=0,pposyError=0;
-        double runtime=0;
+        double sstarttertime = 100;
         while ((abs(difference) >= 2.5)) {
+
             currentPosition = track();
-            runtime+=differtime;
-            if(runtime>4){
-                op.telemetry.addData("DINK DONK TIME GONE", difference);
-                break;
-            }
             op.telemetry.addData("distance", difference);
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
+            double twoDistance = sqrt(pow(y - currentPosition[1], 2) + pow(x - currentPosition[0], 2));
+            double oneDistance = sqrt(pow(startposition[1] - currentPosition[1], 2) + pow(startposition[0] - currentPosition[0], 2));
+            if ((oneDistance + Velocity/2+1/4) / (oneDistance + twoDistance) > t) {
+                t = (oneDistance + Velocity/2+1/4) / (oneDistance + twoDistance);
+            }
+            if(t>0.9){
+                if(sstarttertime>op.getRuntime()){
+                    sstarttertime=op.getRuntime();
+                }
+                if(op.getRuntime()>sstarttertime+0.5){
+                    break;
+                }
+            }
             if(x==0){
                 x=0.0001;
             }
             if(y==0){
                 y=0.0001;
             }
-            double totaldis=x+y;
             double mpconst=y/x;
             difference-=5;
             double[] tarcurpos={startposition[0]+(target_position[0]-startposition[0])*((startDifference-difference)/startDifference),startposition[1]+(target_position[1]-startposition[1])*(1-(difference)/startDifference)};
@@ -587,7 +596,6 @@ public class VSLAMChassis extends BasicChassis {
             if (error <= -180) {
                 target_position[2] -= 360;
             }
-            op.telemetry.addData("angletarget", target_position[2]);
 
             if(mpconst==1){
                 mpconst=1.001;
@@ -598,12 +606,12 @@ public class VSLAMChassis extends BasicChassis {
             if(Double.isNaN(target_position[2])){
                 target_position[2] = 9999999;
             }
-            double xError=xVelocity/abs(xVelocity)*(sqrt(pow(startpower*30,2)/abs((1-pow(mpconst,2))))-abs(xVelocity));
-            double posxError=tarcurpos[0]-currentPosition[0];
+            double xError=xVelocity/abs(xVelocity)*(sqrt(pow(startpower*40,2)/abs((1-pow(mpconst,2))))-abs(xVelocity));
+            double posxError=0;//tarcurpos[0]-currentPosition[0];
             double yError=(xError+xVelocity)*mpconst-yVelocity;
-            double posyError=(tarcurpos[1]-currentPosition[1]);
-            if(difference<10*startpower){
-                powerconst=max(min(startpower, startpower*difference/10),0.3);
+            double posyError=0;//(tarcurpos[1]-currentPosition[1]);
+            if(difference<5*startpower){
+                powerconst=max(min(startpower, startpower*difference/5),0.3/startpower);
                 xError = xVelocity/abs(xVelocity)*((pow(difference,2)/4) / abs(1 - pow(mpconst, 2)) - abs(xVelocity));
                 yError = (xError + xVelocity) * mpconst - yVelocity;
                 targetspeed = pow(difference,2)/4;
@@ -650,9 +658,12 @@ public class VSLAMChassis extends BasicChassis {
             //double angleCorrectPower[] = {sin(angleInCorrection + PI / 4), sin(angleInCorrection - PI / 4), sqrt(pow(yCorrection, 2) + pow(xCorrection, 2))};
             //error+=(angleInCorrection-currentPosition[2])/2;
             double targetaVelocity = (error)*2;
-            anglecorrection = ((targetaVelocity + aVelocity)*0.1 + error * 2) / 192;
-            if(abs(anglecorrection)>0.6){
-                anglecorrection=abs(anglecorrection)/anglecorrection*0.6;
+            anglecorrection=(error*2+(targetaVelocity+aVelocity)/10)/192;
+            if(abs(anglecorrection)*power>0.6){
+                anglecorrection/=(abs(anglecorrection)*power)/0.6;
+            }
+            if(aVelocity>280){
+                anglecorrection=0;
             }
             double powernum = pow(E, -10*(tan((abs(error / 12) % 15) * PI / 180)));
             if(powernum==-1){
@@ -661,21 +672,14 @@ public class VSLAMChassis extends BasicChassis {
             if(Double.isNaN(powernum)){
                 powernum=99999;
             }
-            if(error<180&&error>-180) {
-                power = startpower * (3-(1 / (1 + powernum)) * 4);
-            }
-            else{
-                power = startpower * (-2.75+(1 / (1 + powernum)) * 4);
-            }
+            power=startpower;
             if(direction==0){
                 power*=-1;
             }
-            op.telemetry.addData("difference", difference);
 //                op.telemetry.addData("t", t);
 //                op.telemetry.addData("i", i);
-//            op.telemetry.addData("ytarget", target_position[1]);
-//            op.telemetry.addData("xtarget", target_position[0]);
-//            op.telemetry.addData("differtime", differtime);
+            op.telemetry.addData("ytarget", target_position[1]);
+            op.telemetry.addData("xtarget", target_position[0]);
 //            op.telemetry.addData("yCorrection", yCorrection);
 //            op.telemetry.addData("xCorrection",xCorrection);
 //            op.telemetry.addData("p",p);
@@ -684,10 +688,10 @@ public class VSLAMChassis extends BasicChassis {
 //            op.telemetry.addData("xInt",xInt);
 //            op.telemetry.addData("yInt",yInt);
 //            op.telemetry.addData("yError", yError);
-//            op.telemetry.addData("xError",xError);
+//            op.telemey.adtrdData("xError",xError);
 //            op.telemetry.addData("yError", posyError);
 //            op.telemetry.addData("xError",posxError);
-//            op.telemetry.addData("angletarget", target_position[2]);
+            op.telemetry.addData("angletarget", target_position[2]);
 //                op.telemetry.addData("angletarget2", angleInRadians);
 //                op.telemetry.addData("mp", mpconst);
             op.telemetry.addData("error", error);
@@ -700,15 +704,8 @@ public class VSLAMChassis extends BasicChassis {
 //                op.telemetry.addData("yvelocity", (xError+xVelocity)*mpconst);
 //                op.telemetry.addData("xCorrection", xCorrection);
 //                op.telemetry.addData("yCorrection",yCorrection);
-//            op.telemetry.addData("power",power);
-            op.telemetry.addData("targetX",target_position[0]);
-            op.telemetry.addData("targetY",target_position[1]);
-            op.telemetry.addData("targetA",target_position[2]);
-            op.telemetry.addData("x",x);
-            op.telemetry.addData("y",y);
-            op.telemetry.addData("currentX",currentPosition[0]);
-            op.telemetry.addData("currentY",currentPosition[1]);
-            op.telemetry.addData("currentA",currentPosition[2]);
+            op.telemetry.addData("power",power);
+            op.telemetry.addData("powerconst",powerconst);
             motorRightBack.setPower((powerconst*power   + anglecorrection));
             motorRightFront.setPower((powerconst*power   + anglecorrection));
             motorLeftBack.setPower((powerconst*power   - anglecorrection));
@@ -726,7 +723,6 @@ public class VSLAMChassis extends BasicChassis {
             x = currentPosition[0];
             y = currentPosition[1];
         }
-
         stopAllMotors();
     }
 
@@ -2240,7 +2236,7 @@ public class VSLAMChassis extends BasicChassis {
 //                        target_position[2]=0.001;
 //                        mpconst = 1000;
 //                    }
-                        target_position[2]=atan2(xDerivative,yDerivative)*180/PI-(direction-1)*180;
+                        target_position[2]=atan2(xDerivative,yDerivative)*180/PI+(direction-1)*180;
                         anglediff=target_position[2]-lastAngle;
                         targetaVelocity=-anglediff/differtime;
                         lastAngle = target_position[2];
@@ -2375,7 +2371,7 @@ public class VSLAMChassis extends BasicChassis {
                     }
 //                    posxError=0;
 //                    posyError=0;
-                    target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI)-(direction-1)*180;
+                    target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI)+(direction-1)*180;
 
 //                    op.telemetry.addData("xDerivative",targetXVelocity);
 //                    op.telemetry.addData("xcorrection",xCorrection);
@@ -2393,7 +2389,7 @@ public class VSLAMChassis extends BasicChassis {
                         error += 360;
                     }
                     op.telemetry.addData("error", error);
-                    double error2=currentPosition[2]-atan2(x,y)*180/PI-(direction-1)*180;
+                    double error2=currentPosition[2]-atan2(x,y)*180/PI+(direction-1)*180;
                     error2*=1;
                     error2 %= 360;
                     if (error2 > 180) {
@@ -2889,6 +2885,9 @@ public class VSLAMChassis extends BasicChassis {
             }
             if(abs(aVelocity)>300){
                 angleConst=0;
+            }
+            if(abs(aVelocity)<10){
+                angleConst*=2;
             }
             op.telemetry.addData("angleconst", angleConst);
             op.telemetry.addData("targetaVelocity",targetaVelocity);

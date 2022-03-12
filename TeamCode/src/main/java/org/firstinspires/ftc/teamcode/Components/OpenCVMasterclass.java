@@ -83,7 +83,8 @@ public class OpenCVMasterclass {
     public int RedTeamElem(){
         RedTeamElem opencv = new RedTeamElem(op);
         backWebcam.setPipeline(opencv);
-        backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
+        backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
             @Override
             public void onOpened()
             {

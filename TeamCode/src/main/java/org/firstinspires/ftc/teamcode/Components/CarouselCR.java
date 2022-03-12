@@ -46,41 +46,25 @@ public class CarouselCR
     }
 
         public void spinCarouselRed() {
-            speed =CAROUSEL_STOP -CAROUSEL_SPEED ;
-            op.telemetry.addData("Running Carousel in Red field with speed", "%5.2f", speed);
-            if(op.gamepad2.x){
-                crServo.setPower(0.7);
-
-            }
-            else{
-                crServo.setPower(0);
-            }
+            speed =CAROUSEL_STOP - CAROUSEL_SPEED ;
+            crServo.setPower(0.3);
+            op.sleep(5000);
+            crServo.setPower(0);
 
 
         }
 
     public  void spinCarouselAutonomousBlue (){
         speed =CAROUSEL_STOP - CAROUSEL_SPEED ;
-        op.telemetry.addData("Running in Autonomous for the Red Field with speed",
-                "%5.2f", speed);
-        op.telemetry.update();
-        crServo.setPower(speed);
-
-        op.idle();
-        op.sleep(CYCLE_MS_AUTONOMOUS);
-
-        // if you're here, this code means that the button has been released and
-        // the following code will stop the carousel
-        speed =CAROUSEL_STOP ;
-        op.telemetry.addData("Carousel Stopped", "%5.2f", speed);
-        op.telemetry.update();
+        crServo.setPower(-0.3);
+        op.sleep(4000);
         crServo.setPower(0);
 
     }
 
         public  void spinCarouselAutonomousRed (){
-            crServo.setPower(0.5);
-            op.sleep(2500);
+            crServo.setPower(0.3);
+            op.sleep(4000);
             crServo.setPower(0);
         }
 
