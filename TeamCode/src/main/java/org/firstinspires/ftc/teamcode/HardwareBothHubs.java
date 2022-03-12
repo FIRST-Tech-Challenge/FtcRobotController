@@ -131,7 +131,7 @@ public class HardwareBothHubs
     protected ElapsedTime   capMotorTimer     = new ElapsedTime();
 
     public int          CAPPING_ARM_POS_START   = 0;
-    public int          CAPPING_ARM_POS_STORE   = 291;
+    public int          CAPPING_ARM_POS_STORE   = 649;   // updated arm encoder
     public int          CAPPING_ARM_POS_LIBERTY = 786;   // status of liberty pose (end duck-autonomous here)
     public int          CAPPING_ARM_POS_VERTICAL= 1006;  // straight up (minimal motor power required)
     public int          CAPPING_ARM_POS_CAP     = 1335;
@@ -144,7 +144,7 @@ public class HardwareBothHubs
     public double  WRIST_SERVO_INIT    = 0.950;
     public double  WRIST_SERVO_GRAB    = 0.455;
     public double  WRIST_SERVO_LIBERTY = 0.500;  // status of liberty pose (end duck-autonomous here)
-    public double  WRIST_SERVO_STORE   = 0.259;
+    public double  WRIST_SERVO_STORE   = 0.427;  // updated wrist encoder
     public double  WRIST_SERVO_CAP     = 0.133;
 
     public Servo   clawServo = null;
