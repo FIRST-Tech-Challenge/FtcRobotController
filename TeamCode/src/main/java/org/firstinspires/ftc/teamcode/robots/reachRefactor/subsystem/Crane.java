@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -13,9 +14,13 @@ import java.util.Map;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
+
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.ELBOW_TO_WRIST;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.HIGH_TIER_SHIPPING_HUB_HEIGHT;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.SHOULDER_AXLE_TO_GROUND_HEIGHT;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.SHOULDER_TO_ELBOW;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
@@ -37,6 +42,8 @@ public class Crane implements Subsystem {
     public static double SHOULDER_DEG_MAX = 90;
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
+
+    public static double P = 0.995;
 
     public Turret turret;
 
@@ -77,10 +84,17 @@ public class Crane implements Subsystem {
 
         LOWEST_TIER(75, 130, 20, 1.5f, 130),
         MIDDLE_TIER(60, 130, 40, 1f, 150),
-        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
-        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
-        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
+//        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
+//        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
+//        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
+        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3, 0.5f),
+        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3, -90, 0.5f),
+        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3, 90, 0.5f),
         TRANSFER(-45, -50, -20, 0, 0.4f, 0),
+
+        TEST_1(25, 90, 25, 1.5f, 0),
+        TEST_2(45, 90, 90, 1f, 0),
+        TEST_3(65, 90, 135, 1f, 0),
 
         AUTON_LOWEST_TIER(45.957, 47.5, 44.253, 1.5f, 110),
         AUTON_MIDDLE_TIER(29.9, 71.69, 55, 1f, 120),
@@ -103,7 +117,9 @@ public class Crane implements Subsystem {
         public double turretAngle;
         public float toHomeTime;
         public double dumpPos;
-        public boolean turret;
+        public boolean turret, ik;
+
+        private double dx, dy;
 
         Articulation(double shoulderPos, double elbowPos, double wristPos, double turretAngle, float toHomeTime, double dumpPos) {
             this.shoulderPos = shoulderPos;
@@ -123,6 +139,30 @@ public class Crane implements Subsystem {
             this.dumpPos = dumpPos;
             turret = false;
         }
+
+        Articulation(double dx, double dy, double turretAngle, float toHomeTime) {
+            this.ik = true;
+            this.turretAngle = turretAngle;
+            this.toHomeTime = toHomeTime;
+
+            dy = dy - SHOULDER_AXLE_TO_GROUND_HEIGHT;
+            this.dx = dx;
+            this.dy = dy;
+
+            turret = true;
+        }
+
+        Articulation(double dx, double dy, float toHomeTime) {
+            this.ik = true;
+            this.toHomeTime = toHomeTime;
+
+            dy = dy - SHOULDER_AXLE_TO_GROUND_HEIGHT;
+            this.dx = dx;
+            this.dy = dy;
+
+            turret = false;
+        }
+
     }
 
     private float currentToHomeTime = Articulation.HOME.toHomeTime;
@@ -133,8 +173,7 @@ public class Crane implements Subsystem {
             })
             .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {
             })
-            .addTimedState(() -> articulation.toHomeTime / 4, () -> setIntermediatePositions(articulation), () -> {})
-            .addTimedState(() -> articulation.toHomeTime / 2 , () -> setTargetPositions(articulation),
+            .addTimedState(() -> articulation.toHomeTime , () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
                         if (articulation.dumpPos != 0)
@@ -154,6 +193,69 @@ public class Crane implements Subsystem {
             }, () -> {})
             .build();
 
+    private double x;
+    private long startTime;
+    private final StateMachine mainIk = getStateMachine(new Stage())
+            .addSingleState(() -> {
+                dumping = false;
+                x = 2;
+            })
+            .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {})
+            .addSingleState(() -> {
+                startTime = System.nanoTime();
+            })
+            .addState(() -> {
+                double t = (System.nanoTime() - startTime) * 1e-9;
+                x = map(t, 0, articulation.toHomeTime, 2, articulation.dx);
+
+                double c = -articulation.dx / Math.log(1 - P);
+                double y = articulation.dy * (1 - Math.exp(-x / c));
+
+                double[] angles = craneIK(x, y);
+
+                setTargetPositions(angles[0], angles[1], angles[2]);
+                currentDumpPos = angles[3];
+
+                return t >= articulation.toHomeTime;
+            })
+            .addSingleState(() -> {
+                double[] angles = craneIK(articulation.dx, articulation.dy);
+
+                setTargetPositions(angles[0], angles[1], angles[2]);
+                currentDumpPos = angles[3];
+                currentToHomeTime = articulation.toHomeTime;
+            })
+            .build();
+
+    private final StateMachine mainIkNoHome = getStateMachine(new Stage())
+            .addSingleState(() -> {
+                dumping = false;
+                x = 2;
+                startTime = System.nanoTime();
+            })
+            .addState(() -> {
+                double t = (System.nanoTime() - startTime) * 1e-9;
+                x = map(t, 0, articulation.toHomeTime, 2, articulation.dx);
+
+                double c = -articulation.dx / Math.log(1 - P);
+                double y = articulation.dy * (1 - Math.exp(-x / c));
+
+                double[] angles = craneIK(x, y);
+
+                setTargetPositions(angles[0], angles[1], angles[2]);
+                currentDumpPos = angles[3];
+
+                return t >= articulation.toHomeTime;
+            })
+            .addSingleState(() -> {
+                double[] angles = craneIK(articulation.dx, articulation.dy);
+
+                setTargetPositions(angles[0], angles[1], angles[2]);
+                currentDumpPos = angles[3];
+                currentToHomeTime = articulation.toHomeTime;
+            })
+            .build();
+
     private final StateMachine init = getStateMachine(new Stage())
             .addTimedState(2f, () -> setTargetPositions(Articulation.INIT), () -> {
             })
@@ -170,9 +272,16 @@ public class Crane implements Subsystem {
             }
         } else {
             this.articulation = articulation;
-            if (toHomeEnabled ? main.execute() : mainNoHome.execute()) {
-                this.articulation = Articulation.MANUAL;
-                return true;
+            if(articulation.ik) {
+                if (toHomeEnabled ? mainIk.execute() : mainIkNoHome.execute()) {
+                    this.articulation = Articulation.MANUAL;
+                    return true;
+                }
+            } else {
+                if (toHomeEnabled ? main.execute() : mainNoHome.execute()) {
+                    this.articulation = Articulation.MANUAL;
+                    return true;
+                }
             }
         }
         return false;
@@ -227,6 +336,14 @@ public class Crane implements Subsystem {
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
 
             telemetryMap.put("bucket distance", bucketDistance);
+
+            double shoulderAngle = wrapAngleRad(Math.toRadians(90 - shoulderTargetAngle));
+            double elbowAngle = -wrapAngleRad(Math.toRadians(180 - elbowTargetAngle));
+            double wristAngle = wrapAngleRad(Math.toRadians(180) - wrapAngleRad(-elbowAngle + Math.toRadians(wristTargetAngle)));
+
+            telemetryMap.put("horizontal distance", SHOULDER_TO_ELBOW * Math.cos(shoulderAngle) + ELBOW_TO_WRIST * Math.cos(shoulderAngle + elbowAngle));
+            telemetryMap.put("vertical distance", SHOULDER_TO_ELBOW * Math.sin(shoulderAngle) + ELBOW_TO_WRIST * Math.sin(shoulderAngle + elbowAngle));
+            telemetryMap.put("wrist absolute angle", wristAngle);
         }
 
         telemetryMap.put("Turret:", "");
@@ -241,22 +358,14 @@ public class Crane implements Subsystem {
         dumping = true;
     }
 
-    private void setIntermediatePositions(Articulation articulation) {
-        double shoulderAngle = (articulation.shoulderPos - Articulation.HOME.shoulderPos) / 2.0;
-        double elbowAngle = (articulation.elbowPos - Articulation.HOME.elbowPos) / 2.0;
-
-        setShoulderTargetAngle(shoulderAngle);
-        setElbowTargetAngle(elbowAngle);
-        setWristTargetAngle(articulation.wristPos);
-
-        if (articulation.turret)
-            turret.setTargetHeading(articulation.turretAngle);
+    private void setTargetPositions(double shoulderPos, double elbowPos, double wristPos) {
+        setShoulderTargetAngle(shoulderPos);
+        setElbowTargetAngle(elbowPos);
+        setWristTargetAngle(wristPos);
     }
 
     private void setTargetPositions(Articulation articulation) {
-        setShoulderTargetAngle(articulation.shoulderPos);
-        setElbowTargetAngle(articulation.elbowPos);
-        setWristTargetAngle(articulation.wristPos);
+        setTargetPositions(articulation.shoulderPos, articulation.elbowPos, articulation.wristPos);
 
         if (articulation.turret)
             turret.setTargetHeading(articulation.turretAngle);

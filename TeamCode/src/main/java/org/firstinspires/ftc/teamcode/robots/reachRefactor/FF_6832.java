@@ -222,7 +222,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, false);
+        robot = new Robot(hardwareMap, true);
         alliance = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
@@ -554,11 +554,15 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad1.y || stickyGamepad2.y) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
-            robot.articulate(Robot.Articulation.TRANSFER);
-        if(stickyGamepad1.x || stickyGamepad2.x) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
-            robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
+            robot.crane.articulate(Crane.Articulation.TRANSFER);
         if(stickyGamepad1.b || stickyGamepad2.b) //todo - this should trigger a Swerve_Cycle_Complete articulation in Pose
-            robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
+            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
+        if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
+            robot.crane.articulate(Crane.Articulation.TEST_1);
+        if(stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
+            robot.crane.articulate(Crane.Articulation.TEST_1);
+        if(stickyGamepad1.right_stick_button || stickyGamepad2.right_stick_button)
+            robot.crane.articulate(Crane.Articulation.TEST_1);
     }
 
     private void changeGameState(GameState state) {
@@ -782,6 +786,9 @@ public class FF_6832 extends OpMode {
 
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
+
+        if(!initializing)
+            dashboard.sendImage(robot.getBitmap());
 
         updateTiming();
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 
@@ -12,6 +13,12 @@ import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -20,6 +27,8 @@ import java.util.Map;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
+
+import android.graphics.Bitmap;
 
 /**
  * @author Mahesh Natamai
@@ -40,6 +49,12 @@ public class Robot implements Subsystem {
 
     private Articulation articulation;
     private final Map<Articulation, StateMachine> articulationMap;
+
+    private Bitmap craneBitmap;
+    private Mat craneMat;
+    private FtcDashboard dashboard;
+    public static int CB_WIDTH = 320;
+    public static int CB_HEIGHT = 240;
 
     public Robot(HardwareMap hardwareMap, boolean simulated) {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -70,10 +85,10 @@ public class Robot implements Subsystem {
 
         articulationMap.put(Articulation.AUTO_HIGH_TIER_RED, autoHighTierRed);
         articulationMap.put(Articulation.AUTO_HIGH_TIER_BLUE, autoHighTierBlue);
-        articulationMap.put(Articulation.AUTO_MIDDLE_TIER_RED, autoMiddleTierRed);
-        articulationMap.put(Articulation.AUTO_MIDDLE_TIER_BLUE, autoMiddleTierBlue);
-        articulationMap.put(Articulation.AUTO_LOW_TIER_RED, autoLowTierRed);
-        articulationMap.put(Articulation.AUTO_LOW_TIER_BLUE, autoLowTierBlue);
+
+        craneBitmap = Bitmap.createBitmap(CB_WIDTH, CB_HEIGHT, Bitmap.Config.RGB_565);
+        craneMat = new Mat(CB_HEIGHT, CB_WIDTH, CvType.CV_8UC3);
+        dashboard = FtcDashboard.getInstance();
     }
 
     @Override
@@ -115,7 +130,34 @@ public class Robot implements Subsystem {
             subsystemUpdateTimes[i] = System.nanoTime() - updateStartTime;
         }
 
+        double theta1 = wrapAngleRad(Math.toRadians(90 - crane.getShoulderTargetAngle()));
+        double theta2 = -wrapAngleRad(Math.toRadians(180 - crane.getElbowTargetAngle()));
+        double wristAngle = wrapAngleRad(Math.toRadians(180) - wrapAngleRad(-(theta1 + theta2) + Math.toRadians(crane.getWristTargetAngle())));
+
+        double x = (CB_WIDTH / 2.0);
+        double y = (CB_HEIGHT / 2.0);
+        double x1 = x + 70.1575 * Math.cos(theta1);
+        double y1 = y + 70.1575 * Math.sin(theta1);
+        double x2 = x1 + 55.118 * Math.cos(theta1 + theta2);
+        double y2 = y1 + 55.118 * Math.sin(theta1 + theta2);
+        double x3 = x2 + 10 * Math.cos(wristAngle);
+        double y3 = y2 + 10 * Math.sin(wristAngle);
+        double x4 = x2 - 10 * Math.cos(wristAngle);
+        double y4 = y2 - 10 * Math.sin(wristAngle);
+
+        craneMat.setTo(new Scalar(0));
+        Imgproc.line(craneMat, new Point(x, CB_HEIGHT - y), new Point(x1, CB_HEIGHT - y1), new Scalar(255, 255, 255), 2);
+        Imgproc.line(craneMat, new Point(x1, CB_HEIGHT - y1), new Point(x2, CB_HEIGHT - y2), new Scalar(255, 255, 255), 2);
+        Imgproc.line(craneMat, new Point(x2, CB_HEIGHT - y2), new Point(x3, CB_HEIGHT - y3), new Scalar(255, 255, 255), 2);
+        Imgproc.line(craneMat, new Point(x2, CB_HEIGHT - y2), new Point(x4, CB_HEIGHT - y4), new Scalar(255, 255, 255), 2);
+
+        Utils.matToBitmap(craneMat, craneBitmap);
+
         DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getChassisLength(), driveTrain.getSwivelAngle(), driveTrain.getWheelVelocities(), turret.getTargetHeading(), crane.getShoulderTargetAngle(), crane.getElbowTargetAngle(), crane.getWristTargetAngle());
+    }
+
+    public Bitmap getBitmap() {
+        return craneBitmap;
     }
 
     @Override
@@ -227,40 +269,23 @@ public class Robot implements Subsystem {
         double dx = Math.hypot(diff.getX(), diff.getY());
         double dy = targetHeight - SHOULDER_AXLE_TO_GROUND_HEIGHT;
 
-        double theta2 = -Math.acos((Math.pow(dx, 2) + Math.pow(dy, 2) - Math.pow(SHOULDER_TO_ELBOW, 2) - Math.pow(ELBOW_TO_WRIST, 2)) / (2 * SHOULDER_TO_ELBOW * ELBOW_TO_WRIST));
-        double theta1 = Math.atan2(dy, dx) - Math.atan2(ELBOW_TO_WRIST * Math.sin(theta2), SHOULDER_TO_ELBOW + ELBOW_TO_WRIST * Math.cos(theta2));
+        double[] angles = craneIK(dx, dy);
 
-        if(!Double.isNaN(theta1) && !Double.isNaN(theta2)) {
-            double shoulderTargetAngle = wrapAngle(90 - Math.toDegrees(theta1));
-            double elbowTargetAngle = 180 - wrapAngle(Math.toDegrees(-theta2));
-            double wristAngle = 90 - (wrapAngle(Math.toDegrees(-theta2)) - wrapAngle(Math.toDegrees(theta1)));
-
-            crane.setShoulderTargetAngle(shoulderTargetAngle);
-            crane.setElbowTargetAngle(elbowTargetAngle);
-            crane.setWristTargetAngle(wristAngle);
-            crane.setDumpPos(wristAngle + 180);
+        if(angles != null) {
+            crane.setShoulderTargetAngle(angles[0]);
+            crane.setElbowTargetAngle(angles[1]);
+            crane.setWristTargetAngle(angles[2]);
+            crane.setDumpPos(wrapAngle(angles[3]));
         }
 
         return crane.isDumping();
     }
 
     private StateMachine autoHighTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
             .build();
     private StateMachine autoHighTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT))
-            .build();
-    private StateMachine autoMiddleTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT))
-            .build();
-    private StateMachine autoMiddleTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, MIDDLE_TIER_SHIPPING_HUB_HEIGHT))
-            .build();
-    private StateMachine autoLowTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT))
-            .build();
-    private StateMachine autoLowTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, LOW_TIER_SHIPPING_HUB_HEIGHT))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
             .build();
 
     public boolean articulate(Articulation articulation) {

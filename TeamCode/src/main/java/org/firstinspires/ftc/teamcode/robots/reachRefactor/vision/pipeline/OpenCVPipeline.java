@@ -25,8 +25,7 @@ import java.util.List;
  */
 
 @Config
-public class OpenCVPipeline extends OpenCvPipeline
-{
+public class OpenCVPipeline extends OpenCvPipeline {
     private Mat cropOutput = new Mat();
     private Mat normalizeInput = new Mat();
     private Mat normalizeOutput = new Mat();
@@ -39,6 +38,7 @@ public class OpenCVPipeline extends OpenCvPipeline
     private Mat findContoursOutputMat = new Mat();
     private Mat finalContourOutputMat = new Mat();
     private Mat dashboardMat = new Mat();
+    private Mat hierarchy = new Mat();
     private volatile Bitmap dashboardBitmap;
 
     private volatile int largestX, largestY;
@@ -70,7 +70,7 @@ public class OpenCVPipeline extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input) {
             // Step crop (stage 1):
-            cropOutput = crop(input, new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y));
+            cropOutput = input.submat(new Rect(new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y)));
 
             // Step Normalize0 (stage 2):
             normalizeInput = cropOutput;
@@ -95,13 +95,13 @@ public class OpenCVPipeline extends OpenCvPipeline
             // Step Find_Contours0 (stage 5):
             findContoursInput = hsvThresholdOutput;
             findContours(findContoursInput, findContoursOutput);
-            findContoursOutputMat = cropOutput.clone();
+            findContoursOutputMat = cropOutput;
             for (int i = 0; i < findContoursOutput.size(); i++) {
                 Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
             }
 
             // Finding largest contour (stage 6):
-            finalContourOutputMat = cropOutput.clone();
+            finalContourOutputMat = cropOutput;
             largestArea = -1;
             largestX = -1;
             largestY = -1;
@@ -178,11 +178,6 @@ public class OpenCVPipeline extends OpenCvPipeline
         return dashboardBitmap;
     }
 
-    private Mat crop(Mat image, Point topLeftCorner, Point bottomRightCorner) {
-        Rect cropRect = new Rect(topLeftCorner, bottomRightCorner);
-        return new Mat(image, cropRect);
-    }
-
     /**
      * Normalizes or remaps the values of pixels in an image.
      * @param input The image on which to perform the Normalize.
@@ -256,8 +251,8 @@ public class OpenCVPipeline extends OpenCvPipeline
                 new Scalar(hue[1], sat[1], val[1]), out);
     }
 
+
     private void findContours(Mat input, List<MatOfPoint> contours) {
-        Mat hierarchy = new Mat();
         contours.clear();
         int mode = Imgproc.RETR_LIST;
         int method = Imgproc.CHAIN_APPROX_SIMPLE;
