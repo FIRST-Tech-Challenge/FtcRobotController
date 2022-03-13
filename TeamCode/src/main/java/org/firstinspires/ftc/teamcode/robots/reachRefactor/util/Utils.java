@@ -93,6 +93,6 @@ public class Utils {
         double elbowAngle = 180 - wrapAngle(Math.toDegrees(-theta2));
         double wristAngle = 90 - (wrapAngle(Math.toDegrees(-theta2)) - wrapAngle(Math.toDegrees(theta1)));
 
-        return new double[] {shoulderAngle, elbowAngle, wristAngle, wrapAngle(wristAngle - 135)};
+        return new double[] {shoulderAngle, elbowAngle, wristAngle, wrapAngle(wristAngle + 90)};
     }
 }

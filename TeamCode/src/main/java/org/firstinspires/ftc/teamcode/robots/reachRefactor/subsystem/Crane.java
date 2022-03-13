@@ -44,6 +44,7 @@ public class Crane implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
 
     public static double P = 0.995;
+    public static double BUCKET_TRIGGER_DISTANCE = 5;
 
     public Turret turret;
 
@@ -87,9 +88,9 @@ public class Crane implements Subsystem {
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
 //        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
-        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3, 0.5f),
-        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3, -90, 0.5f),
-        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3, 90, 0.5f),
+        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 1.25f),
+        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, -90, 1.25f),
+        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 90, 1.25f),
         TRANSFER(-45, -50, -20, 0, 0.4f, 0),
 
         TEST_1(25, 90, 25, 1.5f, 0),
@@ -165,15 +166,27 @@ public class Crane implements Subsystem {
 
     }
 
+    private boolean checkTargetPositions(Articulation articulation) {
+        return shoulderTargetAngle == articulation.shoulderPos &&
+                elbowTargetAngle == articulation.elbowPos &&
+                wristTargetAngle == articulation.wristPos;
+    }
+
     private float currentToHomeTime = Articulation.HOME.toHomeTime;
     private double currentDumpPos = 0;
     private final StateMachine main = getStateMachine(new Stage())
             .addSingleState(() -> {
                 dumping = false;
             })
-            .addTimedState(() -> currentToHomeTime, () -> setTargetPositions(Articulation.HOME), () -> {
-            })
-            .addTimedState(() -> articulation.toHomeTime , () -> setTargetPositions(articulation),
+            .addTimedState(() -> checkTargetPositions(articulation) ? 0 : 0.5f, () -> {
+                if (!checkTargetPositions(articulation) && articulation.turret)
+                    turret.setTargetHeading(Articulation.HOME.turretAngle);
+            }, () -> {})
+            .addTimedState(() -> checkTargetPositions(articulation) ? 0 : currentToHomeTime, () -> {
+                if(!checkTargetPositions(articulation))
+                    setTargetPositionsNoTurret(Articulation.HOME);
+            }, () -> { })
+            .addTimedState(() -> checkTargetPositions(articulation) ? 0 : articulation.toHomeTime , () -> setTargetPositions(articulation),
                     () -> {
                         currentToHomeTime = articulation.toHomeTime;
                         if (articulation.dumpPos != 0)
@@ -213,16 +226,19 @@ public class Crane implements Subsystem {
 
                 double[] angles = craneIK(x, y);
 
-                setTargetPositions(angles[0], angles[1], angles[2]);
-                currentDumpPos = angles[3];
-
+                if(angles != null) {
+                    setTargetPositions(angles[0], angles[1], angles[2]);
+                    currentDumpPos = angles[3];
+                }
                 return t >= articulation.toHomeTime;
             })
             .addSingleState(() -> {
                 double[] angles = craneIK(articulation.dx, articulation.dy);
 
-                setTargetPositions(angles[0], angles[1], angles[2]);
-                currentDumpPos = angles[3];
+                if(angles != null) {
+                    setTargetPositions(angles[0], angles[1], angles[2]);
+                    currentDumpPos = angles[3];
+                }
                 currentToHomeTime = articulation.toHomeTime;
             })
             .build();
@@ -242,16 +258,19 @@ public class Crane implements Subsystem {
 
                 double[] angles = craneIK(x, y);
 
-                setTargetPositions(angles[0], angles[1], angles[2]);
-                currentDumpPos = angles[3];
-
+                if(angles != null) {
+                    setTargetPositions(angles[0], angles[1], angles[2]);
+                    currentDumpPos = angles[3];
+                }
                 return t >= articulation.toHomeTime;
             })
             .addSingleState(() -> {
                 double[] angles = craneIK(articulation.dx, articulation.dy);
 
-                setTargetPositions(angles[0], angles[1], angles[2]);
-                currentDumpPos = angles[3];
+                if(angles != null) {
+                    setTargetPositions(angles[0], angles[1], angles[2]);
+                    currentDumpPos = angles[3];
+                }
                 currentToHomeTime = articulation.toHomeTime;
             })
             .build();
@@ -330,6 +349,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Shoulder Target Angle", shoulderTargetAngle);
             telemetryMap.put("Elbow Target Angle", elbowTargetAngle);
             telemetryMap.put("Wrist Target Angle", wristTargetAngle);
+            telemetryMap.put("Wrist Dump Angle", currentDumpPos);
 
             telemetryMap.put("Shoulder Target PWM", shoulderServoValue(shoulderTargetAngle));
             telemetryMap.put("Elbow Target PWM", elbowServoValue(elbowTargetAngle));
@@ -368,7 +388,11 @@ public class Crane implements Subsystem {
         setTargetPositions(articulation.shoulderPos, articulation.elbowPos, articulation.wristPos);
 
         if (articulation.turret)
-            turret.setTargetHeading(articulation.turretAngle);
+            turret.setTargetHeading(Articulation.HOME.turretAngle);
+    }
+
+    public void setTargetPositionsNoTurret(Articulation articulation) {
+        setTargetPositions(articulation.shoulderPos, articulation.elbowPos, articulation.wristPos);
     }
 
     // ----------------------------------------------------------------------------------------------

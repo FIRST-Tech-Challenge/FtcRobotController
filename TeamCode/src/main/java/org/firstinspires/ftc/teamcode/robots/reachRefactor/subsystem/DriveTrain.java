@@ -222,14 +222,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     private double getChassisLengthCorrection() {
-        // returning 0 if distance sensor is likely blocked
-        if (chassisLength < MIN_CHASSIS_LENGTH)
-            return 0;
-
         chassisLengthPID.setInput(chassisLength);
         chassisLengthPID.setSetpoint(targetChassisLength);
 
-        return chassisLengthPID.performPID();
+        return chassisLength < MIN_CHASSIS_LENGTH && targetChassisLength == MIN_CHASSIS_LENGTH ? 0 : chassisLengthPID.performPID();
     }
 
     private void updateVelocityCoefficients() {

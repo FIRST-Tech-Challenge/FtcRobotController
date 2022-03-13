@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 
@@ -52,7 +51,6 @@ public class Robot implements Subsystem {
 
     private Bitmap craneBitmap;
     private Mat craneMat;
-    private FtcDashboard dashboard;
     public static int CB_WIDTH = 320;
     public static int CB_HEIGHT = 240;
 
@@ -88,7 +86,6 @@ public class Robot implements Subsystem {
 
         craneBitmap = Bitmap.createBitmap(CB_WIDTH, CB_HEIGHT, Bitmap.Config.RGB_565);
         craneMat = new Mat(CB_HEIGHT, CB_WIDTH, CvType.CV_8UC3);
-        dashboard = FtcDashboard.getInstance();
     }
 
     @Override
@@ -117,9 +114,6 @@ public class Robot implements Subsystem {
 
         if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getTargetPos() == Gripper.OPEN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != Articulation.GRAB_AND_TRANSFER)
             articulation = Articulation.GRAB_AND_TRANSFER;
-//
-//        if(crane.getShoulderTargetAngle() > 15 && crane.getElbowTargetAngle() > 75 && crane.getWristTargetAngle() > 15 && crane.getBucketDistance() < BUCKET_TRIGGER_DISTANCE && articulation != Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER)
-//            articulation = Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER;
 
         articulate(articulation);
 
@@ -132,6 +126,11 @@ public class Robot implements Subsystem {
 
         double theta1 = wrapAngleRad(Math.toRadians(90 - crane.getShoulderTargetAngle()));
         double theta2 = -wrapAngleRad(Math.toRadians(180 - crane.getElbowTargetAngle()));
+        double height = SHOULDER_TO_ELBOW * Math.sin(theta1) + ELBOW_TO_WRIST * Math.sin(theta1 + theta2);
+
+        if(height > HIGH_TIER_SHIPPING_HUB_HEIGHT - SHOULDER_AXLE_TO_GROUND_HEIGHT && crane.getBucketDistance() < Crane.BUCKET_TRIGGER_DISTANCE && articulation == Articulation.MANUAL && crane.getArticulation() == Crane.Articulation.MANUAL)
+            articulation = Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER;
+
         double wristAngle = wrapAngleRad(Math.toRadians(180) - wrapAngleRad(-(theta1 + theta2) + Math.toRadians(crane.getWristTargetAngle())));
 
         double x = (CB_WIDTH / 2.0);
@@ -214,11 +213,10 @@ public class Robot implements Subsystem {
             .build();
 
     private StateMachine transfer = getStateMachine(new Stage())
-            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
-            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(1.0))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
-            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL && gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(0.0))
             .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
@@ -252,7 +250,7 @@ public class Robot implements Subsystem {
             .addTimedState(1f, () -> driveTrain.setDuckSpinnerPower(0.5), () -> driveTrain.setDuckSpinnerPower(0))
             .build();
 
-    private boolean handleAutoCrane(Position targetPosition, double targetHeight) {
+    public boolean handleAutoCrane(Pose2d targetPosition, double targetHeight) {
         Pose2d pose = driveTrain.getPoseEstimate();
         Vector2d turretPose = pose.vec().minus(
                 new Vector2d(
@@ -261,7 +259,7 @@ public class Robot implements Subsystem {
                 ).rotated(pose.getHeading())
         );
 
-        Vector2d shippingHub = targetPosition.getPose().vec();
+        Vector2d shippingHub = targetPosition.vec();
         Vector2d diff = shippingHub.minus(turretPose);
         double turretAngle = Math.atan2(diff.getY(), diff.getX());
         turret.setTargetHeading(wrapAngle(360 - Math.toDegrees(wrapAngleRad(turretAngle) - (pose.getHeading() + Math.toRadians(180)))));
@@ -282,10 +280,10 @@ public class Robot implements Subsystem {
     }
 
     private StateMachine autoHighTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB.getPose(), HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
             .build();
     private StateMachine autoHighTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB, HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB.getPose(), HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
             .build();
 
     public boolean articulate(Articulation articulation) {

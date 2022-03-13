@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -101,6 +102,8 @@ public class FF_6832 extends OpMode {
     public static double CHASSIS_LENGTH_SCALING_FACTOR = 1;
     public static double MAINTAIN_HEADING_DELAY = 1;
     public static double RUMBLE_DURATION = 0.5;
+    public static double MAX_DX = 12;
+    public static double MAX_DY = 12;
 
     private Robot robot;
     private Autonomous auto;
@@ -222,7 +225,7 @@ public class FF_6832 extends OpMode {
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
 
-        robot = new Robot(hardwareMap, true);
+        robot = new Robot(hardwareMap, false);
         alliance = Alliance.BLUE;
         startingPosition = Position.START_BLUE_UP;
         robot.driveTrain.setPoseEstimate(startingPosition.getPose());
@@ -457,6 +460,24 @@ public class FF_6832 extends OpMode {
 
         if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
             robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
+        if(true && gamepad1.touchpad_finger_1) {
+            Pose2d pose = robot.driveTrain.getPoseEstimate();
+            Vector2d turretPose = pose.vec().minus(
+                    new Vector2d(
+                            robot.driveTrain.getChassisLength(),
+                            0
+                    ).rotated(pose.getHeading())
+            );
+
+            Vector2d finalPose = turretPose.minus(
+                    new Vector2d(
+                            map(gamepad1.touchpad_finger_1_x, -1, 1, -MAX_DX, MAX_DX),
+                            map(gamepad1.touchpad_finger_1_y, -1, 1, 0, MAX_DY)
+                    ).rotated(pose.getHeading() - Math.toRadians(90))
+            );
+
+            robot.handleAutoCrane(new Pose2d(finalPose.getX(), finalPose.getY()), HIGH_TIER_SHIPPING_HUB_HEIGHT);
+        }
 
         handleArcadeDrive(gamepad1);
         handleArcadeDriveReversed(gamepad2);
@@ -733,6 +754,8 @@ public class FF_6832 extends OpMode {
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
         // handling op mode telemetry
+        opModeTelemetryMap.put("tpx", gamepad1.touchpad_finger_1_x);
+        opModeTelemetryMap.put("tpy", gamepad1.touchpad_finger_1_y);
         opModeTelemetryMap.put("Active", active);
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);
