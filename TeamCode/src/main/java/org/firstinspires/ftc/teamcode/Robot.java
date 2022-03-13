@@ -170,7 +170,7 @@ public class Robot {
         }
     }
 
-    public void teleopLoop(int red) {
+    public void teleopLoop(int red, double startx, double starty) {
 
 
             /** gamepad 1**/
@@ -204,8 +204,11 @@ public class Robot {
         changed = false;
         int up =0;
         turret.updateTurretPositions();
-        if (xpos > 60*red) {
-            if (!shared_shipping_hub) {
+        if (xpos > (60)*red-startx) {
+            if (!shared_shipping_hub&&red==1) {
+                changed = true;
+            }
+            if (!alliance_shipping_hub&&red==-1) {
                 changed = true;
             }
             if(red==1) {
@@ -218,8 +221,11 @@ public class Robot {
             }
             up = 0;
         }
-        else if (xpos < 60*red) {
-            if (!alliance_shipping_hub) {
+        else if (xpos < (60)*red-startx) {
+            if (!shared_shipping_hub&&red==-1) {
+                changed = true;
+            }
+            if (!alliance_shipping_hub&&red==1) {
                 changed = true;
             }
             if(red==1) {
@@ -236,10 +242,10 @@ public class Robot {
         if (changed) {
             if(!basketDown){
                 if(alliance_shipping_hub){
-                    turret.FlipBasketArmHigh();
+                    turret.FlipBasketArmToPosition(.45);
                 }
                 if(shared_shipping_hub){
-                    turret.FlipBasketArmLow();
+                    turret.FlipBasketArmToPosition(.9);
                 }
             }
             //according to blue side left auto next to barrier
@@ -280,6 +286,7 @@ public class Robot {
         }
 
         if (turretTurn != 0) {
+            autoAiming=false;
             TurretManualRotation(turretTurn);
         }
         else if (!retracting&&!autoAiming){
@@ -295,6 +302,7 @@ public class Robot {
             isExtending=false;
         }
         if (extendTurret != 0 || manualretractTurret != 0 || retracting) {
+            autoAiming=false;
             TurretManualExtension(extendTurret, manualretractTurret);
         }
         else{
@@ -317,10 +325,10 @@ public class Robot {
         rotation.spinCarousel();
         if (autoAiming) {
             if(shared_shipping_hub) {
-                autoAim(turret_saved_positions[0], red);
+                autoAim(new double[][]{{-red*turret_saved_positions[0][0][0]-startx,turret_saved_positions[0][0][1]-starty,turret_saved_positions[0][0][2]},{turret_saved_positions[0][1][0]-startx,turret_saved_positions[0][1][1]-starty,turret_saved_positions[0][1][2]}}, red);
             }
             else{
-                autoAim(turret_saved_positions[1], red);
+                autoAim(new double[][]{{-red*turret_saved_positions[1][0][0]-startx,turret_saved_positions[1][0][1]-starty,turret_saved_positions[1][0][2]},{turret_saved_positions[1][1][0]-startx,turret_saved_positions[1][1][1]-starty,turret_saved_positions[1][1][2]}}, red);
             }
         }
         op.telemetry.addData("autoaiming", autoAiming);op.telemetry.addData("up",up);
@@ -403,7 +411,7 @@ public class Robot {
                     startTime[0] = op.getRuntime();
                     startTime[1] = startTime[0] + 1;
                 }
-                if (op.getRuntime() > startTime[0] + 1 && !isReversing) {
+                if (op.getRuntime() > startTime[0] + 0.7 && !isReversing) {
                     isReversing = true;
                     op.telemetry.addData("reversing ", "intake");
                     startTime[1] = op.getRuntime();
@@ -412,7 +420,7 @@ public class Robot {
                 if (op.getRuntime() > startTime[1] + .6) {
                     intake.stopIntake();
                 }
-                if (op.getRuntime() > startTime[1] + 1.4) {
+                if (op.getRuntime() > startTime[1] + 0.9) {
                     op.telemetry.addData("flippedy do ", "back down");
                     intake.stopIntake();
                     if (shared_shipping_hub) {
@@ -449,7 +457,7 @@ public class Robot {
     }
 
     public void autoAim (double [][]turret_saved_positions, int red) {
-        double angle = 180-Math.atan2(-(turret_saved_positions[1][0]*red - xpos),(turret_saved_positions[1][1]-ypos))*180/PI- VSLAMChassis.angle;
+        double angle = 180-Math.atan2(-(turret_saved_positions[1][0] - xpos),(turret_saved_positions[1][1]-ypos))*180/PI- VSLAMChassis.angle;
         angle%=360;
         if(angle>180){
             angle-=360;

@@ -6,9 +6,11 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.spartronics4915.lib.T265Camera;
+@Disabled
 
 @Autonomous(name = "T265Test", preselectTeleOp = "OneGPTeleop")
 public class T265Test extends LinearOpMode {

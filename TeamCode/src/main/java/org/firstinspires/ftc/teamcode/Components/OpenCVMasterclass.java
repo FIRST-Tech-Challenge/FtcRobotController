@@ -115,17 +115,19 @@ public class OpenCVMasterclass {
                  */
             }
         });
+
         op.telemetry.addLine("Waiting for start");
         op.telemetry.update();
         op.waitForStart();
+        backWebcam.stopStreaming();
         if(opencv.getLocation()== RedTeamElem.Location.NOT_FOUND) {
-            return 0;
+            return 2;
         }
         else if(opencv.getLocation()== RedTeamElem.Location.MID) {
             return 1;
         }
         else if(opencv.getLocation()== RedTeamElem.Location.RIGHT) {
-            return 2;
+            return 0;
         }
         else{
             return 0;

@@ -25,7 +25,7 @@ public class RedTeamElem extends OpenCvPipeline {
         MID,
         NOT_FOUND
     }
-    private Location location = Location.NOT_FOUND;
+    private RedTeamElem.Location location = RedTeamElem.Location.NOT_FOUND;
 
 /* Nathan's values
     static final Rect LEFT_ROI = new Rect(
@@ -40,11 +40,11 @@ public class RedTeamElem extends OpenCvPipeline {
 
     //New calculations
     static final Rect LEFT_ROI = new Rect(
-            new Point(130,100),
-            new Point(60,10));
+            new Point(70,103),
+            new Point(0,13));
     static final Rect MIDDLE_ROI = new Rect(
-            new Point(310,100),
-            new Point(240, 10));
+            new Point(250,103),
+            new Point(180, 13));
 
     static double PERCENT_COLOR_THRESHOLD = 0.3; //percentage of color
 
@@ -74,19 +74,19 @@ public class RedTeamElem extends OpenCvPipeline {
         boolean freightLeft = leftValue > PERCENT_COLOR_THRESHOLD;
 
         if (freightLeft && true && freightMid){
-            location = Location.NOT_FOUND;
+            location = RedTeamElem.Location.NOT_FOUND;
             telemetry.addData("Object Location","not found");
         }
         else if (false){
-            location = Location.RIGHT;
+            location = RedTeamElem.Location.RIGHT;
             telemetry.addData("Object Location","Left");
         }
         else if (freightLeft){
-            location = Location.LEFT;
+            location = RedTeamElem.Location.LEFT;
             telemetry.addData("Object Location","Right");
         }
         else if (freightMid){
-            location = Location.MID;
+            location = RedTeamElem.Location.MID;
             telemetry.addData("Object Location","Mid");
         }
         telemetry.addData("x",xpos);
@@ -96,12 +96,12 @@ public class RedTeamElem extends OpenCvPipeline {
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2RGB);
 
         Scalar colorRectangle= new Scalar(255,0,0);
-        Imgproc.rectangle(mat,MIDDLE_ROI,location== Location.MID? colorRectangle:colorRectangle,5);
-        Imgproc.rectangle(mat,LEFT_ROI,location== Location.LEFT? colorRectangle:colorRectangle,5);
+        Imgproc.rectangle(mat,MIDDLE_ROI,location== RedTeamElem.Location.MID? colorRectangle:colorRectangle,5);
+        Imgproc.rectangle(mat,LEFT_ROI,location== RedTeamElem.Location.LEFT? colorRectangle:colorRectangle,5);
         return mat;
 
     }
-    public Location getLocation(){
+    public RedTeamElem.Location getLocation(){
         return location;
     }
 }

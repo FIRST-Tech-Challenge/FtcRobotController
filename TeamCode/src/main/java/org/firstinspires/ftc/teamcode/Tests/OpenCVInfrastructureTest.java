@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
 import java.util.Arrays;
+@Disabled
 
 @Autonomous(name= "OpenCVInfrastructureTest", preselectTeleOp = "OneGPTeleop")
 public class OpenCVInfrastructureTest extends LinearOpMode {

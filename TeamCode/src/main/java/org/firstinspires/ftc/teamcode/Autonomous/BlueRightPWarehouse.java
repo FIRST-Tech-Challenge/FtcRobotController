@@ -50,7 +50,7 @@ public class BlueRightPWarehouse extends LinearOpMode {
             sleep(500);
             robot.goToPosition(0, -6, 0, -80, 0.4);
             robot.partOfPolySplineToPositionHead(0,-33,-8,0,-6,40,-3,69,-3,true,true,0.5);
-            robot.partOfPolySplineToPositionHead(0,0,-6,40,-3,72,-3, 72,-8,true,true,0.5);
+            robot.partOfPolySplineToPositionHead(0,0,-6,40,-3,74,-3, 74,-8,true,true,0.5);
 //        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,-25.5,-5.6,12,-50,16,-38,true,true,0.5);
 //        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,12,-50,35,-27,16,-38,true,true,0.5);
 //        robot.turnInPlace(90,0.5);
@@ -79,7 +79,7 @@ public class BlueRightPWarehouse extends LinearOpMode {
             sleep(500);
             robot.goToPosition(0, -6, 0, -80, 0.4);
             robot.partOfPolySplineToPositionHead(0,-33,-8,0,-6,40,-3,69,-3,true,true,0.5);
-            robot.partOfPolySplineToPositionHead(0,0,-6,40,-3,72,-3, 72,-8,true,true,0.5);
+            robot.partOfPolySplineToPositionHead(0,0,-6,40,-3,74,-3, 74,-8,true,true,0.5);
         }
         //16,-60,-79   48,-24,-176    90,     81,-24,90    92,-24   92,-12
         stop();

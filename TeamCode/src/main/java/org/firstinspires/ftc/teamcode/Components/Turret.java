@@ -65,20 +65,20 @@ public class Turret {
         if(!isTeleOp) {
             turret_Angle_Control.setPosition(1);
             turret_Angle_Control2.setPosition(0);
+            turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         //all this should be ^^ up there
-        turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         basketActuationServo.setPosition(0.4);
         basketArmServo.setPosition(0.0);
         turret_saved_positions[0][1][0] = 80;//-36
-        turret_saved_positions[0][1][1] = -48;//-60
+        turret_saved_positions[0][1][1] = -53;//-60
         turret_saved_positions[0][1][2] = 0;
         turret_saved_positions[0][0][0] = 80;//-36
-        turret_saved_positions[0][0][1] = -48;//-60
+        turret_saved_positions[0][0][1] = -53;//-60
         turret_saved_positions[0][0][2] = 0;
         turret_saved_positions[1][1][0] = 12;//-36
         turret_saved_positions[1][1][1] = -24;//-60

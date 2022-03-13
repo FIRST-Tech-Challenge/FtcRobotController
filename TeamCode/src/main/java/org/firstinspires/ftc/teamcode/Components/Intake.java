@@ -31,8 +31,8 @@ public class Intake {
             intakeServo2.setPosition(.3);
         }
         else{
-            intakeServo.setPosition(.3);
-            intakeServo2.setPosition(1);
+            intakeServo.setPosition(.35);
+            intakeServo2.setPosition(.95);
         }
     }
 

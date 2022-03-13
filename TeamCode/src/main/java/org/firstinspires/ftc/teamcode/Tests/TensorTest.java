@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
+@Disabled
 
 @Autonomous(name= "TensorTest")
 public class TensorTest extends LinearOpMode {

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Components.LedColor;
+import org.firstinspires.ftc.teamcode.Components.LedColor;@Disabled
 
 @Autonomous(name = "Led Color Test")
 

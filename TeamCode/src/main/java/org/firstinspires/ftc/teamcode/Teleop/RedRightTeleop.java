@@ -7,10 +7,9 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
 
-@TeleOp(name = "TwoGPTeleopRegionals")
+@TeleOp(name = "RedRightTeleopRegionals")
 //@Disabled
-
-public class TwoGPTeleop extends LinearOpMode {
+public class RedRightTeleop extends LinearOpMode {
     public void runOpMode() {
 
         telemetry.addData("Status", "Before new Robot");
@@ -29,7 +28,7 @@ public class TwoGPTeleop extends LinearOpMode {
         }
 
         while (!isStopRequested()) {
-            robot.teleopLoop(1);
+            robot.teleopLoop(-1,0,0);
         }
 
         idle();

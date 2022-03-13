@@ -26,7 +26,7 @@ public class RedRightPWarehouse extends LinearOpMode {
         if(position!=2) {
             robot.goToPosition(0, -14, 10-moved, 45, 0.5);
             if(position==1) {
-                robot.TurretSlidesToPosition(0, 12.242,0, 0.5);
+                robot.TurretSlidesToPosition(0, 13.742,0, 0.5);
                 sleep(1300);
                 robot.FlipBasketArmToPosition(.6);
                 sleep(500);
@@ -34,7 +34,7 @@ public class RedRightPWarehouse extends LinearOpMode {
                 sleep(1000);
             }
             if(position==0) {
-                robot.TurretSlidesToPosition(0, 8.442, 0, 0.5);
+                robot.TurretSlidesToPosition(0, 11.242, 0, 0.5);
                 sleep(1300);
                 robot.FlipBasketArmToPosition(.75);
                 sleep(500);
@@ -44,13 +44,13 @@ public class RedRightPWarehouse extends LinearOpMode {
             robot.FlipBasketToPosition(0.4);
             robot.TurretSlidesToPosition(0, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.00);
-            robot.goToPosition(1, -8, 33-moved, 40, 0.4);
+            robot.goToPosition(1, -9, 35-moved, 40, 0.5);
             robot.setMotorPowers(0.2);
             robot.spinCarouselAutonomousRed();
             robot.setMotorPowers(-0.3);
             sleep(500);
             robot.goToPosition(0, -6, 0-moved, 80, 0.4);
-            robot.partOfPolySplineToPositionHead(0,33-moved,-8,0-moved,-6,-40-moved,-3.3,-69-moved,-3.3,true,true,0.5);
+            robot.partOfPolySplineToPositionHead(0,30-moved,-8,0-moved,-6,-40-moved,-3.3,-69-moved,-3.3,true,true,0.5);
             robot.partOfPolySplineToPositionHead(0,0-moved,-6,-40-moved,-3.3,-69-moved,-3.3, -72-moved,-8,true,true,0.5);
 //        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,-25.5,-5.6,12,-50,16,-38,true,true,0.5);
 //        robot.partOfPolySplineToPositionHead(0,-25.5,-5.6,12,-50,35,-27,16,-38,true,true,0.5);
@@ -62,7 +62,7 @@ public class RedRightPWarehouse extends LinearOpMode {
 //        sleep(2000);
         }
         else{
-            robot.goToPosition(0, -52, -5.5,90, 0.5);
+            robot.goToPosition(0, -58.5, -15.9,90, 0.5);
 //                robot.TurretSlidesToPosition(-9, 10, 0, 0.5);
 //                sleep(1300);
             robot.FlipBasketArmToPosition(.45);
@@ -73,9 +73,9 @@ public class RedRightPWarehouse extends LinearOpMode {
             robot.FlipBasketToPosition(0.4);
             robot.TurretSlidesToPosition(0, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.00);
-            robot.goToPosition(1, -45, 0,90, 0.5);
-            robot.goToPosition(1, -8, 33-moved, 40, 0.4);
-            robot.setMotorPowers(0.2);
+            robot.goToPosition(1, -50, 0,90, 0.5);
+            robot.goToPosition(1, -8, 30-moved, 40, 0.4);
+            robot.setMotorPowers(0.25);
             robot.spinCarouselAutonomousRed();
             robot.setMotorPowers(-0.3);
             sleep(500);
