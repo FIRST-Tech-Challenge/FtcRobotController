@@ -26,14 +26,8 @@ public class Intake {
         intakeServo2 = opMode.hardwareMap.get(Servo.class, "IntakeServo2");
         touchSensor = opMode.hardwareMap.get(DigitalChannel.class, "touchSensor");
         touchSensor.setMode(DigitalChannel.Mode.INPUT);
-        if(isTeleop){
-            intakeServo.setPosition(1);
-            intakeServo2.setPosition(.3);
-        }
-        else{
-            intakeServo.setPosition(.35);
-            intakeServo2.setPosition(.95);
-        }
+            intakeServo.setPosition(.3);
+            intakeServo2.setPosition(1);
     }
 
     public boolean isSwitched() {

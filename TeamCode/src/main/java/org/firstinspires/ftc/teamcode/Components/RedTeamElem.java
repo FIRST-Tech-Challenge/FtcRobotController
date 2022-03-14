@@ -43,8 +43,8 @@ public class RedTeamElem extends OpenCvPipeline {
             new Point(70,103),
             new Point(0,13));
     static final Rect MIDDLE_ROI = new Rect(
-            new Point(250,103),
-            new Point(180, 13));
+            new Point(240,103),
+            new Point(160, 13));
 
     static double PERCENT_COLOR_THRESHOLD = 0.3; //percentage of color
 

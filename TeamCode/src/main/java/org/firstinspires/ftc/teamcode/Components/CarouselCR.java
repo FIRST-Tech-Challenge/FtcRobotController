@@ -56,14 +56,14 @@ public class CarouselCR
 
     public  void spinCarouselAutonomousBlue (){
         speed =CAROUSEL_STOP - CAROUSEL_SPEED ;
-        crServo.setPower(-0.3);
+        crServo.setPower(-0.26);
         op.sleep(4000);
         crServo.setPower(0);
 
     }
 
         public  void spinCarouselAutonomousRed (){
-            crServo.setPower(0.3);
+            crServo.setPower(0.26);
             op.sleep(4000);
             crServo.setPower(0);
         }
