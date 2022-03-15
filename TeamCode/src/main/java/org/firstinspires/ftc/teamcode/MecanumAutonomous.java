@@ -12,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.external.libs.PIDController;
+import org.firstinspires.ftc.teamcode.hardwaremaps.FrenzyHardwareMap;
+
 @Disabled
 @Autonomous(name="MecanumAutonomous", group="FreightFrenzy")
 public class MecanumAutonomous extends LinearOpMode {

@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
+import org.firstinspires.ftc.teamcode.hardwaremaps.FrenzyHardwareMap;
 
 @Autonomous(name="Drivetrain Wiring/Encoder Test", group="Utilities")
 public class DriveWiringTest extends LinearOpMode {

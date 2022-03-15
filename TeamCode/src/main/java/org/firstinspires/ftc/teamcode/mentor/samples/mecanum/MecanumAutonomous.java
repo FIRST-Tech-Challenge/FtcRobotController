@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
+import org.firstinspires.ftc.teamcode.hardwaremaps.FrenzyHardwareMap;
 import org.firstinspires.ftc.teamcode.mentor.samples.external.libs.PIDController;
 
 @Disabled

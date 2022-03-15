@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.FrenzyHardwareMap;
+import org.firstinspires.ftc.teamcode.hardwaremaps.FrenzyHardwareMap;
 
 @Disabled
 @TeleOp(name="Drive Test", group="Utilities")

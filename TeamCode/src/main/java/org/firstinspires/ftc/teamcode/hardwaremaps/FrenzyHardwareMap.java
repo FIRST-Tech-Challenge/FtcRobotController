@@ -27,138 +27,83 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.firstinspires.ftc.teamcode.hardwaremaps;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvWebcam;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class FrenzyHardwareMap {
-
     //Motor in Port 0, Rev Hub 1.
-    public DcMotor motorFrontLeft = null;
-
+    public DcMotorEx motorFrontLeft = null;
     //Motor in Port 1, Rev Hub 1.
-    public DcMotor motorFrontRight = null;
-
+    public DcMotorEx motorFrontRight = null;
     //Motor in Port 2, Rev Hub 1.
-    public DcMotor motorBackRight = null;
-
+    public DcMotorEx motorBackRight = null;
     //Motor in Port 3, Rev Hub 1.
-    public DcMotor motorBackLeft = null;
-
+    public DcMotorEx motorBackLeft = null;
     //Motor in Port 0, Rev Hub 2.
     public DcMotor motorIntake = null;
-
     //Motor in Port 1, Rev Hub 2
     public DcMotorEx motorArm = null;
-
     //Motor in Port 2, Rev Hub 2
     public DcMotorEx motorCarousel = null;
-
     //IMU from RevHub.
     public BNO055IMU imu = null;
-
     //Color Sensor
     public NormalizedColorSensor colorsensed = null;
-
-    public OpenCvWebcam webCam;
-
-    public RevBlinkinLedDriver blinkinLedDriver;
-
+    //magnetic limit switch for arm
+    public TouchSensor armLimitSwitch;
     //Setup Wheel measurements for REV motors.
     //Encoder clicks are originally 28 per rotation, but multiply by 20:1.
     public final int REV_ENCODER_CLICKS = 560;
-
     final double REV_WHEEL_DIAM = 7.5;
-
-    public final double REV_WHEEL_CIRC = REV_WHEEL_DIAM * Math.PI;
-
+    public final double REV_WHEEL_CIRC = (REV_WHEEL_DIAM/2) * Math.PI;
     final double CLICKS_PER_CM = REV_ENCODER_CLICKS / REV_WHEEL_CIRC;
-
-    final int MS_PERM_TO = 2500;
 
     //Setup local opmode members.
     HardwareMap frenzyMap = null;
     Telemetry telemetry = null;
-    Map<String, String> robotPartNames = new HashMap<>();
-
     private ElapsedTime period = new ElapsedTime();
     //Constructor
     public FrenzyHardwareMap() {
-        robotPartNames.put("dt_motor_fl","frontLeft");
-        robotPartNames.put("dt_motor_bl","backLeft");
-        robotPartNames.put("dt_motor_fr","frontRight");
-        robotPartNames.put("dt_motor_br","backRight");
-
-        robotPartNames.put("arm_motor","arm");
-
-        robotPartNames.put("intake_motor","intake");
-
-        robotPartNames.put("carousel_motor","carousel");
-
-        robotPartNames.put("robot_imu","imu");
-
-        robotPartNames.put("robot_webcam","Webcam 1");
-
-        robotPartNames.put("robot_leds_blinkin","blinkin");
-
-
     }
     //Initialize the hardware interface
     public void init(HardwareMap hwMap, Telemetry frenzyTelemetry) {
-
         //Save reference to the hardware map.
         frenzyMap = hwMap;
         telemetry = frenzyTelemetry;
 
         //Define and initialize drivetrain motors.
-        motorFrontLeft = frenzyMap.get(DcMotor.class, robotPartNames.get("dt_motor_fl"));
-        motorBackLeft = frenzyMap.get(DcMotor.class, robotPartNames.get("dt_motor_bl"));
-        motorFrontRight = frenzyMap.get(DcMotor.class, robotPartNames.get("dt_motor_fr"));
-        motorBackRight = frenzyMap.get(DcMotor.class, robotPartNames.get("dt_motor_br"));
+        motorFrontLeft = frenzyMap.get(DcMotorEx.class, "frontLeft");
+        motorBackLeft = frenzyMap.get(DcMotorEx.class, "backLeft");
+        motorFrontRight = frenzyMap.get(DcMotorEx.class, "frontRight");
+        motorBackRight = frenzyMap.get(DcMotorEx.class, "backRight");
 
         //Define and initialize arm/intake/carousel motors.
-        motorArm = frenzyMap.get(DcMotorEx.class, robotPartNames.get("arm_motor"));
-        motorIntake = frenzyMap.get(DcMotor.class, robotPartNames.get("intake_motor"));
-        motorCarousel = frenzyMap.get(DcMotorEx.class, robotPartNames.get("carousel_motor"));
-
+        motorArm = frenzyMap.get(DcMotorEx.class, "arm");
+        motorIntake = frenzyMap.get(DcMotorEx.class, "intake");
+        motorCarousel = frenzyMap.get(DcMotorEx.class, "carousel");
         //Define the imu
-        imu = frenzyMap.get(BNO055IMU.class, robotPartNames.get("robot_imu"));
-
+        imu = frenzyMap.get(BNO055IMU.class, "imu");
         //Define Color Sensor
-        colorsensed = frenzyMap.get(NormalizedColorSensor.class, robotPartNames.get("colorsense"));
+        colorsensed = frenzyMap.get(NormalizedColorSensor.class,"colorsense");
 
-        //Define web cam
-        int cameraMonitorViewId = frenzyMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", frenzyMap.appContext.getPackageName());
-        webCam = OpenCvCameraFactory.getInstance().createWebcam(frenzyMap.get(WebcamName.class, robotPartNames.get("robot_webcam")), cameraMonitorViewId);
-
-        //Define LEDs
-        blinkinLedDriver = frenzyMap.get(RevBlinkinLedDriver.class, robotPartNames.get("robot_leds_blinkin"));
+        //define limit switch
+        armLimitSwitch = frenzyMap.get(TouchSensor.class,"limitSwitch");
 
         // Set all motor directions.
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotor.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorFrontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorEx.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotorEx.Direction.FORWARD);
 
         // Set motor directions arm/intake/carousel.
-        motorIntake.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorArm.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorCarousel.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorIntake.setDirection(DcMotorEx.Direction.REVERSE);
+        motorArm.setDirection(DcMotorEx.Direction.REVERSE);
+        motorCarousel.setDirection(DcMotorEx.Direction.REVERSE);
 
         // Set all motors to zero power.
         motorFrontRight.setPower(0.0);
@@ -172,27 +117,25 @@ public class FrenzyHardwareMap {
         motorCarousel.setPower(0.0);
 
         // Set all motors to run with encoders.
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         // Set arm motor modes
         motorArm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-        //set webcam timeout
-        webCam.setMillisecondsPermissionTimeout(MS_PERM_TO);
     }
     //Stops and resets the encoders before setting them to run again. drive train specific
     public void restartEncoders(){
-            motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorFrontRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            motorFrontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            motorBackLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            motorFrontRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            motorBackRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            motorBackLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
     //Sets the powers of all motors.
     public void setPowers(double input){
@@ -215,11 +158,10 @@ public class FrenzyHardwareMap {
     }
     //set motor mode to run To position
     public void setRunToPosition(){
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motorFrontLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        motorBackLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
     }
 }
 
