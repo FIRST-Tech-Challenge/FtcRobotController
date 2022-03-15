@@ -31,6 +31,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -51,6 +52,8 @@ public class FrenzyHardwareMap {
     public DcMotorEx motorCarousel = null;
     //IMU from RevHub.
     public BNO055IMU imu = null;
+    //Color Sensor
+    public NormalizedColorSensor colorsensed = null;
     //magnetic limit switch for arm
     public TouchSensor armLimitSwitch;
     //Setup Wheel measurements for REV motors.
@@ -85,6 +88,8 @@ public class FrenzyHardwareMap {
         motorCarousel = frenzyMap.get(DcMotorEx.class, "carousel");
         //Define the imu
         imu = frenzyMap.get(BNO055IMU.class, "imu");
+        //Define Color Sensor
+        colorsensed = frenzyMap.get(NormalizedColorSensor.class,"colorsense");
 
         //define limit switch
         armLimitSwitch = frenzyMap.get(TouchSensor.class,"limitSwitch");

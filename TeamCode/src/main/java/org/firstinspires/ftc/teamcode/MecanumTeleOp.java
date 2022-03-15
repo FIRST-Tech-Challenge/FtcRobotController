@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+@Config
 @TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
 public class MecanumTeleOp extends LinearOpMode {
 
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,6 +22,8 @@ public class MecanumTeleOp extends LinearOpMode {
         //import the hardware map
         robot.init(hardwareMap, telemetry);
 
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         //set the drivetrain slowdown
         double slowdown = 1.0;
 
@@ -89,7 +96,7 @@ public class MecanumTeleOp extends LinearOpMode {
             gamepad2DPadDown = gamepad2.dpad_down; // track state of the dpad button
 
             // Magnetic Limit Switch
-            if (armLimitPressed && !armLimitSwitchFlag && !gamepad2DPadDown){
+            if (armLimitPressed && !armLimitSwitchFlag && !gamepad2DPadDown) {
                 // Reset to 0 if the magnetic limit switch is pressed and our flag is set to false
                 armSetPos = 0;
                 robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -97,18 +104,18 @@ public class MecanumTeleOp extends LinearOpMode {
                 armLimitSwitchFlag = true;
                 armPower = 0;// Added arm power 0
 
-            }else if( armCurrentPos > 15 && !armLimitPressed) {
+            } else if (armCurrentPos > 15 && !armLimitPressed) {
                 // when arm is up set the limit switch flag to false to allow reset on next limit switch press
                 armLimitSwitchFlag = false;
             }
 
             // Arm Up and Arm Down in small increments, >= 0.5 helps prevent issues with 0 value
-            if (gamepad2.right_stick_y <= -0.5){
+            if (gamepad2.right_stick_y <= -0.5) {
                 armSetPos = armSetPos + 10;
                 armPower = armPowerLevels;
             } else if (gamepad2.right_stick_y >= 0.5 && (!armLimitPressed && !armLimitSwitchFlag)) {
                 armSetPos = armSetPos - 10;
-            } else if(gamepad2DPadDown == true){
+            } else if (gamepad2DPadDown == true) {
                 armSetPos = armSetPos - 2;
                 armPower = armPowerLevels;
             }
@@ -118,13 +125,13 @@ public class MecanumTeleOp extends LinearOpMode {
             if (gamepad2.a) {
                 armSetPos = armLevel0;
                 armPower = armPowerLevels;
-            }else if (gamepad2.x) {
+            } else if (gamepad2.x) {
                 armSetPos = armLevel1;
                 armPower = armPowerLevels;
-            }else if (gamepad2.y) {
+            } else if (gamepad2.y) {
                 armSetPos = armLevel2;
                 armPower = armPowerLevels;
-            }else if (gamepad2.b) {
+            } else if (gamepad2.b) {
                 armSetPos = armLevel3;
                 armPower = armPowerLevels;
             }
@@ -138,15 +145,14 @@ public class MecanumTeleOp extends LinearOpMode {
              * Right trigger in at faster speed
              * Left Trigger out at a slower speed
              */
-            if (gamepad2.right_trigger > 0.5){
-                intakePower = -0.75;
-            }
-            else if (gamepad2.left_trigger > 0.5){
+            if (gamepad2.right_trigger > 0.5) {
+                intakePower = -0.95;
+            } else if (gamepad2.left_trigger > 0.5) {
                 intakePower = 0.35;
-            }
-            else if (gamepad2.left_trigger <= 0.5 && gamepad2.right_trigger <= 0.5){
+            } else if (gamepad2.left_trigger <= 0.5 && gamepad2.right_trigger <= 0.5) {
                 intakePower = 0;
             }
+
             //set power intake
             robot.motorIntake.setPower(intakePower);
 
@@ -157,11 +163,9 @@ public class MecanumTeleOp extends LinearOpMode {
              */
             if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
                 carouselPower = 0.825;
-            }
-            else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
-                carouselPower = -0.825 ;
-            }
-            else{
+            } else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
+                carouselPower = -0.825;
+            } else {
                 carouselPower = 0;
             }
             //set power carousel
@@ -178,20 +182,19 @@ public class MecanumTeleOp extends LinearOpMode {
             controller1lstickx = gamepad1.left_stick_x;
             controller1lsticky = gamepad1.left_stick_y;
             controller1rstickx = gamepad1.right_stick_x;
-            if(controller1lstickx < 0.25 && controller1lstickx > -0.25)
+            if (controller1lstickx < 0.25 && controller1lstickx > -0.25)
                 controller1lstickx = 0.0;
-            if(controller1lsticky < 0.25 && controller1lsticky > -0.25)
+            if (controller1lsticky < 0.25 && controller1lsticky > -0.25)
                 controller1lsticky = 0.0;
-            if(controller1rstickx < 0.25 && controller1rstickx > -0.25)
+            if (controller1rstickx < 0.25 && controller1rstickx > -0.25)
                 controller1rstickx = 0.0;
 
             // Toggles slowdown with B Press or Trigger Press
-            if((gamepad1.b && !bpressed) || (gamepad1.right_trigger >= 0.5 && !rtriggerpressed) || (gamepad1.left_trigger >= 0.5 && !ltriggerpressed)){
-                if(slowdownflag){
+            if ((gamepad1.b && !bpressed) || (gamepad1.right_trigger >= 0.5 && !rtriggerpressed) || (gamepad1.left_trigger >= 0.5 && !ltriggerpressed)) {
+                if (slowdownflag) {
                     slowdown = 1;
                     slowdownflag = false;
-                }
-                else if(!slowdownflag){
+                } else if (!slowdownflag) {
                     slowdown = 0.25;
                     slowdownflag = true;
                 }
@@ -224,6 +227,11 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorFrontRight.setPower(frontRightPower);
             robot.motorBackRight.setPower(backRightPower);
 
+            if (robot.colorsensed.getNormalizedColors().red > 0.08 && robot.colorsensed.getNormalizedColors().blue > 0.08 && robot.colorsensed.getNormalizedColors().green > 0.08){
+                gamepad2.rumble(0.3, 0.3, 200);
+                gamepad1.rumble(0.3, 0.3, 200);
+            }
+
             telemetry.addData("Left Stick X", controller1lstickx);
             telemetry.addData("Left Stick Y", controller1lsticky);
             telemetry.addData("Left Stick X input", gamepad1.left_stick_x);
@@ -236,6 +244,14 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Right Y Stick",gamepad1.right_stick_y);
             telemetry.addData("Left Y Stick",gamepad1.left_stick_y);
             telemetry.addData("Slowdown:",slowdownflag);
+
+            telemetry.addData("Color Sensor Gain:", robot.colorsensed.getGain());
+            telemetry.addData("Color Sensor Colors:", robot.colorsensed.getNormalizedColors());
+            telemetry.addData("Color Sensor Red:", robot.colorsensed.getNormalizedColors().red);
+            telemetry.addData("Color Sensor Blue:", robot.colorsensed.getNormalizedColors().blue);
+            telemetry.addData("Color Sensor Green:", robot.colorsensed.getNormalizedColors().green);
+
+
             telemetry.update();
         }
     }

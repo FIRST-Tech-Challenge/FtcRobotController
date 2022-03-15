@@ -33,7 +33,9 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -69,6 +71,9 @@ public class FrenzyHardwareMap {
 
     //IMU from RevHub.
     public BNO055IMU imu = null;
+
+    //Color Sensor
+    public NormalizedColorSensor colorsensed = null;
 
     public OpenCvWebcam webCam;
 
@@ -133,6 +138,9 @@ public class FrenzyHardwareMap {
 
         //Define the imu
         imu = frenzyMap.get(BNO055IMU.class, robotPartNames.get("robot_imu"));
+
+        //Define Color Sensor
+        colorsensed = frenzyMap.get(NormalizedColorSensor.class, robotPartNames.get("colorsense"));
 
         //Define web cam
         int cameraMonitorViewId = frenzyMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", frenzyMap.appContext.getPackageName());
