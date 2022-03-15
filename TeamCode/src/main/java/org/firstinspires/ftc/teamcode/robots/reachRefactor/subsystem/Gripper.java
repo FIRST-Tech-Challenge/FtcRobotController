@@ -34,7 +34,7 @@ public class Gripper implements Subsystem {
     public static double INTAKE_POWER = 0.3;
 
     private final Servo pitchServo, servo;
-    private final CRServo intakeServo;
+    private final CRServo intakeServo, intakeServoTooElectricBoogaloo;
     private final DistanceSensor freightSensor;
 
     // State
@@ -54,12 +54,14 @@ public class Gripper implements Subsystem {
             servo = new ServoSim();
             pitchServo = new ServoSim();
             intakeServo = new CRServoSim();
+            intakeServoTooElectricBoogaloo = new CRServoSim();
             freightSensor = new DistanceSensorSim(100);
         } else {
             servo = hardwareMap.get(Servo.class, "gripperServo");
             pitchServo = hardwareMap.get(Servo.class, "gripperPitchServo");
             freightSensor = hardwareMap.get(RevColorSensorV3.class, "freightSensor");
             intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+            intakeServoTooElectricBoogaloo = hardwareMap.get(CRServo.class, "intakeServoTooElectricBoogaloo");
             intakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
@@ -79,6 +81,7 @@ public class Gripper implements Subsystem {
         servo.setPosition(servoNormalize(targetPos));
         pitchServo.setPosition(servoNormalize(pitchTargetPos));
         intakeServo.setPower(intakePower);
+        intakeServoTooElectricBoogaloo.setPower(intakePower);
     }
 
     public void stop() {
