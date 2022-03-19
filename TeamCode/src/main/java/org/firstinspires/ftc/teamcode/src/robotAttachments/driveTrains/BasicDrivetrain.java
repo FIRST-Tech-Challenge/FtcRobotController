@@ -180,6 +180,13 @@ public class BasicDrivetrain implements Controllable {
 
     }
 
+    /**
+     * Allows control of a basic drivetrain
+     *
+     * @param gamepad1 The first gamepad
+     * @param gamepad2 The second gamepad
+     * @return Always returns null
+     */
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
         this.back_left.setPower(((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));

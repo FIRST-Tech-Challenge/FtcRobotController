@@ -85,6 +85,13 @@ public class CarouselSpinner implements Controllable {
         spinnerServo.setPower(0);
     }
 
+    /**
+     * Allows control of a carousel spinner
+     *
+     * @param gamepad1 The first gamepad
+     * @param gamepad2 The second gamepad
+     * @return Always returns null
+     */
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
         if (Math.abs(gamepad2.right_stick_x) > 0.1) {

@@ -35,6 +35,13 @@ public class TeleopDriveTrain extends BasicDrivetrain {
      */
 
 
+    /**
+     * Allows control of the teleop drivetrain
+     *
+     * @param gamepad1 The first gamepad
+     * @param gamepad2 The second gamepad
+     * @return Always returns null
+     */
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
 
         // The Y axis of a joystick ranges from -1 in its topmost position

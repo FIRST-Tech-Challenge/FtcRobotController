@@ -219,7 +219,7 @@ public class ContinuousIntake implements Controllable {
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
 
-        FreightFrenzyGameObject currentObject = null; // Assigning to null so the compiler is happy
+        FreightFrenzyGameObject currentObject = FreightFrenzyGameObject.EMPTY; // Assigning to null so the compiler is happy
 
         // Intake Controls
         {

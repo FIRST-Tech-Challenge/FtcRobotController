@@ -35,6 +35,13 @@ public class CappingArm implements Controllable {
         cappingServo.setPosition(cappingPosition);
     }
 
+    /**
+     * Allows control of a Capping Arm
+     *
+     * @param gamepad1 The first gamepad
+     * @param gamepad2 The second gamepad
+     * @return Always returns null
+     */
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
         if (gamepad2.x) {

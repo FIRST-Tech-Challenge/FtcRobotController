@@ -17,6 +17,13 @@ public class TapeMeasureTurret implements Controllable {
         this.yaw = hardwareMap.crservo.get(yawServoName);
     }
 
+    /**
+     * Allows control of a tape measure turret
+     *
+     * @param gamepad1 The first gamepad
+     * @param gamepad2 The second gamepad
+     * @return Always returns null
+     */
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
         double tp = gamepad2.right_stick_y;
