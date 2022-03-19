@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,9 +20,11 @@ public class MecanumTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        
 
         //import the hardware map
         robot.init(hardwareMap, telemetry);
+        RevBlinkinLedDriver blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");;
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -32,7 +35,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double controller1lstickx = 0.0;
         double controller1lsticky = 0.0;
         double controller1rstickx = 0.0;
-
+.
         // init motor and add intake for arm
         robot.motorArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         int armCurrentPos = 0;
@@ -49,6 +52,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double armPowerLevels = 0.7;
         boolean gamepad2DPadDown = false; // track the state of the dpad
 
+
         //intake power
         double intakePower = 0.5;
 
@@ -64,6 +68,7 @@ public class MecanumTeleOp extends LinearOpMode {
         boolean rtriggerpressed = false;
         boolean ltriggerpressed = false;
         boolean slowdownflag = false;
+
 
 
         //init loop
@@ -228,9 +233,15 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorFrontRight.setPower(frontRightPower);
             robot.motorBackRight.setPower(backRightPower);
 
-            if (robot.colorsensed.getNormalizedColors().red > 0.08 && robot.colorsensed.getNormalizedColors().blue > 0.08 && robot.colorsensed.getNormalizedColors().green > 0.08){
-                gamepad2.rumble(0.3, 0.3, 200);
-                gamepad1.rumble(0.3, 0.3, 200);
+            if (robot.colorsensed.getNormalizedColors().red > 0.04 && robot.colorsensed.getNormalizedColors().blue > 0.04 && robot.colorsensed.getNormalizedColors().green > 0.04){
+                if(!gamepad1.isRumbling()) {
+                    gamepad2.rumble(0.3, 0.3, 200);
+                    gamepad1.rumble(0.3, 0.3, 200);
+                }
+                blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            }
+            else{
+                blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
             }
 
             telemetry.addData("Left Stick X", controller1lstickx);
