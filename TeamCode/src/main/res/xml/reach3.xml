@@ -15,7 +15,7 @@
             <RevRobotics40HDHexMotor name="motorFrontLeft" port="1" />
             <RevRobotics40HDHexMotor name="motorFrontRight" port="2" />
             <RevRoboticsCoreHexMotor name="duckSpinner" port="3" />
-            <ContinuousRotationServo name="intakeServoToo" port="3" />
+            <ContinuousRotationServo name="intakeServoToo" port="4" />
             <ContinuousRotationServo name="intakeServo" port="2" />
             <Servo name="gripperPitchServo" port="1" />
             <Servo name="gripperServo" port="0" />
