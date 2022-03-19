@@ -98,7 +98,7 @@ public abstract class Teleop extends LinearOpMode {
     double      duckVelocityStep;
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
-    boolean   rangeSensorsEnabled = false;  // enable only when designing an Autonomous plan (takes time!)
+    boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
     int       rangeSensorIndex = 1;         // only send a new ping out every other control cycle, and rotate sensors
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
@@ -637,8 +637,8 @@ public abstract class Teleop extends LinearOpMode {
     } // processFreightArmControls
 
     /*---------------------------------------------------------------------------------*/
-    /* The 1620rpm capping-arm motor requires a minimum of 30% power to RAISE the arm  */
-    /* and 20% power to LOWER the arm -- where RAISE and LOWER switch orientation as   */
+    /* The 1150rpm capping-arm motor requires a minimum of 20% power to RAISE the arm  */
+    /* and 10% power to LOWER the arm -- where RAISE and LOWER switch orientation as   */
     /* the arm rotates thru the full range of encoder counts. This function scales the */
     /* manual user input (left/right trigger) to allow fine control over the full      */
     /* range of motion.                                                                */
@@ -647,16 +647,18 @@ public abstract class Teleop extends LinearOpMode {
         double absPercentInput = Math.abs( percentInput );
         // The necessary min/max power range is determined by these inputs:
         // a) percentInput > 0 = rotation toward CAPPING_ARM_POS_GRAB (gamepad1.left_trigger) 
-        //      countsFromVertical >= 0 = LOWERING the capping arm (need 20%+ power)
-        //      countsFromVertical <  0 = RAISING the capping arm  (need 30%+ power)
+        //      countsFromVertical >= 0 = LOWERING the capping arm (need 10%+ power)
+        //      countsFromVertical <  0 = RAISING the capping arm  (need 20%+ power)
         // b) percentInput < 0 = rotation toward CAPPING_ARM_POS_START (gamepad1.right_trigger) 
-        //      countsFromVertical >= 0 = RAISING the capping arm  (need 30%+ power)
-        //      countsFromVertical <  0 = LOWERING the capping arm (need 20%+ power)
+        //      countsFromVertical >= 0 = RAISING the capping arm  (need 20%+ power)
+        //      countsFromVertical <  0 = LOWERING the capping arm (need 10%+ power)
         boolean raisingArm = ((percentInput > 0.0) && (countsFromVertical < 0)) ||
                              ((percentInput < 0.0) && (countsFromVertical >= 0));
-        double minPower = (raisingArm)? 0.30 : 0.20;
-        // maxPower = minPower+0.25 (ie, 100% joystick input, minus the 75% before we start ramping up)
-        double computedPower = (absPercentInput <= 0.75)? minPower : (minPower + absPercentInput-0.75);
+        double minPower = (raisingArm)? 0.20 : 0.10;
+        // scale trigger input to 1/4, unless trying to go fast and then use 1/2
+        double scaleFactor = (absPercentInput < 0.80)? 0.25 : 0.50;
+        // maxPower = minPower + 0.50 (0.60 for lowering; 0.70 for raising)
+        double computedPower = minPower + (scaleFactor * absPercentInput);
         // Apply the positive/negative sign from percentInput
         computedPower *= (percentInput > 0.0)? 1.0 : -1.0;
 //      telemetry.addData("CappingMotor", "%.2f", computedPower );
@@ -709,9 +711,11 @@ public abstract class Teleop extends LinearOpMode {
             // toggle between GRAB and STORE positions 
             // (use current arm position to decide)
             if( robot.cappingMotorPos < robot.CAPPING_ARM_POS_CAP )
-            {  // currently STORE; switch to GRAB
-              wristServoPos = robot.WRIST_SERVO_GRAB;
-              robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
+            {  // currently STORE; switch to GRAB/CUP
+//            wristServoPos = robot.WRIST_SERVO_GRAB;
+              wristServoPos = robot.WRIST_SERVO_CUP;
+//            robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
+              robot.cappingArmPosInit( robot.CAPPING_ARM_POS_CUP );
               cappingArmCycleCount = CAPPING_CYCLECOUNT_START;
             }
             else

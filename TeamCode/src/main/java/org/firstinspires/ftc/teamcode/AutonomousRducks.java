@@ -218,7 +218,6 @@ public class AutonomousRducks extends AutonomousBase {
 
         // Command capping arm into the grabbing position
         robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
-        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_SPIN );
 
         // Process the first 750 msec of motion
         ElapsedTime fieldWallTimer = new ElapsedTime();
@@ -232,9 +231,8 @@ public class AutonomousRducks extends AutonomousBase {
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
 
-        // Finish both arm movements before continuing
-        while( opModeIsActive() &&
-                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
+        // Finish capping arm movement before continuing
+        while( opModeIsActive() && (robot.cappingMotorAuto == true) ) {
             performEveryLoop();
         }
 
@@ -317,7 +315,7 @@ public class AutonomousRducks extends AutonomousBase {
 
         switch( level ) {
             case 3 : servoPos = robot.BOX_SERVO_DUMP_TOP;
-                     backDistance = 4.5;
+                     backDistance = 4.7;
                      break;
             case 2 : servoPos = robot.BOX_SERVO_DUMP_MIDDLE;
                      backDistance = 3.5;
@@ -328,7 +326,7 @@ public class AutonomousRducks extends AutonomousBase {
         } // switch()
 
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
-        sleep( 500 );                               // let cube drop out
+        sleep( 500 );                     // let cube drop out
         // back away and store arm
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
         robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
@@ -342,16 +340,19 @@ public class AutonomousRducks extends AutonomousBase {
     private void spinDuckCarousel( int level ) {
         double towardWall = 0;
         switch( level ) {
-            case 3 : towardWall = 17.0; break; // top
+            case 3 : towardWall = 20.0; break; // top
             case 2 : towardWall = 18.0; break; // middle
             case 1 : towardWall = 17.0; break; // bottom
         } // switch()
         gyroTurn(TURN_SPEED_20, -90.0 );   // Turn toward wall
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, -90.0, DRIVE_TO );
 //      driveToBackDistance( 8.0, 1.0, 0.20, 10000 );
-        double wallDistance = backRangeSensor()/2.54 - 8.0;
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance, -90.0, DRIVE_TO );
-        gyroTurn(TURN_SPEED_20, -145.0 );  // Turn toward corner
+        double wallDistance = backRangeSensor()/2.54;
+        sonarRangeR = robot.singleSonarRangeR()/2.54;
+        telemetry.addData("sonarRangeR", "%.2f in (11.0)", sonarRangeR );
+        telemetry.addData("wallDistance", "%.2f in", wallDistance );
+        telemetry.update();
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance,-90.0, DRIVE_TO );
         robot.duckMotor.setPower( 0.48 );  // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
@@ -363,7 +364,7 @@ public class AutonomousRducks extends AutonomousBase {
                 case 3 : barelyPressSpeed = 0.02; break;
                 case 4 : barelyPressSpeed = 0.02; break;
             }
-            robot.driveTrainMotors( -barelyPressSpeed, -barelyPressSpeed, -barelyPressSpeed, -barelyPressSpeed );
+            robot.driveTrainMotors( barelyPressSpeed, -barelyPressSpeed, -barelyPressSpeed, barelyPressSpeed );
             sleep( 1000 );   // Spin the carousel for 5 seconds total
         } // loop
         robot.duckMotor.setPower( 0.0 );  // Disable carousel motor
@@ -371,8 +372,9 @@ public class AutonomousRducks extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void driveToSquare( int level ) {
+        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 4.0,-90.0, DRIVE_TO );
         gyroTurn(TURN_SPEED_20, -180.0 );   // Turn square to side wall
-        double squareDistance = 30.0 - backRangeSensor()/2.54;
+        double squareDistance = 30.0 - robot.singleSonarRangeB()/2.54;
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );
         // Don't lower arm to floor until we get into the square, in case the freight box has rotated
         // (the front edge will catch on the floor tile when we try to drive forward)
@@ -427,8 +429,8 @@ public class AutonomousRducks extends AutonomousBase {
     /*---------------------------------------------------------------------------------*/
     double rightRangeSensor() {
         for( int i=0; i<5; i++ ) {
-            sonarRangeR = robot.updateSonarRangeR();
             sleep(50);
+            sonarRangeR = robot.updateSonarRangeR();
         }
         return sonarRangeR;
     } // rightRangeSensor
@@ -436,8 +438,8 @@ public class AutonomousRducks extends AutonomousBase {
     /*---------------------------------------------------------------------------------*/
     double backRangeSensor() {
         for( int i=0; i<6; i++ ) {
-            sonarRangeB = robot.updateSonarRangeB();
             sleep(50);
+            sonarRangeB = robot.updateSonarRangeB();
         }
         return sonarRangeB;
     } // backRangeSensor

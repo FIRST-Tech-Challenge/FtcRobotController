@@ -130,20 +130,22 @@ public class HardwareBothHubs
     protected int           capMotorLogIndex  = 0;
     protected ElapsedTime   capMotorTimer     = new ElapsedTime();
 
-    public int          CAPPING_ARM_POS_START   = 0;
-    public int          CAPPING_ARM_POS_STORE   = 649;   // updated arm encoder
-    public int          CAPPING_ARM_POS_LIBERTY = 786;   // status of liberty pose (end duck-autonomous here)
-    public int          CAPPING_ARM_POS_VERTICAL= 1006;  // straight up (minimal motor power required)
-    public int          CAPPING_ARM_POS_CAP     = 1335;
-    public int          CAPPING_ARM_POS_GRAB    = 2070;
+    public int          CAPPING_ARM_POS_START   = 0;     // 1150rpm motor (145.1 pulse/rev)
+    public int          CAPPING_ARM_POS_STORE   = 907;   // transport position (high enough to miss shared-hub post)
+    public int          CAPPING_ARM_POS_LIBERTY = 1099;   // status of liberty pose (end duck-autonomous here)
+    public int          CAPPING_ARM_POS_VERTICAL= 1406;  // straight up (minimal motor power required)
+    public int          CAPPING_ARM_POS_CAP     = 1866;  // hovering above the alliance shipping hub post
+    public int          CAPPING_ARM_POS_CUP     = 2764;  // floor level (to grab CUP  Team Shipping Element)
+    public int          CAPPING_ARM_POS_GRAB    = 2893;  // floor level (to grab 7592 Team Shipping Element)
     public int          cappingArmPos = CAPPING_ARM_POS_START;
 
     // CAPPING ARM WRIST SERVO
     public Servo   wristServo = null;
     public static double wristServoAuto = 0.800;
     public double  WRIST_SERVO_INIT    = 0.950;
-    public double  WRIST_SERVO_GRAB    = 0.455;
     public double  WRIST_SERVO_LIBERTY = 0.500;  // status of liberty pose (end duck-autonomous here)
+    public double  WRIST_SERVO_GRAB    = 0.455;
+    public double  WRIST_SERVO_CUP     = 0.445;
     public double  WRIST_SERVO_STORE   = 0.427;  // updated wrist encoder
     public double  WRIST_SERVO_CAP     = 0.133;
 
@@ -181,8 +183,8 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_COLLECT    = 0;     // Floor level (power-on position)
     public int          FREIGHT_ARM_POS_SAFE       = 60;    // Low enough that it's safe to raise/lower collector arm
     public int          FREIGHT_ARM_POS_SPIN       = 125;   // Raised enough for box to spin clearly
-    public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 232;   // Horizontal transport position
+    public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
 //  public int          FREIGHT_ARM_POS_HUB_TOP    = 1670;  // For dumping into hub top level last
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level last
@@ -858,6 +860,14 @@ public class HardwareBothHubs
         // Ensure motor is stopped/stationary (aborts any prior unfinished automatic movement)
         freightMotor.setPower( 0.0 );
 
+        // The initial lift from COLLECT to TRANSPORT needs more power to lift against what might
+        // be the pile of freight in the warehouse (and a smaller proportional-control divider
+        // produces a higher motor power setting)
+        if( (newPos == FREIGHT_ARM_POS_TRANSPORT1) && (freightMotorPos < FREIGHT_ARM_POS_TRANSPORT1) )
+           freightMotorDiv = 208.0;
+        else // reset back to default proportional-control divider
+           freightMotorDiv = 624.0;
+
         // Establish a new target position & reset counters
         freightMotorAuto = true;
         freightMotorTgt  = newPos;
@@ -907,7 +917,7 @@ public class HardwareBothHubs
                 // - Current at zero or increasing means arm won't move unless given enough power
                 minPower = (freightMotorRamp)? 0.35 : 0.40;
                 // Compute motor power (automatically reduce as we approach target)
-                freightMotorPower = ticksToGo / 624.0;  // 1620rpm = 103.8 counts per shaft revolution
+                freightMotorPower = ticksToGo / freightMotorDiv;  // 1620rpm = 103.8 counts per shaft revolution
                 freightMotorPower = Math.copySign( Math.min(Math.abs(freightMotorPower), maxPower), freightMotorPower );
                 freightMotorPower = Math.copySign( Math.max(Math.abs(freightMotorPower), minPower), freightMotorPower );
                 freightMotor.setPower( freightMotorPower );
@@ -1019,6 +1029,16 @@ public class HardwareBothHubs
         // Query the current range sensor reading and wait for a response
         return sonarRangeB.getDistanceSync();
     } // singleSonarRangeB
+
+    public double singleSonarRangeL() {
+        // Query the current range sensor reading and wait for a response
+        return sonarRangeL.getDistanceSync();
+    } // singleSonarRangeL
+
+    public double singleSonarRangeR() {
+        // Query the current range sensor reading and wait for a response
+        return sonarRangeR.getDistanceSync();
+    } // singleSonarRangeR
 
     public double updateSonarRangeB() {
         // Query the current range sensor reading as the next sample to our BACK range dataset

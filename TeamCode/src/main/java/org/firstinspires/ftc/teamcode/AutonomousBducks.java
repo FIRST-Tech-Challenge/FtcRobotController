@@ -218,7 +218,6 @@ public class AutonomousBducks extends AutonomousBase {
 
         // Command capping arm into the grabbing position
         robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
-        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_SPIN );
 
         // Process the first 750 msec of motion
         ElapsedTime fieldWallTimer = new ElapsedTime();
@@ -232,9 +231,8 @@ public class AutonomousBducks extends AutonomousBase {
         robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
         robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
 
-        // Finish both arm movements before continuing
-        while( opModeIsActive() &&
-                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
+        // Finish capping arm movement before continuing
+        while( opModeIsActive() && (robot.cappingMotorAuto == true) ) {
             performEveryLoop();
         }
 
