@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 @Config(value = "FFCrane")
 public class Crane implements Subsystem {
-    public static int SHOULDER_HOME_PWM = 1550;
+    public static int SHOULDER_HOME_PWM = 1500; //was 1550
     public static int ELBOW_HOME_PWM = 1500;
     public static int WRIST_HOME_PWM = 1500;
 

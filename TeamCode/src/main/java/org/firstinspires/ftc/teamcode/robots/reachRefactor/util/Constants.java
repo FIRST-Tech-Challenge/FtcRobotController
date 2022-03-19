@@ -12,7 +12,7 @@ public class Constants {
     //----------------------------------------------------------------------------------------------
 
     // distance measurements
-    public static final double MIN_CHASSIS_LENGTH = 14;
+    public static final double MIN_CHASSIS_LENGTH = 14.8;
     public static final double MAX_CHASSIS_LENGTH = 28;
     public static final double TRACK_WIDTH = 12.132362205;
     public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
