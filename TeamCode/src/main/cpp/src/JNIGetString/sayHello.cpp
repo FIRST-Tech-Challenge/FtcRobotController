@@ -25,5 +25,5 @@ Java_org_firstinspires_ftc_teamcode_src_utills_JNIGetString_extraCallFromJNI(JNI
                                                                              jobject o) {
     jclass cls = (env)->GetObjectClass(o);
     jfieldID fidDouble = env->GetFieldID(cls, "val", "D");
-    return env->GetDoubleField(o,fidDouble);
+    return env->GetDoubleField(o, fidDouble);
 }

@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<!-- 
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><!--
   This file can provide additional camera calibration settings beyond those built into the SDK itself.
   Each calibration is for a particular camera (indicated by USB vid & pid pair) and a particular
   capture resolution for the camera. Note: it is very important when capturing images used to calibrate

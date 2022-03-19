@@ -231,8 +231,8 @@ public abstract class AutoVFTrackingTemplate extends AutoObjDetectionTemplate {
 
     /***
      * Identify a target by naming it, and setting its position and orientation on the field
-     * @param targetIndex
-     * @param targetName
+     * @param targetIndex The index of the target
+     * @param targetName The name of the target
      * @param dx,dy,dz  Target offsets in x,y,z axes
      * @param rx,ry,rz  Target rotations in x,y,z axes
      */

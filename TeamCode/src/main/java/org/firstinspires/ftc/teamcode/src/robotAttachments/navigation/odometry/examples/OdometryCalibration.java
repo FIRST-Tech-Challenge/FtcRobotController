@@ -49,7 +49,7 @@ public class OdometryCalibration extends GenericOpModeTemplate {
     private BNO055IMU imu;
 
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         //Initialize hardware map values. PLEASE UPDATE THESE VALUES TO MATCH YOUR CONFIGURATION
         initHardwareMap(rfName, rbName, lfName, lbName, verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
         this.initOdometryServos();

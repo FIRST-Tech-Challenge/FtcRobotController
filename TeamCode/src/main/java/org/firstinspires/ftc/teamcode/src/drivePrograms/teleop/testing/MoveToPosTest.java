@@ -12,7 +12,7 @@ public class MoveToPosTest extends TeleOpTemplate {
 
 
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         LinearSlide slide = new LinearSlide(hardwareMap, TeleOpTemplate.linearSlideMotorName);
         waitForStart();
 

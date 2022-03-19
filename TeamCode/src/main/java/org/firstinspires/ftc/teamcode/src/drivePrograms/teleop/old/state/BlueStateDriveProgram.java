@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.old.state;
 
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
-import androidx.annotation.Nullable;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -26,21 +24,18 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
     TripWireDistanceSensor distanceSensor;
     private boolean resetSlide = false;
 
-    @Nullable
-    private Void callBack() {
-        this.leds.setPattern(BlinkinPattern.BLACK);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
-        this.leds.setPattern(currentColor);
-        return null;
-
-    }
-
     public void opModeMain() throws InterruptedException {
         this.initAll();
-        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, this::callBack, this::opModeIsActive, this::isStopRequested);
+        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, () -> {
+            this.leds.setPattern(BlinkinPattern.BLACK);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+            this.leds.setPattern(currentColor);
+            return null;
+
+        }, this::opModeIsActive, this::isStopRequested);
         distanceSensor.start();
         leds.setPattern(defaultColor);
 

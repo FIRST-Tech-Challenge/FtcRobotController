@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 public class CappingArm implements Controllable {
 
     private final Servo cappingServo;
-    private final double upPosition = 0.75;
-    private final double downPosition = 0.28;
-    private final double initPosition = 0.92;
-    private final double cappingPosition = 0.54;
+    private static final double upPosition = 0.75;
+    private static final double downPosition = 0.28;
+    private static final double initPosition = 0.92;
+    private static final double cappingPosition = 0.54;
 
     public CappingArm(HardwareMap hardwareMap, String servoName) {
         cappingServo = hardwareMap.servo.get(servoName);

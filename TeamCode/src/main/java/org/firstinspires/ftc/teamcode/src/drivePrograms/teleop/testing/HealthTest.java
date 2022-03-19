@@ -13,7 +13,7 @@ public class HealthTest extends GenericOpModeTemplate {
     ColorSensor s;
 
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         spinnyServo = hardwareMap.crservo.get(GenericOpModeTemplate.carouselSpinnerName);
         h = (HardwareDeviceHealth) spinnyServo;
         s = hardwareMap.colorSensor.get(GenericOpModeTemplate.bucketColorSensorName);

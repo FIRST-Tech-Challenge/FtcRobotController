@@ -54,7 +54,7 @@ public class VuforiaOdometryLA implements LocalizationAlgorithm {
     }
 
     @Override
-    public void setPos(double X, double Y, double rot) throws InterruptedException {
+    public void setPos(double X, double Y, double rot) {
 
     }
 }

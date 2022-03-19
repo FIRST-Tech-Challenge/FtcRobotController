@@ -91,7 +91,7 @@ public class ConceptTensorFlowObjectDetectionSwitchableCameras extends LinearOpM
      */
     private static final String VUFORIA_KEY = VuforiaKey.VUFORIA_KEY;
 
-    /**
+    /*
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
@@ -105,7 +105,7 @@ public class ConceptTensorFlowObjectDetectionSwitchableCameras extends LinearOpM
     private boolean oldLeftBumper;
     private boolean oldRightBumper;
 
-    /**
+    /*
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */

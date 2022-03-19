@@ -57,22 +57,6 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
 
                 driveSystem.moveTowardsPosition(0, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
                 driveSystem.moveToPosition(0, 26, 180, 1, new DistanceTimeoutWarning(100));
-                /*
-                driveSystem.moveTowardsPosition(0, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
-
-                intake.setIntakeOn();
-
-                try {
-                    driveSystem.moveToPosition(0, 10, 180, 1, new MovementException[]{new DistanceSensorException(intakeDistanceSensor, 8), new DistanceTimeoutException(500)});
-                } catch (MovementException e) {
-                    if (gps.getY() > 20) {
-                        driveSystem.moveToPosition(0, 10, gps.getRot(), 1, new DistanceTimeoutWarning(100));
-                    }
-                }
-
-                intake.setIntakeOff();
-
-                 */
 
 
             } else {

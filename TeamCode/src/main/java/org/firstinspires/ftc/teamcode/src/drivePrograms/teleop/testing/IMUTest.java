@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
 @TeleOp(name = "IMU Test")
 public class IMUTest extends GenericOpModeTemplate {
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

@@ -28,20 +28,18 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
 
-    private Void callBack() {
-        this.leds.setPattern(BlinkinPattern.BLACK);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-        }
-        this.leds.setPattern(currentColor);
-        return null;
-
-    }
-
     public void opModeMain() throws InterruptedException {
         this.initAll();
-        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, this::callBack, this::opModeIsActive, this::isStopRequested);
+        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, () -> {
+            this.leds.setPattern(BlinkinPattern.BLACK);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+            this.leds.setPattern(currentColor);
+            return null;
+
+        }, this::opModeIsActive, this::isStopRequested);
         distanceSensor.start();
         leds.setPattern(defaultColor);
 

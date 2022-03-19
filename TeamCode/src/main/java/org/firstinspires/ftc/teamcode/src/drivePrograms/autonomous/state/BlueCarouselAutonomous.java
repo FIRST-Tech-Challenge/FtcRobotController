@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
 @Autonomous(name = "Blue State Carousel Autonomous")
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
-    private final boolean overBarrier = true;
 
 
     @Override
@@ -54,24 +53,11 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
             driveSystem.moveTowardsPosition(gps.getX() - 4, gps.getY() - 20, 180, 1, 5, new DistanceTimeoutWarning(500));
 
+            boolean overBarrier = true;
             if (!overBarrier) {
                 //Through crack
-                driveSystem.moveTowardsPosition(144 - 0, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
-                driveSystem.moveToPosition(144 - 0, 30, 180, 1, new DistanceTimeoutWarning(100));
-
-               /*
-                intake.setIntakeOn();
-
-
-                try {
-                    driveSystem.moveToPosition(144 - 0, 10, 180, 1, new MovementException[]{new DistanceSensorException(intakeDistanceSensor, 8), new DistanceTimeoutException(100)});
-                } catch (MovementException e) {
-                    if (gps.getY() > 20) {
-                        driveSystem.moveToPosition(144 - 0, 10, gps.getRot(), 1, new DistanceTimeoutWarning(100));
-                    }
-                }
-
-                */
+                driveSystem.moveTowardsPosition(144, 80, 180, 1, 1, new DistanceTimeoutWarning(100));
+                driveSystem.moveToPosition(144, 30, 180, 1, new DistanceTimeoutWarning(100));
 
 
                 intake.setIntakeOff();

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 public class TMTTest extends TeleOpTemplate {
 
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         final TapeMeasureTurret turret = new TapeMeasureTurret(hardwareMap, "tape_measure", "pitch", "yaw");
 
         waitForStart();

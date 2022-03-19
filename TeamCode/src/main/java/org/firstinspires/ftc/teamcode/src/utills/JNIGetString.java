@@ -6,10 +6,6 @@ public class JNIGetString {
         System.loadLibrary("JNIGetStr");
     }
 
-    static {
-        Double.toString(21);
-    }
-
     public static native String stringFromJNI();
 
     public static native int intFromJNI();

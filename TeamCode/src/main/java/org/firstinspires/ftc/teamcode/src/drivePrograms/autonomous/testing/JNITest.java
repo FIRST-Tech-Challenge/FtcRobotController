@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
 @TeleOp(name = "JNITest \uD83D\uDE80")
 public class JNITest extends GenericOpModeTemplate {
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         waitForStart();
 
         System.loadLibrary("JNIGetStr");
