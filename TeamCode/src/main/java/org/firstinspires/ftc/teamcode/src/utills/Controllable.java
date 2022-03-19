@@ -6,6 +6,7 @@ public interface Controllable {
 
     /**
      * Allows control of subsystems through the gamepads
+     *
      * @param gamepad1 The first gamepad
      * @param gamepad2 The second gamepad
      */

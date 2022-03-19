@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.src.utills.JNIGetString;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 
-
 @TeleOp(name = "JNITest \uD83D\uDE80")
 public class JNITest extends GenericOpModeTemplate {
     @Override
@@ -15,7 +14,7 @@ public class JNITest extends GenericOpModeTemplate {
 
         System.loadLibrary("JNIGetStr");
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("JNI Str", JNIGetString.stringFromJNI());
             telemetry.addData("Extra Call Res", JNIGetString.extraCallFromJNI(JNIGetString.getInstance()));
             telemetry.addData("Num", JNIGetString.intFromJNI());

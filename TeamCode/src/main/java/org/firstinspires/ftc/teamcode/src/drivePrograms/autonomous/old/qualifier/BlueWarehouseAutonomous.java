@@ -124,7 +124,6 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
         }
 
 
-
     }
 }
 

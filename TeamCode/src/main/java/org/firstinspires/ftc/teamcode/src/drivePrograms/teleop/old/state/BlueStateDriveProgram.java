@@ -17,18 +17,14 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
     private final ElapsedTime yTimer = new ElapsedTime();
 
     private final ElapsedTime slideResetTimer = new ElapsedTime();
-    private boolean resetSlide = false;
-
     boolean y_depressed2 = true;
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
-
     boolean manualSlideControl = false;
-
     HeightLevel currentLevel = HeightLevel.Down;
-
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
+    private boolean resetSlide = false;
 
     @Nullable
     private Void callBack() {

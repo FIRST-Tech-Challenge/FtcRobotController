@@ -17,6 +17,12 @@ public class LinearSlide implements Controllable {
      * The internal DcMotor object
      */
     final DcMotor linearSlide;
+    private final ElapsedTime slideResetTimer = new ElapsedTime();
+    private boolean resetSlide = false;
+    private boolean manualSlideControl = false;
+    private HeightLevel currentLevel = HeightLevel.Down;
+    private boolean dPadUpDepressed = true;
+    private boolean dPadDownDepressed = true;
 
     /**
      * A constructor for the linear slide
@@ -140,13 +146,6 @@ public class LinearSlide implements Controllable {
         return linearSlide.getTargetPosition();
     }
 
-    private boolean resetSlide = false;
-    private boolean manualSlideControl = false;
-    private final ElapsedTime slideResetTimer = new ElapsedTime();
-    private HeightLevel currentLevel = HeightLevel.Down;
-    private boolean dPadUpDepressed = true;
-    private boolean dPadDownDepressed = true;
-
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
         if (!resetSlide) {
@@ -208,7 +207,6 @@ public class LinearSlide implements Controllable {
             this.autoMode();
             this.resetEncoder();
         }
-
 
 
         return null;

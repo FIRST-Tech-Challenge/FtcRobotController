@@ -23,10 +23,9 @@ public class RedStateDriveProgram extends TeleOpTemplate {
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
     HeightLevel currentLevel = HeightLevel.Down;
-    private boolean resetSlide = false;
-
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
+    private boolean resetSlide = false;
 
     @Nullable
     private Void callBack() {

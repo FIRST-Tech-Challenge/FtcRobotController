@@ -6,23 +6,23 @@ public class JNIGetString {
         System.loadLibrary("JNIGetStr");
     }
 
+    static {
+        Double.toString(21);
+    }
+
     public static native String stringFromJNI();
 
     public static native int intFromJNI();
 
-    public static tmp getInstance(){
+    public static tmp getInstance() {
         tmp temp = new tmp();
         temp.val = 8;
         return temp;
     }
 
-
-    static {
-        Double.toString(21);
-    }
     public static native double extraCallFromJNI(tmp o);
 }
 
-class tmp{
+class tmp {
     public double val = 0;
 }

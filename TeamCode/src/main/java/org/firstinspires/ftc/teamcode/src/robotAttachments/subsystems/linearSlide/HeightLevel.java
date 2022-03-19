@@ -13,6 +13,16 @@ public enum HeightLevel {
     CappingDown,
     GetOverObstacles;
 
+    private static final int[] heights;
+
+    static {
+        HeightLevel[] values = HeightLevel.values();
+        heights = new int[values.length];
+        for (int i = 0; i < values.length; i++) {
+            heights[i] = HeightLevel.getEncoderCountFromEnum(values[i]);
+        }
+    }
+
     /**
      * Pass in the Height Level, returns the the position to go to in ticks
      */
@@ -38,16 +48,6 @@ public enum HeightLevel {
 
     public static int getEncoderCountFromEnum(HeightLevel level) {
         return getEncoderCountFromLevel(level);
-    }
-
-    private static final int[] heights;
-
-    static {
-        HeightLevel[] values = HeightLevel.values();
-        heights = new int[values.length];
-        for (int i = 0; i < values.length; i++) {
-            heights[i] = HeightLevel.getEncoderCountFromEnum(values[i]);
-        }
     }
 
     public static HeightLevel getClosestLevel(int currentLevel) {

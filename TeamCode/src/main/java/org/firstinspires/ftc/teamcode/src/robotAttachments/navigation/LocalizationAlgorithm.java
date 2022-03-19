@@ -18,6 +18,14 @@ public interface LocalizationAlgorithm {
     double[] getPos();
 
     /**
+     * Sets the position of the robot using an Enum key from FieldPoints
+     *
+     * @param initPos the enum key of a three value array of an init position
+     * @throws InterruptedException Throws if the Thread is interupted while waiting for lock. If is interrupted, values are not changed
+     */
+    void setPos(FieldPoints initPos) throws InterruptedException;
+
+    /**
      * Gets the x position of the robot in inches
      * (0,0) is relative to the red warehouse side of the field
      *
@@ -50,12 +58,4 @@ public interface LocalizationAlgorithm {
      * @throws InterruptedException Throws if the thread is interrupted while setting position
      */
     void setPos(double X, double Y, double rot) throws InterruptedException;
-
-    /**
-     * Sets the position of the robot using an Enum key from FieldPoints
-     *
-     * @param initPos the enum key of a three value array of an init position
-     * @throws InterruptedException Throws if the Thread is interupted while waiting for lock. If is interrupted, values are not changed
-     */
-    void setPos(FieldPoints initPos) throws InterruptedException;
 }

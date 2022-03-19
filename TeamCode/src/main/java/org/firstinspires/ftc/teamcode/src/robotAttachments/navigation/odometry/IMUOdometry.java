@@ -223,22 +223,6 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
     }
 
     /**
-     * Sets the position of the robot using an Enum key from FieldPoints
-     *
-     * @param initPos the enum key of a three value array of an init position
-     * @throws InterruptedException Throws if the Thread is interupted while waiting for lock. If is interrupted, values are not changed
-     */
-    public void setPos(FieldPoints initPos) throws InterruptedException {
-        double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
-        assert (tmp != null);
-
-        this.setPos(tmp[0] * COUNTS_PER_INCH, tmp[1] * COUNTS_PER_INCH, tmp[2]);
-
-
-    }
-
-
-    /**
      * Gets the current angle of the IMU
      *
      * @return The angle parallel to the floor in degrees
@@ -253,7 +237,6 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
         return returnVal % 360;
 
     }
-
 
     /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
@@ -298,7 +281,6 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
         }
     }
 
-
     /**
      * Returns the robot's global orientation
      *
@@ -336,6 +318,20 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
         return new double[]{this.getX(), this.getY(), this.getRot()};
     }
 
+    /**
+     * Sets the position of the robot using an Enum key from FieldPoints
+     *
+     * @param initPos the enum key of a three value array of an init position
+     * @throws InterruptedException Throws if the Thread is interupted while waiting for lock. If is interrupted, values are not changed
+     */
+    public void setPos(FieldPoints initPos) throws InterruptedException {
+        double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
+        assert (tmp != null);
+
+        this.setPos(tmp[0] * COUNTS_PER_INCH, tmp[1] * COUNTS_PER_INCH, tmp[2]);
+
+
+    }
 
     /**
      * Reverses the left encoder

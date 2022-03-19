@@ -59,6 +59,20 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
     protected String CameraNameToUse = GenericOpModeTemplate.LeftWebcamName;
 
+    public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
+        List<Recognition> recognitions = tfod.getRecognitions();
+        if (recognitions == null || (recognitions.size() == 0)) {
+            return BarcodePositions.NotSeen;
+        } else if (recognitions.size() == 2) { // Handles edge case where the object is phantom duplicated
+            if (BarcodePositions.getRecognitionLocation(recognitions.get(0)) == BarcodePositions.Center) {
+                return BarcodePositions.getRecognitionLocation(recognitions.get(1));
+            }
+            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
+        } else {
+            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
+        }
+    }
+
     /**
      * Initializes the Vuforia object
      *
@@ -144,21 +158,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         }
 
     }
-
-    public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
-        List<Recognition> recognitions = tfod.getRecognitions();
-        if (recognitions == null || (recognitions.size() == 0)) {
-            return BarcodePositions.NotSeen;
-        } else if (recognitions.size() == 2) { // Handles edge case where the object is phantom duplicated
-            if (BarcodePositions.getRecognitionLocation(recognitions.get(0)) == BarcodePositions.Center) {
-                return BarcodePositions.getRecognitionLocation(recognitions.get(1));
-            }
-            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
-        } else {
-            return BarcodePositions.getRecognitionLocation(recognitions.get(0));
-        }
-    }
-
 
     /**
      * Initializes all fields provided by this class

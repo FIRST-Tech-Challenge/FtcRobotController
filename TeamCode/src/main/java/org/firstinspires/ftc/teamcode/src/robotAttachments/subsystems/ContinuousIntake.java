@@ -49,11 +49,13 @@ public class ContinuousIntake implements Controllable {
      * The internal Servo Object
      */
     private final Servo itemRelease;
-
+    private final ElapsedTime yTimer = new ElapsedTime();
     /**
      * A boolean that tells if the servo is closed or opened
      */
     private boolean isClosed;
+    private boolean y_depressed2 = true;
+
 
     /**
      * Initializes from hardware map and names
@@ -89,7 +91,6 @@ public class ContinuousIntake implements Controllable {
     public FreightFrenzyGameObject identifyContents() {
         return FreightFrenzyGameObject.identify(this.getRGB());
     }
-
 
     /**
      * A getter for the isClosed boolean
@@ -145,7 +146,7 @@ public class ContinuousIntake implements Controllable {
         isClosed = true;
     }
 
-    public void setServoPos(double pos){
+    public void setServoPos(double pos) {
         itemRelease.setPosition(pos);
         isClosed = false;
     }
@@ -207,10 +208,6 @@ public class ContinuousIntake implements Controllable {
     public RevBlinkinLedDriver.BlinkinPattern getLEDPatternFromFreight() {
         return FreightFrenzyGameObject.getLEDColorFromItem(FreightFrenzyGameObject.identify(this.getRGB()));
     }
-
-    private boolean y_depressed2 = true;
-
-    private final ElapsedTime yTimer = new ElapsedTime();
 
     /**
      * Controls the intake and outtake

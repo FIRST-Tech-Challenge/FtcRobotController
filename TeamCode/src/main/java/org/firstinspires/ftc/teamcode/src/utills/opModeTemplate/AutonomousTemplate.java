@@ -102,7 +102,6 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
         }
 
 
-
         if (voltageSensor == null) {
             this.initVoltageSensor();
         }

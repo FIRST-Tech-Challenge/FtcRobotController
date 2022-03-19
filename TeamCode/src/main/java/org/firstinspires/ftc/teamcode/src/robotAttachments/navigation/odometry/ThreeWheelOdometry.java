@@ -214,19 +214,6 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Odo
     }
 
     /**
-     * Sets the position of the robot using an Enum key from FieldPoints
-     *
-     * @param initPos the enum key of a three value array of an init position
-     * @throws InterruptedException Throws if the Thread is interrupted while waiting for lock. If is interrupted, values are not changed
-     */
-    public void setPos(FieldPoints initPos) throws InterruptedException {
-        double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
-        assert (tmp != null);
-        this.setPos(tmp[0] * COUNTS_PER_INCH, tmp[1] * COUNTS_PER_INCH, tmp[2]);
-    }
-
-
-    /**
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
     public void threadMain() throws InterruptedException {
@@ -264,7 +251,6 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Odo
         }
     }
 
-
     /**
      * Returns the robot's global orientation
      *
@@ -298,6 +284,17 @@ public class ThreeWheelOdometry extends ThreadedSubsystemTemplate implements Odo
         return new double[]{this.getX(), this.getY(), this.getRot()};
     }
 
+    /**
+     * Sets the position of the robot using an Enum key from FieldPoints
+     *
+     * @param initPos the enum key of a three value array of an init position
+     * @throws InterruptedException Throws if the Thread is interrupted while waiting for lock. If is interrupted, values are not changed
+     */
+    public void setPos(FieldPoints initPos) throws InterruptedException {
+        double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
+        assert (tmp != null);
+        this.setPos(tmp[0] * COUNTS_PER_INCH, tmp[1] * COUNTS_PER_INCH, tmp[2]);
+    }
 
     /**
      * Reverses the left encoder

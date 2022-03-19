@@ -182,10 +182,10 @@ public class BasicDrivetrain implements Controllable {
 
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
-        this.back_left.setPower( ((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
-        this.front_left.setPower( ((-gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x));
-        this.back_right.setPower( ((-gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
-        this.front_right.setPower( ((-gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
+        this.back_left.setPower(((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.front_left.setPower(((-gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.back_right.setPower(((-gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
+        this.front_right.setPower(((-gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
 
         return null;
 

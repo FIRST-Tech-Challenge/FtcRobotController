@@ -71,7 +71,7 @@ public class RedQualifierDriveProgram extends TeleOpTemplate {
 
             //Declan's controls
             {
-                driveTrain.gamepadControl(gamepad1,null);
+                driveTrain.gamepadControl(gamepad1, null);
 
                 //Declan Speed Modifiers
                 if (gamepad1.b) {
