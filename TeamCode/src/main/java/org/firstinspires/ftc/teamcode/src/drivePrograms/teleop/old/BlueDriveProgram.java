@@ -23,7 +23,7 @@ public class BlueDriveProgram extends TeleOpTemplate {
         RevBlinkinLedDriver.BlinkinPattern currentColor = defaultColor;
 
         while (opModeIsActive() && !isStopRequested()) {
-            driveTrain.setPowerFromGamepad(gamepad1);
+            driveTrain.gamepadControl(gamepad1,null);
 
             //Handles Linear Slide Control
             slide.setMotorPower(1 * gamepad2.left_stick_y);

@@ -5,41 +5,54 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors;
 
 /**
  * this is the class for our robot's intake subsystem
  */
-public class ContinuousIntake {
+public class ContinuousIntake implements Controllable {
+
     /**
      * The power for going forward
      */
     private final static double forwardPower = 1;
+
     /**
      * The Position servo must be to release an item
      */
-    private static final double open = .47; // this position needs to be adjusted!
+    private static final double open = .8; // this position needs to be adjusted!
+
     /**
      * The Position servo must be to keep and item in the intake compartment
      */
-    private static final double closed = .7; // this position needs to be adjusted
+    private static final double closed = 0.45; // this position needs to be adjusted
+
     /**
      * The item color sensor
      */
     private final ColorRangeSensor colorSensor;
+
     /**
      * DcMotor Object
      */
     private final DcMotor intakeMotor;
+
     /**
      * The internal Servo Object
      */
     private final Servo itemRelease;
+
+    /**
+     * A boolean that tells if the servo is closed or opened
+     */
     private boolean isClosed;
 
     /**
@@ -132,6 +145,11 @@ public class ContinuousIntake {
         isClosed = true;
     }
 
+    public void setServoPos(double pos){
+        itemRelease.setPosition(pos);
+        isClosed = false;
+    }
+
     /**
      * this following method takes a parameter for the type of color and outputs the sensor's number for that color
      *
@@ -190,5 +208,56 @@ public class ContinuousIntake {
         return FreightFrenzyGameObject.getLEDColorFromItem(FreightFrenzyGameObject.identify(this.getRGB()));
     }
 
+    private boolean y_depressed2 = true;
+
+    private final ElapsedTime yTimer = new ElapsedTime();
+
+    /**
+     * Controls the intake and outtake
+     *
+     * @param gamepad1 The first gamepad
+     * @param gamepad2 The second gamepad
+     * @return The current item in the intake
+     */
+    @Override
+    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+
+        FreightFrenzyGameObject currentObject = null; // Assigning to null so the compiler is happy
+
+        // Intake Controls
+        {
+            if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
+
+                this.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
+                currentObject = this.identifyContents();
+            } else {
+                this.setMotorPower(0);
+            }
+        }
+
+        //Out take controls
+        {
+            if (!gamepad2.y) {
+                y_depressed2 = true;
+            }
+            if (gamepad2.y && y_depressed2) {
+                y_depressed2 = false;
+                if (this.isClosed()) {
+                    this.setServoOpen();
+                    this.yTimer.reset();
+                } else {
+                    this.setServoClosed();
+                }
+                currentObject = FreightFrenzyGameObject.EMPTY;
+            }
+
+            if (this.yTimer.seconds() > 1.25) {
+                this.setServoClosed();
+            }
+        }
+
+        return (Object) currentObject;
+
+    }
 }
 

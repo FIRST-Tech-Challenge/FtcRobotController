@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSli
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
 /**
  * A class to control linear slides using the builtin motor control methods
  */
-public class LinearSlide {
+public class LinearSlide implements Controllable {
 
     /**
      * The internal DcMotor object
@@ -134,5 +138,79 @@ public class LinearSlide {
      */
     public int getTargetHeight() {
         return linearSlide.getTargetPosition();
+    }
+
+    private boolean resetSlide = false;
+    private boolean manualSlideControl = false;
+    private final ElapsedTime slideResetTimer = new ElapsedTime();
+    private HeightLevel currentLevel = HeightLevel.Down;
+    private boolean dPadUpDepressed = true;
+    private boolean dPadDownDepressed = true;
+
+    @Override
+    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+        if (!resetSlide) {
+            if (Math.abs(gamepad2.left_stick_y) > 0.1) {
+                manualSlideControl = true;
+                int pos = (int) (Math.abs(this.getEncoderCount()) + (100 * -gamepad2.left_stick_y));
+                if (pos < -100) pos = -100;
+                if (pos > HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel))
+                    pos = HeightLevel.getEncoderCountFromEnum(HeightLevel.TopLevel);
+                this.setTargetPosition(pos);
+            }
+
+            if (gamepad2.dpad_left) {
+                this.setTargetLevel(HeightLevel.CappingUp);
+            }
+
+            if (gamepad2.dpad_right) {
+                this.setTargetLevel(HeightLevel.CappingDown);
+            }
+
+            if (!gamepad2.dpad_up) {
+                dPadUpDepressed = true;
+            }
+
+            if (gamepad2.dpad_up && dPadUpDepressed) {
+                if (manualSlideControl) {
+                    manualSlideControl = false;
+                    currentLevel = HeightLevel.getClosestLevel(this.getEncoderCount());
+                }
+                dPadUpDepressed = false;
+                currentLevel = currentLevel.add(1);
+                this.setTargetLevel(currentLevel);
+
+            }
+
+            if (!gamepad2.dpad_down) {
+                dPadDownDepressed = true;
+            }
+
+            if (gamepad2.dpad_down && dPadDownDepressed) {
+                if (manualSlideControl) {
+                    manualSlideControl = false;
+                    currentLevel = HeightLevel.getClosestLevel(this.getEncoderCount());
+                }
+                dPadDownDepressed = false;
+                currentLevel = currentLevel.subtract(1);
+                this.setTargetLevel(currentLevel);
+            }
+
+            if (gamepad2.right_bumper && gamepad2.left_bumper) {
+                this.teleopMode();
+                slideResetTimer.reset();
+                resetSlide = true;
+            }
+        } else if (slideResetTimer.seconds() > 0.5 && slideResetTimer.seconds() < 0.6) {
+            this.setMotorPower(0.3);
+        } else if (slideResetTimer.seconds() > 1 && resetSlide) {
+            resetSlide = false;
+            this.autoMode();
+            this.resetEncoder();
+        }
+
+
+
+        return null;
     }
 }

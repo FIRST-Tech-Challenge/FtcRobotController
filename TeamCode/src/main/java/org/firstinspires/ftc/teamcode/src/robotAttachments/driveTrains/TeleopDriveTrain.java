@@ -34,21 +34,30 @@ public class TeleopDriveTrain extends BasicDrivetrain {
      * @return True if the robot is in normal mode, false if the front and back are reversed in the controls
      */
 
-    /**
-     * Sets the power to the motors based on the right and left stick of the gamepad object
-     *
-     * @param gamepad The gamepad to set powers off of
-     */
-    public void setPowerFromGamepad(Gamepad gamepad) {
+
+    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
 
         // The Y axis of a joystick ranges from -1 in its topmost position
         // to +1 in its bottom most position. We negate this value so that
         // the topmost position corresponds to maximum forward power.
-        this.back_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) - gamepad.right_stick_x));
-        this.front_left.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) - gamepad.right_stick_x));
-        this.back_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y + gamepad.left_stick_x) + gamepad.right_stick_x));
-        this.front_right.setPower(DrivePowerMult * ((-gamepad.left_stick_y - gamepad.left_stick_x) + gamepad.right_stick_x));
+        this.back_left.setPower(DrivePowerMult * ((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.front_left.setPower(DrivePowerMult * ((-gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.back_right.setPower(DrivePowerMult * ((-gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
+        this.front_right.setPower(DrivePowerMult * ((-gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
 
+
+        //Speed Modifiers
+        if (gamepad1.b) {
+            this.setDrivePowerMult(0.6);
+        }
+        if (gamepad1.y) {
+            this.setDrivePowerMult(1);
+
+        }
+        if (gamepad1.a) {
+            this.setDrivePowerMult(0.3);
+        }
+        return null;
     }
 
     /**
@@ -60,10 +69,4 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         this.DrivePowerMult = drivePowerMult;
     }
 
-    /*
-     * A method to invert the controls
-
-    public void flipFrontAndBack() {
-        frontDrive = !frontDrive;
-    }*/
 }

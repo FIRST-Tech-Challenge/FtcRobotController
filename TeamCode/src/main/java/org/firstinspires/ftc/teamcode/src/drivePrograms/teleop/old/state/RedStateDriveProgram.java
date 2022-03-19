@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.state;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.old.state;
 
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
@@ -11,21 +11,19 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDista
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "\uD83D\uDFE6 Blue State Drive Program \uD83D\uDFE6")
-public class BlueStateDriveProgram extends TeleOpTemplate {
-    final BlinkinPattern defaultColor = BlinkinPattern.BLUE;
+@TeleOp(name = "\uD83D\uDFE5 Red State Drive Program \uD83D\uDFE5")
+public class RedStateDriveProgram extends TeleOpTemplate {
+    final BlinkinPattern defaultColor = BlinkinPattern.RED;
     private final ElapsedTime yTimer = new ElapsedTime();
 
     private final ElapsedTime slideResetTimer = new ElapsedTime();
-    private boolean resetSlide = false;
+    boolean manualSlideControl = false;
 
     boolean y_depressed2 = true;
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
-
-    boolean manualSlideControl = false;
-
     HeightLevel currentLevel = HeightLevel.Down;
+    private boolean resetSlide = false;
 
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
@@ -57,7 +55,7 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
         while (opModeIsActive() && !isStopRequested()) {
             //Declan's controls
             {
-                driveTrain.setPowerFromGamepad(gamepad1);
+                driveTrain.gamepadControl(gamepad1, null);
 
                 //Declan Speed Modifiers
                 if (gamepad1.b) {
@@ -164,34 +162,30 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
 
                 //Out take controls
                 {
-                    if (!gamepad2.y) {
-                        y_depressed2 = true;
-                    }
-                    if (gamepad2.y && y_depressed2) {
+
+                    //90 deg
+                    if (gamepad2.y) {
                         y_depressed2 = false;
-                        if (intake.isClosed()) {
-                            intake.setServoOpen();
-                            yTimer.reset();
-                        } else {
-                            intake.setServoClosed();
-                        }
+                        intake.setServoOpen();
                         leds.setPattern(defaultColor);
                         currentColor = defaultColor;
+                        yTimer.reset();
+                    }
+
+                    //down
+                    if (gamepad2.a) {
+                        intake.setServoPos(1);
+                        yTimer.reset();
+                    }
+
+                    //135 deg
+                    if (gamepad2.b) {
+                        intake.setServoPos(.88);
+                        yTimer.reset();
                     }
 
                     if (yTimer.seconds() > 1.25) {
                         intake.setServoClosed();
-                    }
-                }
-
-                // Cap stick controls
-                {
-                    if (gamepad2.x) {
-                        cappingArm.setDownPosition();
-                    } else if (gamepad2.b) {
-                        cappingArm.setUpPosition();
-                    } else if (gamepad2.a) {
-                        cappingArm.setToCappingPosition();
                     }
                 }
 

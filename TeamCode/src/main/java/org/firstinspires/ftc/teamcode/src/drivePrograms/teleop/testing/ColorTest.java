@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
  * A Autonomous to test color sensor capabilities
  */
 @TeleOp(name = "ColorTest")
-@Disabled
+//@Disabled
 public class ColorTest extends TeleOpTemplate {
     private final RevBlinkinLedDriver.BlinkinPattern defaultColor = RevBlinkinLedDriver.BlinkinPattern.BLUE;
 
@@ -24,7 +24,7 @@ public class ColorTest extends TeleOpTemplate {
         leds.setPattern(defaultColor);
         // this instantiation assumes that the color sensor's name is color_sensor
         waitForStart();
-        intake.setServoOpen();
+        intake.setServoClosed();
 
         boolean y_depressed2 = true;
 

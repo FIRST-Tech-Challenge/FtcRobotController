@@ -20,7 +20,7 @@ public class PushOdometryTest extends AutonomousTemplate {
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-            dt.setPowerFromGamepad(gamepad1);
+            dt.gamepadControl(gamepad1, null);
 
             telemetry.addData("PosX", gps.getX());
             telemetry.addData("PosY", gps.getY());

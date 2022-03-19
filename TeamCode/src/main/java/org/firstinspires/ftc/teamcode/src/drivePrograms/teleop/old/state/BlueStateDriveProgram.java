@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.state;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.old.state;
 
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
@@ -11,19 +11,21 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDista
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "\uD83D\uDFE5 Red State Drive Program \uD83D\uDFE5")
-public class RedStateDriveProgram extends TeleOpTemplate {
-    final BlinkinPattern defaultColor = BlinkinPattern.RED;
+@TeleOp(name = "\uD83D\uDFE6 Blue State Drive Program \uD83D\uDFE6")
+public class BlueStateDriveProgram extends TeleOpTemplate {
+    final BlinkinPattern defaultColor = BlinkinPattern.BLUE;
     private final ElapsedTime yTimer = new ElapsedTime();
 
     private final ElapsedTime slideResetTimer = new ElapsedTime();
-    boolean manualSlideControl = false;
+    private boolean resetSlide = false;
 
     boolean y_depressed2 = true;
     boolean dPadUpDepressed = true;
     boolean dPadDownDepressed = true;
+
+    boolean manualSlideControl = false;
+
     HeightLevel currentLevel = HeightLevel.Down;
-    private boolean resetSlide = false;
 
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
@@ -55,7 +57,7 @@ public class RedStateDriveProgram extends TeleOpTemplate {
         while (opModeIsActive() && !isStopRequested()) {
             //Declan's controls
             {
-                driveTrain.setPowerFromGamepad(gamepad1);
+                driveTrain.gamepadControl(gamepad1, null);
 
                 //Declan Speed Modifiers
                 if (gamepad1.b) {

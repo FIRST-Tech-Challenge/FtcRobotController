@@ -2,15 +2,17 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 /**
  * BasicDrivetrain
  * Implements basic drive functions that can be inherited by other drive systems.
  */
-public class BasicDrivetrain {
+public class BasicDrivetrain implements Controllable {
 
     /**
      * Front Right Motor Object
@@ -178,4 +180,14 @@ public class BasicDrivetrain {
 
     }
 
+    @Override
+    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+        this.back_left.setPower( ((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.front_left.setPower( ((-gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.back_right.setPower( ((-gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
+        this.front_right.setPower( ((-gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
+
+        return null;
+
+    }
 }

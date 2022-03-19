@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
 /**
  * A class to control the robot carousel spinner
  */
-public class CarouselSpinner {
+public class CarouselSpinner implements Controllable {
     /**
      * How Fast the servo is to spin
      */
@@ -80,5 +83,20 @@ public class CarouselSpinner {
      */
     public void stop() {
         spinnerServo.setPower(0);
+    }
+
+    @Override
+    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+        if (Math.abs(gamepad2.right_stick_x) > 0.1) {
+            if (gamepad2.right_stick_x > 0) {
+                this.setPowerBlueDirection();
+            } else {
+                this.setPowerRedDirection();
+            }
+        } else {
+            this.stop();
+        }
+
+        return null;
     }
 }

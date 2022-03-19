@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.qualifier;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.old.qualifier;
 
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlid
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 /**
- * Blue Teleop for Qualifier
+ * Teleop for Red Qualifier
  */
 @Disabled
-@TeleOp(name = "Blue Qualifier Drive Program")
-public class BlueQualifierDriveProgram extends TeleOpTemplate {
-    final BlinkinPattern defaultColor = BlinkinPattern.BLUE;
+@TeleOp(name = "Red Qualifier Drive Program")
+public class RedQualifierDriveProgram extends TeleOpTemplate {
+    final BlinkinPattern defaultColor = BlinkinPattern.RED;
     private final ElapsedTime yTimer = new ElapsedTime();
     boolean x_depressed = true;
     boolean y_depressed2 = true;
@@ -39,7 +39,6 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
 
     }
 
-
     public void opModeMain() throws InterruptedException {
         this.initAll();
         distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, this::callBack, this::opModeIsActive, this::isStopRequested);
@@ -51,6 +50,7 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+
 
             if (posOn) {
                 switch (posToGoTo) {
@@ -71,7 +71,7 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
 
             //Declan's controls
             {
-                driveTrain.setPowerFromGamepad(gamepad1);
+                driveTrain.gamepadControl(gamepad1,null);
 
                 //Declan Speed Modifiers
                 if (gamepad1.b) {
@@ -147,7 +147,8 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                         slide.setMotorPower(0);
                     }
                 }
-                if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
+
+                if (Math.abs(gamepad2.left_trigger - gamepad2.right_trigger) > 0.01) {
                     intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
                     RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
                     if (o == null || !intake.isClosed()) {
@@ -178,6 +179,7 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                     } else {
                         intake.setServoClosed();
                     }
+
                     leds.setPattern(defaultColor);
                     currentColor = defaultColor;
                 }
