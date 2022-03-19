@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.hardwaremaps.FrenzyHardwareMap;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 @Config
 @TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
 public class MecanumTeleOp extends LinearOpMode {
@@ -20,11 +23,10 @@ public class MecanumTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        
 
         //import the hardware map
         robot.init(hardwareMap, telemetry);
-        RevBlinkinLedDriver blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");;
+        RevBlinkinLedDriver blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -35,7 +37,7 @@ public class MecanumTeleOp extends LinearOpMode {
         double controller1lstickx = 0.0;
         double controller1lsticky = 0.0;
         double controller1rstickx = 0.0;
-.
+
         // init motor and add intake for arm
         robot.motorArm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         int armCurrentPos = 0;
@@ -68,6 +70,16 @@ public class MecanumTeleOp extends LinearOpMode {
         boolean rtriggerpressed = false;
         boolean ltriggerpressed = false;
         boolean slowdownflag = false;
+
+        class Rumbled extends TimerTask {
+            public void run() {
+                gamepad2.rumble(0.3, 0.3, 200);
+                gamepad1.rumble(0.3, 0.3, 200);
+            }
+        }
+        Timer clock = new Timer();
+        TimerTask rumble1 = new Rumbled();
+        clock.schedule(rumble1, 80000);
 
 
 
@@ -233,7 +245,7 @@ public class MecanumTeleOp extends LinearOpMode {
             robot.motorFrontRight.setPower(frontRightPower);
             robot.motorBackRight.setPower(backRightPower);
 
-            if (robot.colorsensed.getNormalizedColors().red > 0.04 && robot.colorsensed.getNormalizedColors().blue > 0.04 && robot.colorsensed.getNormalizedColors().green > 0.04){
+            if (robot.colorsensed.getNormalizedColors().red > 0.2 && robot.colorsensed.getNormalizedColors().blue > 0.04 && robot.colorsensed.getNormalizedColors().green > 0.04){
                 if(!gamepad1.isRumbling()) {
                     gamepad2.rumble(0.3, 0.3, 200);
                     gamepad1.rumble(0.3, 0.3, 200);
