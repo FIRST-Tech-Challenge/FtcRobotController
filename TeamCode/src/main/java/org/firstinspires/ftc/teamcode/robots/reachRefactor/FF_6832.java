@@ -87,7 +87,7 @@ public class FF_6832 extends OpMode {
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
     public static double FORWARD_SCALING_FACTOR = 24; // scales the target linear robot velocity from tele-op controls
-    public static double ROTATE_SCALING_FACTOR = 2; // scales the target angular robot velocity from tele-op controls
+    public static double ROTATE_SCALING_FACTOR = 1; // scales the target angular robot velocity from tele-op controls
     public static double[] CHASSIS_LENGTH_LEVELS = new double[] {
             MIN_CHASSIS_LENGTH,
             MIN_CHASSIS_LENGTH + (MAX_CHASSIS_LENGTH - MIN_CHASSIS_LENGTH) / 3,
@@ -98,7 +98,7 @@ public class FF_6832 extends OpMode {
     public static double DIAGNOSTIC_SERVO_STEP_MULTIPLIER_FAST = 5;
     public static double DRIVE_VELOCITY_EXPONENT = 1;
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
-    public static double ROTATE_SMOOTHING_FACTOR = 0.3;
+    public static double ROTATE_SMOOTHING_FACTOR = 0.25;
     public static double CHASSIS_LENGTH_SCALING_FACTOR = 1;
     public static double MAINTAIN_HEADING_DELAY = 1;
     public static double RUMBLE_DURATION = 0.5;
@@ -424,10 +424,14 @@ public class FF_6832 extends OpMode {
         }
 
         // gamepad 2
-        if(stickyGamepad2.x) //go home - it's the safest place to retract if the bucket is about to colide with something
+        if(stickyGamepad2.left_bumper) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
+        if(stickyGamepad2.x) {
+            robot.gripper.set();
+            robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
+        }
 
         // joint gamepad controls
         if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
@@ -445,12 +449,12 @@ public class FF_6832 extends OpMode {
             dynamicChassisLengthEnabled = false;
             robot.driveTrain.setChassisLength(robot.driveTrain.getTargetChassisLength() == CHASSIS_LENGTH_LEVELS[0] ? CHASSIS_LENGTH_LEVELS[CHASSIS_LENGTH_LEVELS.length - 1] : CHASSIS_LENGTH_LEVELS[0]);
         }
-        if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
-            dynamicChassisLengthEnabled = true;
-        if(dynamicChassisLengthEnabled) {
-            double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward1 - forward2) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
-            robot.driveTrain.setChassisLength(chassisLength);
-        }
+//        if(stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
+//            dynamicChassisLengthEnabled = true;
+//        if(dynamicChassisLengthEnabled) {
+//            double chassisLength = Range.clip(robot.driveTrain.getTargetChassisLength() + CHASSIS_LENGTH_SCALING_FACTOR * loopTime * 1e-9 * ((forward1 - forward2) / 2), MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+//            robot.driveTrain.setChassisLength(chassisLength);
+//        }
         if(notTriggerDeadZone(gamepad1.left_trigger))
             velocityBoost = (1 + gamepad1.left_trigger * MAX_VELOCITY_BOOST);
         if(notTriggerDeadZone((gamepad2.left_trigger)))
@@ -458,9 +462,13 @@ public class FF_6832 extends OpMode {
         if(!notTriggerDeadZone(gamepad1.left_trigger) && !notTriggerDeadZone(gamepad2.left_trigger))
             velocityBoost = 1;
 
+//        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
+//            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
+
         if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
-            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
-        if(true && gamepad1.touchpad_finger_1) {
+            robot.setAutoDumpEnabled(!robot.isAutoDumpEnabled());
+
+        if(gamepad1.touchpad_finger_1) {
             Pose2d pose = robot.driveTrain.getPoseEstimate();
             Vector2d turretPose = pose.vec().minus(
                     new Vector2d(
@@ -754,8 +762,6 @@ public class FF_6832 extends OpMode {
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
         // handling op mode telemetry
-        opModeTelemetryMap.put("tpx", gamepad1.touchpad_finger_1_x);
-        opModeTelemetryMap.put("tpy", gamepad1.touchpad_finger_1_y);
         opModeTelemetryMap.put("Active", active);
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);

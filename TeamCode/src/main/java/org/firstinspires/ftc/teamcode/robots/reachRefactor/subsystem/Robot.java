@@ -43,6 +43,7 @@ public class Robot implements Subsystem {
     public Subsystem[] subsystems;
 
     private long[] subsystemUpdateTimes;
+    private boolean autoDumpEnabled;
 
     private final List<LynxModule> hubs;
 
@@ -86,12 +87,14 @@ public class Robot implements Subsystem {
 
         craneBitmap = Bitmap.createBitmap(CB_WIDTH, CB_HEIGHT, Bitmap.Config.RGB_565);
         craneMat = new Mat(CB_HEIGHT, CB_WIDTH, CvType.CV_8UC3);
+        autoDumpEnabled = true;
     }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
+        telemetryMap.put("auto-dump enabled", autoDumpEnabled);
         if(debug) {
             for (int i = 0; i < subsystems.length; i++) {
                 String name = subsystems[i].getClass().getSimpleName();
@@ -114,6 +117,11 @@ public class Robot implements Subsystem {
 
         if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getTargetPos() == Gripper.OPEN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != Articulation.GRAB_AND_TRANSFER)
             articulation = Articulation.GRAB_AND_TRANSFER;
+//        if(articulation == Articulation.GRAB_AND_TRANSFER && gripper.getFreightDistance() > Gripper.FREIGHT_TRIGGER) {
+//            articulation = Articulation.MANUAL;
+//            crane.articulate(Crane.Articulation.TRANSFER);
+//            gripper.set();
+//        }
 
         articulate(articulation);
 
@@ -128,7 +136,7 @@ public class Robot implements Subsystem {
         double theta2 = -wrapAngleRad(Math.toRadians(180 - crane.getElbowTargetAngle()));
         double height = SHOULDER_TO_ELBOW * Math.sin(theta1) + ELBOW_TO_WRIST * Math.sin(theta1 + theta2);
 
-        if(height > HIGH_TIER_SHIPPING_HUB_HEIGHT - SHOULDER_AXLE_TO_GROUND_HEIGHT && crane.getBucketDistance() < Crane.BUCKET_TRIGGER_DISTANCE && articulation == Articulation.MANUAL && crane.getArticulation() == Crane.Articulation.MANUAL)
+        if(autoDumpEnabled && height > HIGH_TIER_SHIPPING_HUB_HEIGHT - SHOULDER_AXLE_TO_GROUND_HEIGHT && crane.getBucketDistance() < Crane.BUCKET_TRIGGER_DISTANCE && articulation == Articulation.MANUAL && crane.getArticulation() == Crane.Articulation.MANUAL)
             articulation = Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER;
 
         double wristAngle = wrapAngleRad(Math.toRadians(180) - wrapAngleRad(-(theta1 + theta2) + Math.toRadians(crane.getWristTargetAngle())));
@@ -195,9 +203,8 @@ public class Robot implements Subsystem {
     private StateMachine grabAndTransfer = getStateMachine(new Stage())
             .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
-            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
-            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL && gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(1.0))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
             .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
@@ -213,10 +220,13 @@ public class Robot implements Subsystem {
             .build();
 
     private StateMachine transfer = getStateMachine(new Stage())
-            .addSingleState(() -> gripper.setIntakePower(1.0))
-            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL && gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .addSingleState(() -> gripper.setIntakePower(1.0))
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(0.0))
             .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
@@ -280,10 +290,10 @@ public class Robot implements Subsystem {
     }
 
     private StateMachine autoHighTierRed = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB.getPose(), HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
+            .addState(() -> handleAutoCrane(Position.RED_SHIPPING_HUB.getPose(), HIGH_TIER_SHIPPING_HUB_HEIGHT + 5))
             .build();
     private StateMachine autoHighTierBlue = getStateMachine(new Stage())
-            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB.getPose(), HIGH_TIER_SHIPPING_HUB_HEIGHT + 3))
+            .addState(() -> handleAutoCrane(Position.BLUE_SHIPPING_HUB.getPose(), HIGH_TIER_SHIPPING_HUB_HEIGHT + 5))
             .build();
 
     public boolean articulate(Articulation articulation) {
@@ -295,5 +305,13 @@ public class Robot implements Subsystem {
             return true;
         }
         return false;
+    }
+
+    public void setAutoDumpEnabled(boolean autoDumpEnabled) {
+        this.autoDumpEnabled = autoDumpEnabled;
+    }
+
+    public boolean isAutoDumpEnabled() {
+        return autoDumpEnabled;
     }
 }

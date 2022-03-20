@@ -31,7 +31,9 @@ public class Gripper implements Subsystem {
     public static int PITCH_DOWN = 800;
     public static int PITCH_VERTICAL = 1800;
     public static int FREIGHT_TRIGGER = 40; //mm distance to trigger Lift articulation
+    public static int MAX_FREIGHT_DISTANCE = 80;
     public static double INTAKE_POWER = 0.3;
+    public static double P = 0.975;
 
     private final Servo pitchServo, servo;
     private final CRServo intakeServo, intakeServoToo;
@@ -78,6 +80,12 @@ public class Gripper implements Subsystem {
         freightDistance = freightSensor.getDistance(DistanceUnit.MM);
 
         articulate(articulation);
+
+        if(targetPos == OPEN && pitchTargetPos == PITCH_DOWN) {
+            double c = -MAX_FREIGHT_DISTANCE / Math.log(1-P);
+            intakePower = Math.max(0, 0.355 * (1 - Math.exp(-(freightDistance - FREIGHT_TRIGGER) / c)));
+        }
+
         servo.setPosition(servoNormalize(targetPos));
         pitchServo.setPosition(servoNormalize(pitchTargetPos));
         intakeServo.setPower(intakePower);

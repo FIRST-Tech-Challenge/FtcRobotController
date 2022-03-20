@@ -34,17 +34,26 @@ public class Crane implements Subsystem {
     public static double ELBOW_PWM_PER_DEGREE = -600.0 / 90.0;
     public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0;
 
-    public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
-                                                 // of the robot
-    public static double ELBOW_DEG_MIN = -80;
-    public static double WRIST_DEG_MIN = -180;
+//    public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
+//                                                 // of the robot
+//    public static double ELBOW_DEG_MIN = -80;
+//    public static double WRIST_DEG_MIN = -180;
+//
+//    public static double SHOULDER_DEG_MAX = 90;
+//    public static double ELBOW_DEG_MAX = 140;
+//    public static double WRIST_DEG_MAX = 180;
 
-    public static double SHOULDER_DEG_MAX = 90;
-    public static double ELBOW_DEG_MAX = 140;
-    public static double WRIST_DEG_MAX = 180;
+    public static double SHOULDER_DEG_MIN = Double.NEGATIVE_INFINITY; // negative angles are counter clockwise while looking at the left side
+    // of the robot
+    public static double ELBOW_DEG_MIN = Double.NEGATIVE_INFINITY;
+    public static double WRIST_DEG_MIN = Double.NEGATIVE_INFINITY;
+
+    public static double SHOULDER_DEG_MAX = Double.POSITIVE_INFINITY;
+    public static double ELBOW_DEG_MAX = Double.POSITIVE_INFINITY;
+    public static double WRIST_DEG_MAX = Double.POSITIVE_INFINITY;
 
     public static double P = 0.995;
-    public static double BUCKET_TRIGGER_DISTANCE = 5;
+    public static double BUCKET_TRIGGER_DISTANCE = 7.75;
 
     public Turret turret;
 
@@ -88,10 +97,10 @@ public class Crane implements Subsystem {
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
 //        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
-        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 1.25f),
+        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 0.85f),
         HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, -90, 1.25f),
         HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 90, 1.25f),
-        TRANSFER(-30, -40, -20, 0, 0.4f, 0),
+        TRANSFER(-40, -60, -20, 0, 0.4f, 0),
 
         TEST_1(25, 90, 25, 1.5f, 0),
         TEST_2(45, 90, 90, 1f, 0),
@@ -178,6 +187,9 @@ public class Crane implements Subsystem {
             .addSingleState(() -> {
                 dumping = false;
             })
+//            .addTimedState(() -> checkTargetPositions(Articulation.HIGH_TIER) && articulation == Articulation.TRANSFER ? 1f : 0, () -> {
+//                setShoulderTargetAngle(Articulation.HOME.shoulderPos);
+//            }, () -> {})
             .addTimedState(() -> checkTargetPositions(articulation) ? 0 : 0.5f, () -> {
                 if (!checkTargetPositions(articulation) && articulation.turret)
                     turret.setTargetHeading(Articulation.HOME.turretAngle);
