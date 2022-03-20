@@ -115,7 +115,10 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN && gripper.getTargetPos() == Gripper.OPEN && gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER && articulation != Articulation.GRAB_AND_TRANSFER)
+        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN &&
+                gripper.getTargetPos() == Gripper.OPEN &&
+                gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER &&
+                articulation != Articulation.GRAB_AND_TRANSFER)
             articulation = Articulation.GRAB_AND_TRANSFER;
 //        if(articulation == Articulation.GRAB_AND_TRANSFER && gripper.getFreightDistance() > Gripper.FREIGHT_TRIGGER) {
 //            articulation = Articulation.MANUAL;

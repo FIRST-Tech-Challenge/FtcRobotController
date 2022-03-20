@@ -25,8 +25,10 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 @Config
 public class Gripper implements Subsystem {
     public static int CLOSED = 1300;
+    public static int DUCKCLOSED = 1200;
     public static int RELEASE = 1700;
     public static int OPEN = 1500;
+    public static int DUCKOPEN = 2000;
     public static int PITCH_TRANSFER = 2100;
     public static int PITCH_DOWN = 800;
     public static int PITCH_VERTICAL = 1800;
@@ -71,7 +73,9 @@ public class Gripper implements Subsystem {
 
         articulationMap = new HashMap<>();
         articulationMap.put(Articulation.SET,set);
+        articulationMap.put(Articulation.SETDUCK,setDuck);
         articulationMap.put(Articulation.LIFT, lift);
+        articulationMap.put(Articulation.LIFTDUCK, liftDuck);
         articulationMap.put(Articulation.TRANSFER, transfer);
     }
 
@@ -103,7 +107,9 @@ public class Gripper implements Subsystem {
         GRIP,
         TRANSFER,
         SET, //Set for Intaking - can be used as an emergency release
-        LIFT //Grip and lift to vertical
+        SETDUCK, //Set gripper as duck trap
+        LIFT, //Grip and lift to vertical
+        LIFTDUCK
     }
 
     public boolean articulate(Gripper.Articulation articulation) {
@@ -131,14 +137,37 @@ public class Gripper implements Subsystem {
             .addSingleState(() -> setIntakePower(INTAKE_POWER))
             .build();
 
+    //set Duck trap Set the gripper for intake - assume this is coming down from the released transfer position
+    //Elevation is down and jaws are open wide to just prevent 2 boxes slipping in
+    //Do not assume that we want to Set directly out of Transfer - there may be barriers to cross
+    private final Stage setDuckStage = new Stage();
+    private final StateMachine setDuck = getStateMachine(setDuckStage)
+            .addSingleState(() -> setIntakePower(-1.0))
+            .addSingleState(()->{setTargetPos(CLOSED);}) //close the gripper so it's less likely to catch something
+            .addTimedState(.25f, () -> setPitchTargetPos(PITCH_DOWN), () -> {})
+            .addTimedState(.5f, ()->{setTargetPos(DUCKOPEN);}, () -> {})
+            .addSingleState(() -> setIntakePower(0)) //stop the intakes
+            .build();
+
     //Gripper closes and lifts to the Transfer-ready position
     //Gripper remains closed - Transfer is separate
     private final Stage liftStage = new Stage();
     private final StateMachine lift = getStateMachine(liftStage)
             .addSingleState(() -> setIntakePower(0))
-            .addTimedState(() -> .2f, () -> setTargetPos(CLOSED), () -> {})//close the gripper so it's less likely to catch something
+            .addTimedState(() -> .2f, () -> setTargetPos(CLOSED), () -> {})//close the gripper
             .addTimedState(() -> .2f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
+
+    //Gripper closes and lifts to the Transfer-ready position
+    //Gripper remains closed - Transfer is separate
+    private final Stage liftDuckStage = new Stage();
+    private final StateMachine liftDuck = getStateMachine(liftDuckStage)
+            .addSingleState(() -> setIntakePower(1)) //start intake
+            .addTimedState(() -> .5f, () -> setTargetPos(CLOSED), () -> {})//close the gripper ultra tight (for ducks)
+            .addSingleState(() -> setIntakePower(0)) //start intake
+            .addTimedState(() -> .2f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
+            .build();
+
 
     private final Stage transferStage = new Stage();
     private final StateMachine transfer = getStateMachine(transferStage)
@@ -155,9 +184,19 @@ public class Gripper implements Subsystem {
         articulation = Articulation.SET;
     }
 
+    //Prepare for duck intake
+    public void setDuck() {
+        articulation = Articulation.SETDUCK;
+    }
+
     // grip and lift into Transfer position - this might need timing
     public void lift() {
         articulation = Articulation.LIFT;
+    }
+
+    // grip and lift into Transfer position - this might need timing
+    public void liftDuck() {
+        articulation = Articulation.LIFTDUCK;
     }
 
     @Override

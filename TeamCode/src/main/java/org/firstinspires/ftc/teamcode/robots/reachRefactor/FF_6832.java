@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.DriveTrain;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Gripper;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.StickyGamepad;
@@ -80,7 +81,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
  * gamepad 1: left stick y - coarse adjustment
  */
 @Config
-@TeleOp(name = "AAAArefactored FF_6832")
+@TeleOp(name = "AAAA FF_6832")
 public class FF_6832 extends OpMode {
     // constants
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.2;
@@ -410,8 +411,17 @@ public class FF_6832 extends OpMode {
     private void handleTeleOp() { // apple
         // gamepad 1
         if (stickyGamepad1.x) {
+            if (doubleDuck){
+                if (robot.gripper.getPitchTargetPos() == Gripper.PITCH_DOWN)
+                    robot.gripper.liftDuck();
+                else
+                    robot.gripper.setDuck();
+            }
+            else
+            {
             robot.gripper.set();
             robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
+            }
         }
         if(stickyGamepad1.b)
             robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
