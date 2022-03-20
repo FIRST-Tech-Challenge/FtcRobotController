@@ -117,6 +117,7 @@ public class FF_6832 extends OpMode {
     private Position startingPosition;
     private GameState gameState;
     private int gameStateIndex;
+    public static boolean doubleDuck = false;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
     private long startTime;
 
