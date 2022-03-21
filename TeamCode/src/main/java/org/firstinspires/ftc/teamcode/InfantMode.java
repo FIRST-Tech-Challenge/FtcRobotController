@@ -12,12 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardwaremaps.FrenzyHardwareMap;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 @Config
-@TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
-public class MecanumTeleOp extends LinearOpMode {
+@TeleOp(name="InfantMode", group="FreightFrenzy")
+public class InfantMode extends LinearOpMode {
 
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
 
@@ -32,7 +29,7 @@ public class MecanumTeleOp extends LinearOpMode {
             FtcDashboard dashboard = FtcDashboard.getInstance();
             telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
             //set the drivetrain slowdown
-            double slowdown = 2.0;
+            double slowdown = 1.0;
 
             ElapsedTime gubble = new ElapsedTime();
 
@@ -200,7 +197,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 // Toggles slowdown with B Press or Trigger Press
                 if ((gamepad1.b && !bpressed) || (gamepad1.right_trigger >= 0.5 && !rtriggerpressed) || (gamepad1.left_trigger >= 0.5 && !ltriggerpressed)) {
                     if (slowdownflag) {
-                        slowdown = 2.0;
+                        slowdown = 1;
                         slowdownflag = false;
                     } else if (!slowdownflag) {
                         slowdown = 0.25;
