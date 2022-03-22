@@ -117,7 +117,7 @@ public class WarehouseSideBluePath1 {
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .strafeTo(new Vector2d(43, 67))
+                .strafeTo(new Vector2d(46, 67))
                 .build();
 
         Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
@@ -127,7 +127,7 @@ public class WarehouseSideBluePath1 {
                     setArmLevel.schedule();
                 })
                 */
-                .strafeTo(new Vector2d(43, 50))
+                .strafeTo(new Vector2d(46, 50))
                 .build();
 
         sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);

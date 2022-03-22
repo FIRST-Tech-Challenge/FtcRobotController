@@ -236,7 +236,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.motorBackRight.setPower(backRightPower);
 
                 if(gubble.seconds() < 80) {
-                    if (robot.colorsensed.getNormalizedColors().red > 0.2 && robot.colorsensed.getNormalizedColors().blue > 0.04 && robot.colorsensed.getNormalizedColors().green > 0.04) {
+                    if (robot.colorsensed.getNormalizedColors().red > 0.08 && robot.colorsensed.getNormalizedColors().blue > 0.08 && robot.colorsensed.getNormalizedColors().green > 0.08) {
                         if (!gamepad1.isRumbling()) {
                             gamepad2.rumble(0.3, 0.3, 200);
                             gamepad1.rumble(0.3, 0.3, 200);
