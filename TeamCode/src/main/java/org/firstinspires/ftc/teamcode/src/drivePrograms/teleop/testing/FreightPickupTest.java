@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "Teleop Test The friegth")
+@TeleOp(name = "TeleOp Test The freight")
 public class FreightPickupTest extends TeleOpTemplate {
 
     @Override

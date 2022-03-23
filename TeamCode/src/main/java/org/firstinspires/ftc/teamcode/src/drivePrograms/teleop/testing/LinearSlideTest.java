@@ -34,7 +34,6 @@ public class LinearSlideTest extends TeleOpTemplate {
                 slide.setTargetPosition(720);
             }
 
-            //telemetry.addData("Power", );
             telemetry.addData("LS Height: ", slide.getEncoderCount());
             telemetry.addData("Target Height: ", slide.getTargetHeight());
             telemetry.addData("Slide", slide);

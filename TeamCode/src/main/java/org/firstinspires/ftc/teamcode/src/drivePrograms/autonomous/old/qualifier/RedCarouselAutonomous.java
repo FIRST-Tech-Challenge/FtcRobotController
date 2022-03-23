@@ -143,14 +143,14 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 } catch (MovementException ignored) {
                 }
 
-                intake.setIntakeOn();
+                intake.turnIntakeOn();
                 try {
 
                     driveSystem.moveToPosition(0, 10, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor, 8), new DistanceTimeoutException(500)});
 
                 } catch (MovementException ignored) {
                 } finally {
-                    intake.setIntakeOff();
+                    intake.turnIntakeOff();
                 }
             } else if (overBarrier) {
                 try {

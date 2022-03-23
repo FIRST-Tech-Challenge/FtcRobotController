@@ -163,6 +163,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     protected void initAll() throws InterruptedException {
         initOdometryServos();
         initIntake();
+        initOuttake();
         initLEDS();
         checkStop();
         initLinearSlide();
@@ -172,6 +173,10 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         if (voltageSensor.getVoltage() < 12.5) {
             RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
         }
+    }
+
+    public void initIntake(){
+        this.intake = new ContinuousIntake(hardwareMap,frontIntakeMotorName, backIntakeMotorName);
     }
 
     public void initDistanceSensors() {
@@ -196,7 +201,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     /**
      * Initializes the Intake
      */
-    protected void initIntake() {
+    protected void initOuttake() {
         outtake = new Outtake(hardwareMap, bucketServoName, bucketColorSensorName, true);
         outtake.setServoClosed();
     }

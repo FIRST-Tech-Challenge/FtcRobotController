@@ -340,7 +340,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
                 // checks if intake sensor is triggered
                 if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
-                    intake.setIntakeOff();
+                    intake.turnIntakeOff();
                     driveSystem.strafeAtAngle(180, .5);
                     Thread.sleep(500);
                     break;
@@ -383,7 +383,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             driveSystem.stopAll();
             ElapsedTime time = new ElapsedTime();
             while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
-                intake.setIntakeOn();
+                intake.turnIntakeOn();
                 if ((outtake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
                    break outer;
                }

@@ -60,7 +60,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 driveSystem.moveToPosition(144, 30, 180, 1, new DistanceTimeoutWarning(100));
 
 
-                intake.setIntakeOff();
+                intake.turnIntakeOff();
 
 
             } else {

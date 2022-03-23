@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
+@Disabled
 @TeleOp(name = "info Test")
 public class ConnectionDataTest extends TeleOpTemplate {
     @Override

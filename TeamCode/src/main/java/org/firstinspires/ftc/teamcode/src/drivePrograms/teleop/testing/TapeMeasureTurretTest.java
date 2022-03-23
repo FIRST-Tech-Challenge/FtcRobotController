@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.TapeMeasureTurret;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "-TMTTEst")
-public class TMTTest extends TeleOpTemplate {
+@TeleOp(name = "TapeMeasureTurretTest")
+public class TapeMeasureTurretTest extends TeleOpTemplate {
 
     @Override
     public void opModeMain() {

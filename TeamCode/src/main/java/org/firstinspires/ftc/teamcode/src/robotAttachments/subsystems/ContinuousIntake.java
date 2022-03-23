@@ -9,42 +9,61 @@ import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
 public class ContinuousIntake implements Controllable {
     /**
-     * The power for going forward
+     * The power for going forward for the front motor
      */
-    private final static double forwardPower = 1;
+    private final static double frontMotorForwardPower = 1;
 
     /**
-     * DcMotor Object
+     * The power for going forward for the back motor
      */
-    private final DcMotor intakeMotor;
+    private final static double backMotorForwardPower = 1;
 
-    public ContinuousIntake(HardwareMap hardwareMap, String motorName) {
-        intakeMotor = hardwareMap.dcMotor.get(motorName);
-        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    /**
+     * Front DcMotor Object
+     */
+    private final DcMotor frontIntakeMotor;
+
+    /**
+     * Back DcMotor Object
+     */
+    private final DcMotor backIntakeMotor;
+
+    public ContinuousIntake(HardwareMap hardwareMap, String frontMotorName,String backMotorName) {
+        frontIntakeMotor = hardwareMap.dcMotor.get(frontMotorName);
+        frontIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontIntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontIntakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        backIntakeMotor = hardwareMap.dcMotor.get(backMotorName);
+        backIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backIntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backIntakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /**
      * this turns on the intake motor to intake freight
      */
-    public void setIntakeOn() {
-        intakeMotor.setPower(forwardPower);
+    public void turnIntakeOn() {
+        frontIntakeMotor.setPower(frontMotorForwardPower);
+        backIntakeMotor.setPower(backMotorForwardPower);
     }
 
     /**
      * turns off the intake motor
      */
-    public void setIntakeOff() {
-        intakeMotor.setPower(0);
+    public void turnIntakeOff() {
+        frontIntakeMotor.setPower(0);
+        backIntakeMotor.setPower(0);
     }
 
     /**
      * reverses the intake motor to remove freight from the intake bucket
      */
-    public void setIntakeReverse() {
-        intakeMotor.setPower(-forwardPower);
+    public void turnIntakeReverse() {
+        frontIntakeMotor.setPower(-frontMotorForwardPower);
+        backIntakeMotor.setPower(-backMotorForwardPower);
     }
 
     /**
@@ -52,7 +71,8 @@ public class ContinuousIntake implements Controllable {
      *              this sets the power of the intake motor to the power variable input
      */
     public void setMotorPower(double power) {
-        intakeMotor.setPower(power);
+        frontIntakeMotor.setPower(power * frontMotorForwardPower);
+        backIntakeMotor.setPower(power * backMotorForwardPower);
     }
 
     @Override
@@ -66,4 +86,13 @@ public class ContinuousIntake implements Controllable {
         }
         return null;
     }
+
+    public void setFrontMotorPower(double power){
+        frontIntakeMotor.setPower(power);
+    }
+
+    public void setBackMotorPower(double power){
+        backIntakeMotor.setPower(power);
+    }
+
 }

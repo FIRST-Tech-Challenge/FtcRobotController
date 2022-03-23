@@ -128,7 +128,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 driveSystem.strafeAtAngle(270, .8);
                 Thread.sleep(750);
                 driveSystem.turnTo(190, .5);
-                intake.setIntakeOn();
+                intake.turnIntakeOn();
 
 
                 try {
@@ -136,7 +136,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
 
                 } catch (MovementException ignored) {
                 } finally {
-                    intake.setIntakeOff();
+                    intake.turnIntakeOff();
                 }
                 while (!isStopRequested() && opModeIsActive() && (distanceSensor.getDistance(DistanceUnit.CM) > 8)) {
                     driveSystem.strafeAtAngle(0, 0.5);

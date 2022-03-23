@@ -78,7 +78,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             //Update position with known coordinates 6 in is the distance from the distance sensor to the center of the robot
             gps.setPos(gps.getX(), frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
 
-            intake.setIntakeOn();
+            intake.turnIntakeOn();
 
 
             //Continue strafing while a item is not in the bucket
@@ -90,7 +90,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             driveSystem.stopAll();
 
-            intake.setIntakeReverse();
+            intake.turnIntakeReverse();
 
             //Strafes away from pile
             {
@@ -110,7 +110,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             //Update position with known coordinates
             gps.setPos(6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
 
-            intake.setIntakeOff();
+            intake.turnIntakeOff();
 
             //Runtime Check
 
@@ -118,7 +118,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                 driveSystem.strafeAtAngle(0, 0.5);
                 Thread.sleep(500);
                 driveSystem.stopAll();
-                intake.setIntakeReverse();
+                intake.turnIntakeReverse();
                 Thread.sleep(6000);
                 return;
             }

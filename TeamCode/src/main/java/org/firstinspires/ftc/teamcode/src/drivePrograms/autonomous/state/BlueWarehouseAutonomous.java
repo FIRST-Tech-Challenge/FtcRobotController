@@ -82,7 +82,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             //Update position with known coordinates 6 in is the distance from the distance sensor to the center of the robot
             // gps.setPos(gps.getX(), frontDistanceSensor.getDistance(DistanceUnit.INCH) + 6, gps.getRot());
 
-            intake.setIntakeOn();
+            intake.turnIntakeOn();
 
 
             //Continue strafing while a item is not in the bucket
@@ -93,7 +93,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             driveSystem.stopAll();
 
-            intake.setIntakeReverse();
+            intake.turnIntakeReverse();
             Thread.sleep(500);
 
             //Strafes away from pile
@@ -111,14 +111,14 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             //Update position with known coordinates
             gps.setPos(144 - 6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
 
-            intake.setIntakeOff();
+            intake.turnIntakeOff();
 
             //Runtime Check
             if (OpModeTimer.seconds() > 25) {
                 driveSystem.strafeAtAngle(0, 0.5);
                 Thread.sleep(500);
                 driveSystem.stopAll();
-                intake.setIntakeReverse();
+                intake.turnIntakeReverse();
                 Thread.sleep(6000);
                 return;
             }

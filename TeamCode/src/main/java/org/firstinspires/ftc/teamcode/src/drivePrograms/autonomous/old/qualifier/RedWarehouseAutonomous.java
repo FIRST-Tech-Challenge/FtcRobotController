@@ -122,16 +122,16 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             }
 
 
-            intake.setIntakeOn();
+            intake.turnIntakeOn();
             try {
                 driveSystem.moveToPosition(0, 8, 1, 1, new MovementException[]{new DistanceSensorException(distanceSensor, 8), new DistanceTimeoutException(500)});
 
             } catch (MovementException ignored) {
             } finally {
-                intake.setIntakeOff();
+                intake.turnIntakeOff();
             }
 
-            intake.setIntakeOff();
+            intake.turnIntakeOff();
 
 
         }
