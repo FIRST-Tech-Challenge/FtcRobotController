@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
 /**
  * The Autonomous ran on Blue side near spinner for State
  */
-@Autonomous(name = "Blue State Carousel Autonomous Finals Match")
+@Autonomous(name = "🟦🦆Blue State Carousel Autonomous Finals Match🦆🟦")
 public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
     private final boolean overBarrier = true;

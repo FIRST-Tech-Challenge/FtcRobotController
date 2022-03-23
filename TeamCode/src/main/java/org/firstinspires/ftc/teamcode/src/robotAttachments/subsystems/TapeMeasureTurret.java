@@ -26,13 +26,13 @@ public class TapeMeasureTurret implements Controllable {
      */
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
-        double tp = gamepad2.right_stick_y;
-        double pp = gamepad2.right_stick_y;
-        double yp = gamepad2.right_stick_y;
+        double tapemeasurePower = gamepad2.right_stick_y;
+        double pitchPower = gamepad2.right_stick_y;
+        double yawPower = gamepad2.right_stick_y;
 
-        tapeMeasure.setPower(-tp);
-        pitch.setPower(pp);
-        yaw.setPower(yp);
+        tapeMeasure.setPower(-tapemeasurePower);
+        pitch.setPower(pitchPower);
+        yaw.setPower(yawPower);
 
         return null;
     }

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
-@Autonomous(name = "Blue State Warehouse Autonomous Finals Match")
+@Autonomous(name = "🟦📦Blue State Warehouse Autonomous Finals Match📦🟦")
 public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
     final ElapsedTime OpModeTimer = new ElapsedTime();

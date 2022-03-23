@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.state;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
 /**
  * The Autonomous ran on Red side near Warehouse for State
  */
+@Disabled
 @Autonomous(name = "Red State Warehouse Autonomous")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.RED;

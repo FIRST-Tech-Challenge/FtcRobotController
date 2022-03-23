@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDista
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "\uD83D\uDFE5 Red Worlds Drive Program \uD83D\uDFE5")
+@TeleOp(name = "🟥Red Worlds Drive Program🟥")
 public class RedWorldsDriveProgram extends TeleOpTemplate {
     final BlinkinPattern defaultColor = BlinkinPattern.RED;
     BlinkinPattern currentColor = defaultColor;

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
 /**
  * The Autonomous ran on Red side near Warehouse for State
  */
-@Autonomous(name = "Red State Warehouse Autonomous Finals Match")
+@Autonomous(name = "🟥📦Red State Warehouse Autonomous Finals Match📦🟥")
 public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
     static final BlinkinPattern def = BlinkinPattern.RED;
     final ElapsedTime OpModeTimer = new ElapsedTime();
