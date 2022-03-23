@@ -137,8 +137,8 @@ public class RedStateDriveProgram extends TeleOpTemplate {
                 {
                     if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                         intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
-                        BlinkinPattern o = intake.getLEDPatternFromFreight();
-                        if (o == null || !intake.isClosed()) {
+                        BlinkinPattern o = outtake.getLEDPatternFromFreight();
+                        if (o == null || !outtake.isClosed()) {
                             if (currentColor != defaultColor) {
                                 leds.setPattern(defaultColor);
                                 currentColor = defaultColor;
@@ -160,7 +160,7 @@ public class RedStateDriveProgram extends TeleOpTemplate {
                     //90 deg
                     if (gamepad2.y) {
                         y_depressed2 = false;
-                        intake.setServoOpen();
+                        outtake.setServoOpen();
                         leds.setPattern(defaultColor);
                         currentColor = defaultColor;
                         yTimer.reset();
@@ -168,18 +168,18 @@ public class RedStateDriveProgram extends TeleOpTemplate {
 
                     //down
                     if (gamepad2.a) {
-                        intake.setServoPos(1);
+                        outtake.setServoPos(1);
                         yTimer.reset();
                     }
 
                     //135 deg
                     if (gamepad2.b) {
-                        intake.setServoPos(.88);
+                        outtake.setServoPos(.88);
                         yTimer.reset();
                     }
 
                     if (yTimer.seconds() > 1.25) {
-                        intake.setServoClosed();
+                        outtake.setServoClosed();
                     }
                 }
 

@@ -295,10 +295,10 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
 
         driveSystem.stopAll();
-        intake.setServoOpen();
+        //intake.setServoOpen();
         Thread.sleep(750);
         driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
-        intake.setServoClosed();
+        //intake.setServoClosed();
         slide.setTargetLevel(HeightLevel.Down);
         slide.setMotorPower(0);
 
@@ -347,10 +347,10 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 }
 
                 //checks if bucket is filled
-                if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
-                    intake.setIntakeReverse();
-                    break outer;
-                }
+                //if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
+                //    intake.setIntakeReverse();
+                //    break outer;
+                //}
 
                 final double minimumDistanceThreshold = .1;
 
@@ -384,9 +384,9 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             ElapsedTime time = new ElapsedTime();
             while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
                 intake.setIntakeOn();
-                if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
-                    break outer;
-                }
+                if ((outtake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
+                   break outer;
+               }
             }
         }
 
@@ -429,9 +429,9 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                 if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
                     break;
                 }
-                if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
-                    break outer;
-                }
+                //if (intake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
+               //     break outer;
+                //}
 
                 //If it detects that it is stuck
                 if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
@@ -462,9 +462,9 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             driveSystem.stopAll();
             ElapsedTime time = new ElapsedTime();
             while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
-                if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
-                    break outer;
-                }
+                //if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
+                //    break outer;
+                //}
             }
 
 

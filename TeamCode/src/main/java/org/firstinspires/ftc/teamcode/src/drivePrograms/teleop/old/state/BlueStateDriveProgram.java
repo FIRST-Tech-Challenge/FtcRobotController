@@ -136,8 +136,8 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
                 {
                     if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                         intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
-                        BlinkinPattern o = intake.getLEDPatternFromFreight();
-                        if (o == null || !intake.isClosed()) {
+                        BlinkinPattern o = outtake.getLEDPatternFromFreight();
+                        if (o == null || !outtake.isClosed()) {
                             if (currentColor != defaultColor) {
                                 leds.setPattern(defaultColor);
                                 currentColor = defaultColor;
@@ -160,31 +160,21 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
                     }
                     if (gamepad2.y && y_depressed2) {
                         y_depressed2 = false;
-                        if (intake.isClosed()) {
-                            intake.setServoOpen();
+                        if (outtake.isClosed()) {
+                            outtake.setServoOpen();
                             yTimer.reset();
                         } else {
-                            intake.setServoClosed();
+                            outtake.setServoClosed();
                         }
                         leds.setPattern(defaultColor);
                         currentColor = defaultColor;
                     }
 
                     if (yTimer.seconds() > 1.25) {
-                        intake.setServoClosed();
+                        outtake.setServoClosed();
                     }
                 }
 
-                // Cap stick controls
-                {
-                    if (gamepad2.x) {
-                        cappingArm.setDownPosition();
-                    } else if (gamepad2.b) {
-                        cappingArm.setUpPosition();
-                    } else if (gamepad2.a) {
-                        cappingArm.setToCappingPosition();
-                    }
-                }
 
                 //Carousel Spinner
                 {

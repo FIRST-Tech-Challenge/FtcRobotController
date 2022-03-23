@@ -50,7 +50,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                 slide.gamepadControl(null, gamepad2);
 
                 //Intake Controls
-                FreightFrenzyGameObject currentObj = (FreightFrenzyGameObject) intake.gamepadControl(null, gamepad2);
+                FreightFrenzyGameObject currentObj = (FreightFrenzyGameObject) outtake.gamepadControl(null, gamepad2);
                 RevBlinkinLedDriver.BlinkinPattern colorToChangeTo;
                 if (currentObj == null) {
                     colorToChangeTo = defaultColor;
@@ -63,8 +63,6 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     currentColor = colorToChangeTo;
                 }
 
-                // Cap stick controls
-                cappingArm.gamepadControl(null, gamepad2);
 
                 //Carousel Spinner
                 spinner.gamepadControl(null, gamepad2);

@@ -23,7 +23,7 @@ public class ColorTest extends TeleOpTemplate {
         leds.setPattern(defaultColor);
         // this instantiation assumes that the color sensor's name is color_sensor
         waitForStart();
-        intake.setServoClosed();
+        outtake.setServoClosed();
 
         boolean y_depressed2 = true;
 
@@ -34,18 +34,18 @@ public class ColorTest extends TeleOpTemplate {
             }
             if (gamepad2.y && y_depressed2) {
                 y_depressed2 = false;
-                if (intake.isClosed()) {
-                    intake.setServoOpen();
+                if (outtake.isClosed()) {
+                    outtake.setServoOpen();
                 } else {
-                    intake.setServoClosed();
+                    outtake.setServoClosed();
                 }
             }
 
 
             if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                 intake.setMotorPower(gamepad2.right_trigger - gamepad2.left_trigger);
-                RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
-                if (o == null || !intake.isClosed()) {
+                RevBlinkinLedDriver.BlinkinPattern o = outtake.getLEDPatternFromFreight();
+                if (o == null || !outtake.isClosed()) {
                     leds.setPattern(defaultColor);
                 } else {
                     leds.setPattern(o);
@@ -55,11 +55,11 @@ public class ColorTest extends TeleOpTemplate {
                 intake.setMotorPower(0);
             }
 
-            telemetry.addData("red:", intake.getColor(Red));
-            telemetry.addData("green:", intake.getColor(Green));
-            telemetry.addData("blue:", intake.getColor(Blue));
-            telemetry.addData("distance:", intake.getSensorDistance());
-            telemetry.addData("identity:", FreightFrenzyGameObject.identify(intake.getRGB()));
+            telemetry.addData("red:", outtake.getColor(Red));
+            telemetry.addData("green:", outtake.getColor(Green));
+            telemetry.addData("blue:", outtake.getColor(Blue));
+            telemetry.addData("distance:", outtake.getSensorDistance());
+            telemetry.addData("identity:", FreightFrenzyGameObject.identify(outtake.getRGB()));
 
             telemetry.update();
         }

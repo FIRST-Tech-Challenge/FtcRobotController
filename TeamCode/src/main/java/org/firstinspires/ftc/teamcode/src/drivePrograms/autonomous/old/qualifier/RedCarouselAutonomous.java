@@ -76,7 +76,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.strafeAtAngle(180, .2);
                     Thread.sleep(1000);
                     driveSystem.stopAll();
-                    intake.setServoOpen();
+                    outtake.setServoOpen();
                     Thread.sleep(750);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
@@ -89,7 +89,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.strafeAtAngle(180, .25);
                     Thread.sleep(725);
                     driveSystem.stopAll();
-                    intake.setServoOpen();
+                    outtake.setServoOpen();
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
@@ -104,7 +104,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     driveSystem.strafeAtAngle(180, .2);
                     Thread.sleep(1000);
                     driveSystem.stopAll();
-                    intake.setServoOpen();
+                    outtake.setServoOpen();
                     Thread.sleep(1000);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);

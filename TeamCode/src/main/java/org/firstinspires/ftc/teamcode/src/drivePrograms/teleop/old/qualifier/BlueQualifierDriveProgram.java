@@ -147,8 +147,8 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                 }
                 if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
                     intake.setMotorPower(gamepad2.left_trigger - gamepad2.right_trigger);
-                    RevBlinkinLedDriver.BlinkinPattern o = intake.getLEDPatternFromFreight();
-                    if (o == null || !intake.isClosed()) {
+                    RevBlinkinLedDriver.BlinkinPattern o = outtake.getLEDPatternFromFreight();
+                    if (o == null || !outtake.isClosed()) {
                         if (currentColor != defaultColor) {
                             leds.setPattern(defaultColor);
                             currentColor = defaultColor;
@@ -170,18 +170,18 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                 }
                 if (gamepad2.y && y_depressed2) {
                     y_depressed2 = false;
-                    if (intake.isClosed()) {
-                        intake.setServoOpen();
+                    if (outtake.isClosed()) {
+                        outtake.setServoOpen();
                         yTimer.reset();
                     } else {
-                        intake.setServoClosed();
+                        outtake.setServoClosed();
                     }
                     leds.setPattern(defaultColor);
                     currentColor = defaultColor;
                 }
 
                 if (yTimer.seconds() > 1.25) {
-                    intake.setServoClosed();
+                    outtake.setServoClosed();
                 }
 
                 if (gamepad2.x) {

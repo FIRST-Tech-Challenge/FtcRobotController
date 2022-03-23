@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CappingArm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
@@ -28,15 +28,15 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     /**
      * Name of the front right motor
      */
-    public static final String frontRightName = "front_right/vr";
+    public static final String frontRightName = "front_right";
     /**
      * Name of the front left motor
      */
-    public static final String frontLeftName = "front_left/vl";
+    public static final String frontLeftName = "front_left";
     /**
      * Name of the front left motor
      */
-    public static final String backRightName = "back_right/h";
+    public static final String backRightName = "back_right";
     /**
      * Name of the back left motor
      */
@@ -58,16 +58,19 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     /**
      * Name of the carousel Spinner
      */
-    public static final String carouselSpinnerName = "cs";
+    public static final String carouselSpinnerName = "carousel_spinner";
 
     /**
      * Name of the bucket servo
      */
     public static final String bucketServoName = "bucket";
     /**
-     * Name of the intake motor
+     * Name of the front intake motor
      */
-    public static final String intakeMotorName = "intake";
+    public static final String frontIntakeMotorName = "front_intake/vr";
+
+    public static final String backIntakeMotorName = "back_intake/vl";
+
     /**
      * Name of the color sensor
      */
@@ -87,8 +90,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
 
     public static final String RightWebcamName = "Webcam_Right";
 
-    public static final String CappingArmName = "marker_arm";
-
     /**
      * Name of the IMU
      */
@@ -106,9 +107,15 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      */
     protected OdometryPodServos podServos;
     /**
-     * Provides methods for using the intake
+     * Provides methods for using the outtake
+     */
+    protected Outtake outtake;
+
+    /**
+     * Allows the control of the intake
      */
     protected ContinuousIntake intake;
+
     /**
      * Provides methods for using the robot LED's
      */
@@ -122,8 +129,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     protected DistanceSensor intakeDistanceSensor;
 
     protected DistanceSensor frontDistanceSensor;
-
-    protected CappingArm cappingArm;
 
     /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}
@@ -149,9 +154,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         }
     }
 
-    public void initCappingArm() {
-        cappingArm = new CappingArm(hardwareMap, CappingArmName);
-    }
 
     /**
      * Initializes all fields provided by this class
@@ -167,7 +169,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initVoltageSensor();
         initSpinner();
         initDistanceSensors();
-        initCappingArm();
         if (voltageSensor.getVoltage() < 12.5) {
             RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
         }
@@ -196,8 +197,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Initializes the Intake
      */
     protected void initIntake() {
-        intake = new ContinuousIntake(hardwareMap, intakeMotorName, bucketServoName, bucketColorSensorName, true);
-        intake.setServoClosed();
+        outtake = new Outtake(hardwareMap, bucketServoName, bucketColorSensorName, true);
+        outtake.setServoClosed();
     }
 
     /**

@@ -27,14 +27,14 @@ public class AutoPickupTest extends AutonomousTemplate {
         driveSystem.moveToPosition(FieldPoints.RedWestLoadingPoint, 1);
         driveSystem.moveToPosition(FieldPoints.RedWareHousePass, 1);
         driveSystem.moveToPosition(FieldPoints.RedWareHousePark, 1);
-        intake.setServoClosed();
+        outtake.setServoClosed();
 
 
-        boolean itemPickup = intake.itemInBucket();
+        boolean itemPickup = outtake.itemInBucket();
 
         while (!itemPickup) {
             intake.setIntakeOn();
-            itemPickup = intake.itemInBucket();
+            itemPickup = outtake.itemInBucket();
             driveSystem.strafeAtAngle(0, .2);
             checkStop();
         }
