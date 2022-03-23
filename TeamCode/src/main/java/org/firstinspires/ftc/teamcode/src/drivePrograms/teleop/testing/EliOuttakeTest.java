@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
-@TeleOp(name = "Eli Outtake Test😂")
+@TeleOp(name = "\uFFFFEli Outtake Test😂")
 public class EliOuttakeTest extends GenericOpModeTemplate {
 
     public static final double closedPos = 0;

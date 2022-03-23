@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.src.utills.JNIGetString;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
-
+@Disabled
 @TeleOp(name = "JNITest \uD83D\uDE80")
 public class JNITest extends GenericOpModeTemplate {
     @Override
