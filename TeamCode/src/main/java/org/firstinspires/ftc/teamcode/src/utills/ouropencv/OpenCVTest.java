@@ -21,8 +21,8 @@ public class OpenCVTest extends LinearOpMode {
     public static double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
     public static double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
     // Pink Range                                      Y      Cr     Cb
-    //public static Scalar scalarLowerYCrCb = new Scalar(0.0, 160.0, 100.0);
-    //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
+    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 160.0, 100.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
     private OpenCvCamera webcam;
     private double CrLowerUpdate = 160;
     private double CbLowerUpdate = 100;
@@ -32,8 +32,8 @@ public class OpenCVTest extends LinearOpMode {
     private double upperruntime = 0;
 
     // Yellow Range
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 100.0, 0.0);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 170.0, 120.0);
+    //public static Scalar scalarLowerYCrCb = new Scalar(0.0, 100.0, 0.0);
+    //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 170.0, 120.0);
     @Override
     public void runOpMode() {
         // OpenCV webcam
