@@ -21,8 +21,8 @@ public class OpenCVTest extends LinearOpMode {
     public static double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
     public static double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
     // Pink Range                                      Y      Cr     Cb
-    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 160.0, 100.0);
-    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
+    //public static Scalar scalarLowerYCrCb = new Scalar(0.0, 160.0, 100.0);
+    //public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
     private OpenCvCamera webcam;
     private double CrLowerUpdate = 160;
     private double CbLowerUpdate = 100;
@@ -32,9 +32,8 @@ public class OpenCVTest extends LinearOpMode {
     private double upperruntime = 0;
 
     // Yellow Range
-    public static Scalar YscalarLowerYCrCb = new Scalar(237, 145, 68.85);
-    public static Scalar YscalarUpperYCrCb = new Scalar(255.0, 167, 80);
-
+    public static Scalar scalarLowerYCrCb = new Scalar(0.0, 100.0, 0.0);
+    public static Scalar scalarUpperYCrCb = new Scalar(255.0, 170.0, 120.0);
     @Override
     public void runOpMode() {
         // OpenCV webcam
@@ -44,8 +43,8 @@ public class OpenCVTest extends LinearOpMode {
         ContourPipeline myPipeline;
         webcam.setPipeline(myPipeline = new ContourPipeline(borderLeftX, borderRightX, borderTopY, borderBottomY));
         // Configuration of Pipeline
-        myPipeline.configureScalarLower(YscalarLowerYCrCb.val[0], YscalarLowerYCrCb.val[1], YscalarLowerYCrCb.val[2]);
-        myPipeline.configureScalarUpper(YscalarUpperYCrCb.val[0], YscalarUpperYCrCb.val[1], YscalarUpperYCrCb.val[2]);
+        myPipeline.configureScalarLower(scalarLowerYCrCb.val[0], scalarLowerYCrCb.val[1], scalarLowerYCrCb.val[2]);
+        myPipeline.configureScalarUpper(scalarUpperYCrCb.val[0], scalarUpperYCrCb.val[1], scalarUpperYCrCb.val[2]);
         // Webcam Streaming
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -70,8 +69,8 @@ public class OpenCVTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            myPipeline.configureScalarLower(YscalarLowerYCrCb.val[0], YscalarLowerYCrCb.val[1], YscalarLowerYCrCb.val[2]);
-            myPipeline.configureScalarUpper(YscalarUpperYCrCb.val[0], YscalarUpperYCrCb.val[1], YscalarUpperYCrCb.val[2]);
+            myPipeline.configureScalarLower(scalarLowerYCrCb.val[0], scalarLowerYCrCb.val[1], scalarLowerYCrCb.val[2]);
+            myPipeline.configureScalarUpper(scalarUpperYCrCb.val[0], scalarUpperYCrCb.val[1], scalarUpperYCrCb.val[2]);
 
 
             myPipeline.configureBorders(borderLeftX, borderRightX, borderTopY, borderBottomY);
