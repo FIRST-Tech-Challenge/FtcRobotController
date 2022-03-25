@@ -195,6 +195,10 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 0; // 24
     public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 25; // 75
 
+    public Servo        turretServo                = null;
+    public double       TURRET_SERVO_INIT          = 0.500; // we init to the position needed to STORE the freight arm
+    public double       TURRET_SERVO_STORED        = 0.500;
+
     public Servo        boxServo                   = null;
     public double       BOX_SERVO_INIT             = 0.28;  // we init to the TRANSPORT position
     public double       BOX_SERVO_COLLECT          = 0.48;
@@ -372,6 +376,9 @@ public class HardwareBothHubs
         freightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //      PIDFCoefficients freightPIDF = new PIDFCoefficients( 10.0,10.0,1.0,1.0, MotorControlAlgorithm.PIDF );
 //      freightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, freightPIDF );
+
+        turretServo = hwMap.servo.get("DT2kServo");      // servo port 3 (hub 2)
+        turretServo.setPosition( TURRET_SERVO_INIT );
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         if (!transitionFromAutonomous) {
