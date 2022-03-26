@@ -122,7 +122,7 @@ public class OpenCVPipeline extends OpenCvPipeline {
             }
             if (largestContourIndex != -1) {
                 Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
-                Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(255, 255, 255));
+                Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(0, 255, 0));
             }
             Imgproc.line(finalContourOutputMat, new Point(RIGHT_THRESHOLD, 0), new Point(RIGHT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
             Imgproc.line(finalContourOutputMat, new Point(LEFT_THRESHOLD, 0), new Point(LEFT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);

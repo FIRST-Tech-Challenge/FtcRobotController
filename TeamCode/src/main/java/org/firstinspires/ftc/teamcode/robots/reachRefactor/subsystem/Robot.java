@@ -115,16 +115,18 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN &&
+        if(grabAndTransferStage.getStage() == 3 &&
+                articulation == Articulation.GRAB_AND_TRANSFER &&
+                gripper.getFreightDistance() > Gripper.FREIGHT_TRIGGER) {
+            grabAndTransferStage.resetStage();
+            articulation = Articulation.MANUAL;
+            crane.articulate(Crane.Articulation.TRANSFER);
+            gripper.set();
+        } else if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN &&
                 gripper.getTargetPos() == Gripper.OPEN &&
                 gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER &&
                 articulation != Articulation.GRAB_AND_TRANSFER)
             articulation = Articulation.GRAB_AND_TRANSFER;
-//        if(articulation == Articulation.GRAB_AND_TRANSFER && gripper.getFreightDistance() > Gripper.FREIGHT_TRIGGER) {
-//            articulation = Articulation.MANUAL;
-//            crane.articulate(Crane.Articulation.TRANSFER);
-//            gripper.set();
-//        }
 
         articulate(articulation);
 
@@ -203,7 +205,8 @@ public class Robot implements Subsystem {
     }
 
     // Tele-Op articulations
-    private StateMachine grabAndTransfer = getStateMachine(new Stage())
+    private Stage grabAndTransferStage = new Stage();
+    private StateMachine grabAndTransfer = getStateMachine(grabAndTransferStage)
             .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
@@ -218,8 +221,12 @@ public class Robot implements Subsystem {
 
     private StateMachine dumpAndSetCraneForTransfer = getStateMachine(new Stage())
             .addTimedState(1f, () -> crane.dump(), () -> {})
+            .addSingleState(() -> { crane.setToHomeEnabled(false); })
+            .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addSingleState(() -> { crane.setToHomeEnabled(true); })
             .build();
 
     private StateMachine transfer = getStateMachine(new Stage())

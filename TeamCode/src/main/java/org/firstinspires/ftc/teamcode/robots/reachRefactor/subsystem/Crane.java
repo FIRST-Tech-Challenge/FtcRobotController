@@ -101,6 +101,7 @@ public class Crane implements Subsystem {
         HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, -90, 1.25f),
         HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 90, 1.25f),
         TRANSFER(-40, -60, -20, 0, 0.4f, 0),
+        POST_DUMP(0, 130, 90, 0.6f, 0),
 
         TEST_1(25, 90, 25, 1.5f, 0),
         TEST_2(45, 90, 90, 1f, 0),

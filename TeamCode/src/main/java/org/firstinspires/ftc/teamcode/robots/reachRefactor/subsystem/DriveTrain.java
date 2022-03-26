@@ -29,6 +29,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.MinimalFollower;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TrikeKinematics;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
@@ -315,7 +316,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         poseEstimate = getPoseEstimate();
         poseVelocity = getPoseVelocity();
 
-        if (trajectorySequenceRunner.isBusy()) {
+        if(trajectorySequenceRunner.isBusy()) {
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity(), fieldOverlay);
             if (signal != null)
                 setDriveSignal(signal);

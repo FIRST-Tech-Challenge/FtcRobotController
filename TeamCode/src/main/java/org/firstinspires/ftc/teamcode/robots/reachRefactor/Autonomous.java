@@ -228,7 +228,7 @@ public class Autonomous {
                                 )
                         )
                         .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
-                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.TRANSFER))
+//                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.TRANSFER))
                         .build();
                 break;
             case START_RED_UP:
