@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -58,10 +56,8 @@ public class Outtake implements Controllable {
         this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
         this.colorSensor.enableLed(sensorDetectionLight);
 
-
-        itemRelease = hardwareMap.servo.get(servoName);
+        this.itemRelease = hardwareMap.servo.get(servoName);
         this.setServoClosed();
-        isClosed = true;
     }
 
     /**
@@ -81,7 +77,6 @@ public class Outtake implements Controllable {
     public boolean isClosed() {
         return this.isClosed;
     }
-
 
 
     /**
@@ -174,7 +169,6 @@ public class Outtake implements Controllable {
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
 
         FreightFrenzyGameObject currentObject = FreightFrenzyGameObject.EMPTY; // Assigning to null so the compiler is happy
-
 
 
         //Out take controls

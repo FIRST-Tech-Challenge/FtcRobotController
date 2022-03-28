@@ -12,7 +12,7 @@ public class PushOdometryTest extends AutonomousTemplate {
     @Override
     public void opModeMain() throws InterruptedException {
         TeleopDriveTrain dt = new TeleopDriveTrain(hardwareMap, frontRightName, frontLeftName, backRightName, backLeftName);
-        dt.setDrivePowerMult(.3);
+        dt.setDrivePowerMultiplier(.3);
         this.initDriveSystemWithWheelDrift();
 
         this.initOdometryServos();

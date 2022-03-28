@@ -54,14 +54,14 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
 
                 //Declan Speed Modifiers
                 if (gamepad1.b) {
-                    driveTrain.setDrivePowerMult(0.6);
+                    driveTrain.setDrivePowerMultiplier(0.6);
                 }
                 if (gamepad1.y) {
-                    driveTrain.setDrivePowerMult(1);
+                    driveTrain.setDrivePowerMultiplier(1);
 
                 }
                 if (gamepad1.a) {
-                    driveTrain.setDrivePowerMult(0.3);
+                    driveTrain.setDrivePowerMultiplier(0.3);
                 }
 
             }
