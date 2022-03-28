@@ -40,9 +40,8 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
         while (opModeIsActive() && !isStopRequested()) {
             //Declan's controls
-            {
-                driveTrain.gamepadControl(gamepad1, null);
-            }
+            driveTrain.gamepadControl(gamepad1, null);
+
 
             //Eli's controls
             {
@@ -51,14 +50,12 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
                 //Intake Controls
                 FreightFrenzyGameObject currentObj = (FreightFrenzyGameObject) outtake.gamepadControl(null, gamepad2);
-                RevBlinkinLedDriver.BlinkinPattern colorToChangeTo;
-                if (currentObj == null) {
-                    colorToChangeTo = defaultColor;
-                } else {
+                RevBlinkinLedDriver.BlinkinPattern colorToChangeTo = defaultColor;
+                if (currentObj != null) {
                     colorToChangeTo = FreightFrenzyGameObject.getLEDColorFromItem(currentObj);
                 }
 
-                if (colorToChangeTo != currentColor) {
+                if (colorToChangeTo != currentColor && colorToChangeTo != null) {
                     leds.setPattern(colorToChangeTo);
                     currentColor = colorToChangeTo;
                 }
