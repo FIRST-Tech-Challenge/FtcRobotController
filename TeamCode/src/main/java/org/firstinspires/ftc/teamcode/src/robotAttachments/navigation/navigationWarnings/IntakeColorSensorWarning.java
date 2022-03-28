@@ -4,7 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 
 public class IntakeColorSensorWarning extends MovementWarning {

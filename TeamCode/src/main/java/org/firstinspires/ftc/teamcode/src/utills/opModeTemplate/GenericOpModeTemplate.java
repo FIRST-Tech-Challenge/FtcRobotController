@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.CarouselSpinner;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.ContinuousIntake;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.Outtake;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.OdometryPodServos;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.carouselspinner.CarouselSpinner;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.intake.ContinuousIntake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.podservos.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.tapemeasureturret.TapeMeasureTurret;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 
 /**
@@ -131,6 +132,11 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     protected DistanceSensor frontDistanceSensor;
 
     /**
+     * Allows control of tape measure turret
+     */
+    protected TapeMeasureTurret turret;
+
+    /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}
      *
      * @throws InterruptedException Throws if OpMode is stopped during Execution
@@ -170,9 +176,14 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initVoltageSensor();
         initSpinner();
         initDistanceSensors();
+        initTapeMeasureTurret();
         if (voltageSensor.getVoltage() < 12.5) {
             RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
         }
+    }
+
+    public void initTapeMeasureTurret(){
+        this.turret = new TapeMeasureTurret(hardwareMap, "tape_measure", "pitch", "yaw");
     }
 
     public void initIntake(){

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake;
 
 import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Blue;
 import static org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors.Green;
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
  * A Autonomous to test color sensor capabilities
  */
 @TeleOp(name = "ColorTest")
-//@Disabled
+@Disabled
 public class ColorTest extends TeleOpTemplate {
     public void opModeMain() throws InterruptedException {
         this.initOuttake();

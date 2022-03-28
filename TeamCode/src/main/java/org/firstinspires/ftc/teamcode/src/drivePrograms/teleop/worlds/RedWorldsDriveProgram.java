@@ -11,9 +11,11 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 @TeleOp(name = "🟥Red Worlds Drive Program🟥")
 public class RedWorldsDriveProgram extends TeleOpTemplate {
-    final BlinkinPattern defaultColor = BlinkinPattern.RED;
+    protected static BlinkinPattern defaultColor = BlinkinPattern.RED;
     BlinkinPattern currentColor = defaultColor;
     TripWireDistanceSensor distanceSensor;
+    private boolean x_depressed = true;
+    private boolean tapeMeasureCtrl = false;
 
     public void opModeMain() throws InterruptedException {
         this.initAll();
@@ -36,36 +38,51 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
         telemetry.addData("Initialization", "finished");
         telemetry.update();
+
+        System.gc();
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
             //Declan's controls
-            driveTrain.gamepadControl(gamepad1, null);
+            {
+                driveTrain.gamepadControl(gamepad1, gamepad2);
+                //Carousel Spinner
+                spinner.gamepadControl(gamepad1, gamepad2);
+            }
 
 
             //Eli's controls
             {
-                //Handles Linear Slide Control
-                slide.gamepadControl(null, gamepad2);
-
-                //Intake Controls
-                FreightFrenzyGameObject currentObj = (FreightFrenzyGameObject) outtake.gamepadControl(null, gamepad2);
-                RevBlinkinLedDriver.BlinkinPattern colorToChangeTo = defaultColor;
-                if (currentObj != null) {
-                    colorToChangeTo = FreightFrenzyGameObject.getLEDColorFromItem(currentObj);
+                if (!gamepad2.x){
+                    x_depressed = true;
+                }
+                if (gamepad2.x && x_depressed){
+                    tapeMeasureCtrl = !tapeMeasureCtrl;
                 }
 
-                if (colorToChangeTo != currentColor && colorToChangeTo != null) {
-                    leds.setPattern(colorToChangeTo);
-                    currentColor = colorToChangeTo;
+                if (tapeMeasureCtrl){
+                    turret.gamepadControl(gamepad1,gamepad2);
+                }else {
+
+                    //Handles Linear Slide Control
+                    slide.gamepadControl(gamepad1, gamepad2);
+
+                    //Intake Controls
+                    FreightFrenzyGameObject currentObj = (FreightFrenzyGameObject) outtake.gamepadControl(gamepad1, gamepad2);
+                    RevBlinkinLedDriver.BlinkinPattern colorToChangeTo = defaultColor;
+                    if (currentObj != null) {
+                        colorToChangeTo = FreightFrenzyGameObject.getLEDColorFromItem(currentObj);
+                    }
+
+                    if (colorToChangeTo != currentColor && colorToChangeTo != null) {
+                        leds.setPattern(colorToChangeTo);
+                        currentColor = colorToChangeTo;
+                    }
                 }
 
-
-                //Carousel Spinner
-                spinner.gamepadControl(null, gamepad2);
             }
 
-
+            Thread.yield();
         }
     }
 }

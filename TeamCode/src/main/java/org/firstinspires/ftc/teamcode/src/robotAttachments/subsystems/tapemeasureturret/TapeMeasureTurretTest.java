@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.tapemeasureturret;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.TapeMeasureTurret;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "\uFFFFTapeMeasureTurretTest")
+@TeleOp(name = "\u0000TapeMeasureTurretTest")
 public class TapeMeasureTurretTest extends TeleOpTemplate {
 
     @Override
@@ -14,8 +13,9 @@ public class TapeMeasureTurretTest extends TeleOpTemplate {
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             turret.gamepadControl(null, gamepad2);
+            Thread.yield();
         }
 
     }

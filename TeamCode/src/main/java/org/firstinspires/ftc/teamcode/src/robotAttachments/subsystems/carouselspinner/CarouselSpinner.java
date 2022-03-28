@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.carouselspinner;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -94,15 +94,7 @@ public class CarouselSpinner implements Controllable {
      */
     @Override
     public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
-        if (Math.abs(gamepad2.right_stick_x) > 0.1) {
-            if (gamepad2.right_stick_x > 0) {
-                this.setPowerBlueDirection();
-            } else {
-                this.setPowerRedDirection();
-            }
-        } else {
-            this.stop();
-        }
+        this.spinnerServo.setPower(gamepad1.left_trigger - gamepad1.right_trigger);
 
         return null;
     }

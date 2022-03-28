@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.podservos;
 
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -41,15 +41,15 @@ public class OdometryPodServos {
     /**
      * Horizontal Servo Object
      */
-    public final Servo horizontalServo;
+    protected final Servo horizontalServo;
     /**
      * Left Servo Object
      */
-    public final Servo leftServo;
+    protected final Servo leftServo;
     /**
      * Right Servo Object
      */
-    public final Servo rightServo;
+    protected final Servo rightServo;
 
     /**
      * Constructs and initializes servos

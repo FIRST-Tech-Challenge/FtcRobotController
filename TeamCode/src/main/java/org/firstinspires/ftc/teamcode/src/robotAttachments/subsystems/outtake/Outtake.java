@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake;
 
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -20,28 +20,28 @@ public class Outtake implements Controllable {
     /**
      * The Position servo must be to release an item
      */
-    private static final double open = .8; // this position needs to be adjusted!
+    protected static final double open = .8; // this position needs to be adjusted!
 
     /**
      * The Position servo must be to keep and item in the intake compartment
      */
-    private static final double closed = 0.45; // this position needs to be adjusted
+    protected static final double closed = 0.45; // this position needs to be adjusted
 
     /**
      * The item color sensor
      */
-    private final ColorRangeSensor colorSensor;
+    protected final ColorRangeSensor colorSensor;
 
     /**
      * The internal Servo Object
      */
-    private final Servo itemRelease;
-    private final ElapsedTime yTimer = new ElapsedTime();
+    protected final Servo itemRelease;
+    protected final ElapsedTime yTimer = new ElapsedTime();
     /**
      * A boolean that tells if the servo is closed or opened
      */
-    private boolean isClosed;
-    private boolean y_depressed2 = true;
+    protected boolean isClosed;
+    protected boolean y_depressed2 = true;
 
 
     /**
@@ -192,7 +192,7 @@ public class Outtake implements Controllable {
             }
         }
 
-        return (Object) currentObject;
+        return currentObject;
 
     }
 }

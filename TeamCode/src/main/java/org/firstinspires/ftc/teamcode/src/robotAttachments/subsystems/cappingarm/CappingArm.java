@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems;
+package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.cappingarm;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
