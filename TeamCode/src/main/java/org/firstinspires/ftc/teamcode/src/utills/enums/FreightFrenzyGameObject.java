@@ -12,12 +12,32 @@ public enum FreightFrenzyGameObject {
     DUCK,
     EMPTY;
 
-
+    /**
+     * RGB values of a ball
+     */
     private static final double[] BallRGB = new double[]{303, 538, 454};
+
+    /**
+     * RGB values of a smooth cube side
+     */
     private static final double[] CubeSmoothRGB = new double[]{151, 203, 83};
+
+    /**
+     * RGB values of a waffle cube side
+     */
     private static final double[] CubeWaffleRGB = new double[]{110, 114, 68};
+
+    /**
+     * RGB values of a duck
+     */
     private static final double[] DuckRGB = new double[]{54, 91, 54};
+
+    /**
+     * RGB values of a empty outtake
+     */
     private static final double[] EmptyRGB = new double[]{32, 56, 48};
+
+
     /**
      * A Array of every possible enum value
      */
@@ -123,11 +143,11 @@ public enum FreightFrenzyGameObject {
      * @return The distance between the two, smaller is closer
      */
     private static double getDifferenceOfColor(final double[] sight, final double[] object) {
-        final double r = Math.abs(sight[0] - object[0]);
-        final double g = Math.abs(sight[1] - object[1]);
-        final double b = Math.abs(sight[2] - object[2]);
+        final double rDifference = Math.abs(sight[0] - object[0]);
+        final double gDifference = Math.abs(sight[1] - object[1]);
+        final double bDiffference = Math.abs(sight[2] - object[2]);
         // this calculates the 3D distance between colors
-        return Math.sqrt(Math.pow(Math.sqrt(Math.pow(r, 2) + Math.pow(g, 2)), 2) + Math.pow(b, 2));
+        return Math.sqrt(Math.pow(Math.sqrt(Math.pow(rDifference, 2) + Math.pow(gDifference, 2)), 2) + Math.pow(bDiffference, 2));
     }
 
 
