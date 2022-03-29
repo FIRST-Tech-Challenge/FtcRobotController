@@ -12,12 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardwaremaps.FrenzyHardwareMap;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 @Config
-@TeleOp(name="MecanumTeleOp", group="FreightFrenzy")
-public class MecanumTeleOp extends LinearOpMode {
+@TeleOp(name="ExperimentalMode", group="FreightFrenzy")
+public class ExperimentalMode extends LinearOpMode {
 
     FrenzyHardwareMap robot = new FrenzyHardwareMap();
 
@@ -101,7 +98,7 @@ public class MecanumTeleOp extends LinearOpMode {
                  */
                 armCurrentPos = robot.motorArm.getCurrentPosition();
                 armLimitPressed = robot.armLimitSwitch.isPressed();
-                gamepad2DPadDown = gamepad2.dpad_down; // track state of the dpad button
+                gamepad2DPadDown = gamepad1.dpad_left; // track state of the dpad button
 
                 // Magnetic Limit Switch
                 if (armLimitPressed && !armLimitSwitchFlag && !gamepad2DPadDown) {
@@ -118,10 +115,10 @@ public class MecanumTeleOp extends LinearOpMode {
                 }
 
                 // Arm Up and Arm Down in small increments, >= 0.5 helps prevent issues with 0 value
-                if (gamepad2.right_stick_y <= -0.5) {
+                if (gamepad1.dpad_up == true) {
                     armSetPos = armSetPos + 10;
                     armPower = armPowerLevels;
-                } else if (gamepad2.right_stick_y >= 0.5 && (!armLimitPressed && !armLimitSwitchFlag)) {
+                } else if (gamepad1.dpad_down == true && (!armLimitPressed && !armLimitSwitchFlag)) {
                     armSetPos = armSetPos - 10;
                 } else if (gamepad2DPadDown == true) {
                     armSetPos = armSetPos - 2;
@@ -130,16 +127,16 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
                 //set arm positions to gamepad.2 buttons
-                if (gamepad2.a) {
+                if (gamepad1.a) {
                     armSetPos = armLevel0;
                     armPower = armPowerLevels;
-                } else if (gamepad2.x) {
+                } else if (gamepad1.x) {
                     armSetPos = armLevel1;
                     armPower = armPowerLevels;
-                } else if (gamepad2.y) {
+                } else if (gamepad1.y) {
                     armSetPos = armLevel2;
                     armPower = armPowerLevels;
-                } else if (gamepad2.b) {
+                } else if (gamepad1.b) {
                     armSetPos = armLevel3;
                     armPower = armPowerLevels;
                 }
@@ -153,11 +150,11 @@ public class MecanumTeleOp extends LinearOpMode {
                  * Right trigger in at faster speed
                  * Left Trigger out at a slower speed
                  */
-                if (gamepad2.right_trigger > 0.5) {
+                if (gamepad1.right_bumper) {
                     intakePower = -0.95;
-                } else if (gamepad2.left_trigger > 0.5) {
+                } else if (gamepad1.left_bumper) {
                     intakePower = 0.35;
-                } else if (gamepad2.left_trigger <= 0.5 && gamepad2.right_trigger <= 0.5) {
+                } else if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
                     intakePower = 0;
                 }
 
@@ -169,9 +166,9 @@ public class MecanumTeleOp extends LinearOpMode {
                  * Right bumper
                  * Left Bumper
                  */
-                if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
+                if (gamepad1.right_bumper == true && !gamepad1.left_bumper) {
                     carouselPower = 0.825;
-                } else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
+                } else if (gamepad1.left_bumper == true && !gamepad1.right_bumper) {
                     carouselPower = -0.825;
                 } else {
                     carouselPower = 0;
@@ -198,7 +195,7 @@ public class MecanumTeleOp extends LinearOpMode {
                     controller1rstickx = 0.0;
 
                 // Toggles slowdown with B Press or Trigger Press
-                if ((gamepad1.b && !bpressed) || (gamepad1.right_trigger >= 0.5 && !rtriggerpressed) || (gamepad1.left_trigger >= 0.5 && !ltriggerpressed)) {
+                if ((gamepad1.right_trigger > 0.5 && !rtriggerpressed) || (gamepad1.left_trigger > 0.5 & !ltriggerpressed)) {
                     if (slowdownflag) {
                         slowdown = 2.0;
                         slowdownflag = false;

@@ -232,18 +232,17 @@ public class InfantMode extends LinearOpMode {
                 robot.motorFrontRight.setPower(frontRightPower);
                 robot.motorBackRight.setPower(backRightPower);
 
-                if(gubble.seconds() < 80) {
                     if (robot.colorsensed.getNormalizedColors().red > 0.2 && robot.colorsensed.getNormalizedColors().blue > 0.04 && robot.colorsensed.getNormalizedColors().green > 0.04) {
                         if (!gamepad1.isRumbling()) {
                             gamepad2.rumble(0.3, 0.3, 200);
                             gamepad1.rumble(0.3, 0.3, 200);
                         }
+                        if(gubble.seconds() < 80)
                         blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                    } else {
+                    } else if(gubble.seconds() < 80){
                         blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);
                     }
-                }
-                else{
+                if(gubble.seconds() > 80){
                     blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
                 }
 

@@ -120,7 +120,7 @@ public class DuckSideRedPath1 {
 
         Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
 
-                .splineToLinearHeading(new Pose2d(-35, -21.5, Math.toRadians(0)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-34.7, -21.5, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
         Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
