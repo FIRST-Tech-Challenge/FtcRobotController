@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.worlds;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
