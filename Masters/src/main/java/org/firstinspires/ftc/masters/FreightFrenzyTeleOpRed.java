@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.masters;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -25,6 +27,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
     //RobotClass robot;
     SampleMecanumDriveCancelable drive;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+
 
     /* Declare OpMode members. */
     private final ElapsedTime runtime = new ElapsedTime();
@@ -104,8 +108,8 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
             Left Joystick
         */
         telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
+       // telemetry.update();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new SampleMecanumDriveCancelable(hardwareMap, this, telemetry);
 
         Pose2d startPose =new Pose2d(new Vector2d(26, -66),Math.toRadians(180));
@@ -175,15 +179,17 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            telemetry.addData("encode",  + linearSlideMotor.getCurrentPosition());
-            telemetry.update();
+            //telemetry.addData("encode",  + linearSlideMotor.getCurrentPosition());
+
 
             switch (currentMode) {
                 case NORMAL:
                     double y = 0;
                     double x = 0;
                     double rx = 0;
-
+telemetry.addData("left y", gamepad1.left_stick_y);
+telemetry.addData("left x", gamepad1.left_stick_x);
+telemetry.addData("right x", gamepad1.right_stick_x);
 
                     if (Math.abs(gamepad1.left_stick_y) > 0.2 || Math.abs(gamepad1.left_stick_x) > 0.2 || Math.abs(gamepad1.right_stick_x) > 0.2) {
                         y = gamepad1.left_stick_y;
@@ -203,12 +209,14 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     double rightFrontPower = y - strafeConstant* x - rx;
                     double rightRearPower = y + strafeConstant*x - rx;
 
+
+
                     if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
                         double max;
-                        max = Math.max(leftFrontPower, leftRearPower);
-                        max = Math.max(max, rightFrontPower);
-                        max = Math.max(max, rightRearPower);
+                        max = Math.max(Math.abs(leftFrontPower), Math.abs(leftRearPower));
+                        max = Math.max(max, Math.abs(rightFrontPower));
+                        max = Math.max(max, Math.abs(rightRearPower));
 
                         leftFrontPower /= max;
                         leftRearPower /= max;
@@ -220,6 +228,11 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
                     leftRearMotor.setPower(leftRearPower * maxPowerConstraint);
                     rightFrontMotor.setPower(rightFrontPower * maxPowerConstraint);
                     rightRearMotor.setPower(rightRearPower * maxPowerConstraint);
+
+                    telemetry.addData("left front power", leftFrontPower);
+                    telemetry.addData("left back power", leftRearPower);
+                    telemetry.addData("right front power", rightFrontPower);
+                    telemetry.addData("right back power", rightRearPower);
 
                     if (gamepad1.a) {
                         maxPowerConstraint = 1;
@@ -420,7 +433,7 @@ public class FreightFrenzyTeleOpRed extends LinearOpMode {
 //                    drive.greenLED2.setState(false);
 //                }
 
-
+            telemetry.update();
         }
     }
     protected void rotateCarousel(){
