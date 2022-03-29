@@ -49,7 +49,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             //This moves into the wall for duck spinning
             driveSystem.moveToPosition(0, gps.getY() + 5, gps.getRot(), 1, new DistanceTimeoutWarning(100));
 
-            driveSystem.stopAll();
+            driveSystem.halt();
             spinner.spinOffRedDuck();
 
             driveSystem.strafeAtAngle(180, 0.5);
@@ -61,7 +61,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                 }
                 currentWallDistance = Math.abs((frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 270)));
             } while (currentWallDistance < (24) && opModeIsActive() && !isStopRequested());
-            driveSystem.stopAll();
+            driveSystem.halt();
         }
     }
 }

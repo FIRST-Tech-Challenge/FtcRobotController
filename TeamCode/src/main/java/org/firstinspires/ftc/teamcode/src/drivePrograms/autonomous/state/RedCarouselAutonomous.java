@@ -49,7 +49,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
             //This moves into the wall for duck spinning
             driveSystem.moveToPosition(0, gps.getY() + 5, gps.getRot(), 1, new DistanceTimeoutWarning(100));
 
-            driveSystem.stopAll();
+            driveSystem.halt();
             spinner.spinOffRedDuck();
 
             driveSystem.moveTowardsPosition(gps.getX() + 7, gps.getY() - 20, gps.getRot(), 1, 5, new DistanceTimeoutWarning(500));
@@ -78,7 +78,7 @@ public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
                     telemetry.update();
                 }
                 //Thread.sleep(2000);
-                driveSystem.stopAll();
+                driveSystem.halt();
                 Thread.sleep(200);// this is to keep the robot stopped and from possibly drifting into a wall or another robot
             }
         }

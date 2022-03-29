@@ -187,7 +187,7 @@ public class BlueStateDriveProgram extends TeleOpTemplate {
                             spinner.setPowerRedDirection();
                         }
                     } else {
-                        spinner.stop();
+                        spinner.halt();
                     }
                 }
 

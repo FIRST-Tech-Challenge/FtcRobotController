@@ -50,7 +50,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             //This moves into the wall for duck spinning
             driveSystem.moveToPosition(140, gps.getY(), gps.getRot(), 1, new DistanceTimeoutWarning(100));
 
-            driveSystem.stopAll();
+            driveSystem.halt();
             spinner.spinOffBlueDuck();
 
             driveSystem.moveTowardsPosition(gps.getX() - 4, gps.getY() - 20, 180, 1, 5, new DistanceTimeoutWarning(500));
@@ -82,7 +82,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     telemetry.update();
                 }
                 //Thread.sleep(2000);
-                driveSystem.stopAll();
+                driveSystem.halt();
                 Thread.sleep(200);// this is to keep the robot stopped and from possibly drifting into a wall or another robot
             }
         }

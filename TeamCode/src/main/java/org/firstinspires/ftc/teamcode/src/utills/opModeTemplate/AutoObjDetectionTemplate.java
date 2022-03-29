@@ -294,7 +294,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
         } while (currentWallDistance < (23 + tuningFactor) && opModeIsActive() && !isStopRequested());
 
 
-        driveSystem.stopAll();
+        driveSystem.halt();
         //intake.setServoOpen();
         Thread.sleep(750);
         driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
@@ -334,7 +334,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
                 //checks if increment of 4 inches is fulfilled for this loop
                 if (gps.getY() < (startingDistanceFromWall - distanceDriven)) {
-                    driveSystem.stopAll();
+                    driveSystem.halt();
                     break;
                 }
 
@@ -360,12 +360,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                     // output to telemetry
                     telemetry.addData("Warning", "Stuck");
                     telemetry.update();
-                    driveSystem.stopAll();
+                    driveSystem.halt();
 
                     // back away from block
                     driveSystem.strafeAtAngle(180, .5);
                     Thread.sleep(500);
-                    driveSystem.stopAll();
+                    driveSystem.halt();
 
 
                     // turn 20 degrees away from wall
@@ -380,7 +380,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             }
 
 
-            driveSystem.stopAll();
+            driveSystem.halt();
             ElapsedTime time = new ElapsedTime();
             while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
                 intake.turnIntakeOn();
@@ -439,12 +439,12 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                     // output to telemetry
                     telemetry.addData("Warning", "Stuck");
                     telemetry.update();
-                    driveSystem.stopAll();
+                    driveSystem.halt();
 
                     // back away from block
                     driveSystem.strafeAtAngle(180, .35);
                     Thread.sleep(500);
-                    driveSystem.stopAll();
+                    driveSystem.halt();
                     Thread.sleep(50);
 
                     // turn 20 degrees away from wall
@@ -459,7 +459,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
                     turnIncrement = 0;
                 }
             }
-            driveSystem.stopAll();
+            driveSystem.halt();
             ElapsedTime time = new ElapsedTime();
             while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
                 //if ((intake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {

@@ -163,7 +163,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 }
             }
         }
-        stopAll();
+        halt();
     }
 
 
@@ -221,7 +221,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 }
             }
         }
-        stopAll();
+        halt();
     }
 
     /**
@@ -254,7 +254,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         double[] pos = FieldPoints.positionsAndPoints.get(position);
         assert pos != null;
         moveToPosition(pos[0], pos[1], gps.getRot(), tolerance);
-        this.stopAll();
+        this.halt();
     }
 
     /**
@@ -269,7 +269,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         double[] pos = FieldPoints.positionsAndPoints.get(position);
         assert pos != null;
         moveToPosition(pos[0], pos[1], theta, tolerance);
-        this.stopAll();
+        this.halt();
     }
 
     /**
@@ -364,10 +364,10 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 try {
                     e.call(x, y, theta, tolerance, telemetry, gps, _isStopRequested, _opModeIsActive, voltageSensor);
                 } catch (MovementWarning ignored) {
-                    this.stopAll();
+                    this.halt();
                     return;
                 } catch (MovementException Me) {
-                    this.stopAll();
+                    this.halt();
                     throw Me;
                 }
             }
@@ -380,7 +380,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
 
         }
-        stopAll();
+        halt();
         telemetry.clear();
         telemetry.update();
     }
@@ -415,7 +415,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         try {
             moveToPosition(x, y, theta, tolerance, (MovementException[]) warnings);
         } catch (MovementException ignored) {
-            this.stopAll();
+            this.halt();
         }
     }
 

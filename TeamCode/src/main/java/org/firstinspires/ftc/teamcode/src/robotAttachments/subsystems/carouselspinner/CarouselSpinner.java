@@ -81,7 +81,7 @@ public class CarouselSpinner implements Controllable {
     /**
      * Stops the spinner
      */
-    public void stop() {
+    public void halt() {
         spinnerServo.setPower(0);
     }
 

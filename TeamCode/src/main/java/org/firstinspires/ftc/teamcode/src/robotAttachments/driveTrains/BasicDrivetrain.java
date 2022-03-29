@@ -146,7 +146,7 @@ public class BasicDrivetrain implements Controllable {
     /**
      * Stops all the motors
      */
-    public void stopAll() {
+    public void halt() {
         back_right.setPower(0);
         back_left.setPower(0);
         front_right.setPower(0);

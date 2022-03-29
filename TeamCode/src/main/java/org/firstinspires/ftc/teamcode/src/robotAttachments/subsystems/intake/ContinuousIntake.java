@@ -11,7 +11,7 @@ public class ContinuousIntake implements Controllable {
     /**
      * The power for going forward for the front motor
      */
-    private final static double frontMotorForwardPower = 1;
+    private final static double frontMotorForwardPower = -1;
 
     /**
      * The power for going forward for the back motor
@@ -73,6 +73,10 @@ public class ContinuousIntake implements Controllable {
     public void setMotorPower(double power) {
         frontIntakeMotor.setPower(power * frontMotorForwardPower);
         backIntakeMotor.setPower(power * backMotorForwardPower);
+    }
+
+    public void halt(){
+        setBackMotorPower(0);
     }
 
     @Override

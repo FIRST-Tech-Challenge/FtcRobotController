@@ -67,12 +67,12 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     Thread.sleep(1000);
                     driveSystem.strafeAtAngle(180, .2);
                     Thread.sleep(1000);
-                    driveSystem.stopAll();
+                    driveSystem.halt();
                     outtake.setServoOpen();
                     Thread.sleep(750);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
-                    driveSystem.stopAll();
+                    driveSystem.halt();
                     slide.setTargetLevel(HeightLevel.Down);
                     break;
                 case Center:
@@ -80,12 +80,12 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .25);
                     Thread.sleep(725);
-                    driveSystem.stopAll();
+                    driveSystem.halt();
                     outtake.setServoOpen();
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
-                    driveSystem.stopAll();
+                    driveSystem.halt();
                     slide.setTargetLevel(HeightLevel.Down);
                     Thread.sleep(500);
                     break;
@@ -95,13 +95,13 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                     Thread.sleep(500);
                     driveSystem.strafeAtAngle(180, .2);
                     Thread.sleep(1000);
-                    driveSystem.stopAll();
+                    driveSystem.halt();
                     outtake.setServoOpen();
                     Thread.sleep(1000);
                     driveSystem.strafeAtAngle(0, .5);
                     Thread.sleep(500);
 
-                    driveSystem.stopAll();
+                    driveSystem.halt();
 
                     slide.setTargetLevel(HeightLevel.Down);
                     Thread.sleep(500);
@@ -116,7 +116,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
             driveSystem.turnTo(90, .3);
             driveSystem.strafeAtAngle(355, .5);
             Thread.sleep(800);
-            driveSystem.stopAll();
+            driveSystem.halt();
             spinner.spinOffBlueDuck();
             try {
                 driveSystem.moveToPosition(120, 70, 1, 1, new DistanceTimeoutException(1000));
@@ -159,7 +159,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplate {
                 podServos.raise();
                 driveSystem.strafeAtAngle(0, 1);
                 Thread.sleep(2500);
-                driveSystem.stopAll();
+                driveSystem.halt();
                 this.stop();
 
             }

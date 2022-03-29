@@ -189,7 +189,7 @@ public class BlueQualifierDriveProgram extends TeleOpTemplate {
                 } else if (gamepad2.b) {
                     spinner.setPowerRedDirection();
                 } else {
-                    spinner.stop();
+                    spinner.halt();
                 }
 
 

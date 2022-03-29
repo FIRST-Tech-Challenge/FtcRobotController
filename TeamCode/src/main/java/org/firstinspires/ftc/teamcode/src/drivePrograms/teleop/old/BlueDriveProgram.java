@@ -51,7 +51,7 @@ public class BlueDriveProgram extends TeleOpTemplate {
             } else if (gamepad2.b) {
                 spinner.setPowerRedDirection();
             } else {
-                spinner.stop();
+                spinner.halt();
             }
 
             if (gamepad1.b) {

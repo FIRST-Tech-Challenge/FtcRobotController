@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
+@Disabled
 @TeleOp(name = "\uFFFFEli Outtake Test😂")
 public class EliOuttakeTest extends GenericOpModeTemplate {
 

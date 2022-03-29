@@ -4,6 +4,7 @@ import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDistanceSensor;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
@@ -13,13 +14,13 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 public class RedWorldsDriveProgram extends TeleOpTemplate {
     protected static BlinkinPattern defaultColor = BlinkinPattern.RED;
     BlinkinPattern currentColor = defaultColor;
-    TripWireDistanceSensor distanceSensor;
+    //TripWireDistanceSensor distanceSensor;
     private boolean x_depressed = true;
     private boolean tapeMeasureCtrl = false;
 
     public void opModeMain() throws InterruptedException {
         this.initAll();
-
+        /*
         distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, () -> {
             this.leds.setPattern(BlinkinPattern.BLACK);
             try {
@@ -31,7 +32,9 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
         }, this::opModeIsActive, this::isStopRequested);
 
-        distanceSensor.start();
+         */
+
+        //distanceSensor.start();
         leds.setPattern(defaultColor);
 
         slide.autoMode();
@@ -58,6 +61,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                 }
                 if (gamepad2.x && x_depressed){
                     tapeMeasureCtrl = !tapeMeasureCtrl;
+                    turret.halt();
                 }
 
                 if (tapeMeasureCtrl){
@@ -68,6 +72,15 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     slide.gamepadControl(gamepad1, gamepad2);
 
                     //Intake Controls
+                    outtake.gamepadControl(gamepad1, gamepad2);
+
+                    intake.gamepadControl(gamepad1,gamepad2);
+
+                    RobotLog.d("I exist and am running");
+                    
+
+
+                    /*
                     FreightFrenzyGameObject currentObj = (FreightFrenzyGameObject) outtake.gamepadControl(gamepad1, gamepad2);
                     RevBlinkinLedDriver.BlinkinPattern colorToChangeTo = defaultColor;
                     if (currentObj != null) {
@@ -78,11 +91,13 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                         leds.setPattern(colorToChangeTo);
                         currentColor = colorToChangeTo;
                     }
+
+                     */
+                    idle();
                 }
 
             }
 
-            Thread.yield();
         }
     }
 }

@@ -218,4 +218,8 @@ public class LinearSlide implements Controllable {
 
         return null;
     }
+
+    public void halt(){
+
+    }
 }

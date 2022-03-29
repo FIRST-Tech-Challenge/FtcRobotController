@@ -40,10 +40,10 @@ public class TeleopDriveTrain extends BasicDrivetrain {
         // The Y axis of a joystick ranges from -1 in its topmost position
         // to +1 in its bottom most position. We negate this value so that
         // the topmost position corresponds to maximum forward power.
-        this.back_left.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
-        this.front_left.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
-        this.back_right.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x));
-        this.front_right.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.back_left.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y + gamepad1.left_stick_x) + gamepad1.right_stick_x));
+        this.front_left.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x));
+        this.back_right.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x));
+        this.front_right.setPower(-DrivePowerMultiplier * ((gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x));
 
 
         //Speed Modifiers

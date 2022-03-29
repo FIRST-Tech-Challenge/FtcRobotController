@@ -195,5 +195,9 @@ public class Outtake implements Controllable {
         return currentObject;
 
     }
+
+    public void halt(){
+
+    }
 }
 

@@ -54,4 +54,7 @@ public class CappingArm implements Controllable {
 
         return null;
     }
+
+    public void halt(){}
+
 }

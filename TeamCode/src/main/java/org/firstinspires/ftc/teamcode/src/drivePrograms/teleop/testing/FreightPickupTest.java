@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
-@TeleOp(name = "\uFFFFTeleOp Test The freight")
+@Disabled
+@TeleOp(name = "Test picking up the freight")
 public class FreightPickupTest extends TeleOpTemplate {
 
     @Override

@@ -19,6 +19,12 @@ public class TapeMeasureTurret implements Controllable {
         this.yaw = hardwareMap.crservo.get(yawServoName);
     }
 
+    public void halt(){
+        tapeMeasure.setPower(0);
+        pitch.setPower(0);
+        yaw.setPower(0);
+    }
+
     /**
      * Allows control of a tape measure turret
      *

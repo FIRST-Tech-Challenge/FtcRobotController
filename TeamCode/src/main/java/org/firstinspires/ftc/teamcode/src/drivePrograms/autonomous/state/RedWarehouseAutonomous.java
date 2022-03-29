@@ -90,7 +90,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             // distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall);
             distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall, false);
 
-            driveSystem.stopAll();
+            driveSystem.halt();
 
             intake.turnIntakeReverse();
 
@@ -104,7 +104,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
                 } while (distanceFromWall < 25 && (opModeIsActive() && !isStopRequested()));
             }
 
-            driveSystem.stopAll();
+            driveSystem.halt();
 
             //Move to white line and against the wall
             driveSystem.moveToPosition(gps.getX(), 36, gps.getRot(), 1, new DistanceTimeoutWarning(500));
@@ -119,7 +119,7 @@ public class RedWarehouseAutonomous extends AutoObjDetectionTemplate {
             if (OpModeTimer.seconds() > 25) {
                 driveSystem.strafeAtAngle(0, 0.5);
                 Thread.sleep(500);
-                driveSystem.stopAll();
+                driveSystem.halt();
                 intake.turnIntakeReverse();
                 Thread.sleep(6000);
                 return;

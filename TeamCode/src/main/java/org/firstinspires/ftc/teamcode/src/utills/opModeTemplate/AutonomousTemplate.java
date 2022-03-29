@@ -24,7 +24,7 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
 
 
     /**
-     * Provides Odometry Methods, Also held by NavigationalDrivetrain driveSystem
+     * Provides Localization Methods, Also held by NavigationalDrivetrain driveSystem
      */
     protected LocalizationAlgorithm gps;
 
@@ -35,19 +35,13 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
      * @throws InterruptedException Throws if the OpMode is stopped during function execution
      */
     protected void initAll() throws InterruptedException {
-        initOdometryServos();
 
         initDriveSystem();
+        super.initAll();
+        podServos.lower();
+        slide.setTargetLevel(HeightLevel.Down);
 
-        initSpinner();
 
-        initSlide();
-
-        initIntake();
-
-        initLEDS();
-
-        initDistanceSensors();
 
         telemetry.addData("Default Initialization: ", "Finished");
         telemetry.update();
@@ -87,14 +81,11 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
         back_right.setDirection(DcMotorSimple.Direction.REVERSE);
         front_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder
-        //verticalEncoderLeft, verticalEncoderRight, horizontalEncoder
-
         {
             checkStop();
             IMU imu = new IMU(hardwareMap, IMUName);
             checkStop();
-            IMUOdometry o = new IMUOdometry(front_left, front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
+            IMUOdometry o = new IMUOdometry(hardwareMap.dcMotor.get(backIntakeMotorName), front_right, back_right, imu.getImu(), 25, this::opModeIsActive, this::isStopRequested);
             o.reverseRightEncoder();
 
             o.start();

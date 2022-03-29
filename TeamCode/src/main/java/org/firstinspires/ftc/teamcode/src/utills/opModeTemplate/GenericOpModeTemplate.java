@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -71,6 +72,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     public static final String frontIntakeMotorName = "front_intake/vr";
 
     public static final String backIntakeMotorName = "back_intake/vl";
+
+    public final static String horizontalOdometryName = "h";
 
     /**
      * Name of the color sensor
@@ -154,9 +157,13 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         try {
             opModeMain();
         } catch (InterruptedException e) {
+            RobotLog.d("OpMode Interrupted, exiting");
             throw e;
         } catch (Exception e) {
+            RobotLog.dd("Exception Was thrown",e,"This exception was thrown and resulted in a early termination of the OpMode");
             RobotLog.setGlobalErrorMsg(MiscUtils.getStackTraceAsString(e)); //Appends more information to the error message
+        } catch (Throwable t){
+            RobotLog.dd("Throwable Was thrown",t,"This Throwable was thrown and resulted in a early termination of the OpMode (And likely everything else)");
         }
     }
 

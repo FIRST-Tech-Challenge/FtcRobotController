@@ -11,4 +11,10 @@ public interface Controllable {
      * @param gamepad2 The second gamepad
      */
     Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2);
+
+
+    /**
+     * Stops the controllable object from moving.
+     */
+    void halt();
 }

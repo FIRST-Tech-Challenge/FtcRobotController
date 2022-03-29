@@ -93,7 +93,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
 
             distanceDriven = pickUpBlock(distanceDriven, startingDistanceFromWall, true);
 
-            driveSystem.stopAll();
+            driveSystem.halt();
 
             intake.turnIntakeReverse();
             Thread.sleep(500);
@@ -108,7 +108,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
                 } while (distanceFromWall < 25 && (opModeIsActive() && !isStopRequested()));
             }
 
-            driveSystem.stopAll();
+            driveSystem.halt();
 
             //Update position with known coordinates
             gps.setPos(144 - 6.5, frontDistanceSensor.getDistance(DistanceUnit.INCH), gps.getRot());
@@ -119,7 +119,7 @@ public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
             if (OpModeTimer.seconds() > 25) {
                 driveSystem.strafeAtAngle(0, 0.5);
                 Thread.sleep(500);
-                driveSystem.stopAll();
+                driveSystem.halt();
                 intake.turnIntakeReverse();
                 Thread.sleep(6000);
                 return;

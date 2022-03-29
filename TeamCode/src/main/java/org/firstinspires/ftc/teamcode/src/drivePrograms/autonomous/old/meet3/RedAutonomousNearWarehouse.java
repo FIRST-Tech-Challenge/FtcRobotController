@@ -23,12 +23,12 @@ public class RedAutonomousNearWarehouse extends AutonomousTemplate {
         podServos.raise();
         driveSystem.strafeAtAngle(180, 1);
         Thread.sleep(50);
-        driveSystem.stopAll();
+        driveSystem.halt();
         slide.setMotorPower(1);
         Thread.sleep(500);
         driveSystem.strafeAtAngle(0, 1);
         Thread.sleep(1250);
-        driveSystem.stopAll();
+        driveSystem.halt();
 
 
     }
