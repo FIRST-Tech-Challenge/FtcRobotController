@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.utills;
 
+import androidx.annotation.Nullable;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.locks.Lock;
@@ -115,6 +117,21 @@ public class MiscUtils {
         String[] cNameSplit = cName.split("\\.");
         cName = cNameSplit[cNameSplit.length - 1];
         return cName;
+    }
+
+    /**
+     * Returns a handle to a running thread with a given name
+     * @param name The name of the thread
+     * @return A Thread Object or null if thread is not found
+     */
+    @Nullable
+    public static Thread getThreadByName(String name){
+        for (Thread t: Thread.getAllStackTraces().keySet()){
+            if (t.getName().equals(name)){
+                return t;
+            }
+        }
+        return null;
     }
 
     /**

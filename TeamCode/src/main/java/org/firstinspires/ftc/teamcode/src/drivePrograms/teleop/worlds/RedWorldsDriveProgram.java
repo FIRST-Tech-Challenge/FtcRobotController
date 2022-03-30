@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.worlds;
 
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.TripWireDistanceSensor;
-import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 @TeleOp(name = "🟥Red Worlds Drive Program🟥")
@@ -46,6 +43,8 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
         System.gc();
         waitForStart();
 
+        final ElapsedTime t = new ElapsedTime();
+
         while (opModeIsActive() && !isStopRequested()) {
             //Declan's controls
             {
@@ -77,7 +76,10 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
                     intake.gamepadControl(gamepad1,gamepad2);
 
-                    RobotLog.d("I exist and am running");
+                    if (t.seconds() > 1) {
+                        RobotLog.d("I exist and am running");
+                        t.reset();
+                    }
                     
 
 
@@ -94,7 +96,8 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     }
 
                      */
-                    idle();
+
+                    Thread.yield();
                 }
 
             }
