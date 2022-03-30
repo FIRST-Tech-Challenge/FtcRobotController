@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.utills.enums;
 
+import androidx.annotation.Nullable;
+
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 /**
@@ -60,7 +62,10 @@ public enum FreightFrenzyGameObject {
      * @param item The game object
      * @return The color the LED's should be based on the game object
      */
-    public static RevBlinkinLedDriver.BlinkinPattern getLEDColorFromItem(final FreightFrenzyGameObject item) {
+    public static RevBlinkinLedDriver.BlinkinPattern getLEDColorFromItem(@Nullable final FreightFrenzyGameObject item) {
+        if (item == null){
+            return null;
+        }
         switch (item) {
             case BALL:
                 return RevBlinkinLedDriver.BlinkinPattern.WHITE;

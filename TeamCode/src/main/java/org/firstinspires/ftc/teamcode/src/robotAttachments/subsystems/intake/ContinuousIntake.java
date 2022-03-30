@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.intake;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -7,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
-public class ContinuousIntake implements Controllable {
+public class ContinuousIntake implements Controllable<Void> {
     /**
      * The power for going forward for the front motor
      */
@@ -85,7 +87,7 @@ public class ContinuousIntake implements Controllable {
     }
 
     @Override
-    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+    public Void gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
 
         if (Math.abs(gamepad2.right_trigger - gamepad2.left_trigger) > 0.01) {
 

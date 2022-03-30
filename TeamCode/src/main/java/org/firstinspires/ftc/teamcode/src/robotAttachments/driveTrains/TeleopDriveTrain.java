@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -83,7 +85,7 @@ public class TeleopDriveTrain extends BasicDrivetrain {
      * @param gamepad2 The second gamepad
      * @return Always returns null
      */
-    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+    public Void gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
 
         // The Y axis of a joystick ranges from -1 in its topmost position
         // to +1 in its bottom most position. We negate this value so that

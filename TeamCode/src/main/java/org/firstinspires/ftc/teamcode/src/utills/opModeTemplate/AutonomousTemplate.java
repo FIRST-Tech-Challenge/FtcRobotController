@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.odometry.I
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.IMU;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.intake.ContinuousIntake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
 
 /**
  * A template for Autonomous OpModes, allows for easy initialization

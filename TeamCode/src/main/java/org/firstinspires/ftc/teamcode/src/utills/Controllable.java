@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.src.utills;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public interface Controllable {
+public interface Controllable<T> {
 
     /**
      * Allows control of subsystems through the gamepads
@@ -10,7 +13,8 @@ public interface Controllable {
      * @param gamepad1 The first gamepad
      * @param gamepad2 The second gamepad
      */
-    Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2);
+    @Nullable
+    T gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2);
 
 
     /**

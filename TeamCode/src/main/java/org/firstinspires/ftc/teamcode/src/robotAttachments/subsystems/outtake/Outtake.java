@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake;
 
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -16,7 +18,7 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors;
 /**
  * this is the class for our robot's intake subsystem
  */
-public class Outtake implements Controllable {
+public class Outtake implements Controllable<FreightFrenzyGameObject> {
     /**
      * The Position servo must be to release an item
      */
@@ -166,37 +168,35 @@ public class Outtake implements Controllable {
      * @return The current item in the intake
      */
     @Override
-    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+    public FreightFrenzyGameObject gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
 
-        FreightFrenzyGameObject currentObject = FreightFrenzyGameObject.EMPTY; // Assigning to null so the compiler is happy
+        FreightFrenzyGameObject currentObject = FreightFrenzyGameObject.EMPTY;
 
-
-        //Out take controls
-        {
-            if (!gamepad2.y) {
-                y_depressed2 = true;
-            }
-            if (gamepad2.y && y_depressed2) {
-                y_depressed2 = false;
-                if (this.isClosed()) {
-                    this.setServoOpen();
-                    this.yTimer.reset();
-                } else {
-                    this.setServoClosed();
-                }
-                currentObject = FreightFrenzyGameObject.EMPTY;
-            }
-
-            if (this.yTimer.seconds() > 1.25) {
+        if (!gamepad2.y) {
+            y_depressed2 = true;
+        }
+        if (gamepad2.y && y_depressed2) {
+            y_depressed2 = false;
+            if (this.isClosed()) {
+                this.setServoOpen();
+                this.yTimer.reset();
+            } else {
                 this.setServoClosed();
             }
+            currentObject = FreightFrenzyGameObject.EMPTY;
         }
 
+        if (this.yTimer.seconds() > 1.25) {
+            this.setServoClosed();
+            if (this.isClosed) {
+                currentObject = this.identifyContents();
+            }
+        }
         return currentObject;
 
     }
 
-    public void halt(){
+    public void halt() {
 
     }
 }

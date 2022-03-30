@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.tapemeasureturret;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
-public class TapeMeasureTurret implements Controllable {
+public class TapeMeasureTurret implements Controllable<Void> {
     private final CRServo tapeMeasure;
     private final CRServo pitch;
     private final CRServo yaw;
@@ -31,7 +33,7 @@ public class TapeMeasureTurret implements Controllable {
      * @param gamepad1 The first gamepad
      * @param gamepad2 The second gamepad
      */
-    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+    public Void gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
         double pitchPower = gamepad2.left_stick_y * powerMultiplier;
         double yawPower = -gamepad2.right_stick_x * powerMultiplier;
 

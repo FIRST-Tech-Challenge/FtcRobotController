@@ -3,19 +3,19 @@ package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.carouselspinner.CarouselSpinner;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.intake.ContinuousIntake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.podservos.OdometryPodServos;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.tapemeasureturret.TapeMeasureTurret;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
+
+import java.util.concurrent.CancellationException;
 
 /**
  * A Abstract class that provides extra reusable functionality to our opModes <P>
@@ -153,14 +153,17 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
 
         try {
             opModeMain();
-        } catch (InterruptedException e) {
-            RobotLog.d("OpMode Interrupted, exiting");
+        } catch (InterruptedException | CancellationException e) {
+            RobotLog.d("OpMode Terminated, exiting");
             throw e;
         } catch (Exception e) {
-            RobotLog.dd("Exception Was thrown",e,"This exception was thrown and resulted in a early termination of the OpMode");
+            RobotLog.dd("Exception Was thrown", e, "This exception was thrown and resulted in a early termination of the OpMode");
             RobotLog.setGlobalErrorMsg(MiscUtils.getStackTraceAsString(e)); //Appends more information to the error message
-        } catch (Throwable t){
-            RobotLog.dd("Throwable Was thrown",t,"This Throwable was thrown and resulted in a early termination of the OpMode (And likely everything else)");
+        } catch (NoClassDefFoundError e) {
+            throw e;
+        } catch (Throwable t) {
+            RobotLog.dd("Throwable Was thrown", t, "This Throwable was thrown and resulted in a early termination of the OpMode (And likely everything else)");
+            throw t;
         }
     }
 
@@ -192,7 +195,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         outtake.setServoClosed();
     }
 
-    public void initTapeMeasureTurret(){
+    public void initTapeMeasureTurret() {
         this.turret = new TapeMeasureTurret(hardwareMap, "tape_measure", "pitch", "yaw");
     }
 
@@ -215,7 +218,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     protected void initSpinner() {
         spinner = new CarouselSpinner(hardwareMap, carouselSpinnerName);
     }
-
 
 
     /**

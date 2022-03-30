@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.carouselspinner;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,7 +12,7 @@ import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 /**
  * A class to control the robot carousel spinner
  */
-public class CarouselSpinner implements Controllable {
+public class CarouselSpinner implements Controllable<Void> {
     /**
      * How Fast the servo is to spin
      */
@@ -93,7 +95,7 @@ public class CarouselSpinner implements Controllable {
      * @return Always returns null
      */
     @Override
-    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+    public Void gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
         this.spinnerServo.setPower(gamepad1.left_trigger - gamepad1.right_trigger);
 
         return null;

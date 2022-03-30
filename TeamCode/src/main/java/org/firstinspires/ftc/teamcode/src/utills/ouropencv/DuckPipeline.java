@@ -17,7 +17,7 @@ import java.util.List;
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future, modified by 12586
 
 public class DuckPipeline extends OpenCvPipeline {
-    Scalar HOT_PINK = new Scalar(196, 23, 112);
+    final Scalar HOT_PINK = new Scalar(196, 23, 112);
 
     // Pink, the default color                         Y      Cr     Cb    (Do not change Y)
     public static Scalar scalarLowerYCrCb = new Scalar(12, 115, 79);

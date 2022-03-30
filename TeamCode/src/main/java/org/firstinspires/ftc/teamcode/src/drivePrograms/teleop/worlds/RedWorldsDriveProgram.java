@@ -6,34 +6,24 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
+import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 @TeleOp(name = "🟥Red Worlds Drive Program🟥")
 public class RedWorldsDriveProgram extends TeleOpTemplate {
-    protected static BlinkinPattern defaultColor = BlinkinPattern.RED;
-    BlinkinPattern currentColor = defaultColor;
-    //TripWireDistanceSensor distanceSensor;
+    public static BlinkinPattern defaultColor = BlinkinPattern.RED;
+    private BlinkinPattern currentPattern;
     private boolean x_depressed = true;
     private boolean tapeMeasureCtrl = false;
 
     public void opModeMain() throws InterruptedException {
         this.initAll();
-        /*
-        distanceSensor = new TripWireDistanceSensor(hardwareMap, "distance_sensor", 8, () -> {
-            this.leds.setPattern(BlinkinPattern.BLACK);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
-            this.leds.setPattern(currentColor);
-            return null;
 
-        }, this::opModeIsActive, this::isStopRequested);
-
-         */
-
-        //distanceSensor.start();
-        leds.setPattern(defaultColor);
+        // Fancy way of saying leds.setPattern(RedWorldsDriveProgram.defaultColor)
+        // But, it will also allow it to change to blue for the BlueWorldsDriveProgram
+        currentPattern = (BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor");
+        leds.setPattern(currentPattern);
 
         slide.autoMode();
 
@@ -56,10 +46,10 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
             //Eli's controls
             {
-                if (!gamepad2.x){
+                if (!gamepad2.x) {
                     x_depressed = true;
                 }
-                if (gamepad2.x && x_depressed){
+                if (gamepad2.x && x_depressed) {
                     tapeMeasureCtrl = !tapeMeasureCtrl;
                     turret.halt();
                     slide.halt();
@@ -68,39 +58,28 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     x_depressed = false;
                 }
 
-                if (tapeMeasureCtrl){
-                    turret.gamepadControl(gamepad1,gamepad2);
+                if (tapeMeasureCtrl) {
+                    turret.gamepadControl(gamepad1, gamepad2);
 
-                }else {
+                } else {
 
                     //Handles Linear Slide Control
                     slide.gamepadControl(gamepad1, gamepad2);
 
                     //Intake Controls
-                    outtake.gamepadControl(gamepad1, gamepad2);
+                    BlinkinPattern proposedPattern = FreightFrenzyGameObject.getLEDColorFromItem(outtake.gamepadControl(gamepad1, gamepad2));
+                    if (proposedPattern != null){
+                        leds.setPattern(proposedPattern);
+                    }else {
+                        leds.setPattern((BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor"));
+                    }
 
-                    intake.gamepadControl(gamepad1,gamepad2);
+                    intake.gamepadControl(gamepad1, gamepad2);
 
                     if (t.seconds() > 1) {
                         RobotLog.d("I exist and am running");
                         t.reset();
                     }
-                    
-
-
-                    /*
-                    FreightFrenzyGameObject currentObj = (FreightFrenzyGameObject) outtake.gamepadControl(gamepad1, gamepad2);
-                    RevBlinkinLedDriver.BlinkinPattern colorToChangeTo = defaultColor;
-                    if (currentObj != null) {
-                        colorToChangeTo = FreightFrenzyGameObject.getLEDColorFromItem(currentObj);
-                    }
-
-                    if (colorToChangeTo != currentColor && colorToChangeTo != null) {
-                        leds.setPattern(colorToChangeTo);
-                        currentColor = colorToChangeTo;
-                    }
-
-                     */
 
                     Thread.yield();
                 }

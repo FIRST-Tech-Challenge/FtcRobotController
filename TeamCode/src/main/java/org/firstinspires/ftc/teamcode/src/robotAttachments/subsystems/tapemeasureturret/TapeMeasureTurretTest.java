@@ -16,7 +16,7 @@ public class TapeMeasureTurretTest extends TeleOpTemplate {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            turret.gamepadControl(null, gamepad2);
+            turret.gamepadControl(gamepad1, gamepad2);
             Thread.yield();
         }
 

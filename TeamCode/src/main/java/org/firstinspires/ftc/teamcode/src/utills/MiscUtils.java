@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -132,6 +133,26 @@ public class MiscUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets a static field from the class of an object
+     *
+     * @param member The object whose class has a static member
+     * @param fieldName The name of the static member to get
+     * @return The value in the static member
+     */
+    public static Object getStaticMemberFromObject(Object member, String fieldName){
+        //NOTE: If you don't know what Java reflection is and you need to modify this, ask Jacob
+        Class<?> parentClass = member.getClass();
+        Object fieldValue;
+        try {
+            Field f =  parentClass.getField(fieldName);
+            fieldValue = f.get(new Object());
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(MiscUtils.getStackTraceAsString(e));
+        }
+        return fieldValue;
     }
 
     /**

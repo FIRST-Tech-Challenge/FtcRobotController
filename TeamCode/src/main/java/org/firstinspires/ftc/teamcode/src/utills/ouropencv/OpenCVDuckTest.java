@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.src.utills.ouropencv;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -17,13 +16,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class OpenCVDuckTest extends LinearOpMode {
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
-    public static double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
-    public static double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
-    public static double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
-    public static double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
+    public static final double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
+    public static final double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
+    public static final double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
+    public static final double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
     // Yellow Range                                      Y      Cr     Cb
-    public static Scalar scalarLowerYCrCb = new Scalar(20, 126, 30);
-    public static Scalar scalarUpperYCrCb = new Scalar(225, 170, 110);
+    public static final Scalar scalarLowerYCrCb = new Scalar(20, 126, 30);
+    public static final Scalar scalarUpperYCrCb = new Scalar(225, 170, 110);
     private OpenCvCamera webcam;
     private double CrLowerUpdate = 160;
     private double CbLowerUpdate = 100;

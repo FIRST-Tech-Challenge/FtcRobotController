@@ -99,14 +99,10 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
     /**
      * This wraps the Executable _isStopRequested
      *
-     * @return it returns false if the OpMode stop is not requested
-     * @throws InterruptedException Throws if stop is requested
+     * @return it returns true if the OpMode stop is requested
      */
-    boolean isStopRequested() throws InterruptedException {
-        if (_isStopRequested.call() || Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
-        return false;
+    boolean isStopRequested() {
+        return _isStopRequested.call() || Thread.currentThread().isInterrupted();
     }
 
     /**
@@ -183,15 +179,13 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         double initialDegreesOff = ((360 - angle) + gps.getRot()) % 360;
         double degreesOff = ((360 - angle) + gps.getRot()) % 360;
         double pow;
-        final double maximumPower = maxPower; //The minimum power the robot can turn at
-        final double minimumPower = minPower; //The minimum power the robot can turn at
 
 
         if (initialDegreesOff < 180) {
             while (degreesOff <= 180 && !isStopRequested() && opModeIsActive()) {
                 // this is the degreesOff in a right turning motion
                 degreesOff = ((360 - angle) + gps.getRot()) % 360;
-                pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maximumPower, minimumPower);
+                pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maxPower, minPower);
 
                 this.turnRight(MiscUtils.boundNumber(pow));
                 //Thread.sleep(20); //A sleep because we do not want this loop running at full speed. We don't need it to.
@@ -209,7 +203,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
             while (degreesOff <= 180 && !isStopRequested() && opModeIsActive()) {
 
                 degreesOff = (angle + (360 - gps.getRot())) % 360;
-                pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maximumPower, minimumPower);
+                pow = shortMovementPowerCalculation(initialDegreesOff, degreesOff, maxPower, minPower);
 
 
                 this.turnLeft(MiscUtils.boundNumber(pow));
@@ -325,6 +319,10 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
         double currentDistance = MiscUtils.distance(currentX, currentY, x, y);
 
         while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
+
+            if (isStopRequested()){
+                throw new InterruptedException();
+            }
 
             /*The next if-else block takes the distance from target and
              sets the power variable to currentAngle power following the function

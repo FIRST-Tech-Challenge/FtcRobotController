@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.cappingarm;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
-public class CappingArm implements Controllable {
+public class CappingArm implements Controllable<Void> {
 
     private final Servo cappingServo;
     private static final double upPosition = 0.75;
@@ -43,7 +45,7 @@ public class CappingArm implements Controllable {
      * @return Always returns null
      */
     @Override
-    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+    public Void gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
         if (gamepad2.x) {
             this.setDownPosition();
         } else if (gamepad2.b) {

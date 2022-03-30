@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 /**
  * A class to control linear slides using the builtin motor control methods
  */
-public class LinearSlide implements Controllable {
+public class LinearSlide implements Controllable<Void> {
 
     /**
      * The internal DcMotor object
@@ -154,7 +156,7 @@ public class LinearSlide implements Controllable {
      * @return Always returns null
      */
     @Override
-    public Object gamepadControl(Gamepad gamepad1, Gamepad gamepad2) {
+    public Void gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
         if (!resetSlide) {
             if (Math.abs(gamepad2.left_stick_y) > 0.1) {
                 manualSlideControl = true;

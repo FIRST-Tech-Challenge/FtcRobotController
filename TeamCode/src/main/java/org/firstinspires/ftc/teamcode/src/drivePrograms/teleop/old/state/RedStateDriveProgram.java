@@ -51,7 +51,7 @@ public class RedStateDriveProgram extends TeleOpTemplate {
         while (opModeIsActive() && !isStopRequested()) {
             //Declan's controls
             {
-                driveTrain.gamepadControl(gamepad1, null);
+                driveTrain.gamepadControl(gamepad1, gamepad2);
 
                 //Declan Speed Modifiers
                 if (gamepad1.b) {

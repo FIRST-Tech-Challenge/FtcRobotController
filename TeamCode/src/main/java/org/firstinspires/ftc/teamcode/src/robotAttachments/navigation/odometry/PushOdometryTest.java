@@ -18,7 +18,7 @@ public class PushOdometryTest extends AutonomousTemplate {
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             IMUOdometry imuOdometry = (IMUOdometry) gps;
-            dt.gamepadControl(gamepad1, null);
+            dt.gamepadControl(gamepad1, gamepad2);
 
             telemetry.addData("PosX", gps.getX());
             telemetry.addData("PosY", gps.getY());
