@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 public class FreightPickupTest extends TeleOpTemplate {
 
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         DcMotor frontIntake = hardwareMap.dcMotor.get(GenericOpModeTemplate.frontIntakeMotorName);
         DcMotor backIntake = hardwareMap.dcMotor.get(GenericOpModeTemplate.backIntakeMotorName);
         this.initDriveTrain();

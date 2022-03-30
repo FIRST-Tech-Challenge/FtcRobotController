@@ -194,7 +194,11 @@ public class MiscUtils {
             if (gotAllLocks) {
                 return;
             }
-            Thread.sleep(20);
+            //Let some other threads do some work, then try for the locks again
+            Thread.yield();
+            if (Thread.currentThread().isInterrupted()){
+                throw new InterruptedException();
+            }
 
         }
     }

@@ -21,7 +21,7 @@ public class OdTimeOutTest extends AutonomousTemplate {
         } catch (MovementException e) {
             telemetry.addData("Distance Time Out", "Yay");
             telemetry.update();
-            while (opModeIsActive() && !isStopRequested()) Thread.sleep(20);
+            while (opModeIsActive() && !isStopRequested()) Thread.yield();
         }
 
 

@@ -15,7 +15,7 @@ public class EliOuttakeTest extends GenericOpModeTemplate {
     public static final double openPos = .5;
 
     @Override
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         Servo outtakeServo = hardwareMap.servo.get(GenericOpModeTemplate.bucketServoName);
         waitForStart();
 

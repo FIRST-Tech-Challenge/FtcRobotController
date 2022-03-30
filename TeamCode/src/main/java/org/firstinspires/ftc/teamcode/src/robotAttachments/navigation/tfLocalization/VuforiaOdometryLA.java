@@ -47,7 +47,7 @@ public class VuforiaOdometryLA implements LocalizationAlgorithm {
     }
 
     @Override
-    public void setPos(FieldPoints initPos) throws InterruptedException {
+    public void setPos(FieldPoints initPos) {
         double[] tmp = FieldPoints.positionsAndPoints.get(initPos);
         assert (tmp != null);
         this.setPos(tmp[0], tmp[1], tmp[2]);

@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 @TeleOp(name = "ColorTest")
 @Disabled
 public class ColorTest extends TeleOpTemplate {
-    public void opModeMain() throws InterruptedException {
+    public void opModeMain() {
         this.initOuttake();
         this.initIntake();
 

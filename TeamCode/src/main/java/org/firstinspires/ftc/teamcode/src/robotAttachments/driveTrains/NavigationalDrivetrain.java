@@ -135,9 +135,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      *
      * @param angle The angle to turn to
      * @param power The power to turn at
-     * @throws InterruptedException This exception is thrown to stop the OpMode in response to the stop button
      */
-    public void turnTo(double angle, double power) throws InterruptedException {
+    public void turnTo(double angle, double power) {
         double startingAngle = gps.getRot();
 
         // the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a counterclockwise rotation/left turn
@@ -146,7 +145,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 if (!isStopRequested() && opModeIsActive()) {
                     this.turnLeft(power);
                 } else {
-                    break;
+                    halt();
+                    return;
                 }
             }
         } else {
@@ -155,7 +155,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
                 if (!isStopRequested() && opModeIsActive()) {
                     this.turnRight(power);
                 } else {
-                    break;
+                    halt();
+                    return;
                 }
             }
         }
@@ -170,9 +171,8 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param maxPower      The maximum power the robot will turn at
      * @param minPower      The minimum power the robot will turn at
      * @param consoleOutput If this is true, it will print extra information via telemetry
-     * @throws InterruptedException Throws if the OpMode is killed
      */
-    public void newTurnToPrototype(double angle, double maxPower, double minPower, boolean consoleOutput) throws InterruptedException {
+    public void newTurnToPrototype(double angle, double maxPower, double minPower, boolean consoleOutput) {
 
         angle = angle % 360;
         //the following calculation determines the value of the angle between the current startingAngle and the desired endingAngle in a clockwise rotation/right turn
@@ -496,10 +496,9 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param power     The power to move at
      * @param tolerance The tolerance for how close the robot must get
      * @param errors    A array of error conditions to check. If it throws, the robot does not stop and the exception is propagated up the stack
-     * @throws InterruptedException Throws if the OpMode ends during execution
      * @throws MovementException    Throws if error throws
      */
-    public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementException[] errors) throws InterruptedException, MovementException {
+    public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementException[] errors) throws MovementException {
 
         final String args = "moveTowardsPosition(" + x + ", " + y + ", " + theta + ", " + power + ")\n";
         final String coordinateString = x + " , " + y;

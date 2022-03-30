@@ -63,7 +63,10 @@ public class OpenCVDuckTest extends LinearOpMode {
 
         telemetry.update();
         while (!isStarted()) {
-            Thread.sleep(50);
+            Thread.yield();
+            if (Thread.currentThread().isInterrupted()){
+                throw new InterruptedException();
+            }
         }
 
         while (opModeIsActive()) {

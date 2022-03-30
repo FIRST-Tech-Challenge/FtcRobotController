@@ -31,7 +31,10 @@ public class VFNavWithTFAndDualCamerasMk2 extends AutoVFTrackingTemplate {
                 telemetry.addData("Pos", "Unknown");
             }
             telemetry.update();
-            Thread.sleep(60);
+            Thread.yield();
+            if (Thread.currentThread().isInterrupted()){
+                throw new InterruptedException();
+            }
 
         }
         deactivateAll();

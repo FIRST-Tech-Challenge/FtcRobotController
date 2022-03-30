@@ -26,6 +26,8 @@ public class CarouselSpinner implements Controllable<Void> {
      */
     protected final CRServo spinnerServo;
 
+    private final double sleepPercentage = .90;
+
     /**
      * A constructor that sets up servo from Hardware map
      *
@@ -44,8 +46,15 @@ public class CarouselSpinner implements Controllable<Void> {
     public void spinOffRedDuck() throws InterruptedException {
         spinnerServo.setPower(-servoPower);
         ElapsedTime t = new ElapsedTime();
+
+        Thread.sleep((long) (duckSleepTime * sleepPercentage)); //Sleep for the majority of the duck spin time
+
+        //Spin wait for the rest
         while (t.milliseconds() < duckSleepTime) {
-            Thread.sleep(20);
+            Thread.yield();
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
         }
         spinnerServo.setPower(0);
 
@@ -59,8 +68,14 @@ public class CarouselSpinner implements Controllable<Void> {
     public void spinOffBlueDuck() throws InterruptedException {
         spinnerServo.setPower(servoPower);
         ElapsedTime t = new ElapsedTime();
+        Thread.sleep((long) (duckSleepTime * sleepPercentage)); //Sleep for the majority of the duck spin time
+
+        //Spin wait for the rest
         while (t.milliseconds() < duckSleepTime) {
-            Thread.sleep(20);
+            Thread.yield();
+            if (Thread.currentThread().isInterrupted()) {
+                throw new InterruptedException();
+            }
         }
         spinnerServo.setPower(0);
 

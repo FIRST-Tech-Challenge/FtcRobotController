@@ -41,7 +41,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
     private DcMotor left_back;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         //Assign the hardware map to the odometry wheels
         verticalLeft = hardwareMap.dcMotor.get(verticalLeftEncoderName);
@@ -139,7 +139,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
         } catch (Exception e) {
             telemetry.addData("Error", MiscUtils.getStackTraceAsString(e));
             telemetry.update();
-            while (opModeIsActive() && !isStopRequested()) Thread.sleep(20);
+            while (opModeIsActive() && !isStopRequested()) Thread.yield();
         }
 
         //Stop the thread

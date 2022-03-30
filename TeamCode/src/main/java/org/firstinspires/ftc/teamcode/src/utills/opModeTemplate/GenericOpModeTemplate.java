@@ -123,6 +123,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     protected BNO055IMU imu;
     protected DistanceSensor intakeDistanceSensor;
 
+    /**
+     * The distance sensor on the front of the robot
+     */
     protected DistanceSensor frontDistanceSensor;
 
     /**
@@ -182,6 +185,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initSpinner();
         initDistanceSensors();
         initTapeMeasureTurret();
+        initOuttake();
         if (voltageSensor.getVoltage() < 12.5) {
             RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
         }
