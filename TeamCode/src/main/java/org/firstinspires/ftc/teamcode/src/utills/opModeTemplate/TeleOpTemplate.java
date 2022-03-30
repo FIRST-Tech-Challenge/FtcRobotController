@@ -33,7 +33,7 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
      * Initializes the Drive Train
      */
     protected void initDriveTrain() {
-        driveTrain = new TeleopDriveTrain(hardwareMap, frontRightName, frontLeftName, backRightName, backLeftName);
+        driveTrain = new TeleopDriveTrain(hardwareMap, frontRightName, frontLeftName, backRightName, backLeftName, true);
     }
 
     /**
