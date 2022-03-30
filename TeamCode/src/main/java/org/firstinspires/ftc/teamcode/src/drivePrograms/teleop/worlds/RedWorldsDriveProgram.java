@@ -62,10 +62,15 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                 if (gamepad2.x && x_depressed){
                     tapeMeasureCtrl = !tapeMeasureCtrl;
                     turret.halt();
+                    slide.halt();
+                    intake.halt();
+                    outtake.halt();
+                    x_depressed = false;
                 }
 
                 if (tapeMeasureCtrl){
                     turret.gamepadControl(gamepad1,gamepad2);
+
                 }else {
 
                     //Handles Linear Slide Control

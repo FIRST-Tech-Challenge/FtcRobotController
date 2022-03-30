@@ -26,15 +26,15 @@ public class IMUOdometry extends ThreadedSubsystemTemplate implements Odometry {
     /**
      * The Vertical Left Odometry Encoder
      */
-    private final DcMotor verticalEncoderLeft;
+    protected final DcMotor verticalEncoderLeft;
     /**
      * The Vertical Right Odometry Encoder
      */
-    private final DcMotor verticalEncoderRight;
+    protected final DcMotor verticalEncoderRight;
     /**
      * The Horizontal Odometry Encoder
      */
-    private final DcMotor horizontalEncoder;
+    protected final DcMotor horizontalEncoder;
 
     /**
      * The number of encoder ticks per linear inch

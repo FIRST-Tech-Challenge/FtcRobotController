@@ -28,7 +28,7 @@ public class ContinuousIntake implements Controllable {
      */
     private final DcMotor backIntakeMotor;
 
-    public ContinuousIntake(HardwareMap hardwareMap, String frontMotorName,String backMotorName) {
+    public ContinuousIntake(HardwareMap hardwareMap, String frontMotorName, String backMotorName) {
         frontIntakeMotor = hardwareMap.dcMotor.get(frontMotorName);
         frontIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontIntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -40,6 +40,11 @@ public class ContinuousIntake implements Controllable {
         backIntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backIntakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backIntakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public ContinuousIntake(DcMotor frontMotor, DcMotor backMotor) {
+        frontIntakeMotor = frontMotor;
+        backIntakeMotor = backMotor;
     }
 
     /**
@@ -75,8 +80,8 @@ public class ContinuousIntake implements Controllable {
         backIntakeMotor.setPower(power * backMotorForwardPower);
     }
 
-    public void halt(){
-        setBackMotorPower(0);
+    public void halt() {
+        setMotorPower(0);
     }
 
     @Override
@@ -91,11 +96,11 @@ public class ContinuousIntake implements Controllable {
         return null;
     }
 
-    public void setFrontMotorPower(double power){
+    public void setFrontMotorPower(double power) {
         frontIntakeMotor.setPower(power);
     }
 
-    public void setBackMotorPower(double power){
+    public void setBackMotorPower(double power) {
         backIntakeMotor.setPower(power);
     }
 

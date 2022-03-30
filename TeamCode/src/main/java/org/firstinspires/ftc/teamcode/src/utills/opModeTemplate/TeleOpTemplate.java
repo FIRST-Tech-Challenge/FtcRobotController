@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.TeleopDriveTrain;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.intake.ContinuousIntake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
 
 
 /**
@@ -17,10 +19,18 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
     protected TeleopDriveTrain driveTrain;
 
     /**
+     * Allows the control of the intake
+     */
+    protected ContinuousIntake intake;
+
+
+    /**
      * Initializes the objects provided by this class
      */
     protected void initAll() throws InterruptedException {
         initDriveTrain();
+        initIntake();
+        initOuttake();
 
         super.initAll();
         podServos.raise();
@@ -29,12 +39,19 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
         telemetry.update();
     }
 
+
+
     /**
      * Initializes the Drive Train
      */
     protected void initDriveTrain() {
         driveTrain = new TeleopDriveTrain(hardwareMap, frontRightName, frontLeftName, backRightName, backLeftName, true);
     }
+
+    public void initIntake(){
+        this.intake = new ContinuousIntake(hardwareMap,frontIntakeMotorName, backIntakeMotorName);
+    }
+
 
     /**
      * Initializes the Odometry Servos

@@ -110,15 +110,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Provides methods for lifting and lowering Odometry servos
      */
     protected OdometryPodServos podServos;
-    /**
-     * Provides methods for using the outtake
-     */
-    protected Outtake outtake;
-
-    /**
-     * Allows the control of the intake
-     */
-    protected ContinuousIntake intake;
 
     /**
      * Provides methods for using the robot LED's
@@ -138,6 +129,12 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Allows control of tape measure turret
      */
     protected TapeMeasureTurret turret;
+
+    /**
+     * Provides methods for using the outtake
+     */
+    protected Outtake outtake;
+
 
     /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}
@@ -175,8 +172,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      */
     protected void initAll() throws InterruptedException {
         initOdometryServos();
-        initIntake();
-        initOuttake();
         initLEDS();
         checkStop();
         initLinearSlide();
@@ -189,13 +184,18 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         }
     }
 
+    /**
+     * Initializes the Outtake
+     */
+    protected void initOuttake() {
+        outtake = new Outtake(hardwareMap, bucketServoName, bucketColorSensorName, true);
+        outtake.setServoClosed();
+    }
+
     public void initTapeMeasureTurret(){
         this.turret = new TapeMeasureTurret(hardwareMap, "tape_measure", "pitch", "yaw");
     }
 
-    public void initIntake(){
-        this.intake = new ContinuousIntake(hardwareMap,frontIntakeMotorName, backIntakeMotorName);
-    }
 
     public void initDistanceSensors() {
         intakeDistanceSensor = (DistanceSensor) hardwareMap.get("distance_sensor");
@@ -216,13 +216,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         spinner = new CarouselSpinner(hardwareMap, carouselSpinnerName);
     }
 
-    /**
-     * Initializes the Intake
-     */
-    protected void initOuttake() {
-        outtake = new Outtake(hardwareMap, bucketServoName, bucketColorSensorName, true);
-        outtake.setServoClosed();
-    }
+
 
     /**
      * Initializes the LED's
