@@ -19,15 +19,26 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors;
  * this is the class for our robot's intake subsystem
  */
 public class Outtake implements Controllable<FreightFrenzyGameObject> {
+
     /**
      * The Position servo must be to release an item
      */
-    protected static final double open = .8; // this position needs to be adjusted!
+    protected static final double onehundredEightyPos = .45 + 0.35; // this position needs to be adjusted!
+
+    /**
+     * The Position servo must be to release an item
+     */
+    protected static final double onehundredThirtyFivePos = .45 + (0.35/2); // this position needs to be adjusted!
+
+    /**
+     * The Position servo must be to release an item
+     */
+    protected static final double ninetyPos = .5; // this position needs to be adjusted!
 
     /**
      * The Position servo must be to keep and item in the intake compartment
      */
-    protected static final double closed = 0.45; // this position needs to be adjusted
+    protected static final double closed = 0.1; // this position needs to be adjusted
 
     /**
      * The item color sensor
@@ -38,12 +49,17 @@ public class Outtake implements Controllable<FreightFrenzyGameObject> {
      * The internal Servo Object
      */
     protected final Servo itemRelease;
-    protected final ElapsedTime yTimer = new ElapsedTime();
+    protected final ElapsedTime closeTimer = new ElapsedTime();
     /**
      * A boolean that tells if the servo is closed or opened
      */
     protected boolean isClosed;
+
     protected boolean y_depressed2 = true;
+
+    protected boolean b_depressed = true;
+
+    protected boolean a_depressed = true;
 
 
     /**
@@ -85,7 +101,7 @@ public class Outtake implements Controllable<FreightFrenzyGameObject> {
      * uses the intake's servo hinge to put the intake in the up position
      */
     public void setServoOpen() {
-        itemRelease.setPosition(open);
+        itemRelease.setPosition(ninetyPos);
         isClosed = false;
     }
 
@@ -179,14 +195,44 @@ public class Outtake implements Controllable<FreightFrenzyGameObject> {
             y_depressed2 = false;
             if (this.isClosed()) {
                 this.setServoOpen();
-                this.yTimer.reset();
+                this.closeTimer.reset();
             } else {
                 this.setServoClosed();
             }
             currentObject = FreightFrenzyGameObject.EMPTY;
         }
 
-        if (this.yTimer.seconds() > 1.25) {
+        if (!gamepad2.b) {
+            b_depressed = true;
+        }
+        if (gamepad2.b && b_depressed) {
+            b_depressed = false;
+            if (this.isClosed()) {
+                this.setServoPos(Outtake.onehundredThirtyFivePos);
+                this.closeTimer.reset();
+            } else {
+                this.setServoClosed();
+            }
+            currentObject = FreightFrenzyGameObject.EMPTY;
+        }
+
+        if (!gamepad2.a) {
+            a_depressed = true;
+        }
+        if (gamepad2.a && a_depressed) {
+            a_depressed = false;
+            if (this.isClosed()) {
+                this.setServoPos(Outtake.onehundredEightyPos);
+                this.closeTimer.reset();
+            } else {
+                this.setServoClosed();
+            }
+            currentObject = FreightFrenzyGameObject.EMPTY;
+        }
+
+
+
+        if (this.closeTimer.seconds() > 1.25) {
             this.setServoClosed();
             if (this.isClosed) {
                 currentObject = this.identifyContents();
