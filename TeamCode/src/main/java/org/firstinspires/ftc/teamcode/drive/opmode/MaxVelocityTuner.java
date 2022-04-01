@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 import java.util.Objects;
 
@@ -25,8 +26,8 @@ import java.util.Objects;
  */
 @Config
 @Autonomous(group = "drive")
-public class MaxVelocityTuner extends LinearOpMode {
-    public static double RUNTIME = 2.0;
+public class MaxVelocityTuner extends GenericOpModeTemplate {
+    public static double RUNTIME = 2.25;
 
     private ElapsedTime timer;
     private double maxVelocity = 0.0;
@@ -34,7 +35,9 @@ public class MaxVelocityTuner extends LinearOpMode {
     private VoltageSensor batteryVoltageSensor;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
+        this.initOdometryServos();
+        podServos.lower();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

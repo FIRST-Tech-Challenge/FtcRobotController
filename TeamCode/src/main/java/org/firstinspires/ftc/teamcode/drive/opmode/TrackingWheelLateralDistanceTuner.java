@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 /**
  * Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s
@@ -63,11 +64,14 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
  */
 @Config
 @TeleOp(group = "drive")
-public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
+public class TrackingWheelLateralDistanceTuner extends GenericOpModeTemplate {
     public static int NUM_TURNS = 10;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
+        this.initOdometryServos();
+        podServos.lower();
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         if (!(drive.getLocalizer() instanceof StandardTrackingWheelLocalizer)) {
@@ -96,7 +100,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
         boolean tuningFinished = false;
 
         while (!isStopRequested() && !tuningFinished) {
-            Pose2d vel = new Pose2d(0, 0, -gamepad1.right_stick_x);
+            Pose2d vel = new Pose2d(0, 0, -(gamepad1.right_stick_x *.5));
             drive.setDrivePower(vel);
 
             drive.update();
