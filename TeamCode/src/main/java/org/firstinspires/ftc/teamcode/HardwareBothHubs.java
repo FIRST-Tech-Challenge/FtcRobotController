@@ -206,6 +206,8 @@ public class HardwareBothHubs
     public double       TURRET_SERVO_CENTERED      = 0.505;
     public double       TURRET_SERVO_SHARED_LEFT   = 0.550; // fixed shift LEFT for use on the shared hub
     public double       TURRET_SERVO_SHARED_RIGHT  = 0.450; // fixed shift RIGHT for use on the shared hub
+    public double       TURRET_SERVO_BLUE_ALLIANCE = 0.770; // fixed shift LEFT  for use on the alliance hub
+    public double       TURRET_SERVO_RED_ALLIANCE  = 0.240; // fixed shift RIGHT for use on the alliance hub
     public double       turretServoPos             = 0.0;
 
     public Servo        boxServo                   = null;
@@ -403,7 +405,8 @@ public class HardwareBothHubs
         sweepMotor = hwMap.get(DcMotorEx.class,"sweepMotor");
         sweepMotor.setDirection(DcMotor.Direction.FORWARD);
         sweepMotor.setPower( 0.0 );
-        sweepMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//      sweepMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sweepMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         sweepMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Instantiate Maxbotics ultrasonic range sensors (sensors wired to I2C ports)

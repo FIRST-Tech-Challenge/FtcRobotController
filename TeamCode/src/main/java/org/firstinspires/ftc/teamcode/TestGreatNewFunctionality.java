@@ -18,7 +18,7 @@ import java.io.IOException;
  * TeleOp Full Control.
  */
 @TeleOp(name="Teleop-Skunkworks", group="7592")
-//@Disabled
+@Disabled
 public class TestGreatNewFunctionality extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Capping arm score position
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Duck motor control

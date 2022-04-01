@@ -37,7 +37,8 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // UNUSED
     boolean gamepad2_share_last,      gamepad2_share_now      = false;  // PROBLEM!! reset freight arm controls
 
-    double  sweeperVelocity = 1900.0; // power 1.0 = 2200 counts/sec
+//  double  sweeperVelocity = 1900.0; // power 1.0 = 2200 counts/sec
+    double  sweeperPower    = 0.85;   // RUN_WITHOUT_ENCODER power setting that achieves 1900 cts/sec
     boolean sweeperRunning  = false;  // Intake sweeper forward (fast/continuous - for collecting)
     boolean sweeperEjecting = false;  // Intake sweeper reverse (fast/continuous - eject extra freight)
     boolean clawServoOpen   = false;  // true=OPEN; false=CLOSED on team element
@@ -60,6 +61,7 @@ public abstract class Teleop extends LinearOpMode {
     ElapsedTime turretDelayTimer     = new ElapsedTime();
     boolean     waitForTurretServo   = false;
     double      waitForTurretMsec    = 0.0; // wait time (msec)
+    boolean     needTurretRotated    = false;
 
     double    wristServoPos = 0.950;          // Servo setting to target once arm movement starts (WRIST_SERVO_INIT)
 
@@ -104,6 +106,7 @@ public abstract class Teleop extends LinearOpMode {
     // These are set in the alliance-specific teleops
     double      duckVelocityNow;
     double      duckVelocityStep;
+    double      turretAllianceHubAngle;
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
@@ -244,6 +247,7 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Back ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
             telemetry.addData("Duck ", "%.2f (%.0f cts/sec)",  duckVelocityStep,  robot.duckMotorVel );
+            telemetry.addData("Sweeper ", "%.2f (%.0f cts/sec)",  robot.sweepMotor.getPower(), robot.sweepMotor.getVelocity() );
             telemetry.addData("Freight Arm", "%d cts %.2f mA", robot.freightMotorPos, robot.freightMotorAmps );
             telemetry.addData("Turret Servo", "%.3f (commanded) %d", robot.turretServo.getPosition(),
                     ((waitForTurretServo)? 1:0) );
@@ -345,12 +349,14 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button
         if( gamepad2_square_now && !gamepad2_square_last) {
           if( sweeperEjecting ) {  // already reverse; toggle back to forward
-            robot.sweepMotor.setVelocity( sweeperVelocity );  // ON (forward)
+//          robot.sweepMotor.setVelocity( sweeperVelocity );  // ON (forward)
+            robot.sweepMotor.setPower( sweeperPower );        // ON (forward)
             sweeperRunning  = true;
             sweeperEjecting = false;
           }
           else {  // currently forward, so switch to reverse
-              robot.sweepMotor.setVelocity( -0.5 * sweeperVelocity);  // ON (reverse)
+//          robot.sweepMotor.setVelocity( -0.5 * sweeperVelocity);  // ON (reverse)
+            robot.sweepMotor.setPower( -0.5 * sweeperPower );       // ON (reverse)
             sweeperRunning  = true;
             sweeperEjecting = true;
           }
@@ -446,7 +452,8 @@ public abstract class Teleop extends LinearOpMode {
              collectorArmTimer.reset(); // start our timer
              collectorArmLowering = true;
              // automatically turn ON the sweeper as the arm is lowered
-             robot.sweepMotor.setVelocity( sweeperVelocity );  // ON (forward)
+//           robot.sweepMotor.setVelocity( sweeperVelocity );  // ON (forward)
+             robot.sweepMotor.setPower( sweeperPower );        // ON (forward)
              sweeperRunning = true;
         } // lower
 
@@ -492,7 +499,9 @@ public abstract class Teleop extends LinearOpMode {
     boolean safeToSwingRight() {
         double currentElev   = robot.freightMotorPos;
         double currentAngle  = robot.turretServoPos;
-        double proposedAngle = currentAngle - turretStepSize; // RIGHT
+        boolean frontControl   = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
+        double turretDecrement = (frontControl)? turretStepSize : (3.0 * turretStepSize);
+        double proposedAngle = currentAngle - turretDecrement; // RIGHT
         boolean safeToStepRight;
         // Determine if motion to the RIGHT is safe for this arm elevation
         if( currentElev < robot.TURRET_RIGHT_WHEEL ) {
@@ -514,7 +523,9 @@ public abstract class Teleop extends LinearOpMode {
     boolean safeToSwingLeft() {
         double currentElev   = robot.freightMotorPos;
         double currentAngle  = robot.turretServoPos;
-        double proposedAngle = currentAngle + turretStepSize;  // LEFT
+        boolean frontControl   = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
+        double turretIncrement = (frontControl)? turretStepSize : (3.0 * turretStepSize);
+        double proposedAngle = currentAngle + turretIncrement;  // LEFT
         boolean safeToStepLeft;
         // Determine if motion to the LEFT is safe for this arm elevation
         if( currentElev < robot.TURRET_LEFT_COLLECTOR1 ) {
@@ -556,9 +567,14 @@ public abstract class Teleop extends LinearOpMode {
     void processFreightArmControls() {
         boolean safeToManuallyLower  = collectorArmRaised && (robot.freightMotorPos > robot.FREIGHT_ARM_POS_SPIN);
         boolean safeToManuallyRaise  = collectorArmRaised && (robot.freightMotorPos < robot.FREIGHT_ARM_POS_MAX);
-        double  gamepad2_left_stick  = gamepad2.left_stick_y;
-        double  gamepad2_right_stick = gamepad2.right_stick_x;
-        boolean manual_elev_control  = ( Math.abs(gamepad2_left_stick) > 0.05 );
+        // We want manual "raise" and "lower" to work correctly on both sides of vertical
+        boolean frontControl = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
+        // For both FRONT (shared hub) & REAR (alliance hub), pushing forward/back should RAISE/LOWER arm
+        // Before any modification, pushing forward on left_stick_y produces NEGATIVE values.
+        double  gamepad2_left_stick = gamepad2.left_stick_y;
+        boolean manual_elev_control = ( Math.abs(gamepad2_left_stick) > 0.05 );
+        // Pushing the right stick left/right swings turret counter-clockwise or clockwise
+        double  gamepad2_right_stick  = gamepad2.right_stick_x;
         boolean manual_turret_control = ( Math.abs(gamepad2_right_stick) > 0.05 );
 
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
@@ -642,8 +658,9 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
+            needTurretRotated    = true;
             needCollectorRaised  = true;
-            freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_MIDDLE;
+            freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;  // TOP + ROTATE!
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
@@ -668,25 +685,24 @@ public abstract class Teleop extends LinearOpMode {
             freightArmCycleCount = FREIGHT_CYCLECOUNT_START;
         }
         else if( manual_elev_control || freightArmElevTweaked ) {
-            // Abort any automatic movement in progress
+            // Abort any automatic movement in progress (we don't have to zero
+            // any motor power in progress because we're about to set a new value)
             robot.freightMotorAuto = false;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;
-            // Does user want to lower
-            if( safeToManuallyLower && (gamepad2_left_stick > 0.05) ) {
-                // front (shared hub) = raise; back (alliance hub) = lower
-                boolean frontControl = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
-                double raisePower = 0.50 + (0.20 * gamepad2_left_stick);  // from 0.50 to 0.70
-                double lowerPower = 0.05 + (0.20 * gamepad2_left_stick);  // from 0.05 to 0.25
-                double motorPower = (frontControl)? -raisePower : lowerPower;  // raise : lower
+            // Different amounts of motor power are needed to raise and lower the arm
+            // and EVEN MORE power may be needed if lifting a double-weighted cube
+            double frontRaisePwr = 0.40 + (0.40 * -gamepad2_left_stick); // from 0.40 to 0.80
+            double rearRaisePwr  = 0.40 + (0.25 * -gamepad2_left_stick); // from 0.40 to 0.65
+            double frontLowerPwr = 0.20 + (0.10 *  gamepad2_left_stick); // from 0.20 to 0.30
+            double rearLowerPwr  = 0.20 + (0.10 *  gamepad2_left_stick); // from 0.20 to 0.30
+            // Does user want to raise the arm (negative joystick input)
+            if( safeToManuallyRaise && (gamepad2_left_stick < -0.05) ) {
+                double motorPower = (frontControl)? frontRaisePwr : -rearRaisePwr;
                 robot.freightMotor.setPower( motorPower );
                 freightArmElevTweaked = true;
             }
-            else if( safeToManuallyRaise && (gamepad2_left_stick < -0.05) ) {
-                // front (shared hub) = lower; back (alliance hub) = raise
-                boolean frontControl = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
-                double lowerPower = 0.40 + (0.60 * -gamepad2_left_stick);  // from 0.40 to 1.00
-                double raisePower = 0.40 + (0.20 * -gamepad2_left_stick);  // from 0.40 to 0.60
-                double motorPower = (frontControl)? lowerPower : -raisePower;  // lower : raise
+            else if( safeToManuallyLower && (gamepad2_left_stick > 0.05) ) {
+                double motorPower = (frontControl)? -frontLowerPwr : rearLowerPwr;
                 robot.freightMotor.setPower( motorPower );
                 freightArmElevTweaked = true;
             }
@@ -754,6 +770,11 @@ public abstract class Teleop extends LinearOpMode {
             else { // arm motor is stopped, but arm may be bouncing
                 freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;
                 freightArmDelayTimer.reset();
+                // Do we need to rotate the freight arm turret toward the alliance hub?
+                if( needTurretRotated ) {
+                    robot.turretPositionSet( turretAllianceHubAngle );
+                    needTurretRotated = false;
+                }
             }
         } else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SETTLE) {
             if( freightArmDelayTimer.milliseconds() > 500 ) {
