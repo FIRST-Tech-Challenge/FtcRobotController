@@ -554,12 +554,12 @@ public abstract class Teleop extends LinearOpMode {
     
     /*---------------------------------------------------------------------------------*/
     void processFreightArmControls() {
-        boolean safeToManuallyLower  = collectorArmRaised && (robot.freightMotorPos > robot.FREIGHT_ARM_POS_TRANSPORT1);
+        boolean safeToManuallyLower  = collectorArmRaised && (robot.freightMotorPos > robot.FREIGHT_ARM_POS_SPIN);
         boolean safeToManuallyRaise  = collectorArmRaised && (robot.freightMotorPos < robot.FREIGHT_ARM_POS_MAX);
         double  gamepad2_left_stick  = gamepad2.left_stick_y;
         double  gamepad2_right_stick = gamepad2.right_stick_x;
-        boolean manual_elev_control  = ( Math.abs(gamepad2_left_stick) > 0.03 );
-        boolean manual_turret_control = ( Math.abs(gamepad2_right_stick) > 0.03 );
+        boolean manual_elev_control  = ( Math.abs(gamepad2_left_stick) > 0.05 );
+        boolean manual_turret_control = ( Math.abs(gamepad2_right_stick) > 0.05 );
 
         // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
         if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
@@ -672,17 +672,21 @@ public abstract class Teleop extends LinearOpMode {
             robot.freightMotorAuto = false;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;
             // Does user want to lower
-            if( safeToManuallyRaise && (gamepad2_left_stick > 0.05) ) {
+            if( safeToManuallyLower && (gamepad2_left_stick > 0.05) ) {
                 // front (shared hub) = raise; back (alliance hub) = lower
                 boolean frontControl = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
-                double motorPower = (frontControl)? -0.50 : 0.20;    // raise : lower
+                double raisePower = 0.50 + (0.20 * gamepad2_left_stick);  // from 0.50 to 0.70
+                double lowerPower = 0.05 + (0.20 * gamepad2_left_stick);  // from 0.05 to 0.25
+                double motorPower = (frontControl)? -raisePower : lowerPower;  // raise : lower
                 robot.freightMotor.setPower( motorPower );
                 freightArmElevTweaked = true;
             }
-            else if( safeToManuallyLower && (gamepad2_left_stick < -0.05) ) {
+            else if( safeToManuallyRaise && (gamepad2_left_stick < -0.05) ) {
                 // front (shared hub) = lower; back (alliance hub) = raise
                 boolean frontControl = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
-                double motorPower = (frontControl)? 0.30 : -0.40;    // lower : raise
+                double lowerPower = 0.40 + (0.60 * -gamepad2_left_stick);  // from 0.40 to 1.00
+                double raisePower = 0.40 + (0.20 * -gamepad2_left_stick);  // from 0.40 to 0.60
+                double motorPower = (frontControl)? lowerPower : -raisePower;  // lower : raise
                 robot.freightMotor.setPower( motorPower );
                 freightArmElevTweaked = true;
             }
@@ -691,9 +695,7 @@ public abstract class Teleop extends LinearOpMode {
                 freightArmElevTweaked = false;
             }
         } // manual_elev_control
-        else if( manual_turret_control ) {
-            // Abort any automatic movement in progress
-            robot.freightMotorAuto = false;
+        else if( manual_turret_control && (robot.freightMotorAuto == false) ) {
             freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;
             // Does user want to swing right?
             if( safeToSwingRight() && (gamepad2_right_stick > 0.30) ) {

@@ -881,6 +881,9 @@ public class HardwareBothHubs
         // produces a higher motor power setting)
         if( (newPos == FREIGHT_ARM_POS_TRANSPORT1) && (freightMotorPos < FREIGHT_ARM_POS_TRANSPORT1) )
            freightMotorDiv = 208.0;
+        // going from TRANSPORT1 to SHARED_HUB is another short-distance lift
+        else if( (newPos == FREIGHT_ARM_POS_SHARED) && (freightMotorPos < FREIGHT_ARM_POS_SHARED) )
+            freightMotorDiv = 208.0;
         else // reset back to default proportional-control divider
            freightMotorDiv = 624.0;
 
