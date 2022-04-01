@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 2.0 (12/10/2021)
+/* FTC Team 7572 - Version 3.0 (03/26/2022)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -52,7 +52,14 @@ public abstract class Teleop extends LinearOpMode {
     final int FREIGHT_CYCLECOUNT_DONE   = 0;  // Movement is complete (cycle count is reset)
     int       freightArmCycleCount      = FREIGHT_CYCLECOUNT_DONE;
     boolean   freightArmElevTweaked     = false;  // Reminder to zero power when trigger released
-    double    turretStepSize            = 0.005;
+
+    ElapsedTime freightArmDelayTimer = new ElapsedTime();
+    boolean     waitForDumpServo     = false;
+
+    double      turretStepSize       = 0.005;
+    ElapsedTime turretDelayTimer     = new ElapsedTime();
+    boolean     waitForTurretServo   = false;
+    double      waitForTurretMsec    = 0.0; // wait time (msec)
 
     double    wristServoPos = 0.950;          // Servo setting to target once arm movement starts (WRIST_SERVO_INIT)
 
@@ -238,7 +245,8 @@ public abstract class Teleop extends LinearOpMode {
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
             telemetry.addData("Duck ", "%.2f (%.0f cts/sec)",  duckVelocityStep,  robot.duckMotorVel );
             telemetry.addData("Freight Arm", "%d cts %.2f mA", robot.freightMotorPos, robot.freightMotorAmps );
-            telemetry.addData("Turret Servo", "%.3f (commanded)", robot.turretServo.getPosition() );
+            telemetry.addData("Turret Servo", "%.3f (commanded) %d", robot.turretServo.getPosition(),
+                    ((waitForTurretServo)? 1:0) );
             telemetry.addData("Capping Arm", "%d cts %.2f mA", robot.cappingMotorPos, robot.cappingMotorAmps );
             telemetry.addData("Capping Wrist", "%.3f (commanded)", robot.wristServo.getPosition() );
             if( rangeSensorsEnabled ) {
@@ -463,57 +471,87 @@ public abstract class Teleop extends LinearOpMode {
      
     } // processCollectorArmControl
 
+    /*---------------------------------------------------------------------------------
+    /* The angle we can safely swing LEFT or RIGHT from center varies by arm elevation: 
+    /*                      0.500
+    /*                    +--+--+ COLLECT LEVEL 
+    /*                    |  |  |
+    /*                    |  |  | TURRET_RIGHT_WHEEL
+    /*                    |  |  +--------------------+ 0.005
+    /*    COLLECTOR ARM   |  |                       |
+    /*    0.740 +---------+  |                       |
+    /*          |            |                       |
+    /*          |            |   <<VERTICAL>>        |
+    /*          |            |                       |
+    /*          |            |                       | TURRET_RIGHT_MAX
+    /*          |            |         +-------------+
+    /*          |            |         |      COLLECTOR ARM POST
+    /*          |            |         |
+    /*          +------------+---------+
     /*---------------------------------------------------------------------------------*/
-    /* The distance we can safely swing RIGHT from center varies by arm elevation.     */
     boolean safeToSwingRight() {
         double currentElev   = robot.freightMotorPos;
         double currentAngle  = robot.turretServoPos;
         double proposedAngle = currentAngle - turretStepSize; // RIGHT
         boolean safeToStepRight;
-        // Must be above chassis frame before ANY rightward motion is possible
+        // Determine if motion to the RIGHT is safe for this arm elevation
         if( currentElev < robot.TURRET_RIGHT_WHEEL ) {
-            safeToStepRight = false;
+            safeToStepRight = (proposedAngle > 0.500);  // back to centerline
         }
         else if( currentElev < robot.FREIGHT_ARM_POS_VERTICAL ){
             safeToStepRight = (proposedAngle > 0.005);
         }
         else if( currentElev < robot.TURRET_RIGHT_MAX ) {
-            safeToStepRight = (proposedAngle > 0.005);
+            safeToStepRight = (proposedAngle > 0.005);  // ???
         }
         else { // rotated back down toward the floor on the other side
-            safeToStepRight = false;
+            safeToStepRight = (proposedAngle > 0.500);  // back to centerline
         }
         return safeToStepRight;
     } // safeToSwingRight
 
     /*---------------------------------------------------------------------------------*/
-    /* The distance we can safely swing LEFT from center varies by arm elevation.      */
     boolean safeToSwingLeft() {
         double currentElev   = robot.freightMotorPos;
         double currentAngle  = robot.turretServoPos;
         double proposedAngle = currentAngle + turretStepSize;  // LEFT
         boolean safeToStepLeft;
-        // Must be above collector before ANY leftward motion is possible
+        // Determine if motion to the LEFT is safe for this arm elevation
         if( currentElev < robot.TURRET_LEFT_COLLECTOR1 ) {
-            safeToStepLeft = false;
+            safeToStepLeft = (proposedAngle < 0.500);  // back to centerline
         }
         else if( currentElev < robot.TURRET_LEFT_COLLECTOR2 ) {
             safeToStepLeft = (proposedAngle < 0.740);
         }
         else if( currentElev < robot.FREIGHT_ARM_POS_VERTICAL ) {
-            safeToStepLeft = false;   // keep-out zone for capping arm
+            safeToStepLeft = (proposedAngle < 0.740);  // ???
         }
         else if( currentElev < robot.TURRET_LEFT_MAX ) {
             safeToStepLeft = (proposedAngle < 1.000);
         }
         else {
-            safeToStepLeft = false;
+            safeToStepLeft = (proposedAngle < 0.500);  // back to centerline
         }
         return safeToStepLeft;
     } // safeToSwingLeft
 
-    ElapsedTime freightArmDelayTimer = new ElapsedTime();
-    boolean waitForServo = false;
+    /*---------------------------------------------------------------------------------*/
+    void centerTurretArm() {
+        double deltaPosition = Math.abs( robot.turretServoPos - robot.TURRET_SERVO_CENTERED );
+        // Are we already there?
+        if( deltaPosition < 0.002 ) {
+            waitForTurretServo = false;
+        }
+        // We're not; determine how long we think it will take to get there?
+        else {
+            waitForTurretServo = true;
+            waitForTurretMsec  = deltaPosition * 3000;   // 0.500 travel takes 1500 msec 
+        }
+        // Re-command the center position either way (just to be safe) and reset counter
+        robot.turretPositionSet( robot.TURRET_SERVO_CENTERED );
+        turretDelayTimer.reset();
+    } // centerTurretArm
+    
     /*---------------------------------------------------------------------------------*/
     void processFreightArmControls() {
         boolean safeToManuallyLower  = collectorArmRaised && (robot.freightMotorPos > robot.FREIGHT_ARM_POS_TRANSPORT1);
@@ -535,7 +573,9 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 SHARE button
         if( gamepad2_share_now && !gamepad2_share_last )
         {
+            robot.turretPositionSet( robot.TURRET_SERVO_CENTERED );
             robot.freightArmPosInit( robot.FREIGHT_ARM_POS_COLLECT );
+            freightArmTarget  = robot.FREIGHT_ARM_POS_COLLECT;
             robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
             robot.sweepMotor.setPower( 0.0 );  // OFF
             sweeperRunning    = false;
@@ -554,6 +594,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         if(( gamepad2_circle_now && !gamepad2_circle_last) || (freightPresent && collectingFreight))
         {
+            // Do we need to re-center turret before we can begin to raise/lower freight-arm?
+            centerTurretArm();
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_TRANSPORT1;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -568,12 +610,14 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 CROSS button ()
         else if( gamepad2_cross_now && !gamepad2_cross_last)
         {
+            // Do we need to re-center turret before we can begin to raise/lower freight-arm?
+            centerTurretArm();
             // We lower from front-dump really fast.  Get the servo moving
             // so the front edge of box isn't pointing down!
             robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
             needCollectorLowered = true; // at the END! (AFTER freight-arm is in place)
             if(robot.freightMotorPos < 500) {
-                waitForServo = true;
+                waitForDumpServo = true;
                 // Hold for 500ms if we are going front dump to collect
                 freightArmDelayTimer.reset();
             }
@@ -586,6 +630,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD UP
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {
+            // Do we need to re-center turret before we can begin to raise/lower freight-arm?
+            centerTurretArm();
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -594,6 +640,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD LEFT
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {
+            // Do we need to re-center turret before we can begin to raise/lower freight-arm?
+            centerTurretArm();
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_MIDDLE;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -602,6 +650,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
         else if( gamepad2_dpad_right_now && !gamepad2_dpad_right_last)
         {
+            // Do we need to re-center turret before we can begin to raise/lower freight-arm?
+            centerTurretArm();
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_SHARED;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -610,6 +660,8 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD DOWN
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {
+            // Do we need to re-center turret before we can begin to raise/lower freight-arm?
+            centerTurretArm();
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_BOTTOM;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -621,11 +673,17 @@ public abstract class Teleop extends LinearOpMode {
             freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;
             // Does user want to lower
             if( safeToManuallyRaise && (gamepad2_left_stick > 0.05) ) {
-                robot.freightMotor.setPower( 0.20 );
+                // front (shared hub) = raise; back (alliance hub) = lower
+                boolean frontControl = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
+                double motorPower = (frontControl)? -0.50 : 0.20;    // raise : lower
+                robot.freightMotor.setPower( motorPower );
                 freightArmElevTweaked = true;
             }
             else if( safeToManuallyLower && (gamepad2_left_stick < -0.05) ) {
-                robot.freightMotor.setPower( -0.40 );
+                // front (shared hub) = lower; back (alliance hub) = raise
+                boolean frontControl = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
+                double motorPower = (frontControl)? 0.30 : -0.40;    // lower : raise
+                robot.freightMotor.setPower( motorPower );
                 freightArmElevTweaked = true;
             }
             else if( freightArmElevTweaked ) {
@@ -638,10 +696,10 @@ public abstract class Teleop extends LinearOpMode {
             robot.freightMotorAuto = false;
             freightArmCycleCount = FREIGHT_CYCLECOUNT_DONE;
             // Does user want to swing right?
-            if( safeToSwingRight() && (gamepad2_right_stick > 0.05) ) {
+            if( safeToSwingRight() && (gamepad2_right_stick > 0.30) ) {
                 robot.turretPositionShift( -turretStepSize );
             }
-            else if( safeToSwingLeft() && (gamepad2_right_stick < -0.05) ) {
+            else if( safeToSwingLeft() && (gamepad2_right_stick < -0.30) ) {
                 robot.turretPositionShift( turretStepSize );
             }
         } // manual_turret_control
@@ -650,9 +708,17 @@ public abstract class Teleop extends LinearOpMode {
         if( freightArmCycleCount >= FREIGHT_CYCLECOUNT_START ) {
             // Collector arm must be raised before any freight arm motion is commanded
             if( collectorArmRaised ) {
-                if(waitForServo) {
+                if( waitForTurretServo ) {
+                    if( turretDelayTimer.milliseconds() >= waitForTurretMsec ) {
+                        waitForTurretServo = false;
+                    }
+                    else {
+                        // Do nothing (wait for servo to rotate back to center
+                    }
+                }
+                else if(waitForDumpServo) {
                     if(freightArmDelayTimer.milliseconds() >= 300) {
-                        waitForServo = false;
+                        waitForDumpServo = false;
                     }
                     else {
                         // Do nothing (wait for servo to rotate back upward

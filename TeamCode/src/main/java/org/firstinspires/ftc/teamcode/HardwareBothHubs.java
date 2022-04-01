@@ -198,14 +198,14 @@ public class HardwareBothHubs
     public int          TURRET_RIGHT_WHEEL         = 175;   // High enough to clear the chassis/wheel on the right
     public int          TURRET_RIGHT_MAX           = 1780;  // ... maximum before we hit the other upright
     public int          TURRET_LEFT_COLLECTOR1     = 315;   // High enough to clear the collector arm on the left
-    public int          TURRET_LEFT_COLLECTOR2     = 425;   // High enough to interact with capping arm
+    public int          TURRET_LEFT_COLLECTOR2     = 425;   // High enough to interact with capping arm post/upright
     public int          TURRET_LEFT_MAX            = 1780;  // ... maximum before we hit the other upright
 
     public Servo        turretServo                = null;
-    public double       TURRET_SERVO_INIT          = 0.500; // we init to the position needed to STORE the freight arm
-    public double       TURRET_SERVO_STORED        = 0.500;
-    public double       TURRET_SERVO_SHARED_LEFT   = 0.450; // fixed shift LEFT for use on the shared hub
-    public double       TURRET_SERVO_SHARED_RIGHT  = 0.550; // fixed shift RIGHT for use on the shared hub
+    public double       TURRET_SERVO_INIT          = 0.505; // we init to the position needed to STORE the freight arm
+    public double       TURRET_SERVO_CENTERED      = 0.505;
+    public double       TURRET_SERVO_SHARED_LEFT   = 0.550; // fixed shift LEFT for use on the shared hub
+    public double       TURRET_SERVO_SHARED_RIGHT  = 0.450; // fixed shift RIGHT for use on the shared hub
     public double       turretServoPos             = 0.0;
 
     public Servo        boxServo                   = null;
@@ -387,8 +387,7 @@ public class HardwareBothHubs
 //      freightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, freightPIDF );
 
         turretServo = hwMap.servo.get("DT2kServo");      // servo port 3 (hub 2)
-        turretServoPos = TURRET_SERVO_INIT;
-        turretServo.setPosition( turretServoPos );
+        turretPositionSet( TURRET_SERVO_INIT );
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         if (!transitionFromAutonomous) {
@@ -941,6 +940,20 @@ public class HardwareBothHubs
             }
         } // freightMotorAuto
     } // freightArmPosRun
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* turretPositionSet()                                                                        */
+    /* - target_position = the target to command the turret servo                                 */
+    public void turretPositionSet( double target_position ) {
+       // ensure we don't go below 0.000 or above 1.000
+       if( (target_position < 0.000) || (target_position > 1.000) ) {
+          // ignore request (can't exceed servo hardware limits)
+       }
+       else {
+          turretServoPos = target_position;
+          turretServo.setPosition( turretServoPos );
+       }
+    } // turretPositionSet
 
     /*--------------------------------------------------------------------------------------------*/
     /* turretPositionShift()                                                                      */
