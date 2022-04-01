@@ -122,13 +122,14 @@ public class MiscUtils {
 
     /**
      * Returns a handle to a running thread with a given name
+     *
      * @param name The name of the thread
      * @return A Thread Object or null if thread is not found
      */
     @Nullable
-    public static Thread getThreadByName(String name){
-        for (Thread t: Thread.getAllStackTraces().keySet()){
-            if (t.getName().equals(name)){
+    public static Thread getThreadByName(String name) {
+        for (Thread t : Thread.getAllStackTraces().keySet()) {
+            if (t.getName().equals(name)) {
                 return t;
             }
         }
@@ -138,20 +139,17 @@ public class MiscUtils {
     /**
      * Gets a static field from the class of an object
      *
-     * @param member The object whose class has a static member
+     * @param member    The object whose class has a static member
      * @param fieldName The name of the static member to get
      * @return The value in the static member
      */
-    public static Object getStaticMemberFromObject(Object member, String fieldName){
+    public static Object getStaticMemberFromObject(Object member, String fieldName) throws NoSuchFieldException, IllegalAccessException {
         //NOTE: If you don't know what Java reflection is and you need to modify this, ask Jacob
         Class<?> parentClass = member.getClass();
         Object fieldValue;
-        try {
-            Field f =  parentClass.getField(fieldName);
-            fieldValue = f.get(new Object());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(MiscUtils.getStackTraceAsString(e));
-        }
+        Field f = parentClass.getField(fieldName);
+        fieldValue = f.get(new Object());
+
         return fieldValue;
     }
 
@@ -196,7 +194,7 @@ public class MiscUtils {
             }
             //Let some other threads do some work, then try for the locks again
             Thread.yield();
-            if (Thread.currentThread().isInterrupted()){
+            if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
             }
 

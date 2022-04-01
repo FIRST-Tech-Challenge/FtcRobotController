@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.worlds;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 @TeleOp(name = "🟥Red Worlds Drive Program🟥")
@@ -22,7 +22,14 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
         // Fancy way of saying leds.setPattern(RedWorldsDriveProgram.defaultColor)
         // But, it will also allow it to change to blue for the BlueWorldsDriveProgram
-        currentPattern = (BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor");
+
+        try {
+            currentPattern = (BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor");
+        } catch (ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            RobotLog.dd("LED Pattern Retrieval Failed", MiscUtils.getStackTraceAsString(e));
+            currentPattern = GenericOpModeTemplate.LEDErrorColor;
+        }
+
         leds.setPattern(currentPattern);
 
         slide.autoMode();
@@ -32,8 +39,6 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
         System.gc();
         waitForStart();
-
-        final ElapsedTime t = new ElapsedTime();
 
         while (opModeIsActive() && !isStopRequested()) {
             //Declan's controls
@@ -68,18 +73,17 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
                     //Intake Controls
                     BlinkinPattern proposedPattern = FreightFrenzyGameObject.getLEDColorFromItem(outtake.gamepadControl(gamepad1, gamepad2));
-                    if (proposedPattern != null){
+                    if (proposedPattern != null) {
                         leds.setPattern(proposedPattern);
-                    }else {
-                        leds.setPattern((BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor"));
+                    } else {
+                        try {
+                            leds.setPattern((BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor"));
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                            currentPattern = GenericOpModeTemplate.LEDErrorColor;
+                        }
                     }
 
                     intake.gamepadControl(gamepad1, gamepad2);
-
-                    if (t.seconds() > 1) {
-                        RobotLog.d("I exist and am running");
-                        t.reset();
-                    }
 
                     Thread.yield();
                 }

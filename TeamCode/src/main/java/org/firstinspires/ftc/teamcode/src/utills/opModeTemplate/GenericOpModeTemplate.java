@@ -98,6 +98,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Name of the IMU
      */
     public static final String IMUName = "imu";
+
+    protected static final RevBlinkinLedDriver.BlinkinPattern LEDErrorColor = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
     /**
      * Allows the subsystems to look at voltage
      */
