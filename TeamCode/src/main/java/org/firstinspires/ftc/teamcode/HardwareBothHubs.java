@@ -186,8 +186,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 232;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
-//  public int          FREIGHT_ARM_POS_HUB_TOP    = 1670;  // For dumping into hub top level last
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level last
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_MAX        = 2250;  // Maximum safe rotation without hitting field floor
@@ -195,9 +194,19 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_HUB_MIDDLE_AUTO = FREIGHT_ARM_POS_HUB_MIDDLE + 0; // 24
     public int          FREIGHT_ARM_POS_HUB_BOTTOM_AUTO = FREIGHT_ARM_POS_HUB_BOTTOM + 25; // 75
 
+    // These values are also freight-arm counts, but represent limits for horizontal motion
+    public int          TURRET_RIGHT_WHEEL         = 175;   // High enough to clear the chassis/wheel on the right
+    public int          TURRET_RIGHT_MAX           = 1780;  // ... maximum before we hit the other upright
+    public int          TURRET_LEFT_COLLECTOR1     = 315;   // High enough to clear the collector arm on the left
+    public int          TURRET_LEFT_COLLECTOR2     = 425;   // High enough to interact with capping arm
+    public int          TURRET_LEFT_MAX            = 1780;  // ... maximum before we hit the other upright
+
     public Servo        turretServo                = null;
     public double       TURRET_SERVO_INIT          = 0.500; // we init to the position needed to STORE the freight arm
     public double       TURRET_SERVO_STORED        = 0.500;
+    public double       TURRET_SERVO_SHARED_LEFT   = 0.450; // fixed shift LEFT for use on the shared hub
+    public double       TURRET_SERVO_SHARED_RIGHT  = 0.550; // fixed shift RIGHT for use on the shared hub
+    public double       turretServoPos             = 0.0;
 
     public Servo        boxServo                   = null;
     public double       BOX_SERVO_INIT             = 0.28;  // we init to the TRANSPORT position
@@ -378,7 +387,8 @@ public class HardwareBothHubs
 //      freightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, freightPIDF );
 
         turretServo = hwMap.servo.get("DT2kServo");      // servo port 3 (hub 2)
-        turretServo.setPosition( TURRET_SERVO_INIT );
+        turretServoPos = TURRET_SERVO_INIT;
+        turretServo.setPosition( turretServoPos );
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         if (!transitionFromAutonomous) {
@@ -931,6 +941,23 @@ public class HardwareBothHubs
             }
         } // freightMotorAuto
     } // freightArmPosRun
+
+    /*--------------------------------------------------------------------------------------------*/
+    /* turretPositionShift()                                                                      */
+    /* - turret_increment = how much to adjust the turret servo target position                   */
+    public void turretPositionShift( double turret_increment ) {
+       // ensure we don't go below 0.000
+       if( (turretServoPos + turret_increment) < 0.000 ) {
+          // ignore request (can't exceed servo hardware limits)
+       }
+       else if( (turretServoPos + turret_increment) > 1.000 ) {
+          // ignore request (can't exceed servo hardware limits)
+       }
+       else {
+          turretServoPos += turret_increment;
+          turretServo.setPosition( turretServoPos );
+       }
+    } // turretPositionShift
 
     /*--------------------------------------------------------------------------------------------*/
     /* NOTE ABOUT RANGE SENSORS:                                                                  */
