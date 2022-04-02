@@ -438,7 +438,7 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.left_bumper) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
-            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);/**booty loose**/
+            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad2.x) {
             robot.gripper.set();
             robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
