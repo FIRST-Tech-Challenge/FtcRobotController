@@ -86,8 +86,8 @@ public class Autonomous {
         
         TrajectorySequence backAndForthSequence =
                 robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
-                        .back(96)
-                        .forward(96)
+                        .back(48)
+                        .forward(48)
                         .build();
         backAndForth = trajectorySequenceToStateMachine(backAndForthSequence);
 

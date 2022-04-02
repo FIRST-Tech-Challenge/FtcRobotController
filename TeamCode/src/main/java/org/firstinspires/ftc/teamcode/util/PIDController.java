@@ -7,6 +7,8 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.between;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import java.util.function.Function;
+
 /**
  * Created on 6/28/2015.
  */
@@ -47,6 +49,7 @@ public class PIDController {
     private double m_P;                 // factor for "proportional" control
     private double m_I;                 // factor for "integral" control
     private double m_D;                 // factor for "derivative" control
+    private Function<Double, Double> m_F;                 // factor for feed forward control
     private double m_input;             // sensor input for pid controller
     private double m_maximumOutput = 1.0;       // |maximum output|
     private double m_minimumOutput = -1.0;      // |minimum output|
@@ -69,6 +72,7 @@ public class PIDController {
     private double pwrP = 0.0;
     private double pwrI = 0.0;
     private double pwrD = 0.0;
+    private double pwrF = 0.0;
 
 
     /**
@@ -96,6 +100,14 @@ public class PIDController {
         m_P = coefficients.kP;
         m_I = coefficients.kI;
         m_D = coefficients.kD;
+        m_prevTime=System.nanoTime();
+    }
+
+    public PIDController(com.acmerobotics.roadrunner.control.PIDCoefficients coefficients, Function<Double, Double> kF) {
+        m_P = coefficients.kP;
+        m_I = coefficients.kI;
+        m_D = coefficients.kD;
+        m_F = kF;
         m_prevTime=System.nanoTime();
     }
 
@@ -168,8 +180,12 @@ public class PIDController {
             pwrP = m_P * m_error;
             pwrI = m_I * m_totalError;
             pwrD = m_D * m_deltaError;
+            if(m_F != null)
+                pwrF = m_F.apply(m_input);
+            else
+                pwrF = 0;
 
-            m_result = pwrP + pwrI + pwrD;
+            m_result = pwrP + pwrI + pwrD + pwrF;
 
             // Set the current error to the previous error for the next cycle
             m_prevError = m_error;
@@ -206,6 +222,13 @@ public class PIDController {
         m_P = pidCoefficients.kP;
         m_I = pidCoefficients.kI;
         m_D = pidCoefficients.kD;
+    }
+
+    public void setPID(com.acmerobotics.roadrunner.control.PIDCoefficients pidCoefficients, Function<Double, Double> kF) {
+        m_P = pidCoefficients.kP;
+        m_I = pidCoefficients.kI;
+        m_D = pidCoefficients.kD;
+        m_F = kF;
     }
 
     /**

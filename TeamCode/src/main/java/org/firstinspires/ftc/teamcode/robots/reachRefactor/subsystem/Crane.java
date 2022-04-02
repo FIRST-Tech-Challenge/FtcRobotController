@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor.subsystem;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.ServoSim;
 
@@ -19,48 +22,49 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.HIGH_TIER_SHIPPING_HUB_HEIGHT;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.SHOULDER_AXLE_TO_GROUND_HEIGHT;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.SHOULDER_TO_ELBOW;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
 
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.firstinspires.ftc.teamcode.util.PIDController;
 
 @Config(value = "FFCrane")
 public class Crane implements Subsystem {
-    public static int SHOULDER_HOME_PWM = 1500; //was 1550
+    public static int SHOULDER_START_ANGLE = -90;
     public static int ELBOW_HOME_PWM = 1500;
     public static int WRIST_HOME_PWM = 1500;
 
-    public static double SHOULDER_PWM_PER_DEGREE = 600.0 / 90.0;
+    public static double SHOULDER_TICKS_PER_DEGREE = 643.0 / 90.0;
     public static double ELBOW_PWM_PER_DEGREE = -600.0 / 90.0;
     public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0;
 
-//    public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
-//                                                 // of the robot
-//    public static double ELBOW_DEG_MIN = -80;
-//    public static double WRIST_DEG_MIN = -180;
-//
-//    public static double SHOULDER_DEG_MAX = 90;
-//    public static double ELBOW_DEG_MAX = 140;
-//    public static double WRIST_DEG_MAX = 180;
+    public static double kF = 0.0;
+    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.01a, 0, 0);
+    public static double SHOULDER_TOLERANCE = 1;
 
-    public static double SHOULDER_DEG_MIN = Double.NEGATIVE_INFINITY; // negative angles are counter clockwise while looking at the left side
-    // of the robot
-    public static double ELBOW_DEG_MIN = Double.NEGATIVE_INFINITY;
-    public static double WRIST_DEG_MIN = Double.NEGATIVE_INFINITY;
+    public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
+    public static double SHOULDER_DEG_MAX = 90; // of the robot
 
-    public static double SHOULDER_DEG_MAX = Double.POSITIVE_INFINITY;
-    public static double ELBOW_DEG_MAX = Double.POSITIVE_INFINITY;
-    public static double WRIST_DEG_MAX = Double.POSITIVE_INFINITY;
+    public static double ELBOW_DEG_MIN = -80;
+    public static double WRIST_DEG_MIN = -180;
+
+    public static double ELBOW_DEG_MAX = 140;
+    public static double WRIST_DEG_MAX = 180;
 
     public static double P = 0.995;
     public static double BUCKET_TRIGGER_DISTANCE = 7.75;
 
     public Turret turret;
 
-    public Servo shoulderServo, elbowServo, wristServo;
+    public Servo elbowServo, wristServo;
+    public DcMotorEx shoulderMotor;
     private final DistanceSensor bucketDistanceSensor;
 
+    private PIDController shoulderPID;
+
     private double bucketDistance;
+    private double shoulderPosition, shoulderAngle, shoulderCorrection;
     private double shoulderTargetAngle, elbowTargetAngle, wristTargetAngle;
     private boolean dumping;
     private boolean toHomeEnabled;
@@ -69,16 +73,25 @@ public class Crane implements Subsystem {
 
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
         if (simulated) {
-            shoulderServo = new ServoSim();
+            shoulderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             elbowServo = new ServoSim();
             wristServo = new ServoSim();
             bucketDistanceSensor = new DistanceSensorSim(100);
         } else {
-            shoulderServo = hardwareMap.get(Servo.class, "firstLinkServo");
+            shoulderMotor = hardwareMap.get(DcMotorEx.class, "firstLinkMotor");
+            shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             elbowServo = hardwareMap.get(Servo.class, "secondLinkServo");
             wristServo = hardwareMap.get(Servo.class, "bucketServo");
             bucketDistanceSensor = hardwareMap.get(DistanceSensor.class, "distBucket");
         }
+        shoulderPID = new PIDController(SHOULDER_PID, (theta) -> kF * theta * Math.cos(shoulderAngle));
+        shoulderPID.setInputRange(SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
+        shoulderPID.setOutputRange(-1.0, 1.0);
+        shoulderPID.setTolerance(SHOULDER_TOLERANCE);
+        shoulderPID.enable();
 
         this.turret = turret;
         articulation = Articulation.MANUAL;
@@ -333,7 +346,15 @@ public class Crane implements Subsystem {
         if (wristTargetAngle > 180)
             wristTargetAngle -= 360;
 
-        shoulderServo.setPosition(servoNormalize(shoulderServoValue(shoulderTargetAngle)));
+        shoulderPosition = shoulderMotor.getCurrentPosition();
+        shoulderAngle = SHOULDER_START_ANGLE + wrapAngle(shoulderPosition / SHOULDER_TICKS_PER_DEGREE);
+
+        shoulderPID.setPID(SHOULDER_PID);
+        shoulderPID.setSetpoint(shoulderTargetAngle);
+        shoulderPID.setInput(shoulderAngle);
+        shoulderCorrection = shoulderPID.performPID();
+        shoulderMotor.setPower(shoulderCorrection);
+
         elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
         wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
 
@@ -364,7 +385,9 @@ public class Crane implements Subsystem {
             telemetryMap.put("Wrist Target Angle", wristTargetAngle);
             telemetryMap.put("Wrist Dump Angle", currentDumpPos);
 
-            telemetryMap.put("Shoulder Target PWM", shoulderServoValue(shoulderTargetAngle));
+            telemetryMap.put("Shoulder Angle", shoulderAngle);
+            telemetryMap.put("Shoulder Ticks", shoulderPosition);
+
             telemetryMap.put("Elbow Target PWM", elbowServoValue(elbowTargetAngle));
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
 
@@ -411,14 +434,6 @@ public class Crane implements Subsystem {
     // ----------------------------------------------------------------------------------------------
     // Getters And Setters
     // ----------------------------------------------------------------------------------------------
-
-    // take the supplied relative-to-home target value in degrees
-    // and convert to servo setting
-    private double shoulderServoValue(double targetPos) {
-        double newPos = Range.clip(targetPos, SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
-        newPos = newPos * SHOULDER_PWM_PER_DEGREE + SHOULDER_HOME_PWM;
-        return newPos;
-    }
 
     private double elbowServoValue(double targetPos) {
         double newPos = Range.clip(targetPos, ELBOW_DEG_MIN, ELBOW_DEG_MAX);

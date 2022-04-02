@@ -12,17 +12,17 @@ import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-public class MinimalFollower extends TrajectoryFollower {
+public class CloneFollower extends TrajectoryFollower {
 
-    private PIDFController axialController, headingController;
+    private PIDFController axialController, crossTrackController;
     private Pose2d admissibleError;
     private double timeout;
     private NanoClock clock;
     private Pose2d lastError;
 
-    public MinimalFollower(PIDCoefficients axialCoeffs, PIDCoefficients headingCoeffs, Pose2d admissibleError, double timeout) {
+    public CloneFollower(PIDCoefficients axialCoeffs, PIDCoefficients crossTrackCoeffs, Pose2d admissibleError, double timeout) {
         axialController = new PIDFController(axialCoeffs);
-        headingController = new PIDFController(headingCoeffs);
+        crossTrackController = new PIDFController(crossTrackCoeffs);
         this.admissibleError = admissibleError;
         this.timeout = timeout;
         clock = NanoClock.system();
@@ -30,9 +30,9 @@ public class MinimalFollower extends TrajectoryFollower {
     }
 
     @Override
-     public void followTrajectory(Trajectory trajectory) {
+    public void followTrajectory(Trajectory trajectory) {
         axialController.reset();
-        headingController.reset();
+        crossTrackController.reset();
 
         super.followTrajectory(trajectory);
     }
@@ -64,11 +64,14 @@ public class MinimalFollower extends TrajectoryFollower {
 
         axialController.setTargetPosition(poseError.getX());
         axialController.setTargetVelocity(targetRobotVel.getX());
-        headingController.setTargetPosition(poseError.getHeading());
-        headingController.setTargetVelocity(targetRobotVel.getHeading());
+        crossTrackController.setTargetPosition(poseError.getY());
+        crossTrackController.setTargetVelocity(targetRobotVel.getY());
 
         double axialCorrection = axialController.update(0.0, currentRobotVel.getX());
-        double headingCorrection = headingController.update(0.0, currentRobotVel.getHeading());
+        double headingCorrection = Math.signum(
+                targetVel.vec().dot(currentPose.headingVec()) *
+                crossTrackController.update(0.0, currentRobotVel.getY())
+        );
 
         Pose2d correctedVelocity = targetRobotVel.plus(
                 new Pose2d(

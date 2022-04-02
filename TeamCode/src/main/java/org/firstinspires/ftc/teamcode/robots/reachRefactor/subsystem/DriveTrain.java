@@ -29,6 +29,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.CloneFollower;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.MinimalFollower;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TrikeKinematics;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
@@ -59,8 +60,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public static double B = 0.005;
     public static double ZETA = 0.01;
-    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(6, 0, 0);
-    public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(4, 0, 0);
+    public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -124,7 +125,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         this.simulated = simulated;
         // TrajectoryFollower follower = new RamseteFollower(B, ZETA, new Pose2d(0.5,
         // 0.5, Math.toRadians(5)), 3);
-        TrajectoryFollower follower = new TankPIDVAFollower(AXIAL_PID, CROSS_AXIAL_PID,
+        TrajectoryFollower follower = new CloneFollower(AXIAL_PID, CROSS_AXIAL_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5)), 1.5);
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 

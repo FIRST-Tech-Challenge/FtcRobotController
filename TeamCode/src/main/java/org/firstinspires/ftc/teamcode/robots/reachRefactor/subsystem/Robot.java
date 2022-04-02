@@ -221,12 +221,12 @@ public class Robot implements Subsystem {
 
     private StateMachine dumpAndSetCraneForTransfer = getStateMachine(new Stage())
             .addTimedState(1f, () -> crane.dump(), () -> {})
-            .addSingleState(() -> { crane.setToHomeEnabled(false); })
-            .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
-            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+//            .addSingleState(() -> { crane.setToHomeEnabled(false); })
+//            .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
+//            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
-            .addSingleState(() -> { crane.setToHomeEnabled(true); })
+//            .addSingleState(() -> { crane.setToHomeEnabled(true); })
             .build();
 
     private StateMachine transfer = getStateMachine(new Stage())

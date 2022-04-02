@@ -7,7 +7,7 @@
             <RevRoboticsCoreHexMotor name="turret" port="0" />
             <RevRobotics40HDHexMotor name="motorMiddle" port="2" />
             <Servo name="bucketServo" port="2" />
-            <Servo name="firstLinkServo" port="1" />
+            <RevRobotics40HDHexMotor name="firstLinkMotor" port="1" />
             <Servo name="secondLinkServo" port="0" />
             <REV_VL53L0X_RANGE_SENSOR name="distBucket" port="1" bus="2" />
         </LynxModule>
