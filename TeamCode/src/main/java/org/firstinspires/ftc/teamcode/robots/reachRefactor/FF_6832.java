@@ -445,11 +445,11 @@ public class FF_6832 extends OpMode {
         }
 
         // joint gamepad controls
-        if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right || stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) && robot.crane.getArticulation() == Crane.Articulation.MANUAL && alliance == Alliance.BLUE)
+        if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_left) && robot.crane.getArticulation() == Crane.Articulation.MANUAL && alliance == Alliance.BLUE)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
 //        if((stickyGamepad1.dpad_down || stickyGamepad2.dpad_down) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
 //            robot.crane.articulate(Crane.Articulation.SHARED_SHIPPING_HUB);
-        if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right || stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) && robot.crane.getArticulation() == Crane.Articulation.MANUAL && alliance == Alliance.RED)
+        if((stickyGamepad2.dpad_right || stickyGamepad1.dpad_left) && robot.crane.getArticulation() == Crane.Articulation.MANUAL && alliance == Alliance.RED)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
         if((stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
             robot.crane.articulate(Crane.Articulation.HOME);
