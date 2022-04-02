@@ -61,7 +61,7 @@ public abstract class Teleop extends LinearOpMode {
     ElapsedTime turretDelayTimer     = new ElapsedTime();
     boolean     waitForTurretServo   = false;
     double      waitForTurretMsec    = 0.0; // wait time (msec)
-    boolean     needTurretRotated    = false;
+    boolean     autoRotateTurret     = false; // Rotate toward shared hub
 
     double    wristServoPos = 0.950;          // Servo setting to target once arm movement starts (WRIST_SERVO_INIT)
 
@@ -658,7 +658,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
-            needTurretRotated    = true;
+            autoRotateTurret     = true;
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;  // TOP + ROTATE!
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -764,19 +764,21 @@ public abstract class Teleop extends LinearOpMode {
             freightArmCycleCount--;
         }
         else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_CHECK ) {
+            // If we're still moving then HOLD at this freightArmCycleCount value
             if( robot.freightMotorAuto ) {
-                // still moving; hold at this cycle count
+                // While waiting, see if we're clear to start rotating 
+                // freight arm turret around toward the alliance hub?
+                if( autoRotateTurret && (robot.freightMotorPos >= robot.FREIGHT_ARM_POS_ROT_TURRET) ) {
+                    robot.turretPositionSet( turretAllianceHubAngle );
+                    autoRotateTurret = false;
+                }
             }
             else { // arm motor is stopped, but arm may be bouncing
                 freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;
                 freightArmDelayTimer.reset();
-                // Do we need to rotate the freight arm turret toward the alliance hub?
-                if( needTurretRotated ) {
-                    robot.turretPositionSet( turretAllianceHubAngle );
-                    needTurretRotated = false;
-                }
             }
-        } else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SETTLE) {
+        }
+        else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SETTLE) {
             if( freightArmDelayTimer.milliseconds() > 500 ) {
                 freightArmCycleCount--;
                 // If we stopped in COLLECT position then sweeper will be
@@ -987,41 +989,41 @@ public abstract class Teleop extends LinearOpMode {
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
-        double fineControlSpeed = 0.15;
-        double autoDriveSpeed   = 0.40;
-        double fineTurnSpeed    = 0.05;
+        double fineDriveSpeed  = 0.15;
+        double fineStrafeSpeed = 0.25;
+        double autoDriveSpeed  = 0.40;
+        double fineTurnSpeed   = 0.05;
         boolean dPadMode = true;
         // Only process 1 Dpad button at a time
         if( gamepad1.dpad_up ) {
             telemetry.addData("Dpad","FORWARD");
-            frontLeft  = fineControlSpeed;
-            frontRight = fineControlSpeed;
-            rearLeft   = fineControlSpeed;
-            rearRight  = fineControlSpeed;
+            frontLeft  = fineDriveSpeed;
+            frontRight = fineDriveSpeed;
+            rearLeft   = fineDriveSpeed;
+            rearRight  = fineDriveSpeed;
         }
         else if( gamepad1.dpad_down ) {
             telemetry.addData("Dpad","BACKWARD");
-            frontLeft  = -fineControlSpeed;
-            frontRight = -fineControlSpeed;
-            rearLeft   = -fineControlSpeed;
-            rearRight  = -fineControlSpeed;
+            frontLeft  = -fineDriveSpeed;
+            frontRight = -fineDriveSpeed;
+            rearLeft   = -fineDriveSpeed;
+            rearRight  = -fineDriveSpeed;
         }
-/* DISABLE D-PAD LEFT/RIGHT STRAFE FOR THIS SEASON
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","LEFT");
-            frontLeft  = -fineControlSpeed;
-            frontRight =  fineControlSpeed;
-            rearLeft   =  fineControlSpeed;
-            rearRight  = -fineControlSpeed;
+            frontLeft  = -fineStrafeSpeed;
+            frontRight =  fineStrafeSpeed;
+            rearLeft   =  fineStrafeSpeed;
+            rearRight  = -fineStrafeSpeed;
         }
         else if( gamepad1.dpad_right ) {
             telemetry.addData("Dpad","RIGHT");
-            frontLeft  =  fineControlSpeed;
-            frontRight = -fineControlSpeed;
-            rearLeft   = -fineControlSpeed;
-            rearRight  =  fineControlSpeed;
+            frontLeft  =  fineStrafeSpeed;
+            frontRight = -fineStrafeSpeed;
+            rearLeft   = -fineStrafeSpeed;
+            rearRight  =  fineStrafeSpeed;
         }
-*  INSTEAD USE LEFT/RIGHT FOR FINE-TURNING CONTROL */
+/*  INSTEAD USE LEFT/RIGHT FOR FINE-TURNING CONTROL
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","TURN");
             frontLeft  = -fineTurnSpeed;
@@ -1036,6 +1038,7 @@ public abstract class Teleop extends LinearOpMode {
             rearLeft   =  fineTurnSpeed;
             rearRight  = -fineTurnSpeed;
         }
+ */
         else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
             telemetry.addData("Touchpad","FORWARD");
             frontLeft  = autoDriveSpeed;
