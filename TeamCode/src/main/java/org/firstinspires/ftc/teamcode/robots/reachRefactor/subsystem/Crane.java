@@ -31,17 +31,18 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 
 @Config(value = "FFCrane")
 public class Crane implements Subsystem {
-    public static int SHOULDER_START_ANGLE = -90;
+    public static int SHOULDER_START_ANGLE = 90;
     public static int ELBOW_HOME_PWM = 1500;
     public static int WRIST_HOME_PWM = 1500;
 
-    public static double SHOULDER_TICKS_PER_DEGREE = 643.0 / 90.0;
+    public static double SHOULDER_TICKS_PER_DEGREE = 7.65;
     public static double ELBOW_PWM_PER_DEGREE = -600.0 / 90.0;
     public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0;
 
     public static double kF = 0.0;
-    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.01a, 0, 0);
+    public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.01, 0, 0);
     public static double SHOULDER_TOLERANCE = 1;
+    public static double SHOULDER_POWER = 1.0;
 
     public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
     public static double SHOULDER_DEG_MAX = 90; // of the robot
@@ -80,7 +81,8 @@ public class Crane implements Subsystem {
         } else {
             shoulderMotor = hardwareMap.get(DcMotorEx.class, "firstLinkMotor");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            shoulderMotor.setTargetPosition(0);
+            shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             elbowServo = hardwareMap.get(Servo.class, "secondLinkServo");
@@ -110,9 +112,9 @@ public class Crane implements Subsystem {
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
 //        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
-        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 0.85f),
-        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, -90, 1.25f),
-        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 5, 90, 1.25f),
+        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, 0.85f),
+        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, -90, 1.25f),
+        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, 90, 1.25f),
         TRANSFER(-40, -60, -20, 0, 0.4f, 0),
         POST_DUMP(0, 130, 90, 0.6f, 0),
 
@@ -347,13 +349,16 @@ public class Crane implements Subsystem {
             wristTargetAngle -= 360;
 
         shoulderPosition = shoulderMotor.getCurrentPosition();
-        shoulderAngle = SHOULDER_START_ANGLE + wrapAngle(shoulderPosition / SHOULDER_TICKS_PER_DEGREE);
+        shoulderAngle = SHOULDER_START_ANGLE + shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
+//
+//        shoulderPID.setPID(SHOULDER_PID);
+//        shoulderPID.setSetpoint(shoulderTargetAngle);
+//        shoulderPID.setInput(shoulderAngle);
+//        shoulderCorrection = shoulderPID.performPID();
 
-        shoulderPID.setPID(SHOULDER_PID);
-        shoulderPID.setSetpoint(shoulderTargetAngle);
-        shoulderPID.setInput(shoulderAngle);
-        shoulderCorrection = shoulderPID.performPID();
-        shoulderMotor.setPower(shoulderCorrection);
+//        shoulderMotor.setPower(shoulderCorrection);
+        shoulderMotor.setTargetPosition((int) ((shoulderTargetAngle - SHOULDER_START_ANGLE) * SHOULDER_TICKS_PER_DEGREE));
+        shoulderMotor.setPower(SHOULDER_POWER);
 
         elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
         wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));

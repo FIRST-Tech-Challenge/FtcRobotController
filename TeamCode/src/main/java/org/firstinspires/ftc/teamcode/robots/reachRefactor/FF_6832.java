@@ -438,18 +438,18 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad2.left_bumper) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
-            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
+            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);/**booty loose**/
         if(stickyGamepad2.x) {
             robot.gripper.set();
             robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
         }
 
         // joint gamepad controls
-        if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_left) && robot.crane.getArticulation() == Crane.Articulation.MANUAL && alliance == Alliance.BLUE)
+        if(stickyGamepad1.dpad_right && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_RIGHT);
 //        if((stickyGamepad1.dpad_down || stickyGamepad2.dpad_down) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
 //            robot.crane.articulate(Crane.Articulation.SHARED_SHIPPING_HUB);
-        if((stickyGamepad2.dpad_right || stickyGamepad1.dpad_left) && robot.crane.getArticulation() == Crane.Articulation.MANUAL && alliance == Alliance.RED)
+        if(stickyGamepad1.dpad_left && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
             robot.crane.articulate(Crane.Articulation.HIGH_TIER_LEFT);
         if((stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) && robot.crane.getArticulation() == Crane.Articulation.MANUAL)
             robot.crane.articulate(Crane.Articulation.HOME);

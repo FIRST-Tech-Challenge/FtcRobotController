@@ -15,18 +15,13 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 public class CloneFollower extends TrajectoryFollower {
 
     private PIDFController axialController, crossTrackController;
-    private Pose2d admissibleError;
-    private double timeout;
-    private NanoClock clock;
     private Pose2d lastError;
 
     public CloneFollower(PIDCoefficients axialCoeffs, PIDCoefficients crossTrackCoeffs, Pose2d admissibleError, double timeout) {
+        super(admissibleError, timeout, NanoClock.system());
         axialController = new PIDFController(axialCoeffs);
         crossTrackController = new PIDFController(crossTrackCoeffs);
-        this.admissibleError = admissibleError;
-        this.timeout = timeout;
-        clock = NanoClock.system();
-        lastError = new Pose2d();
+        lastError = new Pose2d();//peen lol PEEN
     }
 
     @Override
