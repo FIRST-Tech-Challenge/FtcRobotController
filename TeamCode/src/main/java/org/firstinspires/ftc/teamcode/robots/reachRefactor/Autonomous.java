@@ -19,8 +19,15 @@ public class Autonomous {
     public VisionProvider visionProvider;
     private Robot robot;
 
+    enum Mode {
+        LINEAR, SPLINE, NO_RR, SIMPLE;
+    }
+
     // autonomous routines
-    private StateMachine blueUp, redUp, blueDown, redDown, blueUpLinear, redUpLinear, blueDownLinear, redDownLinear, blueUpSimple, redUpSimple, blueDownSimple, redDownSimple;
+    private StateMachine blueUp, redUp, blueDown, redDown,
+            blueUpLinear, redUpLinear, blueDownLinear, redDownLinear,
+            blueUpNoRR, redUpNoRR, blueDownNoRR, redDownNoRR,
+            blueUpSimple, redUpSimple, blueDownSimple, redDownSimple;
     // misc. routines
     public StateMachine backAndForth, square, turn, lengthTest, diagonalTest;
 
@@ -28,43 +35,58 @@ public class Autonomous {
         this.robot = robot;
     }
 
-    public StateMachine getStateMachine(Constants.Position startingPosition, boolean spline) {
-        if(spline)
-            switch(startingPosition) {
-                case START_BLUE_UP:
-                    return blueUp;
-                case START_RED_UP:
-                    return redUp;
-                case START_BLUE_DOWN:
-                    return blueDown;
-                case START_RED_DOWN:
-                    return redDown;
-            }
-        else
-            switch(startingPosition) {
-                case START_BLUE_UP:
-                    return blueUpLinear;
-                case START_RED_UP:
-                    return redUpLinear;
-                case START_BLUE_DOWN:
-                    return blueDownLinear;
-                case START_RED_DOWN:
-                    return redDownLinear;
-            }
-        return null;
-    }
-
-    public StateMachine getStateMachineSimple(Constants.Position startingPosition) {
-        switch(startingPosition) {
-            case START_BLUE_UP:
-                return blueUpSimple;
-            case START_RED_UP:
-                return redUpSimple;
-            case START_BLUE_DOWN:
-                return blueDownSimple;
-            case START_RED_DOWN:
-                return redDownSimple;
+    public StateMachine getStateMachine(Constants.Position startingPosition, Mode mode) {
+        switch(mode) {
+            case LINEAR:
+                switch(startingPosition) {
+                    case START_BLUE_UP:
+                        return blueUp;
+                    case START_RED_UP:
+                        return redUp;
+                    case START_BLUE_DOWN:
+                        return blueDown;
+                    case START_RED_DOWN:
+                        return redDown;
+                }
+                break;
+            case SPLINE:
+                switch(startingPosition) {
+                    case START_BLUE_UP:
+                        return blueUpLinear;
+                    case START_RED_UP:
+                        return redUpLinear;
+                    case START_BLUE_DOWN:
+                        return blueDownLinear;
+                    case START_RED_DOWN:
+                        return redDownLinear;
+                }
+                break;
+            case NO_RR:
+                switch(startingPosition) {
+                    case START_BLUE_UP:
+                        return blueUpNoRR;
+                    case START_RED_UP:
+                        return redUpNoRR;
+                    case START_BLUE_DOWN:
+                        return blueDownNoRR;
+                    case START_RED_DOWN:
+                        return redDownNoRR;
+                }
+                break;
+            case SIMPLE:
+                switch(startingPosition) {
+                    case START_BLUE_UP:
+                        return blueUpSimple;
+                    case START_RED_UP:
+                        return redUpSimple;
+                    case START_BLUE_DOWN:
+                        return blueDownSimple;
+                    case START_RED_DOWN:
+                        return redDownSimple;
+                }
+                break;
         }
+
         return null;
     }
 
@@ -208,6 +230,10 @@ public class Autonomous {
                         .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                         .build();
 
+                blueUpNoRR = Utils.getStateMachine(new Stage())
+
+                        .build();
+
                 TrajectorySequence blueUp1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
                         .back(20)
                         .build();
@@ -316,6 +342,9 @@ public class Autonomous {
                             robot.crane.setToHomeEnabled(true);
                             robot.driveTrain.setUseAutonChassisLengthPID(false);
                         })
+                        .build();
+
+                redUpNoRR = Utils.getStateMachine(new Stage())
                         .build();
 
                 TrajectorySequence redUp1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
@@ -429,6 +458,9 @@ public class Autonomous {
                         .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
                         .build();
 
+                blueDownNoRR = Utils.getStateMachine(new Stage())
+                        .build();
+
                 TrajectorySequence blueDown1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
                         .back(20)
                         .build();
@@ -538,6 +570,9 @@ public class Autonomous {
                                 )
                         )
                         .addState(() -> !robot.driveTrain.trajectorySequenceRunner.isBusy())
+                        .build();
+
+                redDownNoRR = Utils.getStateMachine(new Stage())
                         .build();
 
                 TrajectorySequence redDown1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())

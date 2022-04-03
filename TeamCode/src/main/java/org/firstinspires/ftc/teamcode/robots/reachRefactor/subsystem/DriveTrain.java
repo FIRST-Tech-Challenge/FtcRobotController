@@ -37,6 +37,9 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSe
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
@@ -64,6 +67,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
+    public static PIDCoefficients CUSTOM_HEADING_PID = new PIDCoefficients(4.5, 0, 0);
+    public static double CUSTOM_HEADING_PID_TOLERANCE = 2;
+
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
     public static double ROLL_ANTI_TIP_PID_TOLERANCE = 2;
     public static PIDCoefficients PITCH_ANTI_TIP_PID = new PIDCoefficients(0, 0, 0);
@@ -90,6 +96,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private final DistanceSensor chassisLengthDistanceSensor;
 
     private final PIDController swivelPID, chassisLengthPID, rollAntiTipPID, pitchAntiTipPID, maintainHeadingPID;
+    private PIDController headingPID;
 
     private final boolean simulated;
 
@@ -211,6 +218,13 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         pitchAntiTipPID.setTolerance(PITCH_ANTI_TIP_PID_TOLERANCE);
         pitchAntiTipPID.enable();
 
+        headingPID = new PIDController(CUSTOM_HEADING_PID);
+        headingPID.setInputRange(0, Math.toRadians(360));
+        headingPID.setOutputRange(-100, 100);
+        headingPID.setContinuous(true);
+        headingPID.setTolerance(CUSTOM_HEADING_PID_TOLERANCE);
+        headingPID.enable();
+
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
         chassisLengthMode = ChassisLengthMode.BOTH;
@@ -265,6 +279,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
         pitchAntiTipPID.setPID(PITCH_ANTI_TIP_PID);
         pitchAntiTipPID.setTolerance(PITCH_ANTI_TIP_PID_TOLERANCE);
+
+        headingPID.setPID(CUSTOM_HEADING_PID);
+        headingPID.setTolerance(CUSTOM_HEADING_PID_TOLERANCE);
     }
 
     @Override
@@ -512,6 +529,55 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     // ----------------------------------------------------------------------------------------------
     // Trajectory Following
     // ----------------------------------------------------------------------------------------------
+
+    private double getAverageTicks() {
+        return (leftPosition + rightPosition) / 2.0;
+    }
+
+    private double driveTarget, driveHeading, driveSpeed;
+    private Stage driveStage = new Stage();
+    private StateMachine drive = Utils.getStateMachine(driveStage)
+            .addSingleState(() -> {
+                driveHeading = poseEstimate.getHeading();
+            })
+            .addState(() -> {
+                headingPID.setSetpoint(driveHeading);
+                headingPID.setInput(poseEstimate.getHeading());
+                double correction = headingPID.performPID();
+                setDriveSignal(new DriveSignal(new Pose2d(driveSpeed, 0, correction), new Pose2d(0, 0, 0)));
+                return getAverageTicks() < driveTarget;
+            })
+            .addSingleState(() -> {
+                setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
+            })
+            .build();
+    public boolean driveAsync(double driveDistance, double driveVelocity) {
+        this.driveTarget = driveDistance * DIFF_TICKS_PER_INCH + getAverageTicks();
+        this.driveSpeed = driveSpeed;
+        return drive.execute();
+    }
+
+    private double turnAngle;
+    private Stage turnStage = new Stage();
+    private StateMachine turn = Utils.getStateMachine(turnStage)
+            .addSingleState(() -> {
+                turnAngle += poseEstimate.getHeading();
+            })
+            .addState(() -> {
+                headingPID.setSetpoint(turnAngle);
+                headingPID.setInput(poseEstimate.getHeading());
+                double correction = headingPID.performPID();
+                setDriveSignal(new DriveSignal(new Pose2d(0, 0, correction), new Pose2d(0, 0, 0)));
+                return getAverageTicks() < driveTarget;
+            })
+            .addSingleState(() -> {
+                setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
+            })
+            .build();
+    public boolean turnAsync(double turnAngle) {
+        this.turnAngle = turnAngle;
+        return turn.execute();
+    }
 
     @Override
     public void setDriveSignal(@NonNull DriveSignal driveSignal) {

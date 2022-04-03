@@ -231,8 +231,8 @@ public class Robot implements Subsystem {
 
     private StateMachine transfer = getStateMachine(new Stage())
             .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
-            .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL && gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(1.0))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))

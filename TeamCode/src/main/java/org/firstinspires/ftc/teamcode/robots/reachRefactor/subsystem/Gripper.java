@@ -172,7 +172,7 @@ public class Gripper implements Subsystem {
     private final Stage transferStage = new Stage();
     private final StateMachine transfer = getStateMachine(transferStage)
             .addTimedState(() -> .1f, () -> setPitchTargetPos(PITCH_TRANSFER), () -> {})//give freight last-second momentum toward the bucket
-            .addTimedState(() -> .25f, () -> setTargetPos(RELEASE), () -> {})
+            .addTimedState(() -> .75f, () -> setTargetPos(RELEASE), () -> {})
             .addSimultaneousStates(
                     () -> { setTargetPos(CLOSED); return true; },
                     () -> { setPitchTargetPos(PITCH_VERTICAL); return true; }

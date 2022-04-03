@@ -687,15 +687,15 @@ public class FF_6832 extends OpMode {
                     handleCraneDebug();
                     break;
                 case AUTONOMOUS:
-                    if(auto.getStateMachine(startingPosition, true).execute())
+                    if(auto.getStateMachine(startingPosition, Autonomous.Mode.SPLINE).execute())
                         changeGameState(GameState.TELE_OP);
                     break;
                 case LINEAR_AUTONOMOUS:
-                    if(auto.getStateMachine(startingPosition, false).execute())
+                    if(auto.getStateMachine(startingPosition, Autonomous.Mode.LINEAR).execute())
                         changeGameState(GameState.TELE_OP);
                     break;
                 case JANK_AUTO:
-                    if(auto.getStateMachineSimple(startingPosition).execute())
+                    if(auto.getStateMachine(startingPosition, Autonomous.Mode.SIMPLE).execute())
                         changeGameState(GameState.TELE_OP);
                     break;
                 case BACK_AND_FORTH:
