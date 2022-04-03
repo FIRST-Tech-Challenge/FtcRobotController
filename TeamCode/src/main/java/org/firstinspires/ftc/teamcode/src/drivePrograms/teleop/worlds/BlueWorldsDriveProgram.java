@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "🟦Blue Worlds Drive Program🟦")
 public class BlueWorldsDriveProgram extends RedWorldsDriveProgram {
-    static {
-        defaultColor = BlinkinPattern.BLUE;
+    public BlueWorldsDriveProgram(){
+        super();
+        this.defaultColor = BlinkinPattern.BLUE;
+        this.currentPattern = this.defaultColor;
     }
 }

@@ -7,17 +7,19 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
  * A wrapper class for the Robot Voltage sensor
  */
 public class RobotVoltageSensor {
+    /**
+     * Internal voltage sensor object
+     */
     private VoltageSensor sensor;
 
     /**
-     * Gets the voltage sensor from the hardware map
+     * Gets the voltage sensor from the hardware map, stores it internally
      *
      * @param hardwareMap The OpMode hardware map
      */
     public RobotVoltageSensor(HardwareMap hardwareMap) {
-        for (com.qualcomm.robotcore.hardware.VoltageSensor _sensor : hardwareMap.voltageSensor) {
-            sensor = _sensor;
-        }
+        this.sensor = RobotVoltageSensor.extractVoltageSensor(hardwareMap);
+        assert sensor != null; //Sanity Check
     }
 
     /**
@@ -27,5 +29,17 @@ public class RobotVoltageSensor {
      */
     public double getVoltage() {
         return sensor.getVoltage();
+    }
+
+    /**
+     * Extracts a voltage sensor from the hardware map
+     * @param hardwareMap The hardware map to get a voltage sensor from
+     * @return A voltage sensor
+     */
+    public static VoltageSensor extractVoltageSensor(HardwareMap hardwareMap){
+        for (com.qualcomm.robotcore.hardware.VoltageSensor _sensor : hardwareMap.voltageSensor) {
+            return _sensor;
+        }
+        return null;
     }
 }

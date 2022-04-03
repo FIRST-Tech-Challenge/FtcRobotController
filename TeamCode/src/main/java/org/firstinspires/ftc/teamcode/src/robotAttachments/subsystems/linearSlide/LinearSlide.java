@@ -167,13 +167,6 @@ public class LinearSlide implements Controllable<Void> {
                 this.setTargetPosition(pos);
             }
 
-            if (gamepad2.dpad_left) {
-                this.setTargetLevel(HeightLevel.CappingUp);
-            }
-
-            if (gamepad2.dpad_right) {
-                this.setTargetLevel(HeightLevel.CappingDown);
-            }
 
             if (!gamepad2.dpad_up) {
                 dPadUpDepressed = true;
@@ -221,7 +214,7 @@ public class LinearSlide implements Controllable<Void> {
         return null;
     }
 
-    public void halt(){
+    public void halt() {
 
     }
 }

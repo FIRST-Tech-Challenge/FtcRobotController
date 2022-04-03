@@ -5,30 +5,31 @@ import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.StateOuttake;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
+import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyStateObject;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 @TeleOp(name = "🟥Red Worlds Drive Program🟥")
 public class RedWorldsDriveProgram extends TeleOpTemplate {
-    public static BlinkinPattern defaultColor = BlinkinPattern.RED;
-    private BlinkinPattern currentPattern;
+    protected BlinkinPattern defaultColor;
+    protected BlinkinPattern currentPattern;
     private boolean x_depressed = true;
     private boolean tapeMeasureCtrl = false;
+    StateOuttake Outtake;
+
+    public RedWorldsDriveProgram(){
+        defaultColor = BlinkinPattern.RED;
+        currentPattern = this.defaultColor;
+    }
 
     public void opModeMain() throws InterruptedException {
         this.initAll();
+        outtake = null;
+        Outtake = new StateOuttake(hardwareMap,GenericOpModeTemplate.bucketColorSensorName,GenericOpModeTemplate.bucketServoName,true);
 
-        // Fancy way of saying leds.setPattern(RedWorldsDriveProgram.defaultColor)
-        // But, it will also allow it to change to blue for the BlueWorldsDriveProgram
-
-        try {
-            currentPattern = (BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor");
-        } catch (ClassCastException | NoSuchFieldException | IllegalAccessException e) {
-            RobotLog.dd("LED Pattern Retrieval Failed", MiscUtils.getStackTraceAsString(e));
-            currentPattern = GenericOpModeTemplate.LEDErrorColor;
-        }
 
         leds.setPattern(currentPattern);
 
@@ -59,7 +60,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     turret.halt();
                     slide.halt();
                     intake.halt();
-                    outtake.halt();
+                    Outtake.halt();
                     x_depressed = false;
                 }
 
@@ -72,15 +73,11 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     slide.gamepadControl(gamepad1, gamepad2);
 
                     //Intake Controls
-                    BlinkinPattern proposedPattern = FreightFrenzyGameObject.getLEDColorFromItem(outtake.gamepadControl(gamepad1, gamepad2));
+                    BlinkinPattern proposedPattern = FreightFrenzyStateObject.getLEDColorFromItem(Outtake.gamepadControl(gamepad1, gamepad2));
                     if (proposedPattern != null) {
                         leds.setPattern(proposedPattern);
                     } else {
-                        try {
-                            leds.setPattern((BlinkinPattern) MiscUtils.getStaticMemberFromObject(this, "defaultColor"));
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                            currentPattern = GenericOpModeTemplate.LEDErrorColor;
-                        }
+                        leds.setPattern(this.defaultColor);
                     }
 
                     intake.gamepadControl(gamepad1, gamepad2);

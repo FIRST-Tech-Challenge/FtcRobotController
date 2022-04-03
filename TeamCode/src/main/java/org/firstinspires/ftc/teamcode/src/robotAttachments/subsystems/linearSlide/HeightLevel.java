@@ -9,8 +9,6 @@ public enum HeightLevel {
     BottomLevel,
     MiddleLevel,
     TopLevel,
-    CappingUp,
-    CappingDown,
     GetOverObstacles;
 
     private static final int[] heights;
@@ -32,12 +30,6 @@ public enum HeightLevel {
                 return 584;
             case MiddleLevel:
                 return 233;
-
-            case CappingUp:
-                return 500;
-
-            case CappingDown:
-                return 335;
             case BottomLevel:
             case Down:
             case GetOverObstacles:
