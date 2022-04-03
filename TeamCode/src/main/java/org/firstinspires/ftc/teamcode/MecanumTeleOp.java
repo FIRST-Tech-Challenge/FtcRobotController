@@ -68,6 +68,9 @@ public class MecanumTeleOp extends LinearOpMode {
             boolean armLimitPressed;
             boolean armLimitSwitchFlag = true;
 
+            //carousel increase
+            boolean started = false;
+
             //booleans for slow mode
             boolean bpressed = false;
             boolean rtriggerpressed = false;
@@ -169,15 +172,33 @@ public class MecanumTeleOp extends LinearOpMode {
                  * Right bumper
                  * Left Bumper
                  */
-                if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
-                    carouselPower = 0.825;
-                } else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
-                    carouselPower = -0.825;
+                if (gamepad1.right_bumper == true && !gamepad1.left_bumper) {
+                    if(!started){
+                        started = true;
+                        carouselPower = 0.5;
+                    }
+                    if(started)
+                    {
+                        carouselPower = carouselPower + 0.04;
+                    }
+                    if(carouselPower >= 0.0825)
+                        carouselPower = 0.825;
+                } else if (gamepad1.left_bumper == true && !gamepad1.right_bumper) {
+                    if(!started){
+                        started = true;
+                        carouselPower = -0.5;
+                    }
+                    if(started)
+                    {
+                        carouselPower = carouselPower - 0.04;
+                    }
+                    if(carouselPower <= -0.0825)
+                        carouselPower = -0.825;
                 } else {
                     carouselPower = 0;
+                    started = false;
                 }
                 //set power carousel
-                robot.motorCarousel.setPower(carouselPower);
 
 
                 /* Drivetrain Mecanum, Gamepad 1
@@ -268,8 +289,6 @@ public class MecanumTeleOp extends LinearOpMode {
                 telemetry.addData("Color Sensor Red:", robot.colorsensed.getNormalizedColors().red);
                 telemetry.addData("Color Sensor Blue:", robot.colorsensed.getNormalizedColors().blue);
                 telemetry.addData("Color Sensor Green:", robot.colorsensed.getNormalizedColors().green);
-
-
                 telemetry.update();
             }
     }

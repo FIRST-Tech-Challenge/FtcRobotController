@@ -147,7 +147,6 @@ public class DuckSideBluePath1 {
             closeDetectTSEPosition.schedule();
         });
 
-
     }
 
     public void execute(CommandOpMode commandOpMode){

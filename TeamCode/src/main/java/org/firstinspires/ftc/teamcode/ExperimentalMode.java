@@ -65,6 +65,9 @@ public class ExperimentalMode extends LinearOpMode {
             boolean armLimitPressed;
             boolean armLimitSwitchFlag = true;
 
+            //carousel increase
+            boolean started = false;
+
             //booleans for slow mode
             boolean bpressed = false;
             boolean rtriggerpressed = false;
@@ -167,11 +170,30 @@ public class ExperimentalMode extends LinearOpMode {
                  * Left Bumper
                  */
                 if (gamepad1.right_bumper == true && !gamepad1.left_bumper) {
+                    if(!started){
+                        started = true;
+                        carouselPower = 0.5;
+                    }
+                    if(started)
+                    {
+                        carouselPower = carouselPower + 0.04;
+                    }
+                    if(carouselPower >= 0.0825)
                     carouselPower = 0.825;
                 } else if (gamepad1.left_bumper == true && !gamepad1.right_bumper) {
+                    if(!started){
+                        started = true;
+                        carouselPower = -0.5;
+                    }
+                    if(started)
+                    {
+                        carouselPower = carouselPower - 4;
+                    }
+                    if(carouselPower <= -0.0825)
                     carouselPower = -0.825;
                 } else {
                     carouselPower = 0;
+                    started = false;
                 }
                 //set power carousel
                 robot.motorCarousel.setPower(carouselPower);
