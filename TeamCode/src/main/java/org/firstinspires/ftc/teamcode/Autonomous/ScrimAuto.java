@@ -49,7 +49,7 @@ public class ScrimAuto extends LinearOpMode {
         robot.goToPosition(1,-29,84, 0 ,0.5);
 //        robot.partOfPolySplineToPositionHead(1,68,-32, 81,-27,99,-21,99,-12,true,true,0.5);
 //        robot.partOfPolySplineToPositionHead(1, 81,-27,99,-21,99,-16, 99,0,true,true,0.5);
-        if(!robot.autoIntake(0.2,10)){
+        if(!robot.autoIntake(0.2,10,0)){
             stop();
         }
         robot.goToPosition(0,-29,84,90,0.5);

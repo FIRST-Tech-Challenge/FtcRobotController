@@ -75,6 +75,16 @@ public class IMUChassis extends BasicChassis {
     }
 
     @Override
+    public void setRightMotorPowers(double power) {
+
+    }
+
+    @Override
+    public void setLeftMotorPowers(double power) {
+
+    }
+
+    @Override
     public void setMotorPowers(double power) {
 
     }

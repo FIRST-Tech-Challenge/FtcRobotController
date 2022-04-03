@@ -33,10 +33,10 @@ public class CarouselCR
 
     public void spinCarousel() { // This is for Blue side
         if(op.gamepad1.dpad_right){
-            crServo.setPower(-0.4);
+            crServo.setPower(-1.0);
         }
         else if(op.gamepad1.dpad_left){
-            crServo.setPower(0.4);
+            crServo.setPower(1.0);
 
         }
         else{
@@ -55,16 +55,17 @@ public class CarouselCR
         }
 
     public  void spinCarouselAutonomousBlue (){
-        speed =CAROUSEL_STOP - CAROUSEL_SPEED ;
-        crServo.setPower(-0.26);
-        op.sleep(4000);
+        crServo.setPower(-1.0);
+        op.sleep(2500);
         crServo.setPower(0);
 
     }
-
+    public void setCarouselSpeed(double power){
+        crServo.setPower(power);
+    }
         public  void spinCarouselAutonomousRed (){
-            crServo.setPower(0.26);
-            op.sleep(4000);
+            crServo.setPower(1.0);
+            op.sleep(2500);
             crServo.setPower(0);
         }
 

@@ -32,9 +32,9 @@ public class VSLAMChassis extends BasicChassis {
     VuforiaThread vuforia = null;
     public static T265Camera slamra;
     double deltaAngle=0;
-    double xVelocity = 0;
-    double yVelocity = 0;
-    double aVelocity = 0;
+    public static double xVelocity = 0;
+    public static double yVelocity = 0;
+    public static double aVelocity = 0;
     public static double Velocity=0;
     double maxVelocity=0;
     boolean bad = false;
@@ -49,7 +49,7 @@ public class VSLAMChassis extends BasicChassis {
     public static float ypos = 0;
     public static float angle=0;
     public static boolean barrier = false;
-    double differtime=0.002;
+    public static double differtime=0.002;
     final double[] velocity = {0,0,0};
     double power = .30, correction;
 
@@ -113,7 +113,14 @@ public class VSLAMChassis extends BasicChassis {
 
     public void navigate() {//navigation.navigate(op);
     }
-
+    public void setRightMotorPowers(double power){
+        motorRightBack.setPower(power);
+        motorRightFront.setPower(power);
+    }
+    public void setLeftMotorPowers(double power){
+        motorLeftBack.setPower(power);
+        motorLeftFront.setPower(power);
+    }
     public boolean goToPositionTeleop(double xPosition, double yPosition, double newangle, double power) {
         double x =xPosition;
         double y= yPosition;
