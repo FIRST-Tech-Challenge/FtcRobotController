@@ -5,16 +5,20 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.sun.tools.javac.jvm.Gen;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 /*
  * This is an example of a more complex path to really test the tuning.
  */
 @Autonomous(group = "drive")
-public class SplineTest extends LinearOpMode {
+public class SplineTest extends GenericOpModeTemplate {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
+        this.initOdometryServos();
+        podServos.lower();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         waitForStart();

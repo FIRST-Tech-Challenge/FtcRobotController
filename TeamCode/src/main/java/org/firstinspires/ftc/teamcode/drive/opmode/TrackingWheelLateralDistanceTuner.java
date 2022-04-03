@@ -63,9 +63,9 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
  * precision. The heading should still line up.
  */
 @Config
-@TeleOp(group = "drive")
+@TeleOp(group = "drive",name = "TrackingWheelLateralDistanceTuner")
 public class TrackingWheelLateralDistanceTuner extends GenericOpModeTemplate {
-    public static int NUM_TURNS = 10;
+    public static int NUM_TURNS = 15;
 
     @Override
     public void opModeMain() throws InterruptedException {
