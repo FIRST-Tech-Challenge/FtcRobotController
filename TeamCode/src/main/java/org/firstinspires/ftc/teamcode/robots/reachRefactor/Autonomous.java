@@ -231,7 +231,7 @@ public class Autonomous {
                         .build();
 
                 blueUpNoRR = Utils.getStateMachine(new Stage())
-
+                        .addState(() -> robot.driveTrain.turnAsync(90))
                         .build();
 
                 TrajectorySequence blueUp1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())

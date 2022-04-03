@@ -447,6 +447,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
+        telemetryMap.put("getAverageTicks", getAveragePos());
+        telemetryMap.put("driveTarget", driveTarget);
 
         telemetryMap.put("duck game enabled", duckGameEnabled);
         if (debug) {
@@ -530,7 +532,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     // Trajectory Following
     // ----------------------------------------------------------------------------------------------
 
-    private double getAverageTicks() {
+    private double getAveragePos() {
         return (leftPosition + rightPosition) / 2.0;
     }
 
@@ -545,16 +547,25 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                 headingPID.setInput(poseEstimate.getHeading());
                 double correction = headingPID.performPID();
                 setDriveSignal(new DriveSignal(new Pose2d(driveSpeed, 0, correction), new Pose2d(0, 0, 0)));
-                return getAverageTicks() < driveTarget;
-            })
-            .addSingleState(() -> {
-                setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
+                return getAveragePos() > driveTarget;
             })
             .build();
-    public boolean driveAsync(double driveDistance, double driveVelocity) {
-        this.driveTarget = driveDistance * DIFF_TICKS_PER_INCH + getAverageTicks();
-        this.driveSpeed = driveSpeed;
-        return drive.execute();
+
+    boolean driveAsyncInitialized = false;
+    public boolean driveAsync(double driveDistance, double driveSpeed) {
+        if(!driveAsyncInitialized) {
+            this.driveTarget = driveDistance + getAveragePos();
+            this.driveSpeed = driveSpeed;
+            driveAsyncInitialized = true;
+        }
+
+        if(drive.execute()){
+            setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
+
+            driveAsyncInitialized = false;
+            return true;
+        }
+        return false;
     }
 
     private double turnAngle;
@@ -568,15 +579,17 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                 headingPID.setInput(poseEstimate.getHeading());
                 double correction = headingPID.performPID();
                 setDriveSignal(new DriveSignal(new Pose2d(0, 0, correction), new Pose2d(0, 0, 0)));
-                return getAverageTicks() < driveTarget;
-            })
-            .addSingleState(() -> {
-                setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
+                return getAveragePos() < driveTarget;
             })
             .build();
     public boolean turnAsync(double turnAngle) {
         this.turnAngle = turnAngle;
-        return turn.execute();
+
+        if(turn.execute()){
+            setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
+            return true;
+        }
+        return false;
     }
 
     @Override

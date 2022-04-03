@@ -165,6 +165,7 @@ public class FF_6832 extends OpMode {
     public enum GameState {
         AUTONOMOUS("Autonomous", true),
         LINEAR_AUTONOMOUS("Linear Autonomous", true),
+        NO_RR("no RR", true),
         JANK_AUTO("Jank Auto", true),
 
         TELE_OP("Tele-Op"),
@@ -696,6 +697,10 @@ public class FF_6832 extends OpMode {
                     break;
                 case JANK_AUTO:
                     if(auto.getStateMachine(startingPosition, Autonomous.Mode.SIMPLE).execute())
+                        changeGameState(GameState.TELE_OP);
+                    break;
+                case NO_RR:
+                    if(auto.getStateMachine(startingPosition, Autonomous.Mode.NO_RR).execute())
                         changeGameState(GameState.TELE_OP);
                     break;
                 case BACK_AND_FORTH:
