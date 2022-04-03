@@ -4,9 +4,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
@@ -26,26 +26,29 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @Config
 @Autonomous(group = "drive")
-public class BackAndForth extends LinearOpMode {
+public class BackAndForth extends GenericOpModeTemplate {
 
     public static double DISTANCE = 50;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void opModeMain() throws InterruptedException {
+        this.initOdometryServos();
+        podServos.lower();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
-                .build();
-
-        Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
-                .back(DISTANCE)
-                .build();
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+            Trajectory trajectoryForward = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    .forward(DISTANCE)
+                    .build();
+
             drive.followTrajectory(trajectoryForward);
+
+            Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
+                    .back(DISTANCE)
+                    .build();
+
             drive.followTrajectory(trajectoryBackward);
         }
     }
