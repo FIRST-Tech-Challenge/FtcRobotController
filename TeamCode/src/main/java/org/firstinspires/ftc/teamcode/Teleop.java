@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.HardwareBothHubs.TurretPosition;
 
 /**
  * TeleOp Full Control.
@@ -106,7 +107,7 @@ public abstract class Teleop extends LinearOpMode {
     // These are set in the alliance-specific teleops
     double      duckVelocityNow;
     double      duckVelocityStep;
-    double      turretAllianceHubAngle;
+    TurretPosition      turretAllianceHubAngle;
 
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
     boolean   rangeSensorsEnabled = true;  // enable only when designing an Autonomous plan (takes time!)
@@ -251,6 +252,8 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Freight Arm", "%d cts %.2f mA", robot.freightMotorPos, robot.freightMotorAmps );
             telemetry.addData("Turret Servo", "%.3f (commanded) %d", robot.turretServo.getPosition(),
                     ((waitForTurretServo)? 1:0) );
+            telemetry.addData("Turret Servo Enc", "%d cts stability %d stable %d", robot.turretEncoderPos,
+                    robot.turretEncStableCts, ((robot.isTurretStable(robot.turretSetPos))? 1:0) );
             telemetry.addData("Capping Arm", "%d cts %.2f mA", robot.cappingMotorPos, robot.cappingMotorAmps );
             telemetry.addData("Capping Wrist", "%.3f (commanded)", robot.wristServo.getPosition() );
             if( rangeSensorsEnabled ) {
@@ -498,7 +501,7 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     boolean safeToSwingRight() {
         double currentElev   = robot.freightMotorPos;
-        double currentAngle  = robot.turretServoPos;
+        double currentAngle  = robot.turretTartgetPos;
         boolean frontControl   = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
         double turretDecrement = (frontControl)? turretStepSize : (3.0 * turretStepSize);
         double proposedAngle = currentAngle - turretDecrement; // RIGHT
@@ -522,7 +525,7 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     boolean safeToSwingLeft() {
         double currentElev   = robot.freightMotorPos;
-        double currentAngle  = robot.turretServoPos;
+        double currentAngle  = robot.turretTartgetPos;
         boolean frontControl   = (robot.freightMotorPos < robot.FREIGHT_ARM_POS_VERTICAL);
         double turretIncrement = (frontControl)? turretStepSize : (3.0 * turretStepSize);
         double proposedAngle = currentAngle + turretIncrement;  // LEFT
@@ -548,7 +551,8 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void centerTurretArm() {
-        double deltaPosition = Math.abs( robot.turretServoPos - robot.TURRET_SERVO_CENTERED );
+        // This function will have to be revamped to use encoder counts
+        double deltaPosition = Math.abs( robot.turretTartgetPos - robot.turretMap.get( TurretPosition.CENTERED ));
         // Are we already there?
         if( deltaPosition < 0.002 ) {
             waitForTurretServo = false;
@@ -559,7 +563,7 @@ public abstract class Teleop extends LinearOpMode {
             waitForTurretMsec  = deltaPosition * 3000;   // 0.500 travel takes 1500 msec 
         }
         // Re-command the center position either way (just to be safe) and reset counter
-        robot.turretPositionSet( robot.TURRET_SERVO_CENTERED );
+        robot.turretPositionSet( TurretPosition.CENTERED );
         turretDelayTimer.reset();
     } // centerTurretArm
     
@@ -589,7 +593,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad2 SHARE button
         if( gamepad2_share_now && !gamepad2_share_last )
         {
-            robot.turretPositionSet( robot.TURRET_SERVO_CENTERED );
+            robot.turretPositionSet( TurretPosition.CENTERED );
             robot.freightArmPosInit( robot.FREIGHT_ARM_POS_COLLECT );
             freightArmTarget  = robot.FREIGHT_ARM_POS_COLLECT;
             robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
@@ -612,6 +616,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
+//            robot.turretPositionSet(TurretPosition.CENTERED);
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_TRANSPORT1;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -628,6 +633,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
+//            robot.turretPositionSet(TurretPosition.CENTERED);
             // We lower from front-dump really fast.  Get the servo moving
             // so the front edge of box isn't pointing down!
             robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
@@ -648,6 +654,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
+//            robot.turretPositionSet(TurretPosition.CENTERED);
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -658,6 +665,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
+//            robot.turretPositionSet(TurretPosition.CENTERED);
             autoRotateTurret     = true;
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;  // TOP + ROTATE!
@@ -669,6 +677,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
+//            robot.turretPositionSet(TurretPosition.CENTERED);
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_SHARED;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -679,6 +688,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             centerTurretArm();
+//            robot.turretPositionSet(TurretPosition.CENTERED);
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_BOTTOM;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -726,6 +736,9 @@ public abstract class Teleop extends LinearOpMode {
         if( freightArmCycleCount >= FREIGHT_CYCLECOUNT_START ) {
             // Collector arm must be raised before any freight arm motion is commanded
             if( collectorArmRaised ) {
+//                if( !robot.isTurretStable( TurretPosition.CENTERED ) ) {
+//                    // Do nothing (wait for servo to rotate back to center
+//                }
                 if( waitForTurretServo ) {
                     if( turretDelayTimer.milliseconds() >= waitForTurretMsec ) {
                         waitForTurretServo = false;

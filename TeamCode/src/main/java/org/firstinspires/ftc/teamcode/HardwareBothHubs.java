@@ -29,12 +29,15 @@ import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Hardware class for goBilda robot (15"x15" chassis with 6" Andymark mecanum wheels)
@@ -203,13 +206,37 @@ public class HardwareBothHubs
     public int          TURRET_LEFT_MAX            = 1780;  // ... maximum before we hit the other upright
 
     public Servo        turretServo                = null;
-    public double       TURRET_SERVO_INIT          = 0.505; // we init to the position needed to STORE the freight arm
-    public double       TURRET_SERVO_CENTERED      = 0.505;
-    public double       TURRET_SERVO_SHARED_LEFT   = 0.550; // fixed shift LEFT for use on the shared hub
-    public double       TURRET_SERVO_SHARED_RIGHT  = 0.450; // fixed shift RIGHT for use on the shared hub
-    public double       TURRET_SERVO_BLUE_ALLIANCE = 0.770; // fixed shift LEFT  for use on the alliance hub
-    public double       TURRET_SERVO_RED_ALLIANCE  = 0.240; // fixed shift RIGHT for use on the alliance hub
-    public double       turretServoPos             = 0.0;
+//    public double       TURRET_SERVO_INIT          = 0.505; // we init to the position needed to STORE the freight arm
+//    public double       TURRET_SERVO_CENTERED      = 0.505;
+//    public double       TURRET_SERVO_SHARED_LEFT   = 0.550; // fixed shift LEFT for use on the shared hub
+//    public double       TURRET_SERVO_SHARED_RIGHT  = 0.450; // fixed shift RIGHT for use on the shared hub
+//    public double       TURRET_SERVO_BLUE_ALLIANCE = 0.770; // fixed shift LEFT  for use on the alliance hub
+//    public double       TURRET_SERVO_RED_ALLIANCE  = 0.240; // fixed shift RIGHT for use on the alliance hub
+    public int          turretEncoderPos           = 0;     // Turret servo current position
+    public int          turretEncStableCts         = 0;     // Turret at set position counts
+    public double       turretTartgetPos           = 0.0;   // Value servo set to
+
+    // TBD measure these counts
+    public enum TurretPosition {
+        INIT(0),
+        CENTERED(0),
+        SHARED_LEFT(-100),
+        SHARED_RIGHT(100),
+        BLUE_ALLIANCE(-500),
+        RED_ALLIANCE(500);
+
+        private final int encoderCount;
+
+        TurretPosition(int encoderCount) {
+            this.encoderCount = encoderCount;
+        }
+
+        public int getEncoderCount() {
+            return encoderCount;
+        }
+    }
+    Map<TurretPosition, Double> turretMap = new EnumMap<>(TurretPosition.class);
+    public TurretPosition       turretSetPos = TurretPosition.INIT;
 
     public Servo        boxServo                   = null;
     public double       BOX_SERVO_INIT             = 0.28;  // we init to the TRANSPORT position
@@ -227,6 +254,7 @@ public class HardwareBothHubs
     public double       LINK_SERVO_RAISED          = 0.500; // in case we want to tweak/optimize
     public double       LINK_SERVO_LOWERED         = 0.265;
 
+    // This motor has the turret encoder attached.
     protected DcMotorEx sweepMotor    = null;
 
     //====== NAVIGATION DISTANCE SENSORS =====
@@ -299,6 +327,15 @@ public class HardwareBothHubs
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap, boolean isAutonomous ) {
+        // Setup the turret map
+        // TBD do analysis of blue side position
+        turretMap.put(TurretPosition.INIT, 0.505);
+        turretMap.put(TurretPosition.CENTERED, 0.505);
+        turretMap.put(TurretPosition.SHARED_LEFT, 0.550);
+        turretMap.put(TurretPosition.SHARED_RIGHT, 0.450);
+        turretMap.put(TurretPosition.BLUE_ALLIANCE, 0.770);
+        turretMap.put(TurretPosition.RED_ALLIANCE, 0.240);
+
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -390,7 +427,7 @@ public class HardwareBothHubs
 //      freightMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, freightPIDF );
 
         turretServo = hwMap.servo.get("DT2kServo");      // servo port 3 (hub 2)
-        turretPositionSet( TURRET_SERVO_INIT );
+        turretPositionSet( TurretPosition.INIT );
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         if (!transitionFromAutonomous) {
@@ -403,9 +440,14 @@ public class HardwareBothHubs
         }
 
         //Initialize sweeper motor
+        //It is important to perform this after setting the turret servo to init
+        //so the 0 encoder position matches the init position.
         sweepMotor = hwMap.get(DcMotorEx.class,"sweepMotor");
         sweepMotor.setDirection(DcMotor.Direction.FORWARD);
         sweepMotor.setPower( 0.0 );
+        if (!transitionFromAutonomous) {
+            sweepMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
 //      sweepMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         sweepMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         sweepMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -508,6 +550,13 @@ public class HardwareBothHubs
         double freightMotorPwrPrior = freightMotorPwr;
         freightMotorPwr    = freightMotor.getPower();
         freightMotorRamp   = isPwrRampingDown( freightMotorPwrPrior, freightMotorPwr );
+
+        turretEncoderPos   = sweepMotor.getCurrentPosition();
+        if(isTurretAtPosition(turretSetPos)) {
+            turretEncStableCts++;
+        } else {
+            turretEncStableCts = 0;
+        }
 
         // Do we need to capture capping-arm instrumentation data?
         if( capMotorLogEnable ) {
@@ -950,16 +999,14 @@ public class HardwareBothHubs
 
     /*--------------------------------------------------------------------------------------------*/
     /* turretPositionSet()                                                                        */
-    /* - target_position = the target to command the turret servo                                 */
-    public void turretPositionSet( double target_position ) {
-       // ensure we don't go below 0.000 or above 1.000
-       if( (target_position < 0.000) || (target_position > 1.000) ) {
-          // ignore request (can't exceed servo hardware limits)
-       }
-       else {
-          turretServoPos = target_position;
-          turretServo.setPosition( turretServoPos );
-       }
+    /* - target_position = the target position to command the turret servo to go to                            */
+    public void turretPositionSet( TurretPosition target_position ) {
+        if(!isTurretAtPosition((target_position))) {
+            turretEncStableCts = 0;
+            turretSetPos = target_position;
+            turretTartgetPos = turretMap.get(turretSetPos);
+            turretServo.setPosition(turretTartgetPos);
+        }
     } // turretPositionSet
 
     /*--------------------------------------------------------------------------------------------*/
@@ -967,15 +1014,15 @@ public class HardwareBothHubs
     /* - turret_increment = how much to adjust the turret servo target position                   */
     public void turretPositionShift( double turret_increment ) {
        // ensure we don't go below 0.000
-       if( (turretServoPos + turret_increment) < 0.000 ) {
+       if( (turretTartgetPos + turret_increment) < 0.000 ) {
           // ignore request (can't exceed servo hardware limits)
        }
-       else if( (turretServoPos + turret_increment) > 1.000 ) {
+       else if( (turretTartgetPos + turret_increment) > 1.000 ) {
           // ignore request (can't exceed servo hardware limits)
        }
        else {
-          turretServoPos += turret_increment;
-          turretServo.setPosition( turretServoPos );
+           turretTartgetPos += turret_increment;
+          turretServo.setPosition( turretTartgetPos );
        }
     } // turretPositionShift
 
@@ -1138,7 +1185,18 @@ public class HardwareBothHubs
         frontRightMotor.setPower(0);
         rearLeftMotor.setPower(0);
         rearRightMotor.setPower(0);
+    }
 
+    protected boolean isTurretAtPosition(TurretPosition position) {
+        int turretError = position.getEncoderCount() - turretEncoderPos;
+
+        // This number needs refinement
+        return (Math.abs(turretError) < 20);
+    }
+
+    public boolean isTurretStable(TurretPosition position) {
+        // This number needs refinement
+        return ((turretSetPos == position) && (turretEncStableCts > 1));
     }
 
     /***

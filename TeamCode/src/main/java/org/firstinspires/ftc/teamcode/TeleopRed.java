@@ -19,6 +19,6 @@ public class TeleopRed extends Teleop {
         // 1150 rpm motor = 145.1 encoder pulse/rev at output shaft 
         duckVelocityNow  =  100; //red target counts per second (positive!)
         duckVelocityStep =   90; //red ramp-up step size (positive!)
-        turretAllianceHubAngle = robot.TURRET_SERVO_RED_ALLIANCE;
+        turretAllianceHubAngle = HardwareBothHubs.TurretPosition.RED_ALLIANCE;
     }
 } // TeleopRed
