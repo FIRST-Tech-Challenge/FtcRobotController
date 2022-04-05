@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -30,7 +29,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.CloneFollower;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.MinimalFollower;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TrikeKinematics;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
@@ -100,7 +98,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private final boolean simulated;
 
-    private double leftPosition, rightPosition, swervePosition, swivelPosition, duckSpinnerPosition;
+    private double leftPosition, rightPosition, leftRelOffset, rightRelOffset, swervePosition, swivelPosition, duckSpinnerPosition;
     private double swivelAngle, targetSwivelAngle;
     private double leftVelocity, rightVelocity, swerveVelocity;
     private double targetLeftVelocity, targetRightVelocity, targetSwerveVelocity, swivelPower, duckSpinnerPower;
@@ -301,9 +299,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             swivelPosition += swivelPower * dt;
             chassisLength = targetChassisLength;
         } else {
-            leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition());
-            rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition());
-            swervePosition = swerveEncoderTicksToInches(swerveMotor.getCurrentPosition());
+            leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
+            rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
+            swervePosition = swerveEncoderTicksToInches(swerveMotor.getCurrentPosition()); //todo fixup relative swerve position?
             swivelPosition = swivelMotor.getCurrentPosition();
             duckSpinnerPosition = duckSpinner.getCurrentPosition();
             swivelAngle = wrapAngleRad(swivelPosition / SWIVEL_TICKS_PER_REVOLUTION * Math.toRadians(360));
@@ -472,8 +470,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("anti-tip roll on target", rollAntiTipPID.onTarget());
             telemetryMap.put("anti-tip pitch on target", pitchAntiTipPID.onTarget());
 
-            telemetryMap.put("left position", diffInchesToEncoderTicks(leftPosition));
-            telemetryMap.put("right position", diffInchesToEncoderTicks(rightPosition));
+            telemetryMap.put("left position", leftPosition);
+            telemetryMap.put("right position", rightPosition);
+            telemetryMap.put("left position tics", diffInchesToEncoderTicks(leftPosition));
+            telemetryMap.put("right position tics", diffInchesToEncoderTicks(rightPosition));
             telemetryMap.put("swerve position", swerveInchesToEncoderTicks(swervePosition));
 
             telemetryMap.put("swivel position", swivelPosition);
@@ -535,25 +535,38 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         return (leftPosition + rightPosition) / 2.0;
     }
 
+    //reset the relative position to zeros
+    private void resetRelPos(){
+        leftRelOffset = leftMotor.getCurrentPosition();
+        rightRelOffset = rightMotor.getCurrentPosition();
+        leftPosition = 0;
+        rightPosition = 0;
+    }
+
     private double driveTarget, driveHeading, driveSpeed;
     private Stage driveStage = new Stage();
     private StateMachine drive = Utils.getStateMachine(driveStage)
-            .addSingleState(() -> {
-                driveHeading = poseEstimate.getHeading();
-            })
             .addState(() -> {
                 headingPID.setSetpoint(driveHeading);
                 headingPID.setInput(poseEstimate.getHeading());
                 double correction = headingPID.performPID();
                 setDriveSignal(new DriveSignal(new Pose2d(driveSpeed, 0, correction), new Pose2d(0, 0, 0)));
-                return getAveragePos() > driveTarget;
+                return (getAveragePos() > driveTarget);
             })
             .build();
 
     boolean driveAsyncInitialized = false;
-    public boolean driveAsync(double driveDistance, double driveSpeed) {
+
+    //call this version if we just want to continue in the direction the robot is currently pointing
+    public boolean driveUntil(double driveDistance, double driveSpeed) {
+        return(driveUntil(driveDistance, poseEstimate.getHeading(), driveSpeed));
+    }
+
+    public boolean driveUntil(double driveDistance, double driveHeading, double driveSpeed) {
         if(!driveAsyncInitialized) {
+            resetRelPos();
             this.driveTarget = driveDistance + getAveragePos();
+            this.driveHeading = driveHeading;
             this.driveSpeed = driveSpeed;
             driveAsyncInitialized = true;
         }
@@ -584,10 +597,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             .build();
 
     boolean turnInit = false;
-    public boolean turnAsync(double turnAngle) {
+    public boolean turnUntil(double turnAngle) {
         if(!turnInit){
-            this.turnAngle = turnAngle;
-            turnAngle += poseEstimate.getHeading();
+            this.turnAngle = turnAngle; // this is in Radians relative to the starting angle as set by auton alliance
             turnInit = true;
         }
 
