@@ -67,7 +67,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
-    public static PIDCoefficients CUSTOM_HEADING_PID = new PIDCoefficients(1.5, 0.0, .001);
+    public static PIDCoefficients CUSTOM_HEADING_PID = new PIDCoefficients(1.5, 0.0, 1.0);
     public static double CUSTOM_HEADING_PID_TOLERANCE = 2;
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -447,8 +447,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
-        telemetryMap.put("getAverageTicks", getAveragePos());
-        telemetryMap.put("driveTarget", driveTarget);
+        telemetryMap.put("turnStuff", turnAngle - poseEstimate.getHeading());
 
         telemetryMap.put("duck game enabled", duckGameEnabled);
         if (debug) {
@@ -571,6 +570,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     //driveAsyncInitialized is only true when its currently driving
     boolean isDriving(){return driveAsyncInitialized;}
 
+    private double turnError = 2.0;
     private double turnAngle;
     private Stage turnStage = new Stage();
     private StateMachine turn = Utils.getStateMachine(turnStage)
@@ -579,7 +579,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                 headingPID.setInput(poseEstimate.getHeading());
                 double correction = headingPID.performPID();
                 setDriveSignal(new DriveSignal(new Pose2d(0, 0, correction), new Pose2d(0, 0, 0)));
-                return poseEstimate.getHeading() == turnAngle;
+                return headingPID.onTarget();
             })
             .build();
 
