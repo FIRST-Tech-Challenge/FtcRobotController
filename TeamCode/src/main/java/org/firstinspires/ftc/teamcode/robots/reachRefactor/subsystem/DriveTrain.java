@@ -67,7 +67,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4.5, 0, 0);
 
-    public static PIDCoefficients CUSTOM_HEADING_PID = new PIDCoefficients(4.5, 0, 0);
+    public static PIDCoefficients CUSTOM_HEADING_PID = new PIDCoefficients(1.5, 0.0, .001);
     public static double CUSTOM_HEADING_PID_TOLERANCE = 2;
 
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
@@ -568,29 +568,39 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         return false;
     }
 
+    //driveAsyncInitialized is only true when its currently driving
+    boolean isDriving(){return driveAsyncInitialized;}
+
     private double turnAngle;
     private Stage turnStage = new Stage();
     private StateMachine turn = Utils.getStateMachine(turnStage)
-            .addSingleState(() -> {
-                turnAngle += poseEstimate.getHeading();
-            })
             .addState(() -> {
                 headingPID.setSetpoint(turnAngle);
                 headingPID.setInput(poseEstimate.getHeading());
                 double correction = headingPID.performPID();
                 setDriveSignal(new DriveSignal(new Pose2d(0, 0, correction), new Pose2d(0, 0, 0)));
-                return getAveragePos() < driveTarget;
+                return poseEstimate.getHeading() == turnAngle;
             })
             .build();
+
+    boolean turnInit = false;
     public boolean turnAsync(double turnAngle) {
-        this.turnAngle = turnAngle;
+        if(!turnInit){
+            this.turnAngle = turnAngle;
+            turnAngle += poseEstimate.getHeading();
+            turnInit = true;
+        }
 
         if(turn.execute()){
             setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
+            turnInit = false;
             return true;
         }
         return false;
     }
+
+    //see isDriving();
+    boolean isTurning(){return turnInit;}
 
     @Override
     public void setDriveSignal(@NonNull DriveSignal driveSignal) {
