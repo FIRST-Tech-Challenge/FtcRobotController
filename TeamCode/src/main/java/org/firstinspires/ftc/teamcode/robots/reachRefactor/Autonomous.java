@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.reachRefactor;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.getStateMachine;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
@@ -29,7 +30,7 @@ public class Autonomous {
             blueUpNoRR, redUpNoRR, blueDownNoRR, redDownNoRR,
             blueUpSimple, redUpSimple, blueDownSimple, redDownSimple;
     // misc. routines
-    public StateMachine backAndForth, square, turn, lengthTest, diagonalTest;
+    public StateMachine backAndForth, square, turn, lengthTest, diagonalTest, squareNoRR;
 
     public Autonomous(Robot robot) {
         this.robot = robot;
@@ -125,6 +126,25 @@ public class Autonomous {
                         .turn(Math.toRadians(-90))
                         .build();
         square = trajectorySequenceToStateMachine(squareSequence);
+
+        squareNoRR = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 90,20))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.turnUntilDegrees(0))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 0,20))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.turnUntilDegrees(270))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 270,20))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.turnUntilDegrees(180))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.driveUntilDegrees(24, 180, 20))
+                .addTimedState(1f, () -> {}, () -> {})
+                .addState(() -> robot.driveTrain.turnUntilDegrees(90))
+                .addTimedState(1f, () -> {}, () -> {})
+                .build();
 
         TrajectorySequence turnSequence =
                 robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
@@ -231,22 +251,29 @@ public class Autonomous {
                         .build();
 
                 blueUpNoRR = Utils.getStateMachine(new Stage())
-                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(90),20))
-                        .addTimedState(1f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(0)))
-                        .addTimedState(1f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(0),20))
-                        .addTimedState(1f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(270)))
-                        .addTimedState(1f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(270),20))
-                        .addTimedState(1f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(180)))
-                        .addTimedState(1f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(180), 20))
-                        .addTimedState(1f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(90)))
-                        .addTimedState(1f, () -> {}, () -> {})
+
+                        //extend swerve by 29.67 inches
+                        .addState(() -> robot.driveTrain.driveUntil(-29.67,-20))
+                        //preload dump section
+                        .addMineralState(
+                                () -> visionProvider.getMostFrequentPosition().getIndex(),
+                                () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                                () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                                () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+                        )
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+                        .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(90), () -> {})
+                        .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+                        //preload dump section end
+
+                        //back up past the hub for turn toward warehouse
+                        .addState(() -> robot.driveTrain.driveUntil(-20,-20))
+                        //turn to warehouse
+                        .addState(() -> robot.driveTrain.turnUntilDegrees(45))
+                        //enter warehouse
+                        .addState(() -> robot.driveTrain.driveUntilDegrees(30, 30,20))
+
                         .build();
 
                 TrajectorySequence blueUp1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())

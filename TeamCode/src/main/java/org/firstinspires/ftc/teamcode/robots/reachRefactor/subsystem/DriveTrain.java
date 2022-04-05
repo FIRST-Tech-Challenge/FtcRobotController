@@ -550,8 +550,9 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
                 headingPID.setSetpoint(driveHeading);
                 headingPID.setInput(poseEstimate.getHeading());
                 double correction = headingPID.performPID();
+                //if(driveTarget<0)driveSpeed*=-1; //reverse motor direction if target is behind us
                 setDriveSignal(new DriveSignal(new Pose2d(driveSpeed, 0, correction), new Pose2d(0, 0, 0)));
-                return (getAveragePos() > driveTarget);
+                return (Math.abs(driveTarget - getAveragePos()) < 1); //todo, make a better way to range check for close-enough that won't fail if we overshoot between checks
             })
             .build();
 
@@ -578,6 +579,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             return true;
         }
         return false;
+    }
+    //version using a heading requested in degrees
+    public boolean driveUntilDegrees(double driveDistance, double driveHeading, double driveSpeed) {
+        return driveUntil(driveDistance, Math.toRadians(driveHeading), driveSpeed);
     }
 
     //driveAsyncInitialized is only true when its currently driving
@@ -609,6 +614,10 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             return true;
         }
         return false;
+    }
+    //request a turn in degrees units
+    public boolean turnUntilDegrees(double turnAngle) {
+        return turnUntil(Math.toRadians(turnAngle));
     }
 
     //see isDriving();

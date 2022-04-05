@@ -177,6 +177,7 @@ public class FF_6832 extends OpMode {
 
         BACK_AND_FORTH("Back And Forth"),
         SQUARE("Square"),
+        SQUARENORR("Square No RR"),
         TURN("Turn"),
         LENGTH_TEST("Length Test"),
         DIAGONAL_TEST("Diagonal Test");
@@ -708,6 +709,9 @@ public class FF_6832 extends OpMode {
                     break;
                 case SQUARE:
                     auto.square.execute();
+                    break;
+                case SQUARENORR:
+                    auto.squareNoRR.execute();
                     break;
                 case TURN:
                     auto.turn.execute();
