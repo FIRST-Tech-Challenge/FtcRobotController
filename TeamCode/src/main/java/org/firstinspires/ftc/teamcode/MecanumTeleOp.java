@@ -172,34 +172,33 @@ public class MecanumTeleOp extends LinearOpMode {
                  * Right bumper
                  * Left Bumper
                  */
-                if (gamepad1.right_bumper == true && !gamepad1.left_bumper) {
-                    if(!started){
+                if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
+                    if(!started) {
                         started = true;
                         carouselPower = 0.5;
                     }
-                    if(started)
-                    {
+                    if(started) {
                         carouselPower = carouselPower + 0.04;
                     }
-                    if(carouselPower >= 0.0825)
+                    if(carouselPower >= 0.825)
                         carouselPower = 0.825;
-                } else if (gamepad1.left_bumper == true && !gamepad1.right_bumper) {
+                } else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
                     if(!started){
                         started = true;
                         carouselPower = -0.5;
                     }
-                    if(started)
+                    else
                     {
                         carouselPower = carouselPower - 0.04;
                     }
-                    if(carouselPower <= -0.0825)
+                    if(carouselPower <= -0.825)
                         carouselPower = -0.825;
                 } else {
                     carouselPower = 0;
                     started = false;
                 }
                 //set power carousel
-
+                robot.motorCarousel.setPower(carouselPower);
 
                 /* Drivetrain Mecanum, Gamepad 1
                  * Leftstick controls forward/back and strafing

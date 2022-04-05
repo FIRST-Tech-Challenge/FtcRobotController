@@ -54,6 +54,7 @@ public class InfantMode extends LinearOpMode {
             double armPowerLevels = 0.7;
             boolean gamepad2DPadDown = false; // track the state of the dpad
 
+            boolean started = false;
 
             //intake power
             double intakePower = 0.5;
@@ -167,11 +168,29 @@ public class InfantMode extends LinearOpMode {
                  * Left Bumper
                  */
                 if (gamepad2.right_bumper == true && !gamepad2.left_bumper) {
-                    carouselPower = 0.825;
+                    if(!started) {
+                        started = true;
+                        carouselPower = 0.5;
+                    }
+                    if(started) {
+                        carouselPower = carouselPower + 0.04;
+                    }
+                    if(carouselPower >= 0.825)
+                        carouselPower = 0.825;
                 } else if (gamepad2.left_bumper == true && !gamepad2.right_bumper) {
-                    carouselPower = -0.825;
+                    if(!started){
+                        started = true;
+                        carouselPower = -0.5;
+                    }
+                    else
+                    {
+                        carouselPower = carouselPower - 0.04;
+                    }
+                    if(carouselPower <= -0.825)
+                        carouselPower = -0.825;
                 } else {
                     carouselPower = 0;
+                    started = false;
                 }
                 //set power carousel
                 robot.motorCarousel.setPower(carouselPower);

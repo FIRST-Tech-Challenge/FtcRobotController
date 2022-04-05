@@ -130,7 +130,7 @@ public class DuckSideRedPath1 {
                     setArmLevel.schedule();
                 })
                 */
-                .strafeTo(new Vector2d(-39,-22))
+                .strafeTo(new Vector2d(-39,-24))
                 .splineToLinearHeading(new Pose2d(-60, -33.5, Math.toRadians(0)),Math.toRadians(90))
                 .build();
 
