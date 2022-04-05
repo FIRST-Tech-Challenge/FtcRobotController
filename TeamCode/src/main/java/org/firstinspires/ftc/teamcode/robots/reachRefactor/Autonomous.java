@@ -231,10 +231,22 @@ public class Autonomous {
                         .build();
 
                 blueUpNoRR = Utils.getStateMachine(new Stage())
-                        .addState(() -> robot.driveTrain.driveAsync(40, 30))
-                        .addTimedState(3f, () -> {}, () -> {})
-                        .addState(() -> robot.driveTrain.turnAsync(90))
-                        .addTimedState(3f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(90),20))
+                        .addTimedState(1f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(0)))
+                        .addTimedState(1f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(0),20))
+                        .addTimedState(1f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(270)))
+                        .addTimedState(1f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(270),20))
+                        .addTimedState(1f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(180)))
+                        .addTimedState(1f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.driveUntil(24, Math.toRadians(180), 20))
+                        .addTimedState(1f, () -> {}, () -> {})
+                        .addState(() -> robot.driveTrain.turnUntil(Math.toRadians(90)))
+                        .addTimedState(1f, () -> {}, () -> {})
                         .build();
 
                 TrajectorySequence blueUp1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())
