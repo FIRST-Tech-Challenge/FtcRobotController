@@ -1,64 +1,44 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
-import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
-/**
- * The Autonomous ran on Red side near spinner for State
- */
-@SuppressWarnings("unused")
-@Autonomous(name = "🟥🦆Red Worlds Carousel Autonomous🦆🟥")
-public class RedCarouselAutonomous extends AutonomousTemplate {
-    static final BlinkinPattern def = BlinkinPattern.RED;
+@Config
+@Autonomous(name = "Red Carousel Auton")
+public class RedCarouselAutonomous extends GenericOpModeTemplate {
+     static final Pose2d startPos = new Pose2d(-34, -65, Math.toRadians(0));
+     static final Pose2d dropOffPos = new Pose2d(-12, -38, Math.toRadians(270));
+     static final Pose2d carouselSpinPos = new Pose2d(-61, -51, Math.toRadians(270));
+     static final Pose2d parkPos = new Pose2d(-60, -35.5, Math.toRadians(270));
+
 
     @Override
     public void opModeMain() throws InterruptedException {
-        this.initAll();
-        leds.setPattern(def);
-        gps.setPos(6, 111, 180);
+        this.initOdometryServos();
+        podServos.lower();
 
+        final SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(startPos);
 
-        driveSystem.setTurnWhileStrafe(true);
+        final TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPos)
+                .lineToLinearHeading(dropOffPos)
+                .waitSeconds(1)
+                // replace wait with a displacement marker
+                .splineToLinearHeading(carouselSpinPos, Math.toRadians(180))
+                .waitSeconds(1)
+                // replace wait with a displacement marker
+                .lineToLinearHeading(parkPos)
+                .build();
+
         waitForStart();
-
-        if (opModeIsActive() && !isStopRequested()) {
-            driveSystem.debugOn();
-
-            driveSystem.moveToPosition(24, 82.5, 272, .5, new DistanceTimeoutWarning(500));
-
-            dropOffFreight(BarcodePositions.Right);
-
-            driveSystem.moveToPosition(10, 144, gps.getRot(), 1, new DistanceTimeoutWarning(100));
-
-            //This moves into the wall for duck spinning
-            driveSystem.moveToPosition(0, gps.getY() + 5, gps.getRot(), 1, new DistanceTimeoutWarning(100));
-
-            driveSystem.halt();
-
-            spinner.spinOffRedDuck();
-
-            driveSystem.strafeAtAngle(180, 0.5);
-            double[] initialPos = gps.getPos();
-            double currentWallDistance;
-            do {
-                double[] currentPos = gps.getPos();
-                if (MiscUtils.distance(initialPos[0], initialPos[1], currentPos[0], currentPos[1]) > 24) {
-                    break;
-                }
-                currentWallDistance = Math.abs((frontDistanceSensor.getDistance(DistanceUnit.INCH)) * Math.cos(Math.toRadians(gps.getRot() - 90)));
-                telemetry.addData("currentWallDistance",currentWallDistance);
-                telemetry.update();
-                currentWallDistance = 0;
-                Thread.yield();
-            } while (currentWallDistance < (24) && opModeIsActive() && !isStopRequested());
-
-            driveSystem.halt();
+        if (!isStopRequested()) {
+            drive.followTrajectorySequence(trajSeq);
         }
     }
+
 }
