@@ -4,7 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.LocalizationAlgorithm;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationExceptions.MovementException;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.OuttakeMk1;
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 
@@ -12,14 +12,14 @@ public class IntakeColorSensorWarning extends MovementWarning {
     /**
      * Internal intake to monitor
      */
-    private final Outtake outtake;
+    private final OuttakeMk1 outtake;
 
     /**
      * A constructor
      *
      * @param outtake A outtake objects to read from
      */
-    public IntakeColorSensorWarning(Outtake outtake) {
+    public IntakeColorSensorWarning(OuttakeMk1 outtake) {
         super();
         this.outtake = outtake;
     }

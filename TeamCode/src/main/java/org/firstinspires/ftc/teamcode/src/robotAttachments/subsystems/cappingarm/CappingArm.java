@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
+@Deprecated
 public class CappingArm implements Controllable<Void> {
 
     private final Servo cappingServo;

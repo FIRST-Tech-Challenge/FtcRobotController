@@ -18,7 +18,6 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
     protected BlinkinPattern currentPattern;
     private boolean x_depressed = true;
     private boolean tapeMeasureCtrl = false;
-    StateOuttake Outtake;
 
     public RedWorldsDriveProgram(){
         defaultColor = BlinkinPattern.RED;
@@ -27,9 +26,6 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
     public void opModeMain() throws InterruptedException {
         this.initAll();
-        outtake = null;
-        Outtake = new StateOuttake(hardwareMap,GenericOpModeTemplate.bucketColorSensorName,GenericOpModeTemplate.bucketServoName,true);
-
 
         leds.setPattern(currentPattern);
 
@@ -60,7 +56,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     turret.halt();
                     slide.halt();
                     intake.halt();
-                    Outtake.halt();
+                    outtake.halt();
                     x_depressed = false;
                 }
 
@@ -73,7 +69,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     slide.gamepadControl(gamepad1, gamepad2);
 
                     //Intake Controls
-                    BlinkinPattern proposedPattern = FreightFrenzyStateObject.getLEDColorFromItem(Outtake.gamepadControl(gamepad1, gamepad2));
+                    BlinkinPattern proposedPattern = FreightFrenzyGameObject.getLEDColorFromItem(outtake.gamepadControl(gamepad1, gamepad2));
                     if (proposedPattern != null) {
                         leds.setPattern(proposedPattern);
                     } else {

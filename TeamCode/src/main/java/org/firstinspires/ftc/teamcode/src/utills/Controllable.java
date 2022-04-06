@@ -14,7 +14,7 @@ public interface Controllable<T> {
      * @param gamepad2 The second gamepad
      */
     @Nullable
-    T gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2);
+    T gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) throws InterruptedException;
 
 
     /**

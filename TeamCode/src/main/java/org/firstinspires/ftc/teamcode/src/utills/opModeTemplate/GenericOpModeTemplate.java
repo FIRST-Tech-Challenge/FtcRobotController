@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageS
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.carouselspinner.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.OuttakeMk2;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.podservos.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.tapemeasureturret.TapeMeasureTurret;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
@@ -162,7 +163,6 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
             opModeMain();
         } catch (InterruptedException | CancellationException e) {
             RobotLog.d("OpMode Terminated, exiting");
-            throw e;
         } catch (Exception e) {
             RobotLog.dd("Exception Was thrown", e, "This exception was thrown and resulted in a early termination of the OpMode");
             RobotLog.setGlobalErrorMsg(MiscUtils.getStackTraceAsString(e)); //Appends more information to the error message
@@ -198,9 +198,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     /**
      * Initializes the Outtake
      */
-    protected void initOuttake() {
-        outtake = new Outtake(hardwareMap, bucketServoName, bucketColorSensorName, true);
-        outtake.setServoClosed();
+    protected void initOuttake() throws InterruptedException {
+        outtake = new OuttakeMk2(hardwareMap, bucketServoName, bucketColorSensorName, this::opModeIsActive, this::isStopRequested);
+        outtake.close();
     }
 
     public void initTapeMeasureTurret() {

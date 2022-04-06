@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 @TeleOp(name = "ColorTest")
 @Disabled
 public class ColorTest extends TeleOpTemplate {
-    public void opModeMain() {
+    public void opModeMain() throws InterruptedException {
         this.initOuttake();
         this.initIntake();
 
@@ -32,7 +32,6 @@ public class ColorTest extends TeleOpTemplate {
             telemetry.addData("red:", outtake.getColor(Red));
             telemetry.addData("green:", outtake.getColor(Green));
             telemetry.addData("blue:", outtake.getColor(Blue));
-            telemetry.addData("distance:", outtake.getSensorDistance());
             telemetry.addData("identity:", FreightFrenzyGameObject.identify(outtake.getRGB()));
             telemetry.addData("Color", FreightFrenzyGameObject.getLEDColorFromItem(FreightFrenzyGameObject.identify(outtake.getRGB())));
 
