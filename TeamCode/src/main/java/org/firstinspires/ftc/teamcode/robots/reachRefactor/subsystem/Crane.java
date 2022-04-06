@@ -100,6 +100,24 @@ public class Crane implements Subsystem {
         toHomeEnabled = true;
     }
 
+    public boolean shoulderInitialized = false;
+
+    public void calibrateShoulder() {
+        elbowServo.setPosition(servoNormalize(elbowServoValue(90)));
+        wristServo.setPosition(servoNormalize(wristServoValue(0)));
+        shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shoulderMotor.setPower(.05);  // low power descent to ground - should take a few seconds
+    }
+
+    public void configureShoulder(){
+        //set the motor up for joint control - should be called when it is down
+        shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoulderMotor.setTargetPosition(0);
+        shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shoulderInitialized = true;
+    }
+
     public enum Articulation {
         TEST_INIT(0, 0, 0, 0, 5, 0),
         MANUAL(0, 0, 0, 0, 0, 0),
@@ -357,11 +375,14 @@ public class Crane implements Subsystem {
 //        shoulderCorrection = shoulderPID.performPID();
 
 //        shoulderMotor.setPower(shoulderCorrection);
-        shoulderMotor.setTargetPosition((int) ((shoulderTargetAngle - SHOULDER_START_ANGLE) * SHOULDER_TICKS_PER_DEGREE));
-        shoulderMotor.setPower(SHOULDER_POWER);
+        if (shoulderInitialized) { //don't move arm until shoulder initialized
+            shoulderMotor.setTargetPosition((int) ((shoulderTargetAngle - SHOULDER_START_ANGLE) * SHOULDER_TICKS_PER_DEGREE));
+            shoulderMotor.setPower(SHOULDER_POWER);
+
 
         elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
         wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
+        }
 
         if (articulation != Articulation.MANUAL)
             turret.setTargetHeading(articulation.turretAngle);
