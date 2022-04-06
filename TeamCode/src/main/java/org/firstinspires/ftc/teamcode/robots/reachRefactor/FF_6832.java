@@ -247,7 +247,8 @@ public class FF_6832 extends OpMode {
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
         telemetry.setMsTransmissionInterval(25);
-
+        //start the calibration motion
+        robot.crane.calibrateShoulder();
         robot.articulate(Robot.Articulation.INIT);
     }
 
@@ -318,7 +319,10 @@ public class FF_6832 extends OpMode {
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
-            robot.articulate(Robot.Articulation.START_DOWN); //stow crane to the starting position
+            if (robot.crane.shoulderInitialized)
+                robot.articulate(Robot.Articulation.START_DOWN); //stow crane to the starting position
+            else
+                robot.crane.configureShoulder(); //setup the shoulder - do this only when the
         if(stickyGamepad1.left_trigger || stickyGamepad2.left_trigger)
             numericalDashboardEnabled = !numericalDashboardEnabled;
         if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
