@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class RedCarouselAutonomous extends GenericOpModeTemplate {
      static final Pose2d startPos = new Pose2d(-34, -65, Math.toRadians(0));
      static final Pose2d dropOffPos = new Pose2d(-12, -38, Math.toRadians(270));
-     static final Pose2d carouselSpinPos = new Pose2d(-61, -51, Math.toRadians(270));
+     public static Pose2d carouselSpinPos = new Pose2d(-61, -51, Math.toRadians(270));
      static final Pose2d parkPos = new Pose2d(-60, -35.5, Math.toRadians(270));
 
 

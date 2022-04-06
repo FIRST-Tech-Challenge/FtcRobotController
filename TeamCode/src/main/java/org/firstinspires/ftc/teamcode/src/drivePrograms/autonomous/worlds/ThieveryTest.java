@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
-
+@Config
 @TeleOp(name = "ThieveryTest")
 public class ThieveryTest extends GenericOpModeTemplate {
 
