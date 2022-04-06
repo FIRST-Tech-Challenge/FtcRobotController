@@ -106,6 +106,7 @@ public class Crane implements Subsystem {
         elbowServo.setPosition(servoNormalize(elbowServoValue(85)));
         wristServo.setPosition(servoNormalize(wristServoValue(0)));
         shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shoulderMotor.setPower(.15);  // low power descent to ground - should take a few seconds
     }
 
     public void configureShoulder(){
