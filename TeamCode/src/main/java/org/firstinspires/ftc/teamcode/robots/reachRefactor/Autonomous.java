@@ -272,7 +272,7 @@ public class Autonomous {
                         //turn to warehouse
                         .addState(() -> robot.driveTrain.turnUntilDegrees(45))
                         //enter warehouse
-                        .addState(() -> robot.driveTrain.driveUntilDegrees(30, 30,20))
+                        .addState(() -> robot.driveTrain.driveUntilDegrees(50, 30,20))
 
                         .build();
 
@@ -387,6 +387,29 @@ public class Autonomous {
                         .build();
 
                 redUpNoRR = Utils.getStateMachine(new Stage())
+
+                        //extend swerve by 29.67 inches
+                        .addState(() -> robot.driveTrain.driveUntil(-29.67,-20))
+                        //preload dump section
+                        .addMineralState(
+                                () -> visionProvider.getMostFrequentPosition().getIndex(),
+                                () -> { robot.crane.articulate(Crane.Articulation.LOWEST_TIER); return true; },
+                                () -> { robot.crane.articulate(Crane.Articulation.MIDDLE_TIER); return true; },
+                                () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
+                        )
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+                        .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(90), () -> {})
+                        .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+                        //preload dump section end
+
+                        //back up past the hub for turn toward warehouse
+                        .addState(() -> robot.driveTrain.driveUntil(-20,-20))
+                        //turn to warehouse
+                        .addState(() -> robot.driveTrain.turnUntilDegrees(45))
+                        //enter warehouse
+                        .addState(() -> robot.driveTrain.driveUntilDegrees(50, 30,20))
+
                         .build();
 
                 TrajectorySequence redUp1Simple = robot.driveTrain.trajectorySequenceBuilder(robot.driveTrain.getPoseEstimate())

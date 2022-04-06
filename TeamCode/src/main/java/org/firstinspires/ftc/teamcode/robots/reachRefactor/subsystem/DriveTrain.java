@@ -13,12 +13,14 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -28,6 +30,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.CRServoSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.CloneFollower;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TrikeKinematics;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
@@ -87,7 +90,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private final List<DcMotorEx> motors;
     private final DcMotorEx leftMotor, rightMotor, swerveMotor, swivelMotor; // swerveMotor drives the module,
                                                                              // swivelMotor rotates the module
-    private final DcMotorEx duckSpinner;
+    private final CRServo duckSpinner;
     private final BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
@@ -98,7 +101,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     private final boolean simulated;
 
-    private double leftPosition, rightPosition, leftRelOffset, rightRelOffset, swervePosition, swivelPosition, duckSpinnerPosition;
+    private double leftPosition, rightPosition, leftRelOffset, rightRelOffset, swervePosition, swivelPosition;
     private double swivelAngle, targetSwivelAngle;
     private double leftVelocity, rightVelocity, swerveVelocity;
     private double targetLeftVelocity, targetRightVelocity, targetSwerveVelocity, swivelPower, duckSpinnerPower;
@@ -142,8 +145,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             swerveMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             swivelMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            duckSpinner = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor, duckSpinner);
+            duckSpinner = new CRServoSim();
+            motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor);
 
             compensatedBatteryVoltage = 14.0;
         } else {
@@ -154,8 +157,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             rightMotor = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
             swerveMotor = hardwareMap.get(DcMotorEx.class, "motorMiddle");
             swivelMotor = hardwareMap.get(DcMotorEx.class, "motorMiddleSwivel");
-            duckSpinner = hardwareMap.get(DcMotorEx.class, "duckSpinner");
-            motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor, duckSpinner);
+            duckSpinner = hardwareMap.get(CRServo.class, "duckSpinner");
+            motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor);
 
             for (DcMotorEx motor : motors) {
                 MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -303,7 +306,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
             swervePosition = swerveEncoderTicksToInches(swerveMotor.getCurrentPosition()); //todo fixup relative swerve position?
             swivelPosition = swivelMotor.getCurrentPosition();
-            duckSpinnerPosition = duckSpinner.getCurrentPosition();
             swivelAngle = wrapAngleRad(swivelPosition / SWIVEL_TICKS_PER_REVOLUTION * Math.toRadians(360));
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE
                     + DISTANCE_TARGET_TO_BACK_WHEEL;
@@ -423,7 +425,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             swerveMotor.setVelocity(swerveInchesToEncoderTicks(targetSwerveVelocity));
         }
         swivelMotor.setPower(swivelPower);
-        duckSpinner.setPower(duckSpinnerPower);
+        duckSpinner.setPower(-duckSpinnerPower);
 
         lastDriveVelocity = driveVelocity;
 
@@ -488,7 +490,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
             telemetryMap.put("target right velocity", targetRightVelocity);
             telemetryMap.put("target swerve velocity", targetSwerveVelocity);
             telemetryMap.put("swivel power", swivelPower);
-            telemetryMap.put("duck spinner position", duckSpinnerPosition);
             telemetryMap.put("duck spinner power", duckSpinnerPower);
 
             telemetryMap.put("chassis length", chassisLength);
