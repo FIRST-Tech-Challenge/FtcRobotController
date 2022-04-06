@@ -60,7 +60,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     /**
      * Name of the carousel Spinner
      */
-    public static final String carouselSpinnerName = "carousel_spinner";
+    public static final String leftCarouselSpinnerName = "carousel_spinner_left";
+
+    public static final String rightCarouselSpinnerName = "carousel_spinner_right";
 
     /**
      * Name of the bucket servo
@@ -222,7 +224,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Initializes the Spinner
      */
     protected void initSpinner() {
-        spinner = new CarouselSpinner(hardwareMap, carouselSpinnerName);
+        spinner = new CarouselSpinner(hardwareMap, leftCarouselSpinnerName, rightCarouselSpinnerName);
     }
 
 
