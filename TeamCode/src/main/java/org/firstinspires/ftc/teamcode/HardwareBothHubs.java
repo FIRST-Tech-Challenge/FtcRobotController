@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
 
+import static java.lang.Thread.sleep;
+
 import android.graphics.Color;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -30,7 +32,6 @@ import org.firstinspires.ftc.teamcode.HardwareDrivers.MaxSonarI2CXL;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
 
@@ -214,7 +215,7 @@ public class HardwareBothHubs
 //    public double       TURRET_SERVO_RED_ALLIANCE  = 0.240; // fixed shift RIGHT for use on the alliance hub
     public int          turretEncoderPos           = 0;     // Turret servo current position
     public int          turretEncStableCts         = 0;     // Turret at set position counts
-    public double       turretTartgetPos           = 0.0;   // Value servo set to
+    public double       turretTargetPos            = 0.0;   // Value servo set to
 
     // TBD measure these counts
     public enum TurretPosition {
@@ -222,8 +223,8 @@ public class HardwareBothHubs
         CENTERED(0),
         SHARED_LEFT(-100),
         SHARED_RIGHT(100),
-        BLUE_ALLIANCE(-500),
-        RED_ALLIANCE(500);
+        BLUE_ALLIANCE(-1174),
+        RED_ALLIANCE(1011);
 
         private final int encoderCount;
 
@@ -333,7 +334,7 @@ public class HardwareBothHubs
         turretMap.put(TurretPosition.CENTERED, 0.505);
         turretMap.put(TurretPosition.SHARED_LEFT, 0.550);
         turretMap.put(TurretPosition.SHARED_RIGHT, 0.450);
-        turretMap.put(TurretPosition.BLUE_ALLIANCE, 0.770);
+        turretMap.put(TurretPosition.BLUE_ALLIANCE, 0.790);
         turretMap.put(TurretPosition.RED_ALLIANCE, 0.240);
 
         // Save reference to Hardware map
@@ -428,6 +429,11 @@ public class HardwareBothHubs
 
         turretServo = hwMap.servo.get("DT2kServo");      // servo port 3 (hub 2)
         turretPositionSet( TurretPosition.INIT );
+        // Don't know of a better way to handle this, but want to make sure the
+        // servo is centered before we set the encoder to 0.
+        try {
+            sleep(500);
+        } catch (InterruptedException ioex) {}
 
         boxServo = hwMap.servo.get("BoxServo");          // servo port 4 (hub 2)
         if (!transitionFromAutonomous) {
@@ -1001,11 +1007,11 @@ public class HardwareBothHubs
     /* turretPositionSet()                                                                        */
     /* - target_position = the target position to command the turret servo to go to                            */
     public void turretPositionSet( TurretPosition target_position ) {
-        if(!isTurretAtPosition((target_position))) {
-            turretEncStableCts = 0;
+        if(turretSetPos != target_position) {
             turretSetPos = target_position;
-            turretTartgetPos = turretMap.get(turretSetPos);
-            turretServo.setPosition(turretTartgetPos);
+            turretEncStableCts = 0;
+            turretTargetPos = turretMap.get(turretSetPos);
+            turretServo.setPosition(turretTargetPos);
         }
     } // turretPositionSet
 
@@ -1014,15 +1020,15 @@ public class HardwareBothHubs
     /* - turret_increment = how much to adjust the turret servo target position                   */
     public void turretPositionShift( double turret_increment ) {
        // ensure we don't go below 0.000
-       if( (turretTartgetPos + turret_increment) < 0.000 ) {
+       if( (turretTargetPos + turret_increment) < 0.000 ) {
           // ignore request (can't exceed servo hardware limits)
        }
-       else if( (turretTartgetPos + turret_increment) > 1.000 ) {
+       else if( (turretTargetPos + turret_increment) > 1.000 ) {
           // ignore request (can't exceed servo hardware limits)
        }
        else {
-           turretTartgetPos += turret_increment;
-          turretServo.setPosition( turretTartgetPos );
+           turretTargetPos += turret_increment;
+          turretServo.setPosition(turretTargetPos);
        }
     } // turretPositionShift
 
@@ -1191,7 +1197,7 @@ public class HardwareBothHubs
         int turretError = position.getEncoderCount() - turretEncoderPos;
 
         // This number needs refinement
-        return (Math.abs(turretError) < 20);
+        return (Math.abs(turretError) < 30);
     }
 
     public boolean isTurretStable(TurretPosition position) {
@@ -1214,7 +1220,7 @@ public class HardwareBothHubs
         // sleep for the remaining portion of the regular cycle period.
         if (remaining > 0) {
             try {
-                Thread.sleep(remaining);
+                sleep(remaining);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
