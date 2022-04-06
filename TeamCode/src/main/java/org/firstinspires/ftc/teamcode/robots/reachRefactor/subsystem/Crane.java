@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 
 @Config(value = "FFCrane")
 public class Crane implements Subsystem {
-    public static int SHOULDER_START_ANGLE = 90;
+    public static int SHOULDER_START_ANGLE = 105;
     public static int ELBOW_HOME_PWM = 1500;
     public static int WRIST_HOME_PWM = 1500;
 
@@ -103,10 +103,9 @@ public class Crane implements Subsystem {
     public boolean shoulderInitialized = false;
 
     public void calibrateShoulder() {
-        elbowServo.setPosition(servoNormalize(elbowServoValue(90)));
+        elbowServo.setPosition(servoNormalize(elbowServoValue(85)));
         wristServo.setPosition(servoNormalize(wristServoValue(0)));
         shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shoulderMotor.setPower(.05);  // low power descent to ground - should take a few seconds
     }
 
     public void configureShoulder(){
@@ -123,7 +122,7 @@ public class Crane implements Subsystem {
         MANUAL(0, 0, 0, 0, 0, 0),
 
         INIT(-90, 0, 90, 0, 1.5f, 90),
-        HOME(0, 0, 0, 0, 0, 0),
+        HOME(20, -15, 0, 0, 0, 0),
 
         LOWEST_TIER(75, 130, 20, 1.5f, 130),
         MIDDLE_TIER(60, 130, 40, 1f, 150),
@@ -133,7 +132,7 @@ public class Crane implements Subsystem {
         HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, 0.85f),
         HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, -90, 1.25f),
         HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, 90, 1.25f),
-        TRANSFER(-40, -60, -20, 0, 0.4f, 0),
+        TRANSFER(-35, -60, -20, 0, 0.4f, 0),
         POST_DUMP(0, 130, 90, 0.6f, 0),
 
         TEST_1(25, 90, 25, 1.5f, 0),
