@@ -125,7 +125,7 @@ public class Crane implements Subsystem {
         INIT(-80, 0, 90, 0, 1.5f, 90),
         HOME(0, -20, 0, 0, 0, 0),
 
-        LOWEST_TIER(55, 130, 20, 1.5f, 130),
+        LOWEST_TIER(59, 130, 20, 1.5f, 130),
         MIDDLE_TIER(60, 130, 40, 1f, 150),
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
@@ -146,14 +146,15 @@ public class Crane implements Subsystem {
 
         SHARED_SHIPPING_HUB(75, 130, 20, 1.5f, 130),
 
-        AUTON_FFUTSE_UP(0, 0, 0, 0, 0, 0),
+        AUTON_FFUTSE_UP(30, 90, 20, 0, 1.5f, 130),
         AUTON_FFUTSE_HOME(0, 0, -90, 0, 0, 0),
         STOW_FFUTSE(0, 0, -90, 0, 0, 0),
         RELEASE_FFUTSE(0, 0, -90, 0, 0, 0),
 
-        AUTON_FFUTSE_LEFT(75, 130, 20, -30, 1.5f, 130),
-        AUTON_FFUTSE_MIDDLE(75, 130, 20, 0, 1.5f, 130),
-        AUTON_FFUTSE_RIGHT(75, 130, 20, 30, 1.5f, 130),
+        AUTON_FFUTSE_PREP(40, 130, 20, 0,1.5f, 130),
+        AUTON_FFUTSE_LEFT(50, 130, 20, -30, 1.5f, 130),
+        AUTON_FFUTSE_MIDDLE(50, 130, 20, 0, 1.5f, 130),
+        AUTON_FFUTSE_RIGHT(50, 130, 20, 30, 1.5f, 130),
 
         CAP(30, 140, 0, 0, 1, 170);
 

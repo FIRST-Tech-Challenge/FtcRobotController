@@ -251,10 +251,20 @@ public class Autonomous {
                         .build();
 
                 blueUpNoRR = Utils.getStateMachine(new Stage())
+                        .addSingleState(() -> {
+                            robot.crane.setToHomeEnabled(false);
+                            //robot.driveTrain.setUseAutonChassisLengthPID(true);
+                        })
+                        //hack pre-align swerve steer by driving into wall
+                        .addState(() -> robot.driveTrain.driveUntil(1,robot.driveTrain.getPoseEstimate().getHeading() ,.1))
+                        .addTimedState(1,()->{}, ()->{}) //wait
 
                         //extend swerve
-                        .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH + 8))
-                        //.addState(() -> robot.driveTrain.driveUntil(-15,-20))
+                        .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH +11))
+                        //start moving the arm so subsequent movenments aren't as large
+                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.HIGH_TIER))
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+
                         //preload dump section
                         .addMineralState(
                                 () -> visionProvider.getMostFrequentPosition().getIndex(),
@@ -263,18 +273,51 @@ public class Autonomous {
                                 () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                         )
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-                        .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(45), () -> {})
-                        .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
+                        .addTimedState(2f, () -> robot.crane.turret.setTargetHeading(45), () -> {})
+                        .addTimedState(1.5f, () -> robot.crane.dump(), () -> {})
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+                        .addTimedState(1f, () -> robot.crane.turret.setTargetHeading(0), () -> {})
+                        //.addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                         //preload dump section end
 
-                        //back up past the hub for turn toward warehouse
+                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_PREP))
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+
+                        //retract swerve
                         .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
-                        .addState(() -> robot.driveTrain.driveUntil(-35,-20))
+
+                        //FFUTSE Retrieval
+                        .addMineralState(
+                                () -> visionProvider.getMostFrequentPosition().getIndex(),
+                                () -> { robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_LEFT); return true; },
+                                () -> { robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_MIDDLE); return true; },
+                                () -> { robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_RIGHT); return true; }
+                        )
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_UP))
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+//                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_HOME))
+//                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+//                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.STOW_FFUTSE))
+//                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+//                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.RELEASE_FFUTSE))
+//                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+
+
+                        .addSingleState(() -> {
+                            robot.crane.setToHomeEnabled(true);
+                            //robot.driveTrain.setUseAutonChassisLengthPID(true);
+                        })
+                        //end pickup FFUTSE sequence
+
+                        //turn toward warehouse
+                        .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
+                        .addState(() -> robot.driveTrain.driveUntil(-20,20))
                         //turn to warehouse
-                        .addState(() -> robot.driveTrain.turnUntilDegrees(45))
+                        .addState(() -> robot.driveTrain.turnUntilDegrees(-45))
                         //enter warehouse
-                        .addState(() -> robot.driveTrain.driveUntilDegrees(50, 30,20))
+                        .addState(() -> robot.driveTrain.driveUntilDegrees(20, -45,20))
+                        .addState(() -> robot.driveTrain.driveUntilDegrees(25, 45,20))
 
                         .build();
 

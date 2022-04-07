@@ -20,7 +20,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -71,6 +70,8 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public static PIDCoefficients CUSTOM_HEADING_PID = new PIDCoefficients(1.5, 0.0, 1.0);
     public static double CUSTOM_HEADING_PID_TOLERANCE = 2;
 
+    public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0);
+
     public static PIDCoefficients ROLL_ANTI_TIP_PID = new PIDCoefficients(10, 0, 0);
     public static double ROLL_ANTI_TIP_PID_TOLERANCE = 2;
     public static PIDCoefficients PITCH_ANTI_TIP_PID = new PIDCoefficients(0, 0, 0);
@@ -97,7 +98,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     private final DistanceSensor chassisLengthDistanceSensor;
 
     private final PIDController swivelPID, chassisLengthPID, rollAntiTipPID, pitchAntiTipPID, maintainHeadingPID;
-    private PIDController headingPID;
+    private PIDController headingPID, distTravelledPID;
 
     private final boolean simulated;
 
@@ -225,6 +226,15 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         headingPID.setContinuous(true);
         headingPID.setTolerance(CUSTOM_HEADING_PID_TOLERANCE);
         headingPID.enable();
+
+        //oof currently this will be in inches units
+        //input is in inches, output is drive speed
+        distTravelledPID = new PIDController(DIST_TRAVELLED_PID);
+        distTravelledPID.setInputRange(-144, 144);
+        distTravelledPID.setOutputRange(-30, 30); //max speed for Reach
+        distTravelledPID.setContinuous(false);
+        distTravelledPID.setTolerance(1);
+        distTravelledPID.enable();
 
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
@@ -544,20 +554,23 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         rightPosition = 0;
     }
 
-    private double driveTarget, driveHeading, driveSpeed;
+    private double driveTarget, driveHeading, driveSpeed, driveDistErr, driveDistErrPrev;
     private Stage driveStage = new Stage();
     private StateMachine drive = Utils.getStateMachine(driveStage)
             .addState(() -> {
                 headingPID.setSetpoint(driveHeading);
                 headingPID.setInput(poseEstimate.getHeading());
                 double correction = headingPID.performPID();
-                //if(driveTarget<0)driveSpeed*=-1; //reverse motor direction if target is behind us
-                setDriveSignal(new DriveSignal(new Pose2d(driveSpeed, 0, correction), new Pose2d(0, 0, 0)));
-                return (Math.abs(driveTarget - getAveragePos()) < 1); //todo, make a better way to range check for close-enough that won't fail if we overshoot between checks
+                //driveDistErr=Math.abs(driveTarget - getAveragePos());
+                distTravelledPID.setSetpoint(driveTarget);
+                distTravelledPID.setInput(getAveragePos());
+                double spd = distTravelledPID.performPID();
+                setDriveSignal(new DriveSignal(new Pose2d(spd, 0, correction), new Pose2d(0, 0, 0)));
+                return (distTravelledPID.onTarget());
             })
             .build();
 
-    boolean driveAsyncInitialized = false;
+    boolean driveUntilInitialized = false;
 
     //call this version if we just want to continue in the direction the robot is currently pointing
     public boolean driveUntil(double driveDistance, double driveSpeed) {
@@ -565,18 +578,20 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     public boolean driveUntil(double driveDistance, double driveHeading, double driveSpeed) {
-        if(!driveAsyncInitialized) {
+        if(!driveUntilInitialized) {
             resetRelPos();
             this.driveTarget = driveDistance + getAveragePos();
             this.driveHeading = driveHeading;
             this.driveSpeed = driveSpeed;
-            driveAsyncInitialized = true;
+            distTravelledPID.setOutputRange(-driveSpeed,driveSpeed); //max speed
+            distTravelledPID.setSetpoint(driveTarget);
+            driveUntilInitialized = true;
         }
 
         if(drive.execute()){
             setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
 
-            driveAsyncInitialized = false;
+            driveUntilInitialized = false;
             return true;
         }
         return false;
@@ -587,7 +602,7 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     }
 
     //driveAsyncInitialized is only true when its currently driving
-    boolean isDriving(){return driveAsyncInitialized;}
+    boolean isDriving(){return driveUntilInitialized;}
 
     private double turnError = 2.0;
     private double turnAngle;
