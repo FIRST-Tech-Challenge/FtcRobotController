@@ -80,6 +80,8 @@ public abstract class Teleop extends LinearOpMode {
     final int DRIVER_MODE_STANDARD     = 2;
     final int DRIVER_MODE_DRV_CENTRIC  = 3;
     int       driverMode               = DRIVER_MODE_STANDARD;
+//    int       driverMode               = DRIVER_MODE_DRV_CENTRIC;
+
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
     boolean   autoDrive                = false;
 
@@ -1129,9 +1131,12 @@ public abstract class Teleop extends LinearOpMode {
 //          yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
 //          xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
 //          rotation     = multSegLinearRot( -gamepad1.right_stick_x );
-            yTranslation = -gamepad1.left_stick_y * 0.60;
-            xTranslation =  gamepad1.left_stick_x * 0.60;
-            rotation     = -gamepad1.right_stick_x * 0.33;
+//            yTranslation = -gamepad1.left_stick_y * 0.60;
+//            xTranslation =  gamepad1.left_stick_x * 0.60;
+//            rotation     = -gamepad1.right_stick_x * 0.33;
+            yTranslation = -gamepad1.left_stick_y * 1.0;
+            xTranslation =  gamepad1.left_stick_x * 1.25;
+            rotation     = -gamepad1.right_stick_x * 0.50;
         }
         else {
             yTranslation = -gamepad1.left_stick_y;

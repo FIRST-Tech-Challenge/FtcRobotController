@@ -191,7 +191,8 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_ROT_TURRET = 1000;  // Approaching vertical (auto-rotate as we PASS THRU vertical)
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
-    public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level
+    public int          FREIGHT_ARM_POS_HUB_TOP    = 1737;  // For dumping into hub top level
+//    public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_MAX        = 2250;  // Maximum safe rotation without hitting field floor
@@ -1007,7 +1008,7 @@ public class HardwareBothHubs
     /* turretPositionSet()                                                                        */
     /* - target_position = the target position to command the turret servo to go to                            */
     public void turretPositionSet( TurretPosition target_position ) {
-        if(turretSetPos != target_position) {
+        if((turretSetPos != target_position) || (!isTurretAtPosition(target_position))) {
             turretSetPos = target_position;
             turretEncStableCts = 0;
             turretTargetPos = turretMap.get(turretSetPos);
@@ -1197,7 +1198,7 @@ public class HardwareBothHubs
         int turretError = position.getEncoderCount() - turretEncoderPos;
 
         // This number needs refinement
-        return (Math.abs(turretError) < 30);
+        return (Math.abs(turretError) < 47);
     }
 
     public boolean isTurretStable(TurretPosition position) {
