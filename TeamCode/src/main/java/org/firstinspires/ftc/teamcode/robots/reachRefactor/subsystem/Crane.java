@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
@@ -114,6 +115,7 @@ public class Crane implements Subsystem {
         shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shoulderMotor.setTargetPosition(0);
         shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shoulderMotor.setVelocity(SHOULDER_TICKS_PER_DEGREE*10);
         shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shoulderInitialized = true;
     }
@@ -125,7 +127,8 @@ public class Crane implements Subsystem {
         INIT(-80, 0, 90, 0, 1.5f, 90),
         HOME(0, -20, 0, 0, 0, 0),
 
-        LOWEST_TIER(59, 130, 20, 1.5f, 130),
+        LOWEST_TIER(60, 130, 20, 1.5f, 130),
+        LOWEST_TIER_IK(22, HIGH_TIER_SHIPPING_HUB_HEIGHT -9.5, 0.85f),
         MIDDLE_TIER(60, 130, 40, 1f, 150),
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
@@ -152,7 +155,7 @@ public class Crane implements Subsystem {
         RELEASE_FFUTSE(0, 0, -90, 0, 0, 0),
 
         AUTON_FFUTSE_PREP(40, 130, 20, 0,1.5f, 130),
-        AUTON_FFUTSE_LEFT(50, 130, 20, -30, 1.5f, 130),
+        AUTON_FFUTSE_LEFT(55, 130, 20, -30, 1.5f, 130),
         AUTON_FFUTSE_MIDDLE(50, 130, 20, 0, 1.5f, 130),
         AUTON_FFUTSE_RIGHT(50, 130, 20, 30, 1.5f, 130),
 
@@ -379,6 +382,7 @@ public class Crane implements Subsystem {
         if (shoulderInitialized) { //don't move arm until shoulder initialized
             shoulderMotor.setTargetPosition((int) ((shoulderTargetAngle - SHOULDER_START_ANGLE) * SHOULDER_TICKS_PER_DEGREE));
             shoulderMotor.setPower(SHOULDER_POWER);
+
 
 
         elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));

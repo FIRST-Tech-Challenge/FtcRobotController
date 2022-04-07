@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.reachRefactor;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.getStateMachine;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.wrapAngle;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
@@ -251,6 +252,7 @@ public class Autonomous {
                         .build();
 
                 blueUpNoRR = Utils.getStateMachine(new Stage())
+                        .addSingleState(() -> {robot.driveTrain.setChassisLengthMode(DriveTrain.ChassisLengthMode.BOTH);})
                         .addSingleState(() -> {
                             robot.crane.setToHomeEnabled(false);
                             //robot.driveTrain.setUseAutonChassisLengthPID(true);
@@ -260,10 +262,14 @@ public class Autonomous {
                         .addTimedState(1,()->{}, ()->{}) //wait
 
                         //extend swerve
-                        .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH +11))
+                        .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH +9))
                         //start moving the arm so subsequent movenments aren't as large
+                        .addTimedState(1,()->{}, ()->{}) //wait so arm movement doesn't build on kinetic energy of chassis
+
                         .addSingleState(() -> robot.crane.articulate(Crane.Articulation.HIGH_TIER))
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+
+                        .addTimedState(1,()->{}, ()->{}) //wait
 
                         //preload dump section
                         .addMineralState(
@@ -273,6 +279,8 @@ public class Autonomous {
                                 () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                         )
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+
+                        //turn turret to shared hub, then dump and return
                         .addTimedState(2f, () -> robot.crane.turret.setTargetHeading(45), () -> {})
                         .addTimedState(1.5f, () -> robot.crane.dump(), () -> {})
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
@@ -284,6 +292,7 @@ public class Autonomous {
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
 
                         //retract swerve
+                        .addSingleState(() -> {robot.driveTrain.setChassisLengthMode(DriveTrain.ChassisLengthMode.SWERVE);})
                         .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
 
                         //FFUTSE Retrieval
@@ -296,8 +305,8 @@ public class Autonomous {
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                         .addSingleState(() -> robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_UP))
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-//                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_HOME))
-//                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
+                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.AUTON_FFUTSE_HOME))
+                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
 //                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.STOW_FFUTSE))
 //                        .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
 //                        .addSingleState(() -> robot.crane.articulate(Crane.Articulation.RELEASE_FFUTSE))
@@ -316,8 +325,9 @@ public class Autonomous {
                         //turn to warehouse
                         .addState(() -> robot.driveTrain.turnUntilDegrees(-45))
                         //enter warehouse
-                        .addState(() -> robot.driveTrain.driveUntilDegrees(20, -45,20))
-                        .addState(() -> robot.driveTrain.driveUntilDegrees(25, 45,20))
+                        .addState(() -> robot.driveTrain.driveUntilDegrees(16, wrapAngle(-45),20))
+                        //.addTimedState(3,()->{}, ()->{}) //wait
+                        .addState(() -> robot.driveTrain.driveUntilDegrees(26, wrapAngle(45),20))
 
                         .build();
 
