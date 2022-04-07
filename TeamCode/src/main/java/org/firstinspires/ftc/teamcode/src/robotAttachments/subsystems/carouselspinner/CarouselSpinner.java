@@ -17,25 +17,46 @@ public class CarouselSpinner implements Controllable<Void> {
      * How Fast the servo is to spin
      */
     private static final double servoPower = 1;
+
+    /**
+     * Multiplier for the right servo
+     */
+    private static final double rightServoMultiplier = 1;
+
+    /**
+     * Multiplier for the left servo
+     */
+    private static final double leftServoMultiplier = 1;
+
     /**
      * How long it takes to spin off a duck
      */
     private static final long duckSleepTime = 3100;
-    /**
-     * The continuous servo
-     */
-    protected final CRServo spinnerServo;
 
+    /**
+     * The left continuous servo
+     */
+    protected final CRServo leftServo;
+
+    /**
+     * The right continuous servo
+     */
+    protected final CRServo rightServo;
+
+    /**
+     * What percent of duckSleepTime the thread is to sleep for
+     */
     private final double sleepPercentage = .90;
 
     /**
      * A constructor that sets up servo from Hardware map
      *
      * @param hardwareMap Hardware Map Object
-     * @param deviceName  Name of continuous servo
+     * @param spinnerOne  Name of continuous servo
      */
-    public CarouselSpinner(HardwareMap hardwareMap, String deviceName) {
-        spinnerServo = hardwareMap.crservo.get(deviceName);
+    public CarouselSpinner(HardwareMap hardwareMap, String spinnerOne, String spinnerTwo) {
+        leftServo = hardwareMap.crservo.get(spinnerOne);
+        rightServo = hardwareMap.crservo.get(spinnerTwo);
     }
 
     /**
@@ -44,7 +65,7 @@ public class CarouselSpinner implements Controllable<Void> {
      * @throws InterruptedException raises exception if the OpMode is stopped
      */
     public void spinOffRedDuck() throws InterruptedException {
-        spinnerServo.setPower(-servoPower);
+        setServoPower(-servoPower);
         ElapsedTime t = new ElapsedTime();
 
         Thread.sleep((long) (duckSleepTime * sleepPercentage)); //Sleep for the majority of the duck spin time
@@ -56,7 +77,7 @@ public class CarouselSpinner implements Controllable<Void> {
                 throw new InterruptedException();
             }
         }
-        spinnerServo.setPower(0);
+        this.halt();
 
     }
 
@@ -66,7 +87,7 @@ public class CarouselSpinner implements Controllable<Void> {
      * @throws InterruptedException raises exception if the OpMode is stopped
      */
     public void spinOffBlueDuck() throws InterruptedException {
-        spinnerServo.setPower(servoPower);
+        setServoPower(servoPower);
         ElapsedTime t = new ElapsedTime();
         Thread.sleep((long) (duckSleepTime * sleepPercentage)); //Sleep for the majority of the duck spin time
 
@@ -77,29 +98,23 @@ public class CarouselSpinner implements Controllable<Void> {
                 throw new InterruptedException();
             }
         }
-        spinnerServo.setPower(0);
-
+        this.halt();
     }
 
     /**
-     * Spins in blue direction
+     * Sets power to the internal servos
+     * @param power The power to set the servos, in range [-1,1]
      */
-    public void setPowerBlueDirection() {
-        spinnerServo.setPower(servoPower);
-    }
-
-    /**
-     * Spins in red direction
-     */
-    public void setPowerRedDirection() {
-        spinnerServo.setPower(-servoPower);
+    private void setServoPower(double power){
+        leftServo.setPower(power * leftServoMultiplier * servoPower);
+        rightServo.setPower(power * rightServoMultiplier * servoPower);
     }
 
     /**
      * Stops the spinner
      */
     public void halt() {
-        spinnerServo.setPower(0);
+        this.setServoPower(0);
     }
 
     /**
@@ -111,7 +126,7 @@ public class CarouselSpinner implements Controllable<Void> {
      */
     @Override
     public Void gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
-        this.spinnerServo.setPower(gamepad1.left_trigger - gamepad1.right_trigger);
+        this.setServoPower(gamepad1.left_trigger - gamepad1.right_trigger);
 
         return null;
     }

@@ -4,10 +4,12 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
+import kotlin.NotImplementedError;
+
 /**
  * A Enum for each object the bucket can pick up
  */
-public enum FreightFrenzyStateObject {
+public enum FreightFrenzyStateObject{
     BALL,
     CUBESMOOTH,
     CUBEWAFFLE,
@@ -44,7 +46,7 @@ public enum FreightFrenzyStateObject {
      * @return The color the LED's should be based on the game object
      */
     public static RevBlinkinLedDriver.BlinkinPattern getLEDColorFromItem(@Nullable final FreightFrenzyStateObject item) {
-        if (item == null){
+        if (item == null) {
             return null;
         }
         switch (item) {
@@ -134,6 +136,24 @@ public enum FreightFrenzyStateObject {
         final double bDiffference = Math.abs(sight[2] - object[2]);
         // this calculates the 3D distance between colors
         return Math.sqrt(Math.pow(Math.sqrt(Math.pow(rDifference, 2) + Math.pow(gDifference, 2)), 2) + Math.pow(bDiffference, 2));
+    }
+
+    public FreightFrenzyGameObject toFFGO() {
+        switch (this) {
+            case BALL:
+                return FreightFrenzyGameObject.BALL;
+            case DUCK:
+                return FreightFrenzyGameObject.DUCK;
+            case EMPTY:
+                return FreightFrenzyGameObject.EMPTY;
+            case CUBESMOOTH:
+                return FreightFrenzyGameObject.CUBESMOOTH;
+
+            case CUBEWAFFLE:
+                return FreightFrenzyGameObject.CUBEWAFFLE;
+        }
+
+        throw new NotImplementedError("This method must convert all members of " + FreightFrenzyGameObject.class);
     }
 
 

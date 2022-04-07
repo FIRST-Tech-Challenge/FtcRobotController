@@ -5,7 +5,6 @@ import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.StateOuttake;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
@@ -19,8 +18,6 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
     protected BlinkinPattern currentPattern;
     private boolean x_depressed = true;
     private boolean tapeMeasureCtrl = false;
-    StateOuttake outtake;
-    Outtake Outtake;
 
     public RedWorldsDriveProgram(){
         defaultColor = BlinkinPattern.RED;
@@ -29,8 +26,6 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
 
     public void opModeMain() throws InterruptedException {
         this.initAll();
-        Outtake = new Outtake(hardwareMap, GenericOpModeTemplate.bucketServoName, GenericOpModeTemplate.bucketColorSensorName,true);
-        outtake = null;
 
         leds.setPattern(currentPattern);
 
@@ -61,7 +56,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     turret.halt();
                     slide.halt();
                     intake.halt();
-                    Outtake.halt();
+                    outtake.halt();
                     x_depressed = false;
                 }
 
@@ -74,13 +69,12 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     slide.gamepadControl(gamepad1, gamepad2);
 
                     //Intake Controls
-                    BlinkinPattern proposedPattern = FreightFrenzyGameObject.getLEDColorFromItem(Outtake.gamepadControl(gamepad1, gamepad2));
+                    BlinkinPattern proposedPattern = FreightFrenzyGameObject.getLEDColorFromItem(outtake.gamepadControl(gamepad1, gamepad2));
                     if (proposedPattern != null) {
                         leds.setPattern(proposedPattern);
                     } else {
                         leds.setPattern(this.defaultColor);
                     }
-
 
                     intake.gamepadControl(gamepad1, gamepad2);
 

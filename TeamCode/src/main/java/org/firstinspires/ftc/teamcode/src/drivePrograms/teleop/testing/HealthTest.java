@@ -14,7 +14,7 @@ public class HealthTest extends GenericOpModeTemplate {
 
     @Override
     public void opModeMain() {
-        spinnyServo = hardwareMap.crservo.get(GenericOpModeTemplate.carouselSpinnerName);
+        spinnyServo = hardwareMap.crservo.get(GenericOpModeTemplate.leftCarouselSpinnerName);
         h = (HardwareDeviceHealth) spinnyServo;
         s = hardwareMap.colorSensor.get(GenericOpModeTemplate.bucketColorSensorName);
         waitForStart();

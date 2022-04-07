@@ -27,7 +27,7 @@ public class AutoPickupTest extends AutonomousTemplate {
         driveSystem.moveToPosition(FieldPoints.RedWestLoadingPoint, 1);
         driveSystem.moveToPosition(FieldPoints.RedWareHousePass, 1);
         driveSystem.moveToPosition(FieldPoints.RedWareHousePark, 1);
-        outtake.setServoClosed();
+        outtake.close();
 
 
         boolean itemPickup = outtake.itemInBucket();

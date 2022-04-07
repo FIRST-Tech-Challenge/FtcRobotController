@@ -293,10 +293,10 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
 
 
         driveSystem.halt();
-        outtake.setServoOpen();
+        outtake.open();
         Thread.sleep(750);
         driveSystem.move(0, 5, 1, new DistanceTimeoutWarning(500));
-        outtake.setServoClosed();
+        outtake.close();
         slide.setTargetLevel(HeightLevel.Down);
         slide.setMotorPower(0);
 

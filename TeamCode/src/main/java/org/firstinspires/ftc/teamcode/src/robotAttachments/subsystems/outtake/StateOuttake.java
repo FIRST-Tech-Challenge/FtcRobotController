@@ -10,16 +10,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.src.utills.Controllable;
+import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyStateObject;
+import org.firstinspires.ftc.teamcode.src.utills.enums.RGBCameraColors;
 
-public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
-    /**
-     * The item color sensor
-     */
-    private final ColorRangeSensor colorSensor;
-
-
+public class StateOuttake implements Outtake {
     /**
      * The Position servo must be to release an item
      */
@@ -28,11 +23,16 @@ public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
      * The Position servo must be to keep and item in the intake compartment
      */
     private static final double closed = .7; // this position needs to be adjusted
-
+    /**
+     * The item color sensor
+     */
+    private final ColorRangeSensor colorSensor;
     /**
      * The internal Servo Object
      */
     private final Servo itemRelease;
+    private final ElapsedTime yTimer = new ElapsedTime();
+    boolean y_depressed2 = true;
     private boolean isClosed;
 
     public StateOuttake(HardwareMap hardwareMap, String colorSensor, String servoName, boolean sensorDetectionLight) {
@@ -41,33 +41,28 @@ public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
 
 
         itemRelease = hardwareMap.servo.get(servoName);
-        this.setServoClosed();
+        this.close();
         isClosed = true;
     }
 
-    boolean y_depressed2 = true;
-
-    private final ElapsedTime yTimer = new ElapsedTime();
-
-
     @Nullable
     @Override
-    public FreightFrenzyStateObject gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
+    public FreightFrenzyGameObject gamepadControl(@NonNull Gamepad gamepad1, @NonNull Gamepad gamepad2) {
         if (!gamepad2.y) {
             y_depressed2 = true;
         }
         if (gamepad2.y && y_depressed2) {
             y_depressed2 = false;
             if (this.isClosed()) {
-                this.setServoOpen();
+                this.open();
                 yTimer.reset();
             } else {
-                this.setServoClosed();
+                this.close();
             }
         }
 
         if (yTimer.seconds() > 1.25) {
-            this.setServoClosed();
+            this.close();
         }
 
         return this.identifyContents();
@@ -89,7 +84,7 @@ public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
     /**
      * uses the intake's servo hinge to put the intake in the up position
      */
-    public void setServoOpen() {
+    public void open() {
         itemRelease.setPosition(open);
         isClosed = false;
     }
@@ -97,9 +92,19 @@ public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
     /**
      * uses the intake's servo hinge to put the intake in the down position
      */
-    public void setServoClosed() {
+    public void close() {
         itemRelease.setPosition(closed);
         isClosed = true;
+    }
+
+    @Override
+    public void goTo(double pos) {
+
+    }
+
+    @Override
+    public int getColor(RGBCameraColors color) {
+        return 0;
     }
 
     /**
@@ -108,7 +113,7 @@ public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
      * @return Returns the blink pattern for the object in the bucket
      */
     public RevBlinkinLedDriver.BlinkinPattern getLEDPatternFromFreight() {
-        return FreightFrenzyStateObject.getLEDColorFromItem(FreightFrenzyStateObject.identify(this.getRGB()));
+        return FreightFrenzyGameObject.getLEDColorFromItem(this.identifyContents());
     }
 
     /**
@@ -116,8 +121,8 @@ public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
      *
      * @return The {@link FreightFrenzyStateObject} inside the bucket
      */
-    public FreightFrenzyStateObject identifyContents() {
-        return FreightFrenzyStateObject.identify(this.getRGB());
+    public FreightFrenzyGameObject identifyContents() {
+        return FreightFrenzyStateObject.identify(this.getRGB()).toFFGO();
     }
 
     /**
@@ -127,6 +132,12 @@ public class StateOuttake implements Controllable<FreightFrenzyStateObject> {
      */
     public double[] getRGB() {
         return new double[]{colorSensor.red(), colorSensor.green(), colorSensor.blue()};
+    }
+
+
+    @Override
+    public boolean itemInBucket() {
+        return false;
     }
 
 

@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.src.utills;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.RobotLog;
+
+import org.firstinspires.ftc.teamcode.R;
 
 /**
  * This is a template for all subsystems that need threading, provides some thread safety
@@ -38,7 +41,7 @@ public abstract class ThreadedSubsystemTemplate extends Thread implements Thread
     /**
      * Ends the life of this thread
      */
-    public void end() {
+    public final void end() {
         onEnd();
         this.isRunning = false;
         this.interrupt();
@@ -59,6 +62,9 @@ public abstract class ThreadedSubsystemTemplate extends Thread implements Thread
                 Thread.sleep(sleepTime);
             }
         } catch (InterruptedException ignored) {
+        }catch (Throwable t){
+            RobotLog.addGlobalWarningMessage("Side Ran Thread Crashed because thrown Throwable: " + t.getClass());
+            RobotLog.dd("Failure",t,"Fix Me Jacob");
         }
 
     }
@@ -68,7 +74,7 @@ public abstract class ThreadedSubsystemTemplate extends Thread implements Thread
      *
      * @return true if running, false otherwise
      */
-    public boolean isRunning() {
+    public final boolean isRunning() {
         return this.isRunning;
     }
 
