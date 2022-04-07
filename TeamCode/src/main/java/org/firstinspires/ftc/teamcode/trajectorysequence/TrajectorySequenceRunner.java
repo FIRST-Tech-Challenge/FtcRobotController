@@ -16,12 +16,16 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -75,6 +79,13 @@ public class TrajectorySequenceRunner {
         currentSegmentIndex = 0;
         lastSegmentIndex = -1;
     }
+
+    double error;
+    long timePrevious = 0;
+    long timeNow;
+    public static double totalError = 0;
+    private long dTime = 0;
+    public static long totalTime = 0;
 
     public @Nullable
     DriveSignal update(Pose2d poseEstimate, Pose2d poseVelocity) {
@@ -191,6 +202,17 @@ public class TrajectorySequenceRunner {
         packet.put("xError", getLastPoseError().getX());
         packet.put("yError", getLastPoseError().getY());
         packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
+
+
+        error = Math.sqrt(Math.pow(getLastPoseError().getX(), 2) + Math.pow(getLastPoseError().getY(), 2));
+        timeNow = System.currentTimeMillis();
+        if (timePrevious == 0) {
+            timePrevious = timeNow;
+        } else {
+            dTime = timeNow - timePrevious;
+            totalError = Math.abs(dTime * error) + totalError;
+            totalTime = totalTime + dTime;
+        }
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 

@@ -3,13 +3,8 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.worlds;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.StateOuttake;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
-import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyStateObject;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
 @TeleOp(name = "🟥Red Worlds Drive Program🟥")
@@ -19,7 +14,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
     private boolean x_depressed = true;
     private boolean tapeMeasureCtrl = false;
 
-    public RedWorldsDriveProgram(){
+    public RedWorldsDriveProgram() {
         defaultColor = BlinkinPattern.RED;
         currentPattern = this.defaultColor;
     }
