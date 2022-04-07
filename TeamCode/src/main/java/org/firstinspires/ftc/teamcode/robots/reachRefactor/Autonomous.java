@@ -252,8 +252,9 @@ public class Autonomous {
 
                 blueUpNoRR = Utils.getStateMachine(new Stage())
 
-                        //extend swerve by 29.67 inches
-                        .addState(() -> robot.driveTrain.driveUntil(-29.67,-20))
+                        //extend swerve
+                        .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH + 8))
+                        //.addState(() -> robot.driveTrain.driveUntil(-15,-20))
                         //preload dump section
                         .addMineralState(
                                 () -> visionProvider.getMostFrequentPosition().getIndex(),
@@ -262,13 +263,14 @@ public class Autonomous {
                                 () -> { robot.crane.articulate(Crane.Articulation.HIGH_TIER); return true; }
                         )
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
-                        .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(90), () -> {})
+                        .addTimedState(3f, () -> robot.crane.turret.setTargetHeading(45), () -> {})
                         .addTimedState(1.5f, () -> robot.crane.dump(), () -> robot.crane.articulate(Crane.Articulation.HOME))
                         .addState(() -> robot.crane.getArticulation() == Crane.Articulation.MANUAL)
                         //preload dump section end
 
                         //back up past the hub for turn toward warehouse
-                        .addState(() -> robot.driveTrain.driveUntil(-20,-20))
+                        .addSingleState(() -> robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
+                        .addState(() -> robot.driveTrain.driveUntil(-35,-20))
                         //turn to warehouse
                         .addState(() -> robot.driveTrain.turnUntilDegrees(45))
                         //enter warehouse
@@ -388,7 +390,7 @@ public class Autonomous {
 
                 redUpNoRR = Utils.getStateMachine(new Stage())
 
-                        //extend swerve by 29.67 inches
+                        //extend swerve
                         .addState(() -> robot.driveTrain.driveUntil(-29.67,-20))
                         //preload dump section
                         .addMineralState(

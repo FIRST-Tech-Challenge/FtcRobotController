@@ -103,10 +103,10 @@ public class Crane implements Subsystem {
     public boolean shoulderInitialized = false;
 
     public void calibrateShoulder() {
-        elbowServo.setPosition(servoNormalize(elbowServoValue(85)));
+        elbowServo.setPosition(servoNormalize(elbowServoValue(80)));
         wristServo.setPosition(servoNormalize(wristServoValue(0)));
         shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shoulderMotor.setPower(.15);  // low power descent to ground - should take a few seconds
+        shoulderMotor.setPower(.2);  // low power descent to ground - should take a few seconds
     }
 
     public void configureShoulder(){
@@ -122,17 +122,17 @@ public class Crane implements Subsystem {
         TEST_INIT(0, 0, 0, 0, 5, 0),
         MANUAL(0, 0, 0, 0, 0, 0),
 
-        INIT(-90, 0, 90, 0, 1.5f, 90),
-        HOME(20, -15, 0, 0, 0, 0),
+        INIT(-80, 0, 90, 0, 1.5f, 90),
+        HOME(0, -20, 0, 0, 0, 0),
 
-        LOWEST_TIER(75, 130, 20, 1.5f, 130),
+        LOWEST_TIER(55, 130, 20, 1.5f, 130),
         MIDDLE_TIER(60, 130, 40, 1f, 150),
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
 //        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
-        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, 0.85f),
-        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, -90, 1.25f),
-        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 4, 90, 1.25f),
+        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, 0.85f),
+        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, -90, 1.25f),
+        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, 90, 1.25f),
         TRANSFER(-35, -60, -20, 0, 0.4f, 0),
         POST_DUMP(0, 130, 90, 0.6f, 0),
 
