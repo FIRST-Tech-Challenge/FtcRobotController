@@ -220,21 +220,25 @@ public class Robot implements Subsystem {
             .build();
 
     private StateMachine dumpAndSetCraneForTransfer = getStateMachine(new Stage())
+            .addSingleState(() -> crane.setToHomeEnabled(false))
             .addTimedState(.5f, () -> crane.dump(), () -> {})
 //            .addSingleState(() -> { crane.setToHomeEnabled(false); })
 //            .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
 //            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
-            .addState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
 //            .addSingleState(() -> { crane.setToHomeEnabled(true); })
+            .addSingleState(() -> crane.setToHomeEnabled(true))
             .build();
 
     private StateMachine transfer = getStateMachine(new Stage())
             .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
-            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL && gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
             .addSingleState(() -> gripper.setIntakePower(1.0))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
             .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)

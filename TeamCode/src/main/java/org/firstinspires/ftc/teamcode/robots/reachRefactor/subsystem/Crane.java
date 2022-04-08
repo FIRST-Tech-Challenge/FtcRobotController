@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 
 @Config(value = "FFCrane")
 public class Crane implements Subsystem {
-    public static int SHOULDER_START_ANGLE = 105;
+    public static int SHOULDER_START_ANGLE = 110;
     public static int ELBOW_HOME_PWM = 1500;
     public static int WRIST_HOME_PWM = 1500;
 
