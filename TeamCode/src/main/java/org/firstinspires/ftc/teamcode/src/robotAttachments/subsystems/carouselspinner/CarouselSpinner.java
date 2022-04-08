@@ -103,9 +103,10 @@ public class CarouselSpinner implements Controllable<Void> {
 
     /**
      * Sets power to the internal servos
+     *
      * @param power The power to set the servos, in range [-1,1]
      */
-    private void setServoPower(double power){
+    private void setServoPower(double power) {
         leftServo.setPower(power * leftServoMultiplier * servoPower);
         rightServo.setPower(power * rightServoMultiplier * servoPower);
     }

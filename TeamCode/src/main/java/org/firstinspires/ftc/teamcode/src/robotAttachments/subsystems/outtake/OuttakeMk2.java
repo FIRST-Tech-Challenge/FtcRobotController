@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.utills.Executable;
 import org.firstinspires.ftc.teamcode.src.utills.ThreadedSubsystemTemplate;
@@ -85,6 +86,7 @@ public class OuttakeMk2 extends ThreadedSubsystemTemplate implements Outtake {
             movingForward = false;
         } finally {
             lock.unlock();
+            RobotLog.d("Task RF Finished");
         }
     }
 
@@ -119,6 +121,7 @@ public class OuttakeMk2 extends ThreadedSubsystemTemplate implements Outtake {
             movingBackward = false;
         } finally {
             lock.unlock();
+            RobotLog.d("Task RB Finished");
         }
     }
 
@@ -231,11 +234,8 @@ public class OuttakeMk2 extends ThreadedSubsystemTemplate implements Outtake {
     @Override
     public void halt() {
         taskQueue.clear();
-        taskQueue.add(() -> {
-            this.outtakeServo.setPower(0);
-            return null;
-        });
-
+        this.outtakeServo.setPower(0);
+        taskQueue.clear();
     }
 
     /**

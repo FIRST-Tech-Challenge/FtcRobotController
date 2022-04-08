@@ -5,24 +5,18 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 @Config
 @Autonomous(name = "Red Carousel Auton")
 public class RedCarouselAutonomous extends GenericOpModeTemplate {
     static final Pose2d startPos = new Pose2d(-40, -65, Math.toRadians(0));
     static final Pose2d dropOffPos = new Pose2d(-12, -38, Math.toRadians(270));
-    public static Pose2d carouselSpinPos = new Pose2d(-61, -51, Math.toRadians(270));
     static final Pose2d parkPos = new Pose2d(-60, -35.5, Math.toRadians(270));
-
+    public static Pose2d carouselSpinPos = new Pose2d(-61, -51, Math.toRadians(270));
 
     @Override
     public void opModeMain() throws InterruptedException {
@@ -64,8 +58,11 @@ public class RedCarouselAutonomous extends GenericOpModeTemplate {
             drive.followTrajectory(traj3);
         }
 
-        telemetry.addData("Cumulative Error (in/sec)", TrajectorySequenceRunner.totalError/1000);
-        telemetry.addData("Average Error (in)", TrajectorySequenceRunner.totalError / TrajectorySequenceRunner.totalTime);
+        telemetry.addData("Cumulative Error (in/sec)", TrajectorySequenceRunner.getTotalPositionError());
+        telemetry.addData("Average Error (in)", TrajectorySequenceRunner.getAveragePositionError());
+        telemetry.addLine();
+        telemetry.addData("Cumulative Heading Error (in/sec)", TrajectorySequenceRunner.getTotalHeadingError());
+        telemetry.addData("Average Heading Error (in)", TrajectorySequenceRunner.getAverageHeadingError());
 
         telemetry.update();
 

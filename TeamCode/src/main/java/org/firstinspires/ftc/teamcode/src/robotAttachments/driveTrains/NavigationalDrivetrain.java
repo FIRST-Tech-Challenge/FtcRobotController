@@ -320,7 +320,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
 
         while (currentDistance > tolerance && !isStopRequested() && opModeIsActive()) {
 
-            if (isStopRequested()){
+            if (isStopRequested()) {
                 throw new InterruptedException();
             }
 
@@ -496,7 +496,7 @@ public class NavigationalDrivetrain extends BasicDrivetrain {
      * @param power     The power to move at
      * @param tolerance The tolerance for how close the robot must get
      * @param errors    A array of error conditions to check. If it throws, the robot does not stop and the exception is propagated up the stack
-     * @throws MovementException    Throws if error throws
+     * @throws MovementException Throws if error throws
      */
     public void moveTowardsPosition(double x, double y, double theta, final double power, double tolerance, MovementException[] errors) throws MovementException {
 

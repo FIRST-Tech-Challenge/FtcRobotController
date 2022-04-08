@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
+
 @Config
 @TeleOp(name = "ThieveryTest")
 public class ThieveryTest extends GenericOpModeTemplate {
@@ -17,7 +18,7 @@ public class ThieveryTest extends GenericOpModeTemplate {
 
         waitForStart();
 
-        while (opModeIsActive() && !isStopRequested()){
+        while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Pos", odometry.getPoseEstimate());
             odometry.update();
             telemetry.update();

@@ -13,9 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "OpenCV_Contour_12586_Test", group = "Tutorials")
-public class    OpenCVTest extends LinearOpMode {
-    private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
+public class OpenCVTest extends LinearOpMode {
     public static final double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
     public static final double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
     public static final double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
@@ -23,6 +21,8 @@ public class    OpenCVTest extends LinearOpMode {
     // Pink Range                                      Y      Cr     Cb
     public static final Scalar scalarLowerYCrCb = new Scalar(0.0, 160.0, 100.0);
     public static final Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
+    private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
+    private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
     private OpenCvCamera webcam;
     private double CrLowerUpdate = 160;
     private double CbLowerUpdate = 100;

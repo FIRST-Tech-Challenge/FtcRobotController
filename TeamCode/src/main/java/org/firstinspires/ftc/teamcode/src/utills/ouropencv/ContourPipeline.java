@@ -17,11 +17,10 @@ import java.util.List;
 // Credits to team 7303 RoboAvatars, adjusted by team 3954 Pink to the Future
 
 public class ContourPipeline extends OpenCvPipeline {
-    final Scalar HOT_PINK = new Scalar(196, 23, 112);
-
     // Pink, the default color                         Y      Cr     Cb    (Do not change Y)
     public static Scalar scalarLowerYCrCb = new Scalar(0.0, 150.0, 120.0);
     public static Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
+    final Scalar HOT_PINK = new Scalar(196, 23, 112);
 
     // Yellow, freight or ducks!
     //public static Scalar scalarLowerYCrCb = new Scalar(0.0, 100.0, 0.0);
@@ -33,31 +32,23 @@ public class ContourPipeline extends OpenCvPipeline {
 
     // Use this picture for you own color https://github.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022/blob/main/YCbCr.jpeg
     // Note that the Cr and Cb values range between 0-255. this means that the origin of the coordinate system is (128,128)
-
+    private final Mat mat = new Mat();
+    private final Mat processed = new Mat();
+    private final Object sync = new Object();
     // Volatile because accessed by OpMode without sync
     public volatile boolean error = false;
     public volatile Exception debug;
-
     private double borderLeftX;     //fraction of pixels from the left side of the cam to skip
     private double borderRightX;    //fraction of pixels from the right of the cam to skip
     private double borderTopY;      //fraction of pixels from the top of the cam to skip
     private double borderBottomY;   //fraction of pixels from the bottom of the cam to skip
-
     private int CAMERA_WIDTH;
     private int CAMERA_HEIGHT;
-
     private int loopCounter = 0;
     private int pLoopCounter = 0;
-
-    private final Mat mat = new Mat();
-    private final Mat processed = new Mat();
-
-    private Rect maxRect = new Rect(600,1,1,1);
-
+    private Rect maxRect = new Rect(600, 1, 1, 1);
     private double maxArea = 0;
     private boolean first = false;
-
-    private final Object sync = new Object();
 
     public ContourPipeline(double borderLeftX, double borderRightX, double borderTopY, double borderBottomY) {
         this.borderLeftX = borderLeftX;
@@ -65,18 +56,23 @@ public class ContourPipeline extends OpenCvPipeline {
         this.borderTopY = borderTopY;
         this.borderBottomY = borderBottomY;
     }
+
     public void configureScalarLower(double y, double cr, double cb) {
         scalarLowerYCrCb = new Scalar(y, cr, cb);
     }
+
     public void configureScalarUpper(double y, double cr, double cb) {
         scalarUpperYCrCb = new Scalar(y, cr, cb);
     }
+
     public void configureScalarLower(int y, int cr, int cb) {
         scalarLowerYCrCb = new Scalar(y, cr, cb);
     }
+
     public void configureScalarUpper(int y, int cr, int cb) {
         scalarUpperYCrCb = new Scalar(y, cr, cb);
     }
+
     public void configureBorders(double borderLeftX, double borderRightX, double borderTopY, double borderBottomY) {
         this.borderLeftX = borderLeftX;
         this.borderRightX = borderRightX;
@@ -115,25 +111,24 @@ public class ContourPipeline extends OpenCvPipeline {
                         MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
                         Rect rect = Imgproc.boundingRect(areaPoints);
 
-                        if (                        rect.area() > maxArea
-                                && rect.x + (rect.width / 2.0)  > (borderLeftX * CAMERA_WIDTH)
-                                && rect.x + (rect.width / 2.0)  < CAMERA_WIDTH - (borderRightX * CAMERA_WIDTH)
+                        if (rect.area() > maxArea
+                                && rect.x + (rect.width / 2.0) > (borderLeftX * CAMERA_WIDTH)
+                                && rect.x + (rect.width / 2.0) < CAMERA_WIDTH - (borderRightX * CAMERA_WIDTH)
                                 && rect.y + (rect.height / 2.0) > (borderTopY * CAMERA_HEIGHT)
                                 && rect.y + (rect.height / 2.0) < CAMERA_HEIGHT - (borderBottomY * CAMERA_HEIGHT)
 
-                                || loopCounter - pLoopCounter   > 6
-                                && rect.x + (rect.width / 2.0)  > (borderLeftX * CAMERA_WIDTH)
-                                && rect.x + (rect.width / 2.0)  < CAMERA_WIDTH - (borderRightX * CAMERA_WIDTH)
+                                || loopCounter - pLoopCounter > 6
+                                && rect.x + (rect.width / 2.0) > (borderLeftX * CAMERA_WIDTH)
+                                && rect.x + (rect.width / 2.0) < CAMERA_WIDTH - (borderRightX * CAMERA_WIDTH)
                                 && rect.y + (rect.height / 2.0) > (borderTopY * CAMERA_HEIGHT)
                                 && rect.y + (rect.height / 2.0) < CAMERA_HEIGHT - (borderBottomY * CAMERA_HEIGHT)
-                        ){
+                        ) {
                             maxArea = rect.area();
                             maxRect = rect;
                             pLoopCounter++;
                             loopCounter = pLoopCounter;
                             first = true;
-                        }
-                        else if(loopCounter - pLoopCounter > 10){
+                        } else if (loopCounter - pLoopCounter > 10) {
                             maxArea = new Rect().area();
                             maxRect = new Rect();
                         }
@@ -143,7 +138,7 @@ public class ContourPipeline extends OpenCvPipeline {
                     contour.release();
                 }
                 if (contours.isEmpty()) {
-                    maxRect = new Rect(600,1,1,1);
+                    maxRect = new Rect(600, 1, 1, 1);
                 }
             }
             // Draw Rectangles If Area Is At Least 500
@@ -179,41 +174,49 @@ public class ContourPipeline extends OpenCvPipeline {
             return maxRect.height;
         }
     }
+
     public int getRectWidth() {
         synchronized (sync) {
             return maxRect.width;
         }
     }
+
     public int getRectX() {
         synchronized (sync) {
             return maxRect.x;
         }
     }
+
     public int getRectY() {
         synchronized (sync) {
             return maxRect.y;
         }
     }
+
     public double getRectMidpointX() {
         synchronized (sync) {
             return getRectX() + (getRectWidth() / 2.0);
         }
     }
+
     public double getRectMidpointY() {
         synchronized (sync) {
             return getRectY() + (getRectHeight() / 2.0);
         }
     }
+
     public Point getRectMidpointXY() {
         synchronized (sync) {
             return new Point(getRectMidpointX(), getRectMidpointY());
         }
     }
+
     public double getAspectRatio() {
         synchronized (sync) {
             return getRectArea() / (CAMERA_HEIGHT * CAMERA_WIDTH);
         }
     }
+
     public double getRectArea() {
         synchronized (sync) {
             return maxRect.area();

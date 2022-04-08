@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,8 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
-import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
@@ -245,7 +242,6 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
     }
 
 
-
     protected double pickUpBlock2(double distanceDriven, double startingDistanceFromWall, boolean isBlue) throws InterruptedException {
 
         //Loops while the item is not detected
@@ -315,7 +311,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
 
                 }
                 Thread.yield();
-                if (Thread.currentThread().isInterrupted()){
+                if (Thread.currentThread().isInterrupted()) {
                     throw new InterruptedException();
                 }
             }
@@ -326,10 +322,10 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
             while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
                 intake.turnIntakeOn();
                 if ((outtake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
-                   break outer;
-               }
+                    break outer;
+                }
                 Thread.yield();
-                if (Thread.currentThread().isInterrupted()){
+                if (Thread.currentThread().isInterrupted()) {
                     throw new InterruptedException();
                 }
             }

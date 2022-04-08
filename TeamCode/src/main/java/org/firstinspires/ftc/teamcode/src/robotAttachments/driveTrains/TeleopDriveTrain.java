@@ -58,7 +58,7 @@ public class TeleopDriveTrain extends BasicDrivetrain {
             front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }else {
+        } else {
             front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

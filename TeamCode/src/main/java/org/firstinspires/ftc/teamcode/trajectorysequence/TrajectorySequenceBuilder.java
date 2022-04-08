@@ -33,22 +33,16 @@ public class TrajectorySequenceBuilder {
 
     private final TrajectoryVelocityConstraint baseVelConstraint;
     private final TrajectoryAccelerationConstraint baseAccelConstraint;
-
-    private TrajectoryVelocityConstraint currentVelConstraint;
-    private TrajectoryAccelerationConstraint currentAccelConstraint;
-
     private final double baseTurnConstraintMaxAngVel;
     private final double baseTurnConstraintMaxAngAccel;
-
-    private double currentTurnConstraintMaxAngVel;
-    private double currentTurnConstraintMaxAngAccel;
-
     private final List<SequenceSegment> sequenceSegments;
-
     private final List<TemporalMarker> temporalMarkers;
     private final List<DisplacementMarker> displacementMarkers;
     private final List<SpatialMarker> spatialMarkers;
-
+    private TrajectoryVelocityConstraint currentVelConstraint;
+    private TrajectoryAccelerationConstraint currentAccelConstraint;
+    private double currentTurnConstraintMaxAngVel;
+    private double currentTurnConstraintMaxAngAccel;
     private Pose2d lastPose;
 
     private double tangentOffset;

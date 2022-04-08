@@ -21,7 +21,7 @@ public class TapeMeasureTurret implements Controllable<Void> {
         this.yaw = hardwareMap.crservo.get(yawServoName);
     }
 
-    public void halt(){
+    public void halt() {
         tapeMeasure.setPower(0);
         pitch.setPower(0);
         yaw.setPower(0);
@@ -41,13 +41,13 @@ public class TapeMeasureTurret implements Controllable<Void> {
         pitch.setPower(pitchPower);
         yaw.setPower(yawPower);
 
-        if (gamepad2.a){
+        if (gamepad2.a) {
             powerMultiplier = .1;
         }
-        if (gamepad2.b){
+        if (gamepad2.b) {
             powerMultiplier = .5;
         }
-        if (gamepad2.y){
+        if (gamepad2.y) {
             powerMultiplier = 1;
         }
 

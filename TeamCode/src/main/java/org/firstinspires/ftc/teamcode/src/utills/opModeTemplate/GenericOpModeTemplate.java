@@ -199,7 +199,9 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Initializes the Outtake
      */
     protected void initOuttake() throws InterruptedException {
-        outtake = new OuttakeMk2(hardwareMap, bucketServoName, bucketColorSensorName, this::opModeIsActive, this::isStopRequested);
+        OuttakeMk2 tmp = new OuttakeMk2(hardwareMap, bucketServoName, bucketColorSensorName, this::opModeIsActive, this::isStopRequested);
+        tmp.start();
+        outtake = tmp;
         outtake.close();
     }
 

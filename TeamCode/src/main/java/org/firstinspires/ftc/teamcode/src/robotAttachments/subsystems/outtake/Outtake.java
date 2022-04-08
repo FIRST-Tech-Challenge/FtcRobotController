@@ -34,6 +34,7 @@ public interface Outtake extends Controllable<FreightFrenzyGameObject> {
 
     /**
      * Goes to the requested position
+     *
      * @param pos The position to go to
      * @throws InterruptedException Throws if stop is requested during this time
      */

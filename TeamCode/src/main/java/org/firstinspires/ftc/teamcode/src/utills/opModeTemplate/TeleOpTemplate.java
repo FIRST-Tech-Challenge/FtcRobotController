@@ -39,7 +39,6 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
     }
 
 
-
     /**
      * Initializes the Drive Train
      */
@@ -47,8 +46,8 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
         driveTrain = new TeleopDriveTrain(hardwareMap, frontRightName, frontLeftName, backRightName, backLeftName, true);
     }
 
-    public void initIntake(){
-        this.intake = new ContinuousIntake(hardwareMap,frontIntakeMotorName, backIntakeMotorName);
+    public void initIntake() {
+        this.intake = new ContinuousIntake(hardwareMap, frontIntakeMotorName, backIntakeMotorName);
     }
 
 

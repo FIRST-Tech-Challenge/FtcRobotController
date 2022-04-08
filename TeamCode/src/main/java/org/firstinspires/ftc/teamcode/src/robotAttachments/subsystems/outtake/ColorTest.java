@@ -25,9 +25,9 @@ public class ColorTest extends TeleOpTemplate {
 
         while (opModeIsActive() && !isStopRequested()) {
 
-            intake.gamepadControl(gamepad1,gamepad2);
+            intake.gamepadControl(gamepad1, gamepad2);
 
-            outtake.gamepadControl(gamepad1,gamepad2);
+            outtake.gamepadControl(gamepad1, gamepad2);
 
             telemetry.addData("red:", outtake.getColor(Red));
             telemetry.addData("green:", outtake.getColor(Green));

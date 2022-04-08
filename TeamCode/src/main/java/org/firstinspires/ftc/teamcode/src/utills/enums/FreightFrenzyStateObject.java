@@ -9,7 +9,7 @@ import kotlin.NotImplementedError;
 /**
  * A Enum for each object the bucket can pick up
  */
-public enum FreightFrenzyStateObject{
+public enum FreightFrenzyStateObject {
     BALL,
     CUBESMOOTH,
     CUBEWAFFLE,

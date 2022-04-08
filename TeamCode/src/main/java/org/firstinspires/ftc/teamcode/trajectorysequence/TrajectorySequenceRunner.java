@@ -16,16 +16,12 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -42,24 +38,25 @@ public class TrajectorySequenceRunner {
     public static String COLOR_ACTIVE_WAIT = "#dd2c00";
 
     public static int POSE_HISTORY_LIMIT = 100;
-
+    public static double totalError = 0;
+    public static double totalHError = 0;
+    public static long totalTime = 0;
     private final TrajectoryFollower follower;
-
     private final PIDFController turnController;
-
     private final NanoClock clock;
-
+    private final FtcDashboard dashboard;
+    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    List<TrajectoryMarker> remainingMarkers = new ArrayList<>();
+    double error = 0;
+    double headingError = 0;
+    long timePrevious = 0;
+    long timeNow;
     private TrajectorySequence currentTrajectorySequence;
     private double currentSegmentStartTime;
     private int currentSegmentIndex;
     private int lastSegmentIndex;
-
     private Pose2d lastPoseError = new Pose2d();
-
-    List<TrajectoryMarker> remainingMarkers = new ArrayList<>();
-
-    private final FtcDashboard dashboard;
-    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    private long dTime = 0;
 
     public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients) {
         this.follower = follower;
@@ -80,12 +77,41 @@ public class TrajectorySequenceRunner {
         lastSegmentIndex = -1;
     }
 
-    double error;
-    long timePrevious = 0;
-    long timeNow;
-    public static double totalError = 0;
-    private long dTime = 0;
-    public static long totalTime = 0;
+    /**
+     * Gets the average error over all the paths
+     *
+     * @return The total error in inches
+     */
+    public static double getAveragePositionError() {
+        return TrajectorySequenceRunner.totalError / TrajectorySequenceRunner.totalTime;
+    }
+
+    /**
+     * Gets the error over all the paths
+     *
+     * @return The total error in in/sec
+     */
+    public static double getTotalPositionError() {
+        return totalError / 1000;
+    }
+
+    /**
+     * Gets the average error over all the paths
+     *
+     * @return The total error in inches
+     */
+    public static double getAverageHeadingError() {
+        return TrajectorySequenceRunner.totalHError / TrajectorySequenceRunner.totalTime;
+    }
+
+    /**
+     * Gets the error over all the paths
+     *
+     * @return The total error in in/sec
+     */
+    public static double getTotalHeadingError() {
+        return totalHError / 1000;
+    }
 
     public @Nullable
     DriveSignal update(Pose2d poseEstimate, Pose2d poseVelocity) {
@@ -205,12 +231,15 @@ public class TrajectorySequenceRunner {
 
 
         error = Math.sqrt(Math.pow(getLastPoseError().getX(), 2) + Math.pow(getLastPoseError().getY(), 2));
+        headingError = Math.abs(Math.toDegrees(getLastPoseError().getHeading()));
+
         timeNow = System.currentTimeMillis();
         if (timePrevious == 0) {
             timePrevious = timeNow;
         } else {
             dTime = timeNow - timePrevious;
             totalError = Math.abs(dTime * error) + totalError;
+            totalHError = (headingError * dTime) + totalHError;
             totalTime = totalTime + dTime;
         }
 

@@ -63,7 +63,7 @@ public enum FreightFrenzyGameObject {
      * @return The color the LED's should be based on the game object
      */
     public static RevBlinkinLedDriver.BlinkinPattern getLEDColorFromItem(@Nullable final FreightFrenzyGameObject item) {
-        if (item == null){
+        if (item == null) {
             return null;
         }
         switch (item) {

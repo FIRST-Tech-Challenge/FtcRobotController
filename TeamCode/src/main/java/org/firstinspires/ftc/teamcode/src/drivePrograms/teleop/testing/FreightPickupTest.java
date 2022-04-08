@@ -18,13 +18,13 @@ public class FreightPickupTest extends TeleOpTemplate {
         this.initDriveTrain();
         waitForStart();
 
-        while (opModeIsActive() && !isStopRequested()){
-            driveTrain.gamepadControl(gamepad1,gamepad2);
+        while (opModeIsActive() && !isStopRequested()) {
+            driveTrain.gamepadControl(gamepad1, gamepad2);
 
-            if (gamepad2.a){
+            if (gamepad2.a) {
                 frontIntake.setPower(1);
                 backIntake.setPower(1);
-            }else {
+            } else {
                 frontIntake.setPower(0);
                 backIntake.setPower(0);
             }

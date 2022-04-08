@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
@@ -32,7 +31,7 @@ public class TrackWidthTuner extends GenericOpModeTemplate {
 
 
     @Override
-    public void opModeMain() throws InterruptedException{
+    public void opModeMain() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         this.initOdometryServos();
         podServos.lower();

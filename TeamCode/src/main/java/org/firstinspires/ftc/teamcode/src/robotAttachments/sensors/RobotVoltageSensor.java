@@ -10,7 +10,7 @@ public class RobotVoltageSensor {
     /**
      * Internal voltage sensor object
      */
-    private VoltageSensor sensor;
+    private final VoltageSensor sensor;
 
     /**
      * Gets the voltage sensor from the hardware map, stores it internally
@@ -23,23 +23,24 @@ public class RobotVoltageSensor {
     }
 
     /**
+     * Extracts a voltage sensor from the hardware map
+     *
+     * @param hardwareMap The hardware map to get a voltage sensor from
+     * @return A voltage sensor
+     */
+    public static VoltageSensor extractVoltageSensor(HardwareMap hardwareMap) {
+        for (com.qualcomm.robotcore.hardware.VoltageSensor _sensor : hardwareMap.voltageSensor) {
+            return _sensor;
+        }
+        return null;
+    }
+
+    /**
      * Returns the voltage
      *
      * @return Returns the voltage in Volts
      */
     public double getVoltage() {
         return sensor.getVoltage();
-    }
-
-    /**
-     * Extracts a voltage sensor from the hardware map
-     * @param hardwareMap The hardware map to get a voltage sensor from
-     * @return A voltage sensor
-     */
-    public static VoltageSensor extractVoltageSensor(HardwareMap hardwareMap){
-        for (com.qualcomm.robotcore.hardware.VoltageSensor _sensor : hardwareMap.voltageSensor) {
-            return _sensor;
-        }
-        return null;
     }
 }

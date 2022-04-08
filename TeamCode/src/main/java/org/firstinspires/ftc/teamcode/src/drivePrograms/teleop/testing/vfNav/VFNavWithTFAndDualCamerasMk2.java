@@ -32,7 +32,7 @@ public class VFNavWithTFAndDualCamerasMk2 extends AutoVFTrackingTemplate {
             }
             telemetry.update();
             Thread.yield();
-            if (Thread.currentThread().isInterrupted()){
+            if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
             }
 

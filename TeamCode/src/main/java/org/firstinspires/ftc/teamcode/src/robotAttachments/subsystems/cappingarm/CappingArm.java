@@ -11,11 +11,11 @@ import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 @Deprecated
 public class CappingArm implements Controllable<Void> {
 
-    private final Servo cappingServo;
     private static final double upPosition = 0.75;
     private static final double downPosition = 0.28;
     private static final double initPosition = 0.92;
     private static final double cappingPosition = 0.54;
+    private final Servo cappingServo;
 
     public CappingArm(HardwareMap hardwareMap, String servoName) {
         cappingServo = hardwareMap.servo.get(servoName);
@@ -58,6 +58,7 @@ public class CappingArm implements Controllable<Void> {
         return null;
     }
 
-    public void halt(){}
+    public void halt() {
+    }
 
 }

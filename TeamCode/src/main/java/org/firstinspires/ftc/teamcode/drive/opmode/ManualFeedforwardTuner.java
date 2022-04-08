@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -16,13 +23,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.Objects;
-
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -44,15 +44,9 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 public class ManualFeedforwardTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private SampleMecanumDrive drive;
-
-    enum Mode {
-        DRIVER_MODE,
-        TUNING_MODE
-    }
-
     private Mode mode;
 
     private static MotionProfile generateProfile(boolean movingForward) {
@@ -142,5 +136,10 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
             telemetry.update();
         }
+    }
+
+    enum Mode {
+        DRIVER_MODE,
+        TUNING_MODE
     }
 }

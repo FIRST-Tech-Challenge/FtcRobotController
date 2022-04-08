@@ -275,7 +275,7 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
                 break;
             }
             Thread.yield();
-            if (Thread.currentThread().isInterrupted()){
+            if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException();
             }
         }

@@ -27,7 +27,7 @@ public class OuttakeMk1 implements Outtake {
     /**
      * The Position servo must be to release an item
      */
-    protected static final double onehundredThirtyFivePos = .45 + (0.35/2); // this position needs to be adjusted!
+    protected static final double onehundredThirtyFivePos = .45 + (0.35 / 2); // this position needs to be adjusted!
 
     /**
      * The Position servo must be to release an item
@@ -48,14 +48,14 @@ public class OuttakeMk1 implements Outtake {
      * The internal Servo Object
      */
     protected final Servo itemRelease;
-
+    protected final ElapsedTime closeTimer = new ElapsedTime();
     /**
      * A boolean that tells if the servo is closed or opened
      */
     protected boolean isClosed;
-
-
-
+    protected boolean y_depressed2 = true;
+    protected boolean b_depressed = true;
+    protected boolean a_depressed = true;
 
     /**
      * Initializes from hardware map and names
@@ -90,7 +90,6 @@ public class OuttakeMk1 implements Outtake {
     public boolean isClosed() {
         return this.isClosed;
     }
-
 
     /**
      * uses the intake's servo hinge to put the intake in the up position
@@ -171,14 +170,6 @@ public class OuttakeMk1 implements Outtake {
         return FreightFrenzyGameObject.getLEDColorFromItem(FreightFrenzyGameObject.identify(this.getRGB()));
     }
 
-    protected boolean y_depressed2 = true;
-
-    protected boolean b_depressed = true;
-
-    protected boolean a_depressed = true;
-
-    protected final ElapsedTime closeTimer = new ElapsedTime();
-
     /**
      * Controls the intake and outtake
      *
@@ -232,7 +223,6 @@ public class OuttakeMk1 implements Outtake {
             }
             currentObject = FreightFrenzyGameObject.EMPTY;
         }
-
 
 
         if (this.closeTimer.seconds() > 1.25) {

@@ -13,29 +13,29 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 /**
  * This is a simple teleop routine for debugging your motor configuration.
  * Pressing each of the buttons will power its respective motor.
- *
+ * <p>
  * Button Mappings:
- *
+ * <p>
  * Xbox/PS4 Button - Motor
- *   X / ▢         - Front Left
- *   Y / Δ         - Front Right
- *   B / O         - Rear  Right
- *   A / X         - Rear  Left
- *                                    The buttons are mapped to match the wheels spatially if you
- *                                    were to rotate the gamepad 45deg°. x/square is the front left
- *                    ________        and each button corresponds to the wheel as you go clockwise
- *                   / ______ \
- *     ------------.-'   _  '-..+              Front of Bot
- *              /   _  ( Y )  _  \                  ^
- *             |  ( X )  _  ( B ) |     Front Left   \    Front Right
- *        ___  '.      ( A )     /|       Wheel       \      Wheel
- *      .'    '.    '-._____.-'  .'       (x/▢)        \     (Y/Δ)
- *     |       |                 |                      \
- *      '.___.' '.               |          Rear Left    \   Rear Right
- *               '.             /             Wheel       \    Wheel
- *                \.          .'              (A/X)        \   (B/O)
- *                  \________/
- *
+ * X / ▢         - Front Left
+ * Y / Δ         - Front Right
+ * B / O         - Rear  Right
+ * A / X         - Rear  Left
+ * The buttons are mapped to match the wheels spatially if you
+ * were to rotate the gamepad 45deg°. x/square is the front left
+ * ________        and each button corresponds to the wheel as you go clockwise
+ * / ______ \
+ * ------------.-'   _  '-..+              Front of Bot
+ * /   _  ( Y )  _  \                  ^
+ * |  ( X )  _  ( B ) |     Front Left   \    Front Right
+ * ___  '.      ( A )     /|       Wheel       \      Wheel
+ * .'    '.    '-._____.-'  .'       (x/▢)        \     (Y/Δ)
+ * |       |                 |                      \
+ * '.___.' '.               |          Rear Left    \   Rear Right
+ * '.             /             Wheel       \    Wheel
+ * \.          .'              (A/X)        \   (B/O)
+ * \________/
+ * <p>
  * Uncomment the @Disabled tag below to use this opmode.
  */
 @Disabled
@@ -70,16 +70,16 @@ public class MotorDirectionDebugger extends LinearOpMode {
             telemetry.addLine("<font face=\"monospace\">&nbsp;&nbsp;A / X&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Rear&nbsp;&nbsp;Left</font>");
             telemetry.addLine();
 
-            if(gamepad1.x) {
+            if (gamepad1.x) {
                 drive.setMotorPowers(MOTOR_POWER, 0, 0, 0);
                 telemetry.addLine("Running Motor: Front Left");
-            } else if(gamepad1.y) {
+            } else if (gamepad1.y) {
                 drive.setMotorPowers(0, 0, 0, MOTOR_POWER);
                 telemetry.addLine("Running Motor: Front Right");
-            } else if(gamepad1.b) {
+            } else if (gamepad1.b) {
                 drive.setMotorPowers(0, 0, MOTOR_POWER, 0);
                 telemetry.addLine("Running Motor: Rear Right");
-            } else if(gamepad1.a) {
+            } else if (gamepad1.a) {
                 drive.setMotorPowers(0, MOTOR_POWER, 0, 0);
                 telemetry.addLine("Running Motor: Rear Left");
             } else {
