@@ -48,7 +48,8 @@ public abstract class Teleop extends LinearOpMode {
 
     final int FREIGHT_CYCLECOUNT_START  = 20; // Freight Arm just started moving (1st cycle)
     final int FREIGHT_CYCLECOUNT_SERVO  = 10; // Freight Arm off the floor (safe to rotate box servo)
-    final int FREIGHT_CYCLECOUNT_CHECK  = 2;  // Time to check if Freight Arm is still moving?
+    final int FREIGHT_CYCLECOUNT_CHECK  = 3;  // Time to check if Freight Arm is still moving?
+    final int FREIGHT_ARM_CENTERING     = 2;  // Center the freight arm after performing evasive maneuvers
     final int FREIGHT_CYCLECOUNT_SETTLE = 1;  // Small delay to make sure things aren't bouncing around
     final int FREIGHT_CYCLECOUNT_DONE   = 0;  // Movement is complete (cycle count is reset)
     int       freightArmCycleCount      = FREIGHT_CYCLECOUNT_DONE;
@@ -62,6 +63,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean     waitForTurretServo   = false;
     double      waitForTurretMsec    = 0.0; // wait time (msec)
     boolean     autoRotateTurret     = false; // Rotate toward shared hub
+    boolean     waitingForTurret     = false; // Need to wait for turret to center
 
     double    wristServoPos = 0.950;          // Servo setting to target once arm movement starts (WRIST_SERVO_INIT)
 
@@ -93,6 +95,8 @@ public abstract class Teleop extends LinearOpMode {
     boolean     needCollectorLowered = false;  // request to lower collector arm (after freight arm lowers)
     boolean     collectorArmRaising  = false;  // commanded to rise, but still in process
     boolean     collectorArmLowering = false;  // commanded to lower, but still in process
+    boolean     needEvasiveManeuvers = false;  // One of the buttons pressed will require evasive maneuvers
+    boolean     performEvasiveManeuvers = false; // Move the arm to avoid the hub post
     ElapsedTime collectorArmTimer    = new ElapsedTime();
 
     //freight detection section
@@ -598,7 +602,13 @@ public abstract class Teleop extends LinearOpMode {
         if(( gamepad2_circle_now && !gamepad2_circle_last) || (freightPresent && collectingFreight))
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
-            robot.turretPositionSet(TurretPosition.CENTERED);
+            if( needEvasiveManeuvers ) {
+                robot.turretPositionSet(TurretPosition.CENTERED);
+                performEvasiveManeuvers = true;
+                needEvasiveManeuvers = false;
+            } else {
+                robot.turretPositionSet(TurretPosition.CENTERED);
+            }
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_TRANSPORT1;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -635,6 +645,8 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             robot.turretPositionSet(TurretPosition.CENTERED);
+            // This is in case the operator rotated the turret manually
+            needEvasiveManeuvers = true;
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;
             freightArmServoPos   = robot.BOX_SERVO_TRANSPORT;
@@ -645,6 +657,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             robot.turretPositionSet(TurretPosition.CENTERED);
+            needEvasiveManeuvers = true;
             autoRotateTurret     = true;
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;  // TOP + ROTATE!
@@ -713,7 +726,8 @@ public abstract class Teleop extends LinearOpMode {
         if( freightArmCycleCount >= FREIGHT_CYCLECOUNT_START ) {
             // Collector arm must be raised before any freight arm motion is commanded
             if( collectorArmRaised ) {
-                if( !robot.isTurretStable( TurretPosition.CENTERED ) ) {
+                // Wait for the turret, if we aren't starting the arm before rotating.
+                if( !performEvasiveManeuvers && !robot.isTurretStable( TurretPosition.CENTERED ) ) {
                     // Do nothing (wait for servo to rotate back to center
                 } else if(waitForDumpServo) {
                     if(freightArmDelayTimer.milliseconds() >= 300) {
@@ -749,7 +763,11 @@ public abstract class Teleop extends LinearOpMode {
             if( robot.freightMotorAuto ) {
                 // While waiting, see if we're clear to start rotating 
                 // freight arm turret around toward the alliance hub?
-                if( autoRotateTurret && (robot.freightMotorPos >= robot.FREIGHT_ARM_POS_ROT_TURRET) ) {
+                if( performEvasiveManeuvers && (robot.freightMotorPos <= robot.FREIGHT_ARM_POS_EVASIVE )) {
+//                    robot.turretPositionSet(TurretPosition.CENTERED);
+                    performEvasiveManeuvers = false;
+                    freightArmCycleCount = FREIGHT_ARM_CENTERING;
+                } else if( autoRotateTurret && (robot.freightMotorPos >= robot.FREIGHT_ARM_POS_ROT_TURRET) ) {
                     robot.turretPositionSet( turretAllianceHubAngle );
                     autoRotateTurret = false;
                 }
@@ -757,6 +775,29 @@ public abstract class Teleop extends LinearOpMode {
             else { // arm motor is stopped, but arm may be bouncing
                 freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;
                 freightArmDelayTimer.reset();
+            }
+        }
+        else if( freightArmCycleCount == FREIGHT_ARM_CENTERING ) {
+            if(!robot.isTurretStable( TurretPosition.CENTERED )) {
+                // We have gone too far without being centered, so now we need to wait for
+                // the servo.
+                if( robot.freightMotorPos <= robot.FREIGHT_ARM_POS_ROT_TURRET ) {
+                    robot.freightMotorAuto = false;
+                    robot.freightMotor.setPower( 0.0 );
+                    waitingForTurret = true;
+                }
+            } else {
+                if( waitingForTurret ) {
+                    waitingForTurret = false;
+                    // Start the arm moving again
+                    robot.freightArmPosInit( freightArmTarget );
+                } else {
+                    // arm motor is stopped, but arm may be bouncing
+                    if( !robot.freightMotorAuto ) {
+                        freightArmCycleCount = FREIGHT_CYCLECOUNT_SETTLE;
+                        freightArmDelayTimer.reset();
+                    }
+                }
             }
         }
         else if( freightArmCycleCount == FREIGHT_CYCLECOUNT_SETTLE) {
