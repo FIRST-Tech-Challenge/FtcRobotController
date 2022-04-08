@@ -227,6 +227,8 @@ public class Robot implements Subsystem {
 //            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addTimedState(1f, () -> {}, () -> {})
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
 //            .addSingleState(() -> { crane.setToHomeEnabled(true); })

@@ -129,15 +129,15 @@ public class Crane implements Subsystem {
 
         LOWEST_TIER(60, 130, 20, 1.5f, 130),
         LOWEST_TIER_IK(22, HIGH_TIER_SHIPPING_HUB_HEIGHT -9.5, 0.85f),
-        MIDDLE_TIER(60, 130, 40, 1f, 150),
+        MIDDLE_TIER(60, 130, 40,  1f, 150),
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
 //        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
         HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, 0.85f),
         HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, -90, 1.25f),
         HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, 90, 1.25f),
-        TRANSFER(-35, -60, -20, 0, 0.4f, 0),
-        POST_DUMP(0, 130, 90, 0.6f, 0),
+        TRANSFER(-35, -64, -20, 0, 0.4f, 0),
+        POST_DUMP(-10, 150, 90, 0.6f, 0),
 
         TEST_1(25, 90, 25, 1.5f, 0),
         TEST_2(45, 90, 90, 1f, 0),
@@ -389,7 +389,7 @@ public class Crane implements Subsystem {
         wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
         }
 
-        if (articulation != Articulation.MANUAL)
+        if (articulation != Articulation.MANUAL && articulation.turret)
             turret.setTargetHeading(articulation.turretAngle);
         turret.update(fieldOverlay);
     }
