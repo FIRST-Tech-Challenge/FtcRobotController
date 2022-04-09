@@ -191,7 +191,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
     public int          FREIGHT_ARM_POS_ROT_TURRET = 855;  // Approaching vertical (auto-rotate as we PASS THRU vertical)
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
-    public int          FREIGHT_ARM_POS_EVASIVE    = 1397;  // Point to start rotating after avoiding the hub
+    public int          FREIGHT_ARM_POS_EVASIVE    = 1707;  // Point to start rotating after avoiding the hub
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1737;  // For dumping into hub top level
 //    public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
