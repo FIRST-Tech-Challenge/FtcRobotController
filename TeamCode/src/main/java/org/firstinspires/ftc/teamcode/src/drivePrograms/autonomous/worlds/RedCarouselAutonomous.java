@@ -41,7 +41,7 @@ public class RedCarouselAutonomous extends AutonomousTemplate {
                 // Cross Box
                 .splineToConstantHeading(parkPos.plus(new Pose2d(12, 15, 0)).vec(), 0)
                 //Approach Goal
-                .splineToSplineHeading(dropOffPos.plus(new Pose2d(6, -2, Math.toRadians(-12))), 0)
+                .splineToSplineHeading(dropOffPos.plus(new Pose2d(6, -4, Math.toRadians(-16))), 0)
 
                 .build();
 
@@ -56,7 +56,7 @@ public class RedCarouselAutonomous extends AutonomousTemplate {
 
         final TrajectorySequence toPark = drive.trajectorySequenceBuilder(toSpinner.end())
                 //Park
-                .lineTo(parkPos.vec().plus(new Vector2d(5)))
+                .lineTo(parkPos.vec().plus(new Vector2d(5, -2)))
                 .build();
 
         if (!isStopRequested()) {
