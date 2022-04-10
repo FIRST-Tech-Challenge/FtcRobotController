@@ -2,71 +2,84 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 
 @Config
-@Autonomous(name = "Red Carousel Auton")
-public class RedCarouselAutonomous extends GenericOpModeTemplate {
+@Autonomous(name = "🟥Red Carousel Autonomous🟥")
+public class RedCarouselAutonomous extends AutonomousTemplate {
     static final Pose2d startPos = new Pose2d(-40, -65, Math.toRadians(0));
-    static final Pose2d dropOffPos = new Pose2d(-12, -38, Math.toRadians(270));
+    static final Pose2d dropOffPos = new Pose2d(-33, -25, Math.toRadians(180));
     static final Pose2d parkPos = new Pose2d(-60, -35.5, Math.toRadians(270));
-    public static Pose2d carouselSpinPos = new Pose2d(-61, -51, Math.toRadians(270));
+    static final Pose2d carouselSpinPos = new Pose2d(-65, -54, Math.toRadians(270));
 
     @Override
     public void opModeMain() throws InterruptedException {
+        this.initLinearSlide();
         this.initOdometryServos();
+        this.initLEDS();
+        this.initSpinner();
         podServos.lower();
 
         final SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+
         drive.setPoseEstimate(startPos);
 
-        final TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPos)
-                .lineToLinearHeading(dropOffPos)
-                .waitSeconds(1)
-                // replace wait with a displacement marker
-                .splineToLinearHeading(carouselSpinPos, Math.toRadians(180))
-                .waitSeconds(1)
-                // replace wait with a displacement marker
-                .lineToLinearHeading(parkPos)
-                .build();
-
-        final Trajectory traj1 = drive.trajectoryBuilder(startPos)
-                .lineToLinearHeading(dropOffPos)
-
-                .build();
-        final Trajectory traj2 = drive.trajectoryBuilder(dropOffPos)
-                .splineToLinearHeading(carouselSpinPos, Math.toRadians(180))
-                .build();
-        final Trajectory traj3 = drive.trajectoryBuilder(carouselSpinPos)
-                .lineToLinearHeading(parkPos)
-                .build();
 
         waitForStart();
 
+        // From
+        final TrajectorySequence toGoal = drive.trajectorySequenceBuilder(startPos)
+                // Side in
+                .lineToConstantHeading(new Pose2d(parkPos.getX() + 12, parkPos.getY() - 15, 0).vec())
+                // Cross Box
+                .splineToConstantHeading(parkPos.plus(new Pose2d(12, 15, 0)).vec(), 0)
+                //Approach Goal
+                .splineToSplineHeading(dropOffPos.plus(new Pose2d(6, -2, Math.toRadians(-12))), 0)
+
+                .build();
+
+        final TrajectorySequence toSpinner = drive.trajectorySequenceBuilder(toGoal.end())
+                // Cross Box
+                .lineToLinearHeading(new Pose2d(parkPos.getX() + 5, parkPos.getY() + 15, Math.toRadians(270)))
+
+                //.setConstraints((v, pose2d, pose2d1, pose2d2) -> 10, (v, pose2d, pose2d1, pose2d2) -> 20)
+                // To Carousel Spinner
+                .lineTo(carouselSpinPos.vec().plus(new Vector2d(5)))
+                .build();
+
+        final TrajectorySequence toPark = drive.trajectorySequenceBuilder(toSpinner.end())
+                //Park
+                .lineTo(parkPos.vec().plus(new Vector2d(5)))
+                .build();
+
         if (!isStopRequested()) {
-            //drive.followTrajectorySequence(trajSeq);
-            drive.followTrajectory(traj1);
+
+            drive.followTrajectorySequence(toGoal);
+            drive.turnTo(dropOffPos.getHeading());
+            slide.setTargetLevel(HeightLevel.TopLevel);
+
+
             Thread.sleep(1000);
-            drive.followTrajectory(traj2);
+
+            slide.setTargetLevel(HeightLevel.BottomLevel);
+
             Thread.sleep(1000);
-            drive.followTrajectory(traj3);
+
+            drive.followTrajectorySequence(toSpinner);
+
+            spinner.spinOffRedDuck();
+
+            drive.followTrajectorySequence(toPark);
+
+
         }
-
-        telemetry.addData("Cumulative Error (in/sec)", TrajectorySequenceRunner.getTotalPositionError());
-        telemetry.addData("Average Error (in)", TrajectorySequenceRunner.getAveragePositionError());
-        telemetry.addLine();
-        telemetry.addData("Cumulative Heading Error (in/sec)", TrajectorySequenceRunner.getTotalHeadingError());
-        telemetry.addData("Average Heading Error (in)", TrajectorySequenceRunner.getAverageHeadingError());
-
-        telemetry.update();
-
-        while (opModeIsActive() && !isStopRequested()) Thread.yield();
     }
 
 }

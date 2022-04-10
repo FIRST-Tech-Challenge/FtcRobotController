@@ -47,7 +47,7 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
     }
 
     public void initIntake() {
-        this.intake = new ContinuousIntake(hardwareMap, frontIntakeMotorName, backIntakeMotorName);
+        this.intake = new ContinuousIntake(hardwareMap, frontIntakeMotorName, backIntakeMotorName, leftTouchSensorName, rightTouchSensorName);
     }
 
 

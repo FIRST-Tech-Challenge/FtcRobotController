@@ -84,6 +84,16 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     public static final String bucketColorSensorName = "color_sensor";
 
     /**
+     * Name of the left touch sensor in intake
+     */
+    public static final String leftTouchSensorName = "tsleft";
+
+    /**
+     * Name of the right touch sensor in intake
+     */
+    public static final String rightTouchSensorName = "tsright";
+
+    /**
      * Name of the LED string
      */
     public static final String LEDName = "LED";
@@ -275,4 +285,5 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
             throw new InterruptedException();
         }
     }
+
 }

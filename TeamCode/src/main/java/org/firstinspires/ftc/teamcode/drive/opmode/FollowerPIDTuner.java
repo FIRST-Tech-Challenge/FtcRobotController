@@ -40,18 +40,27 @@ public class FollowerPIDTuner extends GenericOpModeTemplate {
 
         if (isStopRequested()) return;
 
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .forward(DISTANCE)
+                .turn(Math.toRadians(-90))
+                .forward(DISTANCE)
+                .turn(Math.toRadians(-90))
+                .forward(DISTANCE)
+                .turn(Math.toRadians(-90))
+                .forward(DISTANCE)
+                .turn(Math.toRadians(-90))
+                .build();
+
+
         while (!isStopRequested()) {
-            TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .forward(DISTANCE)
-                    .turn(Math.toRadians(90))
-                    .build();
+
             drive.followTrajectorySequence(trajSeq);
+            TrajectorySequence goHome = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                    .splineToLinearHeading(startPose, 0)
+                    .build();
+            drive.followTrajectorySequence(goHome);
+
+
         }
     }
 }

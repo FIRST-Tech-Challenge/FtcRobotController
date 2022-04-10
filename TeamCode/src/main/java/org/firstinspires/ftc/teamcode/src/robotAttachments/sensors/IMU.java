@@ -30,6 +30,7 @@ public class IMU {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
         imu.initialize(parameters);
 
     }

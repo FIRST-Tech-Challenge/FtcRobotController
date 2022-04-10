@@ -30,6 +30,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -73,7 +74,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final DcMotorEx rightFront;
     private final List<DcMotorEx> motors;
 
-    private final BNO055IMU imu;
+    public final BNO055IMU imu;
     private final VoltageSensor batteryVoltageSensor;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
@@ -94,7 +95,16 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         imu = hardwareMap.get(BNO055IMU.class, GenericOpModeTemplate.IMUName);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+
+        //this section was brought in by us
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        //
+
         imu.initialize(parameters);
 
 
@@ -120,7 +130,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X); // X-axis faces down so remapped it to be down
+        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Z); // X-axis faces down so remapped it to be down
 
         leftFront = hardwareMap.get(DcMotorEx.class, GenericOpModeTemplate.frontLeftName);
         leftRear = hardwareMap.get(DcMotorEx.class, GenericOpModeTemplate.backLeftName);
@@ -314,6 +324,48 @@ public class SampleMecanumDrive extends MecanumDrive {
     public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
+
+
+    /**
+     * Gets the current angle of the IMU
+     *
+     * @return The angle parallel to the floor in degrees
+     */
+    public double getImuAngle() {
+        double returnVal;
+        if (imu.getAngularOrientation().firstAngle < 0) {
+            returnVal = imu.getAngularOrientation().firstAngle + 360;
+        } else {
+            returnVal = Math.abs(imu.getAngularOrientation().firstAngle);
+        }
+        return returnVal % 360;
+    }
+
+    public void updateHeadingFromIMU() {
+        this.setPoseEstimate(
+                new Pose2d(
+                        this.getPoseEstimate().getX(),
+                        this.getPoseEstimate().getY(),
+                        Math.toRadians((this.getImuAngle()) % 360)
+                )
+        );
+    }
+
+
+    public void turnTo(double angle) {
+        //updateHeadingFromIMU();
+        this.turnAsync(angle);
+        //updateHeadingFromIMU();
+        halt();
+    }
+
+    public void halt() {
+        this.leftFront.setPower(0);
+        this.rightRear.setPower(0);
+        this.rightFront.setPower(0);
+        this.leftRear.setPower(0);
+    }
+
 
     @Override
     public Double getExternalHeadingVelocity() {

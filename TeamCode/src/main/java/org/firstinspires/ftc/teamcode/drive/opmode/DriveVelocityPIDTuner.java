@@ -50,7 +50,7 @@ import java.util.List;
 @Config
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends GenericOpModeTemplate {
-    public static double DISTANCE = 100; // in
+    public static double DISTANCE = 150; // in
 
     private static MotionProfile generateProfile(boolean movingForward) {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
