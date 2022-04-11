@@ -154,7 +154,7 @@ public class Gripper implements Subsystem {
     private final Stage liftStage = new Stage();
     private final StateMachine lift = getStateMachine(liftStage)
             .addSingleState(() -> setIntakePower(0))
-            .addTimedState(() -> .2f, () -> setTargetPos(CLOSED), () -> {})//close the gripper
+            .addTimedState(() -> 1f, () -> setTargetPos(CLOSED), () -> {})//close the gripper
             .addTimedState(() -> .2f, () -> setPitchTargetPos(PITCH_VERTICAL), () -> {})
             .build();
 
@@ -171,12 +171,14 @@ public class Gripper implements Subsystem {
 
     private final Stage transferStage = new Stage();
     private final StateMachine transfer = getStateMachine(transferStage)
-            .addTimedState(() -> .1f, () -> setPitchTargetPos(PITCH_TRANSFER), () -> {})//give freight last-second momentum toward the bucket
+            .addTimedState(() -> .5f, () -> setPitchTargetPos(PITCH_TRANSFER), () -> {})//give freight last-second momentum toward the bucket
+            .addSingleState(() -> setIntakePower(1.0))
             .addTimedState(() -> .75f, () -> setTargetPos(RELEASE), () -> {})
             .addSimultaneousStates(
                     () -> { setTargetPos(CLOSED); return true; },
                     () -> { setPitchTargetPos(PITCH_VERTICAL); return true; }
             )
+            .addSingleState(() -> setIntakePower(0.0))
             .build();
 
     //Prepare for intake

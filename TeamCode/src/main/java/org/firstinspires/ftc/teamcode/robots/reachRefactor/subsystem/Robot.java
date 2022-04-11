@@ -43,7 +43,7 @@ public class Robot implements Subsystem {
     public Subsystem[] subsystems;
 
     private long[] subsystemUpdateTimes;
-    private boolean autoDumpEnabled;
+    private boolean autoDumpEnabled, doubleDuckEnabled;
 
     private final List<LynxModule> hubs;
 
@@ -85,6 +85,9 @@ public class Robot implements Subsystem {
         articulationMap.put(Articulation.AUTO_HIGH_TIER_RED, autoHighTierRed);
         articulationMap.put(Articulation.AUTO_HIGH_TIER_BLUE, autoHighTierBlue);
 
+        articulationMap.put(Articulation.DOUBLE_DUCK_DUMP_AND_SET_CRANE_FOR_TRANSFER, doubleDuckDumpAndSetCraneForTransfer);
+        articulationMap.put(Articulation.DOUBLE_DUCK_GRAB_AND_TRANSFER, doubleDuckGrabAndTransfer);
+
         craneBitmap = Bitmap.createBitmap(CB_WIDTH, CB_HEIGHT, Bitmap.Config.RGB_565);
         craneMat = new Mat(CB_HEIGHT, CB_WIDTH, CvType.CV_8UC3);
         autoDumpEnabled = true;
@@ -115,18 +118,11 @@ public class Robot implements Subsystem {
         for (LynxModule module : hubs)
             module.clearBulkCache();
 
-        if(grabAndTransferStage.getStage() == 3 &&
-                articulation == Articulation.GRAB_AND_TRANSFER &&
-                gripper.getFreightDistance() > Gripper.FREIGHT_TRIGGER) {
-            grabAndTransferStage.resetStage();
-            articulation = Articulation.MANUAL;
-            crane.articulate(Crane.Articulation.TRANSFER);
-            gripper.set();
-        } else if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN &&
+        if (gripper.getPitchTargetPos() == Gripper.PITCH_DOWN &&
                 gripper.getTargetPos() == Gripper.OPEN &&
                 gripper.getFreightDistance() < Gripper.FREIGHT_TRIGGER &&
-                articulation != Articulation.GRAB_AND_TRANSFER)
-            articulation = Articulation.GRAB_AND_TRANSFER;
+                (doubleDuckEnabled ? articulation != Articulation.DOUBLE_DUCK_GRAB_AND_TRANSFER : articulation != Articulation.GRAB_AND_TRANSFER))
+            articulation = doubleDuckEnabled ? Articulation.DOUBLE_DUCK_GRAB_AND_TRANSFER : Articulation.GRAB_AND_TRANSFER;
 
         articulate(articulation);
 
@@ -201,20 +197,54 @@ public class Robot implements Subsystem {
         AUTO_MIDDLE_TIER_RED,
         AUTO_MIDDLE_TIER_BLUE,
         AUTO_LOW_TIER_RED,
-        AUTO_LOW_TIER_BLUE
+        AUTO_LOW_TIER_BLUE,
+
+        DOUBLE_DUCK_GRAB_AND_TRANSFER,
+        DOUBLE_DUCK_DUMP_AND_SET_CRANE_FOR_TRANSFER
     }
 
     // Tele-Op articulations
+    private StateMachine doubleDuckGrabAndTransfer = getStateMachine(new Stage())
+            .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL && gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addSingleState(() -> driveTrain.setChassisLength(MAX_CHASSIS_LENGTH))
+            .build();
+
+    private StateMachine doubleDuckDumpAndSetCraneForTransfer = getStateMachine(new Stage())
+            .addSingleState(() -> crane.setToHomeEnabled(false))
+            .addTimedState(.5f, () -> crane.dump(), () -> {})
+//            .addSingleState(() -> { crane.setToHomeEnabled(false); })
+//            .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
+//            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addSingleState(() -> crane.articulate(Crane.Articulation.POST_DUMP))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+            .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
+            .addTimedState(1f, () -> {}, () -> {})
+            .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
+            .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
+//            .addSingleState(() -> { crane.setToHomeEnabled(true); })
+            .addSingleState(() -> crane.setToHomeEnabled(true))
+            .addSingleState(() -> gripper.setDuck())
+            .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
+            .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
+            .build();
+
+
+
     private Stage grabAndTransferStage = new Stage();
     private StateMachine grabAndTransfer = getStateMachine(grabAndTransferStage)
             .addSingleState(() -> driveTrain.setChassisLength(MIN_CHASSIS_LENGTH))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.LIFT))
             .addSingleState(() -> crane.articulate(Crane.Articulation.TRANSFER))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL && gripper.getArticulation() == Gripper.Articulation.MANUAL)
-            .addSingleState(() -> gripper.setIntakePower(1.0))
             .addSingleState(() -> gripper.articulate(Gripper.Articulation.TRANSFER))
             .addState(() -> gripper.getArticulation() == Gripper.Articulation.MANUAL)
-            .addSingleState(() -> gripper.setIntakePower(0.0))
             .addSingleState(() -> crane.articulate(Crane.Articulation.HOME))
             .addState(() -> crane.getArticulation() == Crane.Articulation.MANUAL)
             .build();
@@ -330,5 +360,13 @@ public class Robot implements Subsystem {
 
     public boolean isAutoDumpEnabled() {
         return autoDumpEnabled;
+    }
+
+    public void setDoubleDuckEnabled(boolean doubleDuckEnabled) {
+        this.doubleDuckEnabled = doubleDuckEnabled;
+    }
+
+    public boolean isDoubleDuckEnabled() {
+        return doubleDuckEnabled;
     }
 }

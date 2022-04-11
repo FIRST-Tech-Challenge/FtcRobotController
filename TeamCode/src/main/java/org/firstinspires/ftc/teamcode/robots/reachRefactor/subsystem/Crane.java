@@ -33,6 +33,8 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 @Config(value = "FFCrane")
 public class Crane implements Subsystem {
     public static int SHOULDER_START_ANGLE = 110;
+    public static int IK_SHOULDER_OFFSET = 10;
+    public static int IK_START_X = 2;
     public static int ELBOW_HOME_PWM = 1500;
     public static int WRIST_HOME_PWM = 1500;
 
@@ -125,7 +127,7 @@ public class Crane implements Subsystem {
         MANUAL(0, 0, 0, 0, 0, 0),
 
         INIT(-80, 0, 90, 0, 1.5f, 90),
-        HOME(0, -20, 0, 0, 0, 0),
+        HOME(0, 0, 0, 0, 0, 0),
 
         LOWEST_TIER(60, 130, 20, 1.5f, 130),
         LOWEST_TIER_IK(22, HIGH_TIER_SHIPPING_HUB_HEIGHT -9.5, 0.85f),
@@ -133,11 +135,15 @@ public class Crane implements Subsystem {
 //        HIGH_TIER(14.57741692662239, 113, 50.37986606359482, 1f, 170),
 //        HIGH_TIER_LEFT(14.57741692662239, 113, 50.37986606359482, -90, 1f, 180),
 //        HIGH_TIER_RIGHT(14.57741692662239, 113, 50.37986606359482, 90, 1f, 170),
-        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, 0.85f),
-        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, -90, 1.25f),
-        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 7, 90, 1.25f),
-        TRANSFER(-35, -64, -20, 0, 0.4f, 0),
-        POST_DUMP(-10, 150, 90, 0.6f, 0),
+        HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 9, 0.85f),
+//        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 9, -90, 1.875f),
+//        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 9, 90, 1.875f),
+        HIGH_TIER_LEFT(-4.920813143253326, 72.16384265571833, 70.09306891262531, -90, 1f, -174.03407676517963),
+        HIGH_TIER_RIGHT(-4.920813143253326, 72.16384265571833, 70.09306891262531, 90, 1f, -174.03407676517963),
+
+
+        TRANSFER(-45.598692297935486, -67.18511611223221, -19.45390723645687, 0, 0.4f, 0),
+        POST_DUMP(-24.44047723710537, 75.32890900969505, 180.0, 0.6f, 0),
 
         TEST_1(25, 90, 25, 1.5f, 0),
         TEST_2(45, 90, 90, 1f, 0),
@@ -269,7 +275,7 @@ public class Crane implements Subsystem {
             })
             .addState(() -> {
                 double t = (System.nanoTime() - startTime) * 1e-9;
-                x = map(t, 0, articulation.toHomeTime, 2, articulation.dx);
+                x = map(t, 0, articulation.toHomeTime, IK_START_X, articulation.dx);
 
                 double c = -articulation.dx / Math.log(1 - P);
                 double y = articulation.dy * (1 - Math.exp(-x / c));
@@ -301,7 +307,7 @@ public class Crane implements Subsystem {
             })
             .addState(() -> {
                 double t = (System.nanoTime() - startTime) * 1e-9;
-                x = map(t, 0, articulation.toHomeTime, 2, articulation.dx);
+                x = map(t, 0, articulation.toHomeTime, IK_START_X, articulation.dx);
 
                 double c = -articulation.dx / Math.log(1 - P);
                 double y = articulation.dy * (1 - Math.exp(-x / c));
@@ -382,11 +388,8 @@ public class Crane implements Subsystem {
         if (shoulderInitialized) { //don't move arm until shoulder initialized
             shoulderMotor.setTargetPosition((int) ((shoulderTargetAngle - SHOULDER_START_ANGLE) * SHOULDER_TICKS_PER_DEGREE));
             shoulderMotor.setPower(SHOULDER_POWER);
-
-
-
-        elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
-        wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
+            elbowServo.setPosition(servoNormalize(elbowServoValue(elbowTargetAngle)));
+            wristServo.setPosition(servoNormalize(wristServoValue(wristTargetAngle)));
         }
 
         if (articulation != Articulation.MANUAL && articulation.turret)
@@ -441,7 +444,7 @@ public class Crane implements Subsystem {
     }
 
     public void dump() {
-        setWristTargetAngle(currentDumpPos);
+        setWristTargetAngle(-currentDumpPos);
         dumping = true;
     }
 

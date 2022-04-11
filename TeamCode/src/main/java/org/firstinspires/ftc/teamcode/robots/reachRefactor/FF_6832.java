@@ -117,7 +117,6 @@ public class FF_6832 extends OpMode {
     private Position startingPosition;
     private GameState gameState;
     private int gameStateIndex;
-    public static boolean doubleDuck = false;
     private StickyGamepad stickyGamepad1, stickyGamepad2;
     private long startTime;
 
@@ -132,6 +131,7 @@ public class FF_6832 extends OpMode {
     private boolean maintainHeadingTriggered;
     private long turningStopTime;
     public static double MAX_VELOCITY_BOOST = 1;
+    private boolean deeznuts;
 
     // diagnostic state
     private DiagnosticStep diagnosticStep;
@@ -418,35 +418,30 @@ public class FF_6832 extends OpMode {
     private void handleTeleOp() { // apple
         // gamepad 1
         if (stickyGamepad1.x) {
-            if (doubleDuck){
+            if (robot.isDoubleDuckEnabled()){
                 if (robot.gripper.getPitchTargetPos() == Gripper.PITCH_DOWN)
                     robot.gripper.liftDuck();
                 else
                     robot.gripper.setDuck();
             }
-            else
-            {
-            robot.gripper.set();
-            robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
+            else {
+                robot.gripper.set();
+                robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
             }
         }
         if(stickyGamepad1.b)
-            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
-        if(gamepad1.a || gamepad2.a) {
-            robot.driveTrain.setDuckSpinnerPower(DriveTrain.DUCK_SPINNER_POWER * alliance.getMod());
-            duckSpinnerPowerResetHandled = false;
-        } else if(!duckSpinnerPowerResetHandled) {
-            robot.driveTrain.setDuckSpinnerPower(0);
-            duckSpinnerPowerResetHandled = true;
-        }
+            robot.articulate(robot.isDoubleDuckEnabled() ? Robot.Articulation.DOUBLE_DUCK_DUMP_AND_SET_CRANE_FOR_TRANSFER : Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
 
         // gamepad 2
         if(stickyGamepad2.left_bumper) //go home - it's the safest place to retract if the bucket is about to colide with something
             robot.crane.articulate(Crane.Articulation.HOME);
         if(stickyGamepad2.b)  //dump bucket - might be able to combine this with Cycle Complete
-            robot.articulate(Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
+            robot.articulate(robot.isDoubleDuckEnabled() ? Robot.Articulation.DOUBLE_DUCK_DUMP_AND_SET_CRANE_FOR_TRANSFER : Robot.Articulation.DUMP_AND_SET_CRANE_FOR_TRANSFER);
         if(stickyGamepad2.x) {
-            robot.gripper.set();
+            if(robot.isDoubleDuckEnabled())
+                robot.gripper.setDuck();
+            else
+                robot.gripper.set();
             robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
         }
 
@@ -482,8 +477,15 @@ public class FF_6832 extends OpMode {
 //        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
 //            robot.articulate(alliance == Alliance.RED ? Robot.Articulation.AUTO_HIGH_TIER_RED : Robot.Articulation.AUTO_HIGH_TIER_BLUE);
 
-        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
-            robot.setAutoDumpEnabled(!robot.isAutoDumpEnabled());
+        if(gamepad1.right_trigger > 0.3 || gamepad2.right_trigger > 0.3)
+            robot.driveTrain.setDuckSpinnerPower(0.5);
+        else if(gamepad1.a || gamepad2.a)
+            robot.driveTrain.setDuckSpinnerPower(DriveTrain.DUCK_SPINNER_POWER * alliance.getMod());
+        else
+            robot.driveTrain.setDuckSpinnerPower(0);
+
+//            robot.setAutoDumpEnabled(!robot.isAutoDumpEnabled());
+//            robot.setDoubleDuckEnabled(!robot.isDoubleDuckEnabled());
 
         if(gamepad1.touchpad_finger_1) {
             Pose2d pose = robot.driveTrain.getPoseEstimate();
@@ -626,7 +628,7 @@ public class FF_6832 extends OpMode {
         if (active) {
             long currentTime = System.currentTimeMillis();
             if (!endGameHandled && gameState == GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
-                robot.articulate(Robot.Articulation.START_END_GAME);
+//                robot.articulate(Robot.Articulation.START_END_GAME);
                 endGameHandled = true;
                 rumble();
             }
@@ -801,7 +803,7 @@ public class FF_6832 extends OpMode {
 
         switch(gameState) {
             case TELE_OP:
-                opModeTelemetryMap.put("velocity boost", velocityBoost);
+                opModeTelemetryMap.put("Double Duck", robot.isDoubleDuckEnabled());
                 break;
             case MANUAL_DIAGNOSTIC:
                 opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);

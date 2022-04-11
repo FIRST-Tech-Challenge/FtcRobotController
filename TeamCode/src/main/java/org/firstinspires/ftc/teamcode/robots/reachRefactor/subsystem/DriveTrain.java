@@ -459,7 +459,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("turnStuff", turnAngle - poseEstimate.getHeading());
 
-        telemetryMap.put("duck game enabled", duckGameEnabled);
         if (debug) {
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
@@ -720,19 +719,15 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
 
     public void setMotorVelocities(double left, double right, double swerve) {
         useMotorPowers = false;
-        if (!duckGameEnabled) {
-            this.targetLeftVelocity = left;
-            this.targetRightVelocity = right;
-        }
+        this.targetLeftVelocity = left;
+        this.targetRightVelocity = right;
         this.targetSwerveVelocity = swerve;
     }
 
     public void setMotorPowers(double left, double right, double swerve) {
         useMotorPowers = true;
-        if (!duckGameEnabled) {
-            this.leftPower = left;
-            this.rightPower = right;
-        }
+        this.leftPower = left;
+        this.rightPower = right;
         this.swervePower = swerve;
     }
 
@@ -815,21 +810,6 @@ public class DriveTrain extends TrikeDrive implements Subsystem {
     public void setChassisLengthMode(ChassisLengthMode chassisLengthMode) {
         this.chassisLengthMode = chassisLengthMode;
     }
-
-    public void setDuckGameEnabled(boolean duckGameEnabled) {
-        if (duckGameEnabled) {
-            setMotorVelocities(0, 0, targetSwerveVelocity);
-            setMaintainChassisLengthEnabled(false);
-        } else {
-            setMaintainChassisLengthEnabled(true);
-        }
-        this.duckGameEnabled = duckGameEnabled;
-    }
-
-    public boolean isDuckGameEnabled() {
-        return duckGameEnabled;
-    }
-
     public double getVoltage() {
         return compensatedBatteryVoltage;
     }

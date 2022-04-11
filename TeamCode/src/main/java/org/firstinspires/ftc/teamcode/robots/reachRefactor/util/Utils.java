@@ -95,4 +95,18 @@ public class Utils {
 
         return new double[] {shoulderAngle, elbowAngle, wristAngle, wrapAngle(wristAngle + 90)};
     }
+
+    public static double[] craneIK(double dx, double dy, double offset) {
+        double theta2 = -Math.acos((Math.pow(dx, 2) + Math.pow(dy, 2) - Math.pow(SHOULDER_TO_ELBOW, 2) - Math.pow(ELBOW_TO_WRIST, 2)) / (2 * SHOULDER_TO_ELBOW * ELBOW_TO_WRIST));
+        double theta1 = offset + Math.atan2(dy, dx) - Math.atan2(ELBOW_TO_WRIST * Math.sin(theta2), SHOULDER_TO_ELBOW + ELBOW_TO_WRIST * Math.cos(theta2));
+
+        if(Double.isNaN(theta1) || Double.isNaN(theta2))
+            return null;
+
+        double shoulderAngle = wrapAngle(90 - Math.toDegrees(theta1));
+        double elbowAngle = 180 - wrapAngle(Math.toDegrees(-theta2));
+        double wristAngle = 90 - (wrapAngle(Math.toDegrees(-theta2)) - wrapAngle(Math.toDegrees(theta1)));
+
+        return new double[] {shoulderAngle, elbowAngle, wristAngle, wrapAngle(wristAngle + 90)};
+    }
 }
