@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -31,13 +32,10 @@ public class RedCarouselAutonomous extends AutonomousTemplate {
 
         drive.setPoseEstimate(startPos);
 
-
-        waitForStart();
-
         // From
-        final TrajectorySequence toGoal = drive.trajectorySequenceBuilder(startPos)
+        final Trajectory toGoal = drive.trajectoryBuilder(startPos)
                 // Side in
-                .lineToConstantHeading(new Pose2d(parkPos.getX() + 12, parkPos.getY() - 15, 0).vec())
+                .lineToConstantHeading(parkPos.plus(new Pose2d(12, -15)).vec())
                 // Cross Box
                 .splineToConstantHeading(parkPos.plus(new Pose2d(12, 15, 0)).vec(), 0)
                 //Approach Goal
@@ -54,14 +52,19 @@ public class RedCarouselAutonomous extends AutonomousTemplate {
                 .lineTo(carouselSpinPos.vec().plus(new Vector2d(5)))
                 .build();
 
-        final TrajectorySequence toPark = drive.trajectorySequenceBuilder(toSpinner.end())
+        final Trajectory toPark = drive.trajectoryBuilder(toSpinner.end())
                 //Park
                 .lineTo(parkPos.vec().plus(new Vector2d(5, -2)))
                 .build();
 
+        telemetry.addData("Setup", "Finished");
+        telemetry.update();
+        waitForStart();
+
+
         if (!isStopRequested()) {
 
-            drive.followTrajectorySequence(toGoal);
+            drive.followTrajectory(toGoal);
             drive.turnTo(dropOffPos.getHeading());
             slide.setTargetLevel(HeightLevel.TopLevel);
 
@@ -76,7 +79,7 @@ public class RedCarouselAutonomous extends AutonomousTemplate {
 
             spinner.spinOffRedDuck();
 
-            drive.followTrajectorySequence(toPark);
+            drive.followTrajectory(toPark);
 
 
         }
