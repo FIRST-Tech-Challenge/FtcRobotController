@@ -5,9 +5,11 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.SpaceBar;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.carouselspinner.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
@@ -107,6 +109,10 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
 
     public static final String RightWebcamName = "Webcam_Right";
 
+    public static final String RightSpaceBarName = "tsright";
+
+    public static final String LeftSpaceBarName = "tsleft";
+
     /**
      * Name of the IMU
      */
@@ -153,6 +159,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      */
     protected Outtake outtake;
 
+    protected TouchSensor spaceBar;
+
 
     /**
      * The entry point for all child classes of {@link GenericOpModeTemplate}
@@ -173,7 +181,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
             opModeMain();
         } catch (InterruptedException | CancellationException e) {
             RobotLog.d("OpMode Terminated, exiting");
-        } catch (Exception e) {
+        } catch (Exception | AssertionError e) {
             RobotLog.dd("Exception Was thrown", e, "This exception was thrown and resulted in a early termination of the OpMode");
             RobotLog.setGlobalErrorMsg(MiscUtils.getStackTraceAsString(e)); //Appends more information to the error message
         } catch (NoClassDefFoundError e) {
@@ -182,6 +190,10 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
             RobotLog.dd("Throwable Was thrown", t, "This Throwable was thrown and resulted in a early termination of the OpMode (And likely everything else)");
             throw t;
         }
+    }
+
+    protected void initSpaceBar() {
+        this.spaceBar = new SpaceBar(hardwareMap, RightSpaceBarName, LeftSpaceBarName);
     }
 
 
@@ -200,6 +212,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         initDistanceSensors();
         initTapeMeasureTurret();
         initOuttake();
+        initSpaceBar();
         if (voltageSensor.getVoltage() < 12.5) {
             RobotLog.addGlobalWarningMessage("Voltage reported by internal sensor less than 12.5V");
         }
