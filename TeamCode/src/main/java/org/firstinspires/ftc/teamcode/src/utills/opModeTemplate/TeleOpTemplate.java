@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
+import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.driveTrains.TeleopDriveTrain;
@@ -21,6 +23,8 @@ public abstract class TeleOpTemplate extends GenericOpModeTemplate {
      * Allows the control of the intake
      */
     protected ContinuousIntake intake;
+
+    public static final BlinkinPattern SpaceBarBlinkColor = BlinkinPattern.BLACK;
 
 
     /**

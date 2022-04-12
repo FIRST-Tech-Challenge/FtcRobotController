@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.worlds;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
@@ -13,6 +14,8 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
     protected BlinkinPattern currentPattern;
     private boolean x_depressed = true;
     private boolean tapeMeasureCtrl = false;
+
+    private final ElapsedTime SpaceBarColorTimer = new ElapsedTime();
 
     public RedWorldsDriveProgram() {
         defaultColor = BlinkinPattern.RED;
@@ -63,17 +66,30 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
                     //Handles Linear Slide Control
                     slide.gamepadControl(gamepad1, gamepad2);
 
+                    intake.gamepadControl(gamepad1, gamepad2);
+
                     //Intake Controls
+                    // The intake may propose a pattern
                     BlinkinPattern proposedPattern = FreightFrenzyGameObject.getLEDColorFromItem(outtake.gamepadControl(gamepad1, gamepad2));
+
+                    // Check SPace Bar, if pressed, reset space bar timer
+                    if (spaceBar.isPressed()) {
+                        SpaceBarColorTimer.reset();
+                    }
+
+                    //If space bar timer is less than 1, turn LEDS off
+                    //This overrides the intakes' proposed pattern
+                    if (SpaceBarColorTimer.seconds() < 1) {
+                        proposedPattern = BlinkinPattern.BLACK;
+                    }
+
                     if (proposedPattern != null) {
                         leds.setPattern(proposedPattern);
                     } else {
                         leds.setPattern(this.defaultColor);
                     }
-
-                    intake.gamepadControl(gamepad1, gamepad2);
-
                     Thread.yield();
+
                 }
 
             }
