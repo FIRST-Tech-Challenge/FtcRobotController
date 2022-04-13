@@ -9,6 +9,8 @@ import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvSwitchableWebcam;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
  * A template for all Autonomous opModes that use Vision, allows easy initialization
@@ -26,14 +28,20 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
     protected String CameraNameToUse = GenericOpModeTemplate.LeftWebcamName;
-    ContourPipeline myPipeline;
-    private OpenCvCamera webcam;
+
     private double CrLowerUpdate = 160;
     private double CbLowerUpdate = 100;
     private double CrUpperUpdate = 255;
     private double CbUpperUpdate = 255;
     private double lowerruntime = 0;
     private double upperruntime = 0;
+
+    public static final int CAMERA_OPEN_ERROR_FAILURE_TO_OPEN_CAMERA_DEVICE = -1;
+    public static final int CAMERA_OPEN_ERROR_POSTMORTEM_OPMODE = -2;
+    ContourPipeline myPipeline;
+    WebcamName camName;
+    OpenCvWebcam webcam;
+    private boolean rightCameraOn;
 
     /**
      * Initializes all fields provided by this class
@@ -45,11 +53,95 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
         super.initAll();
     }
 
-    private void initOpenCV() {
-        // OpenCV webcam
+    public void switchWebcam() {
+        if (rightCameraOn) {
+            webcam.closeCameraDevice();
+            webcam.closeCameraDeviceAsync(() -> {
+            });
+
+            camName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.LeftWebcamName);
+
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+            /**
+             * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+             * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+             */
+            webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
+
+            webcam.setPipeline(myPipeline);
+
+            // Webcam Streaming
+            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+                }
+
+                @Override
+                public void onError(int errorCode) {
+                    /*
+                     * This will be called if the camera could not be opened
+                     */
+                }
+            });
+
+
+            rightCameraOn = false;
+        } else {
+            webcam.closeCameraDevice();
+            webcam.closeCameraDeviceAsync(() -> {
+            });
+
+            camName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.RightWebcamName);
+
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+            /**
+             * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+             * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+             */
+            webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
+
+            webcam.setPipeline(myPipeline);
+
+            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+                }
+
+                @Override
+                public void onError(int errorCode) {
+                    /*
+                     * This will be called if the camera could not be opened
+                     */
+                }
+            });
+
+
+            rightCameraOn = true;
+        }
+
+    }
+
+    public void initOpenCV() {
+        /**
+         * NOTE: Many comments have been omitted from this sample for the
+         * sake of conciseness. If you're just starting out with EasyOpenCv,
+         * you should take a look at {@link InternalCamera1Example} or its
+         * webcam counterpart, {@link WebcamExample} first.
+         */
+
+        camName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.RightWebcamName);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam_Left"), cameraMonitorViewId);
-        //OpenCV Pipeline
+
+        /**
+         * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+         * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+         */
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
 
         webcam.setPipeline(myPipeline = new ContourPipeline(borderLeftX, borderRightX, borderTopY, borderBottomY));
         // Configuration of Pipeline
@@ -69,14 +161,9 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
                  */
             }
         });
-        myPipeline.configureScalarLower(scalarLowerYCrCb.val[0], scalarLowerYCrCb.val[1], scalarLowerYCrCb.val[2]);
-        myPipeline.configureScalarUpper(scalarUpperYCrCb.val[0], scalarUpperYCrCb.val[1], scalarUpperYCrCb.val[2]);
 
+        rightCameraOn = true;
 
-        myPipeline.configureBorders(borderLeftX, borderRightX, borderTopY, borderBottomY);
-        if (myPipeline.error) {
-            telemetry.addData("Exception: ", myPipeline.debug);
-        }
     }
 
     /**

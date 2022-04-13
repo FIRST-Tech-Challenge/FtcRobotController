@@ -10,12 +10,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutonomousTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateCV;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
 @Autonomous(name = "🟦Blue Carousel Autonomous🟦")
-public class BlueCarouselAutonomous extends AutonomousTemplate {
+public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
     final static Pose2d startPos = new Pose2d(-34, 65, 0);
     final static Pose2d dropOffPos = new Pose2d(-27, 23.5, Math.toRadians(180));
     final static Pose2d carouselSpinPos = new Pose2d(-61, 51, Math.toRadians(90));
@@ -25,10 +26,9 @@ public class BlueCarouselAutonomous extends AutonomousTemplate {
 
     @Override
     public void opModeMain() throws InterruptedException {
-        this.initLinearSlide();
-        this.initOdometryServos();
-        this.initLEDS();
-        this.initSpinner();
+        initAll();
+        this.switchWebcam();
+
         podServos.lower();
 
         final SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -63,6 +63,18 @@ public class BlueCarouselAutonomous extends AutonomousTemplate {
 
         telemetry.addData("Setup", "Finished");
         telemetry.update();
+
+        leds.setPattern(BlinkinPattern.WHITE);
+        BarcodePositions pos;
+        do {
+            pos = this.findPositionOfMarker();
+            telemetry.addData("Pos", pos);
+            telemetry.update();
+
+        } while (!opModeIsActive() && !isStarted());
+        leds.setPattern(defaultColor);
+
+
         waitForStart();
 
         if (!isStopRequested()) {
@@ -74,7 +86,19 @@ public class BlueCarouselAutonomous extends AutonomousTemplate {
 
             Thread.sleep(1000);
 
-            slide.setTargetLevel(HeightLevel.BottomLevel);
+            switch (pos) {
+                case NotSeen:
+                case Right:
+                    slide.setTargetLevel(HeightLevel.TopLevel);
+                    break;
+
+                case Center:
+                    slide.setTargetLevel(HeightLevel.MiddleLevel);
+
+                case Left:
+                    slide.setTargetLevel(HeightLevel.BottomLevel);
+            }
+
 
             Thread.sleep(1000);
 
