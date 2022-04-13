@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 import java.util.ArrayList;
@@ -180,7 +180,7 @@ public class VFNavWithTFAndDualCameras extends GenericOpModeTemplate {
 
         telemetry.addData("Initialization", "Loading TFOD Assets");
         telemetry.update();
-        this.tfod.loadModelFromAsset(AutoObjDetectionTemplate.TFOD_MODEL_ASSET, AutoObjDetectionTemplate.LABELS);
+        this.tfod.loadModelFromAsset(AutoObjDetectionTemplateVF.TFOD_MODEL_ASSET, AutoObjDetectionTemplateVF.LABELS);
 
         telemetry.addData("Initialization", "Activating TFOD Engine");
         telemetry.update();
@@ -231,7 +231,7 @@ public class VFNavWithTFAndDualCameras extends GenericOpModeTemplate {
                 telemetry.addData("Visible Target", "none");
             }
             telemetry.addData("Using Left Camera", usingLeftCamera);
-            telemetry.addData("Recognition", AutoObjDetectionTemplate.findPositionOfMarker(tfod));
+            telemetry.addData("Recognition", AutoObjDetectionTemplateVF.findPositionOfMarker(tfod));
             telemetry.update();
         }
 

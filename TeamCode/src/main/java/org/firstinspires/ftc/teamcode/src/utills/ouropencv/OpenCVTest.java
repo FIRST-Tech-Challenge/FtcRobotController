@@ -59,6 +59,8 @@ public class OpenCVTest extends LinearOpMode {
                  */
             }
         });
+
+
         // Only if you are using ftcdashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());

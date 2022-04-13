@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.SpaceBar;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.carouselspinner.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.LinearSlide;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.Outtake;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.OuttakeMk2;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.outtake.OuttakeMk1;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.podservos.OdometryPodServos;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.tapemeasureturret.TapeMeasureTurret;
 import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
@@ -222,9 +222,7 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
      * Initializes the Outtake
      */
     protected void initOuttake() throws InterruptedException {
-        OuttakeMk2 tmp = new OuttakeMk2(hardwareMap, bucketServoName, bucketColorSensorName, this::opModeIsActive, this::isStopRequested);
-        tmp.start();
-        outtake = tmp;
+        outtake = new OuttakeMk1(hardwareMap, GenericOpModeTemplate.bucketServoName, GenericOpModeTemplate.bucketColorSensorName, true);
         outtake.close();
     }
 

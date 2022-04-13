@@ -48,7 +48,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 import java.util.ArrayList;
@@ -234,13 +234,13 @@ public class ConceptVuforiaFieldNavigationWebcam extends GenericOpModeTemplate {
 
         //Runs initialization Code
         this.tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        this.tfod.loadModelFromAsset(AutoObjDetectionTemplate.TFOD_MODEL_ASSET, AutoObjDetectionTemplate.LABELS);
+        this.tfod.loadModelFromAsset(AutoObjDetectionTemplateVF.TFOD_MODEL_ASSET, AutoObjDetectionTemplateVF.LABELS);
 
         tfod.activate();
         tfod.setZoom(1.4, 16.0 / 9.0);
         targets.activate();
         while (!isStopRequested() && !opModeIsActive()) {
-            telemetry.addData("Recognition", AutoObjDetectionTemplate.findPositionOfMarker(tfod));
+            telemetry.addData("Recognition", AutoObjDetectionTemplateVF.findPositionOfMarker(tfod));
             telemetry.update();
             Thread.sleep(60);
         }

@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode.src.drivePrograms.teleop.testing;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
-@Disabled
+//@Disabled
+@Config
 @TeleOp(name = "\uFFFFEli Outtake Test😂")
 public class EliOuttakeTest extends GenericOpModeTemplate {
 
-    public static final double closedPos = 0;
+    public static double closedPos = 1;
 
-    public static final double openPos = .5;
+    public static double openPos = 0.9;
 
     @Override
     public void opModeMain() {

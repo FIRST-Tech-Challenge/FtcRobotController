@@ -74,6 +74,21 @@ public class OuttakeMk1 implements Outtake {
     }
 
     /**
+     * Initializes from hardware map and names
+     *
+     * @param hardwareMap hardware map object
+     * @param servoName   Name of lifting servo
+     * @param colorSensor name of the color sensor
+     */
+    public OuttakeMk1(HardwareMap hardwareMap, String servoName, String colorSensor) {
+        this.colorSensor = hardwareMap.get(ColorRangeSensor.class, colorSensor);
+        this.colorSensor.enableLed(true);
+
+        this.itemRelease = hardwareMap.servo.get(servoName);
+        this.close();
+    }
+
+    /**
      * Identifies the contents in the bucket
      *
      * @return The {@link FreightFrenzyGameObject} inside the bucket

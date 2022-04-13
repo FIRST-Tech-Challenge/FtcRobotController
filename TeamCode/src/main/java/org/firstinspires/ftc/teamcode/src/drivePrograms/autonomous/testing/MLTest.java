@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 
 /**
  * A Autonomous to test our machine learning model
  */
 @Disabled
 @Autonomous(name = "MLTest")
-public class MLTest extends AutoObjDetectionTemplate {
+public class MLTest extends AutoObjDetectionTemplateVF {
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();

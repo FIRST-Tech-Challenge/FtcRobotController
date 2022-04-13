@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 
 import java.util.List;
 import java.util.Locale;
 
 @Disabled
 @TeleOp(name = "HI Son of Carl")
-public class CameraTest extends AutoObjDetectionTemplate {
+public class CameraTest extends AutoObjDetectionTemplateVF {
 
     @Override
     public void opModeMain() throws InterruptedException {

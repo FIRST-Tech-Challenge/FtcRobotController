@@ -9,12 +9,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.MovementWarning;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 
 @Disabled
 @Autonomous(name = "Blue State Warehouse Autonomous")
-public class BlueWarehouseAutonomous extends AutoObjDetectionTemplate {
+public class BlueWarehouseAutonomous extends AutoObjDetectionTemplateVF {
     static final BlinkinPattern def = BlinkinPattern.BLUE;
     final ElapsedTime OpModeTimer = new ElapsedTime();
 

@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * A template for all Autonomous opModes that use Vision, allows easy initialization
  */
 @Disabled
-public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
+public abstract class AutoObjDetectionTemplateVF extends AutonomousTemplate {
 
     /**
      * The file that is loaded to detect from
@@ -238,7 +238,7 @@ public abstract class AutoObjDetectionTemplate extends AutonomousTemplate {
      * @return Where the marker is
      */
     public BarcodePositions findPositionOfMarker() {
-        return AutoObjDetectionTemplate.findPositionOfMarker(this.tfod);
+        return AutoObjDetectionTemplateVF.findPositionOfMarker(this.tfod);
     }
 
 

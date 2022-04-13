@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +14,7 @@ import java.util.Locale;
  */
 @Disabled
 @Autonomous(name = "TeamModelObjectDetectionTest")
-public class TeamModelObjectDetectionTest extends AutoObjDetectionTemplate {
+public class TeamModelObjectDetectionTest extends AutoObjDetectionTemplateVF {
 
     @Override
     public void opModeMain() throws InterruptedException {

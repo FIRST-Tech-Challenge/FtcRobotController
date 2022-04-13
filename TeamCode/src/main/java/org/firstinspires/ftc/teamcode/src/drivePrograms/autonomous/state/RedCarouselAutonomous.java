@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 
 /**
  * The Autonomous ran on Red side near spinner for State
  */
 @Disabled
 @Autonomous(name = "Red State Carousel Autonomous")
-public class RedCarouselAutonomous extends AutoObjDetectionTemplate {
+public class RedCarouselAutonomous extends AutoObjDetectionTemplateVF {
     static final BlinkinPattern def = BlinkinPattern.RED;
     private final boolean overBarrier = true;
 

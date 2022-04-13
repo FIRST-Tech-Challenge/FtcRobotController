@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 
 import java.util.List;
 import java.util.Locale;
 
 @Disabled
 @Autonomous(name = "New Detection Method Test")
-public class TensorflowDetectionTeamMarker3 extends AutoObjDetectionTemplate {
+public class TensorflowDetectionTeamMarker3 extends AutoObjDetectionTemplateVF {
     @Override
     public void opModeMain() throws InterruptedException {
         initAll();

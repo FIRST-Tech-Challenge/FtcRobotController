@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 
 import java.util.List;
 
 @Disabled
 @Autonomous(name = "Marker Position Test")
 
-public class cameraMarkerPosTest extends AutoObjDetectionTemplate {
+public class cameraMarkerPosTest extends AutoObjDetectionTemplateVF {
 
     @Override
     public void opModeMain() throws InterruptedException {

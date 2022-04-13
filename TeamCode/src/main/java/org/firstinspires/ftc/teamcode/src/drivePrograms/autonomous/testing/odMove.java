@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplate;
+import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateVF;
 
 
 /**
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetection
  */
 @Disabled
 @Autonomous(name = "OdMove")
-public class odMove extends AutoObjDetectionTemplate {
+public class odMove extends AutoObjDetectionTemplateVF {
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
