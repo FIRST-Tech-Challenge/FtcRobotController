@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateCV;
@@ -27,11 +26,6 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
     @Override
     public void opModeMain() throws InterruptedException {
         initAll();
-        this.switchWebcam();
-
-        podServos.lower();
-
-        final SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         leds.setPattern(defaultColor);
 

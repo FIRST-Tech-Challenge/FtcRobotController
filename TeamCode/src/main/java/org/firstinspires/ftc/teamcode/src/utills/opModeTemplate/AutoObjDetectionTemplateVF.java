@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.navigation.navigationWarnings.DistanceTimeoutWarning;
 import org.firstinspires.ftc.teamcode.src.utills.VuforiaKey;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.enums.FreightFrenzyGameObject;
 
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -241,180 +237,6 @@ public abstract class AutoObjDetectionTemplateVF extends AutonomousTemplate {
         return AutoObjDetectionTemplateVF.findPositionOfMarker(this.tfod);
     }
 
-
-    protected double pickUpBlock2(double distanceDriven, double startingDistanceFromWall, boolean isBlue) throws InterruptedException {
-
-        //Loops while the item is not detected
-        outer:
-        while (opModeIsActive() && !isStopRequested()) {
-
-            //Strafes forward in steps of four inches each time
-            distanceDriven += 4;  //Four is currently the distance it steps each time
-            driveSystem.strafeAtAngle(0, 0.3);
-            double currentDistance = 0;
-            double previousDistance;
-            double turnIncrement = 0; //this is the additional amount the robot should turn to pick up each time
-            double positiveIfBlue = 1;
-            if (!isBlue) {
-                positiveIfBlue = -1;
-            }
-
-
-            while (opModeIsActive() && !isStopRequested()) {
-
-                driveSystem.strafeAtAngleWhileTurn(0, gps.getRot() + turnIncrement, .3);
-                previousDistance = currentDistance;
-                currentDistance = gps.getY();
-
-                //checks if increment of 4 inches is fulfilled for this loop
-                if (gps.getY() < (startingDistanceFromWall - distanceDriven)) {
-                    driveSystem.halt();
-                    break;
-                }
-
-                // checks if intake sensor is triggered
-                if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
-                    intake.turnIntakeOff();
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(500);
-                    break;
-                }
-
-                //checks if bucket is filled
-                if (outtake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
-                    intake.turnIntakeReverse();
-                    break outer;
-                }
-
-                final double minimumDistanceThreshold = .1;
-
-                //If it detects that it is stuck
-                if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
-
-                    // output to telemetry
-                    telemetry.addData("Warning", "Stuck");
-                    telemetry.update();
-                    driveSystem.halt();
-
-                    // back away from block
-                    driveSystem.strafeAtAngle(180, .5);
-                    Thread.sleep(500);
-                    driveSystem.halt();
-
-
-                    // turn 20 degrees away from wall
-                    //sets the strafeAtAngle of this movement to these variable changes
-                    turnIncrement += (10 * positiveIfBlue);
-
-
-                    continue;
-
-                }
-                Thread.yield();
-                if (Thread.currentThread().isInterrupted()) {
-                    throw new InterruptedException();
-                }
-            }
-
-
-            driveSystem.halt();
-            ElapsedTime time = new ElapsedTime();
-            while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
-                intake.turnIntakeOn();
-                if ((outtake.identifyContents() != FreightFrenzyGameObject.EMPTY)) {
-                    break outer;
-                }
-                Thread.yield();
-                if (Thread.currentThread().isInterrupted()) {
-                    throw new InterruptedException();
-                }
-            }
-        }
-
-        return distanceDriven;
-    }
-
-    protected double pickUpBlock(double distanceDriven, double startingDistanceFromWall, boolean isBlue) throws InterruptedException {
-        boolean strafeIntoWall = false;
-        double positiveIfBlue = 1;
-        if (!isBlue) {
-            positiveIfBlue = -1;
-        }
-
-        outer:
-        while (opModeIsActive() && !isStopRequested()) {
-            //Strafes forward in steps of four inches each time
-            distanceDriven += 4;  //Four is currently the distance it steps each time
-            driveSystem.strafeAtAngle(0, 0.3);
-
-            double currentDistance = 0;
-            double previousDistance;
-            double turnIncrement = 0; //this is the additional amount the robot should turn to pick up each time
-
-            final double minimumDistanceThreshold = .05;
-
-
-            while (opModeIsActive() && !isStopRequested()) {
-
-                if (turnIncrement > 21) {
-                    turnIncrement = 0;
-                }
-                driveSystem.strafeAtAngleWhileTurn(0, gps.getRot() + turnIncrement, .3);
-                previousDistance = currentDistance;
-                currentDistance = gps.getY();
-
-                if (frontDistanceSensor.getDistance(DistanceUnit.INCH) < (startingDistanceFromWall - distanceDriven)) {
-                    break;
-                }
-
-                if (intakeDistanceSensor.getDistance(DistanceUnit.INCH) < 3) {
-                    break;
-                }
-
-                if (outtake.identifyContents() != FreightFrenzyGameObject.EMPTY) {
-                    break outer;
-                }
-
-                //If it detects that it is stuck
-                if (Math.abs(currentDistance - previousDistance) < minimumDistanceThreshold) {
-
-                    // output to telemetry
-                    telemetry.addData("Warning", "Stuck");
-                    telemetry.update();
-                    driveSystem.halt();
-
-                    // back away from block
-                    driveSystem.strafeAtAngle(180, .35);
-                    Thread.sleep(500);
-                    driveSystem.halt();
-                    Thread.sleep(50);
-
-                    // turn 20 degrees away from wall
-                    //sets the strafeAtAngle of this movement to these variable changes
-                    turnIncrement += (7 * positiveIfBlue);
-                    strafeIntoWall = true;
-
-                }
-
-                if (Math.abs(180 - gps.getRot()) > 45) {
-                    driveSystem.turnTo(180, 0.3);
-                    turnIncrement = 0;
-                }
-            }
-            driveSystem.halt();
-            ElapsedTime time = new ElapsedTime();
-            while ((time.seconds() < 1.5) && (opModeIsActive() && !isStopRequested())) {
-                idle();
-            }
-
-
-        }
-        if (strafeIntoWall) {
-
-            driveSystem.moveToPosition(gps.getX() - (10 * (-positiveIfBlue)), 30, 180, 2, new DistanceTimeoutWarning(100));
-        }
-        return distanceDriven;
-    }
 
 }
 
