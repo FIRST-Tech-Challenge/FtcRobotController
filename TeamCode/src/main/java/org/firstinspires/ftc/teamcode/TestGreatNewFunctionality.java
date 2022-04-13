@@ -2,23 +2,18 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import android.os.Environment;
+import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_DRIVE_POW;
+import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_STRAFE_POW;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * TeleOp Full Control.
  */
 @TeleOp(name="Teleop-Skunkworks", group="7592")
-@Disabled
+//@Disabled
 public class TestGreatNewFunctionality extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Capping arm score position
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Duck motor control
@@ -53,8 +48,154 @@ public class TestGreatNewFunctionality extends LinearOpMode {
     double[] tiltAngles = new double[12];
     int      tiltAnglesIndex = 0;
 
+    int leftRange, rightRange, frontRange, backRange = 0;
+    double robotAngle = 0.0;
+
+    /*---------------------------------------------------------------------------------------------
+     * getError determines the error between the target angle and the robot's current heading
+     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
+     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
+     *          Positive error means the robot should turn LEFT (CCW) to reduce error.
+     */
+    protected double getAngleError(double targetAngle) {
+        // calculate error in -179 to +180 range  (
+        double robotError = targetAngle - robot.headingAngle;
+        while (robotError >  180.0)  robotError -= 360.0;
+        while (robotError <= -180.0) robotError += 360.0;
+        return robotError;
+    } // getError()
+
+
+    public double scalePower(double fl, double fr, double bl, double br) {
+        double scaleFactor = 1.0;
+        double maxValue = Math.max(Math.abs(fl), Math.max(Math.abs(fr),
+                Math.max(Math.abs(bl), Math.abs(br))));
+        if(maxValue > 1.0) {
+            scaleFactor = 1.0 / maxValue;
+        }
+        return scaleFactor;
+    }
+
+    /**
+     * @param leftWall - true strafe to left wall, false strafe to right wall
+     * @param maxSpeed - The speed to use when going large distances
+     * @param distanceFromWall - The distance to make the robot parallel to the wall in cm
+     * @param timeout - The maximum amount of time to wait until giving up
+     * @return true if reached distance, false if timeout occurred first
+     */
+    public boolean strafeToWall(boolean leftWall, double maxSpeed, int distanceFromWall, int timeout) {
+        double maxPower = Math.abs(maxSpeed);
+        boolean reachedDestination = false;
+        int allowedError = 2; // in cm
+        double angleErrorMult = 0.014;
+        double distanceErrorMult = 0.014;
+        ElapsedTime timer = new ElapsedTime();
+        int sensorDistance;
+        int distanceError;
+        robot.readBulkData();
+        double driveAngle = robotAngle = robot.headingIMU();
+        double angleError;
+        double rotatePower;
+        double drivePower;
+        double fl, fr, bl, br;
+        double scaleFactor;
+        timer.reset();
+        while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
+            robot.readBulkData();
+            robot.headingIMU();
+            sensorDistance = leftWall ? (leftRange = robot.singleSonarRangeL()) : (rightRange = robot.singleSonarRangeR());
+            distanceError = sensorDistance - distanceFromWall;
+            if(Math.abs(distanceError) > allowedError) {
+                // Right is negative angle, left positive
+                angleError = -getAngleError(driveAngle);
+                rotatePower = angleError * angleErrorMult;
+                drivePower = distanceError * distanceErrorMult;
+                drivePower = leftWall ? drivePower : -drivePower;
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_STRAFE_POW), maxPower), drivePower);
+                fl = -drivePower + rotatePower;
+                fr = drivePower - rotatePower;
+                bl = drivePower + rotatePower;
+                br = -drivePower - rotatePower;
+                scaleFactor = scalePower(fl, fr, bl, br);
+                robot.driveTrainMotors(scaleFactor*fl,
+                        scaleFactor*fr,
+                        scaleFactor*bl,
+                        scaleFactor*br);
+            } else {
+                robot.driveTrainMotorsZero();
+                reachedDestination = true;
+            }
+        }
+        // Timed out
+        if(!reachedDestination) {
+            robot.driveTrainMotorsZero();
+        }
+
+        return reachedDestination;
+    } // strafeToWall
+
+    /**
+     * @param frontWall - true drive to front wall, false drive to back wall
+     * @param maxSpeed - The speed to use when going large distances
+     * @param distanceFromWall - The distance to make the robot parallel to the wall in cm
+     * @param timeout - The maximum amount of time to wait until giving up
+     * @return true if reached distance, false if timeout occurred first
+     */
+    public boolean driveToWall(boolean frontWall, double maxSpeed, int distanceFromWall, int timeout) {
+        double maxPower = Math.abs(maxSpeed);
+        boolean reachedDestination = false;
+        int allowedError = 2; // in cm
+        double angleErrorMult = 0.014;
+        double distanceErrorMult = 0.014;
+        ElapsedTime timer = new ElapsedTime();
+        int sensorDistance;
+        int distanceError;
+        robot.readBulkData();
+        double driveAngle = robotAngle = robot.headingIMU();
+        double angleError;
+        double rotatePower;
+        double drivePower;
+        double fl, fr, bl, br;
+        double scaleFactor;
+        timer.reset();
+        while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
+            robot.readBulkData();
+            robot.headingIMU();
+            sensorDistance = frontWall ? (frontRange = robot.singleSonarRangeF()) : (backRange = robot.singleSonarRangeB());
+            distanceError = sensorDistance - distanceFromWall;
+            if(Math.abs(distanceError) > allowedError) {
+                angleError = -getAngleError(driveAngle);
+                rotatePower = angleError * angleErrorMult;
+                drivePower = distanceError * distanceErrorMult;
+                drivePower = frontWall ? drivePower : -drivePower;
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_DRIVE_POW), maxPower), drivePower);
+                fl = drivePower + rotatePower;
+                fr = drivePower - rotatePower;
+                bl = drivePower + rotatePower;
+                br = drivePower - rotatePower;
+                scaleFactor = scalePower(fl, fr, bl, br);
+                robot.driveTrainMotors(scaleFactor*fl,
+                        scaleFactor*fr,
+                        scaleFactor*bl,
+                        scaleFactor*br);
+            } else {
+                robot.driveTrainMotorsZero();
+                reachedDestination = true;
+            }
+        }
+        if(!reachedDestination) {
+            robot.driveTrainMotorsZero();
+        }
+
+        return reachedDestination;
+    } // driveToWall
+
     @Override
     public void runOpMode() throws InterruptedException {
+        boolean reachedDestination = false;
+        double driveSpeed = 0.0;
+        double strafeSpeed = 0.0;
+        double turnSpeed = 0.0;
         boolean atPosition;
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
@@ -81,33 +222,29 @@ public class TestGreatNewFunctionality extends LinearOpMode {
             robot.readBulkData();
             robot.headingIMU();
 
-            if( processDriveOverBarrier() ) {
-                // stop and wait for it to settle
-                robot.stopMotion();
+            if(gamepad1_dpad_up_now && !gamepad1_dpad_up_last) {
+                reachedDestination = driveToWall(true, 0.75, 30, 5000);
+            }
+            if(gamepad1_dpad_down_now && !gamepad1_dpad_down_last) {
+                reachedDestination = driveToWall(false, 0.75, 30, 5000);
+            }
+            if(gamepad1_dpad_left_now && !gamepad1_dpad_left_last) {
+                reachedDestination = strafeToWall(true, 0.75, 30, 5000);
+//                turnSpeed -= 0.05;
+//                robot.driveTrainMotors(turnSpeed, -turnSpeed, turnSpeed, -turnSpeed);
+            }
+            if(gamepad1_dpad_right_now && !gamepad1_dpad_right_last) {
+//                turnSpeed += 0.05;
+//                robot.driveTrainMotors(turnSpeed, -turnSpeed, turnSpeed, -turnSpeed);
+                reachedDestination = strafeToWall(false, 0.75, 30, 5000);
             }
 
-            if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last ) {
-                startDriveOverBarrier( 0.40 );
-            }
-
-            if( gamepad1_dpad_down_now && !gamepad1_dpad_down_last ) {
-                startDriveOverBarrier( -0.40 );
-            }
-
-            if( gamepad1_cross_now && !gamepad1_cross_last ) {
-                robot.stopMotion();
-                autoBarrierDrive = false;
-            }
-
-            // Hopefully this does everything capping arm.
-            telemetry.addData( "robot.tiltAngle:", robot.tiltAngle );
-            telemetry.addData( "autoBarrierDrive:", autoBarrierDrive );
-            telemetry.addData( "tiltAngle0:", tiltAngle0 );
-            telemetry.addData( "flatcount:", flatcount );
-            telemetry.addData( "startedBarrier:", startedBarrier );
-
-            for( int i=0; i<12; i++ )
-                telemetry.addData( "tilt error", "%d = %.2f", i, tiltAngles[i] );
+            telemetry.addData("Reached Destination: ", reachedDestination ? "true" : "false");
+            telemetry.addData("Range L/R", "L %d R %d", leftRange, rightRange);
+            telemetry.addData("Range F/B", "F %d B %d", frontRange, backRange);
+            telemetry.addData("Drive Angle: ", robotAngle);
+            telemetry.addData("Heading: ", robot.headingAngle);
+            telemetry.addData("Turn Speed: ", turnSpeed);
             telemetry.update();
         }
     } // runOpMode

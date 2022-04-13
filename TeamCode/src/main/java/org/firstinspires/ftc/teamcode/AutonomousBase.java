@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_DRIVE_POW;
+import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_STRAFE_POW;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -47,6 +50,20 @@ public abstract class AutonomousBase extends LinearOpMode {
     protected double getError(double targetAngle) {
         // calculate error in -179 to +180 range  (
         double robotError = targetAngle - robot.headingIMU();
+        while (robotError >  180.0)  robotError -= 360.0;
+        while (robotError <= -180.0) robotError += 360.0;
+        return robotError;
+    } // getError()
+
+    /*---------------------------------------------------------------------------------------------
+     * getError determines the error between the target angle and the robot's current heading
+     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
+     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
+     *          Positive error means the robot should turn LEFT (CCW) to reduce error.
+     */
+    protected double getAngleError(double targetAngle) {
+        // calculate error in -179 to +180 range  (
+        double robotError = targetAngle - robot.headingAngle;
         while (robotError >  180.0)  robotError -= 360.0;
         while (robotError <= -180.0) robotError += 360.0;
         return robotError;
@@ -183,6 +200,138 @@ public abstract class AutonomousBase extends LinearOpMode {
         }
         return onTarget;
     } // onHeading()
+
+    /**
+     *
+     * @param fl Front left motor power
+     * @param fr Front right motor power
+     * @param bl Back left motor power
+     * @param br Back right motor power
+     * @return Scaling factor to make sure power level is set to less than 1
+     */
+    public double scalePower(double fl, double fr, double bl, double br) {
+        double scaleFactor = 1.0;
+        double maxValue = Math.max(Math.abs(fl), Math.max(Math.abs(fr),
+                Math.max(Math.abs(bl), Math.abs(br))));
+        if(maxValue > 1.0) {
+            scaleFactor = 1.0 / maxValue;
+        }
+        return scaleFactor;
+    }
+
+    /**
+     * @param leftWall - true strafe to left wall, false strafe to right wall
+     * @param maxSpeed - The speed to use when going large distances
+     * @param distanceFromWall - The distance to make the robot parallel to the wall in cm
+     * @param timeout - The maximum amount of time to wait until giving up
+     * @return true if reached distance, false if timeout occurred first
+     */
+    public boolean strafeToWall(boolean leftWall, double maxSpeed, int distanceFromWall, int timeout) {
+        double maxPower = Math.abs(maxSpeed);
+        boolean reachedDestination = false;
+        int allowedError = 2; // in cm
+        double angleErrorMult = 0.014;
+        double distanceErrorMult = 0.014;
+        ElapsedTime timer = new ElapsedTime();
+        int sensorDistance;
+        int distanceError;
+        performEveryLoop();
+        double driveAngle = robot.headingIMU();
+        double angleError;
+        double rotatePower;
+        double drivePower;
+        double fl, fr, bl, br;
+        double scaleFactor;
+        timer.reset();
+        while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
+            performEveryLoop();
+            robot.headingIMU();
+            sensorDistance = leftWall ? robot.singleSonarRangeL() : robot.singleSonarRangeR();
+            distanceError = sensorDistance - distanceFromWall;
+            if(Math.abs(distanceError) > allowedError) {
+                // Right is negative angle, left positive
+                angleError = -getAngleError(driveAngle);
+                rotatePower = angleError * angleErrorMult;
+                drivePower = distanceError * distanceErrorMult;
+                drivePower = leftWall ? drivePower : -drivePower;
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_STRAFE_POW), maxPower), drivePower);
+                fl = -drivePower + rotatePower;
+                fr = drivePower - rotatePower;
+                bl = drivePower + rotatePower;
+                br = -drivePower - rotatePower;
+                scaleFactor = scalePower(fl, fr, bl, br);
+                robot.driveTrainMotors(scaleFactor*fl,
+                        scaleFactor*fr,
+                        scaleFactor*bl,
+                        scaleFactor*br);
+            } else {
+                robot.driveTrainMotorsZero();
+                reachedDestination = true;
+            }
+        }
+        // Timed out
+        if(!reachedDestination) {
+            robot.driveTrainMotorsZero();
+        }
+
+        return reachedDestination;
+    } // strafeToWall
+
+    /**
+     * @param frontWall - true drive to front wall, false drive to back wall
+     * @param maxSpeed - The speed to use when going large distances
+     * @param distanceFromWall - The distance to make the robot parallel to the wall in cm
+     * @param timeout - The maximum amount of time to wait until giving up
+     * @return true if reached distance, false if timeout occurred first
+     */
+    public boolean driveToWall(boolean frontWall, double maxSpeed, int distanceFromWall, int timeout) {
+        double maxPower = Math.abs(maxSpeed);
+        boolean reachedDestination = false;
+        int allowedError = 2; // in cm
+        double angleErrorMult = 0.014;
+        double distanceErrorMult = 0.014;
+        ElapsedTime timer = new ElapsedTime();
+        int sensorDistance;
+        int distanceError;
+        performEveryLoop();
+        double driveAngle = robot.headingIMU();
+        double angleError;
+        double rotatePower;
+        double drivePower;
+        double fl, fr, bl, br;
+        double scaleFactor;
+        timer.reset();
+        while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
+            performEveryLoop();
+            robot.headingIMU();
+            sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
+            distanceError = sensorDistance - distanceFromWall;
+            if(Math.abs(distanceError) > allowedError) {
+                angleError = -getAngleError(driveAngle);
+                rotatePower = angleError * angleErrorMult;
+                drivePower = distanceError * distanceErrorMult;
+                drivePower = frontWall ? drivePower : -drivePower;
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_DRIVE_POW), maxPower), drivePower);
+                fl = drivePower + rotatePower;
+                fr = drivePower - rotatePower;
+                bl = drivePower + rotatePower;
+                br = drivePower - rotatePower;
+                scaleFactor = scalePower(fl, fr, bl, br);
+                robot.driveTrainMotors(scaleFactor*fl,
+                        scaleFactor*fr,
+                        scaleFactor*bl,
+                        scaleFactor*br);
+            } else {
+                robot.driveTrainMotorsZero();
+                reachedDestination = true;
+            }
+        }
+        if(!reachedDestination) {
+            robot.driveTrainMotorsZero();
+        }
+
+        return reachedDestination;
+    } // driveToWall
 
     /*---------------------------------------------------------------------------------------------
      * Method will drive straight for a specified time.
@@ -341,26 +490,4 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.rearRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } // opModeIsActive()
     } // gyroDrive()
-
-    // Drives to a distance returned by the back sensor allowing for specified error
-    // Units are INCHES.
-    public void driveToBackDistance( double endDistance, double distanceTol, double drivePwr, int msecTimeout ) {
-        ElapsedTime driveTimer = new ElapsedTime();
-        driveTimer.reset();
-        // Keep driving until we reach the desired end-distance, or timeout
-        while( opModeIsActive() && (driveTimer.milliseconds() < msecTimeout) ) {
-           // Where are we now?
-           double actualDistance = robot.singleSonarRangeB()/2.54;
-           double distanceError  = endDistance - actualDistance;
-           // Are we within tolerance?
-           if( Math.abs(distanceError) <= distanceTol) break;
-           // Do we need to drive backward or forward to get there?
-           double motorPower = (distanceError > 0.0)? -drivePwr:drivePwr;           
-           robot.driveTrainMotors( motorPower, motorPower, motorPower, motorPower );
-           // Sleep 100 msec before measuring again
-           sleep( 100 );
-        } // while
-        robot.stopMotion();
-    } // driveToBackDistance()
-    
 } // AutonomousBase

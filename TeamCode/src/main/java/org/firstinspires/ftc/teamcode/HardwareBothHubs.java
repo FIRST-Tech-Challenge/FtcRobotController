@@ -87,6 +87,9 @@ public class HardwareBothHubs
     public double       rearRightMotorVel  = 0.0;     // encoder counts per second
     public double       rearRightMotorAmps = 0.0;     // current power draw (Amps)
 
+    public final static double MIN_DRIVE_POW      = 0.03;    // Minimum speed to move the robot
+    public final static double MIN_TURN_POW       = 0.03;    // Minimum speed to turn the robot
+    public final static double MIN_STRAFE_POW     = 0.04;    // Minimum speed to strafe the robot
     protected double COUNTS_PER_MOTOR_REV  = 28.0;    // goBilda Yellow Jacket Planetary Gear Motor Encoders
     protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
     protected double MECANUM_SLIPPAGE      = 1.01;    // one wheel revolution doesn't achieve 6" x 3.1415 of travel.
@@ -1134,17 +1137,22 @@ public class HardwareBothHubs
     } // stdevSonarRangeF
 
     /*--------------------------------------------------------------------------------------------*/
-    public double singleSonarRangeB() {
+    public int singleSonarRangeF() {
+        // Query the current range sensor reading and wait for a response
+        return sonarRangeF.getDistanceSync();
+    } // singleSonarRangeF
+
+    public int singleSonarRangeB() {
         // Query the current range sensor reading and wait for a response
         return sonarRangeB.getDistanceSync();
     } // singleSonarRangeB
 
-    public double singleSonarRangeL() {
+    public int singleSonarRangeL() {
         // Query the current range sensor reading and wait for a response
         return sonarRangeL.getDistanceSync();
     } // singleSonarRangeL
 
-    public double singleSonarRangeR() {
+    public int singleSonarRangeR() {
         // Query the current range sensor reading and wait for a response
         return sonarRangeR.getDistanceSync();
     } // singleSonarRangeR
