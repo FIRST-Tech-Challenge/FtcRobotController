@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
@@ -18,30 +19,34 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Disabled
 public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
 
-    public static final double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
-    public static final double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
-    public static final double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
-    public static final double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
+    private static final double borderLeftX = 0.0;   //fraction of pixels from the left side of the cam to skip
+    private static final double borderRightX = 0.0;   //fraction of pixels from the right of the cam to skip
+    private static final double borderTopY = 0.0;   //fraction of pixels from the top of the cam to skip
+    private static final double borderBottomY = 0.0;   //fraction of pixels from the bottom of the cam to skip
     // Pink Range                                      Y      Cr     Cb
-    public static final Scalar scalarLowerYCrCb = new Scalar(0.0, 160.0, 100.0);
-    public static final Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
+    private static final Scalar scalarLowerYCrCb = new Scalar(0.0, 160.0, 100.0);
+    private static final Scalar scalarUpperYCrCb = new Scalar(255.0, 255.0, 255.0);
     private static final int CAMERA_WIDTH = 640; // width  of wanted camera resolution
     private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
-    protected String CameraNameToUse = GenericOpModeTemplate.LeftWebcamName;
 
-    private double CrLowerUpdate = 160;
-    private double CbLowerUpdate = 100;
-    private double CrUpperUpdate = 255;
-    private double CbUpperUpdate = 255;
-    private double lowerruntime = 0;
-    private double upperruntime = 0;
-
-    public static final int CAMERA_OPEN_ERROR_FAILURE_TO_OPEN_CAMERA_DEVICE = -1;
-    public static final int CAMERA_OPEN_ERROR_POSTMORTEM_OPMODE = -2;
-    ContourPipeline myPipeline;
-    WebcamName camName;
-    OpenCvWebcam webcam;
+    private static final int CAMERA_OPEN_ERROR_FAILURE_TO_OPEN_CAMERA_DEVICE = -1;
+    private static final int CAMERA_OPEN_ERROR_POSTMORTEM_OPMODE = -2;
+    private final ContourPipeline myPipeline = new ContourPipeline(borderLeftX, borderRightX, borderTopY, borderBottomY);
+    private WebcamName camName;
+    private OpenCvWebcam webcam;
     private boolean rightCameraOn;
+
+    private final OpenCvCamera.AsyncCameraOpenListener defaultListener = new OpenCvCamera.AsyncCameraOpenListener() {
+        @Override
+        public void onOpened() {
+            webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+        }
+
+        @Override
+        public void onError(int errorCode) {
+            onWebcamError(errorCode);
+        }
+    };
 
     /**
      * Initializes all fields provided by this class
@@ -51,6 +56,16 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
     public void initAll() throws InterruptedException {
         this.initOpenCV();
         super.initAll();
+    }
+
+    private static void onWebcamError(int errorCode) {
+        switch (errorCode) {
+            case CAMERA_OPEN_ERROR_POSTMORTEM_OPMODE:
+                Thread.currentThread().interrupt();
+
+            case CAMERA_OPEN_ERROR_FAILURE_TO_OPEN_CAMERA_DEVICE:
+                RobotLog.d("Camera Failed To Open");
+        }
     }
 
     public void switchWebcam() {
@@ -72,19 +87,7 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
             webcam.setPipeline(myPipeline);
 
             // Webcam Streaming
-            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                @Override
-                public void onOpened() {
-                    webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-                }
-
-                @Override
-                public void onError(int errorCode) {
-                    /*
-                     * This will be called if the camera could not be opened
-                     */
-                }
-            });
+            webcam.openCameraDeviceAsync(defaultListener);
 
 
             rightCameraOn = false;
@@ -105,64 +108,11 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
 
             webcam.setPipeline(myPipeline);
 
-            webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                @Override
-                public void onOpened() {
-                    webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-                }
-
-                @Override
-                public void onError(int errorCode) {
-                    /*
-                     * This will be called if the camera could not be opened
-                     */
-                }
-            });
+            webcam.openCameraDeviceAsync(defaultListener);
 
 
             rightCameraOn = true;
         }
-
-    }
-
-    public void initOpenCV() {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera1Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
-
-        camName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.RightWebcamName);
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-        /**
-         * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
-         * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
-         */
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
-
-        webcam.setPipeline(myPipeline = new ContourPipeline(borderLeftX, borderRightX, borderTopY, borderBottomY));
-        // Configuration of Pipeline
-        myPipeline.configureScalarLower(scalarLowerYCrCb.val[0], scalarLowerYCrCb.val[1], scalarLowerYCrCb.val[2]);
-        myPipeline.configureScalarUpper(scalarUpperYCrCb.val[0], scalarUpperYCrCb.val[1], scalarUpperYCrCb.val[2]);
-        // Webcam Streaming
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-            }
-        });
-
-        rightCameraOn = true;
 
     }
 
@@ -232,6 +182,42 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
             }
         }
         return BarcodePositions.NotSeen;
+    }
+
+    public void initOpenCV() {
+        /**
+         * NOTE: Many comments have been omitted from this sample for the
+         * sake of conciseness. If you're just starting out with EasyOpenCv,
+         * you should take a look at {@link InternalCamera1Example} or its
+         * webcam counterpart, {@link WebcamExample} first.
+         */
+
+        camName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.RightWebcamName);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        /**
+         * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+         * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+         */
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
+
+        webcam.setPipeline(myPipeline);
+        // Configuration of Pipeline
+        myPipeline.configureScalarLower(scalarLowerYCrCb.val[0], scalarLowerYCrCb.val[1], scalarLowerYCrCb.val[2]);
+        myPipeline.configureScalarUpper(scalarUpperYCrCb.val[0], scalarUpperYCrCb.val[1], scalarUpperYCrCb.val[2]);
+        // Webcam Streaming
+        webcam.openCameraDeviceAsync(defaultListener);
+
+        rightCameraOn = true;
+
+    }
+
+    @Override
+    protected void cleanup() {
+        super.cleanup();
+        webcam.closeCameraDevice();
+        webcam.closeCameraDeviceAsync(() -> RobotLog.dd("Webcam Image Processor", "Closed"));
     }
 
 }

@@ -189,7 +189,13 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
         } catch (Throwable t) {
             RobotLog.dd("Throwable Was thrown", t, "This Throwable was thrown and resulted in a early termination of the OpMode (And likely everything else)");
             throw t;
+        } finally {
+            this.cleanup();
         }
+    }
+
+    protected void cleanup() {
+
     }
 
     protected void initSpaceBar() {
