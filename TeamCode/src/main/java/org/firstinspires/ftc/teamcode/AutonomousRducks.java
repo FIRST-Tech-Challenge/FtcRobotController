@@ -42,15 +42,6 @@ public class AutonomousRducks extends AutonomousBase {
     static final boolean DRIVE_Y              = true;    // Drive forward/backward
     static final boolean DRIVE_X              = false;   // Drive right/left (not DRIVE_Y)
 
-    static final double  DRIVE_SPEED_10       = 0.10;    // Lower speed for moving from a standstill
-    static final double  DRIVE_SPEED_20       = 0.20;    // Lower speed for moving from a standstill
-    static final double  DRIVE_SPEED_30       = 0.30;    // Lower speed for fine control going sideways
-    static final double  DRIVE_SPEED_40       = 0.40;    // Normally go slower to achieve better accuracy
-    static final double  DRIVE_SPEED_55       = 0.55;    // Somewhat longer distances, go a little faster
-    static final double  TURN_SPEED_20        = 0.20;    // Nominal half speed for better accuracy.
-
-    static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
-
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
@@ -338,21 +329,24 @@ public class AutonomousRducks extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void spinDuckCarousel( int level ) {
-        double towardWall = 0;
-        switch( level ) {
-            case 3 : towardWall = 20.0; break; // top
-            case 2 : towardWall = 18.0; break; // middle
-            case 1 : towardWall = 17.0; break; // bottom
-        } // switch()
+//      double towardWall = 0;
+//      switch( level ) {
+//          case 3 : towardWall = 20.0; break; // top
+//          case 2 : towardWall = 18.0; break; // middle
+//          case 1 : towardWall = 17.0; break; // bottom
+//      } // switch()
         gyroTurn(TURN_SPEED_20, -90.0 );   // Turn toward wall
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, -90.0, DRIVE_TO );
+        strafeToWall(false, DRIVE_SPEED_55, 27, 3000);
+//        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, -90.0, DRIVE_TO );
+        driveToWall(false, DRIVE_SPEED_55, 21, 3000);
+        timeDriveStraight(-DRIVE_SPEED_10, 1000);
 //      driveToBackDistance( 8.0, 1.0, 0.20, 10000 );
-        double wallDistance = backRangeSensor()/2.54;
-        sonarRangeR = robot.singleSonarRangeR()/2.54;
-        telemetry.addData("sonarRangeR", "%.2f in (11.0)", sonarRangeR );
-        telemetry.addData("wallDistance", "%.2f in", wallDistance );
-        telemetry.update();
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance,-90.0, DRIVE_TO );
+//      double wallDistance = backRangeSensor()/2.54;
+//      sonarRangeR = robot.singleSonarRangeR()/2.54;
+//      telemetry.addData("sonarRangeR", "%.2f in (11.0)", sonarRangeR );
+//      telemetry.addData("wallDistance", "%.2f in", wallDistance );
+//      telemetry.update();
+//      gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance,-90.0, DRIVE_TO );
         robot.duckMotor.setPower( 0.48 );  // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
@@ -374,7 +368,7 @@ public class AutonomousRducks extends AutonomousBase {
     private void driveToSquare( int level ) {
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 4.0,-90.0, DRIVE_TO );
         gyroTurn(TURN_SPEED_20, -180.0 );   // Turn square to side wall
-        double squareDistance = 30.0 - robot.singleSonarRangeB()/2.54;
+        double squareDistance = 26.5 - robot.singleSonarRangeB()/2.54;
         gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );
         // Don't lower arm to floor until we get into the square, in case the freight box has rotated
         // (the front edge will catch on the floor tile when we try to drive forward)
@@ -383,6 +377,7 @@ public class AutonomousRducks extends AutonomousBase {
             performEveryLoop();
         }
         gyroDrive(DRIVE_SPEED_40, DRIVE_X, -5.0, 999.9, DRIVE_TO );
+        driveToWall(false, DRIVE_SPEED_55, 54, 2000);
         // Until Autonomous ends (30 seconds), wait for arm to come down
         while( opModeIsActive() ) {
             sleep(75);  // wait for arm to lower

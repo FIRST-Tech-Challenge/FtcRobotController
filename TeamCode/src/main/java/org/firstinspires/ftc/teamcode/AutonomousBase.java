@@ -19,6 +19,14 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final long    HUB_SCORE_TIME_THRESHOLD = 29500; // Time elapsed in auto where we can still
                                                            // score in the alliance hub and park
 
+    static final double  DRIVE_SPEED_10       = 0.14;    // Lower speed for moving from a standstill
+    static final double  DRIVE_SPEED_20       = 0.28;    // Lower speed for moving from a standstill
+    static final double  DRIVE_SPEED_30       = 0.42;    // Lower speed for fine control going sideways
+    static final double  DRIVE_SPEED_40       = 0.56;    // Normally go slower to achieve better accuracy
+    static final double  DRIVE_SPEED_55       = 0.77;    // Somewhat longer distances, go a little faster
+    static final double  TURN_SPEED_20        = 0.28;    // Nominal half speed for better accuracy.
+
+    static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle
      * @return  current gyro angle (-179.9 to +180.0)
@@ -245,12 +253,11 @@ public abstract class AutonomousBase extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             performEveryLoop();
-            robot.headingIMU();
             sensorDistance = leftWall ? robot.singleSonarRangeL() : robot.singleSonarRangeR();
             distanceError = sensorDistance - distanceFromWall;
             if(Math.abs(distanceError) > allowedError) {
                 // Right is negative angle, left positive
-                angleError = -getAngleError(driveAngle);
+                angleError = getError(driveAngle);
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = leftWall ? drivePower : -drivePower;
@@ -303,11 +310,10 @@ public abstract class AutonomousBase extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             performEveryLoop();
-            robot.headingIMU();
             sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
             distanceError = sensorDistance - distanceFromWall;
             if(Math.abs(distanceError) > allowedError) {
-                angleError = -getAngleError(driveAngle);
+                angleError = getError(driveAngle);
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = frontWall ? drivePower : -drivePower;

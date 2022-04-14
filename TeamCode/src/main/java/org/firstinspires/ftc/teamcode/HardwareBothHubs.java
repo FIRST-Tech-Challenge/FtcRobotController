@@ -91,7 +91,8 @@ public class HardwareBothHubs
     public final static double MIN_TURN_POW       = 0.03;    // Minimum speed to turn the robot
     public final static double MIN_STRAFE_POW     = 0.04;    // Minimum speed to strafe the robot
     protected double COUNTS_PER_MOTOR_REV  = 28.0;    // goBilda Yellow Jacket Planetary Gear Motor Encoders
-    protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
+    protected double DRIVE_GEAR_REDUCTION  = 26.851;  // goBilda 26.9:1 (223rpm) gear ratio with 1:1 bevel gear
+//    protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
     protected double MECANUM_SLIPPAGE      = 1.01;    // one wheel revolution doesn't achieve 6" x 3.1415 of travel.
     protected double WHEEL_DIAMETER_INCHES = 6.0;     // For computing circumference
     protected double COUNTS_PER_INCH       = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * MECANUM_SLIPPAGE) / (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -1012,12 +1013,10 @@ public class HardwareBothHubs
     /* turretPositionSet()                                                                        */
     /* - target_position = the target position to command the turret servo to go to                            */
     public void turretPositionSet( TurretPosition target_position ) {
-        if((turretSetPos != target_position) || (!isTurretAtPosition(target_position))) {
-            turretSetPos = target_position;
-            turretEncStableCts = 0;
-            turretTargetPos = turretMap.get(turretSetPos);
-            turretServo.setPosition(turretTargetPos);
-        }
+        turretSetPos = target_position;
+        turretEncStableCts = 0;
+        turretTargetPos = turretMap.get(turretSetPos);
+        turretServo.setPosition(turretTargetPos);
     } // turretPositionSet
 
     /*--------------------------------------------------------------------------------------------*/

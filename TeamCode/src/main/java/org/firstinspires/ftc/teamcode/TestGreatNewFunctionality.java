@@ -59,7 +59,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
      */
     protected double getAngleError(double targetAngle) {
         // calculate error in -179 to +180 range  (
-        double robotError = targetAngle - robot.headingAngle;
+        double robotError = targetAngle - robot.headingIMU();
         while (robotError >  180.0)  robotError -= 360.0;
         while (robotError <= -180.0) robotError += 360.0;
         return robotError;
@@ -87,7 +87,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         double maxPower = Math.abs(maxSpeed);
         boolean reachedDestination = false;
         int allowedError = 2; // in cm
-        double angleErrorMult = 0.014;
+        double angleErrorMult = 0.040;
         double distanceErrorMult = 0.014;
         ElapsedTime timer = new ElapsedTime();
         int sensorDistance;
@@ -102,12 +102,11 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             robot.readBulkData();
-            robot.headingIMU();
             sensorDistance = leftWall ? (leftRange = robot.singleSonarRangeL()) : (rightRange = robot.singleSonarRangeR());
             distanceError = sensorDistance - distanceFromWall;
             if(Math.abs(distanceError) > allowedError) {
                 // Right is negative angle, left positive
-                angleError = -getAngleError(driveAngle);
+                angleError = getAngleError(driveAngle);
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = leftWall ? drivePower : -drivePower;
@@ -160,11 +159,10 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             robot.readBulkData();
-            robot.headingIMU();
             sensorDistance = frontWall ? (frontRange = robot.singleSonarRangeF()) : (backRange = robot.singleSonarRangeB());
             distanceError = sensorDistance - distanceFromWall;
             if(Math.abs(distanceError) > allowedError) {
-                angleError = -getAngleError(driveAngle);
+                angleError = getAngleError(driveAngle);
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = frontWall ? drivePower : -drivePower;
