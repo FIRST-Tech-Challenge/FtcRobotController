@@ -28,7 +28,12 @@ public abstract class AutonomousTemplate extends GenericOpModeTemplate {
         telemetry.addData("Default Initialization: ", "Finished");
         telemetry.update();
         checkStop();
+    }
 
+    @Override
+    protected void initLinearSlide() throws InterruptedException {
+        super.initLinearSlide();
+        slide.autoMode();
     }
 
 }

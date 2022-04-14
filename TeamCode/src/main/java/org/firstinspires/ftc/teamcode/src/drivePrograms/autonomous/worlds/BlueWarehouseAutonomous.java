@@ -65,6 +65,16 @@ public class BlueWarehouseAutonomous extends AutonomousTemplate {
         waitForStart();
 
         if (!isStopRequested()) {
+            double angle = 0;
+            while (!isStopRequested() && opModeIsActive()) {
+
+                drive.strafeAtAngleWhileTurn(angle, 0, .3);
+                angle += 1;
+                angle = angle % 360;
+                // this is for testing strafewhileturn
+            }
+
+            /*
             drive.followTrajectorySequence(startToHub);
             drive.turnTo(dropOffPos.getHeading());
 
@@ -72,7 +82,11 @@ public class BlueWarehouseAutonomous extends AutonomousTemplate {
                 drive.followTrajectorySequence(hubToWH);
                 drive.followTrajectorySequence(WHToHub);
                 drive.turnTo(dropOffPos.getHeading());
+
+
             }
+
+             */
 
         }
 

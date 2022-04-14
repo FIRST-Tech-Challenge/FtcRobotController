@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateCV;
@@ -23,6 +24,35 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
 
     final static BlinkinPattern defaultColor = BlinkinPattern.BLUE;
 
+    public static Trajectory ToGoalTraj(SampleMecanumDrive drive, Pose2d startPos) {
+        return drive.trajectoryBuilder(startPos)
+                // Side in
+                .lineToConstantHeading(parkPos.plus(new Pose2d(20, 15, 0)).vec())
+                // Cross Box
+                .splineToConstantHeading(parkPos.plus(new Pose2d(25, -15, 0)).vec(), 0)
+                //Approach Goal
+                .splineToSplineHeading(dropOffPos.plus(new Pose2d(8, 4, Math.toRadians(18))), 0)
+                .build();
+    }
+
+    public static TrajectorySequence ToSpinner(SampleMecanumDrive drive, Pose2d startPos) {
+        return drive.trajectorySequenceBuilder(startPos)
+                // Cross Box
+                .lineToLinearHeading(new Pose2d(parkPos.getX() + 15, parkPos.getY() - 15, Math.toRadians(95)))
+
+                //.setConstraints((v, pose2d, pose2d1, pose2d2) -> 10, (v, pose2d, pose2d1, pose2d2) -> 20)
+                // To Carousel Spinner
+                .lineTo(carouselSpinPos.plus(new Pose2d(8, 4)).vec())
+                .build();
+    }
+
+    public static Trajectory ToEnd(SampleMecanumDrive drive, Pose2d startPos) {
+        return drive.trajectoryBuilder(startPos)
+                //Park
+                .lineTo(parkPos.vec().plus(new Vector2d(8, -1)))
+                .build();
+    }
+
     @Override
     public void opModeMain() throws InterruptedException {
         initAll();
@@ -32,28 +62,11 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
         drive.setPoseEstimate(startPos);
 
         // From
-        final Trajectory toGoal = drive.trajectoryBuilder(startPos)
-                // Side in
-                .lineToConstantHeading(parkPos.plus(new Pose2d(20, 15, 0)).vec())
-                // Cross Box
-                .splineToConstantHeading(parkPos.plus(new Pose2d(25, -15, 0)).vec(), 0)
-                //Approach Goal
-                .splineToSplineHeading(dropOffPos.plus(new Pose2d(6, 4, Math.toRadians(18))), 0)
-                .build();
+        final Trajectory toGoal = BlueCarouselAutonomous.ToGoalTraj(drive, startPos);
 
-        final TrajectorySequence toSpinner = drive.trajectorySequenceBuilder(toGoal.end())
-                // Cross Box
-                .lineToLinearHeading(new Pose2d(parkPos.getX() + 15, parkPos.getY() - 15, Math.toRadians(95)))
+        final TrajectorySequence toSpinner = BlueCarouselAutonomous.ToSpinner(drive, toGoal.end());
 
-                //.setConstraints((v, pose2d, pose2d1, pose2d2) -> 10, (v, pose2d, pose2d1, pose2d2) -> 20)
-                // To Carousel Spinner
-                .lineTo(carouselSpinPos.plus(new Pose2d(8, 4)).vec())
-                .build();
-
-        final Trajectory toPark = drive.trajectoryBuilder(toSpinner.end())
-                //Park
-                .lineTo(parkPos.vec().plus(new Vector2d(8, -1)))
-                .build();
+        final Trajectory toPark = ToEnd(drive, toSpinner.end());
 
         telemetry.addData("Setup", "Finished");
         telemetry.update();
@@ -75,10 +88,6 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
 
             drive.followTrajectory(toGoal);
             drive.turnTo(dropOffPos.getHeading());
-            slide.setTargetLevel(HeightLevel.TopLevel);
-
-
-            Thread.sleep(1000);
 
             switch (pos) {
                 case NotSeen:
@@ -88,13 +97,20 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
 
                 case Center:
                     slide.setTargetLevel(HeightLevel.MiddleLevel);
+                    break;
 
                 case Left:
                     slide.setTargetLevel(HeightLevel.BottomLevel);
+                    break;
             }
 
+            //Wait for the slide to reach position
+            slide.waitOn();
 
-            Thread.sleep(1000);
+            outtake.open();
+            Thread.sleep(2000);
+            outtake.close();
+            slide.setTargetLevel(HeightLevel.Down);
 
             drive.followTrajectorySequence(toSpinner);
 

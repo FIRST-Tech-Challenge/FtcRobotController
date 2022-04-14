@@ -44,7 +44,7 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
 
         @Override
         public void onError(int errorCode) {
-            onWebcamError(errorCode);
+
         }
     };
 
@@ -56,16 +56,6 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
     public void initAll() throws InterruptedException {
         this.initOpenCV();
         super.initAll();
-    }
-
-    private static void onWebcamError(int errorCode) {
-        switch (errorCode) {
-            case CAMERA_OPEN_ERROR_POSTMORTEM_OPMODE:
-                Thread.currentThread().interrupt();
-
-            case CAMERA_OPEN_ERROR_FAILURE_TO_OPEN_CAMERA_DEVICE:
-                RobotLog.d("Camera Failed To Open");
-        }
     }
 
     public void switchWebcam() {
@@ -216,7 +206,7 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
     @Override
     protected void cleanup() {
         super.cleanup();
-        webcam.closeCameraDevice();
+        //webcam.closeCameraDevice();
         webcam.closeCameraDeviceAsync(() -> RobotLog.dd("Webcam Image Processor", "Closed"));
     }
 

@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.RobotLog;
+import com.qualcomm.robotcore.wifi.NetworkConnection;
+import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.RobotVoltageSensor;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.sensors.SpaceBar;
@@ -112,6 +114,8 @@ public abstract class GenericOpModeTemplate extends LinearOpMode {
     public static final String RightSpaceBarName = "tsright";
 
     public static final String LeftSpaceBarName = "tsleft";
+
+    public static final WifiDirectAssistant.NetworkEvent a = NetworkConnection.NetworkEvent.CONNECTING;
 
     /**
      * Name of the IMU

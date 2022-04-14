@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/FTC/Documents/AndroidStudio/FtcRobotController/FtcRobotController/src/main/res/layout/activity_ftc_controller.xml" value="0.1453804347826087" />
+      </map>
+    </option>
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Desktop/JavaDoc" />
     <option name="OTHER_OPTIONS" value="-verbose" />

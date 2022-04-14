@@ -24,7 +24,7 @@ public enum HeightLevel {
     /**
      * Pass in the Height Level, returns the the position to go to in ticks
      */
-    private static int getEncoderCountFromLevel(HeightLevel level) {
+    public static int getEncoderCountFromEnum(HeightLevel level) {
         switch (level) {
             case TopLevel:
                 return 584;
@@ -36,10 +36,6 @@ public enum HeightLevel {
             default:
                 return 0;
         }
-    }
-
-    public static int getEncoderCountFromEnum(HeightLevel level) {
-        return getEncoderCountFromLevel(level);
     }
 
     public static HeightLevel getClosestLevel(int currentLevel) {

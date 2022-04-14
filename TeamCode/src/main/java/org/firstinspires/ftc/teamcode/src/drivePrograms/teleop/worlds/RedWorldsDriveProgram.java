@@ -22,6 +22,7 @@ public class RedWorldsDriveProgram extends TeleOpTemplate {
         currentPattern = this.defaultColor;
     }
 
+
     public void opModeMain() throws InterruptedException {
         this.initAll();
 

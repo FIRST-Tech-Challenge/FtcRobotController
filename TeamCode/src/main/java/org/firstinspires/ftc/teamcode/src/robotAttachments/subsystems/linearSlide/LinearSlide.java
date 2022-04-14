@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.src.utills.Controllable;
 
@@ -58,6 +59,18 @@ public class LinearSlide implements Controllable<Void> {
      */
     public void setTargetLevel(HeightLevel level) {
         linearSlide.setTargetPosition(HeightLevel.getEncoderCountFromEnum(level));
+    }
+
+    public void waitOn() throws InterruptedException {
+        ElapsedTime slideStuckTimer = new ElapsedTime();
+        while (!this.isAtPosition()) {
+            if (slideStuckTimer.seconds() > 8) {
+                RobotLog.addGlobalWarningMessage("Slide Was Stuck. Dropping on lowest level");
+                this.setTargetLevel(HeightLevel.BottomLevel);
+                break;
+            }
+            Thread.sleep(40);
+        }
     }
 
     /**

@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.src.utills.MiscUtils;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTemplate;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
@@ -364,6 +365,42 @@ public class SampleMecanumDrive extends MecanumDrive {
         this.rightRear.setPower(0);
         this.rightFront.setPower(0);
         this.leftRear.setPower(0);
+    }
+
+    public void strafeAtAngleWhileTurn(double angle, double desiredHeading, double power) {
+
+        power = MiscUtils.boundNumber(power);
+        double power1;
+        double power2;
+        double power3;
+        double power4;
+
+        angle = angle % 360;
+        //----strafing power calculation---------------------------------
+        power1 = Math.cos(Math.toRadians(angle + 45.0)); //power 1 is front right and back left
+        power2 = Math.cos(Math.toRadians(angle - 45)); // power 2 is front right and back left
+
+        power1 = power * power1;
+        power2 = power * power2;
+
+        //-----turning power calculation-------------------------------------
+        double degreesOff = ((this.getPoseEstimate().getHeading() - desiredHeading) % 360);
+        double tmp;
+        if (degreesOff < 180) {
+            tmp = MiscUtils.map(degreesOff, 0, 180, 0, 1);
+        } else {
+            tmp = MiscUtils.map(degreesOff, 180, 360, -1, 0);
+        }
+        power3 = -tmp;
+        power4 = tmp;
+
+        //---setting motor powers--------------------------------------------
+        rightFront.setPower(power1 + power3);
+        leftRear.setPower(power1 + power4);
+
+        leftFront.setPower(power2 + power4);
+        rightRear.setPower(power2 + power3);
+
     }
 
 
