@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.TeleOpTemplate;
 
+@SuppressWarnings("unused")
 @Disabled
 @TeleOp(name = "AnalogMTPControler")
 public class AnalogMTPControler extends TeleOpTemplate {

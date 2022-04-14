@@ -74,20 +74,6 @@ public class BlueWarehouseAutonomous extends AutonomousTemplate {
                 // this is for testing strafewhileturn
             }
 
-            /*
-            drive.followTrajectorySequence(startToHub);
-            drive.turnTo(dropOffPos.getHeading());
-
-            for (int i = 0; i < 5; i++) {
-                drive.followTrajectorySequence(hubToWH);
-                drive.followTrajectorySequence(WHToHub);
-                drive.turnTo(dropOffPos.getHeading());
-
-
-            }
-
-             */
-
         }
 
     }

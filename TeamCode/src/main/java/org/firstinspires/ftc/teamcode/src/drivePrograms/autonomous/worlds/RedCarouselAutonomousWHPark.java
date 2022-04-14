@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
+@SuppressWarnings("unused")
 @Config
 @Autonomous(name = "🟥Red Carousel WH Park Autonomous🟥")
 public class RedCarouselAutonomousWHPark extends WorldsAutonomousProgram {

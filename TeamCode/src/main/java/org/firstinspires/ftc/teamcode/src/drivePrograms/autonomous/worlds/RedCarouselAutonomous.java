@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -44,12 +43,7 @@ public class RedCarouselAutonomous extends WorldsAutonomousProgram {
                 // Cross Box
                 .lineToLinearHeading(new Pose2d(parkPos.getX() + 5, parkPos.getY() + 15, Math.toRadians(270)))
 
-                .addSpatialMarker(new Pose2d(parkPos.getX() + 5, parkPos.getY() + 15, Math.toRadians(270)).vec(), new MarkerCallback() {
-                    @Override
-                    public void onMarkerReached() {
-                        slide.setTargetLevel(HeightLevel.Down);
-                    }
-                })
+                .addSpatialMarker(new Pose2d(parkPos.getX() + 5, parkPos.getY() + 15, Math.toRadians(270)).vec(), () -> slide.setTargetLevel(HeightLevel.Down))
                 //.setConstraints((v, pose2d, pose2d1, pose2d2) -> 10, (v, pose2d, pose2d1, pose2d2) -> 20)
                 // To Carousel Spinner
                 .lineTo(carouselSpinPos.vec().plus(new Vector2d(5)))

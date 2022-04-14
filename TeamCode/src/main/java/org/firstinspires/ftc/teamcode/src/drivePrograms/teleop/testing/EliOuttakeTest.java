@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.GenericOpModeTem
 @TeleOp(name = "\uFFFFEli Outtake Test😂")
 public class EliOuttakeTest extends GenericOpModeTemplate {
 
-    public static double closedPos = 1;
+    public static final double closedPos = 1;
 
-    public static double openPos = 0.9;
+    public static final double openPos = 0.9;
 
     @Override
     public void opModeMain() {
