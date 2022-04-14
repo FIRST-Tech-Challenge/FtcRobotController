@@ -9,20 +9,20 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
-import org.firstinspires.ftc.teamcode.src.utills.opModeTemplate.AutoObjDetectionTemplateCV;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
 @Autonomous(name = "🟦Blue Carousel Autonomous🟦")
-public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
+public class BlueCarouselAutonomous extends WorldsAutonomousProgram {
     final static Pose2d startPos = new Pose2d(-34, 65, 0);
     final static Pose2d dropOffPos = new Pose2d(-27, 23.5, Math.toRadians(180));
     final static Pose2d carouselSpinPos = new Pose2d(-61, 51, Math.toRadians(90));
     final static Pose2d parkPos = new Pose2d(-60, 35.5, Math.toRadians(90));
 
-    final static BlinkinPattern defaultColor = BlinkinPattern.BLUE;
+    public BlueCarouselAutonomous() {
+        super(BlinkinPattern.BLUE);
+    }
 
     public static Trajectory ToGoalTraj(SampleMecanumDrive drive, Pose2d startPos) {
         return drive.trajectoryBuilder(startPos)
@@ -71,15 +71,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
         telemetry.addData("Setup", "Finished");
         telemetry.update();
 
-        leds.setPattern(BlinkinPattern.WHITE);
-        BarcodePositions pos;
-        do {
-            pos = this.findPositionOfMarker();
-            telemetry.addData("Pos", pos);
-            telemetry.update();
-
-        } while (!opModeIsActive() && !isStarted());
-        leds.setPattern(defaultColor);
+        final BarcodePositions pos = monitorMarkerWhileWaitForStart();
 
 
         waitForStart();
@@ -89,28 +81,7 @@ public class BlueCarouselAutonomous extends AutoObjDetectionTemplateCV {
             drive.followTrajectory(toGoal);
             drive.turnTo(dropOffPos.getHeading());
 
-            switch (pos) {
-                case NotSeen:
-                case Right:
-                    slide.setTargetLevel(HeightLevel.TopLevel);
-                    break;
-
-                case Center:
-                    slide.setTargetLevel(HeightLevel.MiddleLevel);
-                    break;
-
-                case Left:
-                    slide.setTargetLevel(HeightLevel.BottomLevel);
-                    break;
-            }
-
-            //Wait for the slide to reach position
-            slide.waitOn();
-
-            outtake.open();
-            Thread.sleep(2000);
-            outtake.close();
-            slide.setTargetLevel(HeightLevel.Down);
+            this.dropOffItem(pos);
 
             drive.followTrajectorySequence(toSpinner);
 

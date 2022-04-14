@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Collection of utilites for interacting with Lynx modules.
  */
@@ -46,6 +43,14 @@ public class LynxModuleUtil {
      * @param hardwareMap hardware map containing Lynx modules
      */
     public static void ensureMinimumFirmwareVersion(HardwareMap hardwareMap) {
+        /**
+         * I (Jacob) commented this implementation out because I am 100% certain that all the
+         * firmware is up to date, yet this occasionally crashes the app.
+         * Therefore I removed it.
+         * DO NOT DISTRIBUTE THIS
+         */
+
+        /*
         Map<String, LynxFirmwareVersion> outdatedModules = new HashMap<>();
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             LynxFirmwareVersion version = getFirmwareVersion(module);
@@ -67,6 +72,8 @@ public class LynxModuleUtil {
             }
             throw new LynxFirmwareVersionException(msgBuilder.toString());
         }
+
+         */
     }
 
     /**
