@@ -94,10 +94,7 @@ public class ContinuousIntake implements Controllable<Void> {
     }
 
     public boolean isSpaceBarPressed() {
-        if (TSRight.isPressed() || TSLeft.isPressed()) {
-            return true;
-        }
-        return false;
+        return TSRight.isPressed() || TSLeft.isPressed();
     }
 
     public void halt() {

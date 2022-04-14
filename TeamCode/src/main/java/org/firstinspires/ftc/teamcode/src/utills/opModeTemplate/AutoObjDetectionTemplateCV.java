@@ -10,12 +10,12 @@ import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 /**
  * A template for all Autonomous opModes that use Vision, allows easy initialization
  */
+@SuppressWarnings("unused")
 @Disabled
 public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
 
@@ -68,9 +68,9 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
 
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-            /**
-             * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
-             * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+            /*
+              Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+              {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
              */
             webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
 
@@ -90,9 +90,9 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
 
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-            /**
-             * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
-             * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+            /*
+              Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+              {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
              */
             webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
 
@@ -175,20 +175,20 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
     }
 
     public void initOpenCV() {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera1Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
+        /*
+          NOTE: Many comments have been omitted from this sample for the
+          sake of conciseness. If you're just starting out with EasyOpenCv,
+          you should take a look at {@link InternalCamera1Example} or its
+          webcam counterpart, {@link WebcamExample} first.
          */
 
         camName = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.RightWebcamName);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        /**
-         * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
-         * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+        /*
+          Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+          {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
          */
         webcam = OpenCvCameraFactory.getInstance().createWebcam(camName, cameraMonitorViewId);
 

@@ -50,7 +50,7 @@ public abstract class AutoObjDetectionTemplateVF extends AutonomousTemplate {
      */
     public volatile TFObjectDetector tfod;
 
-    protected String CameraNameToUse = GenericOpModeTemplate.LeftWebcamName;
+    protected final String CameraNameToUse = GenericOpModeTemplate.LeftWebcamName;
 
     public static BarcodePositions findPositionOfMarker(TFObjectDetector tfod) {
         List<Recognition> recognitions = tfod.getRecognitions();

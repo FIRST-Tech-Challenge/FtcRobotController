@@ -37,6 +37,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 
+import java.util.Locale;
+
 @TeleOp(name = "SwitchableWebcamExample")
 public class SwitchableWebcamExample extends LinearOpMode {
     WebcamName webcam1;
@@ -45,11 +47,11 @@ public class SwitchableWebcamExample extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera1Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
+        /*
+          NOTE: Many comments have been omitted from this sample for the
+          sake of conciseness. If you're just starting out with EasyOpenCv,
+          you should take a look at {@link InternalCamera1Example} or its
+          webcam counterpart, {@link WebcamExample} first.
          */
 
         webcam1 = hardwareMap.get(WebcamName.class, GenericOpModeTemplate.RightWebcamName);
@@ -57,9 +59,9 @@ public class SwitchableWebcamExample extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        /**
-         * Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
-         * {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
+        /*
+          Here we use a special factory method that accepts multiple WebcamName arguments. It returns an
+          {@link OpenCvSwitchableWebcam} which contains a couple extra methods over simply an {@link OpenCvCamera}.
          */
         switchableWebcam = OpenCvCameraFactory.getInstance().createSwitchableWebcam(cameraMonitorViewId, webcam1, webcam2);
 
@@ -84,16 +86,16 @@ public class SwitchableWebcamExample extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addLine("PRESS A/B TO SWITCH CAMERA\n");
             telemetry.addData("Frame Count", switchableWebcam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", switchableWebcam.getFps()));
+            telemetry.addData("FPS", String.format(Locale.ENGLISH, "%.2f", switchableWebcam.getFps()));
             telemetry.addData("Total frame time ms", switchableWebcam.getTotalFrameTimeMs());
             telemetry.addData("Pipeline time ms", switchableWebcam.getPipelineTimeMs());
             telemetry.addData("Overhead time ms", switchableWebcam.getOverheadTimeMs());
             telemetry.addData("Theoretical max FPS", switchableWebcam.getCurrentPipelineMaxFps());
             telemetry.update();
 
-            /**
-             * To switch the active camera, simply call
-             * {@link OpenCvSwitchableWebcam#setActiveCamera(WebcamName)}
+            /*
+              To switch the active camera, simply call
+              {@link OpenCvSwitchableWebcam#setActiveCamera(WebcamName)}
              */
             if (gamepad1.a) {
                 switchableWebcam.setActiveCamera(webcam1);
@@ -105,14 +107,14 @@ public class SwitchableWebcamExample extends LinearOpMode {
         }
     }
 
-    class SamplePipeline extends OpenCvPipeline {
+    static class SamplePipeline extends OpenCvPipeline {
         @Override
         public Mat processFrame(Mat input) {
             Imgproc.rectangle(
                     input,
                     new Point(
-                            input.cols() / 4,
-                            input.rows() / 4),
+                            input.cols() / 4f,
+                            input.rows() / 4f),
                     new Point(
                             input.cols() * (3f / 4f),
                             input.rows() * (3f / 4f)),

@@ -121,31 +121,6 @@ public class BasicDrivetrain implements Controllable<Void> {
     }
 
     /**
-     * This resets the motors to their proper configuration
-     */
-    public void reinitializeMotors() {
-        front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        front_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        front_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        back_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        back_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-        back_left.setDirection(DcMotorSimple.Direction.REVERSE);
-        front_left.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
-    /**
      * Stops all the motors
      */
     public void halt() {

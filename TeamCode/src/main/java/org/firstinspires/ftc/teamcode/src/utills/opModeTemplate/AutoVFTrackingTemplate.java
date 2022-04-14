@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public abstract class AutoVFTrackingTemplate extends AutoObjDetectionTemplateVF {
     private static final float mmPerInch = 25.4f;
     private static final float mmTargetHeight = 6 * mmPerInch;          // the height of the center of the target image above the floor
