@@ -18,7 +18,7 @@ public class BlueCarouselAutonomousWHPark extends WorldsAutonomousProgram {
     final static Pose2d dropOffPos = new Pose2d(-27, 23.5, Math.toRadians(180));
     final static Pose2d warehouseCrossPos = new Pose2d(11, 46, 0);
 
-    protected BlueCarouselAutonomousWHPark() {
+    public BlueCarouselAutonomousWHPark() {
         super(BlinkinPattern.BLUE);
     }
 

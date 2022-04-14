@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
@@ -43,7 +44,14 @@ public class RedCarouselAutonomous extends WorldsAutonomousProgram {
                 // Cross Box
                 .lineToLinearHeading(new Pose2d(parkPos.getX() + 5, parkPos.getY() + 15, Math.toRadians(270)))
 
-                .addSpatialMarker(new Pose2d(parkPos.getX() + 5, parkPos.getY() + 15, Math.toRadians(270)).vec(), () -> slide.setTargetLevel(HeightLevel.Down))
+                .addSpatialMarker(
+                        //The actual drop off pos
+                        dropOffPos.vec().plus(new Vector2d(8, -5))
+                                // Plus the point the robot is going to
+                                .plus(new Vector2d(parkPos.getX() + 5, parkPos.getY() + 15))
+
+                                //Devided by two to take the midpoint of the goal point and the next cross over point
+                                .div(2), () -> slide.setTargetLevel(HeightLevel.Down))
                 //.setConstraints((v, pose2d, pose2d1, pose2d2) -> 10, (v, pose2d, pose2d1, pose2d2) -> 20)
                 // To Carousel Spinner
                 .lineTo(carouselSpinPos.vec().plus(new Vector2d(5)))
@@ -60,7 +68,9 @@ public class RedCarouselAutonomous extends WorldsAutonomousProgram {
     @Override
     public void opModeMain() throws InterruptedException {
         this.initAll();
+        RobotLog.v("Completed initialization");
         this.switchWebcam();
+        RobotLog.v("Switched Cameras");
 
         final SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 

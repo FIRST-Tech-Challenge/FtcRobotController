@@ -18,6 +18,7 @@ public abstract class WorldsAutonomousProgram extends AutoObjDetectionTemplateCV
     public void initAll() throws InterruptedException {
         super.initAll();
         leds.setPattern(defaultColor);
+        System.gc();
     }
 
     protected BarcodePositions monitorMarkerWhileWaitForStart() {

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.src.utills.opModeTemplate;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -8,6 +10,7 @@ import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.src.utills.ouropencv.ContourPipeline;
 import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -39,7 +42,24 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
     private final OpenCvCamera.AsyncCameraOpenListener defaultListener = new OpenCvCamera.AsyncCameraOpenListener() {
         @Override
         public void onOpened() {
-            webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            try {
+                //Trying to open camera at given resolution
+                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            } catch (final OpenCvCameraException e) {
+                //Fallback code if the camera fails to open
+                //The reason this is here is because sometimes the camera will fail to open randomly
+                //Even though the camera actually supports the given resolution
+                final String message = e.getMessage();
+
+                if (isValid(message)) {
+                    //If we are here, we can possibly recover
+                    final int[] newRes = getLargestResolution(getResolutionsFromErrorMessage(message));
+                    webcam.startStreaming(newRes[0], newRes[1], OpenCvCameraRotation.UPRIGHT);
+                    RobotLog.addGlobalWarningMessage("Camera failed to open because of resolution error, but recovered");
+                } else {
+                    throw e;
+                }
+            }
         }
 
         @Override
@@ -47,6 +67,71 @@ public abstract class AutoObjDetectionTemplateCV extends AutonomousTemplate {
 
         }
     };
+
+    @SuppressLint("NewApi")
+    private static int[][] getResolutionsFromErrorMessage(final String errorMessage) {
+
+        //Trim off fluff
+        String strSizes = errorMessage.substring(errorMessage.indexOf('['), errorMessage.lastIndexOf(']') + 1);
+
+        //Count number of valid resolutions passed back
+        final long count = strSizes.chars().filter(ch -> ch == ',').count() + 1;
+
+        final int[][] returnContainer = new int[(int) count][2];
+
+        strSizes = strSizes.replaceAll("[,]", " ");
+
+        int storageIndex = 0;
+
+        while (strSizes.length() > 0) {
+            //Gets the resolution without brackets, eg: 176x144
+            final String resolution = strSizes.substring(strSizes.indexOf('[') + 1, strSizes.indexOf(']'));
+            final String[] xy = resolution.split("[x]");
+            returnContainer[storageIndex][0] = Integer.parseInt(xy[0]);
+            returnContainer[storageIndex][1] = Integer.parseInt(xy[1]);
+
+            storageIndex++;
+
+
+            strSizes = strSizes.substring(strSizes.indexOf(']') + 1);
+
+
+        }
+
+
+        return returnContainer;
+    }
+
+    private static int[] getLargestResolution(final int[][] resolutions) {
+        long maxSize = 0;
+        int maxIndex = -1;
+        for (int index = 0; index < resolutions.length; index++) {
+            int[] x = resolutions[index];
+
+            long size = (long) x[0] * x[1];
+            if (size > maxSize) {
+                maxSize = size;
+                maxIndex = index;
+            }
+        }
+        assert maxIndex >= 0;
+
+        return resolutions[maxIndex];
+
+    }
+
+    private static boolean isValid(String message) {
+        //null check
+        if (message == null) {
+            return false;
+        }
+
+        //Asserts that the message has brackets which indicate the resolution
+        if (message.contains("[") && message.contains("]")) {
+            return message.indexOf('[') < message.lastIndexOf(']');
+        }
+        return false;
+    }
 
     /**
      * Initializes all fields provided by this class
