@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds.carouselVariants;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -7,12 +7,14 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds.WorldsAutonomousProgram;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @SuppressWarnings("unused")
 @Config
-@Autonomous(name = "🟥Red Carousel WH Park Autonomous🟥")
+@Autonomous(name = "🟥Red Carousel WH Park Autonomous🟥", group = "RedCarousel")
 public class RedCarouselAutonomousWHPark extends WorldsAutonomousProgram {
     static final Pose2d startPos = new Pose2d(-40, -65, Math.toRadians(0));
     static final Pose2d dropOffPos = new Pose2d(-33, -25, Math.toRadians(180));
@@ -45,7 +47,7 @@ public class RedCarouselAutonomousWHPark extends WorldsAutonomousProgram {
         // From
         final Trajectory toGoal = RedCarouselAutonomous.ToGoalTraj(drive, startPos);
 
-        final TrajectorySequence toSpinner = RedCarouselAutonomous.ToSpinner(drive, toGoal.end(), slide);
+        final TrajectorySequence toSpinner = RedCarouselAutonomous.ToSpinner(drive, toGoal.end());
 
         final TrajectorySequence toPark = toEnd(drive, toSpinner.end());
 
@@ -62,6 +64,7 @@ public class RedCarouselAutonomousWHPark extends WorldsAutonomousProgram {
             this.dropOffItem(pos);
 
             drive.followTrajectorySequence(toSpinner);
+            slide.setTargetLevel(HeightLevel.Down);
 
             spinner.spinOffRedDuck();
 

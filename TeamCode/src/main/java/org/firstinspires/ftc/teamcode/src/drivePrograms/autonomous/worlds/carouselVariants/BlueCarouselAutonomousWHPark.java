@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds;
+package org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds.carouselVariants;
 
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 
@@ -8,11 +8,13 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.src.drivePrograms.autonomous.worlds.WorldsAutonomousProgram;
+import org.firstinspires.ftc.teamcode.src.robotAttachments.subsystems.linearSlide.HeightLevel;
 import org.firstinspires.ftc.teamcode.src.utills.enums.BarcodePositions;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "🟦Blue Carousel WH Park Autonomous🟦")
+@Autonomous(name = "🟦Blue Carousel WH Park Autonomous🟦", group = "BlueCarousel")
 public class BlueCarouselAutonomousWHPark extends WorldsAutonomousProgram {
     final static Pose2d startPos = new Pose2d(-34, 65, 0);
     final static Pose2d dropOffPos = new Pose2d(-27, 23.5, Math.toRadians(180));
@@ -58,6 +60,7 @@ public class BlueCarouselAutonomousWHPark extends WorldsAutonomousProgram {
             this.dropOffItem(pos);
 
             drive.followTrajectorySequence(toSpinner);
+            slide.setTargetLevel(HeightLevel.Down);
 
             spinner.spinOffBlueDuck();
 
