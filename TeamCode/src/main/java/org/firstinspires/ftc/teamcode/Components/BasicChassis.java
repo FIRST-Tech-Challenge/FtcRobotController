@@ -100,4 +100,53 @@ public abstract class BasicChassis {
         }
         track();
     }
+
+    public void moveMultidirectionalMecanum(double power, float leftStickx, float leftSticky, float rightStick) {
+//        rightStick*=-1;
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        leftStickx*=0.65;
+//        leftSticky*=0.65;
+
+        double powera = 0;
+        double powerb = 0;
+
+        if ((leftStickx + leftSticky)/(leftSticky - leftStickx) >= 1) {
+            powera = 1;
+            powerb = (leftSticky - leftStickx)/(leftStickx + leftSticky);
+        }
+        else if ((leftStickx + leftSticky)/(leftSticky - leftStickx) <= -1) {
+            powera = -1;
+            powerb = -(leftSticky - leftStickx)/(leftStickx + leftSticky);
+        }
+        else if ((leftStickx + leftSticky)/(leftSticky - leftStickx) > -1 && (leftStickx + leftSticky)/(leftSticky - leftStickx) < 0 || leftSticky-leftStickx < 0 && (leftStickx + leftSticky) == 0) {
+            powerb = -1;
+            powera = -(leftStickx + leftSticky)/(leftSticky - leftStickx);
+        }
+        else if ((leftStickx + leftSticky)/(leftSticky - leftStickx) < 1 && (leftStickx + leftSticky)/(leftSticky - leftStickx) > 0 || leftSticky-leftStickx > 0 && (leftStickx + leftSticky) == 0) {
+            powerb = 1;
+            powera = (leftStickx + leftSticky)/(leftSticky - leftStickx);
+        }
+
+
+//        if (isSlow) {
+//            if(abs(rightStick)<0.999&abs(rightStick)>0.2){
+//                rightStick=0.999f*abs(rightStick)/rightStick;
+//            }
+//            motorLeftBack.setPower(rightSticky * 1.25/Math.sqrt(2));
+//            motorRightFront.setPower((power - rightStick) * 0.3);
+//            motorRightBack.setPower((power - rightStick) * 0.3);
+//            motorLeftFront.setPower((power + rightStick) * 0.3);
+//        }
+//        else {
+            motorLeftFront.setPower(powera-rightStick);
+            motorRightBack.setPower(powera+rightStick);
+
+            motorRightFront.setPower(powerb+rightStick);
+            motorLeftBack.setPower(powerb-rightStick);
+//        }
+        track();
+    }
 }

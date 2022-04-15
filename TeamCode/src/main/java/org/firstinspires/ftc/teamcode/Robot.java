@@ -156,6 +156,10 @@ public class Robot {
         drivetrain.moveMultidirectional(power, angle, rightStick, isSlow);
     }
 
+    public void moveMultidirectionalMecanum(double power, float leftStickx, float leftSticky, float rightStick) {
+        drivetrain.moveMultidirectionalMecanum(power, leftStickx, leftSticky, rightStick);
+    }
+
     public void goToPositionWithoutStop(int direction, double yPosition, double xPosition, double power) {
         drivetrain.goToPositionWithoutStop(direction, yPosition, xPosition, power);
     }
@@ -465,6 +469,19 @@ public class Robot {
 
         magnitude = forward;
         drivetrain.moveMultidirectional(magnitude, angleInDegree, turning, slowMode); // It is 0.95, because the robot DCs at full power.
+    }
+
+    public void mazeTeleopLoop() {
+
+
+        /** gamepad 1**/
+        float forward = -op.gamepad1.left_stick_y;
+        float strafe = -op.gamepad1.left_stick_x; //remove dis boi son
+        float turning = -op.gamepad1.right_stick_x;
+
+
+        magnitude = forward;
+        drivetrain.moveMultidirectionalMecanum(0.9, strafe, forward, turning); // It is 0.95, because the robot DCs at full power.
     }
 
     public void autoAim(double[][] turret_saved_positions, int red) {
