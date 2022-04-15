@@ -2,9 +2,6 @@
 */
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_DRIVE_POW;
-import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_STRAFE_POW;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -63,7 +60,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
         while (robotError >  180.0)  robotError -= 360.0;
         while (robotError <= -180.0) robotError += 360.0;
         return robotError;
-    } // getError()
+    } // getAngleError()
 
 
     public double scalePower(double fl, double fr, double bl, double br) {
@@ -110,7 +107,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = leftWall ? drivePower : -drivePower;
-                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_STRAFE_POW), maxPower), drivePower);
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), robot.MIN_STRAFE_POW), maxPower), drivePower);
                 fl = -drivePower + rotatePower;
                 fr = drivePower - rotatePower;
                 bl = drivePower + rotatePower;
@@ -166,7 +163,7 @@ public class TestGreatNewFunctionality extends LinearOpMode {
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = frontWall ? drivePower : -drivePower;
-                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_DRIVE_POW), maxPower), drivePower);
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), robot.MIN_DRIVE_POW), maxPower), drivePower);
                 fl = drivePower + rotatePower;
                 fr = drivePower - rotatePower;
                 bl = drivePower + rotatePower;
@@ -219,6 +216,13 @@ public class TestGreatNewFunctionality extends LinearOpMode {
             // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
             robot.headingIMU();
+
+            if( gamepad2_triangle_now && !gamepad2_triangle_last ) {
+                if( robot.cappingMotor.getPower() > 0.5 )
+                    robot.cappingMotor.setPower( -1.00 );
+                else
+                    robot.cappingMotor.setPower( 1.00 );
+            }
 
             if(gamepad1_dpad_up_now && !gamepad1_dpad_up_last) {
                 reachedDestination = driveToWall(true, 0.75, 30, 5000);

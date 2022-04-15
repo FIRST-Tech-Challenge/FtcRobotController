@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_DRIVE_POW;
-import static org.firstinspires.ftc.teamcode.HardwareBothHubs.MIN_STRAFE_POW;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +10,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     HardwareBothHubs robot = new HardwareBothHubs();
 
     static final int     DRIVE_TO             = 1;       // STOP  after the specified movement
+    static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
     static final double  P_DRIVE_COEFF        = 0.005;   // Larger is more responsive, but also less stable
     static final double  HEADING_THRESHOLD    = 2.0;     // Minimum of 1 degree for an integer gyro
     static final double  P_TURN_COEFF         = 0.050;   // Larger is more responsive, but also less stable
@@ -23,10 +21,10 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  DRIVE_SPEED_20       = 0.28;    // Lower speed for moving from a standstill
     static final double  DRIVE_SPEED_30       = 0.42;    // Lower speed for fine control going sideways
     static final double  DRIVE_SPEED_40       = 0.56;    // Normally go slower to achieve better accuracy
+    static final double  DRIVE_SPEED_50       = 0.65;    //
     static final double  DRIVE_SPEED_55       = 0.77;    // Somewhat longer distances, go a little faster
     static final double  TURN_SPEED_20        = 0.28;    // Nominal half speed for better accuracy.
 
-    static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle
      * @return  current gyro angle (-179.9 to +180.0)
@@ -75,7 +73,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         while (robotError >  180.0)  robotError -= 360.0;
         while (robotError <= -180.0) robotError += 360.0;
         return robotError;
-    } // getError()
+    } // getAngleError()
 
     /*---------------------------------------------------------------------------------------------
      * returns desired steering force.  +/- 1 range.  positive = steer left
@@ -261,7 +259,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = leftWall ? drivePower : -drivePower;
-                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_STRAFE_POW), maxPower), drivePower);
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), robot.MIN_STRAFE_POW), maxPower), drivePower);
                 fl = -drivePower + rotatePower;
                 fr = drivePower - rotatePower;
                 bl = drivePower + rotatePower;
@@ -317,7 +315,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 rotatePower = angleError * angleErrorMult;
                 drivePower = distanceError * distanceErrorMult;
                 drivePower = frontWall ? drivePower : -drivePower;
-                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), MIN_DRIVE_POW), maxPower), drivePower);
+                drivePower = Math.copySign(Math.min(Math.max(Math.abs(drivePower), robot.MIN_DRIVE_POW), maxPower), drivePower);
                 fl = drivePower + rotatePower;
                 fr = drivePower - rotatePower;
                 bl = drivePower + rotatePower;
@@ -332,6 +330,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 reachedDestination = true;
             }
         }
+        // Timed out
         if(!reachedDestination) {
             robot.driveTrainMotorsZero();
         }

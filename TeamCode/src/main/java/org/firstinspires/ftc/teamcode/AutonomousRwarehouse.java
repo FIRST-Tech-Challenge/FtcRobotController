@@ -42,18 +42,6 @@ public class AutonomousRwarehouse extends AutonomousBase {
     static final boolean DRIVE_Y              = true;    // Drive forward/backward
     static final boolean DRIVE_X              = false;   // Drive right/left (not DRIVE_Y)
 
-    static final double  DRIVE_SPEED_10       = 0.10;    // Lower speed for moving from a standstill
-    static final double  DRIVE_SPEED_20       = 0.20;    // Lower speed for moving from a standstill
-    static final double  DRIVE_SPEED_30       = 0.30;    // Lower speed for fine control going sideways
-    static final double  DRIVE_SPEED_40       = 0.40;    // Normally go slower to achieve better accuracy
-    static final double  DRIVE_SPEED_55       = 0.55;    // Somewhat longer distances, go a little faster
-    static final double  TURN_SPEED_20        = 0.20;    // Nominal half speed for better accuracy.
-
-    static final double  HEADING_THRESHOLD    = 2.0;     // Minimum of 1 degree for an integer gyro
-    static final double  P_TURN_COEFF         = 0.050;   // Larger is more responsive, but also less stable
-
-    static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
-
     double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
     OpenCvCamera webcam;
@@ -467,7 +455,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
             performEveryLoop();
         }
-        
+
         return collected;
     } // collectFreight
 
@@ -595,8 +583,8 @@ public class AutonomousRwarehouse extends AutonomousBase {
     /*---------------------------------------------------------------------------------*/
     double leftRangeSensor() {
         for( int i=0; i<5; i++ ) {
-            sonarRangeL = robot.updateSonarRangeL();
             sleep(50);
+            sonarRangeL = robot.updateSonarRangeL();
         }
         return sonarRangeL;
     } // leftRangeSensor
@@ -604,8 +592,8 @@ public class AutonomousRwarehouse extends AutonomousBase {
     /*---------------------------------------------------------------------------------*/
     double rightRangeSensor() {
         for( int i=0; i<5; i++ ) {
-            sonarRangeR = robot.updateSonarRangeR();
             sleep(50);
+            sonarRangeR = robot.updateSonarRangeR();
         }
         return sonarRangeR;
     } // rightRangeSensor
@@ -613,8 +601,8 @@ public class AutonomousRwarehouse extends AutonomousBase {
     /*---------------------------------------------------------------------------------*/
     double backRangeSensor() {
         for( int i=0; i<6; i++ ) {
-            sonarRangeB = robot.updateSonarRangeB();
             sleep(50);
+            sonarRangeB = robot.updateSonarRangeB();
         }
         return sonarRangeB;
     } // backRangeSensor

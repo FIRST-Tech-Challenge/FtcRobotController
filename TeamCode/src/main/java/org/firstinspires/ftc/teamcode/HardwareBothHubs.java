@@ -92,7 +92,7 @@ public class HardwareBothHubs
     public final static double MIN_STRAFE_POW     = 0.04;    // Minimum speed to strafe the robot
     protected double COUNTS_PER_MOTOR_REV  = 28.0;    // goBilda Yellow Jacket Planetary Gear Motor Encoders
     protected double DRIVE_GEAR_REDUCTION  = 26.851;  // goBilda 26.9:1 (223rpm) gear ratio with 1:1 bevel gear
-//    protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
+//  protected double DRIVE_GEAR_REDUCTION  = 19.203;  // goBilda 19.2:1 (312rpm) gear ratio with 1:1 bevel gear
     protected double MECANUM_SLIPPAGE      = 1.01;    // one wheel revolution doesn't achieve 6" x 3.1415 of travel.
     protected double WHEEL_DIAMETER_INCHES = 6.0;     // For computing circumference
     protected double COUNTS_PER_INCH       = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION * MECANUM_SLIPPAGE) / (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -197,7 +197,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
     public int          FREIGHT_ARM_POS_EVASIVE    = 1707;  // Point to start rotating after avoiding the hub
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1737;  // For dumping into hub top level
-//    public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level
+//  public int          FREIGHT_ARM_POS_HUB_TOP    = 1707;  // For dumping into hub top level
     public int          FREIGHT_ARM_POS_HUB_MIDDLE = 1960;  // For dumping into hub middle level
     public int          FREIGHT_ARM_POS_HUB_BOTTOM = 2160;  // For dumping into hub bottom level
     public int          FREIGHT_ARM_POS_MAX        = 2250;  // Maximum safe rotation without hitting field floor
@@ -873,7 +873,7 @@ public class HardwareBothHubs
                 // Determine our min power:
                 // - Current ramping down implies motor/arm is coming to a stop (allow low power)
                 // - Current at zero or increasing means arm won't move unless given enough power
-                minPower = (cappingMotorRamp)? 0.01 : 0.30;
+                minPower = (cappingMotorRamp)? 0.20 : 0.30;
               // Compute motor power (automatically reduce as we approach target)
               cappingMotorPower = ticksToGo / 416.0;  // 1620rpm = 103.8 counts per shaft revolution
               cappingMotorPower = Math.copySign( Math.min(Math.abs(cappingMotorPower), maxPower), cappingMotorPower );
@@ -1031,7 +1031,7 @@ public class HardwareBothHubs
           // ignore request (can't exceed servo hardware limits)
        }
        else {
-           turretTargetPos += turret_increment;
+          turretTargetPos += turret_increment;
           turretServo.setPosition(turretTargetPos);
        }
     } // turretPositionShift
@@ -1205,7 +1205,6 @@ public class HardwareBothHubs
     protected boolean isTurretAtPosition(TurretPosition position) {
         int turretError = position.getEncoderCount() - turretEncoderPos;
 
-        // This number needs refinement
         // Using +-3 degrees allowed error
         return (Math.abs(turretError) < 68);
     }

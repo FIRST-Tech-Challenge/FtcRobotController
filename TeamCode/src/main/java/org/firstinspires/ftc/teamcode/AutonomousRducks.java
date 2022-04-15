@@ -182,7 +182,7 @@ public class AutonomousRducks extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "driveToSquare");
             telemetry.update();
-            driveToSquare( hubLevel );
+            driveToSquare();
         }
 
     } // mainAutonomous
@@ -317,7 +317,7 @@ public class AutonomousRducks extends AutonomousBase {
         } // switch()
 
         robot.boxServo.setPosition( servoPos );     // rotate the box to dump
-        sleep( 500 );                     // let cube drop out
+        sleep( 500 );                               // let cube drop out
         // back away and store arm
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
         robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
@@ -329,24 +329,10 @@ public class AutonomousRducks extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void spinDuckCarousel( int level ) {
-//      double towardWall = 0;
-//      switch( level ) {
-//          case 3 : towardWall = 20.0; break; // top
-//          case 2 : towardWall = 18.0; break; // middle
-//          case 1 : towardWall = 17.0; break; // bottom
-//      } // switch()
         gyroTurn(TURN_SPEED_20, -90.0 );   // Turn toward wall
         strafeToWall(false, DRIVE_SPEED_55, 27, 3000);
-//        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -towardWall, -90.0, DRIVE_TO );
         driveToWall(false, DRIVE_SPEED_55, 21, 3000);
         timeDriveStraight(-DRIVE_SPEED_10, 1000);
-//      driveToBackDistance( 8.0, 1.0, 0.20, 10000 );
-//      double wallDistance = backRangeSensor()/2.54;
-//      sonarRangeR = robot.singleSonarRangeR()/2.54;
-//      telemetry.addData("sonarRangeR", "%.2f in (11.0)", sonarRangeR );
-//      telemetry.addData("wallDistance", "%.2f in", wallDistance );
-//      telemetry.update();
-//      gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -wallDistance,-90.0, DRIVE_TO );
         robot.duckMotor.setPower( 0.48 );  // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
@@ -365,19 +351,18 @@ public class AutonomousRducks extends AutonomousBase {
     } // spinDuckCarousel
 
     /*--------------------------------------------------------------------------------------------*/
-    private void driveToSquare( int level ) {
+    private void driveToSquare() {
+        timeDriveStrafe( DRIVE_SPEED_30, 750 );
         gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 4.0,-90.0, DRIVE_TO );
-        gyroTurn(TURN_SPEED_20, -180.0 );   // Turn square to side wall
-        double squareDistance = 26.5 - robot.singleSonarRangeB()/2.54;
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, squareDistance, 999.9, DRIVE_TO );
+        double squareDistance = 29.5 - robot.singleSonarRangeR()/2.54;
+        gyroDrive(DRIVE_SPEED_40, DRIVE_X, -squareDistance, 999.9, DRIVE_TO );
         // Don't lower arm to floor until we get into the square, in case the freight box has rotated
         // (the front edge will catch on the floor tile when we try to drive forward)
         robot.freightArmPosInit( robot.FREIGHT_ARM_POS_COLLECT );
         while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
             performEveryLoop();
         }
-        gyroDrive(DRIVE_SPEED_40, DRIVE_X, -5.0, 999.9, DRIVE_TO );
-        driveToWall(false, DRIVE_SPEED_55, 54, 2000);
+        timeDriveStraight(-DRIVE_SPEED_10, 1000);
         // Until Autonomous ends (30 seconds), wait for arm to come down
         while( opModeIsActive() ) {
             sleep(75);  // wait for arm to lower

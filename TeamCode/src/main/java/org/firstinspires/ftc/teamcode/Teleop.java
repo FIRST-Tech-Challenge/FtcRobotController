@@ -83,8 +83,7 @@ public abstract class Teleop extends LinearOpMode {
     final int DRIVER_MODE_STANDARD     = 2;
     final int DRIVER_MODE_DRV_CENTRIC  = 3;
     int       driverMode               = DRIVER_MODE_STANDARD;
-//    int       driverMode               = DRIVER_MODE_DRV_CENTRIC;
-
+//  int       driverMode               = DRIVER_MODE_DRV_CENTRIC;
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
     boolean   autoDrive                = false;
 
@@ -604,7 +603,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             if( needEvasiveManeuvers ) {
-//                robot.turretPositionSet(TurretPosition.CENTERED);
+//              robot.turretPositionSet(TurretPosition.CENTERED);
                 performEvasiveManeuvers = true;
                 needEvasiveManeuvers = false;
             } else {
@@ -646,7 +645,7 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Do we need to re-center turret before we can begin to raise/lower freight-arm?
             robot.turretPositionSet(TurretPosition.CENTERED);
-            // This is in case the operator rotated the turret manually
+            // If turret manually rotated, don't snap back to center until above post height
             needEvasiveManeuvers = true;
             needCollectorRaised  = true;
             freightArmTarget     = robot.FREIGHT_ARM_POS_HUB_TOP;
@@ -727,10 +726,11 @@ public abstract class Teleop extends LinearOpMode {
         if( freightArmCycleCount >= FREIGHT_CYCLECOUNT_START ) {
             // Collector arm must be raised before any freight arm motion is commanded
             if( collectorArmRaised ) {
-                // Wait for the turret, if we aren't starting the arm before rotating.
+                // Turret must be centered before motion starts (except for evasive manuevers)
                 if( !performEvasiveManeuvers && !robot.isTurretStable( TurretPosition.CENTERED ) ) {
                     // Do nothing (wait for servo to rotate back to center
-                } else if(waitForDumpServo) {
+                }
+                else if(waitForDumpServo) {
                     if(freightArmDelayTimer.milliseconds() >= 300) {
                         waitForDumpServo = false;
                     }
@@ -1188,10 +1188,7 @@ public abstract class Teleop extends LinearOpMode {
 //          yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
 //          xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
 //          rotation     = multSegLinearRot( -gamepad1.right_stick_x );
-//            yTranslation = -gamepad1.left_stick_y * 0.60;
-//            xTranslation =  gamepad1.left_stick_x * 0.60;
-//            rotation     = -gamepad1.right_stick_x * 0.33;
-            yTranslation = -gamepad1.left_stick_y * 1.0;
+            yTranslation = -gamepad1.left_stick_y * 1.00;
             xTranslation =  gamepad1.left_stick_x * 1.25;
             rotation     = -gamepad1.right_stick_x * 0.50;
         }
