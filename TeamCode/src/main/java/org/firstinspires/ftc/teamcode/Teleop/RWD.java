@@ -24,31 +24,8 @@ public class RWD extends LinearOpMode
 
         while(opModeIsActive())
         {
-            //forward
-            if (gamepad1.left_stick_y > 0) {
-                motorLeftBack.setPower(0.7);
-                motorRightBack.setPower(0.7);
-                isTurning = true;
-            }
-            //back
-            if (gamepad1.left_stick_y < 0) {
-                motorLeftBack.setPower(-0.7);
-                motorRightBack.setPower(-0.7);
-                isTurning = true;
-            }
-            //right
-            if (gamepad1.right_stick_x > 0 && isTurning) {
-                motorLeftBack.setPower(-0.6);
-                motorRightBack.setPower(0.6);
-            }
-            //left
-            if (gamepad1.right_stick_x < 0 && isTurning) {
-                motorLeftBack.setPower(0.6);
-                motorRightBack.setPower(-0.6);
-            }
-            isTurning = true;
-            motorLeftBack.setPower(0);
-            motorRightBack.setPower(0);
+            motorRightBack.setPower(gamepad1.left_stick_y*0.7-gamepad1.right_stick_x);
+            motorLeftBack.setPower(gamepad1.left_stick_y*0.7+gamepad1.right_stick_x);
 
             idle();
         }
