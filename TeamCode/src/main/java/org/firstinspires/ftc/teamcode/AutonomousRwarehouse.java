@@ -98,6 +98,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
             telemetry.addData("Left Red Alignment", "%d %b", FreightFrenzyPipeline.leftRedAverage, FreightFrenzyPipeline.alignedRedLeft);
             telemetry.addData("Center Red Alignment", "%d %b", FreightFrenzyPipeline.centerRedAverage, FreightFrenzyPipeline.alignedRedCenter);
             telemetry.addData("Right Red Alignment", "%d %b", FreightFrenzyPipeline.rightRedAverage, FreightFrenzyPipeline.alignedRedRight);
+            telemetry.addData("Red Garage Detected", "%b", FreightFrenzyPipeline.redGarageDetected);
             redAlignedCount = (FreightFrenzyPipeline.alignedRedLeft ? 1 : 0);
             redAlignedCount += (FreightFrenzyPipeline.alignedRedCenter ? 1 : 0);
             redAlignedCount += (FreightFrenzyPipeline.alignedRedRight ? 1 : 0);
@@ -114,6 +115,12 @@ public class AutonomousRwarehouse extends AutonomousBase {
                 telemetry.addLine("****************************************************");
             } else {
                 telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
+            }
+            if(FreightFrenzyPipeline.redGarageDetected) {
+                telemetry.addLine("****************************************************");
+                telemetry.addLine("* WARNING: Red Garage Detect for Warehouse. *");
+                telemetry.addLine("*          Something is wrong, so so wrong!             *");
+                telemetry.addLine("****************************************************");
             }
             telemetry.update();
             // Pause briefly before looping

@@ -97,6 +97,7 @@ public class AutonomousRducks extends AutonomousBase {
             blueAlignedCount = (FreightFrenzyPipeline.alignedBlueLeft ? 1 : 0);
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueCenter ? 1 : 0);
             blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
+            telemetry.addData("Red Garage Detected", "%b", FreightFrenzyPipeline.redGarageDetected);
             if(redAlignedCount >= 2) {
                 telemetry.addLine("Red aligned for red autonomous. Good job!");
                 hubLevel = FreightFrenzyPipeline.hubLevel;
@@ -107,6 +108,12 @@ public class AutonomousRducks extends AutonomousBase {
                 telemetry.addLine("****************************************************");
             } else {
                 telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
+            }
+            if(!FreightFrenzyPipeline.redGarageDetected) {
+                telemetry.addLine("****************************************************");
+                telemetry.addLine("* WARNING: No Red Garage Detect for Ducks. *");
+                telemetry.addLine("*          Something is wrong, so so wrong!             *");
+                telemetry.addLine("****************************************************");
             }
             telemetry.update();
             // Pause briefly before looping
