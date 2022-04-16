@@ -333,7 +333,7 @@ public class AutonomousRducks extends AutonomousBase {
         strafeToWall(false, DRIVE_SPEED_55, 27, 3000);
         driveToWall(false, DRIVE_SPEED_55, 21, 3000);
         timeDriveStraight(-DRIVE_SPEED_10, 1000);
-        robot.duckMotor.setPower( 0.48 );  // Enable the carousel motor
+        robot.duckMotor.setPower( 0.44 );  // Enable the carousel motor
         // We want to press against the carousel with out trying to reach a given point
         for( int loop=0; loop<5; loop++ ) {
             double barelyPressSpeed = 0.07;

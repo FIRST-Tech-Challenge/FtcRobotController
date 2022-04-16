@@ -193,7 +193,7 @@ public class HardwareBothHubs
     public int          FREIGHT_ARM_POS_SPIN       = 125;   // Raised enough for box to spin clearly
     public int          FREIGHT_ARM_POS_TRANSPORT1 = 232;   // Horizontal transport position
     public int          FREIGHT_ARM_POS_SHARED     = 330;   // Front scoring into shared shipping hub (assumes pretty full)
-    public int          FREIGHT_ARM_POS_ROT_TURRET = 855;  // Approaching vertical (auto-rotate as we PASS THRU vertical)
+    public int          FREIGHT_ARM_POS_ROT_TURRET = 855;   // Approaching vertical (auto-rotate as we PASS THRU vertical)
     public int          FREIGHT_ARM_POS_VERTICAL   = 1126;  // Vertical ("up" vs "down" reverse at this point)
     public int          FREIGHT_ARM_POS_EVASIVE    = 1707;  // Point to start rotating after avoiding the hub
     public int          FREIGHT_ARM_POS_HUB_TOP    = 1737;  // For dumping into hub top level
@@ -213,12 +213,6 @@ public class HardwareBothHubs
     public int          TURRET_LEFT_MAX            = 1780;  // ... maximum before we hit the other upright
 
     public Servo        turretServo                = null;
-//    public double       TURRET_SERVO_INIT          = 0.505; // we init to the position needed to STORE the freight arm
-//    public double       TURRET_SERVO_CENTERED      = 0.505;
-//    public double       TURRET_SERVO_SHARED_LEFT   = 0.550; // fixed shift LEFT for use on the shared hub
-//    public double       TURRET_SERVO_SHARED_RIGHT  = 0.450; // fixed shift RIGHT for use on the shared hub
-//    public double       TURRET_SERVO_BLUE_ALLIANCE = 0.770; // fixed shift LEFT  for use on the alliance hub
-//    public double       TURRET_SERVO_RED_ALLIANCE  = 0.240; // fixed shift RIGHT for use on the alliance hub
     public int          turretEncoderPos           = 0;     // Turret servo current position
     public int          turretEncStableCts         = 0;     // Turret at set position counts
     public double       turretTargetPos            = 0.0;   // Value servo set to
@@ -229,7 +223,7 @@ public class HardwareBothHubs
         CENTERED(0),
         SHARED_LEFT(-100),
         SHARED_RIGHT(100),
-        BLUE_ALLIANCE(-1174),
+        BLUE_ALLIANCE(-868),
         RED_ALLIANCE(1011);
 
         private final int encoderCount;
@@ -340,7 +334,7 @@ public class HardwareBothHubs
         turretMap.put(TurretPosition.CENTERED, 0.505);
         turretMap.put(TurretPosition.SHARED_LEFT, 0.550);
         turretMap.put(TurretPosition.SHARED_RIGHT, 0.450);
-        turretMap.put(TurretPosition.BLUE_ALLIANCE, 0.790);
+        turretMap.put(TurretPosition.BLUE_ALLIANCE, 0.715);
         turretMap.put(TurretPosition.RED_ALLIANCE, 0.240);
 
         // Save reference to Hardware map
@@ -978,7 +972,7 @@ public class HardwareBothHubs
             // Current distance from target (number of encoder counts)
             int ticksToGo = freightMotorTgt - freightMotorPos;
             // Have we achieved the target?
-            if( Math.abs(ticksToGo) < 10 ) {
+            if( Math.abs(ticksToGo) < 12 ) {
                 freightMotor.setPower( 0.0 );
                 if( ++freightMotorWait >= 5 ) {
                     freightMotorAuto = false;
@@ -999,7 +993,7 @@ public class HardwareBothHubs
                 // Determine our min power:
                 // - Current ramping down implies motor/arm is coming to a stop (allow low power)
                 // - Current at zero or increasing means arm won't move unless given enough power
-                minPower = (freightMotorRamp)? 0.35 : 0.40;
+                minPower = (freightMotorRamp)? 0.30 : 0.40;
                 // Compute motor power (automatically reduce as we approach target)
                 freightMotorPower = ticksToGo / freightMotorDiv;  // 1620rpm = 103.8 counts per shaft revolution
                 freightMotorPower = Math.copySign( Math.min(Math.abs(freightMotorPower), maxPower), freightMotorPower );

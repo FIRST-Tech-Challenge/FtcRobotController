@@ -317,7 +317,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
                      break;
             case 2 : angleToHub = -35.0;
-                     distanceToHub = -3.0;  // middle
+                     distanceToHub = -4.0;  // middle
                      finalDistanceToHub = -3.0;
                      freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
                      break;
@@ -462,6 +462,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
     /*--------------------------------------------------------------------------------------------*/
     boolean scoreFreightAllianceHub(int level) {
         boolean scored = false;
+        boolean needToRotate = true;
         double RAMMING_SPEED = DRIVE_SPEED_30;
 
         gyroTurn(TURN_SPEED_20, -90.0 ); // Turn toward alliance hub barrier
@@ -469,7 +470,7 @@ public class AutonomousRwarehouse extends AutonomousBase {
         // This is the minimum distance we want.
         final double MIN_WALL_DISTANCE = 15.5;  // 16", but there could be some angular error
         final double MAX_WALL_DISTANCE = 25.0;  // 25"
-        double wallDistance1 = rightRangeSensor()/2.54;
+        double wallDistance1 = robot.singleSonarRangeR()/2.54;
         telemetry.addData("wallDistance1", "%.1f  in", wallDistance1 );
         telemetry.update();
 
@@ -484,8 +485,8 @@ public class AutonomousRwarehouse extends AutonomousBase {
         }
 
         // Let's verify where we ended up
-        sleep( 1000 );
-        double wallDistance2 = rightRangeSensor()/2.54;
+        sleep( 250 );
+        double wallDistance2 = robot.singleSonarRangeR()/2.54;
 
         // Make sure there isn't something wrong where the robot can't move properly.
         if( (wallDistance2 >= MIN_WALL_DISTANCE) && (wallDistance2 <= MAX_WALL_DISTANCE) ) {
@@ -502,17 +503,23 @@ public class AutonomousRwarehouse extends AutonomousBase {
             // We should be nestled, strafe over to the barrier triangle (a known left/right distance)
             if (opModeIsActive()) {
                 timeDriveStrafe( DRIVE_SPEED_30, 750);
-                gyroDrive( DRIVE_SPEED_40, DRIVE_Y, -5.0, -90.0, DRIVE_THRU );
+                gyroDrive( DRIVE_SPEED_40, DRIVE_Y, -8.5, -90.0, DRIVE_THRU );
                 robot.stopMotion();
             } // over barrier
 
-            // We're over the barrier, rotate the arm forward while we turn, and then dump
+            // We're over the barrier, rotate the arm forward and over, and then dump
             if (opModeIsActive()) {
                 robot.freightArmPosInit( robot.FREIGHT_ARM_POS_HUB_TOP_AUTO );
-                gyroTurn(TURN_SPEED_20, -60.0 );
+//              gyroTurn(TURN_SPEED_20, -60.0 );
                 while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
                     performEveryLoop();
-                }
+                    if( needToRotate ) {
+                        if( robot.freightMotorPos >= robot.FREIGHT_ARM_POS_ROT_TURRET ) {
+                            robot.turretPositionSet( HardwareBothHubs.TurretPosition.RED_ALLIANCE );;
+                            needToRotate = false;
+                        }
+                    }
+                } // opModeIsActive
                 robot.boxServo.setPosition( robot.BOX_SERVO_DUMP_TOP );
                 sleep( 300 );
                 scored = true;
@@ -520,9 +527,11 @@ public class AutonomousRwarehouse extends AutonomousBase {
 
             // Store the arm and turn back toward the warehouse
             if (opModeIsActive()) {
+                timeDriveStrafe( -DRIVE_SPEED_30, 750);
                 robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
                 robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
-                gyroTurn(TURN_SPEED_20, -85.0 );
+//              gyroTurn(TURN_SPEED_20, -85.0 );
+                robot.turretPositionSet( HardwareBothHubs.TurretPosition.CENTERED );;
                 gyroDrive(DRIVE_SPEED_40, DRIVE_Y, 40.0, -85.0, DRIVE_THRU);
                 robot.stopMotion();
                 // let arms finish storing
