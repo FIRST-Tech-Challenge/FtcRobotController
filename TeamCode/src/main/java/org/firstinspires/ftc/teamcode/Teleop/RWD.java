@@ -9,6 +9,8 @@ public class RWD extends LinearOpMode
 {
     private DcMotor motorLeftBack;
     private DcMotor motorRightBack;
+//    private DcMotor motorLeftFront;
+//    private DcMotor motorRightFront;
     boolean isTurning = true;
 
     @Override
@@ -16,6 +18,8 @@ public class RWD extends LinearOpMode
     {
         motorLeftBack = hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = hardwareMap.dcMotor.get("motorRightBack");
+//        motorLeftFront = hardwareMap.dcMotor.get("motorLeftFront");
+//        motorRightFront = hardwareMap.dcMotor.get("motorRightFront");
 
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
 
@@ -24,8 +28,12 @@ public class RWD extends LinearOpMode
 
         while(opModeIsActive())
         {
-            motorRightBack.setPower(gamepad1.left_stick_y*0.7-gamepad1.right_stick_x);
-            motorLeftBack.setPower(gamepad1.left_stick_y*0.7+gamepad1.right_stick_x);
+//            motorRightBack.setPower(gamepad1.left_stick_y*0.3+gamepad1.right_stick_x*0.3);
+//            motorLeftBack.setPower(gamepad1.left_stick_y*0.3-gamepad1.right_stick_x*0.3);
+//            motorRightFront.setPower(gamepad1.left_stick_y*0.3+gamepad1.right_stick_x*0.3);
+//            motorLeftFront.setPower(gamepad1.left_stick_y*0.3-gamepad1.right_stick_x*0.3);
+            motorRightBack.setPower(gamepad1.left_stick_y*0.2+gamepad1.right_stick_x*0.2);
+            motorLeftBack.setPower(gamepad1.left_stick_y*0.2-gamepad1.right_stick_x*0.2);
 
             idle();
         }
