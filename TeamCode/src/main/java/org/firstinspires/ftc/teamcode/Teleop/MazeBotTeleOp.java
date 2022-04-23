@@ -87,11 +87,11 @@ public class MazeBotTeleOp extends LinearOpMode {
 //            motorLeftFront.setPower((power + rightStick) * 0.3);
 //        }
 //        else {
-            motorLeftFront.setPower(powerb * leftStickr - rightStick);
-            motorRightBack.setPower(powerb * leftStickr + rightStick);
+            motorLeftFront.setPower(powerb * leftStickr + rightStick);
+            motorRightBack.setPower(powerb * leftStickr - rightStick);
 
-            motorRightFront.setPower(powera * leftStickr + rightStick);
-            motorLeftBack.setPower(powera * leftStickr - rightStick);
+            motorRightFront.setPower(powera * leftStickr - rightStick);
+            motorLeftBack.setPower(powera * leftStickr + rightStick);
 
 //        }
         }
