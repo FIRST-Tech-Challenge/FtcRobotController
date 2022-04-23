@@ -25,22 +25,17 @@ public class FWD extends LinearOpMode
         motorLeftBack = hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = hardwareMap.dcMotor.get("motorRightBack");
         motorLeftFront = hardwareMap.dcMotor.get("motorLeftFront");
-
         motorRightFront = hardwareMap.dcMotor.get("motorRightFront");
 
         waitForStart();
 
-
-        while(opModeIsActive())
+        resetStartTime();
+        while(opModeIsActive()&&getRuntime()<90)
         {
-            float leftSticky = gamepad1.left_stick_y;
-            float rightStick = gamepad1.right_stick_x;
-
-            motorLeftFront.setPower(leftSticky + rightStick);
-            motorRightBack.setPower(leftSticky - rightStick);
-
-            motorRightFront.setPower(leftSticky - rightStick);
-            motorLeftBack.setPower(leftSticky + rightStick);
+            motorRightBack.setPower(gamepad1.left_stick_y*0.3+gamepad1.right_stick_x*0.3);
+            motorLeftBack.setPower(gamepad1.left_stick_y*0.3-gamepad1.right_stick_x*0.3);
+            motorRightFront.setPower(gamepad1.left_stick_y*0.3+gamepad1.right_stick_x*0.3);
+            motorLeftFront.setPower(gamepad1.left_stick_y*0.3-gamepad1.right_stick_x*0.3);
 
             idle();
         }

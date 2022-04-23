@@ -30,7 +30,6 @@ public class MazeBotTeleOp extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-//        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, true ,false);
         motorLeftFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
         motorRightFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
@@ -45,8 +44,8 @@ public class MazeBotTeleOp extends LinearOpMode {
             telemetry.addData("status", "waiting for start command...");
             telemetry.update();
         }
-
-        while (!isStopRequested()) {
+        resetStartTime();
+        while (!isStopRequested()&&getRuntime()<90) {
             float leftStickx = op.gamepad1.left_stick_x;
             float leftSticky = op.gamepad1.left_stick_y;
             float rightStick = op.gamepad1.right_stick_x;
