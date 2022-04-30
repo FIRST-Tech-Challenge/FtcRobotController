@@ -142,10 +142,10 @@ public class OdometryChassis extends BasicChassis {
     public void navigateTeleOp() {//navigation.navigateTeleOp(op);
     }
 
-    public void setPosition(float x, float y, float newAngle) {
-        xpos = x;
-        ypos = y;
-        globalAngle = newAngle;
+    public void setPosition(double x, double y, double newAngle) {
+        xpos = (float)x;
+        ypos = (float)y;
+        globalAngle = (float)newAngle;
         angle=0;
         //navigation.setPosition(x,y,newAngle);
     }

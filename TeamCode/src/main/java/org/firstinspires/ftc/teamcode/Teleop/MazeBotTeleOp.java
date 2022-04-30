@@ -48,15 +48,15 @@ public class MazeBotTeleOp extends LinearOpMode {
         while (!isStopRequested()&&getRuntime()<90) {
             float leftStickx = op.gamepad1.left_stick_x;
             float leftSticky = op.gamepad1.left_stick_y;
-            float rightStick = op.gamepad1.right_stick_x;
+            float rightStick = op.gamepad1.right_stick_x*0.5f;
             double leftSticktheta = atan2(leftSticky, leftStickx);
-            double leftStickr = sqrt(pow(leftSticky, 2) + pow(leftStickx, 2));
+            double leftStickr = sqrt(pow(leftSticky, 2) + pow(leftStickx, 2))*0.5;
             double powera = 0;
             double powerb = 0;
             double angle = atan2(leftSticky,leftStickx);
 
-            powera = sin(angle + PI/4);
-            powerb = sin(angle - PI/4);
+            powera = -sin(angle + PI/4);
+            powerb = -sin(angle - PI/4);
 
 //            if ((leftStickx + leftSticky)/(leftSticky - leftStickx) >= 1) {
 //                powera = 1;
@@ -86,11 +86,11 @@ public class MazeBotTeleOp extends LinearOpMode {
 //            motorLeftFront.setPower((power + rightStick) * 0.3);
 //        }
 //        else {
-            motorLeftFront.setPower(powerb * leftStickr + rightStick);
-            motorRightBack.setPower(powerb * leftStickr - rightStick);
+            motorLeftFront.setPower(powerb * leftStickr - rightStick);
+            motorRightBack.setPower(powerb * leftStickr + rightStick);
 
-            motorRightFront.setPower(powera * leftStickr - rightStick);
-            motorLeftBack.setPower(powera * leftStickr + rightStick);
+            motorRightFront.setPower(powera * leftStickr + rightStick);
+            motorLeftBack.setPower(powera * leftStickr - rightStick);
 
 //        }
         }
