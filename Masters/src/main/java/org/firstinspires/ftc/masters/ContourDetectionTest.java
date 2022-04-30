@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,7 +12,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 //@Config //Disable if not using FTC Dashboard https://github.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022#opencv_freightfrenzy_2021-2022
-@Autonomous(name="OpenCV_Contour_3954_Test", group="Tutorials")
+@Autonomous(name="OpenCV_Contour_3954_Test", group="drive")
 public class ContourDetectionTest extends LinearOpMode {
     private OpenCvCamera webcam;
 
