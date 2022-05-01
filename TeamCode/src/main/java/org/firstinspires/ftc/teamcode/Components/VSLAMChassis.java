@@ -222,8 +222,8 @@ public class VSLAMChassis extends BasicChassis {
             xVelocity = (float) (up.velocity.vyMetersPerSecond / 0.0254);
             Velocity = sqrt(xVelocity * xVelocity + yVelocity * yVelocity);
             angle = -(float) (up.pose.getHeading() * 180 / PI);
-            ypos = -(float) (up.pose.getX() / 0.0254 - cos(angle * PI / 180) * 4);
-            xpos = (float) (up.pose.getY() / 0.0254 + sin(angle * PI / 180) * 4);
+            ypos = -(float) (up.pose.getX() / 0.0254);
+            xpos = (float) (up.pose.getY() / 0.0254);
             aVelocity = -(float) up.velocity.omegaRadiansPerSecond * 180 / PI;
             if (Velocity > maxVelocity) {
                 maxVelocity = Velocity;
@@ -335,11 +335,11 @@ public class VSLAMChassis extends BasicChassis {
             if ((oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance) > t) {
                 t = (oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance);
             }
-            if (t > 0.98) {
+            if (t > 1.0) {
                 if (sstarttertime > op.getRuntime()) {
                     sstarttertime = op.getRuntime();
                 }
-                if (op.getRuntime() > sstarttertime + 0.5) {
+                if (op.getRuntime() > sstarttertime + 0.5/power) {
                     break;
                 }
             }

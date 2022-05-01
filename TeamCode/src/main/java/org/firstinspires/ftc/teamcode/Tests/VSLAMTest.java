@@ -26,6 +26,7 @@ public class VSLAMTest extends LinearOpMode {
         robot.goToPosition(1, 48,24,180,0.5);
         robot.goToPosition(1,0,24,-90,0.5);
         robot.goToPosition(1, 0,0,-90,0.5);
+        sleep(5000);
         stop();
     }
 }
