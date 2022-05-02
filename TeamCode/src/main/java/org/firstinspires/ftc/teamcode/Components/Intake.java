@@ -12,8 +12,8 @@ public class Intake {
     private Servo intakeServo = null;
     private Servo intakeServo2 = null;
     DigitalChannel touchSensor;
-    boolean isIntaking=false;
-    double intakeTimeStart=-10;
+    boolean isIntaking = false;
+    double intakeTimeStart = -10;
 
     LinearOpMode op = null;
     final private double intakeSpeed = 1;
@@ -22,8 +22,8 @@ public class Intake {
 
     // initialization of intakeMotor
     public Intake(LinearOpMode opMode, boolean isTeleop){
-        op=opMode;
-        teleop=isTeleop;
+        op = opMode;
+        teleop = isTeleop;
         intakeMotor = (DcMotorEx) opMode.hardwareMap.dcMotor.get("IntakeMotor");
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,20 +51,20 @@ public class Intake {
 
     public void startIntake() {
         if(!isIntaking){
-            intakeTimeStart=op.getRuntime();
+            intakeTimeStart = op.getRuntime();
         }
-        isIntaking=true;
+        isIntaking = true;
         intakeMotor.setPower(intakeSpeed);
     }
 
     public void reverseIntake(double power){
-        isIntaking=false;
+        isIntaking = false;
         intakeMotor.setPower(-power);
     }
 
 
     public void stopIntake() {
-        isIntaking=false;
+        isIntaking = false;
         intakeMotor.setPower(0);
     }
 
@@ -90,13 +90,13 @@ public class Intake {
             }
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
     public void flipIntakeToPosition(double torget){
-            intakeServo.setPosition(1-torget);
-            intakeServo2.setPosition(.3+torget);
+            intakeServo.setPosition(1 - torget);
+            intakeServo2.setPosition(.3 + torget);
     }
 
 }

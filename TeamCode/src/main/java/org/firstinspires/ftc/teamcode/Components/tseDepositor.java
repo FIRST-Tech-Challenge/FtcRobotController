@@ -5,6 +5,7 @@ import static java.lang.Math.sqrt;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class tseDepositor {
     // Define class members
     CRServo tseCrServo;
+    Servo TSEServo;
     LinearOpMode op;
     ElapsedTime et;
     long initialTime;
@@ -22,12 +24,29 @@ public class tseDepositor {
 
     public tseDepositor(LinearOpMode opMode) {
         op = opMode;
-        tseCrServo = opMode.hardwareMap.get(CRServo.class, "crtsedepositer");
+        TSEServo = opMode.hardwareMap.get(Servo.class, "tsedepo");
+//        tseCrServo = opMode.hardwareMap.get(CRServo.class, "crtsedepositer");
         et = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         initialTime = retractTime = 0;
         reversePower = 0.0;
 
     }
+
+    public double TSEServoPos() {
+        return TSEServo.getPosition();
+    }
+
+    public void TSEMoverUp() {
+        TSEServo.setPosition(TSEServo.getPosition() + 0.05);
+    }
+    public void TSEMoverDown() {
+        TSEServo.setPosition(TSEServo.getPosition() - 0.05);
+    }
+
+    public void TSEStop () {
+        TSEServo.setPosition(TSEServo.getPosition());
+    }
+
     public void moveTseDepositerTape(String name, int inch,  int forward) {
         String caption;
 

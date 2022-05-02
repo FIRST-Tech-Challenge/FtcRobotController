@@ -57,7 +57,7 @@ public class Robot {
     boolean isFlipping = false;
     boolean isExtending = false;
     double flipDelay = .3, reverseDelay = .7;
-    double[] startTime = {-2, 0, 0, 0, 0, 0, 0, -10, 0, 100, 0, 0};
+    double[] startTime = {-2, 0, 0, 0, 0, 0, 0, -10, 0, 100, 0, 0, 0};
     double magnitude;
     double angleInRadian;
     double angleInDegree;
@@ -70,6 +70,7 @@ public class Robot {
     public static boolean retracting = false;
     double time;
     boolean changed = false;
+    boolean isSpinning = false;
     double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
     int CYCLE_MS = 30;     // period of each cycle
 
@@ -208,23 +209,25 @@ public class Robot {
         boolean startIntake = op.gamepad1.right_bumper;
         boolean reverseIntake = op.gamepad1.y;
         boolean flipIntake = op.gamepad1.left_bumper;
-        boolean extendTSE = op.gamepad2.dpad_right;
-        boolean manualretractTSE = op.gamepad2.dpad_left;
-        boolean autoretractTSE = op.gamepad1.x;
+//        boolean extendTSE = op.gamepad2.dpad_right;
+//        boolean manualretractTSE = op.gamepad2.dpad_left;
+//        boolean autoretractTSE = op.gamepad1.x;
         boolean sequence = op.gamepad1.dpad_up;
 
         /** gamepad 2**/
         float turretTurn = op.gamepad2.right_stick_x;
-        float turretUpNDown = op.gamepad2.left_stick_y;
+        float turretUpNDown = op.gamepad2.right_stick_y;
         float manualretractTurret = op.gamepad2.left_trigger;
         float extendTurret = op.gamepad2.right_trigger;
-        boolean extendAutoTSE = op.gamepad2.dpad_up;
+//        boolean extendAutoTSE = op.gamepad2.dpad_up;
         boolean autoretractTurret = op.gamepad2.y;
         boolean basketArm = op.gamepad2.right_bumper;
         boolean autoAim = op.gamepad2.left_bumper;
         boolean basket = op.gamepad2.a;
         boolean unsave_turret_position = op.gamepad2.b;
         boolean capper = false;
+        boolean TSEArmUp = op.gamepad2.dpad_up;
+        boolean TSEArmDown = op.gamepad2.dpad_down;
 
 
         time = op.getRuntime();
@@ -315,12 +318,12 @@ public class Robot {
         } else if (!retracting && !autoAiming && time > startTime[8] + 2) {
             turret.stopTurn();
         }
-        if (extendAutoTSE) {
-            startTime[6] = op.getRuntime();
-//            TSE.setTseCrServoPower(1.0);
-            isExtending = true;
-            isExtended = true;
-        }
+//        if (extendAutoTSE) {
+//            startTime[6] = op.getRuntime();
+////            TSE.setTseCrServoPower(1.0);
+//            isExtending = true;
+//            isExtended = true;
+//        }
         if (capper && time > startTime[8] + 0.4) {
             capThats();
             startTime[8] = time;
@@ -375,20 +378,38 @@ public class Robot {
                 FlipBasketArmHigh();
             }
         }
-        if (extendTSE) {
-            TSE.setTseCrServoPower(1);
-        }
-        if (!extendTSE && !manualretractTSE && !autoretractTSE && !isExtending) {
-            TSE.setTseCrServoPower(0.0);
-        }
 
-        if (manualretractTSE) {
-            TSE.setTseCrServoPower(-1);
+        if (TSEArmUp) {
+            if (time > startTime[12] + 0.3) {
+                TSE.TSEMoverUp();
+            }
+            op.telemetry.addData("TSEArmPos: ", TSE.TSEServoPos());
+            op.telemetry.update();
         }
+        if (TSEArmDown) {
+            if (time > startTime[12] + 0.3) {
+                TSE.TSEMoverDown();
+            }
+            op.telemetry.addData("TSEArmPos1: ", TSE.TSEServoPos());
+            op.telemetry.update();
+        }
+        TSE.TSEStop();
 
-        if (autoretractTSE) {
-            //insert set tse to 0 function
-        }
+
+//        if (extendTSE) {
+//            TSE.setTseCrServoPower(1);
+//        }
+//        if (!extendTSE && !manualretractTSE && !autoretractTSE && !isExtending) {
+//            TSE.setTseCrServoPower(0.0);
+//        }
+//
+//        if (manualretractTSE) {
+//            TSE.setTseCrServoPower(-1);
+//        }
+//
+//        if (autoretractTSE) {
+//            //insert set tse to 0 function
+//        }
 
         /** turret stuff **/
 
