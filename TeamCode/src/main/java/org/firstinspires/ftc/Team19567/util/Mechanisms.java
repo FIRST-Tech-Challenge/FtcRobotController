@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-/* import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_COEFFICIENT;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.PPR_RATIO; */
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_COEFFICIENT;
+import static org.firstinspires.ftc.Team19567.util.Utility_Constants.PPR_RATIO;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MAX_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POTENTIOMETER_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POW_COEFFICIENT;
@@ -107,11 +107,11 @@ public class Mechanisms {
     }
 
     public void maintainBalance() {
-        double balanceServoPos = Range.clip(Math.pow(Range.clip((3.31-potentiometer.getVoltage())/POTENTIOMETER_COEFFICIENT,0,1),POW_COEFFICIENT)+BALANCE_SERVO_DEFAULT,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
-        balanceServo.setPosition(balanceServoPos);
-        telemetry.addData("Mechanisms","balanceServoPos(%.3f)",balanceServoPos); //TODO: TUNE THIs
-        telemetry.addData("Mechanisms","Potentiometer Voltage(%.3f)",potentiometer.getVoltage());
-        telemetry.addData("Mechanisms","Arm Position",armDC.getCurrentPosition());
-        //balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(BALANCE_COEFFICIENT*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
+        //double balanceServoPos = Range.clip(Math.pow(Range.clip((3.31-potentiometer.getVoltage())/POTENTIOMETER_COEFFICIENT,0,1),POW_COEFFICIENT)+BALANCE_SERVO_DEFAULT,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
+        //balanceServo.setPosition(balanceServoPos);
+        //telemetry.addData("Mechanisms","balanceServoPos(%.3f)",balanceServoPos); //TODO: TUNE THIs
+        //telemetry.addData("Mechanisms","Potentiometer Voltage(%.3f)",potentiometer.getVoltage());
+        //telemetry.addData("Mechanisms","Arm Position",armDC.getCurrentPosition());
+        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(BALANCE_COEFFICIENT*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
 }
