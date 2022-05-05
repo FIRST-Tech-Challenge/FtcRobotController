@@ -310,34 +310,34 @@ public class Turret {
         turret_Rotation.setPower(power);
 
 
-        double extension_length_flat = Math.sqrt(pow(x, 2) + pow(y, 2));
-        if(extension_length_flat ==0){
-            extension_length_flat = 0.01;
-        }
-        double extension_length = Math.sqrt(pow(extension_length_flat, 2) + pow(z, 2));
-        if(extension_length_flat*TICKS_PER_INCH<extendPosition){
-            extension_length_flat = extendPosition;
-        }
-        if (extension_length * TICKS_PER_INCH > MAX_EXTENSION_TICKS) {
-            turret_Extension.setTargetPosition((int) MAX_EXTENSION_TICKS);
-        }
-        else {
-            turret_Extension.setTargetPosition((int) (extension_length * TICKS_PER_INCH));
-        }
-        turret_Extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turret_Extension.setPower(power);
+//        double extension_length_flat = Math.sqrt(pow(x, 2) + pow(y, 2));
+//        if(extension_length_flat ==0){
+//            extension_length_flat = 0.01;
+//        }
+//        double extension_length = Math.sqrt(pow(extension_length_flat, 2) + pow(z, 2));
+//        if(extension_length_flat*TICKS_PER_INCH<extendPosition){
+//            extension_length_flat = extendPosition;
+//        }
+//        if (extension_length * TICKS_PER_INCH > MAX_EXTENSION_TICKS) {
+//            turret_Extension.setTargetPosition((int) MAX_EXTENSION_TICKS);
+//        }
+//        else {
+//            turret_Extension.setTargetPosition((int) (extension_length * TICKS_PER_INCH));
+//        }
+//        turret_Extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        turret_Extension.setPower(power);
 
-
-        double elevation_angle = Math.atan2(z,extension_length_flat) * (180 / PI);
-
-        op.telemetry.addData("angle control angle", elevation_angle / ANGLE_CONTROL_SERVO_TOTAL_DEGREES);
-        if(elevation_angle<0){
-            elevation_angle=0;
-        }
-        if(elevation_angle>35){
-            elevation_angle=35;
-        }
-        AngleControlRotating(elevation_angle);
+//
+//        double elevation_angle = Math.atan2(z,extension_length_flat) * (180 / PI);
+//
+//        op.telemetry.addData("angle control angle", elevation_angle / ANGLE_CONTROL_SERVO_TOTAL_DEGREES);
+//        if(elevation_angle<0){
+//            elevation_angle=0;
+//        }
+//        if(elevation_angle>35){
+//            elevation_angle=35;
+//        }
+//        AngleControlRotating(elevation_angle);
     }
 
     public void TurretManualRotation (double rotation) { //stick_x
@@ -364,23 +364,24 @@ public class Turret {
 
     }
     public void turretExtendo(double whereExtendo){
-        if(whereExtendo>MAX_EXTENSION_TICKS){
-            whereExtendo=MAX_EXTENSION_TICKS-5;
-        }
-        double distance = whereExtendo-extendPosition;
-        if(abs(distance)<50){
-            turret_Extension.setVelocity(0);
-        }
-        else {
-            turret_Extension.setVelocity(distance/abs(distance)* 4 * (abs(distance) + 500));
-        }
-        if(abs(distance)<50&&turret_Extension.getVelocity()<100){
-            turret_Extension.setVelocity(0);
-            faked=true;
-        }
-        else{
-            faked = false;
-        }
+//        if(whereExtendo>MAX_EXTENSION_TICKS){
+//            whereExtendo=MAX_EXTENSION_TICKS-5;
+//        }
+//        double distance = whereExtendo-extendPosition;
+//        if(abs(distance)<50){
+//            turret_Extension.setVelocity(0);
+//        }
+//        else {
+//            turret_Extension.setVelocity(distance/abs(distance)* 4 * (abs(distance) + 500));
+//        }
+//        if(abs(distance)<50&&turret_Extension.getVelocity()<100){
+//            turret_Extension.setVelocity(0);
+//            faked=true;
+//        }
+//        else{
+//            faked = false;
+//        }
+        faked = true;
     }
     public void TurretManualFlip () {
         if (turret_Angle_Control.getPosition() > 0.5) {
@@ -453,10 +454,7 @@ public class Turret {
         }
         else{
             basketArmServo.setPosition(0.01);
-            basketArmServo.setPosition(0.01);
         }
-        servoPos = !servoPos;
-
     }
 
     public void SavePosition (int up) {
@@ -526,8 +524,11 @@ public class Turret {
         }
         if(!arming&&!resetten) {
             basketActuationServo.setPosition(0.82);
-            basketArmServo.setPosition(0.00);
             arming=true;
+        }
+        if(!basketDown&&!arming){
+            basketArmServo.setPosition(0.00);
+            arming = true;
         }
         if(!basketDown&&turretDown&&turretStraight&&!basketing&&!resetten){
             basketActuationServo.setPosition(.82);

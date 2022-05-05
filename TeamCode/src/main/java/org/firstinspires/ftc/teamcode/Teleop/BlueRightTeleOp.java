@@ -9,13 +9,13 @@ import org.firstinspires.ftc.teamcode.Robot;
 
 @TeleOp(name = "BlueRightTeleopRegionals")
 //@Disabled
-
+//9506,12649    
 public class BlueRightTeleOp extends LinearOpMode {
     public void runOpMode() {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, true ,false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 

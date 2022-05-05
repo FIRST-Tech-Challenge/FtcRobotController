@@ -70,7 +70,6 @@ public class Robot {
     public static boolean retracting = false;
     double time;
     boolean changed = false;
-    boolean isSpinning = false;
     double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
     int CYCLE_MS = 30;     // period of each cycle
 
@@ -204,7 +203,7 @@ public class Robot {
 
         /** gamepad 1**/
         float forward = -op.gamepad1.left_stick_y;
-        float strafe = -op.gamepad1.left_stick_x; //remove dis boi son
+        float strafe = -op.gamepad1.left_stick_x; //remove dis boi son// DIY!
         float turning = -op.gamepad1.right_stick_x;
         boolean startIntake = op.gamepad1.right_bumper;
         boolean reverseIntake = op.gamepad1.y;
@@ -227,7 +226,6 @@ public class Robot {
         boolean unsave_turret_position = op.gamepad2.b;
         boolean capper = false;
         boolean TSEArmUp = op.gamepad2.dpad_up;
-        boolean TSEArmDown = op.gamepad2.dpad_down;
 
 
         time = op.getRuntime();
@@ -375,25 +373,14 @@ public class Robot {
         if (basketArm) {
             if (time > startTime[5] + 0.3) {
                 startTime[5] = time;
-                FlipBasketArmHigh();
+                turret.FlipBasketArmHigh();
             }
         }
 
-        if (TSEArmUp) {
-            if (time > startTime[12] + 0.3) {
-                TSE.TSEMoverUp();
-            }
-            op.telemetry.addData("TSEArmPos: ", TSE.TSEServoPos());
-            op.telemetry.update();
+        if (TSEArmUp&&time>startTime[12]+0.1) {
+            startTime[12]=time;
+           TSE.toggleTSEPosition();
         }
-        if (TSEArmDown) {
-            if (time > startTime[12] + 0.3) {
-                TSE.TSEMoverDown();
-            }
-            op.telemetry.addData("TSEArmPos1: ", TSE.TSEServoPos());
-            op.telemetry.update();
-        }
-        TSE.TSEStop();
 
 
 //        if (extendTSE) {
@@ -526,7 +513,7 @@ public class Robot {
     public void fakeAutoAim() {
         double angle = -60;
         turret.TurretRotate(angle);
-        turret.AutoAngleControlRotating(17);
+//        turret.AutoAngleControlRotating(17);
         turret.turretExtendo(3300);
     }
 
@@ -721,11 +708,11 @@ public class Robot {
                     startTime[9] = time;
                 }
                 if (ypos < 18) {
-                    drivetrain.setRightMotorPowers(pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) + angle / 50);
-                    drivetrain.setLeftMotorPowers(pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) - angle / 50);
+                    drivetrain.setRightMotorPowers(0.5*pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) + angle / 50);
+                    drivetrain.setLeftMotorPowers(0.5*pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) - angle / 50);
                 } else {
-                    drivetrain.setRightMotorPowers(pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) + (angle - thoseCurves[(int) times]) / 50);
-                    drivetrain.setLeftMotorPowers(pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) - (angle - thoseCurves[(int) times]) / 50);
+                    drivetrain.setRightMotorPowers(0.5*pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) + (angle - thoseCurves[(int) times]) / 50);
+                    drivetrain.setLeftMotorPowers(0.5*pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) - (angle - thoseCurves[(int) times]) / 50);
                 }
                 if (!intake.isSwitched()) {
                     if (time > 26||times==6) {
@@ -733,7 +720,7 @@ public class Robot {
                         stopIntake();
                         return false;
                     }
-                    sheeeeesh(-0.3, -0.5 + whereTonext[(int) times], 0.5, 0);
+                    sheeeeesh(-0.3, -0.5 + whereTonext[(int) times], 0.3, 0);
                     block = true;
                     break;
                 }

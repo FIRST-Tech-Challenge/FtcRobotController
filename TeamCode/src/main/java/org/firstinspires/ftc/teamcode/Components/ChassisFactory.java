@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class ChassisFactory {
     public static BasicChassis getChassis(BasicChassis.ChassisType chassisType, LinearOpMode op, boolean navigator, boolean isCorgi){
          if(chassisType==BasicChassis.ChassisType.ENCODER){
-            return new EncoderChassis(op);
+            return new EncoderChassis(op, navigator, isCorgi);
         }
         else if(chassisType==BasicChassis.ChassisType.IMU){
             return new IMUChassis(op);

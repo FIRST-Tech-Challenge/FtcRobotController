@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Components.VSLAMChassis;
-@Disabled
 
 @Autonomous(name= "track")
 public class track extends LinearOpMode {
@@ -16,7 +16,7 @@ public class track extends LinearOpMode {
     public void runOpMode(){
         //Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         ElapsedTime op = new ElapsedTime();
-        VSLAMChassis odom = new VSLAMChassis(this, false,true);
+        EncoderChassis odom = new EncoderChassis(this, false,false);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -26,7 +26,7 @@ public class track extends LinearOpMode {
         //int rings = robot.getRingsAndWaitForStart();
         //robot.stopRingDetection();
         waitForStart();
-        odom.moveTester();
+//        odom.moveTester();
 //        robot.setPosition(61.75,-42.25, 0);
 //        robot.moveAngle(0,-65,0.5);
 //        sleep(5000);

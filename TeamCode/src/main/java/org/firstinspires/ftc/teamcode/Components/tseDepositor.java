@@ -18,10 +18,11 @@ public class tseDepositor {
     ElapsedTime et;
     long initialTime;
     long retractTime;
+    int position=0;
+    double[] positions = {0.7,0.05,0.43,0.3};
     double reversePower;
     static final long FORWARD_ROTATION_PER_INCH = 147;
     static final long REVERSE_ROTATION_PER_INCH = 114;
-
     public tseDepositor(LinearOpMode opMode) {
         op = opMode;
         TSEServo = opMode.hardwareMap.get(Servo.class, "tsedepo");
@@ -29,13 +30,21 @@ public class tseDepositor {
         et = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         initialTime = retractTime = 0;
         reversePower = 0.0;
+        TSEServo.setPosition(1.0);
 
     }
 
     public double TSEServoPos() {
         return TSEServo.getPosition();
     }
-
+    public void toggleTSEPosition(){
+        if(position==3) {
+            position =1;
+        }else{
+            position++;
+        }
+        TSEServo.setPosition(positions[position]);
+        }
     public void TSEMoverUp() {
         TSEServo.setPosition(TSEServo.getPosition() + 0.05);
     }
