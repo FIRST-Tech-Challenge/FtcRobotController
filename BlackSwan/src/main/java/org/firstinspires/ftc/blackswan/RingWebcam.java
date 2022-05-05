@@ -40,7 +40,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp(name = "TestComputerVision")
-public class EasyOpenCVExample extends LinearOpMode
+public class RingWebcam extends LinearOpMode
 {
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
