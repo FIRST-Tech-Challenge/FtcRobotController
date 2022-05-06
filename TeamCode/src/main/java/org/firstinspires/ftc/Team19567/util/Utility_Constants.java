@@ -43,7 +43,7 @@ public class Utility_Constants {
     public static int MILLI_END = 1400; //Milliseconds after carousel has been engaged to stop spinning the carousel
     public static double FLICKER_TIME = 100; //Time in milliseconds for the flicker to release one freight
     //COEFFICIENTS
-    public static double BALANCE_COEFFICIENT = 1300.1; //Balancing coefficient for ARM ENCODER VALUES
+    public static double BALANCE_COEFFICIENT = 850; //Balancing coefficient for ARM ENCODER VALUES
     public static double POTENTIOMETER_COEFFICIENT = 3.8; //Balancing Coefficient for POTENTIOMETER VOLTAGE VALUES
     public static double ACC_COEFFICIENT = 80000; //Rate at which to accelerate by (reciprocal of)
     public static double POW_COEFFICIENT = 1.2; //Exponent at which the balancing increases by
