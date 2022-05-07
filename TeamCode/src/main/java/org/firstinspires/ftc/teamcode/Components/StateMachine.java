@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.DROPPED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.INTAKE_DOWN;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.IN_WAREHOUSE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.TURRET_STRAIGHT;
@@ -22,7 +23,9 @@ public class StateMachine {
         EXTENDED(false),
         RAISED(false),
         TURRET_STRAIGHT(true),
-        IN_WAREHOUSE(false);
+        IN_WAREHOUSE(false),
+        TRANSFERRED(false),
+        DROPPED(false);
         boolean status;
         States(boolean value) {
             this.status = value;
@@ -59,10 +62,10 @@ public class StateMachine {
             return States.SWITCHED.status && TURRET_STRAIGHT.status && !States.EXTENDED.status && !States.RAISED.status && States.BASKET_TRANSFER.status && !States.INTAKE_DOWN.status;
         }
         else if(state == States.INTAKE_DOWN){
-
+            return !States.SWITCHED.status;
         }
         else if(state == States.BASKET_CIELING){
-
+            return States.BASKET_DROP.status && DROPPED.status  || States.BASKET_TRANSFER.status && States.TRANSFERRED.status;
         }
         else if(state == States.BASKET_ARM_REST){
 
