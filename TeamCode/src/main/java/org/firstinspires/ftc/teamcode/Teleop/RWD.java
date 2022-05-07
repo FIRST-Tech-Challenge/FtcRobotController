@@ -28,8 +28,8 @@ public class RWD extends LinearOpMode
         resetStartTime();
         while(opModeIsActive()&&getRuntime()<90)
         {
-            motorRightBack.setPower(gamepad1.left_stick_y*0.2+gamepad1.right_stick_x*0.2);
-            motorLeftBack.setPower(gamepad1.left_stick_y*0.2-gamepad1.right_stick_x*0.2);
+            motorRightBack.setPower(gamepad1.left_stick_y*0.15+gamepad1.right_stick_x*0.2);
+            motorLeftBack.setPower(gamepad1.left_stick_y*0.15-gamepad1.right_stick_x*0.2);
 
             idle();
         }
