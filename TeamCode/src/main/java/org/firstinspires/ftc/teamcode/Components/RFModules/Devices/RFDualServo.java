@@ -25,10 +25,14 @@ public abstract class RFDualServo implements RFServoInterface {
 
     enum Direction { FORWARD, REVERSE }
 
+    Servo.Direction servoDirection1;
+
     LinearOpMode op;
 
     public RFDualServo(String servoName, String servoName2, Servo.Direction servoDirection, LinearOpMode opMode) {
         op = opMode;
+
+        servoDirection1 = servoDirection;
 
         Servo.Direction servoDirection2 = REVERSE;
 
@@ -59,14 +63,26 @@ public abstract class RFDualServo implements RFServoInterface {
     public ServoController getController() {
         return null;
     }
-//
-//    public int getPortNumber() {
-//        return
-//    }
-//
-//    void setDirection(Servo.Direction direction);
-//
-//    Servo.Direction getDirection();
+
+    @Override
+    public int getPortNumber() {
+        return 0;
+    }
+
+    @Override
+    public void setDirection (Servo.Direction direction) {
+        rfServo.setDirection(direction);
+
+        rfServo2.setDirection(REVERSE);
+
+        if (direction == REVERSE) {
+            rfServo2.setDirection(FORWARD);
+        }
+    }
+
+    public Servo.Direction getDirection() {
+        return servoDirection1;
+    }
 
     public void scaleRange(double min, double max) {
 
