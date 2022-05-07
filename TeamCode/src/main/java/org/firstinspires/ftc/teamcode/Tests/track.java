@@ -26,7 +26,7 @@ public class track extends LinearOpMode {
         //int rings = robot.getRingsAndWaitForStart();
         //robot.stopRingDetection();
         waitForStart();
-//        odom.moveTester();
+        odom.moveTester();
 //        robot.setPosition(61.75,-42.25, 0);
 //        robot.moveAngle(0,-65,0.5);
 //        sleep(5000);

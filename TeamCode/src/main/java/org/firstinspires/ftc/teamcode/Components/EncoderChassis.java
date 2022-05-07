@@ -109,6 +109,14 @@ public class EncoderChassis extends BasicChassis {
             motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
+        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
+        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lastAngles  = new Orientation();
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -248,7 +256,12 @@ public class EncoderChassis extends BasicChassis {
 
         lastAngles = angles;
 
-
+        if(globalAngle>180){
+            globalAngle-=360;
+        }
+        else if(globalAngle<-180){
+            globalAngle+=360;
+        }
         return -globalAngle;
     }
     //4370,3713
@@ -287,7 +300,10 @@ public class EncoderChassis extends BasicChassis {
         xVelocity = (y*netForward)/ differtime;
         yVelocity = (x*netForward)/ differtime;
         Velocity=sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
-        aVelocity=(newANgle-angle)/differtime;
+        double tempAVelocity=(newANgle-angle)/differtime;
+        if(tempAVelocity!=0){
+            aVelocity=tempAVelocity;
+        }
         xpos+=xVelocity*differtime;
         ypos+=yVelocity*differtime;
         angle =(float)newANgle;
@@ -328,18 +344,18 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setPower(.4);
+        motorRightBack.setPower(.5);
         op.sleep(1000);
         motorRightBack.setPower(0);
-        op.sleep(1000);        motorRightFront.setPower(.4);
+        op.sleep(1000);        motorRightFront.setPower(.5);
         op.sleep(1000);
         motorRightFront.setPower(0);
         op.sleep(1000);
-        motorLeftBack.setPower(.4);
+        motorLeftBack.setPower(.5);
         op.sleep(1000);
         motorLeftBack.setPower(0);
         op.sleep(1000);
-        motorLeftFront.setPower(.4);
+        motorLeftFront.setPower(.5);
         op.sleep(1000);
         motorLeftFront.setPower(0);
         op.sleep(1000);
@@ -450,11 +466,11 @@ public class EncoderChassis extends BasicChassis {
             double posxError = 0;//tarcurpos[0]-currentPosition[0];
             double yError = (xError + xVelocity) * mpconst - yVelocity;
             double posyError = 0;//(tarcurpos[1]-currentPosition[1]);
-            if (difference < 5 * startpower) {
-                powerconst = max(min(startpower, startpower * difference / 5), 0.3 / startpower);
+            if (difference < Velocity/3) {
+                powerconst = min(0.3,targetspeed/Velocity);
                 xError = xVelocity / abs(xVelocity) * ((pow(difference, 2) / 4) / abs(1 - pow(mpconst, 2)) - abs(xVelocity));
                 yError = (xError + xVelocity) * mpconst - yVelocity;
-                targetspeed = pow(difference, 2) / 4;
+                targetspeed = pow(difference, 2)/3;
             }
 //            yInt += (yError + posyError) * differtime;
 //            xInt += (xError + posxError) * differtime;
@@ -490,7 +506,7 @@ public class EncoderChassis extends BasicChassis {
             //double angleCorrectPower[] = {sin(angleInCorrection + PI / 4), sin(angleInCorrection - PI / 4), sqrt(pow(yCorrection, 2) + pow(xCorrection, 2))};
             //error+=(angleInCorrection-currentPosition[2])/2;
             double targetaVelocity = (error) * 2;
-            anglecorrection = (error * 2 + (targetaVelocity + aVelocity) / 10) / 192;
+            anglecorrection = (error * 4 + 4*(targetaVelocity + aVelocity) / 10) / 192;
             if (abs(anglecorrection) * power > 0.6) {
                 anglecorrection /= (abs(anglecorrection) * power) / 0.6;
             }
@@ -2554,14 +2570,6 @@ public class EncoderChassis extends BasicChassis {
     }
 
     public void tripleSplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power) {
-        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double[][] point = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
         point[0][0] = x0;
         point[0][1] = y0;
@@ -2980,8 +2988,8 @@ public class EncoderChassis extends BasicChassis {
                 error += 360;
             }
             double targetaVelocity = (error) * 2;
-            double angleConst = (error * 4 + (targetaVelocity + aVelocity) * .4) / 192;
-            if (aVelocity < 1) {
+            double angleConst = (error * 4 + (targetaVelocity + aVelocity) * .2) / 192;
+            if (abs(aVelocity) < 1) {
                 minPower = 0.4;
             }
             if (abs(angleConst) * power < minPower) {

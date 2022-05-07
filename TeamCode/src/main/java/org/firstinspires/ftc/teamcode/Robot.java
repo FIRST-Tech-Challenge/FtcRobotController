@@ -92,8 +92,8 @@ public class Robot {
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded) {
         op = opMode;
-        //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isCorgi);
+        //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
+        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
         rotation = new CarouselCR(op);
         intake = new Intake(op, isTeleop);
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
@@ -377,7 +377,7 @@ public class Robot {
             }
         }
 
-        if (TSEArmUp&&time>startTime[12]+0.1) {
+        if (TSEArmUp&&time>startTime[12]+0.2) {
             startTime[12]=time;
            TSE.toggleTSEPosition();
         }
