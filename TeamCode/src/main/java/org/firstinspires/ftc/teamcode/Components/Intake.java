@@ -14,6 +14,7 @@ public class Intake {
     DigitalChannel touchSensor;
     boolean isIntaking = false;
     double intakeTimeStart = -10;
+    StateMachine checker = null;
 
     LinearOpMode op = null;
     final private double intakeSpeed = 1;
@@ -21,7 +22,8 @@ public class Intake {
     private boolean intakeUp = false; //position of intake in the lifted position
 
     // initialization of intakeMotor
-    public Intake(LinearOpMode opMode, boolean isTeleop){
+    public Intake(LinearOpMode opMode, boolean isTeleop, StateMachine checkers){
+        checker = checkers;
         op = opMode;
         teleop = isTeleop;
         intakeMotor = (DcMotorEx) opMode.hardwareMap.dcMotor.get("IntakeMotor");

@@ -19,7 +19,6 @@ public class StateMachine {
         BASKET_CIELING(false),
         BASKET_DROP(false),
         BASKET_ARM_REST(true),
-        SLIDING(false),
         EXTENDED(false),
         RAISED(false),
         TURRET_STRAIGHT(true),
@@ -68,29 +67,22 @@ public class StateMachine {
             return States.BASKET_DROP.status && DROPPED.status  || States.BASKET_TRANSFER.status && States.TRANSFERRED.status;
         }
         else if(state == States.BASKET_ARM_REST){
-
+            return States.DROPPED.status;
         }
         else if(state == States.BASKET_DROP){
-
+            return !States.BASKET_ARM_REST.status&&States.TRANSFERRED.status;
         }
         else if(state == States.BASKET_TRANSFER){
-
+            return States.BASKET_ARM_REST.status&&!States.EXTENDED.status;
         }
         else if(state == States.EXTENDED){
-
-        }
-        else if(state == States.IN_WAREHOUSE){
-
+            return !States.BASKET_TRANSFER.status;
         }
         else if(state == States.RAISED){
-
-        }
-        else if(state == States.SLIDING){
-
+            return States.TRANSFERRED.status;
         }
         else{
-            return false;
+            return true;
         }
-        return false;
     }
 }

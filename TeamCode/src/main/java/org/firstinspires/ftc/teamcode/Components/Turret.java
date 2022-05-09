@@ -48,10 +48,12 @@ public class Turret {
     public static boolean basketActuationDown = false;
     public static double extendPosition=0, rotatePosition=0;
     boolean angleControlling = false, arming = false, basketing = false,areTeleop = false;
+    private StateMachine checker = null;
 
 
     // initialization of outtakeMotor
-    public Turret(LinearOpMode opMode, LedColor led_bank, boolean isTeleOp){
+    public Turret(LinearOpMode opMode, LedColor led_bank, boolean isTeleOp, StateMachine checkers){
+        checker = checkers;
         op = opMode;
         areTeleop = isTeleOp;
         if (hardware_present) {

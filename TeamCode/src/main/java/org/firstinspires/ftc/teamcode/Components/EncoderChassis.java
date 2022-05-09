@@ -52,7 +52,7 @@ public class EncoderChassis extends BasicChassis {
     private double correction;
     double maxVelocity = 0;
     double ticksPerRevolution = 2215.5;
-    double[] directions = {1,1,1,1}, ticks = {0,0,0,0};
+    double[] directions = {1, 1, 1, 1}, ticks = {0, 0, 0, 0};
     boolean bad = false;
     private LinearOpMode op = null;
     Lock location = new ReentrantLock();
@@ -103,7 +103,7 @@ public class EncoderChassis extends BasicChassis {
         if (navigator) {
             vuforia = new VuforiaThread(op, location);
         }
-        if(!isTeleop){
+        if (!isTeleop) {
             motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -117,22 +117,21 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lastAngles  = new Orientation();
+        lastAngles = new Orientation();
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
 
         imu = op.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         // make sure the imu gyro is calibrated before continuing.
-        while (!op.isStopRequested() && !imu.isGyroCalibrated())
-        {
+        while (!op.isStopRequested() && !imu.isGyroCalibrated()) {
             op.sleep(50);
             op.idle();
         }
@@ -256,11 +255,10 @@ public class EncoderChassis extends BasicChassis {
 
         lastAngles = angles;
 
-        if(globalAngle>180){
-            globalAngle-=360;
-        }
-        else if(globalAngle<-180){
-            globalAngle+=360;
+        if (globalAngle > 180) {
+            globalAngle -= 360;
+        } else if (globalAngle < -180) {
+            globalAngle += 360;
         }
         return -globalAngle;
     }
@@ -281,32 +279,31 @@ public class EncoderChassis extends BasicChassis {
         ticks[1] += directions[1] * diff[1];
         ticks[3] += directions[3] * diff[3];
         ticks[2] = ticks[3];
-        double netForward = (diff[0]+diff[1]+diff[3]+diff[3])/4.0, netRight = (directions[0]*ticks[0]+directions[1]*ticks[1])/2, netLeft = (directions[3]*ticks[3]);
-        double newANgle = -(netRight-netLeft)/ticksPerRevolution * 360;
-        netForward/=ticksPerInch;
+        double netForward = (diff[0] + diff[1] + diff[3] + diff[3]) / 4.0, netRight = (diff[0] + diff[1]) / 2, netLeft = (diff[3]);
+        double newANgle = angle-(netRight - netLeft) / ticksPerRevolution * 360;
+        netForward /= ticksPerInch;
         newANgle %= 360;
-        if(newANgle>180){
-            newANgle-=360;
-        }
-        else if(newANgle<-180){
-            newANgle+=360;
+        if (newANgle > 180) {
+            newANgle -= 360;
+        } else if (newANgle < -180) {
+            newANgle += 360;
         }
         getAngle();
-        if(abs(-globalAngle-newANgle)>0.5){
+        if (abs(-globalAngle - newANgle) > 0.5) {
             newANgle = -globalAngle;
         }
         double x = cos((newANgle * Math.PI / 180));
         double y = sin((newANgle * Math.PI / 180));
-        xVelocity = (y*netForward)/ differtime;
-        yVelocity = (x*netForward)/ differtime;
-        Velocity=sqrt(xVelocity*xVelocity+yVelocity*yVelocity);
-        double tempAVelocity=(newANgle-angle)/differtime;
-        if(tempAVelocity!=0){
-            aVelocity=tempAVelocity;
+        xVelocity = (y * netForward) / differtime;
+        yVelocity = (x * netForward) / differtime;
+        Velocity = sqrt(xVelocity * xVelocity + yVelocity * yVelocity);
+        double tempAVelocity = (newANgle - angle) / differtime;
+        if (abs(tempAVelocity)<1000) {
+            aVelocity = tempAVelocity;
         }
-        xpos+=xVelocity*differtime;
-        ypos+=yVelocity*differtime;
-        angle =(float)newANgle;
+        xpos += xVelocity * differtime;
+        ypos += yVelocity * differtime;
+        angle = (float) newANgle;
         op.telemetry.addData("ticks1", ticks[0]);
         op.telemetry.addData("ticks2", ticks[1]);
         op.telemetry.addData("ticks3", ticks[2]);
@@ -318,7 +315,7 @@ public class EncoderChassis extends BasicChassis {
         op.telemetry.addData("differtime", differtime);
         op.telemetry.addData("maxVel", maxVelocity);
         if (op.getRuntime() > lastLog + 0.01) {
-            lastLog=op.getRuntime();
+            lastLog = op.getRuntime();
             try {
                 wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," +
                         String.format("%.2f", angle) + "\n");
@@ -347,7 +344,8 @@ public class EncoderChassis extends BasicChassis {
         motorRightBack.setPower(.5);
         op.sleep(1000);
         motorRightBack.setPower(0);
-        op.sleep(1000);        motorRightFront.setPower(.5);
+        op.sleep(1000);
+        motorRightFront.setPower(.5);
         op.sleep(1000);
         motorRightFront.setPower(0);
         op.sleep(1000);
@@ -372,7 +370,7 @@ public class EncoderChassis extends BasicChassis {
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         track();
         double[] currentPosition = track();
-        double lastFuncLog=0.0;
+        double lastFuncLog = 0.0;
         double[] startposition = currentPosition;
         double[] target_position = {0, 0, 0};
         double anglecorrection = 0;
@@ -421,7 +419,7 @@ public class EncoderChassis extends BasicChassis {
                 if (sstarttertime > op.getRuntime()) {
                     sstarttertime = op.getRuntime();
                 }
-                if (op.getRuntime() > sstarttertime + 0.5/power) {
+                if (op.getRuntime() > sstarttertime + 0.5 / power) {
                     break;
                 }
             }
@@ -466,11 +464,11 @@ public class EncoderChassis extends BasicChassis {
             double posxError = 0;//tarcurpos[0]-currentPosition[0];
             double yError = (xError + xVelocity) * mpconst - yVelocity;
             double posyError = 0;//(tarcurpos[1]-currentPosition[1]);
-            if (difference < Velocity/3) {
-                powerconst = min(0.3,targetspeed/Velocity);
+            if (difference < Velocity / 3) {
+                powerconst = min(0.3, targetspeed / Velocity);
                 xError = xVelocity / abs(xVelocity) * ((pow(difference, 2) / 4) / abs(1 - pow(mpconst, 2)) - abs(xVelocity));
                 yError = (xError + xVelocity) * mpconst - yVelocity;
-                targetspeed = pow(difference, 2)/3;
+                targetspeed = pow(difference, 2) / 3;
             }
 //            yInt += (yError + posyError) * differtime;
 //            xInt += (xError + posxError) * differtime;
@@ -506,7 +504,7 @@ public class EncoderChassis extends BasicChassis {
             //double angleCorrectPower[] = {sin(angleInCorrection + PI / 4), sin(angleInCorrection - PI / 4), sqrt(pow(yCorrection, 2) + pow(xCorrection, 2))};
             //error+=(angleInCorrection-currentPosition[2])/2;
             double targetaVelocity = (error) * 2;
-            anglecorrection = (error * 4 + 4*(targetaVelocity + aVelocity) / 10) / 192;
+            anglecorrection = (error * 4 + 4 * (targetaVelocity + aVelocity) / 10) / 192;
             if (abs(anglecorrection) * power > 0.6) {
                 anglecorrection /= (abs(anglecorrection) * power) / 0.6;
             }
@@ -567,7 +565,7 @@ public class EncoderChassis extends BasicChassis {
 
             difference = abs(sqrt(x * x + y * y));
             if (op.getRuntime() > lastFuncLog + 0.01) {
-                lastFuncLog=op.getRuntime();
+                lastFuncLog = op.getRuntime();
                 try {
                     wFTCfile.write(String.format("%.2f", difference) + "\n");
                 } catch (IOException e) {
@@ -1507,7 +1505,7 @@ public class EncoderChassis extends BasicChassis {
                 }
             }
         }
-        if (end) {
+        if (!start&&end) {
             for (int i = 1; i < 2; i++) {
                 difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]), 2) + pow(point[i + 2][1] - currentPosition[1], 2)));
                 t = 0;
@@ -1822,18 +1820,20 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double[] currentPosition = track();
+
+        double lastLogs = 0.00;
         double[][] point = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
         point[0][0] = x0;
         point[0][1] = y0;
-        point[1][0] = x1;
-        point[1][1] = y1;
+        point[1][0] = currentPosition[0];
+        point[1][1] = currentPosition[1];
         point[2][0] = x2;
         point[2][1] = y2;
         point[3][0] = x3;
         point[3][1] = y3;
         point[4][0] = x3 + (x3 - x2) * pow(abs((x3 - x2) / (y3 - y2)), 1);
         point[4][1] = y3 + (y3 - y2) * pow(abs((y3 - y2) / (x3 - x2)), 1);
-        double[] currentPosition = track();
         double[] startPosition = currentPosition;
         double[] target_position = {0, 0, 0};
         double anglecorrection = 0;
@@ -2299,18 +2299,21 @@ public class EncoderChassis extends BasicChassis {
                     currentPosition = track();
                     double twoDistance = sqrt(pow(point[i + 2][1] - currentPosition[1], 2) + pow(point[i + 2][0] - currentPosition[0], 2));
                     double oneDistance = sqrt(pow(point[i + 1][1] - currentPosition[1], 2) + pow(point[i + 1][0] - currentPosition[0], 2));
-                    if ((oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance) > t && td) {
-                        t = (oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance);
-                        t2 = (oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance);
+                    if ((oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance) > t && td) {
+                        t = (oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance);
+                        t2 = (oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance);
                     }
-                    if (t >= 1) {
+                    if (tt >= 1) {
                         if (op.getRuntime() < startTime) {
                             startTime = op.getRuntime();
                         }
-                        if (op.getRuntime() > startTime + 1.5) {
+                        if (op.getRuntime() > startTime + 1.5 / power) {
                             break;
                         }
-                        t = 1;
+                        tt = 1;
+                    }
+                    if(t>=1){
+                        t=1;
                     }
                     if (!td) {
                         t = 1;
@@ -2359,20 +2362,18 @@ public class EncoderChassis extends BasicChassis {
 //                    }
                     target_position[2] = atan2(xDerivative, yDerivative) * 180 / PI + (direction - 1) * 180;
                     anglediff = target_position[2] - lastAngle;
-                    targetaVelocity = -anglediff / differtime;
-                    lastAngle = target_position[2];
-                    target_position[2] %= 360;
-                    error = currentPosition[2] - target_position[2];
-                    error %= 360;
-                    if (error > 180) {
-                        target_position[2] += 360;
-                    }
-                    if (error < -180) {
+                    if (target_position[2] > 180) {
                         target_position[2] -= 360;
                     }
+                    if (target_position[2] < -180) {
+                        target_position[2] += 360;
+                    }
+                    targetaVelocity = anglediff / differtime;
+                    lastAngle = target_position[2];
+
                     op.telemetry.addData("angleTarget", target_position[2]);
-                    if ((oneDistance + 1 / 4) / (oneDistance + twoDistance) > tt) {
-                        tt = (oneDistance + 1 / 4) / (oneDistance + twoDistance);
+                    if ((oneDistance + 1.0 / 4.0) / (oneDistance + twoDistance) > tt) {
+                        tt = (oneDistance + 1.0 / 4) / (oneDistance + twoDistance);
                     }
                     if (tt > 1) {
                         tt = 1;
@@ -2493,7 +2494,13 @@ public class EncoderChassis extends BasicChassis {
 //                    posxError=0;
 //                    posyError=0;
                     target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI) + (direction - 1) * 180;
-
+                    target_position[2]%=360;
+                    if (target_position[2] > 180) {
+                        target_position[2] += 360;
+                    }
+                    if (target_position[2] < -180) {
+                        target_position[2] -= 360;
+                    }
 //                    op.telemetry.addData("xDerivative",targetXVelocity);
 //                    op.telemetry.addData("xcorrection",xCorrection);
 //                    op.telemetry.addData("yDerivative",targetYVelocity);
@@ -2519,7 +2526,7 @@ public class EncoderChassis extends BasicChassis {
                     if (error2 < -180) {
                         error2 += 360;
                     }
-                    double controlconst = (t * t);
+                    double controlconst = (tt * tt * tt);
                     op.telemetry.addData("erro2r", error2);
                     error = controlconst * error2 + ((1 - controlconst) * error);
                     error %= 360;
@@ -2529,8 +2536,9 @@ public class EncoderChassis extends BasicChassis {
                     if (error < -180) {
                         error += 360;
                     }
-                    targetaVelocity += (error) * 2;
-                    anglecorrection = ((targetaVelocity + aVelocity) * 0.1 + error * 2) / 192;
+                    targetaVelocity -= (error);
+                    op.telemetry.addData("targetAVelocity", targetaVelocity);
+                    anglecorrection = (-(targetaVelocity - aVelocity)*0.4 + error) / 192;
                     double powernum = pow(E, -10 * (tan((abs(error / 12) % 15) * PI / 180)));
                     if (powernum == -1) {
                         powernum = -1.0001;
@@ -2563,8 +2571,22 @@ public class EncoderChassis extends BasicChassis {
                     pyError = yError;
                     pposxError = posxError;
                     pposyError = posyError;
+                    if (op.getRuntime() > lastLogs + 0.01) {
+                        lastLogs = op.getRuntime();
+                        try {
+                            wFTCfile.write(String.format("%.2f", target_position[0]) + "," + String.format("%.2f", target_position[1]) + "," +
+                                    String.format("%.2f", target_position[2]) + "," + String.format("%.2f", atan2(targetXVelocity, targetYVelocity) * 180 / PI)+ "," + String.format("%.2f",targetaVelocity)+ "\n");
+                        } catch (IOException e) {
+                            new RuntimeException("write: FAILED", e).printStackTrace();
+                        }
+                    }
                 }
                 stopAllMotors();
+                try {
+                    wFTCfile.write("\n" + "\n" + "MOVED" + "\n" + "\n");
+                } catch (IOException e) {
+                    new RuntimeException("write: FAILED", e).printStackTrace();
+                }
             }
         }
     }

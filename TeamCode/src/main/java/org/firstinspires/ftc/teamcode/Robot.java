@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.LedColor;
 import org.firstinspires.ftc.teamcode.Components.OpenCVMasterclass;
+import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.Turret;
 import org.firstinspires.ftc.teamcode.Components.VSLAMChassis;
 import org.firstinspires.ftc.teamcode.Components.tseDepositor;
@@ -89,15 +90,17 @@ public class Robot {
     private LedColor led_bank = null;
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
+    private StateMachine checker = null;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded) {
         op = opMode;
+        checker = new StateMachine(op,isTeleop);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
         rotation = new CarouselCR(op);
-        intake = new Intake(op, isTeleop);
+        intake = new Intake(op, isTeleop, checker);
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
-        turret = new Turret(op, led_bank, isTeleop);
+        turret = new Turret(op, led_bank, isTeleop, checker);
         openCV = new OpenCVMasterclass(op);
         TSE = new tseDepositor(op);
 
