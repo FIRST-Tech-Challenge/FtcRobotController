@@ -1,24 +1,3 @@
-/*
- * Copyright (c) 2020 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.blackswan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -39,10 +18,9 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "RingWebcam.exe")
-public class RingWebcam extends LinearOpMode
+@TeleOp(name = "CupCupGoose.exe")
+public class CupCupGoose extends LinearOpMode
 {
-    OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
 
     @Override
@@ -77,7 +55,9 @@ public class RingWebcam extends LinearOpMode
 
         while (opModeIsActive())
         {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
+            telemetry.addData("RED", pipeline.getAnalysis1());
+            telemetry.addData("GREEN", pipeline.getAnalysis2());
+            telemetry.addData("BLUE", pipeline.getAnalysis3());
             telemetry.addData("Position", pipeline.position);
             telemetry.update();
 
@@ -96,56 +76,73 @@ public class RingWebcam extends LinearOpMode
         /*
          * An enum to define the skystone position
          */
-        public enum RingPosition
+        public enum CupPosition
         {
-            FOUR,
-            THREE,
-            TWO,
-            ONE,
-            NONE
+            CUPLEFT,
+            CUPMIDDLE,
+            CUPRIGHT,
         }
 
         /*
-         * Some color constants
+              //outer blue 192, 176 size 30,42
+   * Some color constants
          */
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
+        static final Scalar RED = new Scalar(255, 0, 0);
 
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(85,176);
-//inner blue 68,176 size 30,42
-        //outer blue 192, 176 size 30,42
-        //inside red, the same as outer blue
-        //outer red, the same as inside blue
+        static final Point REGION1_BOTTOMLEFT_ANCHOR_POINT = new Point(1,240);
+        static final Point REGION2_BOTTOMLEFT_ANCHOR_POINT = new Point(106,240);
+        static final Point REGION3_BOTTOMLEFT_ANCHOR_POINT = new Point(213,240);
 
 
-        static final int REGION_WIDTH = 30;
-        static final int REGION_HEIGHT = 42;
 
-        final int FOUR_RING_THRESHOLD = 153;
-        final int THREE_RING_THRESHOLD = 149;
-        final int TWO_RING_THRESHOLD = 130;
-        final int ONE_RING_THRESHOLD = 119;
+        static final int REGION_WIDTH = 106;
+        static final int REGION_HEIGHT = 240;
+
+//        final int FOUR_RING_THRESHOLD = 153;
+//        final int THREE_RING_THRESHOLD = 149;
+//        final int TWO_RING_THRESHOLD = 130;
+//        final int ONE_RING_THRESHOLD = 119;
 
         Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
+                REGION1_BOTTOMLEFT_ANCHOR_POINT.x,
+                REGION1_BOTTOMLEFT_ANCHOR_POINT.y);
         Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION1_BOTTOMLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_BOTTOMLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+        Point region2_pointA = new Point(
+                REGION2_BOTTOMLEFT_ANCHOR_POINT.x,
+                REGION2_BOTTOMLEFT_ANCHOR_POINT.y);
+        Point region2_pointB = new Point(
+                REGION2_BOTTOMLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION2_BOTTOMLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+        Point region3_pointA = new Point(
+                REGION3_BOTTOMLEFT_ANCHOR_POINT.x,
+                REGION3_BOTTOMLEFT_ANCHOR_POINT.y);
+        Point region3_pointB = new Point(
+                REGION3_BOTTOMLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION3_BOTTOMLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
         /*
          * Working variables
          */
         Mat region1_Cb;
+        Mat region2_Cb;
+        Mat region3_Cb;
         Mat YCrCb = new Mat();
         Mat Cb = new Mat();
         int avg1;
+        int avg2;
+        int avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile RingPosition position = RingPosition.FOUR;
+        public volatile CupPosition position = CupPosition.CUPLEFT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -160,9 +157,21 @@ public class RingWebcam extends LinearOpMode
         @Override
         public void init(Mat firstFrame)
         {
+            telemetry.addData("BooGaLoo", "1");
+            telemetry.update();
+
             inputToCb(firstFrame);
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+            telemetry.addData("BooGaLoo", "2");
+            telemetry.update();
+            region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+            telemetry.addData("BooGaLoo", "3");
+            telemetry.update();
+            region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
+            telemetry.addData("BooGaLoo", "4");
+            telemetry.update();
+
         }
 
         @Override
@@ -171,44 +180,65 @@ public class RingWebcam extends LinearOpMode
             inputToCb(input);
 
             avg1 = (int) Core.mean(region1_Cb).val[0];
+            avg2 = (int) Core.mean(region2_Cb).val[0];
+            avg3 = (int) Core.mean(region3_Cb).val[0];
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
+                    RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = RingPosition.FOUR; // Record our analysis
-            telemetry.addData("value", avg1);
-            telemetry.update();
-            if(avg1 > FOUR_RING_THRESHOLD) {
-                position = RingPosition.FOUR;
-            }else if (avg1 > THREE_RING_THRESHOLD) {
-                position = RingPosition.THREE;
-            }else if (avg1 > TWO_RING_THRESHOLD) {
-                position = RingPosition.TWO;
-            }else if (avg1 > ONE_RING_THRESHOLD){
-                position = RingPosition.ONE;
-            }else{
-                position = RingPosition.NONE;
-            }
-
-
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region2_pointA, // First point which defines the rectangle
+                    region2_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                    2); // Negative thickness means solid fill
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    region3_pointA, // First point which defines the rectangle
+                    region3_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Negative thickness means solid fill
+
+            position = CupPosition.CUPLEFT; // Record our analysis
+            telemetry.addData("value", avg1);
+            telemetry.update();
+//            if(avg1 > FOUR_RING_THRESHOLD) {
+//                position = RingPosition.FOUR;
+//            }else if (avg1 > THREE_RING_THRESHOLD) {
+//                position = RingPosition.THREE;
+//            }else if (avg1 > TWO_RING_THRESHOLD) {
+//                position = RingPosition.TWO;
+//            }else if (avg1 > ONE_RING_THRESHOLD){
+//                position = RingPosition.ONE;
+//            }else{
+//                position = RingPosition.NONE;
+//            }
+
+
+
+
 
             return input;
         }
 
-        public int getAnalysis()
+        public int getAnalysis1()
         {
             return avg1;
+        }
+
+        public int getAnalysis2()
+        {
+            return avg2;
+        }
+
+        public int getAnalysis3()
+        {
+            return avg3;
         }
 
 
