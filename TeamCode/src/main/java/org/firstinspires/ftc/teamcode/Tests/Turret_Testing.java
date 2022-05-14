@@ -46,8 +46,6 @@ public class Turret_Testing extends LinearOpMode {
 
             robot.TurretManualExtension(gamepad2.right_trigger, gamepad2.left_trigger);
 
-            telemetry.addData("extension pos", robot.Turret_Extension_Position());
-            telemetry.addData("rotation pos", robot.Turret_Rotation_Position());
 
 //            sleep(100);
         }

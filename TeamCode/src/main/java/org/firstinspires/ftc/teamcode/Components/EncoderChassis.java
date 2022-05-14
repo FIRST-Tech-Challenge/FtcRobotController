@@ -47,6 +47,7 @@ public class EncoderChassis extends BasicChassis {
     public static double aVelocity = 0;
     public static double Velocity = 0;
     private final BNO055IMU imu;
+    private double lastAngleUpdate = 0.0;
     private Orientation lastAngles = new Orientation();
     private double globalAngle;
     private double correction;
@@ -297,8 +298,9 @@ public class EncoderChassis extends BasicChassis {
         xVelocity = (y * netForward) / differtime;
         yVelocity = (x * netForward) / differtime;
         Velocity = sqrt(xVelocity * xVelocity + yVelocity * yVelocity);
-        double tempAVelocity = (newANgle - angle) / differtime;
-        if (abs(tempAVelocity)<1000) {
+        double tempAVelocity = (newANgle - angle) / (thisTime-lastAngleUpdate);
+        if (abs(tempAVelocity)<1000 && tempAVelocity!=aVelocity) {
+            lastAngleUpdate = thisTime;
             aVelocity = tempAVelocity;
         }
         xpos += xVelocity * differtime;
@@ -318,7 +320,7 @@ public class EncoderChassis extends BasicChassis {
             lastLog = op.getRuntime();
             try {
                 wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," +
-                        String.format("%.2f", angle) + "\n");
+                        String.format("%.2f", aVelocity)+","+ String.format("%.2f", angle) + "\n");
             } catch (IOException e) {
                 new RuntimeException("write: FAILED", e).printStackTrace();
             }
@@ -2299,9 +2301,9 @@ public class EncoderChassis extends BasicChassis {
                     currentPosition = track();
                     double twoDistance = sqrt(pow(point[i + 2][1] - currentPosition[1], 2) + pow(point[i + 2][0] - currentPosition[0], 2));
                     double oneDistance = sqrt(pow(point[i + 1][1] - currentPosition[1], 2) + pow(point[i + 1][0] - currentPosition[0], 2));
-                    if ((oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance) > t && td) {
-                        t = (oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance);
-                        t2 = (oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance);
+                    if ((oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance) > t && td) {
+                        t = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
+                        t2 = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
                     }
                     if (tt >= 1) {
                         if (op.getRuntime() < startTime) {
@@ -2362,14 +2364,14 @@ public class EncoderChassis extends BasicChassis {
 //                    }
                     target_position[2] = atan2(xDerivative, yDerivative) * 180 / PI + (direction - 1) * 180;
                     anglediff = target_position[2] - lastAngle;
+                    targetaVelocity = anglediff / differtime;
+                    lastAngle = target_position[2];
                     if (target_position[2] > 180) {
                         target_position[2] -= 360;
                     }
                     if (target_position[2] < -180) {
                         target_position[2] += 360;
                     }
-                    targetaVelocity = anglediff / differtime;
-                    lastAngle = target_position[2];
 
                     op.telemetry.addData("angleTarget", target_position[2]);
                     if ((oneDistance + 1.0 / 4.0) / (oneDistance + twoDistance) > tt) {
@@ -2496,10 +2498,10 @@ public class EncoderChassis extends BasicChassis {
                     target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI) + (direction - 1) * 180;
                     target_position[2]%=360;
                     if (target_position[2] > 180) {
-                        target_position[2] += 360;
+                        target_position[2] -= 360;
                     }
                     if (target_position[2] < -180) {
-                        target_position[2] -= 360;
+                        target_position[2] += 360;
                     }
 //                    op.telemetry.addData("xDerivative",targetXVelocity);
 //                    op.telemetry.addData("xcorrection",xCorrection);
@@ -2508,7 +2510,6 @@ public class EncoderChassis extends BasicChassis {
 //                    op.telemetry.addData("acorrection",(atan2(targetXVelocity+xCorrection,targetYVelocity+yCorrection))*180/PI);
                     error = currentPosition[2] - target_position[2];
                     //double angleCorrectPower[] = {sin(angleInCorrection + PI / 4), sin(angleInCorrection - PI / 4), sqrt(pow(yCorrection, 2) + pow(xCorrection, 2))};
-                    error += (currentPosition[2] - tarcurpos[2]);
                     error %= 360;
                     if (error > 180) {
                         error -= 360;
@@ -2518,7 +2519,6 @@ public class EncoderChassis extends BasicChassis {
                     }
                     op.telemetry.addData("error", error);
                     double error2 = currentPosition[2] - atan2(x, y) * 180 / PI + (direction - 1) * 180;
-                    error2 *= 1;
                     error2 %= 360;
                     if (error2 > 180) {
                         error2 -= 360;
@@ -2526,7 +2526,7 @@ public class EncoderChassis extends BasicChassis {
                     if (error2 < -180) {
                         error2 += 360;
                     }
-                    double controlconst = (tt * tt * tt);
+                    double controlconst = (tt * tt);
                     op.telemetry.addData("erro2r", error2);
                     error = controlconst * error2 + ((1 - controlconst) * error);
                     error %= 360;
@@ -2538,7 +2538,7 @@ public class EncoderChassis extends BasicChassis {
                     }
                     targetaVelocity -= (error);
                     op.telemetry.addData("targetAVelocity", targetaVelocity);
-                    anglecorrection = (-(targetaVelocity - aVelocity)*0.4 + error) / 192;
+                    anglecorrection = ((aVelocity)*0.4 - targetaVelocity + error) / 192;
                     double powernum = pow(E, -10 * (tan((abs(error / 12) % 15) * PI / 180)));
                     if (powernum == -1) {
                         powernum = -1.0001;
@@ -2575,7 +2575,7 @@ public class EncoderChassis extends BasicChassis {
                         lastLogs = op.getRuntime();
                         try {
                             wFTCfile.write(String.format("%.2f", target_position[0]) + "," + String.format("%.2f", target_position[1]) + "," +
-                                    String.format("%.2f", target_position[2]) + "," + String.format("%.2f", atan2(targetXVelocity, targetYVelocity) * 180 / PI)+ "," + String.format("%.2f",targetaVelocity)+ "\n");
+                                    String.format("%.2f", target_position[2]) + "," + String.format("%.2f", atan2(targetXVelocity, targetYVelocity) * 180 / PI)+ "," + String.format("%.2f",targetaVelocity)+ ","+String.format("%.2f",anglecorrection)+"\n");
                         } catch (IOException e) {
                             new RuntimeException("write: FAILED", e).printStackTrace();
                         }

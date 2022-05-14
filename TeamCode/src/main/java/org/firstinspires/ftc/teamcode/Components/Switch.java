@@ -14,6 +14,7 @@ public class Switch {
     }
 
     public boolean isSwitched() {
+
         return !touchSensor.getState();
     }
 

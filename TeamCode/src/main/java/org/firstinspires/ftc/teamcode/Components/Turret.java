@@ -29,7 +29,7 @@ public class Turret {
     private double lastTime=0, lastServoPos=0,servoDist=0;
     private final double DEG_PER_TICK_MOTOR = 18.0/116.0, DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime =.3;
     private final double TICKS_PER_INCH = 100.0;
-    private final double MAX_EXTENSION_TICKS = 3300;
+    private final double MAX_EXTENSION_TICKS = 810;
     private final double MIN_EXTENSION_TICKS = 15;
     private final double MAX_ROTATION_TICKS = 570;
     private final double TORQUE_GEAR_RATIO = 10;
@@ -41,11 +41,6 @@ public class Turret {
     boolean servoPos = false;
     boolean servoPos2 = false;
     boolean downCap = false;
-    public static boolean turretDown = true;//up
-    public static boolean turretShort=true;
-    public static boolean turretStraight = true;
-    public static boolean basketDown = true;
-    public static boolean basketActuationDown = false;
     public static double extendPosition=0, rotatePosition=0;
     boolean angleControlling = false, arming = false, basketing = false,areTeleop = false;
     private StateMachine checker = null;
@@ -68,11 +63,20 @@ public class Turret {
             turret_Rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         }
+        turret_Angle_Control.setPosition(0);
+        turret_Angle_Control2.setPosition(118.0/270);
+        turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret_Rotation.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret_Extension.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        basketActuationServo.setPosition(0.58);
+        basketArmServo.setPosition(0.0);
         if(!isTeleOp) {
             turret_Angle_Control.setPosition(0);
             turret_Angle_Control2.setPosition(118.0/270);
             turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            turret_Rotation.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
             turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -102,58 +106,54 @@ public class Turret {
     public double turret_angle_control_rotations;
     double turret_angle_control_full_rotations; //will update this in teleop loop
 
-    public double Turret_Rotation_Position () {
-        if (abs(turret_Rotation.getCurrentPosition()) < 20) {
-            turretStraight = true;
-        }
-        else{
-            turretStraight=false;
-        }
-        return turret_Rotation.getCurrentPosition();
-    }
-    public boolean Turret_Extension_Position () {
-        if (abs(turret_Extension.getCurrentPosition()) < 20) {
-            turretDown = true;
-        }
-        else{
-            turretDown=false;
-        }
-        return turretDown;
-    }
     public void updateTurretPositions(){
         extendPosition = turret_Extension.getCurrentPosition();
         rotatePosition = turret_Rotation.getCurrentPosition();
         if(extendPosition<1500){
-            turretShort=true;
+            checker.setState(StateMachine.States.TURRET_SHORT,true);
         }
         else{
-            turretShort=false;
+            checker.setState(StateMachine.States.TURRET_STRAIGHT,false);
         }
         if (abs(rotatePosition) < 10) {
-            turretStraight = true;
+            checker.setState(StateMachine.States.TURRET_STRAIGHT,true);
         }
         else{
-            turretStraight=false;
+            checker.setState(StateMachine.States.TURRET_STRAIGHT,false);;
         }
         if (extendPosition < 30) {
-            turretDown = true;
+            checker.setState(StateMachine.States.EXTENDED,false);
         }
         else{
-            turretDown=false;
+            checker.setState(StateMachine.States.EXTENDED,true);
         }
         if (basketArmServo.getPosition() < 0.05) {
-            basketDown = true;
+            checker.setState(StateMachine.States.BASKET_ARM_REST,true);
         }
         else{
-            basketDown=false;
+            checker.setState(StateMachine.States.BASKET_ARM_REST,false);
         }
-        if (basketActuationServo.getPosition() < 0.5) {
-            basketActuationDown = false;
+        if (basketActuationServo.getPosition() < 0.54) {
+            checker.setState(StateMachine.States.BASKET_TRANSFER,true);
+            checker.setState(StateMachine.States.BASKET_DROP,false);
+            checker.setState(StateMachine.States.BASKET_CIELING,false);
+
+
+        }
+        else if (basketActuationServo.getPosition() > 0.8) {
+            checker.setState(StateMachine.States.BASKET_TRANSFER,false);
+            checker.setState(StateMachine.States.BASKET_DROP,true);
+            checker.setState(StateMachine.States.BASKET_CIELING,false);
+
         }
         else{
-            basketActuationDown=true;
+            checker.setState(StateMachine.States.BASKET_TRANSFER,false);
+            checker.setState(StateMachine.States.BASKET_CIELING,true);
+            checker.setState(StateMachine.States.BASKET_DROP,false);
+
+
         }
-        if(turretDown&&turretStraight){
+        if(checker.getState(StateMachine.States.EXTENDED)&&!checker.getState(StateMachine.States.RAISED)){
             resetten=true;
             arming = false;
             basketing = false;
@@ -164,8 +164,8 @@ public class Turret {
         }
         op.telemetry.addData("extendoPos", extendPosition);
         op.telemetry.addData("rotatePos", rotatePosition);
-        op.telemetry.addData("basketDown", basketDown);
-        op.telemetry.addData("basketActuationDown", basketActuationDown);
+        op.telemetry.addData("basketDown", checker.getState(StateMachine.States.BASKET_ARM_REST));
+        op.telemetry.addData("basketActuationDown", checker.getState(StateMachine.States.BASKET_TRANSFER));
 
     }
     public void aimHigh(){
@@ -352,37 +352,43 @@ public class Turret {
     }
 
     public void TurretManualExtension (double turret_extension, double turret_retraction) {
-        if (!basketDown) {
+        if (checker.checkIf(StateMachine.States.EXTENDED)) {
             if (((extendPosition > MAX_EXTENSION_TICKS && turret_extension > turret_retraction) || (extendPosition < MIN_EXTENSION_TICKS && turret_extension < turret_retraction))) {
                 turret_Extension.setPower(0);
+                op.telemetry.addData("extreme", extendPosition);
+
             }
             else if(abs(turret_extension-turret_retraction)<.2){
                 turret_Extension.setPower((0));
+                op.telemetry.addData("little", extendPosition);
             }
             else {
                 turret_Extension.setPower((turret_extension - turret_retraction));
+                op.telemetry.addData("tick", "ext", "retr", extendPosition, turret_extension, turret_retraction);
+
             }
         }
+        op.telemetry.addData("turtext", extendPosition);
 
     }
     public void turretExtendo(double whereExtendo){
-//        if(whereExtendo>MAX_EXTENSION_TICKS){
-//            whereExtendo=MAX_EXTENSION_TICKS-5;
-//        }
-//        double distance = whereExtendo-extendPosition;
-//        if(abs(distance)<50){
-//            turret_Extension.setVelocity(0);
-//        }
-//        else {
-//            turret_Extension.setVelocity(distance/abs(distance)* 4 * (abs(distance) + 500));
-//        }
-//        if(abs(distance)<50&&turret_Extension.getVelocity()<100){
-//            turret_Extension.setVelocity(0);
-//            faked=true;
-//        }
-//        else{
-//            faked = false;
-//        }
+        if(whereExtendo>MAX_EXTENSION_TICKS){
+            whereExtendo=MAX_EXTENSION_TICKS-5;
+        }
+        double distance = whereExtendo-extendPosition;
+        if(abs(distance)<50){
+            turret_Extension.setVelocity(0);
+        }
+        else {
+            turret_Extension.setVelocity(distance/abs(distance)* 4 * (abs(distance) + 50));
+        }
+        if(abs(distance)<50&&turret_Extension.getVelocity()<100){
+            turret_Extension.setVelocity(0);
+            faked=true;
+        }
+        else{
+            faked = false;
+        }
         faked = true;
     }
     public void TurretManualFlip () {
@@ -399,7 +405,7 @@ public class Turret {
     public void FlipBasket (int up) {
         updateTurretPositions();
 
-        if(basketDown&&areTeleop) {
+        if(checker.getState(StateMachine.States.BASKET_ARM_REST)&&areTeleop) {
             basketActuationServo.setPosition(0.68);
         }
         else{
@@ -441,7 +447,7 @@ public class Turret {
         basketArmServo.setPosition(torget);
     }
     public void FlipBasketArmLow () {
-        if(basketDown) {
+        if(checker.getState(StateMachine.States.BASKET_ARM_REST)) {
             basketArmServo.setPosition(0.9);
         }
         else{
@@ -451,7 +457,7 @@ public class Turret {
     }
     public void FlipBasketArmHigh () {
         updateTurretPositions();
-        if(basketDown) {
+        if(checker.getState(StateMachine.States.BASKET_ARM_REST)) {
             basketArmServo.setPosition(0.45);
         }
         else{
@@ -511,14 +517,14 @@ public class Turret {
 
     public boolean TurretReset (double power) {
         boolean isReset = true;
-        if(!turretDown){
+        if(!checker.getState(StateMachine.States.EXTENDED)){
             turret_Extension.setVelocity(-extendPosition/abs(extendPosition)* 4 * (abs(extendPosition) + 500));
         }
         else{
             turret_Extension.setVelocity(0);
         }
 
-        if(turretShort&&!turretStraight){
+        if(checker.getState(StateMachine.States.TURRET_SHORT)&&!checker.getState(StateMachine.States.TURRET_STRAIGHT)){
             turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(3*abs(rotatePosition)+100));
         }
         else {
@@ -528,20 +534,20 @@ public class Turret {
             basketActuationServo.setPosition(0.82);
             arming=true;
         }
-        if(!basketDown&&!arming){
+        if(!checker.getState(StateMachine.States.BASKET_ARM_REST)&&!arming){
             basketArmServo.setPosition(0.00);
             arming = true;
         }
-        if(!basketDown&&turretDown&&turretStraight&&!basketing&&!resetten){
+        if(!checker.getState(StateMachine.States.BASKET_ARM_REST)&&checker.getState(StateMachine.States.EXTENDED)&&checker.getState(StateMachine.States.TURRET_STRAIGHT)&&!basketing&&!resetten){
             basketActuationServo.setPosition(.82);
             basketing = true;
         }
-        if(!angleControlling&&turretShort) {
+        if(!angleControlling&&checker.getState(StateMachine.States.TURRET_STRAIGHT)) {
             turret_Angle_Control.setPosition(0);
             turret_Angle_Control2.setPosition(118.0/270);
             angleControlling = true;
         }
-        if(basketDown&&basketActuationDown&&turretDown&&turretStraight){
+        if(checker.getState(StateMachine.States.BASKET_ARM_REST)&&checker.getState(StateMachine.States.BASKET_TRANSFER)&&checker.getState(StateMachine.States.EXTENDED)&&checker.getState(StateMachine.States.TURRET_STRAIGHT)){
             isReset = false;
             arming = false;
             basketing = false;

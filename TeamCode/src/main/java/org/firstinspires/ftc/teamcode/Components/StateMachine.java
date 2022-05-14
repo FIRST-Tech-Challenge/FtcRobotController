@@ -24,7 +24,8 @@ public class StateMachine {
         TURRET_STRAIGHT(true),
         IN_WAREHOUSE(false),
         TRANSFERRED(false),
-        DROPPED(false);
+        DROPPED(false),
+        TURRET_SHORT(true);
         boolean status;
         States(boolean value) {
             this.status = value;
@@ -46,13 +47,13 @@ public class StateMachine {
     public void setState(States state, boolean value) {
         state.setStatus(value);
     }
-
+    public boolean getState(States state){return state.status;}
     public boolean checkIf(States state){
         if(state == States.INTAKING){
             return teleOp || IN_WAREHOUSE.status;
         }
         else if(state == States.FLIPPING){
-            return States.SWITCHED.status && TURRET_STRAIGHT.status && !States.EXTENDED.status && !States.RAISED.status && States.BASKET_TRANSFER.status;
+            return TURRET_STRAIGHT.status && !States.EXTENDED.status && !States.RAISED.status && States.BASKET_TRANSFER.status;
         }
         else if(state == States.SWITCHED){
             return true;
@@ -76,7 +77,7 @@ public class StateMachine {
             return States.BASKET_ARM_REST.status&&!States.EXTENDED.status;
         }
         else if(state == States.EXTENDED){
-            return !States.BASKET_TRANSFER.status;
+            return !States.BASKET_TRANSFER.status || !States.BASKET_ARM_REST.status;
         }
         else if(state == States.RAISED){
             return States.TRANSFERRED.status;

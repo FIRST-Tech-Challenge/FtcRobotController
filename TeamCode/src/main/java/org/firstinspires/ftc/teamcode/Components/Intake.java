@@ -46,6 +46,7 @@ public class Intake {
             }
         }
         else{
+            checker.setState(StateMachine.States.SWITCHED, !touchSensor.getState());
             return touchSensor.getState();
         }
         return true;
@@ -80,7 +81,7 @@ public class Intake {
 //    }
 
     public boolean flipIntake(){
-        if (Turret.turretDown && Turret.turretStraight && Turret.basketDown) {
+        if (checker.checkIf(StateMachine.States.FLIPPING)) {
             if (intakeServo.getPosition()<0.5) {
                 intakeServo.setPosition(1);
                 intakeServo2.setPosition(0.3);

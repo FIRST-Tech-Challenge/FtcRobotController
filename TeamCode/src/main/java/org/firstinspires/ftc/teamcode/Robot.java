@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Components.Turret.basketActuationDown;
-import static org.firstinspires.ftc.teamcode.Components.Turret.basketDown;
-import static org.firstinspires.ftc.teamcode.Components.Turret.turretDown;
-import static org.firstinspires.ftc.teamcode.Components.Turret.turretStraight;
+import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.Velocity;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.aVelocity;
@@ -202,8 +199,6 @@ public class Robot {
     }
 
     public void teleopLoop(int red, double startx, double starty) {
-
-
         /** gamepad 1**/
         float forward = -op.gamepad1.left_stick_y;
         float strafe = -op.gamepad1.left_stick_x; //remove dis boi son// DIY!
@@ -269,7 +264,7 @@ public class Robot {
         }
 
         if (changed) {
-            if (!basketDown) {
+            if (!checker.getState(StateMachine.States.BASKET_ARM_REST)) {
                 if (alliance_shipping_hub) {
                     turret.FlipBasketArmToPosition(.45);
                 }
@@ -427,7 +422,7 @@ public class Robot {
         /** add stuff u want to do with intake when switch is on HERE **/
         if (!intake.isSwitched() || isFlipping) {
             op.telemetry.addData("el button", "is not clicked");
-            if (!intake.isSwitched() && turretStraight && turretDown && basketDown && basketActuationDown || isFlipping) {
+            if (checker.checkIf(StateMachine.States.TRANSFERRING) || isFlipping) {
                 //
                 //
                 op.telemetry.addData("startTime 0", startTime[0]);
@@ -524,9 +519,6 @@ public class Robot {
         turret.capBasket();
     }
 
-    public double Turret_Rotation_Position() {
-        return turret.Turret_Rotation_Position();
-    }
 
     public void TurretExtend(double height_inches, double extension_inches, double power) {
         turret.TurretExtend(height_inches, extension_inches, power);
@@ -612,13 +604,10 @@ public class Robot {
         turret.TurretStop();
     }
 
-    public boolean Turret_Extension_Position() {
-        return turret.Turret_Extension_Position();
-    }
 
     public void autoAim(double shipping_hub_x, double shipping_hub_y) {
         double[] robot_position = {xpos, ypos, angle};
-        double turret_relative_rotation_angle = robot_position[2] - turret.Turret_Rotation_Position();
+        double turret_relative_rotation_angle = robot_position[2] - extendPosition;
         double turret_target_rotation_angle = atan((robot_position[0] - shipping_hub_x) / (robot_position[1] - shipping_hub_y)) + turret_relative_rotation_angle;
         turret.TurretRotate(turret_target_rotation_angle);
     }
@@ -806,13 +795,13 @@ public class Robot {
                     starterTimes[0] = nowTime;
                 }
                 if (nowTime - starterTimes[0] > .2 && resetten && nowTime - starterTimes[4] > 0.74) {
-                    intake.reverseIntake(0.7);
+                    intake.reverseIntake(1.0);
                     reversing = true;
                     starterTimes[0] = 500;
                     starterTimes[1] = nowTime;
                 }
                 if (reversing) {
-                    intake.reverseIntake(0.8);
+                    intake.reverseIntake(1.0);
                 }
                 if (nowTime - starterTimes[1] > 0.3) {
                     intake.flipIntakeToPosition(0.5);
@@ -1027,7 +1016,7 @@ public class Robot {
                 starterTimes[0] = nowTime;
             }
             if (nowTime - starterTimes[0] > .2 && resetten && nowTime - starterTimes[4] > 0.74) {
-                intake.reverseIntake(0.7);
+                intake.reverseIntake(0.8);
                 starterTimes[0] = 500;
                 reversing = true;
                 starterTimes[1] = nowTime;

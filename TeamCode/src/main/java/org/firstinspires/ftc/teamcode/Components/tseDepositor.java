@@ -19,7 +19,7 @@ public class tseDepositor {
     long initialTime;
     long retractTime;
     int position=0;
-    double[] positions = {0.7,0.05,0.53,0.4};
+    double[] positions = {0.7,0.03,0.35,0.25};
     double reversePower;
     static final long FORWARD_ROTATION_PER_INCH = 147;
     static final long REVERSE_ROTATION_PER_INCH = 114;
@@ -30,7 +30,7 @@ public class tseDepositor {
         et = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         initialTime = retractTime = 0;
         reversePower = 0.0;
-        TSEServo.setPosition(1.0);
+        TSEServo.setPosition(0.9);
 
     }
 
