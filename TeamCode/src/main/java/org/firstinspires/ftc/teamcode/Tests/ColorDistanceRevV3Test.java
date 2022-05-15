@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Components.ColorDistanceRevV3;
 @Disabled
 
@@ -31,11 +30,7 @@ public class ColorDistanceRevV3Test extends LinearOpMode {
             telemetry.addData("Blue ", colorDist.blue());
             hsvValues = colorDist.hsvVal();
             telemetry.addData("Hue", hsvValues[0]+" "+hsvValues[1]+" "+hsvValues[2]);
-
-            telemetry.addData("range", String.format("%.01f mm", colorDist.getSensorDistance(DistanceUnit.MM)));
-            telemetry.addData("range", String.format("%.01f cm", colorDist.getSensorDistance(DistanceUnit.CM)));
-            telemetry.addData("range", String.format("%.01f m", colorDist.getSensorDistance(DistanceUnit.METER)));
-            telemetry.addData("range", String.format("%.01f in", colorDist.getSensorDistance(DistanceUnit.INCH)));
+            telemetry.addData("range", String.format("%.01f in", colorDist.getSensorDistance()));
             telemetry.update();
 
         }

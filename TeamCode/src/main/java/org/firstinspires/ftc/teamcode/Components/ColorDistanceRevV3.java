@@ -39,10 +39,10 @@ public class ColorDistanceRevV3
         // Save reference to Hardware map
         hwMap = opMode.hardwareMap;
         // get a reference to the color sensor.
-        sensorColor = hwMap.get(ColorSensor.class, "sensor_color_distance");
+        sensorColor = hwMap.get(ColorSensor.class, "intakeSensor");
 
         // get a reference to the distance sensor that shares the same name.
-        sensorDistance = hwMap.get(DistanceSensor.class, "sensor_color_distance");
+        sensorDistance = hwMap.get(DistanceSensor.class, "intakeSensor");
     }
 
     public int alpha() {
@@ -74,8 +74,8 @@ public class ColorDistanceRevV3
     //       DistanceUnit.CM
     //       DistanceUnit.METER
     //       DistanceUnit.INCH
-    public double getSensorDistance(DistanceUnit unit) {
-        return sensorDistance.getDistance(unit);
+    public double getSensorDistance() {
+        return sensorDistance.getDistance(DistanceUnit.INCH);
     }
 }
 
