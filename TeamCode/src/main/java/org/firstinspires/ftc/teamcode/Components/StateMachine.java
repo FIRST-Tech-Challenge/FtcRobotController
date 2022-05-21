@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.DROPPED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.INTAKE_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.FLIPPING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.INTAKING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.IN_WAREHOUSE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.SEQUENCING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.States.TURRET_STRAIGHT;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -25,7 +27,9 @@ public class StateMachine {
         IN_WAREHOUSE(false),
         TRANSFERRED(false),
         DROPPED(false),
-        TURRET_SHORT(true);
+        TURRET_SHORT(true),
+        SEQUENCING(false),
+        REVERSING(false);
         boolean status;
         States(boolean value) {
             this.status = value;
@@ -37,11 +41,10 @@ public class StateMachine {
     }
 
     public StateMachine(LinearOpMode op, boolean isTeleOp) {
-        States.values();
-        if (isTeleOp) {
-            INTAKE_DOWN.setStatus(false);
-        }
         teleOp=isTeleOp;
+        if(teleOp){
+            States.INTAKE_DOWN.setStatus(true);
+        }
     }
 
     public void setState(States state, boolean value) {
@@ -50,16 +53,22 @@ public class StateMachine {
     public boolean getState(States state){return state.status;}
     public boolean checkIf(States state){
         if(state == States.INTAKING){
-            return teleOp || IN_WAREHOUSE.status;
+            return (teleOp || IN_WAREHOUSE.status) && !INTAKING.status;
+        }
+        else if(state == States.REVERSING){
+            return (!FLIPPING.status&&!States.REVERSING.status);
+        }
+        else if(state == SEQUENCING){
+            return States.SWITCHED.status;
         }
         else if(state == States.FLIPPING){
-            return TURRET_STRAIGHT.status && !States.EXTENDED.status && !States.RAISED.status && States.BASKET_TRANSFER.status;
+            return TURRET_STRAIGHT.status && !States.EXTENDED.status && !States.RAISED.status && States.BASKET_TRANSFER.status && !FLIPPING.status;
         }
         else if(state == States.SWITCHED){
             return true;
         }
         else if(state == States.TRANSFERRING){
-            return States.SWITCHED.status && TURRET_STRAIGHT.status && !States.EXTENDED.status && !States.RAISED.status && States.BASKET_TRANSFER.status && !States.INTAKE_DOWN.status;
+            return !States.TRANSFERRING.status&&!FLIPPING.status && TURRET_STRAIGHT.status && !States.EXTENDED.status && !States.RAISED.status && States.BASKET_TRANSFER.status && !States.INTAKE_DOWN.status && SEQUENCING.status;
         }
         else if(state == States.INTAKE_DOWN){
             return !States.SWITCHED.status;

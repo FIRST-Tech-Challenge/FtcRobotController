@@ -15,17 +15,12 @@ import static java.lang.Math.tan;
 
 import android.annotation.SuppressLint;
 
-import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.spartronics4915.lib.T265Camera;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -466,11 +461,11 @@ public class EncoderChassis extends BasicChassis {
             double posxError = 0;//tarcurpos[0]-currentPosition[0];
             double yError = (xError + xVelocity) * mpconst - yVelocity;
             double posyError = 0;//(tarcurpos[1]-currentPosition[1]);
-            if (difference < Velocity / 3) {
+            if (difference < Velocity / 4) {
                 powerconst = min(0.3, targetspeed / Velocity);
                 xError = xVelocity / abs(xVelocity) * ((pow(difference, 2) / 4) / abs(1 - pow(mpconst, 2)) - abs(xVelocity));
                 yError = (xError + xVelocity) * mpconst - yVelocity;
-                targetspeed = pow(difference, 2) / 3;
+                targetspeed = pow(difference, 2) / 4;
             }
 //            yInt += (yError + posyError) * differtime;
 //            xInt += (xError + posxError) * differtime;
@@ -575,7 +570,7 @@ public class EncoderChassis extends BasicChassis {
                 }
             }
         }
-        turnInPlace(a, truestartpower);
+        turnInPlace(a, 1);
         stopAllMotors();
     }
 
@@ -2993,11 +2988,15 @@ public class EncoderChassis extends BasicChassis {
 
 
     public void turnInPlace(double target, double power) {
+        double acceleRate = 300;
+        double deceleRate = 300;
+        //180
         double currentPosition[] = track();
         double time = op.getRuntime();
+        double closeTime = 100;
         double minPower = 0.3;
         while (abs(currentPosition[2] - target) > 1.5) {
-            minPower = 0.3;
+            minPower = 0.27;
             currentPosition = track();
             if (op.getRuntime() - time > 2.5) {
                 break;
@@ -3010,18 +3009,20 @@ public class EncoderChassis extends BasicChassis {
                 error += 360;
             }
             double targetaVelocity = (error) * 2;
-            double angleConst = (error * 4 + (targetaVelocity + aVelocity) * .2) / 192;
-            if (abs(aVelocity) < 1) {
-                minPower = 0.4;
-            }
+            double angleConst = (error * 4 + (targetaVelocity + aVelocity) * .5) / 216;
             if (abs(angleConst) * power < minPower) {
                 angleConst /= (abs(angleConst) * power) / minPower;
             }
             if (abs(aVelocity) > 300) {
                 angleConst = 0;
             }
-            if (abs(aVelocity) < 10) {
-                angleConst *= 2;
+            if(error<5){
+                if (op.getRuntime() <  closeTime) {
+                    closeTime = op.getRuntime();
+                }
+                if(op.getRuntime()-closeTime>0.4){
+                    break;
+                }
             }
             op.telemetry.addData("angleconst", angleConst);
             op.telemetry.addData("targetaVelocity", targetaVelocity);

@@ -9,7 +9,8 @@ public class Switch {
     DigitalChannel touchSensor;
 
     public Switch(LinearOpMode opMode) {
-        touchSensor = opMode.hardwareMap.get(DigitalChannel.class, "touchSensor");
+//        noMoSwitch
+//        touchSensor = opMode.hardwareMap.get(DigitalChannel.class, "touchSensor");
         touchSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 
