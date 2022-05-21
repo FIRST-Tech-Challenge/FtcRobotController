@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.aVelocity;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
-import org.firstinspires.ftc.teamcode.Components.VSLAMChassis;
 
 @Autonomous(name= "track")
 public class track extends LinearOpMode {
@@ -26,16 +26,29 @@ public class track extends LinearOpMode {
         //int rings = robot.getRingsAndWaitForStart();
         //robot.stopRingDetection();
         waitForStart();
-        odom.moveTester();
+        double stopStart = 1;
+//        odom.moveTester();
 //        robot.setPosition(61.75,-42.25, 0);
 //        robot.moveAngle(0,-65,0.5);
 //        sleep(5000);
 //        robot.goToPosition(23.5,-23.5,0,0.5);            robot.partOfPolySplineToPositionHead(1,  -6.75,-2.2,robot.track()[0],robot.track()[1],2.75, 3.1, 25.75,3.15,true,true,0.3);
 //            robot.partOfPolySplineToPositionHead(1,  -6.75,-2.2, robot.track()[0], robot.track()[1], 25.75,3.15, 30.75,3.0,true,true,0.3);
         //robot.navigate();
-        while(!isStopRequested()){
+        sleep(1000);
+        odom.track();
+        resetStartTime();
+        odom.setLeftMotorPowers(-1.0);
+        odom.setRightMotorPowers(1.0);
+        sleep(1000);
+        odom.track();
+        telemetry.addData("acceleRate", aVelocity*2);
+        odom.stopAllMotors();
+        while(aVelocity>0){
             odom.track();
         }
+        telemetry.addData("deceleTime", getRuntime()-1);
+        telemetry.update();
+        sleep(5000);
         stop();
     }
 

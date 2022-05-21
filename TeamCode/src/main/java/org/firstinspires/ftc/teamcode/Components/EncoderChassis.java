@@ -3002,6 +3002,7 @@ public class EncoderChassis extends BasicChassis {
         double minPower = 0.3;
         double startDiff = currentPosition[2] - target;
         double accelTime = -1+sqrt(1+4*acceleRate*2*startDiff*deceleRate/acceleRate)/(2*acceleRate);
+        double decelDist = aVelocity/deceleRate*aVelocity/2;
         while (abs(currentPosition[2] - target) > 1.5) {
             minPower = 0.27;
             currentPosition = track();
