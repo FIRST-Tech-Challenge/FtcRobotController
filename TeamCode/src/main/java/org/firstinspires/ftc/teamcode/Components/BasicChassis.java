@@ -50,6 +50,7 @@ public abstract class BasicChassis {
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
     abstract public void setRightMotorPowers(double power);
     abstract public void setLeftMotorPowers(double power);
