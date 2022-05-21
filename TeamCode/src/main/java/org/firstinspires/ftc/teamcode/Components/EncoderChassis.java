@@ -2990,11 +2990,18 @@ public class EncoderChassis extends BasicChassis {
     public void turnInPlace(double target, double power) {
         double acceleRate = 300;
         double deceleRate = 300;
-        //180
+        //accelTime * acceleRate/deceleRate * accelTime * acceleRate/2 = error
+        //error = startDiff-(accelTime*accelTime*acceleRate)/2
+        //accelTime * acceleRate/deceleRate * accelTime * acceleRate/2 = startDiff-(accelTime*accelTime*acceleRate)/2
+        //acceleRate*accelTime^2 + acceleTime = 2*startDiff*deceleRate/acceleRate
+        //-1+sqrt(1+4*acceleRate*2*startDiff*deceleRate/acceleRate)/(2*acceleRate)
+
         double currentPosition[] = track();
         double time = op.getRuntime();
         double closeTime = 100;
         double minPower = 0.3;
+        double startDiff = currentPosition[2] - target;
+        double accelTime = -1+sqrt(1+4*acceleRate*2*startDiff*deceleRate/acceleRate)/(2*acceleRate);
         while (abs(currentPosition[2] - target) > 1.5) {
             minPower = 0.27;
             currentPosition = track();
