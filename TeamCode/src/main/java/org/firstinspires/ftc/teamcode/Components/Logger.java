@@ -81,7 +81,6 @@ public class Logger {
             e.printStackTrace();
         }
         op.telemetry.addData("log", newLog);
-        op.telemetry.update();
 
     }
     public void closeLog(){

@@ -108,6 +108,10 @@ public class Robot {
     public int RedElemTest(LinearOpMode opMode, float cameraX, float cameraY) {
         return openCV.RedTeamElem();
     }
+    public void flipBasketArmToPosition(double position){ turret.FlipBasketArmToPosition(position);}
+    public void flipBasketToPosition(double position){ turret.FlipBasketToPosition(position);}
+    public void flipBasket(){turret.FlipBasket(0);}
+    public void flipBasketArmHigh(){turret.FlipBasketArmHigh();}
 
     public double[] BlueWarehouseScam() {
         return openCV.BlueWarehouseScam();
@@ -421,6 +425,7 @@ public class Robot {
         /** add stuff u want to do with intake when switch is on HERE **/
         if ((checker.getState(StateMachine.States.SEQUENCING) || checker.checkIf(StateMachine.States.SEQUENCING)) && !retracting) {
             op.telemetry.addData("el button", "is clicked");
+            isFlipping = true;
             if(!checker.getState(StateMachine.States.SEQUENCING)) {
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 1;
@@ -433,7 +438,7 @@ public class Robot {
                 intake.flipIntakeToPosition(0.7);
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime()+1;
-            } else if (!checker.getState(StateMachine.States.FLIPPING)) {
+            } else if (!checker.getState(StateMachine.States.FLIPPING)&&checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 retracting = true;
             }
             op.telemetry.addData("transferring", !checker.getState(StateMachine.States.TRANSFERRING));
@@ -446,7 +451,7 @@ public class Robot {
             op.telemetry.addData("transfered", !checker.getState(StateMachine.States.TRANSFERRED));
 
 
-            if (op.getRuntime()>startTime[0]+0.4&&checker.checkIf(StateMachine.States.TRANSFERRING) && !checker.getState(StateMachine.States.INTAKE_DOWN)) {
+            if (op.getRuntime()>startTime[0]+0.7&&checker.checkIf(StateMachine.States.TRANSFERRING) && !checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 checker.setState(StateMachine.States.TRANSFERRING, true);
                 isReversing = true;
                 op.telemetry.addData("reversing ", "intake");
@@ -455,6 +460,7 @@ public class Robot {
             }
             if (op.getRuntime() > startTime[1] + 0.7) {
                 isReversing = false;
+                isFlipping = false;
                 intake.stopIntake();
                 turret.FlipBasketToPosition(.5);
                 turret.FlipBasketArmToPosition(.55);

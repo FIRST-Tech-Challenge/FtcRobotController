@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -19,6 +18,7 @@ public class SplineTest extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         robot.setPosition(0,0,0);
+        robot.BlueElemTest(this,0,0);
         waitForStart();//robot.goToPosition(72,0,0,0.3);
 //        for(int i =0 ; i<4;i++){
 //            robot.turnInPlace(76,0.8);

@@ -415,10 +415,7 @@ public class Turret {
     }
     public void FlipBasketToPosition (double torget) {
 //        updateTurretPositions();
-        if(op.getRuntime()>lastTimes[0]+0.8&&torget!= basketActuationServo.getPosition()) {
-            lastTimes[0] = op.getRuntime();
             basketActuationServo.setPosition(torget);
-        }
     }
     public void capBasket(){
 //        if(!downCap) {
