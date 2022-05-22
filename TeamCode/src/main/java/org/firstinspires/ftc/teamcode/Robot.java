@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.Components.CarouselCR;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.LedColor;
+import org.firstinspires.ftc.teamcode.Components.Logger;
 import org.firstinspires.ftc.teamcode.Components.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.Turret;
@@ -83,10 +84,12 @@ public class Robot {
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
     private StateMachine checker = null;
+    private Logger logger;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded) {
         op = opMode;
-        checker = new StateMachine(op, isTeleop);
+        logger = new Logger(opMode);
+        checker = new StateMachine(op, isTeleop, logger);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
         rotation = new CarouselCR(op);
@@ -418,7 +421,10 @@ public class Robot {
         /** add stuff u want to do with intake when switch is on HERE **/
         if ((checker.getState(StateMachine.States.SEQUENCING) || checker.checkIf(StateMachine.States.SEQUENCING)) && !retracting) {
             op.telemetry.addData("el button", "is clicked");
-
+            if(!checker.getState(StateMachine.States.SEQUENCING)) {
+                startTime[0] = op.getRuntime();
+                startTime[1] = op.getRuntime() + 1;
+            }
             checker.setState(StateMachine.States.SEQUENCING, true);
             turret.FlipBasketToPosition(.88);
             turret.FlipBasketArmToPosition(0.00);
@@ -440,26 +446,29 @@ public class Robot {
             op.telemetry.addData("transfered", !checker.getState(StateMachine.States.TRANSFERRED));
 
 
-            if (checker.checkIf(StateMachine.States.TRANSFERRING) && !checker.getState(StateMachine.States.INTAKE_DOWN)) {
+            if (op.getRuntime()>startTime[0]+0.4&&checker.checkIf(StateMachine.States.TRANSFERRING) && !checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 checker.setState(StateMachine.States.TRANSFERRING, true);
                 isReversing = true;
                 op.telemetry.addData("reversing ", "intake");
                 startTime[1] = op.getRuntime();
                 intake.reverseIntake(0.8);
             }
-            if (op.getRuntime() > startTime[1] + 0.7 && !checker.getState(StateMachine.States.TRANSFERRING)) {
+            if (op.getRuntime() > startTime[1] + 0.7) {
                 isReversing = false;
                 intake.stopIntake();
                 turret.FlipBasketToPosition(.5);
                 turret.FlipBasketArmToPosition(.55);
                 autoAiming = true;
+                checker.setState(StateMachine.States.TRANSFERRING, false);
                 checker.setState(StateMachine.States.SEQUENCING, false);
             }
 
         }
         if (autoretractTurret || retracting) {
             autoAiming = false;
-            intake.flipIntakeToPosition(0.0);
+            if(autoretractTurret) {
+                intake.flipIntakeToPosition(0.0);
+            }
             retracting = TurretReset(0.5);
         }
 

@@ -11,27 +11,29 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class StateMachine {
     boolean teleOp = false;
+    Logger logger;
     public enum States {
-        INTAKING(false),
-        FLIPPING(false),
-        SWITCHED(false),
-        TRANSFERRING(false),
-        INTAKE_DOWN(false),
-        BASKET_TRANSFER(true),
-        BASKET_CIELING(false),
-        BASKET_DROP(false),
-        BASKET_ARM_REST(true),
-        EXTENDED(false),
-        RAISED(false),
-        TURRET_STRAIGHT(true),
-        IN_WAREHOUSE(false),
-        TRANSFERRED(false),
-        DROPPED(false),
-        TURRET_SHORT(true),
-        SEQUENCING(false),
-        REVERSING(false);
+        INTAKING(false, "INTAKING"),
+        FLIPPING(false,"FLIPPING"),
+        SWITCHED(false,"SWITCHED"),
+        TRANSFERRING(false,"TRANSFERRING"),
+        INTAKE_DOWN(false,"INTAKE_DOWN"),
+        BASKET_TRANSFER(true,"BASKET_TRANSFER"),
+        BASKET_CIELING(false,"BASKET_CIELING"),
+        BASKET_DROP(false,"BASKET_DROP"),
+        BASKET_ARM_REST(true,"BASKET_ARM_REST"),
+        EXTENDED(false,"EXTENDED"),
+        RAISED(false,"RAISED"),
+        TURRET_STRAIGHT(true,"TURRET_STRAIGHT"),
+        IN_WAREHOUSE(false,"IN_WAREHOUSE"),
+        TRANSFERRED(false,"TRANSFERRED"),
+        DROPPED(false,"DROPPED"),
+        TURRET_SHORT(true,"TURRET_SHORT"),
+        SEQUENCING(false,"SEQUENCING"),
+        REVERSING(false,"REVERSING");
         boolean status;
-        States(boolean value) {
+        String name;
+        States(boolean value, String name) {
             this.status = value;
         }
 
@@ -40,7 +42,8 @@ public class StateMachine {
         }
     }
 
-    public StateMachine(LinearOpMode op, boolean isTeleOp) {
+    public StateMachine(LinearOpMode op, boolean isTeleOp, Logger log) {
+        logger= log;
         teleOp=isTeleOp;
         if(teleOp){
             States.INTAKE_DOWN.setStatus(true);
@@ -49,8 +52,9 @@ public class StateMachine {
 
     public void setState(States state, boolean value) {
         state.setStatus(value);
+        logger.log("STATE:"+ state.values()[1]+state.values()[0]);
     }
-    public boolean getState(States state){return state.status;}
+    public boolean getState(States state){ logger.log("STATE:"+ state.values()[1]+state.values()[0]);return state.status;}
     public boolean checkIf(States state){
         if(state == States.INTAKING){
             return (teleOp || IN_WAREHOUSE.status) && !INTAKING.status;

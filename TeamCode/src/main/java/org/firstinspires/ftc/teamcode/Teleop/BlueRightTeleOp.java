@@ -27,6 +27,7 @@ public class BlueRightTeleOp extends LinearOpMode {
             telemetry.addData("status", "waiting for start command...");
             telemetry.update();
         }
+        resetStartTime();
 
         while (!isStopRequested()) {
             robot.teleopLoop(1,0,0);
