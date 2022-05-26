@@ -95,8 +95,8 @@ public class CupCupGoose extends LinearOpMode
          * The core values which define the location and size of the sample regions
          */
         static final Point REGION1_BOTTOMLEFT_ANCHOR_POINT = new Point(1,240);
-        static final Point REGION2_BOTTOMLEFT_ANCHOR_POINT = new Point(106,240);
-        static final Point REGION3_BOTTOMLEFT_ANCHOR_POINT = new Point(213,240);
+//        static final Point REGION2_BOTTOMLEFT_ANCHOR_POINT = new Point(106,240);
+//        static final Point REGION3_BOTTOMLEFT_ANCHOR_POINT = new Point(213,240);
 
 
 
@@ -163,8 +163,6 @@ public class CupCupGoose extends LinearOpMode
             inputToCb(firstFrame);
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-            telemetry.addData("BooGaLoo", "2");
-            telemetry.update();
             region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
             telemetry.addData("BooGaLoo", "3");
             telemetry.update();
