@@ -32,9 +32,6 @@ public class Robot {
 
     public void updatePosition() {
         // divide by 4 because we are averaging them (scaling)
-        // plug in motor values to check the equations below
-        // multiply currentX by 0.91 to account for x movement being 9% short in testing
-        // todo Properly account for this factor
         curAngle = getCorrectedHeading();
         currentHypotenuse = ((float) master.motorFL.getCurrentPosition() + master.motorBL.getCurrentPosition() + master.motorFR.getCurrentPosition() + master.motorBR.getCurrentPosition() ) / ( 4 * master.COUNTS_PER_INCH );
         currentY = Math.cos(Math.toRadians(curAngle)) * currentHypotenuse;

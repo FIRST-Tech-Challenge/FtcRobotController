@@ -51,15 +51,13 @@ public class CarouselAuto extends MasterAutonomous {
                 offset += 5;
                 sleep(300);
             }
-            if (x < 213 - offset) { // prob need to decrease
+            if (x < 213 - offset) {
                 barcodeIndex = 0;
             } else if (x > 213 - offset && x < 486 - offset) {
                 barcodeIndex = 1;
             } else if (x > 486 - offset) {
                 barcodeIndex = 2;
             }
-            //}
-            //barcodeIndex = barcodeDetector.index;
             telemetry.addLine("1 for blue, -1 for red");
             telemetry.addData("Alliance", allianceSide);
             telemetry.addLine("False for starting on side nearest warehouse");
@@ -101,7 +99,6 @@ public class CarouselAuto extends MasterAutonomous {
 
             pivot(-180, 0.5);
 
-
         } else if (barcodeIndex == 1) {
 
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_2, 0.5);
@@ -121,7 +118,6 @@ public class CarouselAuto extends MasterAutonomous {
             pivot(-180, 0.5);
 
         } else {
-            // moveInches(10, 0.7);
             runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_3, 0.5);
             runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.5);
             while (shoulderMotor.isBusy() || elbowMotor.isBusy()) {

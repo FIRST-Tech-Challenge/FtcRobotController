@@ -15,7 +15,6 @@ public class TeleOpCompetition extends MasterTeleOp {
         waitForStart();
         robot.setInitialAngle();
 
-
         while (opModeIsActive()) {
             driveRobotUsingController();
             controlMechanisms();
@@ -23,7 +22,5 @@ public class TeleOpCompetition extends MasterTeleOp {
 
             idle();
         }
-
-
     }
 }
