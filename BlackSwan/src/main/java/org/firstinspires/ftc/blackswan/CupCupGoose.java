@@ -73,61 +73,55 @@ public class CupCupGoose extends LinearOpMode
             this.telemetry= telemetry;
         }
 
-        /*
-         * An enum to define the skystone position
-         */
         public enum CupPosition
         {
-            CUPLEFT,
+            CUPLEFT ,
             CUPMIDDLE,
             CUPRIGHT,
+            NONE,
+            ONE,
+            ZERO,
         }
 
-        /*
-              //outer blue 192, 176 size 30,42
-   * Some color constants
-         */
         static final Scalar BLUE = new Scalar(0, 0, 255);
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
-
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_BOTTOMLEFT_ANCHOR_POINT = new Point(1,240);
-//        static final Point REGION2_BOTTOMLEFT_ANCHOR_POINT = new Point(106,240);
-//        static final Point REGION3_BOTTOMLEFT_ANCHOR_POINT = new Point(213,240);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(1,240);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(106,240);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(213,240);
 
 
 
         static final int REGION_WIDTH = 106;
         static final int REGION_HEIGHT = 240;
 
-//        final int FOUR_RING_THRESHOLD = 153;
-//        final int THREE_RING_THRESHOLD = 149;
-//        final int TWO_RING_THRESHOLD = 130;
-//        final int ONE_RING_THRESHOLD = 119;
+        final int L = 130;
+        final int M = 130;
+        final int R = 130;
 
         Point region1_pointA = new Point(
-                REGION1_BOTTOMLEFT_ANCHOR_POINT.x,
-                REGION1_BOTTOMLEFT_ANCHOR_POINT.y);
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y);
         Point region1_pointB = new Point(
-                REGION1_BOTTOMLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_BOTTOMLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOPLEFT_ANCHOR_POINT.y - REGION_HEIGHT);
 
         Point region2_pointA = new Point(
-                REGION2_BOTTOMLEFT_ANCHOR_POINT.x,
-                REGION2_BOTTOMLEFT_ANCHOR_POINT.y);
+                REGION2_TOPLEFT_ANCHOR_POINT.x,
+                REGION2_TOPLEFT_ANCHOR_POINT.y);
         Point region2_pointB = new Point(
-                REGION2_BOTTOMLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION2_BOTTOMLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION2_TOPLEFT_ANCHOR_POINT.y - REGION_HEIGHT);
 
         Point region3_pointA = new Point(
-                REGION3_BOTTOMLEFT_ANCHOR_POINT.x,
-                REGION3_BOTTOMLEFT_ANCHOR_POINT.y);
+                REGION3_TOPLEFT_ANCHOR_POINT.x,
+                REGION3_TOPLEFT_ANCHOR_POINT.y);
         Point region3_pointB = new Point(
-                REGION3_BOTTOMLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION3_BOTTOMLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+                REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION3_TOPLEFT_ANCHOR_POINT.y - REGION_HEIGHT);
 
         /*
          * Working variables
@@ -157,18 +151,11 @@ public class CupCupGoose extends LinearOpMode
         @Override
         public void init(Mat firstFrame)
         {
-            telemetry.addData("BooGaLoo", "1");
-            telemetry.update();
-
             inputToCb(firstFrame);
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
             region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
-            telemetry.addData("BooGaLoo", "3");
-            telemetry.update();
             region3_Cb = Cb.submat(new Rect(region3_pointA, region3_pointB));
-            telemetry.addData("BooGaLoo", "4");
-            telemetry.update();
 
         }
 
@@ -205,17 +192,24 @@ public class CupCupGoose extends LinearOpMode
             position = CupPosition.CUPLEFT; // Record our analysis
             telemetry.addData("value", avg1);
             telemetry.update();
-//            if(avg1 > FOUR_RING_THRESHOLD) {
-//                position = RingPosition.FOUR;
-//            }else if (avg1 > THREE_RING_THRESHOLD) {
-//                position = RingPosition.THREE;
-//            }else if (avg1 > TWO_RING_THRESHOLD) {
-//                position = RingPosition.TWO;
-//            }else if (avg1 > ONE_RING_THRESHOLD){
-//                position = RingPosition.ONE;
-//            }else{
-//                position = RingPosition.NONE;
-//            }
+
+            if(avg1 > L) {
+                position = CupPosition.ONE;
+            }else{
+                position = CupPosition.NONE;
+            }
+
+            if(avg2 > M) {
+                position = CupPosition.ONE;
+            }else{
+                position = CupPosition.NONE;
+            }
+
+            if(avg3 > R) {
+                position = CupPosition.ONE;
+            }else{
+                position = CupPosition.NONE;
+            }
 
 
 
