@@ -20,7 +20,7 @@ import org.firstinspires.ftc.Team19567.trajectorysequence.sequencesegment.Sequen
 import org.firstinspires.ftc.Team19567.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.Team19567.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.Team19567.trajectorysequence.sequencesegment.WaitSegment;
-import org.firstinspires.ftc.Team19567.util.DashboardUtil;
+import org.firstinspires.ftc.Team19567.roadrunnerutil.DashboardUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
