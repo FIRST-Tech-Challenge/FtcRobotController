@@ -2,9 +2,9 @@
 
 This repository contains FTC Team 19567 Tier1's source code for the 2021 - 2022 Freight Frenzy season.
 Programmers:
-* Ryan Xu (Lead programmer)
-* Ian Wu (TeleOP automation & carousel acceleration)
-* James Hu (Gamepad rumble design)
+* **Ryan Xu** (Lead programmer)
+* **Ian Wu** (TeleOP automation & carousel acceleration)
+* **James Hu** (Gamepad rumble design)
 
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial) to get familiar with how to use the control system:
