@@ -23,7 +23,7 @@ public class RangeSensor {
 
     public double getDistance(AnalogInput ultrasonic) {
         double rawValue = ultrasonic.getVoltage();
-        double voltage_scale_factor = (ultrasonic.getVoltage() / ((3.3/1024.0) * 6.0)) - 300.0;
+        double voltage_scale_factor = (ultrasonic.getVoltage()*90) - 13.5;
         return rawValue * voltage_scale_factor * 0.0492;
     }
     public double[] getLocation(){

@@ -409,10 +409,13 @@ public class EncoderChassis extends BasicChassis {
             y = target_position[1] - ypos;
             double twoDistance = sqrt(pow(y - currentPosition[1], 2) + pow(x - currentPosition[0], 2));
             double oneDistance = sqrt(pow(startposition[1] - currentPosition[1], 2) + pow(startposition[0] - currentPosition[0], 2));
-            if ((oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance) > t) {
-                t = (oneDistance + Velocity / 2 + 1.0 / 4.0) / (oneDistance + twoDistance);
+            if ((oneDistance + Velocity / 4 + 1.0 / 4.0) / (oneDistance + twoDistance) > t) {
+                t = (oneDistance + Velocity / 4 + 1.0 / 4.0) / (oneDistance + twoDistance);
             }
             if (t > 1.0) {
+                if(op.getRuntime()-time<0.5){
+                    continue;
+                }
                 if (sstarttertime > op.getRuntime()) {
                     sstarttertime = op.getRuntime();
                 }
@@ -427,12 +430,10 @@ public class EncoderChassis extends BasicChassis {
                 y = 0.0001;
             }
             double mpconst = y / x;
-            difference -= 5;
             double[] tarcurpos = {startposition[0] + (target_position[0] - startposition[0]) * ((startDifference - difference) / startDifference), startposition[1] + (target_position[1] - startposition[1]) * (1 - (difference) / startDifference)};
             if (difference < 0) {
                 tarcurpos = target_position;
             }
-            difference += 5;
             if (xVelocity == 0) {
                 xVelocity = 0.0001;
             }

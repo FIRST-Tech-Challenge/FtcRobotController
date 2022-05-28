@@ -29,7 +29,7 @@ public class Turret_Testing extends LinearOpMode {
         }
 
         while (!isStopRequested()) {
-
+            robot.updateTurretPositions();
             diSTANCe+=gamepad2.left_stick_y/10;
             robot.TurretAngleControlRotating(diSTANCe);
 //            sleep(100);

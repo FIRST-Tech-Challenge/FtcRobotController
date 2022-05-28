@@ -359,7 +359,7 @@ public class Robot {
         }
         spinCarousel();
         if (autoAiming && !retracting) {
-            intake.flipIntakeToPosition(0.5);
+            intake.flipIntakeToPosition(0.0);
             fakeAutoAim();
         }
         op.telemetry.addData("autoaiming", autoAiming);
@@ -472,7 +472,7 @@ public class Robot {
         }
         if (autoretractTurret || retracting) {
             autoAiming = false;
-            if(autoretractTurret) {
+            if(!checker.getState(StateMachine.States.INTAKE_DOWN)){
                 intake.flipIntakeToPosition(0.0);
             }
             retracting = TurretReset(0.5);
@@ -517,7 +517,7 @@ public class Robot {
         double angle = -60;
         turret.TurretRotate(angle);
         turret.AutoAngleControlRotating(17);
-        turret.turretExtendo(800);
+        turret.turretExtendo(970);
     }
     public void rotateToPosition(double targetAngle){
         turret.rotateToPosition(targetAngle);
@@ -526,7 +526,9 @@ public class Robot {
     public void capThats() {
         turret.capBasket();
     }
-
+    public void updateTurretPositions(){
+        turret.updateTurretPositions();
+    }
 
     public void TurretExtend(double height_inches, double extension_inches, double power) {
         turret.TurretExtend(height_inches, extension_inches, power);

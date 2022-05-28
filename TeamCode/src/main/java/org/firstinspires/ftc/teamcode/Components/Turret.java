@@ -28,8 +28,8 @@ public class Turret {
     private Servo basketActuationServo = null;
     private double lastTime=0, lastServoPos=0,servoDist=0;
     private final double DEG_PER_TICK_MOTOR = 18.0/116.0, DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime =.3;
-    private final double TICKS_PER_INCH = 810.0/25.0;
-    private final double MAX_EXTENSION_TICKS = 810;
+    private final double TICKS_PER_INCH = 955.0/32.0;
+    private final double MAX_EXTENSION_TICKS = 955;
     private final double MIN_EXTENSION_TICKS = 15;
     private final double MAX_ROTATION_TICKS = 570;
     private double[] lastTimes = {0,0};
@@ -543,7 +543,7 @@ public class Turret {
             basketActuationServo.setPosition(.6);
             basketing = true;
         }
-        if(!angleControlling) {
+        if(!angleControlling&&checker.getState(StateMachine.States.TURRET_SHORT)) {
             turret_Angle_Control.setPosition(0);
             turret_Angle_Control2.setPosition(118.0/270);
             angleControlling = true;

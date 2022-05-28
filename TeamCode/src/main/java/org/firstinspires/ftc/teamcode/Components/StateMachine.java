@@ -18,7 +18,7 @@ public class StateMachine {
         FLIPPING(false, "FLIPPING"),
         SWITCHED(false, "SWITCHED"),
         TRANSFERRING(false, "TRANSFERRING"),
-        INTAKE_DOWN(false, "INTAKE_DOWN"),
+        INTAKE_DOWN(true, "INTAKE_DOWN"),
         BASKET_TRANSFER(true, "BASKET_TRANSFER"),
         BASKET_CIELING(false, "BASKET_CIELING"),
         BASKET_DROP(false, "BASKET_DROP"),
