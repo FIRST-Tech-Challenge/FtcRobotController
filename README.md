@@ -1,9 +1,10 @@
-## NOTICE
+## INFO
 
-This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
-
-## Welcome!
-This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
+This repository contains FTC Team 19567 Tier1's source code for the 2021 - 2022 Freight Frenzy season.
+Programmers:
+* Ryan Xu (Lead programmer)
+* Ian Wu (TeleOP automation & carousel acceleration)
+* James Hu (Gamepad rumble design)
 
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial) to get familiar with how to use the control system:

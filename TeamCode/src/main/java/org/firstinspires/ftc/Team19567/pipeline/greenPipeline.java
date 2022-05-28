@@ -9,6 +9,15 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+/**
+ * A pipeline to detect green (aka the Team Shipping Element). <br>
+ * Minor consistency issues when the TSE is leaning out of frame <br><br>
+ * This pipeline works via thresholding with HSV values<br>
+ * The {@link #THRESHOLD} value for detecting green is situated in {@link org.firstinspires.ftc.Team19567.util.Utility_Constants Utility_Constants.java}
+ *<br><br>
+ * TODO: Improve consistency in the future
+ */
+
 public class greenPipeline extends OpenCvPipeline {
     private Mat output = new Mat();
     private static final double width = 544;
@@ -31,6 +40,10 @@ public class greenPipeline extends OpenCvPipeline {
 
     Telemetry telemetry;
 
+    /**
+     *
+     * @param t Telemetry used to broadcast values to the driver station
+     */
     public greenPipeline(Telemetry t) {
         telemetry = t;
     }
@@ -50,10 +63,10 @@ public class greenPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.cvtColor(input,output,Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input,output,Imgproc.COLOR_RGB2HSV); //Converts input from RGB to HSV (which is better for thresholding)
         //telemetry.addData("Pipeline Status","Setup Complete");
 
-        Core.inRange(output,lowHSV,highHSV,output);
+        Core.inRange(output,lowHSV,highHSV,output); //Binarizes the image, with all HSV values between the low and high
         //telemetry.addData("Pipeline Status","InRange Conv. Completed");
 
         Mat first = output.submat(LEFT_SQUARE);
@@ -121,6 +134,10 @@ public class greenPipeline extends OpenCvPipeline {
         return output;
     }
 
+    /**
+     * @return The {@link #location LOCATION} that the pipeline has currently <br>
+     * detected the TSE to be in
+     */
     public LOCATION getLocation() {
         return location;
     }
