@@ -86,7 +86,7 @@ public class Robot {
     private StateMachine checker = null;
     private Logger logger;
 
-    public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double turtAngel) {
+    public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded) {
         op = opMode;
         logger = new Logger(opMode);
         checker = new StateMachine(op, isTeleop, logger);
@@ -95,7 +95,7 @@ public class Robot {
         rotation = new CarouselCR(op);
         intake = new Intake(op, isTeleop, checker);
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
-        turret = new Turret(op, led_bank, isTeleop, checker, turtAngel);
+        turret = new Turret(op, led_bank, isTeleop, checker);
         openCV = new OpenCVMasterclass(op);
         TSE = new tseDepositor(op);
 

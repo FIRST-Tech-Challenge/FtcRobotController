@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
-
+//cock warren like
 @Autonomous(name= "BlueLeftP", preselectTeleOp = "OneGPTeleop")
 public class BlueLeftP extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false, 0);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false, false);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

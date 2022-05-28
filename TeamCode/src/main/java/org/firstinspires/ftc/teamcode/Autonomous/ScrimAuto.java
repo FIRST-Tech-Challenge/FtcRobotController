@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class ScrimAuto extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false, 0);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false, false);
         //int position = robot.BlueElemTest(this,0,0);
         double[] turretTarget = {0,0,0};//{hubx-position*3/2,huby-position*3/2,1+7*position}
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {

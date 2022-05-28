@@ -14,7 +14,7 @@ public class Turret_Testing extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false, 0);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 

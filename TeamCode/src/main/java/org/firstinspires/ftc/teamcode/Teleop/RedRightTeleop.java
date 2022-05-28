@@ -14,7 +14,7 @@ public class RedRightTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true ,false, 0);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, true ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 

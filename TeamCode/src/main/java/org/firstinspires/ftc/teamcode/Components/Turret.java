@@ -48,7 +48,7 @@ public class Turret {
 
 
     // initialization of outtakeMotor
-    public Turret(LinearOpMode opMode, LedColor led_bank, boolean isTeleOp, StateMachine checkers, double turtAngel){
+    public Turret(LinearOpMode opMode, LedColor led_bank, boolean isTeleOp, StateMachine checkers){
         checker = checkers;
         op = opMode;
         areTeleop = isTeleOp;
@@ -74,18 +74,18 @@ public class Turret {
         basketActuationServo.setPosition(0.58);
         basketArmServo.setPosition(0.0);
         if(!isTeleOp) {
-            turret_Angle_Control.setPosition(0);
-            turret_Angle_Control2.setPosition(118.0/270);
-            turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            turret_Rotation.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            turret_Rotation.setTargetPosition((int)(turtAngel/DEG_PER_TICK_MOTOR));
-            turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            turret_Rotation.setPower(0.5);
-            basketActuationServo.setPosition(0.58);
-            basketArmServo.setPosition(0.0);
+//            turret_Angle_Control.setPosition(0);
+//            turret_Angle_Control2.setPosition(118.0/270);
+//            turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            turret_Rotation.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//            turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//            turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            turret_Rotation.setTargetPosition((int)(-85/DEG_PER_TICK_MOTOR));
+//            turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            turret_Rotation.setPower(0.5);
+//            basketActuationServo.setPosition(0.58);
+//            basketArmServo.setPosition(0.0);
         }
         turret_saved_positions[0][1][0] = 80;//-36
         turret_saved_positions[0][1][1] = -53;//-60
