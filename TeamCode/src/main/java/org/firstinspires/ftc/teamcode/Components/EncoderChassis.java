@@ -2521,7 +2521,7 @@ public class EncoderChassis extends BasicChassis {
                     if (error2 < -180) {
                         error2 += 360;
                     }
-                    double controlconst = (tt * tt);
+                    double controlconst = pow(tt,1.5);
                     op.telemetry.addData("erro2r", error2);
                     error = controlconst * error2 + ((1 - controlconst) * error);
                     error %= 360;
@@ -2531,9 +2531,9 @@ public class EncoderChassis extends BasicChassis {
                     if (error < -180) {
                         error += 360;
                     }
-                    targetaVelocity -= (error);
+                    targetaVelocity -= 2*(error);
                     op.telemetry.addData("targetAVelocity", targetaVelocity);
-                    anglecorrection = ((aVelocity)*0.4 - targetaVelocity + error) / 192;
+                    anglecorrection = (error*2 + (-targetaVelocity + aVelocity) * .2) / 216;
                     double powernum = pow(E, -10 * (tan((abs(error / 12) % 15) * PI / 180)));
                     if (powernum == -1) {
                         powernum = -1.0001;
@@ -2570,7 +2570,7 @@ public class EncoderChassis extends BasicChassis {
                         lastLogs = op.getRuntime();
                         try {
                             wFTCfile.write(String.format("%.2f", target_position[0]) + "," + String.format("%.2f", target_position[1]) + "," +
-                                    String.format("%.2f", target_position[2]) + "," + String.format("%.2f", atan2(targetXVelocity, targetYVelocity) * 180 / PI)+ "," + String.format("%.2f",targetaVelocity)+ ","+String.format("%.2f",anglecorrection)+"\n");
+                                    String.format("%.2f", target_position[2]) +"\n");
                         } catch (IOException e) {
                             new RuntimeException("write: FAILED", e).printStackTrace();
                         }

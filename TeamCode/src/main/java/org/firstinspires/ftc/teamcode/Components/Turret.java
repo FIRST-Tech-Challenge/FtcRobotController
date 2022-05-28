@@ -28,7 +28,7 @@ public class Turret {
     private Servo basketActuationServo = null;
     private double lastTime=0, lastServoPos=0,servoDist=0;
     private final double DEG_PER_TICK_MOTOR = 18.0/116.0, DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime =.3;
-    private final double TICKS_PER_INCH = 100.0;
+    private final double TICKS_PER_INCH = 810.0/25.0;
     private final double MAX_EXTENSION_TICKS = 810;
     private final double MIN_EXTENSION_TICKS = 15;
     private final double MAX_ROTATION_TICKS = 570;
@@ -67,7 +67,7 @@ public class Turret {
         turret_Angle_Control.setPosition(0);
         turret_Angle_Control2.setPosition(118.0/270);
         turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret_Rotation.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret_Extension.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -302,45 +302,50 @@ public class Turret {
 //        op.telemetry.addData("difference", target_point - turret_Angle_Control.getPosition());
 
     }
+    public void rotateToPosition(double targetAngle){
+        turret_Rotation.setTargetPosition((int) (targetAngle/DEG_PER_TICK_MOTOR));
+        turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret_Rotation.setPower(targetAngle);
+    }
     public void TurretSlidesToPosition (double x, double y, double z, double power) {
         updateTurretPositions();
-        double willygay = x;
+        double v = x;
         x=y;
-        y=willygay;
+        y=v;
         double rotation_angle = Math.atan2(y,x) * (180 / PI);
         turret_Rotation.setTargetPosition((int) (rotation_angle/DEG_PER_TICK_MOTOR));
         turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret_Rotation.setPower(power);
 
 
-//        double extension_length_flat = Math.sqrt(pow(x, 2) + pow(y, 2));
-//        if(extension_length_flat ==0){
-//            extension_length_flat = 0.01;
-//        }
-//        double extension_length = Math.sqrt(pow(extension_length_flat, 2) + pow(z, 2));
-//        if(extension_length_flat*TICKS_PER_INCH<extendPosition){
-//            extension_length_flat = extendPosition;
-//        }
-//        if (extension_length * TICKS_PER_INCH > MAX_EXTENSION_TICKS) {
-//            turret_Extension.setTargetPosition((int) MAX_EXTENSION_TICKS);
-//        }
-//        else {
-//            turret_Extension.setTargetPosition((int) (extension_length * TICKS_PER_INCH));
-//        }
-//        turret_Extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        turret_Extension.setPower(power);
+        double extension_length_flat = Math.sqrt(pow(x, 2) + pow(y, 2));
+        if(extension_length_flat ==0){
+            extension_length_flat = 0.01;
+        }
+        double extension_length = Math.sqrt(pow(extension_length_flat, 2) + pow(z, 2));
+        if(extension_length_flat*TICKS_PER_INCH<extendPosition){
+            extension_length_flat = extendPosition;
+        }
+        if (extension_length * TICKS_PER_INCH > MAX_EXTENSION_TICKS) {
+            turret_Extension.setTargetPosition((int) MAX_EXTENSION_TICKS);
+        }
+        else {
+            turret_Extension.setTargetPosition((int) (extension_length * TICKS_PER_INCH));
+        }
+        turret_Extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret_Extension.setPower(power);
 
-//
-//        double elevation_angle = Math.atan2(z,extension_length_flat) * (180 / PI);
-//
-//        op.telemetry.addData("angle control angle", elevation_angle / ANGLE_CONTROL_SERVO_TOTAL_DEGREES);
-//        if(elevation_angle<0){
-//            elevation_angle=0;
-//        }
-//        if(elevation_angle>35){
-//            elevation_angle=35;
-//        }
-//        AngleControlRotating(elevation_angle);
+
+        double elevation_angle = Math.atan2(z,extension_length_flat) * (180 / PI);
+
+        op.telemetry.addData("angle control angle", elevation_angle / ANGLE_CONTROL_SERVO_TOTAL_DEGREES);
+        if(elevation_angle<0){
+            elevation_angle=0;
+        }
+        if(elevation_angle>35){
+            elevation_angle=35;
+        }
+        AngleControlRotating(elevation_angle);
     }
 
     public void TurretManualRotation (double rotation) { //stick_x

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.aVelocity;
+import static java.lang.Math.abs;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -34,21 +35,22 @@ public class track extends LinearOpMode {
 //        robot.goToPosition(23.5,-23.5,0,0.5);            robot.partOfPolySplineToPositionHead(1,  -6.75,-2.2,robot.track()[0],robot.track()[1],2.75, 3.1, 25.75,3.15,true,true,0.3);
 //            robot.partOfPolySplineToPositionHead(1,  -6.75,-2.2, robot.track()[0], robot.track()[1], 25.75,3.15, 30.75,3.0,true,true,0.3);
         //robot.navigate();
+        double acceleRate = 0;
         sleep(1000);
         odom.track();
-        resetStartTime();
-        odom.setLeftMotorPowers(-1.0);
-        odom.setRightMotorPowers(1.0);
-        sleep(1000);
-        odom.track();
-        telemetry.addData("acceleRate", aVelocity*2);
+        odom.turnInPlace(50,1.0);
+        odom.turnInPlace(-90,1.0);
+        odom.turnInPlace(160,1.0);
+        odom.turnInPlace(0,1.0);
+        //846.125,0.47, 833, 0.43
         odom.stopAllMotors();
-        while(aVelocity>0){
+        while(abs(aVelocity)>1){
             odom.track();
         }
         telemetry.addData("deceleTime", getRuntime()-1);
+        telemetry.addData("acceleRate", acceleRate);
         telemetry.update();
-        sleep(5000);
+        sleep(10000);
         stop();
     }
 

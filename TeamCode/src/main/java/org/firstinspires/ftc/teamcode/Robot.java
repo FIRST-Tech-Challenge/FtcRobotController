@@ -462,7 +462,7 @@ public class Robot {
                 isReversing = false;
                 isFlipping = false;
                 intake.stopIntake();
-                turret.FlipBasketToPosition(.5);
+                turret.FlipBasketToPosition(.6);
                 turret.FlipBasketArmToPosition(.55);
                 autoAiming = true;
                 checker.setState(StateMachine.States.TRANSFERRING, false);
@@ -516,8 +516,11 @@ public class Robot {
     public void fakeAutoAim() {
         double angle = -60;
         turret.TurretRotate(angle);
-//        turret.AutoAngleControlRotating(17);
+        turret.AutoAngleControlRotating(17);
         turret.turretExtendo(800);
+    }
+    public void rotateToPosition(double targetAngle){
+        turret.rotateToPosition(targetAngle);
     }
 
     public void capThats() {
