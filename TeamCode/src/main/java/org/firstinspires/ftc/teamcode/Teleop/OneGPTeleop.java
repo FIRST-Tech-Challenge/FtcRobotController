@@ -34,7 +34,7 @@ public class OneGPTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false, 0);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
         //robot.navigateTeleOp();

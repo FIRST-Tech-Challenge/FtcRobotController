@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class OpenCVInfrastructureTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true, false, 0);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
