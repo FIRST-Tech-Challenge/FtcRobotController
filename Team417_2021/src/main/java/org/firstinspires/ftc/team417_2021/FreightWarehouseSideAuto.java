@@ -38,9 +38,6 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
             if (gamepad1.a) {
                 allianceSide *= -1;
             }
-
-
-
                 x = barcodeDetector.x;
 
                 if (gamepad1.x) {
@@ -56,7 +53,6 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
                     barcodeIndex = 1;
                 } else if (x > 400 - offset) {
                     barcodeIndex = 2;
-
             }
 
             telemetry.addLine("1 for blue, -1 for red");
@@ -109,7 +105,6 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
             moveInches(21, 0.5);
             pivot(0, 0.5);
 
-            // THIS MOVEMENT VARIES I THINK
             moveInches(8, 0.5);
 
             grabberServo.setPosition(GRABBER_OUT);
@@ -131,7 +126,6 @@ public class FreightWarehouseSideAuto extends MasterAutonomous {
             moveInches(21, 0.5);
             pivot(0, 0.5);
 
-            // THIS MOVEMENT VARIES I THINK
             moveInches(10, 0.5);
 
             grabberServo.setPosition(GRABBER_OUT);

@@ -79,7 +79,6 @@ abstract public class MasterAutonomous extends MasterOpMode {
     public void moveAtAngle(double inches, double maxSpeed, double targetAngle) throws InterruptedException {
         double movingPower;
         double turningPower;
-        //double targetAngle = robot.getCorrectedHeading();
         double errorAngle;
         double initialInches = robotInches();
         double errorDistance;

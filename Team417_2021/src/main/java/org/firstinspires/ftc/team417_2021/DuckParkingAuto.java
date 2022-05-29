@@ -46,9 +46,5 @@ public class DuckParkingAuto extends MasterAutonomous {
             pivot(90, 0.7);
             moveInches(100, 1.0);
         }
-
-
-
-
     }
 }

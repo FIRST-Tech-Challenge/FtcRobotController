@@ -73,36 +73,6 @@ public class FreightAuto extends MasterAutonomous {
         waitForStart();
         robot.setInitialAngle();
 
-
-        // raise arm to position depending on barcode
-        /*if (barcodeIndex == 0) {
-            // highest level
-            runMotorToPosition(elbowMotor, ELBOW_LEVEL_3, 0.5);
-        } else if (barcodeIndex == 1) {
-            // middle level
-            runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_2, 0.5);
-        } else {
-            // lowest level
-            runMotorToPosition(shoulderMotor, SHOULDER_LEVEL_1, 0.5);
-        }*/
-
-        // ----------------- RIGHT SIDE AUTO -----------------
-        /*moveInches(10, 0.7);
-        pivot(-90, 0.5);
-        moveInches(21,0.7);
-        pivot(-180, 0.5);
-        moveInches(13, 0.5);
-        carouselMotor.setPower(1);
-        sleep(3200);
-        carouselMotor.setPower(0);
-        moveInches(-6,0.7);
-        pivot(90,0.7);
-        moveInches(48,0.7);
-        pivot(0,0.7);
-        */
-
-
-        //wristServo.setPosition(0.0);
         if (barcodeIndex == 0) {
             moveInches(9, 0.7);
             pivot(90 * allianceSide, 0.5);
@@ -132,8 +102,7 @@ public class FreightAuto extends MasterAutonomous {
                 telemetry.addLine("pathli");
             }
         }
-        //
-        //pivot(90, 0.5);
+
         if (barcodeIndex == 2) {
             moveInches(28, 0.7);
         } else {
@@ -146,7 +115,6 @@ public class FreightAuto extends MasterAutonomous {
             moveInches(11, 0.7);
         }
 
-
         grabberServo.setPosition(GRABBER_OUT);
 
         moveInches(-5,0.7);
@@ -154,7 +122,6 @@ public class FreightAuto extends MasterAutonomous {
         runMotorToPosition(elbowMotor, 0, 0.5);
         pivot(90 * allianceSide, 0.9);
        moveInches(78, 1.0);
-
     }
 
     public void dropElement() {
