@@ -5,12 +5,9 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
-import org.firstinspires.ftc.Team19567.drive.SlowSampleMecanumDriveCancelable;
+import org.firstinspires.ftc.Team19567.drive.SlowMecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
@@ -22,21 +19,37 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+/**
+ * This is the class for the red depot side. <br>
+ * It utilizes a finite state machine (FSM), just like the other opmodes. <br>
+ * Alignment: <a href="https://discord.com/channels/873012716757995540/912908534071558144/946196798375084072">Discord</a>
+ */
+
+//TODO: Create a base autonomous class and have all specific autonomous classes extend it
 @Autonomous(name="Red Depot FSM", group="Dababy")
 public class RedDepotFSM extends LinearOpMode {
 
-    private ElapsedTime timeout = new ElapsedTime();
-    private ElapsedTime carouselTimeout = new ElapsedTime();
+    //Declare opmode members
+    //TODO: In the future, these variables should all be situated in a base autonomous class
+
+    //TIMEOUTS
+    private ElapsedTime timeout = new ElapsedTime(); //Create new ElapsedTime() representing time for flicker to release freight
+    private ElapsedTime carouselTimeout = new ElapsedTime(); //Create new ElapsedTime() representing time for carousel to spin the duck off
+
+    //CUSTOM
     private greenPipeline pipeline = new greenPipeline(telemetry); //Team shipping element OpenCV Pipeline
-    private TouchSensor limitSwitch = null;
-    private LOCATION location = LOCATION.ALLIANCE_THIRD;
-    private AUTO_STATE currentState = AUTO_STATE.DETECTING_OPENCV;
-    private int chosenArmPos = 600;
-    private double chosenArmSpeed = 0.3;
-    private double chosenTrajectoryX = -22;
-    private double chosenTrajectoryY = -40;
-    private RevBlinkinLedDriver blinkin = null;
-    private Mechanisms mechanisms = null;
+    private LOCATION location = LOCATION.ALLIANCE_THIRD; //Variable representing location of TSE
+    private AUTO_STATE currentState = AUTO_STATE.DETECTING_OPENCV; //State for the statemachine to begin with
+    private Mechanisms mechanisms = null; //New mechanisms that will be properly initialized later
+
+    //HARDWARE
+    private RevBlinkinLedDriver blinkin = null; //Blinkin
+
+    //PRELOAD
+    private int chosenArmPos = 600; //Variable representing position to set the arm to (for preload)
+    private double chosenArmSpeed = 0.3; //Variable representing speed to set the arm at (for preload)
+    private double chosenTrajectoryX = -22; //Variable representing x coordinate for the robot to drive to (for the preload)
+    private double chosenTrajectoryY = -40; //Variable representing the y coordinate for the robot to drive to (for the preload)
 
     @Override
     public void runOpMode() {
@@ -45,12 +58,11 @@ public class RedDepotFSM extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SlowSampleMecanumDriveCancelable chassis = new SlowSampleMecanumDriveCancelable(hardwareMap);
+        SlowMecanumDriveCancelable chassis = new SlowMecanumDriveCancelable(hardwareMap);
 
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
 
-        limitSwitch = hardwareMap.get(TouchSensor.class,"limitSwitch");
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class,"blinkin");
 
         chassis.setPoseEstimate(new Pose2d(-34, -63, Math.toRadians(90)));

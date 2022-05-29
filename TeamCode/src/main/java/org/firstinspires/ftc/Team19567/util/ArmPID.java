@@ -2,6 +2,7 @@ package org.firstinspires.ftc.Team19567.util;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Deprecated
 public class ArmPID {
     private double p;
     private double i;

@@ -1,16 +1,27 @@
 package org.firstinspires.ftc.Team19567.util;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.Team19567.drive.MecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
 
+/**
+ * Attempt at creating a file with all of the Roadrunner sequences <br>
+ * Note: was never used
+ */
+
+@Deprecated
+@Config
+
+//TODO: Elaborate on this in the future
 public class RoadrunnerSequences {
     public static TrajectorySequence desiredSequence;
 
+    //Function to get all the rr sequences needed
     public static TrajectorySequence GetSequence(ROADRUNNER_SEQUENCE roadrunnerSequence,
-                                                 SampleMecanumDriveCancelable chassis, Mechanisms mechanisms) {
+                                                 MecanumDriveCancelable chassis, Mechanisms mechanisms) {
         switch(roadrunnerSequence) {
             case LINE_TO_SPLINE_WAREHOUSE: {
                 desiredSequence = chassis.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))

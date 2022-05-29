@@ -1,28 +1,24 @@
 package org.firstinspires.ftc.Team19567.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
-import org.firstinspires.ftc.Team19567.drive.SlowSampleMecanumDriveCancelable;
+import org.firstinspires.ftc.Team19567.drive.MecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.Team19567.util.AUTO_STATE;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
-import org.firstinspires.ftc.Team19567.util.Utility_Constants;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name="Red Warehouse Modified", group="Dababy")
+@Disabled
+@Deprecated
+
 public class RedWarehouseModified extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
@@ -45,7 +41,7 @@ public class RedWarehouseModified extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SampleMecanumDriveCancelable chassis = new SampleMecanumDriveCancelable(hardwareMap);
+        MecanumDriveCancelable chassis = new MecanumDriveCancelable(hardwareMap);
 
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();

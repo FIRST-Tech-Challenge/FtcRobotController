@@ -2,7 +2,6 @@ package org.firstinspires.ftc.Team19567.opmode; //The "namespace" for the projec
 
 //Import stuff from FTC SDK
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -18,24 +17,19 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 //Custom enums and classes
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
-import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.Team19567.util.AUTO_STATE;
+import org.firstinspires.ftc.Team19567.drive.MecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.util.PRESET_STATE;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
-import org.opencv.core.Mat;
 
 //Custom constants
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.DISTANCE_SENSOR_THRESHOLD;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.EJECTION_SPEED;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FORCE_SENSOR_THRESHOLD;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INIT_POWER;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INTAKE_TIME;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.TURN_SENSITIVITY;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.STRAFE_SENSITIVITY;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.ACC_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FIRST_LEVEL_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.SECOND_LEVEL_POS;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.THIRD_LEVEL_POS;
@@ -92,7 +86,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
     //Objects
     private RevBlinkinLedDriver.BlinkinPattern blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE;
     private Mechanisms mechanisms = null;
-    SampleMecanumDriveCancelable chassis;
+    MecanumDriveCancelable chassis;
 
     //Enums
     private PRESET_STATE presetState = PRESET_STATE.NO_PRESET;
@@ -114,7 +108,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distanceSensor");
         forceSensor = hardwareMap.get(AnalogInput.class,"forceSensor");
 
-        chassis = new SampleMecanumDriveCancelable(hardwareMap);
+        chassis = new MecanumDriveCancelable(hardwareMap);
         mechanisms = new Mechanisms(hardwareMap,telemetry);
 
         leftDCFront.setDirection(DcMotor.Direction.FORWARD);

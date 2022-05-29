@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Disabled
 @Autonomous(name="OG Blue Warehouse", group="v1")
-
+@Deprecated
 public class blue_warehouse_v1 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

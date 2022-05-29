@@ -7,11 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
-import org.firstinspires.ftc.Team19567.drive.SlowSampleMecanumDriveCancelable;
+import org.firstinspires.ftc.Team19567.drive.SlowMecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
@@ -24,8 +22,15 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+/**
+ * This is the class for the blue warehouse side. <br>
+ * It utilizes a finite state machine (FSM), just like the other opmodes. <br>
+ * Alignment: <a href="https://discord.com/channels/873012716757995540/912908534071558144/9462033760797410482">Discord</a>
+ */
+
 @Autonomous(name="Blue Warehouse FSM", group="Dababy")
 
+//TODO: Create a base autonomous class and have all specific autonomous classes extend it
 public class BlueWarehouseFSM extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
@@ -50,7 +55,7 @@ public class BlueWarehouseFSM extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SlowSampleMecanumDriveCancelable chassis = new SlowSampleMecanumDriveCancelable(hardwareMap);
+        SlowMecanumDriveCancelable chassis = new SlowMecanumDriveCancelable(hardwareMap);
 
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
