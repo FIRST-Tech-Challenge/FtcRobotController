@@ -9,6 +9,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+@Deprecated
 public class redPipeline extends OpenCvPipeline {
     private Mat output = new Mat();
     private static final double width = 544;
