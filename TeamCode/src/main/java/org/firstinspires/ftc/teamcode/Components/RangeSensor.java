@@ -17,19 +17,38 @@ public class RangeSensor {
 
     public RangeSensor(LinearOpMode opMode) {
         ultrasonicFront =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
-        ultrasonicLeft =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
-        ultrasonicRight =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
+//        ultrasonicLeft =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
+//        ultrasonicRight =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
     }
 
-    public double getDistance(AnalogInput ultrasonic) {
+    public double getDistance(boolean front) {
+        AnalogInput ultrasonic;
+        if(front){
+            ultrasonic = ultrasonicFront;
+        }
+        else{
+            ultrasonic = ultrasonicRight;
+        }
         double rawValue = ultrasonic.getVoltage();
+        //0.41 = 24, 0.68 = 48
+        //.27 =24
         double voltage_scale_factor = (ultrasonic.getVoltage()*90) - 13.5;
-        return rawValue * voltage_scale_factor * 0.0492;
+        return rawValue * 24/.27 -12.444;
+    }
+    public double getVoltage(boolean front) {
+        AnalogInput ultrasonic;
+        if(front){
+            ultrasonic = ultrasonicFront;
+        }
+        else{
+            ultrasonic = ultrasonicRight;
+        }
+        return ultrasonic.getVoltage();
     }
     public double[] getLocation(){
         double[] pos = {0,0};
-        pos[1] = cos(angle)*getDistance(ultrasonicFront)-47;
-        pos[0] = cos(angle)*getDistance(ultrasonicLeft);
+        pos[1] = cos(angle)*getDistance(true)-47;
+        pos[0] = cos(angle)*getDistance(false);
         return pos;
     }
 }

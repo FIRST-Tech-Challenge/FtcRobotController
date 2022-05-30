@@ -40,8 +40,8 @@ public class BlueTeamElem extends OpenCvPipeline {
 
     //New calculations
     static final Rect LEFT_ROI = new Rect(
-            new Point(95,100),
-            new Point(25,10));
+            new Point(80,100),
+            new Point(10,10));
     static final Rect MIDDLE_ROI = new Rect(
             new Point(240,100),
             new Point(170, 10));

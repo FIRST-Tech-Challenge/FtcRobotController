@@ -311,6 +311,9 @@ public class EncoderChassis extends BasicChassis {
         op.telemetry.addData("aVelocity", aVelocity);
         op.telemetry.addData("differtime", differtime);
         op.telemetry.addData("maxVel", maxVelocity);
+//        if(ypos>0){
+//            double[] ultraPos = ultra.getLocation;
+//        }
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();
             try {

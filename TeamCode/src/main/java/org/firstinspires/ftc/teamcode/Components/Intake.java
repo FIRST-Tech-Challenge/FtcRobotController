@@ -41,8 +41,8 @@ public class Intake {
         sensorDistance = opMode.hardwareMap.get(DistanceSensor.class, "intakeDistSensor");
 //        touchSensor.setMode(DigitalChannel.Mode.INPUT);
         if (!isTeleop) {
-            intakeServo.setPosition(.3);
-            intakeServo2.setPosition(1.0);
+            intakeServo.setPosition(.35);
+            intakeServo2.setPosition(.65);
         }
         flipTime = 0;
     }
@@ -103,15 +103,15 @@ public class Intake {
     public boolean flipIntake() {
         if (checker.getState(StateMachine.States.INTAKE_DOWN)&&checker.checkIf(StateMachine.States.FLIPPING) &&op.getRuntime()-flipTime>0.4) {
             flipTime= op.getRuntime();
-            intakeServo.setPosition(.3);
+            intakeServo.setPosition(.0);
             intakeServo2.setPosition(1.0);
             checker.setState(StateMachine.States.FLIPPING, true);
             checker.setState(StateMachine.States.INTAKE_DOWN, false);
             return true;
         } else if(!checker.getState(StateMachine.States.FLIPPING)) {
             flipTime = op.getRuntime();
-            intakeServo.setPosition(0.95);
-            intakeServo2.setPosition(.35);
+            intakeServo.setPosition(0.7);
+            intakeServo2.setPosition(.3);
             checker.setState(StateMachine.States.FLIPPING, true);
             checker.setState(StateMachine.States.INTAKE_DOWN, true);
             return true;
@@ -126,7 +126,7 @@ public class Intake {
             flipTime= op.getRuntime();
             checker.setState(StateMachine.States.FLIPPING, true);
             intakeServo.setPosition(1 - torget);
-            intakeServo2.setPosition(.3 + torget);
+            intakeServo2.setPosition(0 + torget);
         }
     }
 
