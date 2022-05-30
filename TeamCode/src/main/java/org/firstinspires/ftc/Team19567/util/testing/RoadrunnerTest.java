@@ -21,8 +21,12 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
+/**
+ * Opmode to test various Roadrunner and OpenCV functions (used before the second qualifier)
+ */
 @Autonomous(name="Roadrunner Test", group="Testing")
 @Disabled
+@Deprecated
 public class RoadrunnerTest extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();

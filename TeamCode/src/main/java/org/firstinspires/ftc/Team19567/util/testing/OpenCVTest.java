@@ -10,6 +10,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
+/**
+ * Opmode to test OpenCV without running the robot in any other way. <br>
+ * Genuinely useful!
+ */
 @Autonomous(name="OpenCV Test",group="Testing")
 public class OpenCVTest extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;

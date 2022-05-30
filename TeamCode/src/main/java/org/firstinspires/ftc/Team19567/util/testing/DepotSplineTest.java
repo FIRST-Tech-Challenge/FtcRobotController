@@ -20,6 +20,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+/**
+ * useless garbage, do not bother with this
+ */
 @Autonomous(name="Depot Spline Test", group="Testing")
 @Disabled
 @Deprecated

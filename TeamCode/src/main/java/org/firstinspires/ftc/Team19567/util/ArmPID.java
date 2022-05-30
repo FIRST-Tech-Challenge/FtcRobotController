@@ -2,6 +2,11 @@ package org.firstinspires.ftc.Team19567.util;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/**
+ * Attempt at making a PID class with <a href="https://gm0.org/en/latest/docs/software/control-loops.html">gm0</a> as a reference. <br>
+ * Was never implemented (or even finished) and is probably incorrect in many ways.
+ */
+
 @Deprecated
 public class ArmPID {
     private double p;

@@ -10,15 +10,21 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+/**
+ * Opmode to read really any analog input's data, but intended for use for the potentiometer and force sensor.
+ * Genuinely useful!
+ */
+
 @TeleOp(name="Potentiometer Test", group="Testing")
-public class PotentiometerTest extends OpMode
-{
+@Disabled
+public class PotentiometerTest extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private AnalogInput potentiometer;
 
     @Override
     public void init() {
+        //Change deviceName to whatever analog sensor needs to be tested, or change the robot's configuration
         potentiometer = hardwareMap.get(AnalogInput.class,"potentiometer");
         telemetry.addData("Status", "Initialized");
         telemetry.update();

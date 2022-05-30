@@ -11,8 +11,12 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 
+/**
+ * Use {@link org.firstinspires.ftc.Team19567.util.testing.OpenCVTest OpenCvTest} instead.
+ */
 @Autonomous(name="OpenCV Red Test",group="Testing")
 @Disabled
+@Deprecated
 public class OpenCVRedTest extends LinearOpMode {
     private LOCATION location = LOCATION.ALLIANCE_THIRD;
     @Override

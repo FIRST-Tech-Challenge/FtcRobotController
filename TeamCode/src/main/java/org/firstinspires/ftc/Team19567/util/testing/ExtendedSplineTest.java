@@ -10,6 +10,9 @@ import org.firstinspires.ftc.Team19567.drive.MecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
 
+/**
+ * useless garbage, do not use
+ */
 @Autonomous(name="Extended Spline Test", group="Testing")
 @Disabled
 @Deprecated

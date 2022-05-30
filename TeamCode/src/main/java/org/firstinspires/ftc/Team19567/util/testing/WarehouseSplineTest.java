@@ -19,6 +19,10 @@ import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+/**
+ * Opmode to test various ways to spline in to the warehouse. <br>
+ * Genuinely useful!
+ */
 @Autonomous(name="Warehouse Spline Test", group="Testing")
 
 public class WarehouseSplineTest extends LinearOpMode {
