@@ -17,7 +17,7 @@ public class tseDepositor {
     long initialTime;
     long retractTime;
     int position=0;
-    double[] positions = {0.7,0.05,0.42,0.3};
+    double[] positions = {0.7,0.05,0.5,0.4,0.3};
     double reversePower;
     static final long FORWARD_ROTATION_PER_INCH = 147;
     static final long REVERSE_ROTATION_PER_INCH = 114;
@@ -36,8 +36,8 @@ public class tseDepositor {
         return TSEServo.getPosition();
     }
     public void toggleTSEPosition(){
-        if(position==3) {
-            position =1;
+        if(position==4) {
+            position = 1;
         }else{
             position++;
         }

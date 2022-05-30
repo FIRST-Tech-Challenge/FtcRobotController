@@ -103,15 +103,15 @@ public class Intake {
     public boolean flipIntake() {
         if (checker.getState(StateMachine.States.INTAKE_DOWN)&&checker.checkIf(StateMachine.States.FLIPPING) &&op.getRuntime()-flipTime>0.4) {
             flipTime= op.getRuntime();
-            intakeServo.setPosition(.0);
-            intakeServo2.setPosition(1.0);
+            intakeServo.setPosition(.28);
+            intakeServo2.setPosition(.72);
             checker.setState(StateMachine.States.FLIPPING, true);
             checker.setState(StateMachine.States.INTAKE_DOWN, false);
             return true;
         } else if(!checker.getState(StateMachine.States.FLIPPING)) {
             flipTime = op.getRuntime();
-            intakeServo.setPosition(0.7);
-            intakeServo2.setPosition(.3);
+            intakeServo.setPosition(1.0);
+            intakeServo2.setPosition(0.0);
             checker.setState(StateMachine.States.FLIPPING, true);
             checker.setState(StateMachine.States.INTAKE_DOWN, true);
             return true;

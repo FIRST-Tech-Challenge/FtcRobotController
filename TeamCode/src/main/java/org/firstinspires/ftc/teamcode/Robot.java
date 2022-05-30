@@ -212,10 +212,11 @@ public class Robot {
 //        boolean manualretractTSE = op.gamepad2.dpad_left;
 //        boolean autoretractTSE = op.gamepad1.x;
         boolean sequence = op.gamepad1.dpad_up;
+        boolean TSEArmUp = op.gamepad1.dpad_up;
 
         /** gamepad 2**/
         float turretTurn = op.gamepad2.right_stick_x;
-        float turretUpNDown = op.gamepad2.right_stick_y;
+        float turretUpNDown = op.gamepad2.left_stick_y;
         float manualretractTurret = op.gamepad2.left_trigger;
         float extendTurret = op.gamepad2.right_trigger;
 //        boolean extendAutoTSE = op.gamepad2.dpad_up;
@@ -225,7 +226,7 @@ public class Robot {
         boolean basket = op.gamepad2.a;
         boolean unsave_turret_position = op.gamepad2.b;
         boolean capper = false;
-        boolean TSEArmUp = op.gamepad2.dpad_up;
+
 
 
         time = op.getRuntime();
