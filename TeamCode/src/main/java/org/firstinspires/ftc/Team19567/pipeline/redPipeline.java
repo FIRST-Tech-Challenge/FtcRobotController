@@ -9,6 +9,14 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+/**
+ * An attempt at making a pipeline to detect the red squares on the field rather than the TSE itself <br>
+ * However, it is not consistent and does not function effectively. <br>
+ * This pipeline is effectively just a clone of {@link org.firstinspires.ftc.Team19567.pipeline.greenPipeline greenPipeline.java}. <br>
+ * The only difference is that it uses different HSV values and constants (i.e. {@link #THRESHOLD}). <br>
+ * In the future, in order to detect squares (which is more robust and adaptive than detecting the TSE), a different pipeline should be used. <br>
+ * If you want to study how a pipeline works, study {@link org.firstinspires.ftc.Team19567.pipeline.greenPipeline greenPipeline.java} instead.
+ */
 @Deprecated
 public class redPipeline extends OpenCvPipeline {
     private Mat output = new Mat();

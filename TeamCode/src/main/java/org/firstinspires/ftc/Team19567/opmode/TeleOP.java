@@ -23,25 +23,15 @@ import org.firstinspires.ftc.Team19567.util.Mechanisms;
 import org.firstinspires.ftc.Team19567.util.TELEOP_STATE;
 import org.firstinspires.ftc.Team19567.util.Utility_Constants;
 
-//Custom constants
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.DISTANCE_SENSOR_THRESHOLD;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.EJECTION_SPEED;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INIT_POWER;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INTAKE_TIME;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.TURN_SENSITIVITY;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.STRAFE_SENSITIVITY;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FIRST_LEVEL_POS;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.SECOND_LEVEL_POS;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.THIRD_LEVEL_POS;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MAX_POS;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.FIRST_LEVEL_POWER;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.SECOND_LEVEL_POWER;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.THIRD_LEVEL_POWER;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.GOING_DOWN_POWER;
-import static org.firstinspires.ftc.Team19567.util.Utility_Constants.INTAKE_SPEED;
-
-@TeleOp(name="TeleOP", group="Dababy") //Gives the TeleOp its name in the driver station menu and categorizes it as an Iterative OpMode
-public class TeleOP extends OpMode {           //Declares the class TestOPIterative, which is a child of OpMode
+/**
+ * Main TeleOP file (actually, the only one). Works with either blue or red side. <br>
+ * In the future, the TeleOP file should NOT be so complicated, with all of the mechanisms and code in one file. <br>
+ * Instead, the mechanisms should all have their own subsystems with all of the variables and code necessary for operation. <br>
+ * In addition, logic such as gamepad presses should be situated within their respective subsystems. <br>
+ * Ideally, a custom gamepad class
+ */
+@TeleOp(name="TeleOP", group="Dababy") //Gives the TeleOp its name in the driver station menu, puts it in the TeleOP section, and classifies it with all opmodes named "Dababy" (NTX Regionals opmodes)
+public class TeleOP extends OpMode {
     //Declare OpMode members
 
     //ElapsedTime
@@ -175,10 +165,10 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
                 }
                 if (isSlowmode) acc = Utility_Constants.SLOWMODE_MULT;
                 else acc = Utility_Constants.MAX_SENSITIVITY;
-                final double leftFrontSpeed = (STRAFE_SENSITIVITY* r * Math.sin(angleDC) - TURN_SENSITIVITY * gamepad1.right_stick_x) * acc; //Using the math explained above, we can obtain the values we want to multiply each wheel by. acc is the variable which controls the overall multiplier of how fast we want to go.
-                final double rightFrontSpeed = (STRAFE_SENSITIVITY * r * Math.cos(angleDC) + TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
-                final double leftBackSpeed = (STRAFE_SENSITIVITY * r * Math.cos(angleDC) - TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
-                final double rightBackSpeed = (STRAFE_SENSITIVITY * r * Math.sin(angleDC) + TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
+                final double leftFrontSpeed = (Utility_Constants.STRAFE_SENSITIVITY* r * Math.sin(angleDC) - Utility_Constants.TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
+                final double rightFrontSpeed = (Utility_Constants.STRAFE_SENSITIVITY * r * Math.cos(angleDC) + Utility_Constants.TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
+                final double leftBackSpeed = (Utility_Constants.STRAFE_SENSITIVITY * r * Math.cos(angleDC) - Utility_Constants.TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
+                final double rightBackSpeed = (Utility_Constants.STRAFE_SENSITIVITY * r * Math.sin(angleDC) + Utility_Constants.TURN_SENSITIVITY * gamepad1.right_stick_x) * acc;
 
                 leftDCFront.setPower(leftFrontSpeed); //Set all the motors to their corresponding powers/speeds
                 rightDCFront.setPower(rightFrontSpeed);
@@ -231,13 +221,13 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
 
         //INTAKE
-        if(intakeTimeout.milliseconds() >= INTAKE_TIME) {
-            if(gamepad1.right_trigger > 0) mechanisms.moveIntake(INTAKE_SPEED);
+        if(intakeTimeout.milliseconds() >= Utility_Constants.INTAKE_TIME) {
+            if(gamepad1.right_trigger > 0) mechanisms.moveIntake(Utility_Constants.INTAKE_SPEED);
             else if(gamepad1.right_bumper) mechanisms.moveIntake(-0.5);
             else if(limitSwitch.isPressed()) mechanisms.moveIntake(0.0);
             else mechanisms.moveIntake(0.1);
         }
-        else if(intakeTimeout.milliseconds() >= 100 && intakeTimeout.milliseconds() <= INTAKE_TIME) mechanisms.moveIntake(EJECTION_SPEED);
+        else if(intakeTimeout.milliseconds() >= 100 && intakeTimeout.milliseconds() <= Utility_Constants.INTAKE_TIME) mechanisms.moveIntake(Utility_Constants.EJECTION_SPEED);
         else mechanisms.moveIntake(0);
 
         //CAROUSEL
@@ -260,13 +250,13 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         }
         else carouselPower = 0.0; */
 
-        if(gamepad1.dpad_left || gamepad1.dpad_right || gamepad2.dpad_right) carouselPower = INIT_POWER+0.2;
+        if(gamepad1.dpad_left || gamepad1.dpad_right || gamepad2.dpad_right) carouselPower = Utility_Constants.INIT_POWER+0.2;
         else carouselPower = 0.0;
 
         //ARM
-        if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*8,0,MAX_POS);
-        else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*8,0,MAX_POS);
-        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-8,0,MAX_POS);
+        if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad1.left_trigger*8,0,Utility_Constants.MAX_POS);
+        else if(gamepad1.left_trigger > 0 || gamepad2.left_trigger > 0) armPos = Range.clip(armPos+gamepad2.left_trigger*8,0,Utility_Constants.MAX_POS);
+        if(gamepad1.left_bumper || gamepad2.left_bumper) armPos = Range.clip(armPos-8,0,Utility_Constants.MAX_POS);
         if(gamepad1.x || gamepad2.x) {
             presetState = PRESET_STATE.ALLIANCE_FIRST;
         }
@@ -286,25 +276,25 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
         //PRESET HANDLING
         switch(presetState) {
             case ALLIANCE_FIRST: {
-                armPower = FIRST_LEVEL_POWER;
-                armPos = FIRST_LEVEL_POS;
-                if(armDC.getCurrentPosition() >= FIRST_LEVEL_POS-5) {
+                armPower = Utility_Constants.FIRST_LEVEL_POWER;
+                armPos = Utility_Constants.FIRST_LEVEL_POS;
+                if(armDC.getCurrentPosition() >= Utility_Constants.FIRST_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
                 }
                 break;
             }
             case ALLIANCE_SECOND: {
-                armPower = SECOND_LEVEL_POWER;
-                armPos = SECOND_LEVEL_POS;
-                if(armDC.getCurrentPosition() >= SECOND_LEVEL_POS-5) {
+                armPower = Utility_Constants.SECOND_LEVEL_POWER;
+                armPos = Utility_Constants.SECOND_LEVEL_POS;
+                if(armDC.getCurrentPosition() >= Utility_Constants.SECOND_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
                 }
                 break;
             }
             case ALLIANCE_THIRD: {
-                armPower = THIRD_LEVEL_POWER;
-                armPos = THIRD_LEVEL_POS;
-                if(armDC.getCurrentPosition() >= THIRD_LEVEL_POS-5) {
+                armPower = Utility_Constants.THIRD_LEVEL_POWER;
+                armPos = Utility_Constants.THIRD_LEVEL_POS;
+                if(armDC.getCurrentPosition() >= Utility_Constants.THIRD_LEVEL_POS-5) {
                     presetState = PRESET_STATE.NO_PRESET;
                 }
                 break;
@@ -312,7 +302,7 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             case GOING_DOWN: {
                 releaseServoPos = Utility_Constants.RELEASE_SERVO_DEFAULT;
                 mechanisms.moveIntake(-0.4);
-                armPower = GOING_DOWN_POWER;
+                armPower = Utility_Constants.GOING_DOWN_POWER;
                 armPos = 0;
                 if(armDC.getCurrentPosition() <= 5) {
                     presetState = PRESET_STATE.NO_PRESET;
@@ -335,11 +325,11 @@ public class TeleOP extends OpMode {           //Declares the class TestOPIterat
             gamepad1.runRumbleEffect(endGameRumble);
         }
         else if(presetState != PRESET_STATE.NO_PRESET) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET;
-        else if(distanceSensor.getDistance(DistanceUnit.MM) <= DISTANCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN;
+        else if(distanceSensor.getDistance(DistanceUnit.MM) <= Utility_Constants.DISTANCE_SENSOR_THRESHOLD) blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN;
         else {
             blinkinPattern = RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE;
         }
-        if(distanceSensor.getDistance(DistanceUnit.MM) <= DISTANCE_SENSOR_THRESHOLD) {
+        if(distanceSensor.getDistance(DistanceUnit.MM) <= Utility_Constants.DISTANCE_SENSOR_THRESHOLD) {
             if(!isIntaked) {
                 gamepad1.runRumbleEffect(boxSecured);
                 intakeTimeout.reset();

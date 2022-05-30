@@ -33,23 +33,30 @@ public class BlueDepotFSM extends LinearOpMode {
     //TODO: In the future, these variables should all be situated in a base autonomous class
 
     //TIMEOUTS
-    private ElapsedTime timeout = new ElapsedTime(); //Create new ElapsedTime() representing time for flicker to release freight
-    private ElapsedTime carouselTimeout = new ElapsedTime(); //Create new ElapsedTime() representing time for carousel to spin the duck off
+    /** ElapsedTime() representing time for flicker to release freight */
+    private ElapsedTime timeout = new ElapsedTime();
+    /** ElapsedTime() representing time for carousel to spin the duck off */
+    private ElapsedTime carouselTimeout = new ElapsedTime();
 
     //CUSTOM
-    private greenPipeline pipeline = new greenPipeline(telemetry); //Team shipping element OpenCV Pipeline
-    private LOCATION location = LOCATION.ALLIANCE_THIRD; //Variable representing location of TSE
-    private AUTO_STATE currentState = AUTO_STATE.DETECTING_OPENCV; //State for the statemachine to begin with
-    private Mechanisms mechanisms = null; //New mechanisms that will be properly initialized later
+    /** TSE OpenCV Pipeline */
+    private final greenPipeline pipeline = new greenPipeline(telemetry);
+    /** Location of TSE (defaults to ALLIANCE_THIRD) */
+    private LOCATION location = LOCATION.ALLIANCE_THIRD;
+    /** State of state machine (defaults to DETECTING_OPENCV) */
+    private AUTO_STATE currentState = AUTO_STATE.DETECTING_OPENCV;
+    /** Mechanisms of the opmode */
+    private Mechanisms mechanisms = null; //Will be properly initialized later
 
     //HARDWARE
-    private RevBlinkinLedDriver blinkin = null; //Blinkin
+    /** The blinkin */
+    private RevBlinkinLedDriver blinkin = null;
 
     //PRELOAD
-    private int chosenArmPos = 600; //Variable representing position to set the arm to (for preload)
-    private double chosenArmSpeed = 0.3; //Variable representing speed to set the arm at (for preload)
-    private double chosenTrajectoryX = -22; //Variable representing x coordinate for the robot to drive to (for the preload)
-    private double chosenTrajectoryY = 40; //Variable representing the y coordinate for the robot to drive to (for the preload)
+    /** Position to set the arm to (for preload) */
+    private int chosenArmPos = 600;
+    /** Speed to run the arm at (for preload) */
+    private double chosenArmSpeed = 0.3;
 
     //Function run when the init button is pressed
     @Override //Annotation used to inform the compiler that the superclass's element is being overriden by the sub class's element
@@ -101,6 +108,11 @@ public class BlueDepotFSM extends LinearOpMode {
         THE FOLLOWING CODE RUNS AFTER THE DRIVER PRESSES START
 
         Changes variables based on the ascertained location of the TSE */
+
+        //x coordinate for the robot to drive to (for the preload)
+        double chosenTrajectoryX;
+        //y coordinate for the robot to drive to (for the preload)
+        double chosenTrajectoryY;
 
         switch(location) {
             //Technically third level (due to webcam positioning and some positions sometimes being flipped), although the first level is being detected
@@ -155,10 +167,10 @@ public class BlueDepotFSM extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     mechanisms.moveIntake(0.4); //Moves the intake so the arm doesn't get stuck
                     mechanisms.rotateArm(chosenArmPos,chosenArmSpeed); //Begins moving the arm
-                }).addSpatialMarker( new Vector2d(chosenTrajectoryX, chosenTrajectoryY+0.5), () -> { //Creates a marker to run approximately 0.5 inches before the specified coordinates have been reached (in this case, the alliance hub)
+                }).addSpatialMarker( new Vector2d(chosenTrajectoryX, chosenTrajectoryY +0.5), () -> { //Creates a marker to run approximately 0.5 inches before the specified coordinates have been reached (in this case, the alliance hub)
                     mechanisms.releaseServoMove(0.3); //Begins moving the release servo
                     mechanisms.moveIntake(0); //Stops moving the intake
-                }).lineToSplineHeading(new Pose2d(chosenTrajectoryX,chosenTrajectoryY,Math.toRadians(-225))) //Begins moving the robot towards the alliance hub (see https://learnroadrunner.com/trajectorybuilder-functions.html for what this function does)
+                }).lineToSplineHeading(new Pose2d(chosenTrajectoryX, chosenTrajectoryY,Math.toRadians(-225))) //Begins moving the robot towards the alliance hub (see https://learnroadrunner.com/trajectorybuilder-functions.html for what this function does)
                 .build(); //Builds the trajectory sequence (necessary)
         //Its in the name
         TrajectorySequence moveToCarouselSequence = chassis.trajectorySequenceBuilder(preloadSequence.end()) //Sets initial pose to be the end of the preload sequence

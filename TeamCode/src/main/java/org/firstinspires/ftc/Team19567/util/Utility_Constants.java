@@ -76,8 +76,10 @@ public class Utility_Constants {
     public static double POW_COEFFICIENT = 1.2;
     /** Specifies maximum distance in MM for distance sensor to detect freight (cannot be less than 50) */
     public static double DISTANCE_SENSOR_THRESHOLD = 80;
-    /** Specifies minimum awmount of detected voltage change to detect freight (should be barely > 0) */
+    /** Specifies minimum amount of detected voltage change to detect freight (should be barely > 0) */
     public static double FORCE_SENSOR_THRESHOLD = 0.01;
+    /** Minimum amount of detection for the OpenCV pipeline to determine that a TSE has been detected */
+    public static double OPENCV_THRESHOLD = 0.025;
     /** Minimum duration in milliseconds between certain presses (e.g. SlowMode, Carousel Engagement) */
     public static int DEBOUNCE_TIME = 250;
     /** Milliseconds to run the intake in reverse after a freight has been detected */
