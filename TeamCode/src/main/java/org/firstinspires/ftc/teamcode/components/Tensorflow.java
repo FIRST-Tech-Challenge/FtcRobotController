@@ -9,13 +9,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
+import org.firstinspires.ftc.teamcode.params.VuforiaParams;
 
 
 public class Tensorflow {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
-    private static final String VUFORIA_KEY = ""; // TODO: ASK
+    private static final String VUFORIA_KEY = VuforiaParams.VUFORIA_KEY;
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
