@@ -20,7 +20,11 @@ public class UltrasonicSensorTest extends LinearOpMode {
         while(opModeIsActive()){
             telemetry.addData("voltage", ultrasonic.getVoltage(true));
             telemetry.addData("distance", ultrasonic.getDistance(true));
-            telemetry.update();
+            telemetry.addData("voltage", ultrasonic.getVoltage(false));
+            telemetry.addData("distance", ultrasonic.getDistance(false));
+            telemetry.addData("x", ultrasonic.getLocation()[0]);
+            telemetry.addData("y", ultrasonic.getLocation()[1]);
+            robot.track();
         }
         stop();
     }

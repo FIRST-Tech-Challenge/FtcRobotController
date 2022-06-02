@@ -69,7 +69,6 @@ public class Turret {
         turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret_Extension.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         basketArmServo.setPosition(0.0);
         if(!isTeleOp) {
@@ -311,7 +310,6 @@ public class Turret {
         turret_Rotation.setPower(targetAngle);
     }
     public void TurretSlidesToPosition (double x, double y, double z, double power) {
-        updateTurretPositions();
         double v = x;
         x=y;
         y=v;
@@ -319,16 +317,11 @@ public class Turret {
         turret_Rotation.setTargetPosition((int) (rotation_angle/DEG_PER_TICK_MOTOR));
         turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret_Rotation.setPower(power);
-
-
         double extension_length_flat = Math.sqrt(pow(x, 2) + pow(y, 2));
         if(extension_length_flat ==0){
             extension_length_flat = 0.01;
         }
         double extension_length = Math.sqrt(pow(extension_length_flat, 2) + pow(z, 2));
-        if(extension_length_flat*TICKS_PER_INCH<extendPosition){
-            extension_length_flat = extendPosition;
-        }
         if (extension_length * TICKS_PER_INCH > MAX_EXTENSION_TICKS) {
             turret_Extension.setTargetPosition((int) MAX_EXTENSION_TICKS);
         }

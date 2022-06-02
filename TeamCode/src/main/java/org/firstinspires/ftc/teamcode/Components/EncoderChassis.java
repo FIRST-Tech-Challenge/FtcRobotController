@@ -58,6 +58,7 @@ public class EncoderChassis extends BasicChassis {
     public static boolean barrier = false;
     public static double differtime = 0.002;
     double lastLog = 0.0;
+    private RangeSensor ultra = null;
     File logFile = new File("/storage/emulated/0/tmp/Log.csv");
     FileWriter wFTCfile;
 
@@ -74,6 +75,7 @@ public class EncoderChassis extends BasicChassis {
         xpos = 0;
         ypos = 0;
         angle = 0;
+        ultra = new RangeSensor(opMode);
         try {
             //Create File
             if (logFile.createNewFile()) {
@@ -311,9 +313,15 @@ public class EncoderChassis extends BasicChassis {
         op.telemetry.addData("aVelocity", aVelocity);
         op.telemetry.addData("differtime", differtime);
         op.telemetry.addData("maxVel", maxVelocity);
-//        if(ypos>0){
-//            double[] ultraPos = ultra.getLocation;
-//        }
+        if(abs(angle)<15){
+            double[] ultraPos = ultra.getLocation();
+            if(abs(ultraPos[1]-ypos)<2.0){
+                ypos=(float)ultraPos[1];
+            }
+//            if(abs(ultraPos[0]-xpos)<2.0){
+//                xpos=(float)ultraPos[0];
+//            }
+        }
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();
             try {
@@ -404,7 +412,8 @@ public class EncoderChassis extends BasicChassis {
         double t = 0, t2;
         double yInt = 0, xInt = 0, pxError = 0, pyError = 0, pposxError = 0, pposyError = 0;
         double sstarttertime = 100;
-        while ((abs(difference) >= 2.5)) {
+        boolean early = false;
+        while ((abs(difference) >= 1.5)) {
 
             currentPosition = track();
             op.telemetry.addData("distance", difference);
@@ -417,12 +426,12 @@ public class EncoderChassis extends BasicChassis {
             }
             if (t > 1.0) {
                 if(op.getRuntime()-time<0.5){
-                    continue;
+                    early=true;
                 }
-                if (sstarttertime > op.getRuntime()) {
+                if (!early&&sstarttertime > op.getRuntime()) {
                     sstarttertime = op.getRuntime();
                 }
-                if (op.getRuntime() > sstarttertime + 0.5 / power) {
+                if (op.getRuntime() > sstarttertime + 1.5 / power) {
                     break;
                 }
             }
@@ -465,7 +474,7 @@ public class EncoderChassis extends BasicChassis {
             double posxError = 0;//tarcurpos[0]-currentPosition[0];
             double yError = (xError + xVelocity) * mpconst - yVelocity;
             double posyError = 0;//(tarcurpos[1]-currentPosition[1]);
-            if (difference < Velocity / 4) {
+            if (difference < Velocity / 3) {
                 powerconst = min(0.3, targetspeed / Velocity);
                 xError = xVelocity / abs(xVelocity) * ((pow(difference, 2) / 4) / abs(1 - pow(mpconst, 2)) - abs(xVelocity));
                 yError = (xError + xVelocity) * mpconst - yVelocity;
