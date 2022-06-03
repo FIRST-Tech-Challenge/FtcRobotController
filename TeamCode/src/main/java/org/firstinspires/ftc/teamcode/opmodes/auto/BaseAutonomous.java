@@ -14,23 +14,32 @@ public abstract class BaseAutonomous extends BaseOpMode {
     Tensorflow tensorflow;
     Team currentTeam;
 
+    // Which team are we on?
     public enum Team {
         RED, BLUE
     }
 
-    public void init(BaseStateMachine.Team team) {
+    /**
+     * Initialization of systems for autonomous
+     * @param team current team in this game
+     */
+    public void init(BaseAutonomous.Team team) {
         super.init();
-        
+
+        // Initialize drive system
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
+        // Set up tensorflow
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         tensorflow = new Tensorflow(camName, tfodMonitorViewId);
+
+        // Set team
         currentTeam = team;
     }
 }

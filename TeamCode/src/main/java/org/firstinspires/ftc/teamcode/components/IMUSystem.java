@@ -47,8 +47,6 @@ public class IMUSystem {
      */
     public double getHeading() {
         return -imu.getAngularOrientation().firstAngle;
-//        Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-//        return orientation.firstAngle;
     }
 
     /**

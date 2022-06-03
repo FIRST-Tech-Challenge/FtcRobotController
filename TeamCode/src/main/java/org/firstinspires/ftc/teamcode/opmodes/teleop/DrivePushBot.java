@@ -9,11 +9,19 @@ import org.firstinspires.ftc.teamcode.components.DriveSystem;
 
 import java.util.EnumMap;
 
+/**
+ * Drives a pushbot with teleop control.
+ */
 @TeleOp(name = "Pushbot", group="TeleOp")
 public class DrivePushBot extends OpMode{
 
     private DriveSystem driveSystem;
+
+    /**
+     * Initializes a pushbot setup
+     */
     public void init() {
+        // Set up drive system
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
             driveMap.put(name, hardwareMap.get(DcMotor.class, name.toString()));
@@ -21,6 +29,10 @@ public class DrivePushBot extends OpMode{
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
     }
 
+    /**
+     * Drives the motors based on the joystick sticks
+     * Left trigger engages slow-drive
+     */
     public void loop() {
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);

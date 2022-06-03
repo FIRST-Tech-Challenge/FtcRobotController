@@ -11,32 +11,45 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 import org.firstinspires.ftc.teamcode.params.VuforiaParams;
 
-
+/**
+ * Creates a Tensorflow Object Detector which can detect certain game objects
+ */
 public class Tensorflow {
-    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Stone";
-    private static final String LABEL_SECOND_ELEMENT = "Skystone";
-    private static final String VUFORIA_KEY = VuforiaParams.VUFORIA_KEY;
+    // Labels of the game objects given
+    private static final String TFOD_MODEL_ASSET = "INSERT_NAME_HERE";
+    private static final String LABEL_FIRST_ELEMENT = "INSERT_NAME_HERE";
 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
+    /**
+     * Creates and initializes a new Tensorflow Object Detector
+     * @param name name in hardware map of desired webcam
+     * @param tfodMonitorId
+     */
     public Tensorflow(WebcamName name, int tfodMonitorId) {
+        // Initialize Vuforia parameters
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-
+        parameters.vuforiaLicenseKey = VuforiaParams.VUFORIA_KEY;
         parameters.cameraName = name;
-
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorId);
+        // Probability of > minimumConfidence = object identified
+        // Increase if too many false item detections
         tfodParameters.minimumConfidence = 0.3;
+        // Creates TFObjectDetector
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        // Load models to identify (NOTE: CAN ADD MORE)
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT);
+        // Start recognizing those objects
         tfod.activate();
     }
 
+    /**
+     * Gets the recognitions that have been detected if updated since last check
+     * @return list of recognitions
+     */
     public List<Recognition> getInference() {
         if (tfod != null) {
             return tfod.getUpdatedRecognitions();
@@ -44,10 +57,14 @@ public class Tensorflow {
         return null;
     }
 
+    /** Activates TFObjectDetector to start recognizing objects
+     */
     public void activate() {
         tfod.activate();
     }
 
+    /** Cleanup after shutdown so that unnecessary resources aren't used
+     */
     public void shutdown() {
         tfod.shutdown();
     }
