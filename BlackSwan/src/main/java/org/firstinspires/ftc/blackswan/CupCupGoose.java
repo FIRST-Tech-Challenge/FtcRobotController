@@ -70,17 +70,15 @@ public class CupCupGoose extends LinearOpMode
     {
         Telemetry telemetry;
         public SkystoneDeterminationPipeline(Telemetry telemetry){
-            this.telemetry= telemetry;
+            this.telemetry=telemetry;
         }
 
         public enum CupPosition
         {
-            CUPLEFT ,
-            CUPMIDDLE,
-            CUPRIGHT,
-            NONE,
-            ONE,
-            ZERO,
+            LEFT,
+            MIDDLE,
+            RIGHT,
+            UNKNOWN,
         }
 
         static final Scalar BLUE = new Scalar(0, 0, 255);
@@ -136,7 +134,7 @@ public class CupCupGoose extends LinearOpMode
         int avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile CupPosition position = CupPosition.CUPLEFT;
+        public volatile CupPosition position = CupPosition.UNKNOWN;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -189,31 +187,19 @@ public class CupCupGoose extends LinearOpMode
                     BLUE, // The color the rectangle is drawn in
                     2); // Negative thickness means solid fill
 
-            position = CupPosition.CUPLEFT; // Record our analysis
-            telemetry.addData("value", avg1);
+            position = CupPosition.UNKNOWN; // Record our analysis
+
             telemetry.update();
 
             if(avg1 > L) {
-                position = CupPosition.ONE;
+                position = CupPosition.LEFT;
+            }else if(avg2 > M){
+                position = CupPosition.MIDDLE;
             }else{
-                position = CupPosition.NONE;
+                position = CupPosition.RIGHT;
             }
 
-            if(avg2 > M) {
-                position = CupPosition.ONE;
-            }else{
-                position = CupPosition.NONE;
-            }
-
-            if(avg3 > R) {
-                position = CupPosition.ONE;
-            }else{
-                position = CupPosition.NONE;
-            }
-
-
-
-
+            telemetry.update();
 
             return input;
         }
