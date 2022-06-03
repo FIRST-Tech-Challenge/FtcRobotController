@@ -28,7 +28,7 @@ public abstract class BaseStateMachine extends BaseAutonomous {
      */
     public void init(Team team) {
         super.init(team);
-        this.msStuckDetectInit = 15000;
+        this.msStuckDetectInit     = 15000;
         this.msStuckDetectInitLoop = 15000;
         // Starts state machine
         newState(State.STATE_INITIAL);

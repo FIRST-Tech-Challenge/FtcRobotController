@@ -17,8 +17,12 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 public class Vuforia {
 
+    // Which camera to use
     public enum CameraChoice {
         PHONE_FRONT, PHONE_BACK, WEBCAM1, WEBCAM2;
     }
@@ -35,21 +39,18 @@ public class Vuforia {
 
     private static final String VUFORIA_KEY = VuforiaParams.VUFORIA_KEY;
 
-    private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
-    private static final float stoneZ = 2.00f * mmPerInch;
-    private static final float bridgeZ = 6.42f * mmPerInch;
-    private static final float bridgeY = 23 * mmPerInch;
-    private static final float bridgeX = 5.18f * mmPerInch;
-    private static final float bridgeRotY = 59;                                 // Units are degrees
-    private static final float bridgeRotZ = 180;
-    private static final float halfField = 72 * mmPerInch;
-    private static final float quadField  = 36 * mmPerInch;
-    private OpenGLMatrix lastLocation = null;
-    private VuforiaLocalizer vuforia = null;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    private static final float mmPerInch      = 25.4f;
+    private static final float mmTargetHeight = (6) * mmPerInch;  // the height of the center of the target image above the floor
+    private static final float stoneZ         = 2.00f * mmPerInch;
+    private static final float bridgeZ        = 6.42f * mmPerInch;
+    private static final float bridgeY        = 23 * mmPerInch;
+    private static final float bridgeX        = 5.18f * mmPerInch;
+    private static final float bridgeRotY     = 59;                    // Units are degrees
+    private static final float bridgeRotZ     = 180;
+    private static final float halfField      = 72 * mmPerInch;
+    private static final float quadField      = 36 * mmPerInch;
+    private OpenGLMatrix lastLocation         = null;
+    private VuforiaLocalizer vuforia          = null;
     public VuforiaTrackables targetsSkyStone;
     private List<VuforiaTrackable> allTrackables;
 

@@ -30,8 +30,8 @@ public class Tensorflow {
     public Tensorflow(WebcamName name, int tfodMonitorId) {
         // Initialize Vuforia parameters
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey = VuforiaParams.VUFORIA_KEY;
-        parameters.cameraName = name;
+        parameters.vuforiaLicenseKey           = VuforiaParams.VUFORIA_KEY;
+        parameters.cameraName                  = name;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorId);

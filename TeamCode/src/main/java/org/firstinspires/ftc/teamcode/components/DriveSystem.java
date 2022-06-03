@@ -122,7 +122,7 @@ public class DriveSystem {
     // Stops motors and resets the motor's mode, target position and heading
     public void stopAndReset() {
         setMotorPower(0.0);
-        mTargetTicks = 0;
+        mTargetTicks   = 0;
         mTargetHeading = 0;
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -148,10 +148,10 @@ public class DriveSystem {
             leftY = 0.0f;
         }
 
-        double frontLeftPower = -leftY + rightX + leftX;
+        double frontLeftPower  = -leftY + rightX + leftX;
         double frontRightPower = -leftY - rightX - leftX;
-        double backLeftPower = -leftY + rightX - leftX;
-        double backRightPower = -leftY - rightX + leftX;
+        double backLeftPower   = -leftY + rightX - leftX;
+        double backRightPower  = -leftY - rightX + leftX;
 
         motors.forEach((name, motor) -> {
             switch(name) {
@@ -195,9 +195,9 @@ public class DriveSystem {
         }
 
         if (Direction.isStrafe(direction)) {
-            double diff = computeDegreesDiff();
+            double diff       = computeDegreesDiff();
             double correction = Range.clip(DriveParams.STRAFE_COEFF * diff, -1, 1);
-            int sign = (direction == Direction.LEFT) ? -1 : 1;
+            int sign          = (direction == Direction.LEFT) ? -1 : 1;
             motors.forEach((name, motor) -> {
                 switch(name) {
                     case FRONTLEFT:
@@ -357,7 +357,7 @@ public class DriveSystem {
     private double diffFromAbs(double heading) {
         // When vertical use pitch instead of heading
         double currHeading = DriveParams.IMU_VERT ? imuSystem.getPitch() : imuSystem.getHeading();
-        double robotDiff = heading - currHeading;
+        double robotDiff   = heading - currHeading;
         Log.d(TAG,"Difference from initial: " + robotDiff);
         // Clip maximum error to -180 : 180
         while (robotDiff > 180) {

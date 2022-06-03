@@ -26,7 +26,7 @@ public abstract class BaseOpMode extends OpMode {
     public void init(){
         stopRequested = false;
         // Timeouts to determine if stuck in loop
-        this.msStuckDetectInit = 20000;
+        this.msStuckDetectInit     = 20000;
         this.msStuckDetectInitLoop = 20000;
         // Initialize motors
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
