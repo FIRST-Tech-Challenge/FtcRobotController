@@ -41,8 +41,8 @@ public class Intake {
         sensorDistance = opMode.hardwareMap.get(DistanceSensor.class, "intakeDistSensor");
 //        touchSensor.setMode(DigitalChannel.Mode.INPUT);
         if (!isTeleop) {
-            intakeServo.setPosition(.35);
-            intakeServo2.setPosition(.65);
+            intakeServo.setPosition(.31);
+            intakeServo2.setPosition(.69);
         }
         flipTime = 0;
     }
@@ -67,14 +67,11 @@ public class Intake {
     }
 
     public void startIntake() {
-        if (!checker.getState(StateMachine.States.INTAKING)) {
+
             intakeTimeStart = op.getRuntime();
-        }
-        if (checker.checkIf(StateMachine.States.INTAKING)) {
             checker.setState(StateMachine.States.INTAKING, true);
             checker.setState(StateMachine.States.REVERSING, false);
             intakeMotor.setPower(intakeSpeed);
-        }
     }
 
     public void reverseIntake(double power) {

@@ -710,7 +710,7 @@ public class Robot {
                     turret.stopTurn();
                 }
                 if (resetten && time < startTime[9]) {
-                    turret.FlipBasketToPosition(.9);
+                    turret.FlipBasketToPosition(.88);
                     turret.FlipBasketArmToPosition(0.03);
                     startTime[9] = time;
                 }
@@ -721,7 +721,7 @@ public class Robot {
                     drivetrain.setRightMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) + (angle - thoseCurves[(int) times]) / 50);
                     drivetrain.setLeftMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) - (angle - thoseCurves[(int) times]) / 50);
                 }
-                if (!intake.isSwitched()) {
+                if (intake.isSwitched()) {
                     if (time > 26 || times == 6) {
                         stopAllMotors();
                         stopIntake();

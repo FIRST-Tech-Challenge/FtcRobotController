@@ -25,10 +25,9 @@ public class BlueRightP extends LinearOpMode {
 
         waitForStart();
         position=2-position;
-        robot.goToPosition(0, -20, 0, 0, 0.5);
         if(position==1) {
             robot.TurretSlidesToPosition(-13.0, 8.5, 0, 0.5);
-            sleep(2000);
+            robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.6);
             sleep(500);
             robot.FlipBasketToPosition(0.2);
@@ -36,7 +35,7 @@ public class BlueRightP extends LinearOpMode {
         }
         else if (position==0) {
             robot.TurretSlidesToPosition(-8.5, 6.5, 0, 0.5);
-            sleep(2000);
+            robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.9);
             sleep(500);
             robot.FlipBasketToPosition(0.2);
@@ -44,7 +43,7 @@ public class BlueRightP extends LinearOpMode {
         }
         else {
             robot.TurretSlidesToPosition(-18.0, 13.5, 0, 0.5);
-            sleep(2000);
+            robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.4);
             sleep(300);
             robot.FlipBasketToPosition(0.2);

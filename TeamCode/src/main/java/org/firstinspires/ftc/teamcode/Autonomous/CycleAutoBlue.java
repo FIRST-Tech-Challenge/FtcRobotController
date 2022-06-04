@@ -47,19 +47,19 @@ public class CycleAutoBlue extends LinearOpMode {
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
-        sleep(5000);
+//        sleep(5000);
 //        robot.FlipBasketToPosition(0.58);
-//        double times=0;
-//        boolean sheesher = true;
-//        while (getRuntime()<28){
-//            sheesher = robot.autoIntake(0.8, 10,times);
-//            if(sheesher) {
-//                robot.FlipBasketArmToPosition(.55);
-//                robot.FlipBasketToPosition(0.18);
-//                sleep(400);
-//                times++;
-//            }
-//        }
+        double times=0;
+        boolean sheesher = true;
+        while (getRuntime()<28){
+            sheesher = robot.autoIntake(0.8, 10,times);
+            if(sheesher) {
+                robot.FlipBasketArmToPosition(.55);
+                robot.FlipBasketToPosition(0.18);
+                sleep(400);
+                times++;
+            }
+        }
 
 //        robot.goToPosition(1, -11.5, -28, -30, 0.8);
 //        robot.FlipBasketArmToPosition(0.00);

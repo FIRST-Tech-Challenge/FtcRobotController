@@ -308,7 +308,7 @@ public class Turret {
     public void rotateToPosition(double targetAngle){
         turret_Rotation.setTargetPosition((int) (targetAngle/DEG_PER_TICK_MOTOR));
         turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turret_Rotation.setPower(targetAngle);
+        turret_Rotation.setPower(0.5);
     }
     public void TurretSlidesToPosition (double x, double y, double z, double power) {
         updateTurretPositions();
@@ -532,7 +532,7 @@ public class Turret {
         }
 
         if(checker.getState(StateMachine.States.TURRET_SHORT)&&!checker.getState(StateMachine.States.TURRET_STRAIGHT)){
-            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(3*abs(rotatePosition)+100));
+            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(3*abs(rotatePosition)+300));
             FlipBasketToPosition(0.88);
         }
         else {

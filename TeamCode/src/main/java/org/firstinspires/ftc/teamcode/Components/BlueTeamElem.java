@@ -40,11 +40,11 @@ public class BlueTeamElem extends OpenCvPipeline {
 
     //New calculations
     static final Rect LEFT_ROI = new Rect(
-            new Point(80,100),
-            new Point(10,10));
+            new Point(150,210),
+            new Point(80,120));
     static final Rect MIDDLE_ROI = new Rect(
-            new Point(240,100),
-            new Point(170, 10));
+            new Point(310,210),
+            new Point(240, 120));
 
     static double PERCENT_COLOR_THRESHOLD = 0.3; //percentage of color
 
