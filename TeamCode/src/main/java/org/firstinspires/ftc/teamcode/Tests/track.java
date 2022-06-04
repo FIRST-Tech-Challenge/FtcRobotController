@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.aVelocity;
-import static java.lang.Math.abs;
-
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -38,19 +35,9 @@ public class track extends LinearOpMode {
         double acceleRate = 0;
         sleep(1000);
         odom.track();
-        odom.turnInPlace(50,1.0);
-        odom.turnInPlace(-90,1.0);
-        odom.turnInPlace(160,1.0);
-        odom.turnInPlace(0,1.0);
-        //846.125,0.47, 833, 0.43
-        odom.stopAllMotors();
-        while(abs(aVelocity)>1){
+        while(opModeIsActive()){
             odom.track();
         }
-        telemetry.addData("deceleTime", getRuntime()-1);
-        telemetry.addData("acceleRate", acceleRate);
-        telemetry.update();
-        sleep(10000);
         stop();
     }
 

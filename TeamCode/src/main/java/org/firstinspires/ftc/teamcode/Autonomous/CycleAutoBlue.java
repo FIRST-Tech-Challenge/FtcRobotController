@@ -14,38 +14,34 @@ public class CycleAutoBlue extends LinearOpMode {
     public void runOpMode() {
         Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
         robot.rotateToPosition(-88);
-        sleep(500);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        int position = robot.BlueElemTest(this, 0, 0);
+        int position = robot.RedElemTest(this, 0, 0);
         double[] turretTarget = {12 + 10.6, -24 + 16.2, 0};//{hubx-position*3/2,huby-position*3/2,1+7*position}
         robot.setPosition(0, 0, 0);
         waitForStart();
         resetStartTime();
-        position=0;
         //Turret extension combined with rotation in such a way to achieve the current location to drop the loaded freight into the correct position by barcode
         if (position == 0) {
-            robot.TurretSlidesToPosition(-18, 4, 0, 1.0);
-            robot.goToPosition(0,-9.5,0,0,0.8);
-            sleep(5000);
+            robot.TurretSlidesToPosition(-16, 8, 0, 1.0);
+            sleep(1000);
             robot.FlipBasketArmToPosition(0.8);
-            sleep(800);
+            sleep(350);
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
         if (position == 1) {
-            robot.TurretSlidesToPosition(-18, 10, 3, 1.0);
-            robot.goToPosition(0,-7,0,0,0.5);
+            robot.TurretSlidesToPosition(-20, 8, 2, 1.0);
+            sleep(1000);
             robot.FlipBasketArmToPosition(0.6);
             sleep(250);
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
         if (position == 2) {
-            robot.TurretSlidesToPosition(-26, 14, 6, 1.0);
-            robot.goToPosition(0,-7,0,0,0.5);
-            sleep(1500);
+            robot.TurretSlidesToPosition(-30, 15, 6, 1.0);
+            sleep(1000);
             robot.FlipBasketArmToPosition(.47);
             sleep(250);
             robot.FlipBasketToPosition(0.18);
