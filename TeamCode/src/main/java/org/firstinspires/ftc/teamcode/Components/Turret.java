@@ -69,7 +69,7 @@ public class Turret {
         turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret_Extension.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turret_Extension.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         basketArmServo.setPosition(0.0);
         if(!isTeleOp) {

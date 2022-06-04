@@ -65,7 +65,7 @@ public class CarouselCR
     }
         public  void spinCarouselAutonomousRed (){
             crServo.setPower(1.0);
-            op.sleep(2500);
+            op.sleep(2700);
             crServo.setPower(0);
         }
 

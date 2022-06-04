@@ -679,6 +679,10 @@ public class Robot {
         drivetrain.turnInPlace(target, power);
     }
 
+    public void toggleTSEPosition () {
+        TSE.toggleTSEPosition();
+    }
+
     public boolean autoIntake(double power, double randRange, double times) {
         resetten = false;
         faked = false;

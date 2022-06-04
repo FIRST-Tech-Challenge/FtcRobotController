@@ -35,6 +35,9 @@ public class tseDepositor {
     public double TSEServoPos() {
         return TSEServo.getPosition();
     }
+    public void setTSEPosition(int position1) {
+        TSEServo.setPosition(positions[position1]);
+    }
     public void toggleTSEPosition(){
         if(position==4) {
             position = 1;
