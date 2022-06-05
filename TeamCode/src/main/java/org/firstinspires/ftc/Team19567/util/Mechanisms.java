@@ -9,15 +9,18 @@ import com.qualcomm.robotcore.util.Range;
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-/*
+
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.PPR_RATIO;
- */
+
 
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.MAX_POS;
+
+/*
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POTENTIOMETER_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.POW_COEFFICIENT;
 import static org.firstinspires.ftc.Team19567.util.Utility_Constants.BALANCE_SERVO_DEFAULT;
+*/
 
 /**
  * Custom mechanisms class with functions for basically every mechanism used. <br>
@@ -155,8 +158,8 @@ public class Mechanisms {
         as it needs to be less aggressive as the arm rotates to the bottom.
         The math here is pretty self-explanatory.
          */
-        double balanceServoPos = Range.clip(Math.pow(Range.clip((3.31-potentiometer.getVoltage())/POTENTIOMETER_COEFFICIENT,0,1),POW_COEFFICIENT)+BALANCE_SERVO_DEFAULT,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
-        balanceServo.setPosition(balanceServoPos);
+        //double balanceServoPos = Range.clip(Math.pow(Range.clip((3.31-potentiometer.getVoltage())/POTENTIOMETER_COEFFICIENT,0,1),POW_COEFFICIENT)+BALANCE_SERVO_DEFAULT,balanceServo.MIN_POSITION,balanceServo.MAX_POSITION);
+        //balanceServo.setPosition(balanceServoPos);
 
         /*
         Debug telemetry:
@@ -167,6 +170,6 @@ public class Mechanisms {
         */
 
         //Balancing mechanism using the arm's encoders rather than the potentiometer's read voltage
-        //balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(BALANCE_COEFFICIENT*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
+        balanceServo.setPosition(Range.clip((armDC.getCurrentPosition()/(BALANCE_COEFFICIENT*PPR_RATIO)),balanceServo.MIN_POSITION,balanceServo.MAX_POSITION)); //TODO: TUNE THIS
     }
 }
