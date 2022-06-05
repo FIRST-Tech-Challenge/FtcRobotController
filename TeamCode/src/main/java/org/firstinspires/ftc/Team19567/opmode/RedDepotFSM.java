@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  */
 
 //TODO: Create a base autonomous class and have all specific autonomous classes extend it
-@Autonomous(name="Blue Depot FSM", group="Dababy")
+@Autonomous(name="Red Depot FSM", group="Dababy")
 public class RedDepotFSM extends LinearOpMode {
 
     //Declare opmode members
