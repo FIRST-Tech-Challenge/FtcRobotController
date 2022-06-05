@@ -704,7 +704,7 @@ public class Robot {
                 turret.updateTurretPositions();
                 time = op.getRuntime();
                 if (!resetten) {
-                    turret.TurretReset(1.0);
+                    boolean isReset = turret.TurretReset(1.0);
                 } else if (resetten) {
                     turret.stopExtend();
                     turret.stopTurn();

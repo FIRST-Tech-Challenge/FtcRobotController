@@ -87,9 +87,6 @@ public class Turret {
 //            basketActuationServo.setPosition(0.58);
 //            basketArmServo.setPosition(0.0);
         }
-        else{
-            basketActuationServo.setPosition(.88);
-        }
         turret_saved_positions[0][1][0] = 80;//-36
         turret_saved_positions[0][1][1] = -53;//-60
         turret_saved_positions[0][1][2] = 0;
@@ -532,7 +529,7 @@ public class Turret {
         }
 
         if(checker.getState(StateMachine.States.TURRET_SHORT)&&!checker.getState(StateMachine.States.TURRET_STRAIGHT)){
-            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(3*abs(rotatePosition)+300));
+            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(3*abs(rotatePosition)+200));
             FlipBasketToPosition(0.88);
         }
         else {
@@ -551,10 +548,10 @@ public class Turret {
             turret_Angle_Control2.setPosition(118.0/270);
             angleControlling = true;
         }
-        op.telemetry.addData("basketArmRest", checker.getState(StateMachine.States.BASKET_ARM_REST));
-        op.telemetry.addData("basketTransfer", checker.getState(StateMachine.States.BASKET_CIELING));
-        op.telemetry.addData("Extended", checker.getState(StateMachine.States.EXTENDED));
-        op.telemetry.addData("turretStraight", checker.getState(StateMachine.States.TURRET_STRAIGHT));
+//        op.telemetry.addData("basketArmRest", checker.getState(StateMachine.States.BASKET_ARM_REST));
+//        op.telemetry.addData("basketTransfer", checker.getState(StateMachine.States.BASKET_CIELING));
+//        op.telemetry.addData("Extended", checker.getState(StateMachine.States.EXTENDED));
+//        op.telemetry.addData("turretStraight", checker.getState(StateMachine.States.TURRET_STRAIGHT));
         if(checker.getState(StateMachine.States.BASKET_ARM_REST)&&checker.getState(StateMachine.States.BASKET_TRANSFER)&&!checker.getState(StateMachine.States.EXTENDED)&&checker.getState(StateMachine.States.TURRET_STRAIGHT)){
             isReset = false;
             arming = false;
