@@ -295,8 +295,8 @@ public class Turret {
         else if (torget_point < 0) {
             torget_point = 0;
         }
-            turret_Angle_Control.setPosition(torget_point);
-            turret_Angle_Control2.setPosition(118.0/270-torget_point);
+        turret_Angle_Control.setPosition(torget_point);
+        turret_Angle_Control2.setPosition(118.0/270-torget_point);
 //        turret_Angle_Control.setPosition(-.5);
 //        turret_Angle_Control2.setPosition(.5);
 //        op.telemetry.addData("difference", target_point - turret_Angle_Control.getPosition());
@@ -420,7 +420,7 @@ public class Turret {
     }
     public void FlipBasketToPosition (double torget) {
 //        updateTurretPositions();
-            basketActuationServo.setPosition(torget);
+        basketActuationServo.setPosition(torget);
     }
     public void capBasket(){
 //        if(!downCap) {
@@ -575,3 +575,4 @@ public class Turret {
         turret_Extension.setPower(0);
     }
 }
+

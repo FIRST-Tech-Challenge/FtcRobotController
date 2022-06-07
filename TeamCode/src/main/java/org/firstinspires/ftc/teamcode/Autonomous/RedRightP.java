@@ -23,12 +23,14 @@ public class RedRightP extends LinearOpMode {
         robot.rotateToPosition(-80);
         waitForStart();
         resetStartTime();
-        robot.rotateToPosition(0);
+        robot.rotateToPosition(5);
         sleep(2000);
-        int position = robot.BlueElemTest(this,0,0);
+        int position = robot.RedElemTest(this,0,0);
         while(getRuntime()<8){
             sleep(100);
         }
+        telemetry.addData("position:", position);
+        telemetry.update();
         if(position==1) {
             robot.TurretSlidesToPosition(13.0, 8.5, 0, 0.5);
             robot.goToPosition(0, -20, 0, 0, 0.5);
@@ -46,7 +48,7 @@ public class RedRightP extends LinearOpMode {
             sleep(300);
         }
         else {
-            robot.TurretSlidesToPosition(18.0, 10, 0, 0.5);
+            robot.TurretSlidesToPosition(17.5, 9.5, 0, 0.5);
             robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.4);
             sleep(300);
@@ -57,10 +59,10 @@ public class RedRightP extends LinearOpMode {
         robot.FlipBasketArmToPosition(0.0);
         robot.turnInPlace(60,1.0);
         robot.FlipBasketToPosition(0.8);
-        robot.goToPosition(1,-6,16,40,0.5);
+        robot.goToPosition(1,-7,18,40,0.5);
         robot.setMotorPowers(0.18);
         robot.spinCarouselAutonomousRed();
-        robot.goToPosition(0,-29,17,0,0.5);
+        robot.goToPosition(0,-29,18,0,0.5);
         robot.rotateToPosition(90);
         sleep(500);
 
