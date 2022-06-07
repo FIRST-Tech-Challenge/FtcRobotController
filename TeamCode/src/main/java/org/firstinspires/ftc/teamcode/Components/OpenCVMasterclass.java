@@ -127,10 +127,10 @@ public class OpenCVMasterclass {
         }
         backWebcam.stopStreaming();
         if(opencv.getLocation()== RedTeamElem.Location.NOT_FOUND) {
-            return 0;
+            return 2;
         }
         else if(opencv.getLocation()== RedTeamElem.Location.MID) {
-            return 2;
+            return 0;
         }
         else if(opencv.getLocation()== RedTeamElem.Location.LEFT) {
             return 1;
