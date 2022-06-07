@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
 import static org.firstinspires.ftc.teamcode.Robot.faked;
 import static org.firstinspires.ftc.teamcode.Robot.resetten;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
 import static java.lang.Math.pow;
-import static java.lang.Math.sin;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -36,7 +31,7 @@ public class Turret {
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
-    public static double [][][]turret_saved_positions={{{84,-48,0},{84,-48,0}},{{12,-24,15},{12,-24,15}}};
+    public static double [][][]turret_saved_positions={{{950,-440,0},{900,-440,0}},{{12,-24,15},{12,-24,15}}};
 
     boolean hardware_present = true;
     boolean servoPos = false;
@@ -87,18 +82,7 @@ public class Turret {
 //            basketActuationServo.setPosition(0.58);
 //            basketArmServo.setPosition(0.0);
         }
-        turret_saved_positions[0][1][0] = 80;//-36
-        turret_saved_positions[0][1][1] = -53;//-60
-        turret_saved_positions[0][1][2] = 0;
-        turret_saved_positions[0][0][0] = 80;//-36
-        turret_saved_positions[0][0][1] = -53;//-60
-        turret_saved_positions[0][0][2] = 0;
-        turret_saved_positions[1][1][0] = 12;//-36
-        turret_saved_positions[1][1][1] = -24;//-60
-        turret_saved_positions[1][1][2] = 15;
-        turret_saved_positions[1][0][0] = 12;//-36
-        turret_saved_positions[1][0][1] = -24;//-60
-        turret_saved_positions[1][0][2] = 15;
+
         op.sleep(1000);
     }
 
@@ -116,7 +100,7 @@ public class Turret {
         else{
             checker.setState(StateMachine.States.TURRET_SHORT,false);
         }
-        if (abs(rotatePosition) < 10) {
+        if (abs(rotatePosition) < 15) {
             checker.setState(StateMachine.States.TURRET_STRAIGHT,true);
         }
         else{
@@ -154,7 +138,7 @@ public class Turret {
 
 
         }
-        if(checker.getState(StateMachine.States.EXTENDED)&&!checker.getState(StateMachine.States.RAISED)){
+        if(!checker.getState(StateMachine.States.EXTENDED)&&!checker.getState(StateMachine.States.RAISED)&&checker.getState(StateMachine.States.TURRET_STRAIGHT)){
             resetten=true;
             arming = false;
             basketing = false;
@@ -210,7 +194,6 @@ public class Turret {
         turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void TurretRotate (double targetAngle) {
-        targetAngle/=DEG_PER_TICK_MOTOR;
         op.telemetry.addData("newAngle",targetAngle);
         int curPos = (int)rotatePosition;
         if(targetAngle>MAX_ROTATION_TICKS){
@@ -220,7 +203,16 @@ public class Turret {
             targetAngle = -MAX_ROTATION_TICKS;
         }
         double dist = targetAngle - curPos;
-        turret_Rotation.setPower(dist/MAX_ROTATION_TICKS);
+        if(abs(dist)<20){
+            faked=true;
+            turret_Rotation.setPower(0);
+        }
+        else {
+            faked=false;
+            turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            turret_Rotation.setVelocity(pow(abs(dist), 1.6) / 50 * dist / abs(dist) * (100));
+        }
+
     }
 
     public void BasketArmFlipLowExtend (double power) {
@@ -383,19 +375,18 @@ public class Turret {
         }
         double distance = whereExtendo-extendPosition;
         if(abs(distance)<50){
-            turret_Extension.setVelocity(0);
+            turret_Extension.setPower(0);
         }
         else {
             turret_Extension.setVelocity(distance/abs(distance)* 4 * (abs(distance) + 50));
         }
         if(abs(distance)<50&&turret_Extension.getVelocity()<100){
-            turret_Extension.setVelocity(0);
+            turret_Extension.setPower(0);
             faked=true;
         }
         else{
             faked = false;
         }
-        faked = true;
     }
     public void TurretManualFlip () {
         if (turret_Angle_Control.getPosition() > 0.5) {
@@ -412,10 +403,13 @@ public class Turret {
         updateTurretPositions();
 
         if(checker.getState(StateMachine.States.BASKET_ARM_REST)&&areTeleop) {
-            basketActuationServo.setPosition(0.68);
+            basketActuationServo.setPosition(0.88);
         }
         else{
             basketActuationServo.setPosition(0.18);
+            if(extendPosition>800&&abs(rotatePosition)>200){
+                SavePosition(0);
+            }
         }
     }
     public void FlipBasketToPosition (double torget) {
@@ -470,29 +464,9 @@ public class Turret {
     }
 
     public void SavePosition (int up) {
-        double armLength = 10.5;
-        if(up==1){
-            armLength=10.5;
-        }
-        double outLength = extendPosition/TICKS_PER_INCH+armLength;
-
-        turret_saved_positions[up][0][0] = turret_saved_positions[up][1][0];
-        turret_saved_positions[up][0][1] = turret_saved_positions[up][1][1];
-        turret_saved_positions[up][0][2] = turret_saved_positions[up][1][2];
-
-        turret_saved_positions[up][1][2] = Math.sin(turret_Angle_Control.getPosition() * DEG_PER_TICK_SERVO * PI/180) * outLength;
-        stopExtend();
-        stopTurn();
-        op.telemetry.addData("height", turret_saved_positions[up][1][2]);
-        op.telemetry.addData("xdiff", (Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2))) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180));
-        double x = cos((-angle * Math.PI / 180));
-        double y = sin((-angle * Math.PI / 180));
-        double[] diff = {Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180),Math.sqrt(Math.pow(outLength, 2) - Math.pow(turret_saved_positions[up][1][2], 2)) * Math.sin(-(rotatePosition * DEG_PER_TICK_MOTOR + angle) * PI/180)};
-        turret_saved_positions[up][1][0] = xpos + (-y*diff[1]+x*diff[0]);
-        turret_saved_positions[up][1][1] = ypos + (-x*diff[1]-y*diff[0]);
-        op.telemetry.addData("x", turret_saved_positions[up][1][0]);
-        op.telemetry.addData("y", turret_saved_positions[up][1][1]);
-        op.telemetry.update();
+        updateTurretPositions();
+        turret_saved_positions[0][0][1]=rotatePosition;
+        turret_saved_positions[0][0][0]=extendPosition;
     }
 
     public void UnsavePosition () {
@@ -518,7 +492,6 @@ public class Turret {
             }
         }
     }
-
     public boolean TurretReset (double power) {
         boolean isReset = true;
         if(checker.getState(StateMachine.States.EXTENDED)){
@@ -527,10 +500,11 @@ public class Turret {
         else{
             turret_Extension.setVelocity(0);
         }
-
-        if(checker.getState(StateMachine.States.TURRET_SHORT)&&!checker.getState(StateMachine.States.TURRET_STRAIGHT)){
-            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(3*abs(rotatePosition)+200));
+        if(checker.getState(StateMachine.States.TURRET_SHORT)){
             FlipBasketToPosition(0.88);
+        }
+        if(checker.getState(StateMachine.States.TURRET_SHORT)&&!checker.getState(StateMachine.States.TURRET_STRAIGHT)){
+            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(5*abs(rotatePosition)+250));
         }
         else {
             turret_Rotation.setPower(0);

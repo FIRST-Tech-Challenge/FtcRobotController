@@ -80,7 +80,6 @@ public class Logger {
         }catch(IOException e){
             e.printStackTrace();
         }
-        op.telemetry.addData("log", newLog);
 
     }
     public void closeLog(){

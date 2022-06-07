@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
+import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.Velocity;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.aVelocity;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
@@ -43,6 +44,7 @@ public class Robot {
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
     boolean isExtended = false;
+    boolean isBall = false;
     public static boolean resetten = true;
     public static boolean faked = false;
     boolean outModed = false;
@@ -97,7 +99,7 @@ public class Robot {
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
         turret = new Turret(op, led_bank, isTeleop, checker);
         openCV = new OpenCVMasterclass(op);
-        TSE = new tseDepositor(op);
+        TSE = new tseDepositor(op, isTeleop);
 
     }
 
@@ -428,17 +430,18 @@ public class Robot {
             op.telemetry.addData("el button", "is clicked");
             isFlipping = true;
             if(!checker.getState(StateMachine.States.SEQUENCING)) {
-                startTime[0] = op.getRuntime();
-                startTime[1] = op.getRuntime() + 1;
+                startTime[0] = op.getRuntime()+9;
+                startTime[1] = op.getRuntime() + 10;
             }
             checker.setState(StateMachine.States.SEQUENCING, true);
             turret.FlipBasketToPosition(.88);
             turret.FlipBasketArmToPosition(0.00);
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 intake.stopIntake();
-                intake.flipIntakeToPosition(0.7);
+                intake.flipIntakeToPosition(0.8);
+                isBall=intake.isBall();
                 startTime[0] = op.getRuntime();
-                startTime[1] = op.getRuntime()+1;
+                startTime[1] = op.getRuntime()+10;
             } else if (!checker.getState(StateMachine.States.FLIPPING)&&checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 retracting = true;
             }
@@ -449,7 +452,6 @@ public class Robot {
             op.telemetry.addData("raise", !checker.getState(StateMachine.States.RAISED));
             op.telemetry.addData("basket", checker.getState(StateMachine.States.BASKET_TRANSFER));
             op.telemetry.addData("intakedown", !checker.getState(StateMachine.States.INTAKE_DOWN));
-            op.telemetry.addData("transfered", !checker.getState(StateMachine.States.TRANSFERRED));
 
 
             if (op.getRuntime()>startTime[0]+0.7&&checker.checkIf(StateMachine.States.TRANSFERRING) && !checker.getState(StateMachine.States.INTAKE_DOWN)) {
@@ -516,9 +518,16 @@ public class Robot {
 
     public void fakeAutoAim() {
         double angle = -60;
-        turret.TurretRotate(angle);
-        turret.AutoAngleControlRotating(17);
-        turret.turretExtendo(970);
+        if(!isBall) {
+            turret.TurretRotate(turret_saved_positions[0][0][1]);
+            turret.AutoAngleControlRotating(17);
+            turret.turretExtendo(turret_saved_positions[0][0][0]);
+        }
+        else{
+            turret.TurretRotate(turret_saved_positions[0][1][1]);
+            turret.AutoAngleControlRotating(0);
+            turret.turretExtendo(turret_saved_positions[0][1][0]);
+        }
     }
     public void rotateToPosition(double targetAngle){
         turret.rotateToPosition(targetAngle);
@@ -694,7 +703,7 @@ public class Robot {
         intake.startIntake();
         turret.runTurretWithoutEncoder();
         track();
-        drivetrain.turnInPlace(-atan2(xpos, 20), 1.0);
+        drivetrain.turnInPlace(-atan2(xpos, 20)*180/PI, 1.0);
         while (!block && op.getRuntime() < 27) {
             starterTime = op.getRuntime();
             double time = op.getRuntime();
@@ -715,11 +724,11 @@ public class Robot {
                     startTime[9] = time;
                 }
                 if (ypos < 18) {
-                    drivetrain.setRightMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) + angle / 50);
-                    drivetrain.setLeftMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) - angle / 50);
+                    drivetrain.setRightMotorPowers( 0.4*pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) + angle / 50);
+                    drivetrain.setLeftMotorPowers(0.4*pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) - angle / 50);
                 } else {
-                    drivetrain.setRightMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) + (angle - thoseCurves[(int) times]) / 50);
-                    drivetrain.setLeftMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) - (angle - thoseCurves[(int) times]) / 50);
+                    drivetrain.setRightMotorPowers(0.4* pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) + (angle - thoseCurves[(int) times]) / 50);
+                    drivetrain.setLeftMotorPowers(0.4* pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) - (angle - thoseCurves[(int) times]) / 50);
                 }
                 if (intake.isSwitched()) {
                     if (time > 26 || times == 6) {
@@ -727,7 +736,7 @@ public class Robot {
                         stopIntake();
                         return false;
                     }
-                    sheeeeesh(-0.3, -0.5 + whereTonext[(int) times], 0.3, 0);
+                    sheeeeesh(0, -0.5 + whereTonext[(int) times], 0.7, 0);
                     block = true;
                     break;
                 }
@@ -749,17 +758,17 @@ public class Robot {
         //57
         double[][] point = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
         double[] currentPosition = track();
-        double barDistance = sqrt(pow(-0.3 - currentPosition[0], 2) + pow(10 - currentPosition[1], 2));
+        double barDistance = sqrt(pow(9.5 - currentPosition[0], 2) + pow(10 - currentPosition[1], 2));
         point[0][0] = currentPosition[0] + sin(currentPosition[2] * PI / 180) * barDistance;
         point[0][1] = currentPosition[1] + cos(currentPosition[2] * PI / 180) * barDistance;
         point[1][0] = currentPosition[0];
         point[1][1] = currentPosition[1];
-        point[2][0] = -0.3;
+        point[2][0] = 0.5;
         point[2][1] = 10;
         point[3][0] = x;
         point[3][1] = y;
-        point[4][0] = x;
-        point[4][1] = y - 22;
+        point[4][0] = 0;
+        point[4][1] = -10;
         double startpower = power;
         boolean autoAiming = false;
         double[] startPosition = currentPosition;
@@ -776,9 +785,9 @@ public class Robot {
         double lastAngle = track()[2], anglediff = 0, targetaVelocity = 0;
         double startTime = 400;
         boolean reversing = false;
-        double[] starterTimes = {100, 100, 100, 100, 100};
+        double[] starterTimes = {100, 100, 100, 100, 100,100};
         turret.runTurretWithoutEncoder();
-        intake.flipIntakeToPosition(0.7);
+        intake.flipIntakeToPosition(0.8);
         starterTimes[4] = op.getRuntime();
         boolean resetting = false;
         for (int i = 0; i < 2; i++) {
@@ -819,7 +828,7 @@ public class Robot {
                     intake.reverseIntake(1.0);
                 }
                 if (nowTime - starterTimes[1] > 0.3) {
-                    intake.flipIntakeToPosition(0.5);
+                    intake.flipIntakeToPosition(0.2);
                     turret.FlipBasketToPosition(.58);
                     starterTimes[1] = 100;
                     starterTimes[2] = nowTime;
@@ -829,186 +838,215 @@ public class Robot {
                     intake.stopIntake();
                     reversing = false;
                     starterTimes[2] = 100;
-                    autoAiming = true;
-                }
-                if (autoAiming) {
-                    fakeAutoAim();
-                    if (faked) {
-                        turret.stopExtend();
-                        turret.stopTurn();
-                        starterTimes[1] = 501;
-                    }
+                    autoAiming=true;
+                    starterTimes[5]=nowTime;
                 }
                 op.telemetry.addData("autoAim", autoAiming);
                 op.telemetry.addData("resetten", resetten);
                 op.telemetry.addData("start0", starterTimes[0]);
                 op.telemetry.addData("start1", starterTimes[1]);
-                currentPosition = track();
-                double twoDistance = sqrt(pow(point[i + 2][1] - currentPosition[1], 2) + pow(point[i + 2][0] - currentPosition[0], 2));
-                double oneDistance = sqrt(pow(point[i + 1][1] - currentPosition[1], 2) + pow(point[i + 1][0] - currentPosition[0], 2));
-                if ((oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance) > t && td) {
-                    t = (oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance);
-                    t2 = (oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance);
-                }
-                if (t >= 1) {
-                    if (nowTime < startTime) {
-                        startTime = op.getRuntime();
-                    }
-                    if (nowTime > startTime + 1.5) {
-                        break;
-                    }
-                    t = 1;
-                }
-                if (!td) {
-                    t = 1;
-                    td = true;
-                }
-                target_position[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * t2 + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t2, 2) +
-                        (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t2, 3));
+                        currentPosition = track();
+                        double twoDistance = sqrt(pow(point[i + 2][1] - currentPosition[1], 2) + pow(point[i + 2][0] - currentPosition[0], 2));
+                        double oneDistance = sqrt(pow(point[i + 1][1] - currentPosition[1], 2) + pow(point[i + 1][0] - currentPosition[0], 2));
+                        if ((oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance) > t && td) {
+                            t = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
+                            t2 = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
+                        }
+                        if (tt >= 1) {
+                            if (op.getRuntime() < startTime) {
+                                startTime = op.getRuntime();
+                            }
+                            if (op.getRuntime() > startTime + 1.5 / power) {
+                                break;
+                            }
+                            tt = 1;
+                        }
+                        if(t>=1){
+                            t=1;
+                        }
+                        if (!td) {
+                            t = 1;
+                            td = true;
+//                        target_position[0] = x2;
+//                        target_position[1] = y2;
+//                        xDerivative = target_position[0]-currentPosition[0];
+//                        yDerivative = target_position[1]-currentPosition[1];
+//                        target_position[2]=atan2(x2,y2)*180/PI-(direction*180);
+//                        target_position[2]%=360;
+//                        error = currentPosition[2] - target_position[2];
+//                        error %= 360;
+//                        if (error > 180) {
+//                            target_position[2] += 360;
+//                        }
+//                        if (error < -180) {
+//                            target_position[2] -= 360;
+//                        }
+//                        td=true;
+                        }
+                        target_position[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * t2 + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t2, 2) +
+                                (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t2, 3));
 
-                target_position[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * t2 + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t2, 2) +
-                        (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t2, 3));
-                xDerivative = (0.5 * (+(+point[i + 2][0] - point[i + 0][0]) + 2 * (2 * point[i][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * t +
-                        3 * (-point[i][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 2)));
-                yDerivative = (0.5 * (+(+point[i + 2][1] - point[i + 0][1]) + 2 * (2 * point[i][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
-                        3 * (-point[i][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
-                if (yDerivative == 0) {
-                    yDerivative = 0.00001;
-                }
-                if (xDerivative == 0) {
-                    xDerivative = 0.00001;
-                }
-                mpconst = yDerivative / xDerivative;
-                target_position[2] = atan2(xDerivative, yDerivative) * 180 / PI + (direction - 1) * 180;
-                anglediff = target_position[2] - lastAngle;
-                targetaVelocity = -anglediff / differtime;
-                lastAngle = target_position[2];
-                target_position[2] %= 360;
-                error = currentPosition[2] - target_position[2];
-                error %= 360;
-                if (error > 180) {
-                    target_position[2] += 360;
-                }
-                if (error < -180) {
-                    target_position[2] -= 360;
-                }
-                if ((oneDistance + 1 / 4) / (oneDistance + twoDistance) > tt) {
-                    tt = (oneDistance + 1 / 4) / (oneDistance + twoDistance);
-                }
-                if (tt > 1) {
-                    tt = 1;
-                }
-                tarcurpos[0] = 0.5 * ((2 * point[i + 1][0]) + (+point[i + 2][0] - point[i + 0][1]) * tt + (-5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(tt, 2) +
-                        (+3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(tt, 3));
+                        target_position[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * t2 + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t2, 2) +
+                                (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t2, 3));
+                        xDerivative = (0.5 * (+(+point[i + 2][0] - point[i + 0][0]) + 2 * (2 * point[i][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * t +
+                                3 * (-point[i][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 2)));
+                        yDerivative = (0.5 * (+(+point[i + 2][1] - point[i + 0][1]) + 2 * (2 * point[i][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
+                                3 * (-point[i][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
+                        if (yDerivative == 0) {
+                            yDerivative = 0.00001;
+                        }
+                        if (xDerivative == 0) {
+                            xDerivative = 0.00001;
+                        }
 
-                tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1] - point[i + 0][1]) * tt + (-5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(tt, 2) +
-                        (+3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(tt, 3));
-                double txDerivative = (0.5 * (+(+point[i + 2][0] - point[i + 0][0]) + 2 * (2 * point[i][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * tt +
-                        3 * (-point[i][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(tt, 2)));
-                double tyDerivative = (0.5 * (+(+point[i + 2][1] - point[i + 0][1]) + 2 * (2 * point[i][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * tt +
-                        3 * (-point[i][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(tt, 2)));
-                tarcurpos[2] = atan2(txDerivative, tyDerivative) * 180 / PI - (direction - 1) * 180;
-                if (tyDerivative == 0) {
-                    tyDerivative = 0.00001;
-                }
-                if (txDerivative == 0) {
-                    txDerivative = 0.00001;
-                }
-                double mpconst2 = tyDerivative / txDerivative;
-                if (mpconst == 1) {
-                    mpconst = 1.001;
-                }
-                if (mpconst2 == 1) {
-                    mpconst2 = 1.001;
-                }
-                if (xVelocity == 0) {
-                    xVelocity = 0.0001;
-                }
-                if (!td) {
-                    tarcurpos[0] = point[i + 1][0];
-                    tarcurpos[1] = point[i + 1][1];
-                }
-                double targetXVelocity = txDerivative / abs(txDerivative) * ((sqrt(pow(startpower * 30, 2) / abs(1 - pow(mpconst2, 2)))));
-                double targetYVelocity = targetXVelocity * mpconst2;
-                xError = targetXVelocity - xVelocity;
-                posxError = tarcurpos[0] - currentPosition[0];
-                yError = targetYVelocity - yVelocity;
-                posyError = (tarcurpos[1] - currentPosition[1]);
-                targetXVelocity = xDerivative / abs(xDerivative) * ((sqrt(pow(startpower * 30, 2) / abs(1 - pow(mpconst, 2)))));
-                targetYVelocity = targetXVelocity * mpconst;
+                        mpconst = yDerivative / xDerivative;
 
-                xCorrection = pd * xError + p * posxError + I * xInt + D * (xError + posxError / differtime);
-                yCorrection = pd * yError + p * posyError + I * yInt + D * (yError + posyError / differtime);
-                x = point[i + 2][0] - currentPosition[0];
-                y = point[i + 2][1] - currentPosition[1];
-                if (x == 0) {
-                    x = 0.0001;
-                }
-                if (y == 0) {
-                    y = 0.0001;
-                }
-                if (targetspeed == 0) {
-                    targetspeed = 0.01;
-                }
-                if (xCorrection == 0) {
-                    xCorrection = 0.001;
-                }
-                if (yCorrection == 0) {
-                    yCorrection = 0.001;
-                }
-                target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI) + (direction - 1) * 180;
+                        target_position[2] = atan2(xDerivative, yDerivative) * 180 / PI + (direction - 1) * 180;
+                        anglediff = target_position[2] - lastAngle;
+                        targetaVelocity = anglediff / differtime;
+                        lastAngle = target_position[2];
+                        if (target_position[2] > 180) {
+                            target_position[2] -= 360;
+                        }
+                        if (target_position[2] < -180) {
+                            target_position[2] += 360;
+                        }
 
-                error = currentPosition[2] - target_position[2];
-                error += (currentPosition[2] - tarcurpos[2]);
-                error %= 360;
-                if (error > 180) {
-                    error -= 360;
-                }
-                if (error < -180) {
-                    error += 360;
-                }
-                double error2 = currentPosition[2] - atan2(x, y) * 180 / PI + (direction - 1) * 180;
-                error2 *= 1;
-                error2 %= 360;
-                if (error2 > 180) {
-                    error2 -= 360;
-                }
-                if (error2 < -180) {
-                    error2 += 360;
-                }
-                double controlconst = (t * t);
+                        op.telemetry.addData("angleTarget", target_position[2]);
+                        if ((oneDistance + 1.0 / 4.0) / (oneDistance + twoDistance) > tt) {
+                            tt = (oneDistance + 1.0 / 4) / (oneDistance + twoDistance);
+                        }
+                        if (tt > 1) {
+                            tt = 1;
+                        }
+                        tarcurpos[0] = 0.5 * ((2 * point[i + 1][0]) + (+point[i + 2][0] - point[i + 0][1]) * tt + (-5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(tt, 2) +
+                                (+3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(tt, 3));
 
-                error = controlconst * error2 + ((1 - controlconst) * error);
-                error %= 360;
-                if (error > 180) {
-                    error -= 360;
-                }
-                if (error < -180) {
-                    error += 360;
-                }
-                targetaVelocity += (error) * 2;
-                anglecorrection = ((targetaVelocity + aVelocity) * 0.1 + error * 2) / 192;
-                double powernum = pow(E, -10 * (tan((abs(error / 12) % 15) * PI / 180)));
-                if (powernum == -1) {
-                    powernum = -1.0001;
-                }
-                if (Double.isNaN(powernum)) {
-                    powernum = 99999;
-                }
-                if (error < 180 && error > -180) {
-                    power = startpower * (3 - (1 / (1 + powernum)) * 4);
-                } else {
-                    power = startpower * (-2.75 + (1 / (1 + powernum)) * 4);
-                }
-                if (direction == 0) {
-                    power *= -1;
-                }
+                        tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1] - point[i + 0][1]) * tt + (-5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(tt, 2) +
+                                (+3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(tt, 3));
+                        double txDerivative = (0.5 * (+(+point[i + 2][0] - point[i + 0][0]) + 2 * (2 * point[i][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * tt +
+                                3 * (-point[i][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(tt, 2)));
+                        double tyDerivative = (0.5 * (+(+point[i + 2][1] - point[i + 0][1]) + 2 * (2 * point[i][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * tt +
+                                3 * (-point[i][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(tt, 2)));
+                        tarcurpos[2] = atan2(txDerivative, tyDerivative) * 180 / PI - (direction - 1) * 180;
+                        if (tyDerivative == 0) {
+                            tyDerivative = 0.00001;
+                        }
+                        if (txDerivative == 0) {
+                            txDerivative = 0.00001;
+                        }
+                        double mpconst2 = tyDerivative / txDerivative;
+                        if (mpconst == 1) {
+                            mpconst = 1.001;
+                        }
+                        if (mpconst2 == 1) {
+                            mpconst2 = 1.001;
+                        }
+                        if (xVelocity == 0) {
+                            xVelocity = 0.0001;
+                        }
+                        if (!td) {
+
+                        }
+                        double targetXVelocity = txDerivative / abs(txDerivative) * ((sqrt(pow(startpower * 30, 2) / abs(1 - pow(mpconst2, 2)))));
+                        double targetYVelocity = targetXVelocity * mpconst2;
+                        xError = targetXVelocity - xVelocity;
+                        posxError = tarcurpos[0] - currentPosition[0];
+                        yError = targetYVelocity - yVelocity;
+                        posyError = (tarcurpos[1] - currentPosition[1]);
+                        targetXVelocity = xDerivative / abs(xDerivative) * ((sqrt(pow(startpower * 30, 2) / abs(1 - pow(mpconst, 2)))));
+                        targetYVelocity = targetXVelocity * mpconst;
+
+                        xCorrection = pd * xError + p * posxError + I * xInt + D * (xError + posxError / differtime);
+                        yCorrection = pd * yError + p * posyError + I * yInt + D * (yError + posyError / differtime);
+                        x = point[i + 2][0] - currentPosition[0];
+                        y = point[i + 2][1] - currentPosition[1];
+                        if (x == 0) {
+                            x = 0.0001;
+                        }
+                        if (y == 0) {
+                            y = 0.0001;
+                        }
+                        double totaldis = sqrt(x * x + y * y);
+
+                        angleConst = currentPosition[2] * PI / 180;
+                        double angleInCorrection = atan2(yCorrection, xCorrection) - (angleConst);
+                        double correctionMag = 30 * sqrt(pow(xCorrection, 2) + pow(yCorrection, 2));
+                        if (targetspeed == 0) {
+                            targetspeed = 0.01;
+                        }
+                        if (xCorrection == 0) {
+                            xCorrection = 0.001;
+                        }
+                        if (yCorrection == 0) {
+                            yCorrection = 0.001;
+                        }
+
+                        target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI) + (direction - 1) * 180;
+                        target_position[2]%=360;
+                        if (target_position[2] > 180) {
+                            target_position[2] -= 360;
+                        }
+                        if (target_position[2] < -180) {
+                            target_position[2] += 360;
+                        }
+
+                        error = currentPosition[2] - target_position[2];
+                        error %= 360;
+                        if (error > 180) {
+                            error -= 360;
+                        }
+                        if (error < -180) {
+                            error += 360;
+                        }
+                        op.telemetry.addData("error", error);
+                        double error2 = currentPosition[2] - atan2(x, y) * 180 / PI + (direction - 1) * 180;
+                        error2 %= 360;
+                        if (error2 > 180) {
+                            error2 -= 360;
+                        }
+                        if (error2 < -180) {
+                            error2 += 360;
+                        }
+                        double controlconst = pow(tt,1.5);
+                        op.telemetry.addData("erro2r", error2);
+                        error = controlconst * error2 + ((1 - controlconst) * error);
+                        error %= 360;
+                        if (error > 180) {
+                            error -= 360;
+                        }
+                        if (error < -180) {
+                            error += 360;
+                        }
+                        targetaVelocity -= 2*(error);
+                        op.telemetry.addData("targetAVelocity", targetaVelocity);
+                        anglecorrection = (error*2 + (-targetaVelocity + aVelocity) * .2) / 216;
+                        double powernum = pow(E, -10 * (tan((abs(error / 12) % 15) * PI / 180)));
+                        if (powernum == -1) {
+                            powernum = -1.0001;
+                        }
+                        if (Double.isNaN(powernum)) {
+                            powernum = 99999;
+                        }
+                        if (error < 180 && error > -180) {
+                            power = startpower * (3 - (1 / (1 + powernum)) * 4);
+                        } else {
+                            power = startpower * (-2.75 + (1 / (1 + powernum)) * 4);
+                        }
+                        if (direction == 0) {
+                            power *= -1;
+                        }
+                        op.telemetry.addData("t", t);
+                        op.telemetry.addData("error", error);
+                        op.telemetry.addData("targetXPosition", target_position[0]);
+                        op.telemetry.addData("targetYPosition", target_position[1]);
+                    drivetrain.setRightMotorPowers((powerconst) * power + anglecorrection);
+                    drivetrain.setLeftMotorPowers((powerconst) * power - anglecorrection);
                 op.telemetry.addData("t", t);
                 op.telemetry.addData("error", error);
                 op.telemetry.addData("targetXPosition", target_position[0]);
                 op.telemetry.addData("targetYPosition", target_position[1]);
-                drivetrain.setRightMotorPowers((powerconst) * power + anglecorrection);
-                drivetrain.setLeftMotorPowers((powerconst) * power - anglecorrection);
+
                 difference = sqrt(pow((point[i + 2][0] - currentPosition[0]), 2) + pow(point[i + 2][1] - currentPosition[1], 2));
             }
         }
@@ -1040,7 +1078,7 @@ public class Robot {
                 intake.reverseIntake(0.8);
             }
             if (nowTime - starterTimes[1] > 0.3) {
-                intake.flipIntakeToPosition(0.5);
+                intake.flipIntakeToPosition(0.2);
                 turret.FlipBasketToPosition(.58);
                 reversing = false;
                 starterTimes[1] = 100;
