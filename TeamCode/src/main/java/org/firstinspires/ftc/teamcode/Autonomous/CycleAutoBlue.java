@@ -24,12 +24,12 @@ public class CycleAutoBlue extends LinearOpMode {
         resetStartTime();
         //Turret extension combined with rotation in such a way to achieve the current location to drop the loaded freight into the correct position by barcode
         if (position == 0) {
-            robot.TurretSlidesToPosition(-16, 8, 0, 1.0);
-            sleep(1000);
+            robot.TurretSlidesToPosition(-19, 9, 0, 1.0);
+            sleep(700);
             robot.FlipBasketArmToPosition(0.8);
-            sleep(350);
+            sleep(700);
             robot.FlipBasketToPosition(0.18);
-            sleep(400);
+            sleep(300);
         }
         if (position == 1) {
             robot.TurretSlidesToPosition(-20, 8, 2, 1.0);

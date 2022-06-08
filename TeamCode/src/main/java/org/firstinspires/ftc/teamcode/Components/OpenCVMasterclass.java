@@ -29,6 +29,7 @@ public class OpenCVMasterclass {
     }
     public int BlueTeamElem(){
         BlueTeamElem opencv = new BlueTeamElem(op);
+        double starttime= op.getRuntime();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -65,7 +66,9 @@ public class OpenCVMasterclass {
 
         op.telemetry.addLine("Waiting for start");
         op.telemetry.update();
-        op.waitForStart();
+        while(!op.isStarted()&&op.getRuntime()-starttime<5){
+            op.sleep(100);
+        }
         backWebcam.stopStreaming();
         if(opencv.getLocation()== BlueTeamElem.Location.NOT_FOUND) {
             return 2;
@@ -82,6 +85,7 @@ public class OpenCVMasterclass {
     }
     public int RedTeamElem(){
         RedTeamElem opencv = new RedTeamElem(op);
+        double starttime= op.getRuntime();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -118,7 +122,9 @@ public class OpenCVMasterclass {
 
         op.telemetry.addLine("Waiting for start");
         op.telemetry.update();
-        op.waitForStart();
+        while(!op.isStarted()&&op.getRuntime()-starttime<5){
+            op.sleep(100);
+        }
         backWebcam.stopStreaming();
         if(opencv.getLocation()== RedTeamElem.Location.NOT_FOUND) {
             return 2;

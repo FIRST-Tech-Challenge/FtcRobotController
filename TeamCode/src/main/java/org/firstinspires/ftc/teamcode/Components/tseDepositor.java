@@ -17,18 +17,20 @@ public class tseDepositor {
     long initialTime;
     long retractTime;
     int position=0;
-    double[] positions = {0.7,0.05,0.5,0.4,0.3};
+    double[] positions = {0.7,0.015,0.4,0.35,0.25};
     double reversePower;
     static final long FORWARD_ROTATION_PER_INCH = 147;
     static final long REVERSE_ROTATION_PER_INCH = 114;
-    public tseDepositor(LinearOpMode opMode) {
+    public tseDepositor(LinearOpMode opMode, boolean isTeleop) {
         op = opMode;
         TSEServo = opMode.hardwareMap.get(Servo.class, "tsedepo");
 //        tseCrServo = opMode.hardwareMap.get(CRServo.class, "crtsedepositer");
         et = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         initialTime = retractTime = 0;
         reversePower = 0.0;
-        TSEServo.setPosition(0.92);
+        if(!isTeleop) {
+            TSEServo.setPosition(0.8);
+        }
 
     }
 
