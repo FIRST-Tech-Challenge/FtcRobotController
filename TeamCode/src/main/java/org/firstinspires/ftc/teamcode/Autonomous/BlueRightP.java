@@ -14,16 +14,23 @@ public class BlueRightP extends LinearOpMode {
     @Override
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
-       robot.rotateToPosition(-5);
+//       robot.rotateToPosition(-7.5);
         sleep(1000);
-        int position = robot.BlueElemTest(this,0,0);
 //        double[] turretTarget = {12+10.6,-24+16.2,0}; //{hubx-position*3/2,huby-position*3/2,1+7*position}
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         robot.setPosition(0,0,0);
-
+        robot.toggleTSEPosition();
+        robot.rotateToPosition(-80);
         waitForStart();
+        resetStartTime();
+        robot.rotateToPosition(-7.5);
+        sleep(2000);
+        int position = robot.BlueElemTest(this,0,0);
+        while(getRuntime()<8){
+            sleep(100);
+        }
         position=2-position;
         if(position==1) {
             robot.TurretSlidesToPosition(-13.0, 8.5, 0, 0.5);
