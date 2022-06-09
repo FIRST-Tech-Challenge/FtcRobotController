@@ -318,7 +318,7 @@ public class EncoderChassis extends BasicChassis {
             if(abs(ultraPos[1]-ypos)<2.0){
                 ypos=(float)ultraPos[1];
             }
-            if(abs(ultraPos[0]-xpos)<2.0){
+            if(-ultraPos[0]+xpos<2.0){
                 xpos=(float)ultraPos[0];
             }
         }

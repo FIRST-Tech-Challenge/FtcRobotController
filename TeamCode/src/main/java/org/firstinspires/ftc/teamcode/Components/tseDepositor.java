@@ -17,7 +17,7 @@ public class tseDepositor {
     long initialTime;
     long retractTime;
     int position=0;
-    double[] positions = {0.7,0.015,0.4,0.35,0.25};
+    double[] positions = {0.7,0.028,0.4,0.37,0.25};
     double reversePower;
     static final long FORWARD_ROTATION_PER_INCH = 147;
     static final long REVERSE_ROTATION_PER_INCH = 114;

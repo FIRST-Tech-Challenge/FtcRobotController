@@ -15,10 +15,8 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.random;
-import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
@@ -46,7 +44,7 @@ public class Robot {
     boolean isExtended = false;
     boolean isBall = false;
     public static boolean resetten = true;
-    public static boolean faked = false;
+    public static boolean faked = false, rotated = false;
     boolean outModed = false;
     boolean shouldFlipIntake = false;
     boolean isReversing = false;
@@ -695,8 +693,8 @@ public class Robot {
     public boolean autoIntake(double power, double randRange, double times) {
         resetten = false;
         faked = false;
-        double[] thoseCurves = {0, 4, 8, 12, 16, 20};
-        double[] whereTonext = {.33, .66, 2.5, 2.8, 3.1, 3.4};
+        double[] thoseCurves = {0, 2, 4, 8, 12, 16,20,16,12};
+        double[] whereTonext = {.33, .66, 1.5, 1.8, 2.1, 2.4};
         double starterTime = op.getRuntime();
         boolean block = false;
         intake.flipIntakeToPosition(0.0);
@@ -724,19 +722,18 @@ public class Robot {
                     startTime[9] = time;
                 }
                 if (ypos < 18) {
-                    drivetrain.setRightMotorPowers( 0.4*pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) + angle / 50);
-                    drivetrain.setLeftMotorPowers(0.4*pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) - angle / 50);
+                    drivetrain.setRightMotorPowers( 0.9*pow((33 + 3.5 * times - ypos) / (35 + 3.5 * times), 2) + angle / 100+0.02);
+                    drivetrain.setLeftMotorPowers(0.9*pow((33 + 3.5 * times - ypos) / (35 + 3.5 * times), 2) - angle / 100-0.02);
                 } else {
-                    drivetrain.setRightMotorPowers(0.4* pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) + (angle - thoseCurves[(int) times]) / 50);
-                    drivetrain.setLeftMotorPowers(0.4* pow((43 + 3.5 * times - ypos) / (43 + 3.5 * times), 1.6) - (angle - thoseCurves[(int) times]) / 50);
+                    drivetrain.setRightMotorPowers(0.9* pow((33 + 3.5 * times - ypos) / (35 + 3.5 * times), 2) + (angle - thoseCurves[(int) times]) / 100+0.02);
+                    drivetrain.setLeftMotorPowers(0.9* pow((33 + 3.5 * times - ypos) / (35 + 3.5 * times), 2) - (angle - thoseCurves[(int) times]) / 100-0.02);
                 }
                 if (intake.isSwitched()) {
                     if (time > 26 || times == 6) {
-                        stopAllMotors();
                         stopIntake();
                         return false;
                     }
-                    sheeeeesh(0, -0.5 + whereTonext[(int) times], 0.7, 0);
+                    sheeeeesh(1.0, -4.5 - whereTonext[(int) times], 1.0, 0);
                     block = true;
                     break;
                 }
@@ -758,17 +755,16 @@ public class Robot {
         //57
         double[][] point = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
         double[] currentPosition = track();
-        double barDistance = sqrt(pow(9.5 - currentPosition[0], 2) + pow(10 - currentPosition[1], 2));
-        point[0][0] = currentPosition[0] + sin(currentPosition[2] * PI / 180) * barDistance;
-        point[0][1] = currentPosition[1] + cos(currentPosition[2] * PI / 180) * barDistance;
+        point[0][0] = currentPosition[0];
+        point[0][1] = currentPosition[1];
         point[1][0] = currentPosition[0];
         point[1][1] = currentPosition[1];
-        point[2][0] = 0.5;
+        point[2][0] = 1.0;
         point[2][1] = 10;
         point[3][0] = x;
         point[3][1] = y;
-        point[4][0] = 0;
-        point[4][1] = -10;
+        point[4][0] = x;
+        point[4][1] = y;
         double startpower = power;
         boolean autoAiming = false;
         double[] startPosition = currentPosition;
@@ -779,7 +775,10 @@ public class Robot {
         double error = 0;
         double powerconst = 1, targetspeed = 0;
         double mpconst = 0;
-        double p = 0.2, pd = .2, I = 0.0000, D = 0.02;
+        double p = .2;
+        double pd = .2;
+        double D = .02;
+        double I = 0;
         double[] tarcurpos = {0, 0, 0};
         double xError = 0, posxError = 0, yError = 0, posyError = 0, xCorrection = 0, yCorrection = 0, t = 0, yInt = 0, xInt = 0, angleConst;
         double lastAngle = track()[2], anglediff = 0, targetaVelocity = 0;
@@ -830,7 +829,7 @@ public class Robot {
                 if (nowTime - starterTimes[1] > 0.3) {
                     intake.flipIntakeToPosition(0.2);
                     turret.FlipBasketToPosition(.58);
-                    starterTimes[1] = 100;
+                    starterTimes[1] = 101;
                     starterTimes[2] = nowTime;
                 }
                 if (nowTime - starterTimes[2] > .1) {
@@ -840,6 +839,16 @@ public class Robot {
                     starterTimes[2] = 100;
                     autoAiming=true;
                     starterTimes[5]=nowTime;
+                }
+                if(ypos<10){
+                    if (autoAiming) {
+                        fakeAutoAim();
+                        if (faked&&rotated) {
+                            turret.stopExtend();
+                            turret.stopTurn();
+                            starterTimes[1]=501;
+                        }
+                    }
                 }
                 op.telemetry.addData("autoAim", autoAiming);
                 op.telemetry.addData("resetten", resetten);
@@ -867,21 +876,6 @@ public class Robot {
                         if (!td) {
                             t = 1;
                             td = true;
-//                        target_position[0] = x2;
-//                        target_position[1] = y2;
-//                        xDerivative = target_position[0]-currentPosition[0];
-//                        yDerivative = target_position[1]-currentPosition[1];
-//                        target_position[2]=atan2(x2,y2)*180/PI-(direction*180);
-//                        target_position[2]%=360;
-//                        error = currentPosition[2] - target_position[2];
-//                        error %= 360;
-//                        if (error > 180) {
-//                            target_position[2] += 360;
-//                        }
-//                        if (error < -180) {
-//                            target_position[2] -= 360;
-//                        }
-//                        td=true;
                         }
                         target_position[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * t2 + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t2, 2) +
                                 (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t2, 3));
@@ -1052,7 +1046,7 @@ public class Robot {
         }
         stopAllMotors();
         double nowTime = op.getRuntime();
-        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked) {
+        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked||!rotated) {
             nowTime = op.getRuntime();
             turret.updateTurretPositions();
             if (!resetten && !autoAiming && starterTimes[0] == 100) {
@@ -1092,15 +1086,16 @@ public class Robot {
             }
             if (autoAiming) {
                 fakeAutoAim();
-                if (faked) {
+                if (faked&&rotated) {
                     turret.stopExtend();
                     turret.stopTurn();
                     starterTimes[1] = 501;
                 }
             }
             op.telemetry.addData("autoAim", autoAiming);
+            op.telemetry.addData("faked",faked);
             op.telemetry.addData("resetten", resetten);
-            op.telemetry.addData("start0", starterTimes[0]);
+            op.telemetry.addData("start0", rotated);
             op.telemetry.addData("start1", starterTimes[1]);
             op.telemetry.update();
         }

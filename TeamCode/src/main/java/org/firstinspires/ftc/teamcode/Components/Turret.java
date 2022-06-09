@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Robot;
+
 
 public class Turret {
 
@@ -204,11 +206,11 @@ public class Turret {
         }
         double dist = targetAngle - curPos;
         if(abs(dist)<20){
-            faked=true;
+            Robot.rotated=true;
             turret_Rotation.setPower(0);
         }
         else {
-            faked=false;
+            Robot.rotated=false;
             turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             turret_Rotation.setVelocity(pow(abs(dist), 1.6) / 50 * dist / abs(dist) * (100));
         }

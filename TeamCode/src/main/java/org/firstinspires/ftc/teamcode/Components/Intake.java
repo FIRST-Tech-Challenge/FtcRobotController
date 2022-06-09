@@ -58,9 +58,9 @@ public class Intake {
     }
 
     public boolean isSwitched() {
-            checker.setState(StateMachine.States.SWITCHED, sensorDistance.getSensorDistance()<1);
+            checker.setState(StateMachine.States.SWITCHED, sensorDistance.getSensorDistance()<1.5);
             op.telemetry.addData("switch", sensorDistance.getSensorDistance());
-            return (sensorDistance.getSensorDistance()<1);
+            return (sensorDistance.getSensorDistance()<1.5);
     }
 
     public void startIntake() {
