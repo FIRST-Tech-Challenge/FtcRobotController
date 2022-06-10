@@ -24,8 +24,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.spartronics4915.lib.T265Camera;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -251,6 +249,11 @@ public class VSLAMChassis extends BasicChassis {
         double[] post = {xpos, ypos, angle};
         return post;
         //return navigation.getPosition();
+    }
+
+    @Override
+    public double[] tracker(boolean encoder) {
+        return new double[0];
     }
 
     public void moveTester() {
@@ -2485,6 +2488,16 @@ public class VSLAMChassis extends BasicChassis {
                 stopAllMotors();
             }
         }
+    }
+
+    @Override
+    public void setRightMotorVelocities(double velocity) {
+
+    }
+
+    @Override
+    public void setLeftMotorVelocities(double velocity) {
+
     }
 
     public void tripleSplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power) {

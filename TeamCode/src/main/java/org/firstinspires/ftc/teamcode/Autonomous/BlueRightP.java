@@ -28,6 +28,7 @@ public class BlueRightP extends LinearOpMode {
         sleep(500);
 //        int position = robot.BlueElemTest(this,0,0);
         waitForStart();
+        robot.tseToPosition(0.6);
         resetStartTime();
         robot.rotateToPosition(-9);
         sleep(2000);

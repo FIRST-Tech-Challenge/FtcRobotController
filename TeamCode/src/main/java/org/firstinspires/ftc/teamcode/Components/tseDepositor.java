@@ -29,7 +29,7 @@ public class tseDepositor {
         initialTime = retractTime = 0;
         reversePower = 0.0;
         if(!isTeleop) {
-            TSEServo.setPosition(0.8);
+            TSEServo.setPosition(0.86);
         }
 
     }
@@ -47,6 +47,9 @@ public class tseDepositor {
             position++;
         }
         TSEServo.setPosition(positions[position]);
+        }
+        public void tseToPosition(double position){
+            TSEServo.setPosition(position);
         }
     public void TSEMoverUp() {
         TSEServo.setPosition(TSEServo.getPosition() + 0.05);

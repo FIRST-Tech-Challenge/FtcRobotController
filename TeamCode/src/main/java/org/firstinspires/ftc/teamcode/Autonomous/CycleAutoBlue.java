@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class CycleAutoBlue extends LinearOpMode {
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, true);
         robot.rotateToPosition(-88);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -21,6 +21,7 @@ public class CycleAutoBlue extends LinearOpMode {
         double[] turretTarget = {12 + 10.6, -24 + 16.2, 0};//{hubx-position*3/2,huby-position*3/2,1+7*position}
         robot.setPosition(0, 0, 0);
         waitForStart();
+        robot.tseToPosition(0.6);
         resetStartTime();
         //Turret extension combined with rotation in such a way to achieve the current location to drop the loaded freight into the correct position by barcode
         if (position == 0) {

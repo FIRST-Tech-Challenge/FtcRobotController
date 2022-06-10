@@ -19,13 +19,13 @@ public class RedRightP extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         robot.setPosition(0,0,0);
-        robot.toggleTSEPosition();
         robot.rotateToPosition(-80);
         waitForStart();
+        robot.tseToPosition(0.6);
         resetStartTime();
         robot.rotateToPosition(5);
         sleep(2000);
-        int position = robot.RedElemTest(this,0,0);
+        int position = 2-robot.RedElemTest(this,0,0);
         while(getRuntime()<8){
             sleep(100);
         }

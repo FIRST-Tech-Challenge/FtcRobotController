@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class UltrasonicSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, true);
         RangeSensor ultrasonic = new RangeSensor(this);
         ElapsedTime op = new ElapsedTime();
         waitForStart();

@@ -48,7 +48,7 @@ public class RangeSensor {
     public double[] getLocation(){
         double[] pos = {0,0};
             pos[1] = 53.5-getDistance(true);
-            pos[0] = getDistance(false)-1.0;
+            pos[0] = getDistance(false)-0.5;
             //hypot
         double hypot =0;
         if(abs(angle)<5){

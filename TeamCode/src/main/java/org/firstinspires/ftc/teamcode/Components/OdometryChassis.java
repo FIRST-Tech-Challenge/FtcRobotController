@@ -258,6 +258,11 @@ public class OdometryChassis extends BasicChassis {
         //return navigation.getPosition();
     }
 
+    @Override
+    public double[] tracker(boolean encoder) {
+        return new double[0];
+    }
+
     public boolean goToPositionTeleop(double y, double x, double a, double power) {
 
         double f = x;
@@ -2524,6 +2529,17 @@ return false;
             }
         }
     }
+
+    @Override
+    public void setRightMotorVelocities(double velocity) {
+
+    }
+
+    @Override
+    public void setLeftMotorVelocities(double velocity) {
+
+    }
+
     public void tripleSplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power) {
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
