@@ -33,7 +33,7 @@ public class RangeSensor {
         }
         double rawValue = ultrasonic.getVoltage();
 
-        return rawValue * 24/.27 -12.444;
+        return  90.48337*rawValue  - 13.12465;
     }
     public double getVoltage(boolean front) {
         AnalogInput ultrasonic;
@@ -51,10 +51,13 @@ public class RangeSensor {
             pos[0] = getDistance(false)-0.5;
             //hypot
         double hypot =0;
-        if(abs(angle)<5){
+        if(abs(angle)<5&&angle!=0){
             hypot = 10000*angle/abs(angle);
-        }else {
+        }else if(angle!=0) {
             hypot = pos[0] / sin(angle * PI / 180);
+        }
+        else{
+            hypot =10000;
         }
             pos[0]*=(hypot-6)/hypot;
 

@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.Velocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.aVelocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.differtime;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xVelocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.yVelocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.Velocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.aVelocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.angle;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.differtime;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xVelocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.yVelocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -25,6 +25,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.CarouselCR;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
+import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.LedColor;
 import org.firstinspires.ftc.teamcode.Components.Logger;
@@ -447,7 +448,7 @@ public class Robot {
             turret.FlipBasketArmToPosition(0.00);
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 intake.stopIntake();
-                intake.flipIntakeToPosition(0.8);
+                intake.flipIntakeToPosition(0.77);
                 isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
@@ -475,7 +476,7 @@ public class Robot {
                 isFlipping = false;
                 intake.stopIntake();
                 turret.FlipBasketToPosition(.6);
-                turret.FlipBasketArmToPosition(.55);
+//                turret.FlipBasketArmToPosition(.3);
                 autoAiming = true;
                 checker.setState(StateMachine.States.TRANSFERRING, false);
                 checker.setState(StateMachine.States.SEQUENCING, false);
@@ -491,8 +492,14 @@ public class Robot {
         }
 
         magnitude = forward;
-        drivetrain.moveMultidirectional(magnitude, angleInDegree, turning, slowMode); // It is 0.95, because the robot DCs at full power.
-    }
+//        if(ypos<20||angle>30||magnitude<0) {
+            drivetrain.moveMultidirectional(magnitude, angleInDegree, turning, slowMode); // It is 0.95, because the robot DCs at full power.
+//        }
+//        else{
+//            drivetrain.setRightMotorVelocities(pow(48-EncoderChassis.ypos,1/2.0)/4.46*30*29.8 + angle *20);
+//            drivetrain.setLeftMotorVelocities(pow(48-EncoderChassis.ypos,1/2.0)/4.46*30*29.8- angle *20);
+//        }
+        }
 
     public void mazeTeleopLoop() {
 
@@ -535,6 +542,9 @@ public class Robot {
             turret.TurretRotate(turret_saved_positions[0][1][1]);
             turret.AutoAngleControlRotating(0);
             turret.turretExtendo(turret_saved_positions[0][1][0]);
+        }
+        if(!checker.getState(StateMachine.States.TURRET_SHORT)){
+            flipBasketArmToPosition(0.55);
         }
     }
 
@@ -706,7 +716,7 @@ public class Robot {
     public boolean autoIntake(double power, double randRange, double times) {
         resetten = false;
         faked = false;
-        double[] thoseCurves = {0, 100, 50, 18, 14, 20, 8, 24};
+        double[] thoseCurves = {0, 10, 12, 15, 5, 12, 8, 8};
         double[] whereTonext = {.33, .66, 1.5, 1.8, 2.1, 2.4};
         double starterTime = op.getRuntime();
         boolean block = false;
@@ -715,23 +725,14 @@ public class Robot {
         turret.runTurretWithoutEncoder();
         track();
         double angleDiff = -angle;
-        drivetrain.turnInPlace(-atan2(xpos, 20) * 180 / PI, 1.0);
+        drivetrain.turnInPlace(-atan2(EncoderChassis.xpos, 20) * 180 / PI, 1.0);
         while (!block && op.getRuntime() < 27) {
             starterTime = op.getRuntime();
             double time = op.getRuntime();
 
             while (time - starterTime < 1.85 + times / 10) {
-                if (ypos < 5) {
-                    angleDiff = atan2(-xpos - 2, 15 - ypos) * 180 / PI - angle;
-                    angleDiff *= 2;
-                } else {
                     angleDiff = -angle;
-                }
-                if(ypos>38) {
-                    drivetrain.tracker(false);
-                }else{
-                    drivetrain.tracker(true);
-                }
+                drivetrain.track();
                 turret.updateTurretPositions();
                 time = op.getRuntime();
                 if (!resetten) {
@@ -746,31 +747,37 @@ public class Robot {
                     startTime[9] = time;
                 }
                 if (ypos < 5) {
-                    drivetrain.setRightMotorVelocities(pow(41+(time-starterTime)-ypos,1/2.0)/4.46*30*29.8 - angleDiff *20 + 30);
-                    drivetrain.setLeftMotorVelocities(pow(41+(time-starterTime)-ypos,1/2.0)/4.46*30*29.8+ angleDiff *20 - 30);
+                    drivetrain.setRightMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8 - angleDiff *20);
+                    drivetrain.setLeftMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8+ angleDiff *20);
 //                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - angleDiff / 100 + 0.1);
 //                    drivetrain.setLeftMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + angleDiff / 100 - 0.1);
-                } else {
-                    drivetrain.setRightMotorVelocities(pow(41+(time-starterTime)-ypos,1/2.0)/4.46*30*29.8 - (angleDiff + thoseCurves[(int) times]) *300-30);
-                    drivetrain.setLeftMotorVelocities(pow(41+(time-starterTime)-ypos,1/2.0)/4.46*30*29.8+ (angleDiff + thoseCurves[(int) times]) *300+30);
+                } else if(ypos<44){
+                    drivetrain.setRightMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8 - (angleDiff + thoseCurves[(int) times]) *30);
+                    drivetrain.setLeftMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8+ (angleDiff + thoseCurves[(int) times]) *30);
 //                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - (angleDiff + thoseCurves[(int) times]) / 25);
 //                    drivetrain.setLeftMotorPowers( abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + (angleDiff + thoseCurves[(int) times]) / 25);
                 }
+                else{
+                    drivetrain.setRightMotorVelocities((44- EncoderChassis.ypos)*30*29.8);
+                    drivetrain.setLeftMotorVelocities((44-EncoderChassis.ypos)*30*29.8);
+                }
                 if (intake.isSwitched()) {
+                    drivetrain.setRightMotorVelocities(-100);
+                    drivetrain.setLeftMotorVelocities(-100);
                     if (time > 26) {
                         stopIntake();
                         return false;
                     }
-                    sheeeeesh(0.2, -0.5, 0.9, 0);
+                    sheeeeesh(0.0, 0, 1.0, 0);
                     block = true;
                     break;
                 }
             }
             if (!block) {
-                turret.TurretReset(0.5);
+//                turret.TurretReset(0.5);
                 drivetrain.setMotorPowers(-0.4);
                 op.sleep(500);
-                thoseCurves[(int) times] = 0.5 + random() * 2 * randRange;
+                thoseCurves[(int) times] = 0.5 + random() * randRange;
 
                 drivetrain.turnInPlace(thoseCurves[(int) times], 0.5);
             }
@@ -786,8 +793,8 @@ public class Robot {
         point[0][1] = currentPosition[1];
         point[1][0] = currentPosition[0];
         point[1][1] = currentPosition[1];
-        point[2][0] = 0.2;
-        point[2][1] = 10;
+        point[2][0] = 0.0;
+        point[2][1] = 20;
         point[3][0] = x;
         point[3][1] = y;
         point[4][0] = x;
@@ -813,7 +820,7 @@ public class Robot {
         boolean reversing = false;
         double[] starterTimes = {100, 100, 100, 100, 100, 100};
         turret.runTurretWithoutEncoder();
-        intake.flipIntakeToPosition(0.8);
+        intake.flipIntakeToPosition(0.77);
         starterTimes[4] = op.getRuntime();
         boolean resetting = false;
         for (int i = 0; i < 2; i++) {
@@ -853,7 +860,7 @@ public class Robot {
                 if (reversing) {
                     intake.reverseIntake(1.0);
                 }
-                if (nowTime - starterTimes[1] > 0.3) {
+                if (nowTime - starterTimes[1] > 0.4) {
                     intake.flipIntakeToPosition(0.2);
                     turret.FlipBasketToPosition(.58);
                     starterTimes[1] = 101;
@@ -875,6 +882,7 @@ public class Robot {
                             turret.stopTurn();
                             starterTimes[1] = 501;
                         }
+                        stopIntake();
                     }
                 }
                 op.telemetry.addData("autoAim", autoAiming);
@@ -1051,8 +1059,8 @@ public class Robot {
                 op.telemetry.addData("error", error);
                 op.telemetry.addData("targetXPosition", target_position[0]);
                 op.telemetry.addData("targetYPosition", target_position[1]);
-                drivetrain.setRightMotorPowers((powerconst) * power + anglecorrection - 0.05);
-                drivetrain.setLeftMotorPowers((powerconst) * power - anglecorrection+0.05);
+                drivetrain.setRightMotorPowers((powerconst) * power + anglecorrection);
+                drivetrain.setLeftMotorPowers((powerconst) * power - anglecorrection);
                 op.telemetry.addData("t", t);
                 op.telemetry.addData("error", error);
                 op.telemetry.addData("targetXPosition", target_position[0]);
@@ -1080,7 +1088,7 @@ public class Robot {
                 starterTimes[0] = nowTime;
             }
             if (nowTime - starterTimes[0] > .2 && resetten && nowTime - starterTimes[4] > 0.74) {
-                intake.reverseIntake(0.8);
+                intake.reverseIntake(0.77);
                 starterTimes[0] = 500;
                 reversing = true;
                 starterTimes[1] = nowTime;
@@ -1088,7 +1096,7 @@ public class Robot {
             if (reversing) {
                 intake.reverseIntake(0.8);
             }
-            if (nowTime - starterTimes[1] > 0.3) {
+            if (nowTime - starterTimes[1] > 0.4) {
                 intake.flipIntakeToPosition(0.2);
                 turret.FlipBasketToPosition(.58);
                 reversing = false;
@@ -1103,6 +1111,7 @@ public class Robot {
             }
             if (autoAiming) {
                 fakeAutoAim();
+                stopIntake();
                 if (faked && rotated) {
                     turret.stopExtend();
                     turret.stopTurn();

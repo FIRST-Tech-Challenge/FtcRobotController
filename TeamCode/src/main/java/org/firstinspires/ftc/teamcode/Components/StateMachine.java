@@ -53,20 +53,17 @@ public class StateMachine {
     }
 
     public void setState(States state, boolean value) {
-        state.setStatus(value);
-        if (value == true) {
-            logger.log("STATE:" + state.values()[1] + "true");
-        } else {
-            logger.log("STATE:" + state.values()[1] + "false");
+        if(state.status!=value) {
+            state.setStatus(value);
+            if (value == true) {
+                logger.log("STATE:" + state.values()[1] + "true");
+            } else {
+                logger.log("STATE:" + state.values()[1] + "false");
+            }
         }
     }
 
     public boolean getState(States state) {
-        if (state.status == true) {
-            logger.log("STATE:" + state.values()[1] + "true");
-        } else {
-            logger.log("STATE:" + state.values()[1] + "false");
-        }
         return state.status;
     }
 

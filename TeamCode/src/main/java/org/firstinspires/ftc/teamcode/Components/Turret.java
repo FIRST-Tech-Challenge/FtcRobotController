@@ -33,7 +33,7 @@ public class Turret {
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
-    public static double [][][]turret_saved_positions={{{950,-440,0},{900,-440,0}},{{12,-24,15},{12,-24,15}}};
+    public static double [][][]turret_saved_positions={{{950,-440,0},{850,-440,0}},{{12,-24,15},{12,-24,15}}};
 
     boolean hardware_present = true;
     boolean servoPos = false;
@@ -495,6 +495,9 @@ public class Turret {
         }
     }
     public boolean TurretReset (double power) {
+        turret_Extension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         boolean isReset = true;
         if(checker.getState(StateMachine.States.EXTENDED)){
             turret_Extension.setVelocity(-extendPosition/abs(extendPosition)* 4 * (abs(extendPosition) + 100));
@@ -506,7 +509,7 @@ public class Turret {
             FlipBasketToPosition(0.88);
         }
         if(checker.getState(StateMachine.States.TURRET_SHORT)&&!checker.getState(StateMachine.States.TURRET_STRAIGHT)){
-            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(5*abs(rotatePosition)+250));
+            turret_Rotation.setVelocity(-rotatePosition/abs(rotatePosition)*(5*abs(rotatePosition)+100));
         }
         else {
             turret_Rotation.setPower(0);

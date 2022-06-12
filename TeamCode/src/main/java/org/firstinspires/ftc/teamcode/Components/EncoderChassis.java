@@ -40,6 +40,7 @@ public class EncoderChassis extends BasicChassis {
     public static double xVelocity = 0;
     public static double yVelocity = 0;
     public static double aVelocity = 0;
+    double[][] blog = {{0,0},{0,0}};
     public static double Velocity = 0;
     double preUltraPos[] = {0, 0, 0};
     private final BNO055IMU imu;
@@ -51,6 +52,7 @@ public class EncoderChassis extends BasicChassis {
     double ticksPerRevolution = 2215.5;
     double[] directions = {1, 1, 1, 1}, ticks = {0, 0, 0, 0};
     boolean bad = false;
+    boolean debug = false;
     private LinearOpMode op = null;
     Lock location = new ReentrantLock();
     public static float xpos = 0;
@@ -61,7 +63,9 @@ public class EncoderChassis extends BasicChassis {
     double lastLog = 0.0;
     boolean navigation = false;
     private RangeSensor ultra = null;
+    double[][] backLogs={{0,0},{0,0},{0,0},{0,0},{0,0}};
     File logFile = new File("/storage/emulated/0/tmp/Log.csv");
+    File logyFile = new File("/storage/emulated/0/tmp/Logy.csv");
     FileWriter wFTCfile;
 
 
@@ -90,12 +94,28 @@ public class EncoderChassis extends BasicChassis {
                 op.telemetry.addData("VSLAMChassis:", "File already exists:%S\n", "Overriding");
                 op.telemetry.update();
             }
+            if (logyFile.createNewFile()) {
+                op.telemetry.addData("VSLAMChassis:", "File created:%S\n", "Logger");
+                op.telemetry.update();
+            } else {
+                logyFile.delete();
+                logyFile.createNewFile();
+                op.telemetry.addData("VSLAMChassis:", "File already exists:%S\n", "Overriding");
+                op.telemetry.update();
+            }
         } catch (IOException e) {
             new RuntimeException("create file: FAILED", e).printStackTrace();
         }
         {
             try {
-                wFTCfile = new FileWriter(logFile);
+                wFTCfile = new FileWriter(logFile, true);
+                wFTCfile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                FileWriter rr = new FileWriter(logyFile, true);
+                rr.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -114,10 +134,10 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lastAngles = new Orientation();
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -303,8 +323,8 @@ public class EncoderChassis extends BasicChassis {
         if (abs(-globalAngle - newANgle) > 0.5) {
             newANgle = -globalAngle;
         }
-        double x = cos((newANgle * Math.PI / 180));
-        double y = sin((newANgle * Math.PI / 180));
+        double x = cos((newANgle * PI / 180));
+        double y = sin((newANgle * PI / 180));
         xVelocity = (y * netForward) / differtime;
         yVelocity = (x * netForward) / differtime;
         Velocity = sqrt(xVelocity * xVelocity + yVelocity * yVelocity);
@@ -331,33 +351,72 @@ public class EncoderChassis extends BasicChassis {
         op.telemetry.addData("maxVel", maxVelocity);
         if (abs(angle) < 15 && navigation&&thisTime-lastUltraUpdate>0.1) {
             double[] ultraPos = ultra.getLocation();
+            double[] except = {-10,-10};
             lastUltraUpdate = thisTime;
-            if (preUltraPos[1] != ultraPos[1]) {
-                if (abs(ultraPos[1] - ypos) < 2.0 && ultraPos[1] < 50 && ultraPos[1] > 8) {
-                    ypos = (float) ultraPos[1];
-                } else if (abs(ultraPos[1] - preUltraPos[1]) < 4&& ultraPos[1] < 50 && ultraPos[1] > 8&&abs(ultraPos[1] - ypos) < 5.0) {
-                    ypos = (float) ultraPos[1];
-                }
-                preUltraPos[1] = ultraPos[1];
+            blog[0][0]=xpos;
+            blog[0][1]=ypos;
+            for(int i=0;i<5;i++){
+                blog[1] = backLogs[i];
+                backLogs[i]=blog[0];
+                blog[0]=blog[1];
             }
-            if (preUltraPos[0] != ultraPos[0]) {
-                if (-ultraPos[0] + xpos < 2.0) {
+            ultraPos[0]+=backLogs[4][0]-backLogs[0][0];
+            ultraPos[1]+=backLogs[4][1]-backLogs[0][1];
+            op.telemetry.addData("blog4",backLogs[4][1]);
+            op.telemetry.addData("blog0", backLogs[0][1]);
+            double[] difference = {xpos-ultraPos[0], ypos-ultraPos[1]};
+            if(abs(ultraPos[0]-xpos)<10.0&&10>ultraPos[0]&&ultraPos[0]>-1){
+                if(!debug) {
                     xpos = (float) ultraPos[0];
                 }
-                else if (abs(ultraPos[0] - preUltraPos[0]) < 4) {
-                    xpos = (float) ultraPos[0];
+                except[0]=-10;
+            }
+            else{
+                except[0]=-40;
+            }
+            if(abs(ultraPos[1]-ypos)<4.0&&ultraPos[1]>-14&&ultraPos[1]<50) {
+                if(!debug) {
+                    ypos = (float) ultraPos[1];
                 }
-                preUltraPos[0] = ultraPos[0];
+                except[1]=-10;
+            }
+            else{
+                except[1]=-40;
+            }
+//            if(except[0]==-10){
+//                for(int i=0;i<5;i++){
+//                    backLogs[i][0]-=difference[0];
+//                }
+//            }
+//            if(except[1]==-10){
+//                for(int i=0;i<5;i++){
+//                    backLogs[i][1]-=difference[1];
+//                }
+//            }
+            double[] raw = ultra.getLocation();
+            try {
+                FileWriter writer = new FileWriter(logFile,true);
+                writer.write(String.format("%4.2f", xpos) + "," + String.format("%4.2f", ultraPos[0]) + "," +String.format("%4.2f", raw[0])+","+String.format("%4.2f", except[0])+","+String.format("%4.2f", ypos) + "," + String.format("%4.2f", ultraPos[1]) + "," +String.format("%4.2f", raw[1])+","+String.format("%4.2f", except[1])+ "\n");
+                writer.close();
+            } catch (IOException e) {
+                new RuntimeException("write: FAILED", e).printStackTrace();
+            }
+            try {
+                FileWriter rr = new FileWriter(logyFile, true);
+                rr.write(String.format("%4.2f", ypos) + ","+String.format("%4.2f", raw[1])+ "\n");
+                rr.close();
+            } catch (IOException e) {
+                new RuntimeException("write: FAILED", e).printStackTrace();
             }
         }
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();
-            try {
-                wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," +
-                        String.format("%.2f", aVelocity) + "," + String.format("%.2f", angle) + "\n");
-            } catch (IOException e) {
-                new RuntimeException("write: FAILED", e).printStackTrace();
-            }
+//            try {
+//                wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," +
+//                        String.format("%.2f", aVelocity) + "," + String.format("%.2f", angle) + "\n");
+//            } catch (IOException e) {
+//                new RuntimeException("write: FAILED", e).printStackTrace();
+//            }
         }
         if (bad) {
             op.telemetry.addData("BAD", true);
@@ -405,10 +464,6 @@ public class EncoderChassis extends BasicChassis {
             lastAngleUpdate = thisTime;
             aVelocity = tempAVelocity;
         }
-        if (encoder) {
-            xpos += xVelocity * differtime;
-            ypos += yVelocity * differtime;
-        }
 
         angle = (float) newANgle;
         op.telemetry.addData("ticks1", ticks[0]);
@@ -423,6 +478,12 @@ public class EncoderChassis extends BasicChassis {
         op.telemetry.addData("maxVel", maxVelocity);
         if (abs(angle) < 15 && navigation&&thisTime-lastUltraUpdate>0.1) {
             double[] ultraPos = ultra.getLocation();
+            try {
+                wFTCfile.write(op.getRuntime() + "," + String.format("%4.2f", ypos) + "," + String.format("%4.2f", ultraPos[1]) + "\n");
+                wFTCfile.flush();
+            } catch (IOException e) {
+                new RuntimeException("write: FAILED", e).printStackTrace();
+            }
             lastUltraUpdate = thisTime;
             if (preUltraPos[1] != ultraPos[1]) {
                 if (abs(ultraPos[1] - ypos) < 2.0 && ultraPos[1] < 50 && ultraPos[1] > 8) {
@@ -441,19 +502,19 @@ public class EncoderChassis extends BasicChassis {
                 }
                 preUltraPos[0] = ultraPos[0];
             }
-            if(encoder){
-                ypos=(float)ultraPos[1];
-                xpos=(float)ultraPos[0];
-            }
+//            if(!encoder){
+//                ypos=(float)ultraPos[1];
+//                xpos=(float)ultraPos[0];
+//            }
         }
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();
-            try {
-                wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," +
-                        String.format("%.2f", aVelocity) + "," + String.format("%.2f", angle) + "\n");
-            } catch (IOException e) {
-                new RuntimeException("write: FAILED", e).printStackTrace();
-            }
+//            try {
+//                wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," +
+//                        String.format("%.2f", aVelocity) + "," + String.format("%.2f", angle) + "\n");
+//            } catch (IOException e) {
+//                new RuntimeException("write: FAILED", e).printStackTrace();
+//            }
         }
         if (bad) {
             op.telemetry.addData("BAD", true);
@@ -469,10 +530,10 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightBack.setPower(.5);
         op.sleep(1000);
         motorRightBack.setPower(0);
@@ -496,10 +557,10 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         track();
         double[] currentPosition = track();
         double lastFuncLog = 0.0;
@@ -767,10 +828,10 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         track();
         double[] currentPosition = track();
         double[] startposition = currentPosition;
@@ -1950,10 +2011,10 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double[] currentPosition = track();
 
         double lastLogs = 0.00;
@@ -3288,10 +3349,10 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double startAngle = getAngle();
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};

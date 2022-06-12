@@ -57,6 +57,7 @@ public class CycleAutoBlue extends LinearOpMode {
             if(sheesher) {
                 robot.FlipBasketArmToPosition(.55);
                 robot.FlipBasketToPosition(0.18);
+                robot.stopIntake();
                 sleep(400);
                 times++;
             }
