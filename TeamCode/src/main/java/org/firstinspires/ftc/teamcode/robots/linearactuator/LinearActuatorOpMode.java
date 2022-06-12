@@ -30,9 +30,9 @@ public class LinearActuatorOpMode extends OpMode {
     public static PIDCoefficients ACTUATOR_COEFFICIENTS = new PIDCoefficients(-20, 0, 0);
 //    public static double TOLERANCE = 0.03;
 //    public static double POWER = -1.0;
-    public static double ZERO_POSITION = 0.2;
-    public static double MAX_OFFSET = 0.15;
-    public static double SAFETY_SAFED = .5; //position where safety is enabled - servo relaxed
+    public static double ZERO_POSITION = 1.0;
+    public static double MAX_OFFSET = 0.65;
+    public static double SAFETY_SAFED = 1.0; //position where safety is enabled - servo relaxed
     public static double SAFETY_UNSAFED = .5; //position where safety is disabled - hydraulics are enabled - hold red down to engage
 //    public static double MAX_POSITION = 2.67 / 2.0 + 2.67 * 1/6;
     double targetLeftPosition, targetRightPosition;
@@ -45,7 +45,7 @@ public class LinearActuatorOpMode extends OpMode {
         rightInput = hardwareMap.analogInput.get("rightinput");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightmotor");
         deadManSafety = hardwareMap.get(Servo.class, "deadManSafety");
-        deadManSafety2 = hardwareMap.get(ServoImplEx.class, "deadManSafety");
+        //deadManSafety2 = hardwareMap.get(ServoImplEx.class, "deadManSafety");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -111,7 +111,7 @@ public class LinearActuatorOpMode extends OpMode {
 //        if(stickyGamepad1.left_bumper)
 //            manual = !manual;
 
-        if (stickyGamepad1.b) //hold down for safety disabled
+        if (gamepad1.b) //hold down for safety disabled
         {
             deadManSafety.setPosition(SAFETY_UNSAFED);
         }
