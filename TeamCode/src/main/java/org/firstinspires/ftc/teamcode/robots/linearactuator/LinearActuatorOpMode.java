@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.StickyGamepad;
@@ -21,6 +23,8 @@ public class LinearActuatorOpMode extends OpMode {
     AnalogInput leftInput, rightInput;
     FtcDashboard dashboard;
     DcMotorEx leftMotor, rightMotor;
+    Servo deadManSafety;
+    ServoImplEx deadManSafety2;
     StickyGamepad stickyGamepad1;
     PIDController leftController, rightController;
     public static PIDCoefficients ACTUATOR_COEFFICIENTS = new PIDCoefficients(-20, 0, 0);
@@ -28,6 +32,8 @@ public class LinearActuatorOpMode extends OpMode {
 //    public static double POWER = -1.0;
     public static double ZERO_POSITION = 0.2;
     public static double MAX_OFFSET = 0.15;
+    public static double SAFETY_SAFED = .5; //position where safety is enabled - servo relaxed
+    public static double SAFETY_UNSAFED = .5; //position where safety is disabled - hydraulics are enabled - hold red down to engage
 //    public static double MAX_POSITION = 2.67 / 2.0 + 2.67 * 1/6;
     double targetLeftPosition, targetRightPosition;
     boolean manual = true;
@@ -38,6 +44,8 @@ public class LinearActuatorOpMode extends OpMode {
         leftMotor = hardwareMap.get(DcMotorEx.class, "leftmotor");
         rightInput = hardwareMap.analogInput.get("rightinput");
         rightMotor = hardwareMap.get(DcMotorEx.class, "rightmotor");
+        deadManSafety = hardwareMap.get(Servo.class, "deadManSafety");
+        deadManSafety2 = hardwareMap.get(ServoImplEx.class, "deadManSafety");
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -102,6 +110,14 @@ public class LinearActuatorOpMode extends OpMode {
 //
 //        if(stickyGamepad1.left_bumper)
 //            manual = !manual;
+
+        if (stickyGamepad1.b) //hold down for safety disabled
+        {
+            deadManSafety.setPosition(SAFETY_UNSAFED);
+        }
+        else {
+            deadManSafety.setPosition(SAFETY_SAFED);
+        }
 
         if(manual) {
             targetLeftPosition = map(-gamepad1.left_stick_y, -1.0, 1.0, ZERO_POSITION - MAX_OFFSET, ZERO_POSITION + MAX_OFFSET);
