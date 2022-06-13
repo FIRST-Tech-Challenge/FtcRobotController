@@ -25,7 +25,6 @@ public class Turret {
     private Servo basketArmServo = null;
     private Servo basketActuationServo = null;
     private double lastTime=0, lastServoPos=0,servoDist=0;
-    boolean straightening=false;
     private final double DEG_PER_TICK_MOTOR = 18.0/116.0, DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime =.3;
     private final double TICKS_PER_INCH = 955.0/32.0;
     private final double MAX_EXTENSION_TICKS = 955;
@@ -106,7 +105,7 @@ public class Turret {
         else{
             checker.setState(StateMachine.States.TURRET_SHORT,false);
         }
-        if (abs(rotatePosition) < 15) {
+        if (abs(rotatePosition) < 10) {
             checker.setState(StateMachine.States.TURRET_STRAIGHT,true);
         }
         else{
@@ -409,7 +408,7 @@ public class Turret {
         updateTurretPositions();
 
         if(checker.getState(StateMachine.States.BASKET_ARM_REST)&&areTeleop) {
-            basketActuationServo.setPosition(0.88);
+            basketActuationServo.setPosition(0.92);
         }
         else{
             basketActuationServo.setPosition(0.18);
@@ -522,13 +521,10 @@ public class Turret {
                 turret_Extension.setVelocity(0);
             }
             if (checker.getState(StateMachine.States.TURRET_SHORT)) {
-                FlipBasketToPosition(0.88);
+                FlipBasketToPosition(0.92);
             }
-            if (checker.getState(StateMachine.States.TURRET_SHORT) && !straightening) {
-                turret_Rotation.setTargetPosition(0);
-                turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                turret_Rotation.setPower(0.4);
-                straightening=true;
+            if (checker.getState(StateMachine.States.TURRET_SHORT) && !checker.getState(StateMachine.States.TURRET_STRAIGHT)) {
+                turret_Rotation.setVelocity(-rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 50));
             } else {
                 turret_Rotation.setVelocity(0);
             }
@@ -563,13 +559,11 @@ public class Turret {
                     turret_Extension.setVelocity(0);
                 }
                 if (checker.getState(StateMachine.States.TURRET_SHORT)) {
-                    FlipBasketToPosition(0.88);
+                    FlipBasketToPosition(0.92);
                 }
-                if (checker.getState(StateMachine.States.TURRET_SHORT) && !straightening) {
+                if (checker.getState(StateMachine.States.TURRET_SHORT) && !checker.getState(StateMachine.States.TURRET_STRAIGHT)) {
                     turret_Rotation.setTargetPosition(0);
-                    turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    turret_Rotation.setPower(0.4);
-                    straightening=true;
+                    turret_Rotation.setVelocity(-rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 50));
                 } else {
                     turret_Rotation.setVelocity(0);
                 }
@@ -590,7 +584,6 @@ public class Turret {
             basketing = false;
             angleControlling = false;
             resetten=true;
-            straightening=false;
         }
         else{
             resetten=false;

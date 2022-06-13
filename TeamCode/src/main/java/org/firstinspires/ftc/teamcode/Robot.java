@@ -327,7 +327,7 @@ public class Robot {
             }
         }
 
-        if (turretTurn != 0) {
+        if (turretTurn != 0&&!retracting) {
             autoAiming = false;
             TurretManualRotation(turretTurn);
         } else if (!retracting && !autoAiming && time > startTime[8] + 2) {
@@ -447,11 +447,11 @@ public class Robot {
                 startTime[1] = op.getRuntime() + 10;
             }
             checker.setState(StateMachine.States.SEQUENCING, true);
-            turret.FlipBasketToPosition(.88);
+            turret.FlipBasketToPosition(.92);
             turret.FlipBasketArmToPosition(0.00);
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 intake.stopIntake();
-                intake.flipIntakeToPosition(0.77);
+                intake.flipIntakeToPosition(0.75);
                 isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
@@ -537,7 +537,8 @@ public class Robot {
 
     public void fakeAutoAim() {
         double angle = -60;
-        if(abs(EncoderChassis.angle)<45+startAngle) {
+        retracting=false;
+        if(abs(startAngle-EncoderChassis.angle)<45) {
             if (!isBall) {
                 turret.TurretRotate(turret_saved_positions[0][0][1]);
                 turret.AutoAngleControlRotating(17);
@@ -552,7 +553,7 @@ public class Robot {
             }
         }
         else{
-            if(time-shareFlipTime>1.0) {
+            if(time-shareFlipTime>1.0&&checker.getState(StateMachine.States.BASKET_ARM_REST)) {
                 flipBasketArmToPosition(0.8);
                 shareFlipTime=time;
             }
