@@ -130,7 +130,7 @@ public class OpenCVMasterclass {
             return 2;
         }
         else if(opencv.getLocation()== RedTeamElem.Location.MID) {
-            return 0;
+            return 1;
         }
         else if(opencv.getLocation()== RedTeamElem.Location.LEFT) {
             return 1;
