@@ -54,7 +54,7 @@ public class BlueRightP extends LinearOpMode {
             sleep(500);
         }
         else {
-            robot.TurretSlidesToPosition(-14.0, 9.5, 2, 0.5);
+            robot.TurretSlidesToPosition(-16.0, 9.5, 2, 0.5);
             robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.4);
             sleep(800);
