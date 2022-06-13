@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class OpenCVInfrastructureTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false,90);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }

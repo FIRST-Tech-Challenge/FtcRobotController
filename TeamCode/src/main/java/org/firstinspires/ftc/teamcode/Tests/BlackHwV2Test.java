@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -236,11 +235,24 @@ public class BlackHwV2Test extends LinearOpMode {
         waitForStart();
         /**/    telemetry.addData("motor","foward");
         telemetry.update();
-        forwardFrontDc( 0.10,1000);
+        motorRight[0].setPower(0.2);
+        sleep(3000);
+        motorRight[0].setPower(0.0);
         sleep(1000);
+        motorRight[1].setPower(0.2);
+        sleep(3000);
+        motorRight[1].setPower(0.0);
+        sleep(1000);
+        motorLeft[0].setPower(0.2);
+        sleep(3000);
+        motorLeft[0].setPower(0.0);
+        sleep(1000);
+        motorLeft[1].setPower(0.2);
+        sleep(3000);
+        motorLeft[1].setPower(0.0);
+
         telemetry.addData("motor","backward");
         telemetry.update();
-        forwardFrontDc( -0.10,1000);
         testMotor("turretExtension",turretExtension,0.10,1000);
         testMotor("turretRotation",turretRotation,0.10,1000);
         testMotor("intakeMotor",intakeMotor,0.10,1000);

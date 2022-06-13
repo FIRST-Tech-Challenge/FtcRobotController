@@ -43,12 +43,13 @@ public class Robot {
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
     boolean isExtended = false;
-    boolean isBall = false;
+    public static boolean isBall = false;
     public static boolean resetten = true;
     public static boolean faked = false, rotated = false;
     boolean outModed = false;
     boolean shouldFlipIntake = false;
     boolean isReversing = false;
+    double shareFlipTime = 0;
     boolean isFlipping = false;
     boolean isExtending = false;
     double flipDelay = .3, reverseDelay = .7;
@@ -56,6 +57,7 @@ public class Robot {
     double magnitude;
     double angleInRadian;
     double angleInDegree;
+    public static double startAngle;
     double power = 0.5;
     double turret_angle_control_distance = 0;
     boolean slowMode = false;
@@ -87,8 +89,9 @@ public class Robot {
     private StateMachine checker = null;
     private Logger logger;
 
-    public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded) {
+    public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         op = opMode;
+        startAngle = startAng;
         logger = new Logger(opMode);
         checker = new StateMachine(op, isTeleop, logger);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
@@ -534,17 +537,30 @@ public class Robot {
 
     public void fakeAutoAim() {
         double angle = -60;
-        if (!isBall) {
-            turret.TurretRotate(turret_saved_positions[0][0][1]);
-            turret.AutoAngleControlRotating(17);
-            turret.turretExtendo(turret_saved_positions[0][0][0]);
-        } else {
-            turret.TurretRotate(turret_saved_positions[0][1][1]);
-            turret.AutoAngleControlRotating(0);
-            turret.turretExtendo(turret_saved_positions[0][1][0]);
+        if(abs(EncoderChassis.angle)<45+startAngle) {
+            if (!isBall) {
+                turret.TurretRotate(turret_saved_positions[0][0][1]);
+                turret.AutoAngleControlRotating(17);
+                turret.turretExtendo(turret_saved_positions[0][0][0]);
+            } else {
+                turret.TurretRotate(turret_saved_positions[0][1][1]);
+                turret.AutoAngleControlRotating(0);
+                turret.turretExtendo(turret_saved_positions[0][1][0]);
+            }
+            if (!checker.getState(StateMachine.States.TURRET_SHORT)) {
+                flipBasketArmToPosition(0.55);
+            }
         }
-        if(!checker.getState(StateMachine.States.TURRET_SHORT)){
-            flipBasketArmToPosition(0.55);
+        else{
+            if(time-shareFlipTime>1.0) {
+                flipBasketArmToPosition(0.8);
+                shareFlipTime=time;
+            }
+            if(time-shareFlipTime>0.5){
+                turret.TurretRotate(turret_saved_positions[0][2][1]);
+                turret.AutoAngleControlRotating(0);
+                turret.turretExtendo(turret_saved_positions[0][2][0]);
+            }
         }
     }
 
@@ -731,7 +747,12 @@ public class Robot {
             double time = op.getRuntime();
 
             while (time - starterTime < 1.85 + times / 10) {
+                if(ypos<15){
+                    angleDiff=-atan2(EncoderChassis.xpos, 15-ypos) * 180 / PI-angle;
+                }
+                else {
                     angleDiff = -angle;
+                }
                 drivetrain.track();
                 turret.updateTurretPositions();
                 time = op.getRuntime();
@@ -746,20 +767,20 @@ public class Robot {
                     turret.FlipBasketArmToPosition(0.03);
                     startTime[9] = time;
                 }
-                if (ypos < 5) {
-                    drivetrain.setRightMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8 - angleDiff *20);
-                    drivetrain.setLeftMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8+ angleDiff *20);
+                if (ypos < 15) {
+                    drivetrain.setRightMotorVelocities((50-EncoderChassis.ypos)*29.8 - angleDiff *30);
+                    drivetrain.setLeftMotorVelocities((50-EncoderChassis.ypos)*29.8+ angleDiff *30);
 //                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - angleDiff / 100 + 0.1);
 //                    drivetrain.setLeftMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + angleDiff / 100 - 0.1);
-                } else if(ypos<44){
-                    drivetrain.setRightMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8 - (angleDiff + thoseCurves[(int) times]) *30);
-                    drivetrain.setLeftMotorVelocities(pow(44-EncoderChassis.ypos,1/3.0)/2.7*30*29.8+ (angleDiff + thoseCurves[(int) times]) *30);
+                } else if(ypos<47){
+                    drivetrain.setRightMotorVelocities((50-EncoderChassis.ypos)*29.8 - (angleDiff + thoseCurves[(int) times]) *30);
+                    drivetrain.setLeftMotorVelocities((50-EncoderChassis.ypos)*29.8+ (angleDiff + thoseCurves[(int) times]) *30);
 //                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - (angleDiff + thoseCurves[(int) times]) / 25);
 //                    drivetrain.setLeftMotorPowers( abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + (angleDiff + thoseCurves[(int) times]) / 25);
                 }
                 else{
-                    drivetrain.setRightMotorVelocities((44- EncoderChassis.ypos)*30*29.8);
-                    drivetrain.setLeftMotorVelocities((44-EncoderChassis.ypos)*30*29.8);
+                    drivetrain.setRightMotorVelocities((50- EncoderChassis.ypos)*29.8);
+                    drivetrain.setLeftMotorVelocities((50-EncoderChassis.ypos)*29.8);
                 }
                 if (intake.isSwitched()) {
                     drivetrain.setRightMotorVelocities(-100);
@@ -768,7 +789,7 @@ public class Robot {
                         stopIntake();
                         return false;
                     }
-                    sheeeeesh(0.0, 0, 1.0, 0);
+                    sheeeeesh(0.0, 0, 0.40, 0);
                     block = true;
                     break;
                 }
@@ -874,7 +895,7 @@ public class Robot {
                     autoAiming = true;
                     starterTimes[5] = nowTime;
                 }
-                if (ypos < 10) {
+                if (ypos < 5) {
                     if (autoAiming) {
                         fakeAutoAim();
                         if (faked && rotated) {
@@ -1115,7 +1136,6 @@ public class Robot {
                 if (faked && rotated) {
                     turret.stopExtend();
                     turret.stopTurn();
-                    starterTimes[1] = 501;
                 }
             }
             op.telemetry.addData("autoAim", autoAiming);

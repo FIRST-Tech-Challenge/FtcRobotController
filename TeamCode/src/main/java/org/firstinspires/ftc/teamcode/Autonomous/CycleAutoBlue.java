@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class CycleAutoBlue extends LinearOpMode {
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, true);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, true,0);
         robot.rotateToPosition(-88);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

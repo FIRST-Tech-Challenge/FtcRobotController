@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class RedElemTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false,90);
         robot.rotateToPosition(-80);
         sleep(1000);
         robot.rotateToPosition(5);

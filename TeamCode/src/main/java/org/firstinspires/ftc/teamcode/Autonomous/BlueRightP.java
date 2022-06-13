@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class BlueRightP extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false,90);
 //       robot.rotateToPosition(-15);
 //       robot.rotateToPosition(-7.5);
         sleep(1000);
@@ -33,6 +33,9 @@ public class BlueRightP extends LinearOpMode {
         robot.rotateToPosition(-9);
         sleep(2000);
         int position = robot.BlueElemTest(this,0,0);
+        while(getRuntime()<8){
+            sleep(100);
+        }
         position=2-position;
         if(position==1) {
             robot.TurretSlidesToPosition(-9.5, 5, 0, 0.5);
@@ -62,8 +65,8 @@ public class BlueRightP extends LinearOpMode {
         robot.FlipBasketArmToPosition(0.0);
         robot.turnInPlace(-60,1.0);
         robot.FlipBasketToPosition(0.8);
-        robot.goToPosition(1,-7,-17,-35,0.5);
-        robot.setMotorPowers(0.18);
+        robot.goToPosition(1,-7,-17,-40,0.5);
+        robot.setMotorPowers(0.1);
         robot.spinCarouselAutonomousBlue();
 
         robot.goToPosition(0,-28,-20,0,0.5);

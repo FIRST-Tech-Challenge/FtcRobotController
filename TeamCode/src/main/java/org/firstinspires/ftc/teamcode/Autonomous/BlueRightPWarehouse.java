@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class BlueRightPWarehouse extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false, false,90);
         sleep(1000);
         int position = robot.BlueElemTest(this,0,0);
         double[] turretTarget = {12+10.6,-24+16.2,0};//{hubx-position*3/2,huby-position*3/2,1+7*position}

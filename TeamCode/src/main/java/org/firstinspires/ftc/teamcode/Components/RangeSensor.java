@@ -7,7 +7,7 @@ import static java.lang.Math.sin;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 
 
 public class RangeSensor {
@@ -15,12 +15,14 @@ public class RangeSensor {
     private AnalogInput ultrasonicFront;
     private AnalogInput ultrasonicRight;
     private AnalogInput ultrasonicLeft;
+    private DigitalChannelImpl digit;
 
 
     public RangeSensor(LinearOpMode opMode) {
         ultrasonicFront =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
         ultrasonicLeft =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
         ultrasonicRight =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
+
     }
 
     public double getDistance(boolean front) {
