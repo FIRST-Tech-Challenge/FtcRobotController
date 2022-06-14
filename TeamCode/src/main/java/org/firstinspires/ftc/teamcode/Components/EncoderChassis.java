@@ -44,7 +44,7 @@ public class EncoderChassis extends BasicChassis {
     public static double Velocity = 0;
     double preUltraPos[] = {0, 0, 0};
     private final BNO055IMU imu;
-    private double lastAngleUpdate = 0.0, lastUltraUpdate=0.0;
+    private double lastAngleUpdate = 0.0, lastUltraUpdate=0.0, lastDigUp=0.0;
     private Orientation lastAngles = new Orientation();
     private double globalAngle;
     private double correction;
@@ -52,7 +52,7 @@ public class EncoderChassis extends BasicChassis {
     double ticksPerRevolution = 2215.5;
     double[] directions = {1, 1, 1, 1}, ticks = {0, 0, 0, 0};
     boolean bad = false;
-    boolean debug = true;
+    boolean debug = false;
     private LinearOpMode op = null;
     Lock location = new ReentrantLock();
     public static float xpos = 0;
@@ -79,9 +79,11 @@ public class EncoderChassis extends BasicChassis {
         super(opMode);
         navigation = navigator;
         op = opMode;
-        xpos = 0;
-        ypos = 0;
-        angle = 0;
+        if(!isTeleop) {
+            xpos = 0;
+            ypos = 0;
+            angle = 0;
+        }
         ultra = new RangeSensor(opMode);
         try {
             //Create File
@@ -361,19 +363,19 @@ public class EncoderChassis extends BasicChassis {
         op.telemetry.addData("aVelocity", aVelocity);
         op.telemetry.addData("differtime", differtime);
         op.telemetry.addData("maxVel", maxVelocity);
-        if (abs(angle) < 15 && navigation&&thisTime-lastUltraUpdate>0.1) {
+        if (abs(angle) < 12 && navigation&&thisTime-lastUltraUpdate>0.1) {
             double[] ultraPos = ultra.getLocation();
             double[] except = {-10,-10};
             lastUltraUpdate = thisTime;
-            blog[0][0]=xpos;
-            blog[0][1]=ypos;
-            for(int i=0;i<5;i++){
-                blog[1] = backLogs[i];
-                backLogs[i]=blog[0];
-                blog[0]=blog[1];
-            }
-            ultraPos[0]+=backLogs[4][0]-backLogs[0][0];
-            ultraPos[1]+=backLogs[4][1]-backLogs[0][1];
+//            blog[0][0]=xpos;
+//            blog[0][1]=ypos;
+//            for(int i=0;i<5;i++){
+//                blog[1] = backLogs[i];
+//                backLogs[i]=blog[0];
+//                blog[0]=blog[1];
+//            }
+//            ultraPos[0]+=backLogs[4][0]-backLogs[0][0];
+//            ultraPos[1]+=backLogs[4][1]-backLogs[0][1];
             op.telemetry.addData("blog4",backLogs[4][1]);
             op.telemetry.addData("blog0", backLogs[0][1]);
             double[] difference = {xpos-ultraPos[0], ypos-ultraPos[1]};
@@ -386,7 +388,7 @@ public class EncoderChassis extends BasicChassis {
             else{
                 except[0]=-40;
             }
-            if(abs(ultraPos[1]-ypos)<4.0&&ultraPos[1]>-14&&ultraPos[1]<50) {
+            if(abs(ultraPos[1]-ypos)<12.0&&ultraPos[1]>-14&&ultraPos[1]<55) {
                 if(!debug) {
                     ypos = (float) ultraPos[1];
                 }
@@ -420,6 +422,9 @@ public class EncoderChassis extends BasicChassis {
             } catch (IOException e) {
                 new RuntimeException("write: FAILED", e).printStackTrace();
             }
+        }
+        if(thisTime-lastDigUp>0.1&&thisTime-lastUltraUpdate>0.05){
+            ultra.setState(true,false);
         }
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();

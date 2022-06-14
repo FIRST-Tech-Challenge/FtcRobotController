@@ -219,6 +219,27 @@ public class Turret {
         }
 
     }
+    public void TurretSlotate (double targetAngle) {
+        op.telemetry.addData("newAngle",targetAngle);
+        int curPos = (int)rotatePosition;
+        if(targetAngle>MAX_ROTATION_TICKS){
+            targetAngle = MAX_ROTATION_TICKS;
+        }
+        if(targetAngle<-MAX_ROTATION_TICKS){
+            targetAngle = -MAX_ROTATION_TICKS;
+        }
+        double dist = targetAngle - curPos;
+        if(abs(dist)<20){
+            Robot.rotated=true;
+            turret_Rotation.setPower(0);
+        }
+        else {
+            Robot.rotated=false;
+            turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            turret_Rotation.setVelocity(pow(abs(dist),1.2) / 50 * dist / abs(dist) * (50));
+        }
+
+    }
 
     public void BasketArmFlipLowExtend (double power) {
 //        basketArmServo.setPosition(190 * TORQUE_GEAR_RATIO);
@@ -562,8 +583,7 @@ public class Turret {
                     FlipBasketToPosition(0.92);
                 }
                 if (checker.getState(StateMachine.States.TURRET_SHORT) && !checker.getState(StateMachine.States.TURRET_STRAIGHT)) {
-                    turret_Rotation.setTargetPosition(0);
-                    turret_Rotation.setVelocity(-rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 50));
+                    turret_Rotation.setVelocity(-rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 30));
                 } else {
                     turret_Rotation.setVelocity(0);
                 }

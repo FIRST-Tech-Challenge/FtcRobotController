@@ -99,8 +99,8 @@ public class Intake {
     public boolean flipIntake() {
         if (checker.getState(StateMachine.States.INTAKE_DOWN)&&checker.checkIf(StateMachine.States.FLIPPING) &&op.getRuntime()-flipTime>0.4) {
             flipTime= op.getRuntime();
-            intakeServo.setPosition(.25);
-            intakeServo2.setPosition(.75);
+            intakeServo.setPosition(.21);
+            intakeServo2.setPosition(.79);
             checker.setState(StateMachine.States.FLIPPING, true);
             checker.setState(StateMachine.States.INTAKE_DOWN, false);
             return true;

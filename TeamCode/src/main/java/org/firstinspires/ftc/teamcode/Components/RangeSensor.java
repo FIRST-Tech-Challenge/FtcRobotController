@@ -7,7 +7,7 @@ import static java.lang.Math.sin;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
+import com.qualcomm.robotcore.hardware.LED;
 
 
 public class RangeSensor {
@@ -15,27 +15,38 @@ public class RangeSensor {
     private AnalogInput ultrasonicFront;
     private AnalogInput ultrasonicRight;
     private AnalogInput ultrasonicLeft;
-    private DigitalChannelImpl digit;
+    private LED ultraFront;
 
 
     public RangeSensor(LinearOpMode opMode) {
         ultrasonicFront =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
         ultrasonicLeft =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
         ultrasonicRight =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
-
+        ultraFront=opMode.hardwareMap.get(LED.class, "ultraFront");
+        ultraFront.enable(true);
     }
 
     public double getDistance(boolean front) {
         AnalogInput ultrasonic;
+        double rawValue = 0;
         if(front){
             ultrasonic = ultrasonicFront;
+            rawValue = ultrasonic.getVoltage();
+            ultraFront.enable(false);
         }
         else{
             ultrasonic = ultrasonicLeft;
+            rawValue = ultrasonic.getVoltage();
         }
-        double rawValue = ultrasonic.getVoltage();
-
         return  90.48337*rawValue  - 13.12465;
+    }
+    public void setState(boolean front, boolean state){
+        if(front){
+            ultraFront.enable(!state);
+        }
+    }
+    public boolean getState(boolean front){
+        return ultraFront.isLightOn();
     }
     public double getVoltage(boolean front) {
         AnalogInput ultrasonic;

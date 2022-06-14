@@ -42,6 +42,7 @@ public class Robot {
     private LinearOpMode op = null;
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
+    int isBlue = 1;
     boolean isExtended = false;
     public static boolean isBall = false;
     public static boolean resetten = true;
@@ -49,7 +50,7 @@ public class Robot {
     boolean outModed = false;
     boolean shouldFlipIntake = false;
     boolean isReversing = false;
-    double shareFlipTime = 0;
+    double shareFlipTime = 0,startRotateTime;
     boolean isFlipping = false;
     boolean isExtending = false;
     double flipDelay = .3, reverseDelay = .7;
@@ -218,6 +219,7 @@ public class Robot {
 
     public void teleopLoop(int red, double startx, double starty) {
         /** gamepad 1**/
+        isBlue=red;
         float forward = -op.gamepad1.left_stick_y;
         float strafe = -op.gamepad1.left_stick_x; //remove dis boi son// DIY!
         float turning = -op.gamepad1.right_stick_x;
@@ -250,46 +252,41 @@ public class Robot {
         int up = 0;
         intake.updateIntakeStates();
         turret.updateTurretPositions();
-        if (xpos > (60) * red - startx) {
-            if (!shared_shipping_hub && red == 1) {
-                changed = true;
-            }
-            if (!alliance_shipping_hub && red == -1) {
-                changed = true;
-            }
-            if (red == 1) {
-                shared_shipping_hub = true;
-                alliance_shipping_hub = false;
-            } else {
-                shared_shipping_hub = false;
-                alliance_shipping_hub = true;
-            }
-            up = 0;
-        } else if (xpos < (60) * red - startx) {
-            if (!shared_shipping_hub && red == -1) {
-                changed = true;
-            }
-            if (!alliance_shipping_hub && red == 1) {
-                changed = true;
-            }
-            if (red == 1) {
-                alliance_shipping_hub = true;
-                shared_shipping_hub = false;
-            } else {
-                alliance_shipping_hub = false;
-                shared_shipping_hub = true;
-            }
-            up = 1;
-        }
+//        if (xpos > (60) * red - startx) {
+//            if (!shared_shipping_hub && red == 1) {
+//                changed = true;
+//            }
+//            if (!alliance_shipping_hub && red == -1) {
+//                changed = true;
+//            }
+//            if (red == 1) {
+//                shared_shipping_hub = true;
+//                alliance_shipping_hub = false;
+//            } else {
+//                shared_shipping_hub = false;
+//                alliance_shipping_hub = true;
+//            }
+//            up = 0;
+//        } else if (xpos < (60) * red - startx) {
+//            if (!shared_shipping_hub && red == -1) {
+//                changed = true;
+//            }
+//            if (!alliance_shipping_hub && red == 1) {
+//                changed = true;
+//            }
+//            if (red == 1) {
+//                alliance_shipping_hub = true;
+//                shared_shipping_hub = false;
+//            } else {
+//                alliance_shipping_hub = false;
+//                shared_shipping_hub = true;
+//            }
+//            up = 1;
+//        }
 
         if (changed) {
             if (!checker.getState(StateMachine.States.BASKET_ARM_REST)) {
-                if (alliance_shipping_hub) {
                     turret.FlipBasketArmToPosition(.45);
-                }
-                if (shared_shipping_hub) {
-                    turret.FlipBasketArmToPosition(.9);
-                }
             }
             //according to blue side left auto next to barrier
         }
@@ -451,7 +448,7 @@ public class Robot {
             turret.FlipBasketArmToPosition(0.00);
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 intake.stopIntake();
-                intake.flipIntakeToPosition(0.75);
+                intake.flipIntakeToPosition(0.77);
                 isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
@@ -467,12 +464,12 @@ public class Robot {
             op.telemetry.addData("intakedown", !checker.getState(StateMachine.States.INTAKE_DOWN));
 
 
-            if (op.getRuntime() > startTime[0] + 0.7 && checker.checkIf(StateMachine.States.TRANSFERRING) && !checker.getState(StateMachine.States.INTAKE_DOWN)) {
+            if (op.getRuntime() > startTime[0] + 0.7 && !checker.getState(StateMachine.States.INTAKE_DOWN)&&!checker.getState(StateMachine.States.TRANSFERRING)) {
                 checker.setState(StateMachine.States.TRANSFERRING, true);
                 isReversing = true;
                 op.telemetry.addData("reversing ", "intake");
                 startTime[1] = op.getRuntime();
-                intake.reverseIntake(0.8);
+                intake.reverseIntake(0.6);
             }
             if (op.getRuntime() > startTime[1] + 0.7) {
                 isReversing = false;
@@ -540,11 +537,13 @@ public class Robot {
         retracting=false;
         if(abs(startAngle-EncoderChassis.angle)<45) {
             if (!isBall) {
-                turret.TurretRotate(turret_saved_positions[0][0][1]);
+                turret.TurretRotate(turret_saved_positions[0][0][1] * isBlue);
                 turret.AutoAngleControlRotating(17);
-                turret.turretExtendo(turret_saved_positions[0][0][0]);
+                if (!checker.getState(StateMachine.States.TURRET_STRAIGHT)){
+                    turret.turretExtendo(turret_saved_positions[0][0][0]);
+                }
             } else {
-                turret.TurretRotate(turret_saved_positions[0][1][1]);
+                turret.TurretRotate(turret_saved_positions[0][1][1]*isBlue);
                 turret.AutoAngleControlRotating(0);
                 turret.turretExtendo(turret_saved_positions[0][1][0]);
             }
@@ -557,8 +556,8 @@ public class Robot {
                 flipBasketArmToPosition(0.8);
                 shareFlipTime=time;
             }
-            if(time-shareFlipTime>0.5){
-                turret.TurretRotate(turret_saved_positions[0][2][1]);
+            if(time-shareFlipTime>0.1){
+                turret.TurretSlotate(turret_saved_positions[0][2][1]*isBlue);
                 turret.AutoAngleControlRotating(0);
                 turret.turretExtendo(turret_saved_positions[0][2][0]);
             }
@@ -749,7 +748,7 @@ public class Robot {
 
             while (time - starterTime < 1.85 + times / 10) {
                 if(ypos<15){
-                    angleDiff=-atan2(EncoderChassis.xpos, 15-ypos) * 180 / PI-angle;
+                    angleDiff=-atan2(EncoderChassis.xpos+2, 15-ypos) * 180 / PI-angle;
                 }
                 else {
                     angleDiff = -angle;
@@ -769,13 +768,13 @@ public class Robot {
                     startTime[9] = time;
                 }
                 if (ypos < 15) {
-                    drivetrain.setRightMotorVelocities((50-EncoderChassis.ypos)*29.8 - angleDiff *30);
-                    drivetrain.setLeftMotorVelocities((50-EncoderChassis.ypos)*29.8+ angleDiff *30);
+                    drivetrain.setRightMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8 - angleDiff *20);
+                    drivetrain.setLeftMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8+ angleDiff *20);
 //                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - angleDiff / 100 + 0.1);
 //                    drivetrain.setLeftMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + angleDiff / 100 - 0.1);
-                } else if(ypos<47){
-                    drivetrain.setRightMotorVelocities((50-EncoderChassis.ypos)*29.8 - (angleDiff + thoseCurves[(int) times]) *30);
-                    drivetrain.setLeftMotorVelocities((50-EncoderChassis.ypos)*29.8+ (angleDiff + thoseCurves[(int) times]) *30);
+                } else if(ypos<45){
+                    drivetrain.setRightMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8 - (angleDiff + thoseCurves[(int) times]) *20);
+                    drivetrain.setLeftMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8+ (angleDiff + thoseCurves[(int) times]) *20);
 //                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - (angleDiff + thoseCurves[(int) times]) / 25);
 //                    drivetrain.setLeftMotorPowers( abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + (angleDiff + thoseCurves[(int) times]) / 25);
                 }
@@ -790,7 +789,7 @@ public class Robot {
                         stopIntake();
                         return false;
                     }
-                    sheeeeesh(0.0, 0, 0.40, 0);
+                    sheeeeesh(0.0, 4, 0.8, 0);
                     block = true;
                     break;
                 }
@@ -816,7 +815,7 @@ public class Robot {
         point[1][0] = currentPosition[0];
         point[1][1] = currentPosition[1];
         point[2][0] = 0.0;
-        point[2][1] = 20;
+        point[2][1] = 15;
         point[3][0] = x;
         point[3][1] = y;
         point[4][0] = x;
@@ -856,7 +855,7 @@ public class Robot {
             targetspeed = startpower * 30;
             double xDerivative = 0, yDerivative = 0;
             boolean td = true;
-            while (op.opModeIsActive() && (abs(difference) >= 2.5) && op.getRuntime() < 29.8) {
+            while (op.opModeIsActive() && (abs(difference) >= 2.5)&&point[3][1]<ypos && op.getRuntime() < 29.8) {
                 turret.updateTurretPositions();
                 double nowTime = op.getRuntime();
                 if (!resetten && !autoAiming && starterTimes[1] == 100) {
@@ -1116,7 +1115,7 @@ public class Robot {
                 starterTimes[1] = nowTime;
             }
             if (reversing) {
-                intake.reverseIntake(0.8);
+                intake.reverseIntake(0.6);
             }
             if (nowTime - starterTimes[1] > 0.4) {
                 intake.flipIntakeToPosition(0.2);

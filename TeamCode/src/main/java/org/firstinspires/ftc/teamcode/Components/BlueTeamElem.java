@@ -27,16 +27,7 @@ public class BlueTeamElem extends OpenCvPipeline {
     }
     private Location location = Location.NOT_FOUND;
 
-/* Nathan's values
-    static final Rect LEFT_ROI = new Rect(
-            new Point(-50, 50), //
-            new Point( 50,150));
-    static final Rect MIDDLE_ROI = new Rect(
-            new Point(200,350),
-            new Point(300 ,400));
-    static final Rect RIGHT_ROI = new Rect(
-            new Point(500,  575),
-            new Point(600,  675));*/
+
 
     //New calculations
     static final Rect LEFT_ROI = new Rect( //130 x 210, 60 x 120
@@ -79,11 +70,11 @@ public class BlueTeamElem extends OpenCvPipeline {
         }
         else if (false){
             location = Location.RIGHT;
-            telemetry.addData("Object Location","Left");
+            telemetry.addData("Object Location","Right");
         }
         else if (freightLeft){
             location = Location.LEFT;
-            telemetry.addData("Object Location","Right");
+            telemetry.addData("Object Location","Left");
         }
         else if (freightMid){
             location = Location.MID;
