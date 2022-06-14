@@ -16,7 +16,8 @@ public class OpenCVInfrastructureTest extends LinearOpMode {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        robot.rotateToPosition(5);
+        robot.rotateToPosition(-8);
+        sleep(5000);
         robot.setPosition(0,0,0);
         int position = robot.BlueElemTest(this,0,0);
 
