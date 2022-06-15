@@ -30,7 +30,7 @@ public class BlueRightP extends LinearOpMode {
         waitForStart();
         robot.tseToPosition(0.6);
         resetStartTime();
-        robot.rotateToPosition(-9);
+        robot.rotateToPosition(-7.5);
         sleep(2000);
         int position = robot.BlueElemTest(this,0,0);
         while(getRuntime()<8){
@@ -38,7 +38,7 @@ public class BlueRightP extends LinearOpMode {
         }
         position=2-position;
         if(position==1) {
-            robot.TurretSlidesToPosition(-9.5, 5, 0, 0.5);
+            robot.TurretSlidesToPosition(-11, 6, 0, 0.5);
             robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.6);
             sleep(900);
@@ -46,7 +46,7 @@ public class BlueRightP extends LinearOpMode {
             sleep(400);
         }
         else if (position==0) {
-            robot.TurretSlidesToPosition(-8, 4.5, 0, 0.5);
+            robot.TurretSlidesToPosition(-9, 5, 0, 0.5);
             robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.8);
             sleep(900);
@@ -54,7 +54,7 @@ public class BlueRightP extends LinearOpMode {
             sleep(500);
         }
         else {
-            robot.TurretSlidesToPosition(-16.0, 9.5, 2, 0.5);
+            robot.TurretSlidesToPosition(-17.5, 10, 2, 0.5);
             robot.goToPosition(0, -20, 0, 0, 0.5);
             robot.FlipBasketArmToPosition(0.4);
             sleep(800);
@@ -65,11 +65,11 @@ public class BlueRightP extends LinearOpMode {
         robot.FlipBasketArmToPosition(0.0);
         robot.turnInPlace(-60,1.0);
         robot.FlipBasketToPosition(0.8);
-        robot.goToPosition(1,-7,-17,-42,0.5);
+        robot.goToPosition(1,-7,-16,-45,0.5);
         robot.setMotorPowers(0.1);
         robot.spinCarouselAutonomousBlue();
 
-        robot.goToPosition(0,-28,-20,0,0.5);
+        robot.goToPosition(0,-27.7,-20,0,0.5);
         robot.rotateToPosition(-90);
         sleep(3000);
 

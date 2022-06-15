@@ -47,7 +47,7 @@ public class Turret_Testing extends LinearOpMode {
 
 //            sleep(100);
 
-            robot.TurretManualExtension(gamepad2.right_trigger, gamepad2.left_trigger);
+            robot.TurretManualExtension(gamepad2.left_stick_y);
 
 
 //            sleep(100);
