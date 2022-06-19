@@ -68,7 +68,7 @@ public class Mechavator extends OpMode {
         //some joystick motors may need to be reversed
         motorStick.setDirection(DcMotorSimple.Direction.REVERSE);
         //motorSwing.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBoom.setDirection(DcMotorSimple.Direction.REVERSE);
+        //motorBoom.setDirection(DcMotorSimple.Direction.REVERSE);
         //motorBucket.setDirection(DcMotorSimple.Direction.REVERSE);
 
         dashboard = FtcDashboard.getInstance();
@@ -132,8 +132,8 @@ public class Mechavator extends OpMode {
         if (!centering) {
             rangeStick = motorStick.getCurrentPosition();
             rangeSwing = motorSwing.getCurrentPosition();
-            rangeBoom = -motorBoom.getCurrentPosition();
-            rangeBucket = -motorBucket.getCurrentPosition();
+            rangeBoom = motorBoom.getCurrentPosition();
+            rangeBucket = motorBucket.getCurrentPosition();
             SetJoystickMode(DcMotor.RunMode.RUN_TO_POSITION);
             SetJoystickPower(.3);
             motorStick.setTargetPosition(rangeStick/2);
@@ -144,7 +144,7 @@ public class Mechavator extends OpMode {
         }
         centering = true;
 
-        if(!motorStick.isBusy() && !motorSwing.isBusy() )//&& !motorBoom.isBusy() &&!motorBucket.isBusy())
+        if(!motorStick.isBusy() && !motorSwing.isBusy() && !motorBoom.isBusy() &&!motorBucket.isBusy())
         {
             //joysticks should now be centered on their range of motion
             SetJoystickMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
