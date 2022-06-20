@@ -27,6 +27,7 @@ public class RedLeftTeleOp extends LinearOpMode {
             telemetry.addData("status", "waiting for start command...");
             telemetry.update();
         }
+        robot.tseToPosition(0.8);
 
         while (!isStopRequested()) {
             robot.teleopLoop(-1,-35.5,0);

@@ -28,6 +28,7 @@ public class BlueRightTeleOp extends LinearOpMode {
             telemetry.update();
         }
         resetStartTime();
+        robot.tseToPosition(0.8);
 
         while (!isStopRequested()) {
             robot.teleopLoop(1,0,0);

@@ -245,8 +245,8 @@ public class Robot {
         boolean basketArm = op.gamepad2.right_bumper;
         boolean autoAim = op.gamepad2.left_bumper;
         boolean basket = op.gamepad2.a;
-        boolean resetTurret = op.gamepad2.x;
-        boolean plusTurret = op.gamepad2.b;
+        boolean resetTurret = op.gamepad2.dpad_down;
+        boolean plusTurret = op.gamepad2.dpad_up;
         boolean unsave_turret_position = op.gamepad2.b;
         boolean capper = false;
 
@@ -300,6 +300,12 @@ public class Robot {
             autoretractTurret = false;
             autoAim = false;
             autoAiming = false;
+        }
+        if(autoAiming){
+            turret_angle_control_distance=17*118.0/270.0/35.0;
+        }
+        if(retracting){
+            turret_angle_control_distance=0;
         }
         turret_angle_control_distance -= turretUpNDown / 300;
         if (turret_angle_control_distance > 1) {
@@ -406,6 +412,7 @@ public class Robot {
         if (TSEArmUp && time > startTime[12] + 0.2) {
             startTime[12] = time;
             TSE.toggleTSEPosition();
+            intake.flipIntakeToPosition(.79);
         }
 
 
@@ -454,13 +461,15 @@ public class Robot {
             if (!checker.getState(StateMachine.States.SEQUENCING)) {
                 startTime[0] = op.getRuntime() + 9;
                 startTime[1] = op.getRuntime() + 10;
+                turret.FlipBasketToPosition(.92);
+                intake.startIntake();
             }
             checker.setState(StateMachine.States.SEQUENCING, true);
-            turret.FlipBasketToPosition(.92);
             turret.FlipBasketArmToPosition(0.00);
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
-                intake.stopIntake();
+                intake.startIntake();
                 intake.flipIntakeToPosition(0.77);
+                turret.FlipBasketToPosition(.92);
                 isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
@@ -474,16 +483,24 @@ public class Robot {
             op.telemetry.addData("raise", !checker.getState(StateMachine.States.RAISED));
             op.telemetry.addData("basket", checker.getState(StateMachine.States.BASKET_TRANSFER));
             op.telemetry.addData("intakedown", !checker.getState(StateMachine.States.INTAKE_DOWN));
+            if (op.getRuntime() > startTime[0] + 0.5 && !checker.getState(StateMachine.States.INTAKE_DOWN)&&!isReversing) {
+               stopIntake();
+            }
 
-
-            if (op.getRuntime() > startTime[0] + 0.7 && !checker.getState(StateMachine.States.INTAKE_DOWN)&&!checker.getState(StateMachine.States.TRANSFERRING)) {
+            if (op.getRuntime() > startTime[0] + 0.8 && !checker.getState(StateMachine.States.INTAKE_DOWN)&&!checker.getState(StateMachine.States.TRANSFERRING)) {
                 checker.setState(StateMachine.States.TRANSFERRING, true);
                 isReversing = true;
                 op.telemetry.addData("reversing ", "intake");
                 startTime[1] = op.getRuntime();
-                intake.reverseIntake(0.6);
+                if(!isBall) {
+                    intake.reverseIntake(0.6);
+                }
+                else{
+                    startTime[1]-=0.1;
+                    intake.reverseIntake(0.55);
+                }
             }
-            if (op.getRuntime() > startTime[1] + 0.7) {
+            if (op.getRuntime() > startTime[1] + 0.4) {
                 isReversing = false;
                 isFlipping = false;
                 flipped = false;
@@ -498,7 +515,7 @@ public class Robot {
         }
         if (autoretractTurret || retracting) {
             autoAiming = false;
-            if (!checker.getState(StateMachine.States.INTAKE_DOWN)) {
+            if (!checker.getState(StateMachine.States.INTAKE_DOWN)&&abs(startAngle-EncoderChassis.angle)<45) {
                 intake.flipIntakeToPosition(0.0);
             }
             retracting = TurretReset(0.5);
@@ -554,17 +571,19 @@ public class Robot {
                 flipped=true;
                 shareFlipTime = op.getRuntime();
             }
-            if(op.getRuntime()-shareFlipTime>0.5) {
+            if(op.getRuntime()-shareFlipTime>0.3) {
                 if (!isBall) {
                     turret.TurretRotate(turret_saved_positions[0][0][1] * isBlue);
                     turret.AutoAngleControlRotating(17);
-                    if (abs(turret_saved_positions[0][0][1] * isBlue - rotatePosition) < 50) {
+                    if (abs(turret_saved_positions[0][0][1] * isBlue - rotatePosition) < 200||isBlue==-1) {
                         turret.turretExtendo(turret_saved_positions[0][0][0]);
                     }
                 } else {
                     turret.TurretRotate(turret_saved_positions[0][1][1] * isBlue);
                     turret.AutoAngleControlRotating(0);
-                    turret.turretExtendo(turret_saved_positions[0][1][0]);
+                    if (abs(turret_saved_positions[0][1][1] * isBlue - rotatePosition) < 200||isBlue==-1) {
+                        turret.turretExtendo(turret_saved_positions[0][1][0]);
+                    }
                 }
             }
         }
@@ -573,6 +592,9 @@ public class Robot {
                 flipBasketArmToPosition(0.25);
                 shareFlipTime=time;
                 flipped = true;
+            }
+            if(checker.getState(StateMachine.States.INTAKE_DOWN)){
+                flipIntakeToPosition(0.76);
             }
             if(time-shareFlipTime>0.1){
                 turret.TurretSlotate(turret_saved_positions[0][2][1]*isBlue);
@@ -618,8 +640,8 @@ public class Robot {
         turret.TurretAngleControlRotating(target_point);
     }
 
-    public void TurretSlidesToPosition(double x, double y, double z, double power) {
-        turret.TurretSlidesToPosition(x, y, z, power);
+    public void TurretSlidesToPosition(double x, double y, double z, double power, boolean retract) {
+        turret.TurretSlidesToPosition(x, y, z, power, retract);
     }
 
     public void setMotorPowers(double power) {

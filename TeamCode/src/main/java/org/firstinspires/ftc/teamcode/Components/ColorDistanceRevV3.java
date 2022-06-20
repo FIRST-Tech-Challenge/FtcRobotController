@@ -69,7 +69,7 @@ public class ColorDistanceRevV3
         return hsvValues;
     }
     public boolean isBall(){
-        if(red()/(float)blue()>0.8){
+        if(red()/(float)blue()>1.0){
             return false;
         }
         else{

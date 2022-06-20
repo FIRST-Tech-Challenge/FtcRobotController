@@ -21,9 +21,9 @@ public class RedRightP extends LinearOpMode {
         robot.setPosition(0,0,0);
         robot.rotateToPosition(-80);
         waitForStart();
-        robot.tseToPosition(0.6);
+        robot.tseToPosition(0.8);
         resetStartTime();
-        robot.rotateToPosition(3);
+        robot.rotateToPosition(5);
         sleep(2000);
         int position = robot.BlueElemTest(this,0,0);
         while(getRuntime()<8){
@@ -39,38 +39,39 @@ public class RedRightP extends LinearOpMode {
         telemetry.addData("position:", position);
         telemetry.update();
         if(position==1) {
-            robot.TurretSlidesToPosition(12.5, 10.0, 0, 0.5);
-            robot.goToPosition(0, -14, 0, 0, 0.5);
+            robot.TurretSlidesToPosition(12.5, 11.0, 0, 0.5,false);
             robot.FlipBasketArmToPosition(0.6);
-            sleep(900);
+            robot.goToPosition(0, -14, 0, 0, 0.5);
+            sleep(500);
             robot.FlipBasketToPosition(0.2);
-            sleep(400);
+            sleep(600);
         }
         else if (position==0) {
-            robot.TurretSlidesToPosition(10, 8.5, 0, 0.5);
-            robot.goToPosition(0, -14, 0, 0, 0.5);
+            robot.TurretSlidesToPosition(17, 11.5, 0, 0.5,false);
             robot.FlipBasketArmToPosition(0.9);
-            sleep(900);
-            robot.FlipBasketToPosition(0.2);
+            robot.goToPosition(0, -14, 0, 0, 0.5);
             sleep(500);
+            robot.FlipBasketToPosition(0.2);
+            sleep(600);
         }
         else {
-            robot.TurretSlidesToPosition(21, 14, 0, 0.5);
-            robot.goToPosition(0, -14, 0, 0, 0.5);
+            robot.TurretSlidesToPosition(25, 18, 4, 0.5,false);
             robot.FlipBasketArmToPosition(0.4);
-            sleep(800);
-            robot.FlipBasketToPosition(0.2);
-            sleep(300);
+            robot.goToPosition(0, -14, 0, 0, 0.5);
+            sleep(500);
+            robot.FlipBasketToPosition(0.3);
+            sleep(600);
+            robot.FlipBasketToPosition(0.7);
         }
-        robot.TurretSlidesToPosition(0 ,0,0,1.0);
+        robot.TurretSlidesToPosition(0 ,0,0,1.0,true);
         robot.FlipBasketArmToPosition(0.0);
         sleep(1000);
         robot.turnInPlace(60,1.0);
         robot.FlipBasketToPosition(0.8);
-        robot.goToPosition(1,-7.75,15.5,40,0.5);
-        robot.setMotorPowers(0.18);
+        robot.goToPosition(1,-7.75,14.5,45,0.5);
+        robot.setMotorPowers(0.15);
         robot.spinCarouselAutonomousRed();
-        robot.goToPosition(0,-27,18,0,0.5);
+        robot.goToPosition(0,-28,18,0,0.5);
         robot.rotateToPosition(90);
         sleep(3000);
 

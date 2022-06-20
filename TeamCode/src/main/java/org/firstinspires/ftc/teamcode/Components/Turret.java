@@ -30,7 +30,8 @@ public class Turret {
     private final double DEG_PER_TICK_MOTOR = 18.0/116.0, DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime =.3;
     private final double TICKS_PER_INCH = 955.0/32.0;
     private double MAX_EXTENSION_TICKS = 955;
-    private double MIN_EXTENSION_TICKS = 10;
+    private double MIN_EXTENSION_TICKS = 0;
+    int adder = 0;
     private final double MAX_ROTATION_TICKS = 570;
     double flipStart=0;
     private double[] lastTimes = {0,0};
@@ -92,22 +93,24 @@ public class Turret {
         op.sleep(1000);
     }
     public void resetExtension(){
-        MAX_EXTENSION_TICKS-=100;
-        MIN_EXTENSION_TICKS-=100;
+        adder+=25;
+        adder+=25;
         retracting=true;
     }
     public void plusExtension(){
-        MAX_EXTENSION_TICKS+=100;
-        MIN_EXTENSION_TICKS+=100;
+        adder-=25;
+        adder-=25;
         retracting=true;
     }
     public int turret_extension_pos;
     public int turret_rotation_pos;
     public double turret_angle_control_rotations;
     double turret_angle_control_full_rotations; //will update this in teleop loop
-
+    public int getCurrentPosition(DcMotorEx motor){
+        return motor.getCurrentPosition()+adder;
+    }
     public void updateTurretPositions(){
-        extendPosition = turret_Extension.getCurrentPosition();
+        extendPosition = getCurrentPosition(turret_Extension);
         rotatePosition = turret_Rotation.getCurrentPosition();
         if(extendPosition<300){
             checker.setState(StateMachine.States.TURRET_SHORT,true);
@@ -121,7 +124,7 @@ public class Turret {
         else{
             checker.setState(StateMachine.States.TURRET_STRAIGHT,false);;
         }
-        if (extendPosition < 1) {
+        if (extendPosition < 10) {
             checker.setState(StateMachine.States.EXTENDED,false);
         }
         else{
@@ -224,8 +227,9 @@ public class Turret {
         }
         else {
             Robot.rotated=false;
+            double targetVelocity = pow(abs(dist), 1.4) / 69 * dist / abs(dist) * (100);
             turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            turret_Rotation.setVelocity(pow(abs(dist), 1.4) / 50 * dist / abs(dist) * (100));
+            turret_Rotation.setVelocity(targetVelocity-(turret_Rotation.getVelocity()-targetVelocity)/3);
         }
 
     }
@@ -245,8 +249,9 @@ public class Turret {
         }
         else {
             Robot.rotated=false;
+            double targetVelocity = pow(abs(dist),1.2) / 50 * dist / abs(dist) * (50);
             turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            turret_Rotation.setVelocity(pow(abs(dist),1.2) / 50 * dist / abs(dist) * (50));
+            turret_Rotation.setVelocity(targetVelocity-(turret_Rotation.getVelocity()-targetVelocity)/4);
         }
 
     }
@@ -335,16 +340,11 @@ public class Turret {
         turret_Rotation.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         turret_Rotation.setPower(0.5);
     }
-    public void TurretSlidesToPosition (double x, double y, double z, double power) {
+    public void TurretSlidesToPosition (double x, double y, double z, double power, boolean retract) {
         updateTurretPositions();
         double v = x;
         x=y;
         y=v;
-        double rotation_angle = Math.atan2(y,x) * (180 / PI);
-        turret_Rotation.setTargetPosition((int) (rotation_angle/DEG_PER_TICK_MOTOR));
-        turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turret_Rotation.setPower(power);
-
 
         double extension_length_flat = Math.sqrt(pow(x, 2) + pow(y, 2));
         if(extension_length_flat ==0){
@@ -362,6 +362,14 @@ public class Turret {
         }
         turret_Extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret_Extension.setPower(power);
+        if(retract) {
+            op.sleep(300);
+        }
+        double rotation_angle = Math.atan2(y,x) * (180 / PI);
+        turret_Rotation.setTargetPosition((int) (rotation_angle/DEG_PER_TICK_MOTOR));
+        turret_Rotation.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret_Rotation.setPower(power);
+
 
 
         double elevation_angle = Math.atan2(z,extension_length_flat) * (180 / PI);
@@ -443,7 +451,7 @@ public class Turret {
         }
         else{
             basketActuationServo.setPosition(0.18);
-            if(extendPosition>800&&abs(rotatePosition)>200){
+            if(extendPosition>400&&abs(rotatePosition)>100){
                 SavePosition(0);
             }
         }
@@ -559,9 +567,6 @@ public class Turret {
             } else {
                 turret_Extension.setPower(0);
             }
-            if (extendPosition<70) {
-                FlipBasketToPosition(0.92);
-            }
             if (checker.getState(StateMachine.States.TURRET_SHORT) && !checker.getState(StateMachine.States.TURRET_STRAIGHT)) {
                 turret_Rotation.setVelocity(-rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 50));
             } else {
@@ -571,13 +576,13 @@ public class Turret {
                 basketArmServo.setPosition(0.00);
                 arming = true;
             }
-            if (!basketing && !checker.getState(StateMachine.States.TURRET_SHORT)) {
-                basketActuationServo.setPosition(.4);
+            if (!basketing&&checker.getState(StateMachine.States.EXTENDED)) {
+                basketActuationServo.setPosition(.5);
                 basketing = true;
             }
             if (!angleControlling && checker.getState(StateMachine.States.TURRET_SHORT)) {
                 turret_Angle_Control.setPosition(0);
-                turret_Angle_Control2.setPosition(118.0 / 270);
+                turret_Angle_Control2.setPosition(118.0 / 270);basketActuationServo.setPosition(.92);
                 angleControlling = true;
             }
         }
@@ -592,10 +597,6 @@ public class Turret {
                 basketArmServo.setPosition(0.30);
                 arming = true;
                 flipStart=op.getRuntime();
-            }
-            if (!basketing && !checker.getState(StateMachine.States.TURRET_SHORT)) {
-                basketActuationServo.setPosition(.7);
-                basketing = true;
             }
             if(abs(rotatePosition)<10){
                 basketArmServo.setPosition(0.00);

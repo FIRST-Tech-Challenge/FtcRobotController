@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
-
-@Autonomous(name= "OpenCVInfrastructureTest", preselectTeleOp = "OneGPTeleop")
+@Autonomous(name= "BlueOpenCVInfrastructureTest", preselectTeleOp = "OneGPTeleop")
 public class OpenCVInfrastructureTest extends LinearOpMode {
     @Override
     public void runOpMode(){
@@ -16,7 +15,7 @@ public class OpenCVInfrastructureTest extends LinearOpMode {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        robot.rotateToPosition(-8);
+        robot.rotateToPosition(-4);
         sleep(5000);
         robot.setPosition(0,0,0);
         int position = robot.BlueElemTest(this,0,0);

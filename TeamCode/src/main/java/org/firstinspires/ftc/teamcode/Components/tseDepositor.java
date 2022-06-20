@@ -17,7 +17,8 @@ public class tseDepositor {
     long initialTime;
     long retractTime;
     int position=0;
-    double[] positions = {0.7,0.028,0.4,0.37,0.25};
+//    0.7,0.028,0.4,0.37,0.25
+    double[] positions = {0.7,0.202,0.57,0.53,0.46,0.4};
     double reversePower;
     static final long FORWARD_ROTATION_PER_INCH = 147;
     static final long REVERSE_ROTATION_PER_INCH = 114;
@@ -29,7 +30,7 @@ public class tseDepositor {
         initialTime = retractTime = 0;
         reversePower = 0.0;
         if(!isTeleop) {
-            TSEServo.setPosition(0.86);
+            TSEServo.setPosition(1);
         }
 
     }
@@ -41,12 +42,13 @@ public class tseDepositor {
         TSEServo.setPosition(positions[position1]);
     }
     public void toggleTSEPosition(){
-        if(position==4) {
+        if(position==5) {
             position = 1;
         }else{
             position++;
         }
         TSEServo.setPosition(positions[position]);
+        op.sleep(200);
         }
         public void tseToPosition(double position){
             TSEServo.setPosition(position);
