@@ -54,9 +54,9 @@ public class BlueRightP extends LinearOpMode {
             sleep(500);
         }
         else {
-            robot.TurretSlidesToPosition(-19, 15, 4, 0.5,false);
-            robot.goToPosition(0, -20, 0, 0, 0.5);
-            robot.FlipBasketArmToPosition(0.4);
+            robot.TurretSlidesToPosition(-19, 16, 5, 0.5,false);
+            robot.goToPosition(0, -17.5, 0, 0, 0.5);
+            robot.FlipBasketArmToPosition(0.45);
             sleep(800);
             robot.FlipBasketToPosition(0.2);
             sleep(300);
@@ -66,11 +66,11 @@ public class BlueRightP extends LinearOpMode {
         robot.FlipBasketArmToPosition(0.0);
         robot.turnInPlace(-60,1.0);
         robot.FlipBasketToPosition(0.8);
-        robot.goToPosition(1,-7,-16,-42,0.5);
+        robot.goToPosition(1,-7.5,-16,-49,0.5);
         robot.setMotorPowers(0.15);
         robot.spinCarouselAutonomousBlue();
 
-        robot.goToPosition(0,-27.7,-20,0,0.5);
+        robot.goToPosition(0,-27.3,-20,5,0.5);
         robot.rotateToPosition(-90);
         sleep(3000);
 

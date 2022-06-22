@@ -461,7 +461,7 @@ public class Robot {
             if (!checker.getState(StateMachine.States.SEQUENCING)) {
                 startTime[0] = op.getRuntime() + 9;
                 startTime[1] = op.getRuntime() + 10;
-                turret.FlipBasketToPosition(.92);
+                turret.FlipBasketToPosition(.87);
                 intake.startIntake();
             }
             checker.setState(StateMachine.States.SEQUENCING, true);
@@ -469,7 +469,7 @@ public class Robot {
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 intake.startIntake();
                 intake.flipIntakeToPosition(0.77);
-                turret.FlipBasketToPosition(.92);
+                turret.FlipBasketToPosition(.87);
                 isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
@@ -493,13 +493,14 @@ public class Robot {
                 op.telemetry.addData("reversing ", "intake");
                 startTime[1] = op.getRuntime();
                 if(!isBall) {
-                    intake.reverseIntake(0.6);
+                    intake.reverseIntake(0.63);
                 }
                 else{
                     startTime[1]-=0.1;
-                    intake.reverseIntake(0.55);
+                    intake.reverseIntake(0.53);
                 }
             }
+
             if (op.getRuntime() > startTime[1] + 0.4) {
                 isReversing = false;
                 isFlipping = false;
@@ -565,7 +566,7 @@ public class Robot {
     public void fakeAutoAim() {
         double angle = -60;
         retracting=false;
-        if(abs(startAngle-EncoderChassis.angle)<45) {
+        if(abs(startAngle-EncoderChassis.angle)%360<45) {
             if(!flipped) {
                 flipBasketArmToPosition(0.55);
                 flipped=true;

@@ -29,7 +29,7 @@ public class Turret {
     private double lastTime=0, lastServoPos=0,servoDist=0;
     private final double DEG_PER_TICK_MOTOR = 18.0/116.0, DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime =.3;
     private final double TICKS_PER_INCH = 955.0/32.0;
-    private double MAX_EXTENSION_TICKS = 955;
+    private double MAX_EXTENSION_TICKS = 1060;
     private double MIN_EXTENSION_TICKS = 0;
     int adder = 0;
     private final double MAX_ROTATION_TICKS = 570;
@@ -363,7 +363,7 @@ public class Turret {
         turret_Extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret_Extension.setPower(power);
         if(retract) {
-            op.sleep(300);
+            op.sleep(200);
         }
         double rotation_angle = Math.atan2(y,x) * (180 / PI);
         turret_Rotation.setTargetPosition((int) (rotation_angle/DEG_PER_TICK_MOTOR));
