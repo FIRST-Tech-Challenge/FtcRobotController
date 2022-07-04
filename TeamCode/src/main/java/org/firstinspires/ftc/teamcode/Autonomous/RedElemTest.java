@@ -9,29 +9,27 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 @Disabled
-@Autonomous(name= "Blue_Right_Regional", preselectTeleOp = "OneGPTeleop")
-public class Blue_Right extends LinearOpMode {
+
+@Autonomous(name= "RedElemTest", preselectTeleOp = "OneGPTeleop")
+public class RedElemTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false, false,0);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, false,90);
+        robot.rotateToPosition(-80);
+        sleep(1000);
+        robot.rotateToPosition(5);
+        robot.toggleTSEPosition();
+        sleep(1000);
+        int position = robot.RedElemTest(this,0,0);
+//        double[] turretTarget = {12+10.6,-24+16.2,0}; //{hubx-position*3/2,huby-position*3/2,1+7*position}
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        double cycletime = 15;
+        robot.setPosition(0,0,0);
 
-        robot.setPosition(0,2,0);
         waitForStart();
+        sleep(30000);
 
-        robot.TurretSlidesToPosition(0, 21
-                , 0, 0.5,false);
-        sleep(1300);
-        robot.FlipBasketArmToPosition(.6);
-        sleep(500);
-        robot.FlipBasketToPosition(1.0);
-        sleep(5000);
-        robot.TurretSlidesToPosition(0, 0
-                , 0, 0.5,false);
-        sleep(5000);
         stop();
     }
 }

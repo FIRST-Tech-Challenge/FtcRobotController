@@ -5,38 +5,33 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
+import org.firstinspires.ftc.teamcode.Components.ColorDistanceRevV3;
 
-@Autonomous(name= "track")
-public class track extends LinearOpMode {
+@Autonomous(name= "colorPrint")
+public class colorSenseTest extends LinearOpMode {
     final boolean debug= true;
     @Override
     public void runOpMode(){
         //Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         ElapsedTime op = new ElapsedTime();
-        EncoderChassis odom = new EncoderChassis(this, false,false);
+        ColorDistanceRevV3 color = new ColorDistanceRevV3(this);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         //ElapsedTime runtime = new ElapsedTime();
-        odom.setPosition(0,0,0);
         //int rings = robot.getRingsAndWaitForStart();
         //robot.stopRingDetection();
         waitForStart();
-        double stopStart = 1;
-//        odom.moveTester();
-//        robot.setPosition(61.75,-42.25, 0);
-//        robot.moveAngle(0,-65,0.5);
-//        sleep(5000);
-//        robot.goToPosition(23.5,-23.5,0,0.5);            robot.partOfPolySplineToPositionHead(1,  -6.75,-2.2,robot.track()[0],robot.track()[1],2.75, 3.1, 25.75,3.15,true,true,0.3);
-//            robot.partOfPolySplineToPositionHead(1,  -6.75,-2.2, robot.track()[0], robot.track()[1], 25.75,3.15, 30.75,3.0,true,true,0.3);
-        //robot.navigate();
-        double acceleRate = 0;
-        sleep(1000);
-        odom.track();
         while(opModeIsActive()){
-            odom.track();
+            float[] hsv =color.hsvVal();
+            telemetry.addData("h",hsv[0]);
+            telemetry.addData("s",hsv[1]);
+            telemetry.addData("v",hsv[2]);
+            telemetry.addData("r",color.red());
+            telemetry.addData("g",color.green());
+            telemetry.addData("b",color.blue());
+            telemetry.update();
         }
         stop();
     }

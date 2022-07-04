@@ -27,26 +27,17 @@ public class BlueTeamElem extends OpenCvPipeline {
     }
     private Location location = Location.NOT_FOUND;
 
-/* Nathan's values
-    static final Rect LEFT_ROI = new Rect(
-            new Point(-50, 50), //
-            new Point( 50,150));
-    static final Rect MIDDLE_ROI = new Rect(
-            new Point(200,350),
-            new Point(300 ,400));
-    static final Rect RIGHT_ROI = new Rect(
-            new Point(500,  575),
-            new Point(600,  675));*/
+
 
     //New calculations
-    static final Rect LEFT_ROI = new Rect(
-            new Point(130,100),
-            new Point(60,10));
-    static final Rect MIDDLE_ROI = new Rect(
-            new Point(310,100),
-            new Point(240, 10));
+    static final Rect LEFT_ROI = new Rect( //130 x 210, 60 x 120
+            new Point(130,240),
+            new Point(60,150));
+    static final Rect MIDDLE_ROI = new Rect( //310 x 210, 240 x 120
+            new Point(320,240),
+            new Point(250, 150));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.3; //percentage of color
+    static double PERCENT_COLOR_THRESHOLD = 0.2; //percentage of color
 
     public BlueTeamElem(LinearOpMode opMode){op=opMode; telemetry=op.telemetry;}
 
@@ -79,11 +70,11 @@ public class BlueTeamElem extends OpenCvPipeline {
         }
         else if (false){
             location = Location.RIGHT;
-            telemetry.addData("Object Location","Left");
+            telemetry.addData("Object Location","Right");
         }
         else if (freightLeft){
             location = Location.LEFT;
-            telemetry.addData("Object Location","Right");
+            telemetry.addData("Object Location","Left");
         }
         else if (freightMid){
             location = Location.MID;

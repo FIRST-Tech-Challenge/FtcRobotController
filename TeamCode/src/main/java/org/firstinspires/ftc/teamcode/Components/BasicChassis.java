@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public abstract class BasicChassis {
+
     public enum ChassisType {
         ENCODER,IMU,ODOMETRY,VSLAM
     }
@@ -70,11 +71,16 @@ public abstract class BasicChassis {
     abstract public void navigate();
     abstract public void navigateTeleOp();
     abstract public double[] track();
+    abstract public double[] tracker(boolean encoder);
+
     abstract public void tripleSplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power, double targetAnglu);
     abstract public void tripleSplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4, double power);
     abstract public void partOfPolySplineToPosition(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, boolean start, boolean end, double targetAnglu, double power);
     abstract public void partOfPolySplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, boolean start, boolean end, double power);
     //replace with move forward or backward at different speeds
+    public abstract void setRightMotorVelocities(double velocity);
+    public abstract void setLeftMotorVelocities(double velocity);
+
     public void moveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
         double angleInRadian;
         angleInRadian = Math.toRadians(angle);

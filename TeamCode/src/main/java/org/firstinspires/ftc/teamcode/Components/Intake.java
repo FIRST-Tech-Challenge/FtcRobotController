@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Intake {
 
@@ -16,6 +13,7 @@ public class Intake {
     private Servo intakeServo = null;
     private Servo intakeServo2 = null;
     DigitalChannel touchSensor;
+    private ColorDistanceRevV3 sensorDistance;
     boolean isIntaking = false;
     double intakeTimeStart = -10;
     StateMachine checker = null;
@@ -23,7 +21,6 @@ public class Intake {
 
     LinearOpMode op = null;
     final private double intakeSpeed = 1;
-    private DistanceSensor sensorDistance;
     boolean teleop = false;
     private boolean intakeUp = false; //position of intake in the lifted position
 
@@ -38,11 +35,11 @@ public class Intake {
         intakeServo = opMode.hardwareMap.get(Servo.class, "IntakeServo");
         intakeServo2 = opMode.hardwareMap.get(Servo.class, "IntakeServo2");
 //        touchSensor = opMode.hardwareMap.get(DigitalChannel.class, "touchSensor");
-        sensorDistance = opMode.hardwareMap.get(DistanceSensor.class, "intakeDistSensor");
+        sensorDistance = new ColorDistanceRevV3(op);
 //        touchSensor.setMode(DigitalChannel.Mode.INPUT);
         if (!isTeleop) {
-            intakeServo.setPosition(.3);
-            intakeServo2.setPosition(1.0);
+            intakeServo.setPosition(.24);
+            intakeServo2.setPosition(.76);
         }
         flipTime = 0;
     }
@@ -61,20 +58,17 @@ public class Intake {
     }
 
     public boolean isSwitched() {
-            checker.setState(StateMachine.States.SWITCHED, sensorDistance.getDistance(DistanceUnit.INCH)<1);
-            op.telemetry.addData("switch", sensorDistance.getDistance(DistanceUnit.INCH));
-            return (sensorDistance.getDistance(DistanceUnit.INCH)<1);
+            checker.setState(StateMachine.States.SWITCHED, sensorDistance.getSensorDistance()<1.5);
+            op.telemetry.addData("switch", sensorDistance.getSensorDistance());
+            return (sensorDistance.getSensorDistance()<1.5);
     }
 
     public void startIntake() {
-        if (!checker.getState(StateMachine.States.INTAKING)) {
+
             intakeTimeStart = op.getRuntime();
-        }
-        if (checker.checkIf(StateMachine.States.INTAKING)) {
             checker.setState(StateMachine.States.INTAKING, true);
             checker.setState(StateMachine.States.REVERSING, false);
             intakeMotor.setPower(intakeSpeed);
-        }
     }
 
     public void reverseIntake(double power) {
@@ -99,19 +93,21 @@ public class Intake {
 //    public void stopperDown() {
 //        stopperServo.setPosition(0);
 //    }
-
+    public boolean isBall(){
+        return sensorDistance.isBall();
+    }
     public boolean flipIntake() {
         if (checker.getState(StateMachine.States.INTAKE_DOWN)&&checker.checkIf(StateMachine.States.FLIPPING) &&op.getRuntime()-flipTime>0.4) {
             flipTime= op.getRuntime();
-            intakeServo.setPosition(.3);
-            intakeServo2.setPosition(1.0);
+            intakeServo.setPosition(.21);
+            intakeServo2.setPosition(.79);
             checker.setState(StateMachine.States.FLIPPING, true);
             checker.setState(StateMachine.States.INTAKE_DOWN, false);
             return true;
         } else if(!checker.getState(StateMachine.States.FLIPPING)) {
             flipTime = op.getRuntime();
-            intakeServo.setPosition(0.95);
-            intakeServo2.setPosition(.35);
+            intakeServo.setPosition(1.0);
+            intakeServo2.setPosition(0.0);
             checker.setState(StateMachine.States.FLIPPING, true);
             checker.setState(StateMachine.States.INTAKE_DOWN, true);
             return true;
@@ -126,7 +122,7 @@ public class Intake {
             flipTime= op.getRuntime();
             checker.setState(StateMachine.States.FLIPPING, true);
             intakeServo.setPosition(1 - torget);
-            intakeServo2.setPosition(.3 + torget);
+            intakeServo2.setPosition(0 + torget);
         }
     }
 

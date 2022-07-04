@@ -8,12 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
-@Autonomous(name= "CycleAuto", preselectTeleOp = "OneGPTeleop")
-public class CycleAutoBlue extends LinearOpMode {
+@Autonomous(name= "BluePreloadPark", preselectTeleOp = "OneGPTeleop")
+public class BluePreloadPark extends LinearOpMode {
     @Override
     public void runOpMode() {
         Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, true,0);
-        robot.rotateToPosition(-88);
+        robot.rotateToPosition(-91);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
@@ -23,32 +23,39 @@ public class CycleAutoBlue extends LinearOpMode {
         waitForStart();
         robot.tseToPosition(0.8);
         resetStartTime();
+
         //Turret extension combined with rotation in such a way to achieve the current location to drop the loaded freight into the correct position by barcode
-        if (position == 0) {
-            robot.TurretSlidesToPosition(-19, 9, 0, 1.0,false);
-            sleep(700);
+        if (position == 2||position==3) {
+            robot.TurretSlidesToPosition(-26, 10.5, 0, 1.0,false);
+            sleep(1000);
             robot.FlipBasketArmToPosition(0.8);
             sleep(700);
             robot.FlipBasketToPosition(0.18);
-            sleep(300);
+            sleep(600);
         }
-        if (position == 1) {
-            robot.TurretSlidesToPosition(-20, 8, 2, 1.0,false);
+        if (position == 0
+        ) {
+            robot.TurretSlidesToPosition(-28, 13, 2, 1.0,false);
             sleep(1000);
             robot.FlipBasketArmToPosition(0.6);
-            sleep(250);
+            sleep(700);
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
-        if (position == 2) {
-            robot.TurretSlidesToPosition(-30, 15, 6, 1.0,false);
-            sleep(1000);
+        if (position == 1) {
+            robot.TurretSlidesToPosition(-33, 15, 6, 1.0,false);
+            sleep(1300);
             robot.FlipBasketArmToPosition(.47);
-            sleep(250);
+            sleep(300);
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
-        robot.goToPosition(1,30,0,0,0.5);
+        robot.TurretSlidesToPosition(0,0,0,0.4,true);
+        sleep(2000);
+        robot.flipBasketArmToPosition(0.0);
+        robot.goToPosition(1,35,0,0,0.5);
+        robot.flipBasketToPosition(0.88);
+        sleep(500);
 //        sleep(5000);
 //        robot.FlipBasketToPosition(0.58);
 //        double times=0;

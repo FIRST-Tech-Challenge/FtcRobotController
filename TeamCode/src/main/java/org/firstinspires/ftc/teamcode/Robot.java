@@ -1,23 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.Velocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.aVelocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.differtime;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xVelocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.yVelocity;
-import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
+import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
+import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.Velocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.aVelocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.angle;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.differtime;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xVelocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.yVelocity;
+import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.random;
-import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.CarouselCR;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
+import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.LedColor;
 import org.firstinspires.ftc.teamcode.Components.Logger;
@@ -42,12 +43,18 @@ public class Robot {
     private LinearOpMode op = null;
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
+    public static int isBlue = 1;
     boolean isExtended = false;
+    boolean flipped = false;
+    double slowTime = 0.0;
+    public static boolean isBall = false;
     public static boolean resetten = true;
-    public static boolean faked = false;
+    public static boolean faked = false, rotated = false;
     boolean outModed = false;
+    double trueStartAngle = 0;
     boolean shouldFlipIntake = false;
     boolean isReversing = false;
+    double shareFlipTime = 0,startRotateTime;
     boolean isFlipping = false;
     boolean isExtending = false;
     double flipDelay = .3, reverseDelay = .7;
@@ -55,6 +62,7 @@ public class Robot {
     double magnitude;
     double angleInRadian;
     double angleInDegree;
+    public static double startAngle;
     double power = 0.5;
     double turret_angle_control_distance = 0;
     boolean slowMode = false;
@@ -86,8 +94,10 @@ public class Robot {
     private StateMachine checker = null;
     private Logger logger;
 
-    public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded) {
+    public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         op = opMode;
+        startAngle = startAng;
+        trueStartAngle=startAng;
         logger = new Logger(opMode);
         checker = new StateMachine(op, isTeleop, logger);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
@@ -97,7 +107,7 @@ public class Robot {
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
         turret = new Turret(op, led_bank, isTeleop, checker);
         openCV = new OpenCVMasterclass(op);
-        TSE = new tseDepositor(op);
+        TSE = new tseDepositor(op, isTeleop);
 
     }
 
@@ -107,6 +117,22 @@ public class Robot {
 
     public int RedElemTest(LinearOpMode opMode, float cameraX, float cameraY) {
         return openCV.RedTeamElem();
+    }
+
+    public void flipBasketArmToPosition(double position) {
+        turret.FlipBasketArmToPosition(position);
+    }
+
+    public void flipBasketToPosition(double position) {
+        turret.FlipBasketToPosition(position);
+    }
+
+    public void flipBasket() {
+        turret.FlipBasket(0);
+    }
+
+    public void flipBasketArmHigh() {
+        turret.FlipBasketArmHigh();
     }
 
     public double[] BlueWarehouseScam() {
@@ -198,6 +224,8 @@ public class Robot {
 
     public void teleopLoop(int red, double startx, double starty) {
         /** gamepad 1**/
+        isBlue=red;
+        startAngle=trueStartAngle*red;
         float forward = -op.gamepad1.left_stick_y;
         float strafe = -op.gamepad1.left_stick_x; //remove dis boi son// DIY!
         float turning = -op.gamepad1.right_stick_x;
@@ -208,68 +236,66 @@ public class Robot {
 //        boolean manualretractTSE = op.gamepad2.dpad_left;
 //        boolean autoretractTSE = op.gamepad1.x;
         boolean sequence = op.gamepad1.dpad_up;
-
+        boolean TSEArmUp = op.gamepad1.dpad_up;
         /** gamepad 2**/
-        float turretTurn = op.gamepad2.right_stick_x;
+        float turretTurn = op.gamepad2.left_stick_x;
         float turretUpNDown = op.gamepad2.right_stick_y;
-        float manualretractTurret = op.gamepad2.left_trigger;
-        float extendTurret = op.gamepad2.right_trigger;
+        float extendTurret = -op.gamepad2.left_stick_y;
 //        boolean extendAutoTSE = op.gamepad2.dpad_up;
         boolean autoretractTurret = op.gamepad2.y;
         boolean basketArm = op.gamepad2.right_bumper;
         boolean autoAim = op.gamepad2.left_bumper;
         boolean basket = op.gamepad2.a;
-        boolean unsave_turret_position = op.gamepad2.b;
+        boolean resetTurret = false;
+        boolean plusTurret = false;
+        boolean slow = op.gamepad1.x;
+        boolean unsave_turret_position = false;
         boolean capper = false;
-        boolean TSEArmUp = op.gamepad2.dpad_up;
 
-
+        if(slow&&op.getRuntime()-slowTime>0.5){
+            slowMode=!slowMode;
+        }
         time = op.getRuntime();
         //according to blue side left auto next to barrier
         changed = false;
         int up = 0;
         intake.updateIntakeStates();
         turret.updateTurretPositions();
-        if (xpos > (60) * red - startx) {
-            if (!shared_shipping_hub && red == 1) {
-                changed = true;
-            }
-            if (!alliance_shipping_hub && red == -1) {
-                changed = true;
-            }
-            if (red == 1) {
-                shared_shipping_hub = true;
-                alliance_shipping_hub = false;
-            } else {
-                shared_shipping_hub = false;
-                alliance_shipping_hub = true;
-            }
-            up = 0;
-        } else if (xpos < (60) * red - startx) {
-            if (!shared_shipping_hub && red == -1) {
-                changed = true;
-            }
-            if (!alliance_shipping_hub && red == 1) {
-                changed = true;
-            }
-            if (red == 1) {
-                alliance_shipping_hub = true;
-                shared_shipping_hub = false;
-            } else {
-                alliance_shipping_hub = false;
-                shared_shipping_hub = true;
-            }
-            up = 1;
-        }
+//        if (xpos > (60) * red - startx) {
+//            if (!shared_shipping_hub && red == 1) {
+//                changed = true;
+//            }
+//            if (!alliance_shipping_hub && red == -1) {
+//                changed = true;
+//            }
+//            if (red == 1) {
+//                shared_shipping_hub = true;
+//                alliance_shipping_hub = false;
+//            } else {
+//                shared_shipping_hub = false;
+//                alliance_shipping_hub = true;
+//            }
+//            up = 0;
+//        } else if (xpos < (60) * red - startx) {
+//            if (!shared_shipping_hub && red == -1) {
+//                changed = true;
+//            }
+//            if (!alliance_shipping_hub && red == 1) {
+//                changed = true;
+//            }
+//            if (red == 1) {
+//                alliance_shipping_hub = true;
+//                shared_shipping_hub = false;
+//            } else {
+//                alliance_shipping_hub = false;
+//                shared_shipping_hub = true;
+//            }
+//            up = 1;
+//        }
 
         if (changed) {
             if (!checker.getState(StateMachine.States.BASKET_ARM_REST)) {
-                if (alliance_shipping_hub) {
                     turret.FlipBasketArmToPosition(.45);
-                }
-                if (shared_shipping_hub) {
-                    turret.FlipBasketArmToPosition(.9);
-                }
             }
             //according to blue side left auto next to barrier
         }
@@ -278,6 +304,12 @@ public class Robot {
             autoretractTurret = false;
             autoAim = false;
             autoAiming = false;
+        }
+        if(autoAiming){
+            turret_angle_control_distance=17*118.0/270.0/35.0;
+        }
+        if(retracting){
+            turret_angle_control_distance=0;
         }
         turret_angle_control_distance -= turretUpNDown / 300;
         if (turret_angle_control_distance > 1) {
@@ -306,8 +338,15 @@ public class Robot {
                 retracting = true;
             }
         }
-
-        if (turretTurn != 0) {
+        if(resetTurret){
+            turret.resetExtension();
+            op.sleep(200);
+        }
+        if(plusTurret){
+            turret.plusExtension();
+            op.sleep(200);
+        }
+        if (turretTurn != 0&&!retracting) {
             autoAiming = false;
             TurretManualRotation(turretTurn);
         } else if (!retracting && !autoAiming && time > startTime[8] + 2) {
@@ -326,9 +365,9 @@ public class Robot {
         if (op.getRuntime() > .147 * 44 + startTime[6]) {
             isExtending = false;
         }
-        if (extendTurret != 0 || manualretractTurret != 0 || retracting) {
+        if (extendTurret != 0 || retracting) {
             autoAiming = false;
-            TurretManualExtension(extendTurret, manualretractTurret);
+            TurretManualExtension(extendTurret);
         } else if (time > startTime[8] + 2.0) {
             turret.stopExtend();
             if (outModed) {
@@ -355,7 +394,6 @@ public class Robot {
         }
         spinCarousel();
         if (autoAiming && !retracting) {
-            intake.flipIntakeToPosition(0.5);
             fakeAutoAim();
         }
         op.telemetry.addData("autoaiming", autoAiming);
@@ -364,6 +402,10 @@ public class Robot {
         if (basket && time > startTime[4] + .3) {
             startTime[4] = time;
             FlipBasket(up);
+            if(autoAiming) {
+                op.sleep(500);
+            }
+            intake.flipIntakeToPosition(0.0);
             op.sleep(200);
             SavePosition(up);
         }
@@ -377,6 +419,7 @@ public class Robot {
         if (TSEArmUp && time > startTime[12] + 0.2) {
             startTime[12] = time;
             TSE.toggleTSEPosition();
+            intake.flipIntakeToPosition(.79);
         }
 
 
@@ -421,19 +464,23 @@ public class Robot {
         /** add stuff u want to do with intake when switch is on HERE **/
         if ((checker.getState(StateMachine.States.SEQUENCING) || checker.checkIf(StateMachine.States.SEQUENCING)) && !retracting) {
             op.telemetry.addData("el button", "is clicked");
-            if(!checker.getState(StateMachine.States.SEQUENCING)) {
-                startTime[0] = op.getRuntime();
-                startTime[1] = op.getRuntime() + 1;
+            isFlipping = true;
+            if (!checker.getState(StateMachine.States.SEQUENCING)) {
+                startTime[0] = op.getRuntime() + 9;
+                startTime[1] = op.getRuntime() + 10;
+                turret.FlipBasketToPosition(.89);
+                intake.startIntake();
             }
             checker.setState(StateMachine.States.SEQUENCING, true);
-            turret.FlipBasketToPosition(.88);
             turret.FlipBasketArmToPosition(0.00);
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
-                intake.stopIntake();
-                intake.flipIntakeToPosition(0.7);
+                intake.startIntake();
+                intake.flipIntakeToPosition(0.77);
+                turret.FlipBasketToPosition(.89);
+                isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
-                startTime[1] = op.getRuntime()+1;
-            } else if (!checker.getState(StateMachine.States.FLIPPING)) {
+                startTime[1] = op.getRuntime() + 10;
+            } else if (!checker.getState(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 retracting = true;
             }
             op.telemetry.addData("transferring", !checker.getState(StateMachine.States.TRANSFERRING));
@@ -443,21 +490,31 @@ public class Robot {
             op.telemetry.addData("raise", !checker.getState(StateMachine.States.RAISED));
             op.telemetry.addData("basket", checker.getState(StateMachine.States.BASKET_TRANSFER));
             op.telemetry.addData("intakedown", !checker.getState(StateMachine.States.INTAKE_DOWN));
-            op.telemetry.addData("transfered", !checker.getState(StateMachine.States.TRANSFERRED));
+            if (op.getRuntime() > startTime[0] + 0.5 && !checker.getState(StateMachine.States.INTAKE_DOWN)&&!isReversing) {
+               stopIntake();
+            }
 
-
-            if (op.getRuntime()>startTime[0]+0.4&&checker.checkIf(StateMachine.States.TRANSFERRING) && !checker.getState(StateMachine.States.INTAKE_DOWN)) {
+            if (op.getRuntime() > startTime[0] + 0.8 && !checker.getState(StateMachine.States.INTAKE_DOWN)&&!checker.getState(StateMachine.States.TRANSFERRING)) {
                 checker.setState(StateMachine.States.TRANSFERRING, true);
                 isReversing = true;
                 op.telemetry.addData("reversing ", "intake");
                 startTime[1] = op.getRuntime();
-                intake.reverseIntake(0.8);
+                if(!isBall) {
+                    intake.reverseIntake(0.63);
+                }
+                else{
+                    startTime[1]-=0.1;
+                    intake.reverseIntake(0.53);
+                }
             }
-            if (op.getRuntime() > startTime[1] + 0.7) {
+
+            if (op.getRuntime() > startTime[1] + 0.4) {
                 isReversing = false;
+                isFlipping = false;
+                flipped = false;
                 intake.stopIntake();
-                turret.FlipBasketToPosition(.5);
-                turret.FlipBasketArmToPosition(.55);
+                turret.FlipBasketToPosition(.6);
+//                turret.FlipBasketArmToPosition(.3);
                 autoAiming = true;
                 checker.setState(StateMachine.States.TRANSFERRING, false);
                 checker.setState(StateMachine.States.SEQUENCING, false);
@@ -466,15 +523,21 @@ public class Robot {
         }
         if (autoretractTurret || retracting) {
             autoAiming = false;
-            if(autoretractTurret) {
+            if (!checker.getState(StateMachine.States.INTAKE_DOWN)&&abs(startAngle-EncoderChassis.angle)<45) {
                 intake.flipIntakeToPosition(0.0);
             }
             retracting = TurretReset(0.5);
         }
 
         magnitude = forward;
-        drivetrain.moveMultidirectional(magnitude, angleInDegree, turning, slowMode); // It is 0.95, because the robot DCs at full power.
-    }
+//        if(ypos<20||angle>30||magnitude<0) {
+            drivetrain.moveMultidirectional(magnitude, angleInDegree, turning, slowMode); // It is 0.95, because the robot DCs at full power.
+//        }
+//        else{
+//            drivetrain.setRightMotorVelocities(pow(48-EncoderChassis.ypos,1/2.0)/4.46*30*29.8 + angle *20);
+//            drivetrain.setLeftMotorVelocities(pow(48-EncoderChassis.ypos,1/2.0)/4.46*30*29.8- angle *20);
+//        }
+        }
 
     public void mazeTeleopLoop() {
 
@@ -509,15 +572,58 @@ public class Robot {
 
     public void fakeAutoAim() {
         double angle = -60;
-        turret.TurretRotate(angle);
-//        turret.AutoAngleControlRotating(17);
-        turret.turretExtendo(800);
+        retracting=false;
+        if(abs(startAngle-EncoderChassis.angle)%360<45) {
+            if(!flipped) {
+                flipBasketArmToPosition(0.55);
+                flipped=true;
+                shareFlipTime = op.getRuntime();
+                flipIntakeToPosition(0.0);
+            }
+            if(op.getRuntime()-shareFlipTime>0.3) {
+                if (!isBall) {
+                    turret.TurretRotate(turret_saved_positions[0][0][1] * isBlue);
+                    turret.AutoAngleControlRotating(17);
+                    if (abs(turret_saved_positions[0][0][1] * isBlue - rotatePosition) < 200||isBlue==-1) {
+                        turret.turretExtendo(turret_saved_positions[0][0][0]);
+                    }
+                } else {
+                    turret.TurretRotate(turret_saved_positions[0][1][1] * isBlue);
+                    turret.AutoAngleControlRotating(0);
+                    if (abs(turret_saved_positions[0][1][1] * isBlue - rotatePosition) < 200||isBlue==-1) {
+                        turret.turretExtendo(turret_saved_positions[0][1][0]);
+                    }
+                }
+            }
+        }
+        else{
+            if(time-shareFlipTime>3.0&&checker.getState(StateMachine.States.BASKET_ARM_REST)&&!flipped) {
+                flipBasketArmToPosition(0.25);
+                shareFlipTime=time;
+                flipped = true;
+            }
+            if(checker.getState(StateMachine.States.INTAKE_DOWN)){
+                flipIntakeToPosition(0.76);
+            }
+            if(time-shareFlipTime>0.1){
+                turret.TurretSlotate(turret_saved_positions[0][2][1]*isBlue);
+                turret.AutoAngleControlRotating(0);
+                turret.turretExtendo(turret_saved_positions[0][2][0]);
+            }
+        }
+    }
+
+    public void rotateToPosition(double targetAngle) {
+        turret.rotateToPosition(targetAngle);
     }
 
     public void capThats() {
         turret.capBasket();
     }
 
+    public void updateTurretPositions() {
+        turret.updateTurretPositions();
+    }
 
     public void TurretExtend(double height_inches, double extension_inches, double power) {
         turret.TurretExtend(height_inches, extension_inches, power);
@@ -543,8 +649,8 @@ public class Robot {
         turret.TurretAngleControlRotating(target_point);
     }
 
-    public void TurretSlidesToPosition(double x, double y, double z, double power) {
-        turret.TurretSlidesToPosition(x, y, z, power);
+    public void TurretSlidesToPosition(double x, double y, double z, double power, boolean retract) {
+        turret.TurretSlidesToPosition(x, y, z, power, retract);
     }
 
     public void setMotorPowers(double power) {
@@ -555,8 +661,8 @@ public class Robot {
         turret.TurretManualRotation(rotation);
     }
 
-    public void TurretManualExtension(double turret_extension, double turret_retraction) {
-        turret.TurretManualExtension(turret_extension, turret_retraction);
+    public void TurretManualExtension(double turret_extension) {
+        turret.TurretManualExtension(turret_extension);
     }
 
     public void turretManualElevation(double elevation) {
@@ -667,60 +773,81 @@ public class Robot {
         drivetrain.turnInPlace(target, power);
     }
 
+    public void toggleTSEPosition() {
+        TSE.toggleTSEPosition();
+    }
+    public void tseToPosition(double position){TSE.tseToPosition(position);}
+
     public boolean autoIntake(double power, double randRange, double times) {
         resetten = false;
         faked = false;
-        double[] thoseCurves = {0, 4, 8, 12, 16, 20};
-        double[] whereTonext = {.33, .66, 2.5, 2.8, 3.1, 3.4};
+        double[] thoseCurves = {0, 10, 12, 15, 5, 12, 8, 8};
+        double[] whereTonext = {.33, .66, 1.5, 1.8, 2.1, 2.4};
         double starterTime = op.getRuntime();
         boolean block = false;
         intake.flipIntakeToPosition(0.0);
         intake.startIntake();
         turret.runTurretWithoutEncoder();
         track();
-        drivetrain.turnInPlace(-atan2(xpos, 20), 1.0);
+        double angleDiff = -angle;
+        drivetrain.turnInPlace(-atan2(EncoderChassis.xpos, 20) * 180 / PI, 1.0);
         while (!block && op.getRuntime() < 27) {
             starterTime = op.getRuntime();
             double time = op.getRuntime();
 
             while (time - starterTime < 1.85 + times / 10) {
-                track();
+                if(ypos<15){
+                    angleDiff=-atan2(EncoderChassis.xpos+2, 15-ypos) * 180 / PI-angle;
+                }
+                else {
+                    angleDiff = -angle;
+                }
+                drivetrain.track();
                 turret.updateTurretPositions();
                 time = op.getRuntime();
                 if (!resetten) {
-                    turret.TurretReset(1.0);
+                    boolean isReset = turret.TurretReset(1.0);
                 } else if (resetten) {
                     turret.stopExtend();
                     turret.stopTurn();
                 }
                 if (resetten && time < startTime[9]) {
-                    turret.FlipBasketToPosition(.9);
+                    turret.FlipBasketToPosition(.88);
                     turret.FlipBasketArmToPosition(0.03);
                     startTime[9] = time;
                 }
-                if (ypos < 18) {
-                    drivetrain.setRightMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) + angle / 50);
-                    drivetrain.setLeftMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), .8) - angle / 50);
-                } else {
-                    drivetrain.setRightMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) + (angle - thoseCurves[(int) times]) / 50);
-                    drivetrain.setLeftMotorPowers(0.5 * pow((30 + 3.5 * times - ypos) / (28 + 3.5 * times), 0.8) - (angle - thoseCurves[(int) times]) / 50);
+                if (ypos < 15) {
+                    drivetrain.setRightMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8 - angleDiff *20);
+                    drivetrain.setLeftMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8+ angleDiff *20);
+//                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - angleDiff / 100 + 0.1);
+//                    drivetrain.setLeftMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + angleDiff / 100 - 0.1);
+                } else if(ypos<45){
+                    drivetrain.setRightMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8 - (angleDiff + thoseCurves[(int) times]) *20);
+                    drivetrain.setLeftMotorVelocities(pow(45-EncoderChassis.ypos,1/3.0)/2.7*40*29.8+ (angleDiff + thoseCurves[(int) times]) *20);
+//                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - (angleDiff + thoseCurves[(int) times]) / 25);
+//                    drivetrain.setLeftMotorPowers( abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + (angleDiff + thoseCurves[(int) times]) / 25);
                 }
-                if (!intake.isSwitched()) {
-                    if (time > 26 || times == 6) {
-                        stopAllMotors();
+                else{
+                    drivetrain.setRightMotorVelocities((50- EncoderChassis.ypos)*29.8);
+                    drivetrain.setLeftMotorVelocities((50-EncoderChassis.ypos)*29.8);
+                }
+                if (intake.isSwitched()) {
+                    drivetrain.setRightMotorVelocities(-100);
+                    drivetrain.setLeftMotorVelocities(-100);
+                    if (time > 26) {
                         stopIntake();
                         return false;
                     }
-                    sheeeeesh(-0.3, -0.5 + whereTonext[(int) times], 0.3, 0);
+                    sheeeeesh(0.0, 4, 0.8, 0);
                     block = true;
                     break;
                 }
             }
             if (!block) {
-                turret.TurretReset(0.5);
+//                turret.TurretReset(0.5);
                 drivetrain.setMotorPowers(-0.4);
                 op.sleep(500);
-                thoseCurves[(int) times] = 0.5 - random() * 2 * randRange;
+                thoseCurves[(int) times] = 0.5 + random() * randRange;
 
                 drivetrain.turnInPlace(thoseCurves[(int) times], 0.5);
             }
@@ -730,20 +857,18 @@ public class Robot {
     }
 
     public void sheeeeesh(double x, double y, double power, int direction) {
-        //57
         double[][] point = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
         double[] currentPosition = track();
-        double barDistance = sqrt(pow(-0.3 - currentPosition[0], 2) + pow(10 - currentPosition[1], 2));
-        point[0][0] = currentPosition[0] + sin(currentPosition[2] * PI / 180) * barDistance;
-        point[0][1] = currentPosition[1] + cos(currentPosition[2] * PI / 180) * barDistance;
+        point[0][0] = currentPosition[0];
+        point[0][1] = currentPosition[1];
         point[1][0] = currentPosition[0];
         point[1][1] = currentPosition[1];
-        point[2][0] = -0.3;
-        point[2][1] = 10;
+        point[2][0] = 0.0;
+        point[2][1] = 15;
         point[3][0] = x;
         point[3][1] = y;
         point[4][0] = x;
-        point[4][1] = y - 22;
+        point[4][1] = y;
         double startpower = power;
         boolean autoAiming = false;
         double[] startPosition = currentPosition;
@@ -754,15 +879,18 @@ public class Robot {
         double error = 0;
         double powerconst = 1, targetspeed = 0;
         double mpconst = 0;
-        double p = 0.2, pd = .2, I = 0.0000, D = 0.02;
+        double p = .2;
+        double pd = .2;
+        double D = .02;
+        double I = 0;
         double[] tarcurpos = {0, 0, 0};
         double xError = 0, posxError = 0, yError = 0, posyError = 0, xCorrection = 0, yCorrection = 0, t = 0, yInt = 0, xInt = 0, angleConst;
         double lastAngle = track()[2], anglediff = 0, targetaVelocity = 0;
         double startTime = 400;
         boolean reversing = false;
-        double[] starterTimes = {100, 100, 100, 100, 100};
+        double[] starterTimes = {100, 100, 100, 100, 100, 100};
         turret.runTurretWithoutEncoder();
-        intake.flipIntakeToPosition(0.7);
+        intake.flipIntakeToPosition(0.77);
         starterTimes[4] = op.getRuntime();
         boolean resetting = false;
         for (int i = 0; i < 2; i++) {
@@ -776,7 +904,7 @@ public class Robot {
             targetspeed = startpower * 30;
             double xDerivative = 0, yDerivative = 0;
             boolean td = true;
-            while (op.opModeIsActive() && (abs(difference) >= 2.5) && op.getRuntime() < 29.8) {
+            while (op.opModeIsActive() && (abs(difference) >= 2.5)&&point[3][1]<ypos && op.getRuntime() < 29.8) {
                 turret.updateTurretPositions();
                 double nowTime = op.getRuntime();
                 if (!resetten && !autoAiming && starterTimes[1] == 100) {
@@ -802,10 +930,10 @@ public class Robot {
                 if (reversing) {
                     intake.reverseIntake(1.0);
                 }
-                if (nowTime - starterTimes[1] > 0.3) {
-                    intake.flipIntakeToPosition(0.5);
+                if (nowTime - starterTimes[1] > 0.4) {
+                    intake.flipIntakeToPosition(0.2);
                     turret.FlipBasketToPosition(.58);
-                    starterTimes[1] = 100;
+                    starterTimes[1] = 101;
                     starterTimes[2] = nowTime;
                 }
                 if (nowTime - starterTimes[2] > .1) {
@@ -814,13 +942,17 @@ public class Robot {
                     reversing = false;
                     starterTimes[2] = 100;
                     autoAiming = true;
+                    starterTimes[5] = nowTime;
                 }
-                if (autoAiming) {
-                    fakeAutoAim();
-                    if (faked) {
-                        turret.stopExtend();
-                        turret.stopTurn();
-                        starterTimes[1] = 501;
+                if (ypos < 5) {
+                    if (autoAiming) {
+                        fakeAutoAim();
+                        if (faked && rotated) {
+                            turret.stopExtend();
+                            turret.stopTurn();
+                            starterTimes[1] = 501;
+                        }
+                        stopIntake();
                     }
                 }
                 op.telemetry.addData("autoAim", autoAiming);
@@ -830,17 +962,20 @@ public class Robot {
                 currentPosition = track();
                 double twoDistance = sqrt(pow(point[i + 2][1] - currentPosition[1], 2) + pow(point[i + 2][0] - currentPosition[0], 2));
                 double oneDistance = sqrt(pow(point[i + 1][1] - currentPosition[1], 2) + pow(point[i + 1][0] - currentPosition[0], 2));
-                if ((oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance) > t && td) {
-                    t = (oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance);
-                    t2 = (oneDistance + Velocity / 2 + 1 / 4) / (oneDistance + twoDistance);
+                if ((oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance) > t && td) {
+                    t = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
+                    t2 = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
                 }
-                if (t >= 1) {
-                    if (nowTime < startTime) {
+                if (tt >= 1) {
+                    if (op.getRuntime() < startTime) {
                         startTime = op.getRuntime();
                     }
-                    if (nowTime > startTime + 1.5) {
+                    if (op.getRuntime() > startTime + 1.5 / power) {
                         break;
                     }
+                    tt = 1;
+                }
+                if (t >= 1) {
                     t = 1;
                 }
                 if (!td) {
@@ -862,22 +997,22 @@ public class Robot {
                 if (xDerivative == 0) {
                     xDerivative = 0.00001;
                 }
+
                 mpconst = yDerivative / xDerivative;
+
                 target_position[2] = atan2(xDerivative, yDerivative) * 180 / PI + (direction - 1) * 180;
                 anglediff = target_position[2] - lastAngle;
-                targetaVelocity = -anglediff / differtime;
+                targetaVelocity = anglediff / differtime;
                 lastAngle = target_position[2];
-                target_position[2] %= 360;
-                error = currentPosition[2] - target_position[2];
-                error %= 360;
-                if (error > 180) {
-                    target_position[2] += 360;
-                }
-                if (error < -180) {
+                if (target_position[2] > 180) {
                     target_position[2] -= 360;
                 }
-                if ((oneDistance + 1 / 4) / (oneDistance + twoDistance) > tt) {
-                    tt = (oneDistance + 1 / 4) / (oneDistance + twoDistance);
+                if (target_position[2] < -180) {
+                    target_position[2] += 360;
+                }
+                op.telemetry.addData("angleTarget", target_position[2]);
+                if ((oneDistance + 1.0 / 4.0) / (oneDistance + twoDistance) > tt) {
+                    tt = (oneDistance + 1.0 / 4) / (oneDistance + twoDistance);
                 }
                 if (tt > 1) {
                     tt = 1;
@@ -908,10 +1043,6 @@ public class Robot {
                 if (xVelocity == 0) {
                     xVelocity = 0.0001;
                 }
-                if (!td) {
-                    tarcurpos[0] = point[i + 1][0];
-                    tarcurpos[1] = point[i + 1][1];
-                }
                 double targetXVelocity = txDerivative / abs(txDerivative) * ((sqrt(pow(startpower * 30, 2) / abs(1 - pow(mpconst2, 2)))));
                 double targetYVelocity = targetXVelocity * mpconst2;
                 xError = targetXVelocity - xVelocity;
@@ -940,10 +1071,16 @@ public class Robot {
                 if (yCorrection == 0) {
                     yCorrection = 0.001;
                 }
-                target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI) + (direction - 1) * 180;
 
+                target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI) + (direction - 1) * 180;
+                target_position[2] %= 360;
+                if (target_position[2] > 180) {
+                    target_position[2] -= 360;
+                }
+                if (target_position[2] < -180) {
+                    target_position[2] += 360;
+                }
                 error = currentPosition[2] - target_position[2];
-                error += (currentPosition[2] - tarcurpos[2]);
                 error %= 360;
                 if (error > 180) {
                     error -= 360;
@@ -951,8 +1088,8 @@ public class Robot {
                 if (error < -180) {
                     error += 360;
                 }
+                op.telemetry.addData("error", error);
                 double error2 = currentPosition[2] - atan2(x, y) * 180 / PI + (direction - 1) * 180;
-                error2 *= 1;
                 error2 %= 360;
                 if (error2 > 180) {
                     error2 -= 360;
@@ -960,8 +1097,8 @@ public class Robot {
                 if (error2 < -180) {
                     error2 += 360;
                 }
-                double controlconst = (t * t);
-
+                double controlconst = pow(tt, 1.5);
+                op.telemetry.addData("erro2r", error2);
                 error = controlconst * error2 + ((1 - controlconst) * error);
                 error %= 360;
                 if (error > 180) {
@@ -970,8 +1107,9 @@ public class Robot {
                 if (error < -180) {
                     error += 360;
                 }
-                targetaVelocity += (error) * 2;
-                anglecorrection = ((targetaVelocity + aVelocity) * 0.1 + error * 2) / 192;
+                targetaVelocity -= 2 * (error);
+                op.telemetry.addData("targetAVelocity", targetaVelocity);
+                anglecorrection = (error * 2 + (-targetaVelocity + aVelocity) * .2) / 216;
                 double powernum = pow(E, -10 * (tan((abs(error / 12) % 15) * PI / 180)));
                 if (powernum == -1) {
                     powernum = -1.0001;
@@ -987,18 +1125,26 @@ public class Robot {
                 if (direction == 0) {
                     power *= -1;
                 }
+                if(difference<10){
+                    powerconst=pow(difference,0.5);
+                }
                 op.telemetry.addData("t", t);
                 op.telemetry.addData("error", error);
                 op.telemetry.addData("targetXPosition", target_position[0]);
                 op.telemetry.addData("targetYPosition", target_position[1]);
                 drivetrain.setRightMotorPowers((powerconst) * power + anglecorrection);
                 drivetrain.setLeftMotorPowers((powerconst) * power - anglecorrection);
+                op.telemetry.addData("t", t);
+                op.telemetry.addData("error", error);
+                op.telemetry.addData("targetXPosition", target_position[0]);
+                op.telemetry.addData("targetYPosition", target_position[1]);
+
                 difference = sqrt(pow((point[i + 2][0] - currentPosition[0]), 2) + pow(point[i + 2][1] - currentPosition[1], 2));
             }
         }
         stopAllMotors();
         double nowTime = op.getRuntime();
-        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked) {
+        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked || !rotated) {
             nowTime = op.getRuntime();
             turret.updateTurretPositions();
             if (!resetten && !autoAiming && starterTimes[0] == 100) {
@@ -1015,16 +1161,16 @@ public class Robot {
                 starterTimes[0] = nowTime;
             }
             if (nowTime - starterTimes[0] > .2 && resetten && nowTime - starterTimes[4] > 0.74) {
-                intake.reverseIntake(0.8);
+                intake.reverseIntake(0.77);
                 starterTimes[0] = 500;
                 reversing = true;
                 starterTimes[1] = nowTime;
             }
             if (reversing) {
-                intake.reverseIntake(0.8);
+                intake.reverseIntake(0.6);
             }
-            if (nowTime - starterTimes[1] > 0.3) {
-                intake.flipIntakeToPosition(0.5);
+            if (nowTime - starterTimes[1] > 0.4) {
+                intake.flipIntakeToPosition(0.2);
                 turret.FlipBasketToPosition(.58);
                 reversing = false;
                 starterTimes[1] = 100;
@@ -1038,15 +1184,16 @@ public class Robot {
             }
             if (autoAiming) {
                 fakeAutoAim();
-                if (faked) {
+                stopIntake();
+                if (faked && rotated) {
                     turret.stopExtend();
                     turret.stopTurn();
-                    starterTimes[1] = 501;
                 }
             }
             op.telemetry.addData("autoAim", autoAiming);
+            op.telemetry.addData("faked", faked);
             op.telemetry.addData("resetten", resetten);
-            op.telemetry.addData("start0", starterTimes[0]);
+            op.telemetry.addData("start0", rotated);
             op.telemetry.addData("start1", starterTimes[1]);
             op.telemetry.update();
         }

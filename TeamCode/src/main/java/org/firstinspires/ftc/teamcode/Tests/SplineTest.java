@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -14,32 +13,34 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true, false,90);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         robot.setPosition(0,0,0);
+        robot.BlueElemTest(this,0,0);
         waitForStart();//robot.goToPosition(72,0,0,0.3);
 //        for(int i =0 ; i<4;i++){
 //            robot.turnInPlace(76,0.8);
 //            robot.turnInPlace(-45,0.8);
 //        }
-//        amogus
-        robot.goToPosition(1, 48,0,90,0.5);
-        robot.goToPosition(1, 48,24,200,0.5);
-        robot.goToPosition(1, 0,0,90,0.5);
-        robot.goToPosition(1, 0,24,-20,0.5);
-        robot.goToPosition(1, 48,0,90,0.5);
-        robot.goToPosition(1, 48,24,180,0.5);
-        robot.goToPosition(1,0,24,-90,0.5);
-        robot.goToPosition(1, 0,0,-90,0.5);
-        sleep(5000);
-//        robot.partOfPolySplineToPositionHead(1,0,0,0,0,30.0/1.5,60,60.0/1.5,0,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(1,0,0,30.0/1.5,60,60.0/1.5,0, 60.0/1.5,-30,true,true,0.5);
-//        sleep(3000);
-//        robot.partOfPolySplineToPositionHead(0,40,0,40,0,20,20,0,0,true,true,0.5);
-//        robot.partOfPolySplineToPositionHead(0,40,0,20,20,0,0,0,-10,true,true,0.5);
-//        sleep(3000);
+        //criss cross apply sauce
+//        robot.goToPosition(1, 48,0,90,0.5);
+//        robot.goToPosition(1, 48,24,200,0.5);
+//        robot.goToPosition(1, 0,0,90,0.5);
+//        robot.goToPosition(1, 0,24,-20,0.5);
+//        robot.goToPosition(1, 48,0,90,0.5);
+//        robot.goToPosition(1, 48,24,180,0.5);
+//        robot.goToPosition(1,0,24,-90,0.5);
+//        robot.goToPosition(1, 0,0,-90,0.5);
+//        sleep(5000);
+        //        amogus
+        robot.partOfPolySplineToPositionHead(1,0,-1,0,0,30.0/1.5,60,60.0/1.5,0,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(1,0,0,30.0/1.5,60,60.0/1.5,0, 60.0/1.5,-30,true,true,0.5);
+        sleep(3000);
+        robot.partOfPolySplineToPositionHead(0,40,0,40,0,20,20,0,0,true,true,0.5);
+        robot.partOfPolySplineToPositionHead(0,40,0,20,20,0,0,0,-10,true,true,0.5);
+        sleep(3000);
         //barrier pass run demo, start facing forward with left side of chassis alligned with the tile edge one tile from the barrier.
 //        robot.goToPosition(1,12,-5,0,0.3);
 //        robot.goToPosition(1,2,-5,-97,0.2);

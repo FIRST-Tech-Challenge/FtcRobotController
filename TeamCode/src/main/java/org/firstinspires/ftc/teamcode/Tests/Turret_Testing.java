@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
-
-@Disabled
 
 @TeleOp(name = "Turret_Testing")
 //@Disabled
@@ -17,7 +14,7 @@ public class Turret_Testing extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false ,false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false,90);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 
@@ -32,7 +29,7 @@ public class Turret_Testing extends LinearOpMode {
         }
 
         while (!isStopRequested()) {
-
+            robot.updateTurretPositions();
             diSTANCe+=gamepad2.left_stick_y/10;
             robot.TurretAngleControlRotating(diSTANCe);
 //            sleep(100);
@@ -41,10 +38,16 @@ public class Turret_Testing extends LinearOpMode {
             telemetry.update();
 
             robot.TurretManualRotation(gamepad2.right_stick_x);
+            if(gamepad2.a){
+                robot.FlipBasket(0);
+            }
+            if(gamepad2.b){
+                robot.flipBasketArmHigh();
+            }
 
 //            sleep(100);
 
-            robot.TurretManualExtension(gamepad2.right_trigger, gamepad2.left_trigger);
+            robot.TurretManualExtension(gamepad2.left_stick_y);
 
 
 //            sleep(100);

@@ -6,18 +6,15 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Robot;
-
-
 @TeleOp(name = "MazeBotTeleOp")
-//@Disabled
+@Disabled
 
 public class MazeBotTeleOp extends LinearOpMode {
     LinearOpMode op = this;

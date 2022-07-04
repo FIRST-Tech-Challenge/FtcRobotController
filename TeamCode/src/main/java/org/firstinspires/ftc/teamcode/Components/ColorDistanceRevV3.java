@@ -39,10 +39,10 @@ public class ColorDistanceRevV3
         // Save reference to Hardware map
         hwMap = opMode.hardwareMap;
         // get a reference to the color sensor.
-        sensorColor = hwMap.get(ColorSensor.class, "intakeSensor");
+        sensorColor = hwMap.get(ColorSensor.class, "intakeDistSensor");
 
         // get a reference to the distance sensor that shares the same name.
-        sensorDistance = hwMap.get(DistanceSensor.class, "intakeSensor");
+        sensorDistance = hwMap.get(DistanceSensor.class, "intakeDistSensor");
     }
 
     public int alpha() {
@@ -67,6 +67,14 @@ public class ColorDistanceRevV3
                 (int) (sensorColor.blue() * SCALE_FACTOR),
                 hsvValues);
         return hsvValues;
+    }
+    public boolean isBall(){
+        if(red()/(float)blue()>1.0){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
     // unit can have one of following values

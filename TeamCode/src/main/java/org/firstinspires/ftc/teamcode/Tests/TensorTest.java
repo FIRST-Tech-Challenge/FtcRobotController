@@ -14,7 +14,7 @@ public class TensorTest extends LinearOpMode {
     final boolean debug= true;
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false,90);
         ElapsedTime op = new ElapsedTime();
 
         while (!isStarted()) {

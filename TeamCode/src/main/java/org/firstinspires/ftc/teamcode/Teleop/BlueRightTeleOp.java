@@ -15,7 +15,7 @@ public class BlueRightTeleOp extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true ,false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true ,false,90);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 
@@ -28,6 +28,7 @@ public class BlueRightTeleOp extends LinearOpMode {
             telemetry.update();
         }
         resetStartTime();
+        robot.tseToPosition(0.8);
 
         while (!isStopRequested()) {
             robot.teleopLoop(1,0,0);

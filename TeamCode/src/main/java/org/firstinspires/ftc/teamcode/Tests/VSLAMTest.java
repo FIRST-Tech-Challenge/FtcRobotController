@@ -8,12 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
-
+@Disabled
 @Autonomous(name= "VSLAMTest", preselectTeleOp = "OneGPTeleop")
 public class VSLAMTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, true, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, true, false,90);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }

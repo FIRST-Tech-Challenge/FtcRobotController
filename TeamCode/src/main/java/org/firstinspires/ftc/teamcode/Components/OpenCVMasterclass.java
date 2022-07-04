@@ -29,6 +29,7 @@ public class OpenCVMasterclass {
     }
     public int BlueTeamElem(){
         BlueTeamElem opencv = new BlueTeamElem(op);
+        double starttime= op.getRuntime();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -65,16 +66,18 @@ public class OpenCVMasterclass {
 
         op.telemetry.addLine("Waiting for start");
         op.telemetry.update();
-        op.waitForStart();
+        while(!op.isStarted()||op.getRuntime()-starttime<5){
+            op.sleep(50);
+        }
         backWebcam.stopStreaming();
         if(opencv.getLocation()== BlueTeamElem.Location.NOT_FOUND) {
             return 2;
         }
         else if(opencv.getLocation()== BlueTeamElem.Location.MID) {
-            return 1;
-        }
-        else if(opencv.getLocation()== BlueTeamElem.Location.RIGHT) {
             return 0;
+        }
+        else if(opencv.getLocation()== BlueTeamElem.Location.LEFT) {
+            return 1;
         }
         else{
             return 0;
@@ -82,6 +85,7 @@ public class OpenCVMasterclass {
     }
     public int RedTeamElem(){
         RedTeamElem opencv = new RedTeamElem(op);
+        double starttime= op.getRuntime();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -118,7 +122,9 @@ public class OpenCVMasterclass {
 
         op.telemetry.addLine("Waiting for start");
         op.telemetry.update();
-        op.waitForStart();
+        while(!op.isStarted()){
+            op.sleep(100);
+        }
         backWebcam.stopStreaming();
         if(opencv.getLocation()== RedTeamElem.Location.NOT_FOUND) {
             return 2;
@@ -126,11 +132,11 @@ public class OpenCVMasterclass {
         else if(opencv.getLocation()== RedTeamElem.Location.MID) {
             return 1;
         }
-        else if(opencv.getLocation()== RedTeamElem.Location.RIGHT) {
+        else if(opencv.getLocation()== RedTeamElem.Location.LEFT) {
             return 0;
         }
         else{
-            return 0;
+            return 3;
         }
     }
     public double[] BlueWarehouseScam(){

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.LedColor;
-@Disabled
+//@Disabled
 
 @Autonomous(name = "Black Hardware V2 Test")
 
@@ -23,7 +22,14 @@ public class BlackHwV2Test extends LinearOpMode {
     DcMotor   intakeMotor;
     DcMotor   turretExtension;
     DcMotor   turretRotation;
-   // DcMotor []  dcMotor;
+    Servo     turretAngleControl;
+    Servo     basketActuationServo;
+    Servo     IntakeServo2;
+    Servo     turret_Angle_Control2;
+    Servo     basketArmServo;
+    // Servo     tsedepositer;
+    Servo     tsedepo;
+    // DcMotor []  dcMotor;
     Servo     servo;
 
 
@@ -77,13 +83,24 @@ public class BlackHwV2Test extends LinearOpMode {
         turretRotation = hwMap.get(DcMotor.class, "turret_Rotation");
         turretRotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+        turretAngleControl = hwMap.get(Servo.class, "turret_Angle_Control");
+
+        basketActuationServo = hwMap.get(Servo.class, "basketActuationServo");
+
+        IntakeServo2 = hwMap.get(Servo.class, "IntakeServo2");
+
+        turret_Angle_Control2 = hwMap.get(Servo.class, "turret_Angle_Control2");
+
+        basketArmServo = hwMap.get(Servo.class, "basketArmServo");
+
         //crServo = new CRServo[NOOFCRSERVOS];
         //crServo[0] = hwMap.get(CRServo.class, "carousel");
 
         crServo = hwMap.get(CRServo.class, "carousel"); //
-        //servo = hwMap.get(Servo.class, "tsedepositer");
 
+        //tsedepositer = hwMap.get(Servo.class, "tsedepositer");
 
+        tsedepo = hwMap.get(Servo.class, "tsedepo");
     }
 
     public void forwardFrontDc( double power, long time) {
@@ -153,6 +170,25 @@ public class BlackHwV2Test extends LinearOpMode {
         crServo.setPower(0);
     }
 
+    public void testServo(String  name, Servo servo, double power, long time) {
+        String caption;
+        caption = "Servo" + name;
+        telemetry.addData(caption," Moving Forward");
+        telemetry.update();
+        servo.setPosition(power);
+        idle();
+        sleep(time);
+        servo.setPosition(0);
+        idle();
+        sleep(time);
+        telemetry.addData(caption," Moving backward");
+        telemetry.update();
+        servo.setPosition(-power);
+        idle();
+        sleep(time);
+        servo.setPosition(0);
+    }
+
     public void testTseDepositerTape(String name, Servo servo, double inch, double rotation_per_inch, double reverse) {
         String caption;
 
@@ -164,30 +200,30 @@ public class BlackHwV2Test extends LinearOpMode {
 
         for (int i =0;  (position> 0.0); i++) {
             double amountRotated = 0.0;
-                servo.getController().setServoPosition(servo.getPortNumber(),0.0 + reverse);
-                //every inch
-                if (position < MAX_POS) {
-                    if (reverse == 1.0) {
-                        servo.setPosition(MAX_POS - position);
-                    } else {
-                        servo.setPosition(position);
-                    }
-                    amountRotated += position;
-                    position = 0.0;
-                    sleep(250);
+            servo.getController().setServoPosition(servo.getPortNumber(),0.0 + reverse);
+            //every inch
+            if (position < MAX_POS) {
+                if (reverse == 1.0) {
+                    servo.setPosition(MAX_POS - position);
                 } else {
-                    if (reverse == 1.0) {
-                        servo.setPosition(MIN_POS);
-                    } else {
-                        servo.setPosition(MAX_POS);
-                    }
-
-                    position = position - MAX_POS;
-                    amountRotated += MAX_POS;
-                    sleep(250);
+                    servo.setPosition(position);
                 }
-                telemetry.addData("Servo Position", "%5.2f", amountRotated);
-                telemetry.update();
+                amountRotated += position;
+                position = 0.0;
+                sleep(250);
+            } else {
+                if (reverse == 1.0) {
+                    servo.setPosition(MIN_POS);
+                } else {
+                    servo.setPosition(MAX_POS);
+                }
+
+                position = position - MAX_POS;
+                amountRotated += MAX_POS;
+                sleep(250);
+            }
+            telemetry.addData("Servo Position", "%5.2f", amountRotated);
+            telemetry.update();
 
         }
     }
@@ -197,19 +233,38 @@ public class BlackHwV2Test extends LinearOpMode {
         long sleepTime = 1000;
         myinit(hardwareMap);
         waitForStart();
-    /**/    telemetry.addData("motor","foward");
+        /**/    telemetry.addData("motor","foward");
         telemetry.update();
-        forwardFrontDc( 0.10,1000);
+        motorRight[0].setPower(0.2);
+        sleep(3000);
+        motorRight[0].setPower(0.0);
         sleep(1000);
+        motorRight[1].setPower(0.2);
+        sleep(3000);
+        motorRight[1].setPower(0.0);
+        sleep(1000);
+        motorLeft[0].setPower(0.2);
+        sleep(3000);
+        motorLeft[0].setPower(0.0);
+        sleep(1000);
+        motorLeft[1].setPower(0.2);
+        sleep(3000);
+        motorLeft[1].setPower(0.0);
+
         telemetry.addData("motor","backward");
         telemetry.update();
-        forwardFrontDc( -0.10,1000);
         testMotor("turretExtension",turretExtension,0.10,1000);
-
         testMotor("turretRotation",turretRotation,0.10,1000);
         testMotor("intakeMotor",intakeMotor,0.10,1000);
         testCRServo("carousel", crServo,-0.10,1000);
-//*/
+        testServo("turretAngleControl",turretAngleControl,0.10,1000);
+        testServo("basketActuationServo",basketActuationServo,0.10,1000);
+     /*   testServo("IntakeServo2",IntakeServo2,0.10,1000);
+        testServo("turret_Angle_Control2",turret_Angle_Control2,0.10,1000);
+        testServo("basketArmServo",basketArmServo,0.10,1000);
+     // testServo("tsedepositer",tsedepositer,0.10,1000);
+     */
+        testServo("tsedepo",tsedepo,0.10,1000);
 
 /*        testTseDepositerTape("forward",servo,10,1.3, 0.0);
         testTseDepositerTape("backward",servo,10,1.3, 1.0); */
@@ -225,7 +280,7 @@ public class BlackHwV2Test extends LinearOpMode {
 
   */     //*  */
 
-       stop();
+        stop();
     }
 
 

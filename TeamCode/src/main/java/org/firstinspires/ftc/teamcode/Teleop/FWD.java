@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.atan2;
-import static java.lang.Math.pow;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "FWD")
+@Disabled
 public class FWD extends LinearOpMode
 {
     private DcMotor motorLeftBack;
