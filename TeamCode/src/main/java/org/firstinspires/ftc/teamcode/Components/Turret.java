@@ -573,6 +573,7 @@ public class Turret {
                 turret_Rotation.setVelocity(0);
             }
             if (!arming&&extendPosition<70) {
+                flipStart=op.getRuntime();
                 basketArmServo.setPosition(0.00);
                 arming = true;
             }
@@ -601,8 +602,8 @@ public class Turret {
             if(abs(rotatePosition)<10){
                 basketArmServo.setPosition(0.00);
             }
-            if (rotatePosition<10) {
-                FlipBasketToPosition(0.92);
+            if (rotatePosition<10&&op.getRuntime()-flipStart>0.5&&arming) {
+                FlipBasketToPosition(0.9);
             }
             if(op.getRuntime()-flipStart>0.5) {
                 if (checker.getState(StateMachine.States.EXTENDED)) {

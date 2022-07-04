@@ -122,7 +122,7 @@ public class OpenCVMasterclass {
 
         op.telemetry.addLine("Waiting for start");
         op.telemetry.update();
-        while(!op.isStarted()&&op.getRuntime()-starttime<5){
+        while(!op.isStarted()){
             op.sleep(100);
         }
         backWebcam.stopStreaming();
@@ -133,10 +133,10 @@ public class OpenCVMasterclass {
             return 1;
         }
         else if(opencv.getLocation()== RedTeamElem.Location.LEFT) {
-            return 1;
+            return 0;
         }
         else{
-            return 0;
+            return 3;
         }
     }
     public double[] BlueWarehouseScam(){

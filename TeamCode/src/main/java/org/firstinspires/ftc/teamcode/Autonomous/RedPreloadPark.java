@@ -13,7 +13,7 @@ public class RedPreloadPark extends LinearOpMode {
     @Override
     public void runOpMode() {
         Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, true,0);
-        robot.rotateToPosition(91);
+        robot.rotateToPosition(89);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
@@ -25,25 +25,24 @@ public class RedPreloadPark extends LinearOpMode {
         resetStartTime();
 
         //Turret extension combined with rotation in such a way to achieve the current location to drop the loaded freight into the correct position by barcode
-        if (position == 1) {
-            robot.TurretSlidesToPosition(-21, 9.5, 0, 1.0,false);
+        if (position == 0) {
+            robot.TurretSlidesToPosition(27.5, 12.5, 0, 1.0,false);
             sleep(1000);
             robot.FlipBasketArmToPosition(0.8);
             sleep(700);
             robot.FlipBasketToPosition(0.18);
             sleep(300);
         }
-        if (position == 0
-        ) {
-            robot.TurretSlidesToPosition(26, 12, 2, 1.0,false);
+        if (position == 1) {
+            robot.TurretSlidesToPosition(28, 13, 2, 1.0,false);
             sleep(1000);
             robot.FlipBasketArmToPosition(0.6);
             sleep(700);
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
-        if (position == 2) {
-            robot.TurretSlidesToPosition(33, 15, 6, 1.0,false);
+        if (position == 2||position==3) {
+            robot.TurretSlidesToPosition(35, 17, 8, 1.0,false);
             sleep(1300);
             robot.FlipBasketArmToPosition(.47);
             sleep(300);

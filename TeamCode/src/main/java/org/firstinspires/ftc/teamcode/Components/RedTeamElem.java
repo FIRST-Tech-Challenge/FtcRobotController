@@ -46,7 +46,7 @@ public class RedTeamElem extends OpenCvPipeline {
             new Point(320,240),
             new Point(250, 150));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.3; //percentage of color
+    static double PERCENT_COLOR_THRESHOLD = 0.1; //percentage of color
 
     public RedTeamElem(LinearOpMode opMode){op=opMode; telemetry=op.telemetry;}
 
@@ -88,6 +88,9 @@ public class RedTeamElem extends OpenCvPipeline {
         else if (freightMid){
             location = RedTeamElem.Location.MID;
             telemetry.addData("Object Location","Mid");
+        }
+        if(!freightMid&&!freightLeft){
+            location = RedTeamElem.Location.NOT_FOUND;
         }
         telemetry.addData("x",xpos);
         telemetry.addData("y",ypos);

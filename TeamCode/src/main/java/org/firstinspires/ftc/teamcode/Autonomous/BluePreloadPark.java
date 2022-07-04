@@ -25,24 +25,24 @@ public class BluePreloadPark extends LinearOpMode {
         resetStartTime();
 
         //Turret extension combined with rotation in such a way to achieve the current location to drop the loaded freight into the correct position by barcode
-        if (position == 2) {
-            robot.TurretSlidesToPosition(-21, 9.5, 0, 1.0,false);
+        if (position == 2||position==3) {
+            robot.TurretSlidesToPosition(-26, 10.5, 0, 1.0,false);
             sleep(1000);
             robot.FlipBasketArmToPosition(0.8);
             sleep(700);
             robot.FlipBasketToPosition(0.18);
             sleep(600);
         }
-        if (position == 1
+        if (position == 0
         ) {
-            robot.TurretSlidesToPosition(-26, 12, 2, 1.0,false);
+            robot.TurretSlidesToPosition(-28, 13, 2, 1.0,false);
             sleep(1000);
             robot.FlipBasketArmToPosition(0.6);
             sleep(700);
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
-        if (position == 0) {
+        if (position == 1) {
             robot.TurretSlidesToPosition(-33, 15, 6, 1.0,false);
             sleep(1300);
             robot.FlipBasketArmToPosition(.47);
@@ -50,7 +50,7 @@ public class BluePreloadPark extends LinearOpMode {
             robot.FlipBasketToPosition(0.18);
             sleep(400);
         }
-        robot.TurretSlidesToPosition(0,0,0,1.0,true);
+        robot.TurretSlidesToPosition(0,0,0,0.4,true);
         sleep(2000);
         robot.flipBasketArmToPosition(0.0);
         robot.goToPosition(1,35,0,0,0.5);

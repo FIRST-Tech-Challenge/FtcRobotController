@@ -37,7 +37,7 @@ public class BlueTeamElem extends OpenCvPipeline {
             new Point(320,240),
             new Point(250, 150));
 
-    static double PERCENT_COLOR_THRESHOLD = 0.3; //percentage of color
+    static double PERCENT_COLOR_THRESHOLD = 0.2; //percentage of color
 
     public BlueTeamElem(LinearOpMode opMode){op=opMode; telemetry=op.telemetry;}
 

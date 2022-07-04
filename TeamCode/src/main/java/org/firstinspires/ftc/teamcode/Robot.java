@@ -46,6 +46,7 @@ public class Robot {
     public static int isBlue = 1;
     boolean isExtended = false;
     boolean flipped = false;
+    double slowTime = 0.0;
     public static boolean isBall = false;
     public static boolean resetten = true;
     public static boolean faked = false, rotated = false;
@@ -245,12 +246,15 @@ public class Robot {
         boolean basketArm = op.gamepad2.right_bumper;
         boolean autoAim = op.gamepad2.left_bumper;
         boolean basket = op.gamepad2.a;
-        boolean resetTurret = op.gamepad2.dpad_down;
-        boolean plusTurret = op.gamepad2.dpad_up;
-        boolean unsave_turret_position = op.gamepad2.b;
+        boolean resetTurret = false;
+        boolean plusTurret = false;
+        boolean slow = op.gamepad1.x;
+        boolean unsave_turret_position = false;
         boolean capper = false;
 
-
+        if(slow&&op.getRuntime()-slowTime>0.5){
+            slowMode=!slowMode;
+        }
         time = op.getRuntime();
         //according to blue side left auto next to barrier
         changed = false;
@@ -390,7 +394,6 @@ public class Robot {
         }
         spinCarousel();
         if (autoAiming && !retracting) {
-            intake.flipIntakeToPosition(0.0);
             fakeAutoAim();
         }
         op.telemetry.addData("autoaiming", autoAiming);
@@ -399,6 +402,10 @@ public class Robot {
         if (basket && time > startTime[4] + .3) {
             startTime[4] = time;
             FlipBasket(up);
+            if(autoAiming) {
+                op.sleep(500);
+            }
+            intake.flipIntakeToPosition(0.0);
             op.sleep(200);
             SavePosition(up);
         }
@@ -461,7 +468,7 @@ public class Robot {
             if (!checker.getState(StateMachine.States.SEQUENCING)) {
                 startTime[0] = op.getRuntime() + 9;
                 startTime[1] = op.getRuntime() + 10;
-                turret.FlipBasketToPosition(.87);
+                turret.FlipBasketToPosition(.89);
                 intake.startIntake();
             }
             checker.setState(StateMachine.States.SEQUENCING, true);
@@ -469,7 +476,7 @@ public class Robot {
             if (checker.checkIf(StateMachine.States.FLIPPING) && checker.getState(StateMachine.States.INTAKE_DOWN)) {
                 intake.startIntake();
                 intake.flipIntakeToPosition(0.77);
-                turret.FlipBasketToPosition(.87);
+                turret.FlipBasketToPosition(.89);
                 isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
@@ -571,6 +578,7 @@ public class Robot {
                 flipBasketArmToPosition(0.55);
                 flipped=true;
                 shareFlipTime = op.getRuntime();
+                flipIntakeToPosition(0.0);
             }
             if(op.getRuntime()-shareFlipTime>0.3) {
                 if (!isBall) {
