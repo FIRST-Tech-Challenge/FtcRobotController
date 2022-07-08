@@ -39,8 +39,8 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "TestComputerVision")
-public class EasyOpenCVExample extends LinearOpMode
+@TeleOp(name = "RingWebcam.exe")
+public class RingWebcam extends LinearOpMode
 {
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
@@ -64,7 +64,7 @@ public class EasyOpenCVExample extends LinearOpMode
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -100,6 +100,7 @@ public class EasyOpenCVExample extends LinearOpMode
         {
             FOUR,
             THREE,
+            TWO,
             ONE,
             NONE
         }
@@ -125,7 +126,8 @@ public class EasyOpenCVExample extends LinearOpMode
 
         final int FOUR_RING_THRESHOLD = 153;
         final int THREE_RING_THRESHOLD = 149;
-        final int ONE_RING_THRESHOLD = 138;
+        final int TWO_RING_THRESHOLD = 130;
+        final int ONE_RING_THRESHOLD = 119;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -184,6 +186,8 @@ public class EasyOpenCVExample extends LinearOpMode
                 position = RingPosition.FOUR;
             }else if (avg1 > THREE_RING_THRESHOLD) {
                 position = RingPosition.THREE;
+            }else if (avg1 > TWO_RING_THRESHOLD) {
+                position = RingPosition.TWO;
             }else if (avg1 > ONE_RING_THRESHOLD){
                 position = RingPosition.ONE;
             }else{

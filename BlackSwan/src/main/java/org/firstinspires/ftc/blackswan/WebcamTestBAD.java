@@ -38,7 +38,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp
-public class WebcamTest extends LinearOpMode
+public class WebcamTestBAD extends LinearOpMode
 {
     OpenCvWebcam webcam;
     int ringCount = 69420;
