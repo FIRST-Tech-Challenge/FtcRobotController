@@ -29,7 +29,7 @@ public class RFDualServo implements RFServoInterface {
 
     LinearOpMode op;
 
-    public RFDualServo(String servoName, String servoName2, Servo.Direction servoDirection, LinearOpMode opMode) {
+    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode) {
         op = opMode;
 
         servoDirection1 = servoDirection;

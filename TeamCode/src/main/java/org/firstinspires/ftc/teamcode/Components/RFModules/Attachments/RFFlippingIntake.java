@@ -10,10 +10,10 @@ public class RFFlippingIntake extends RFDualServo{
 
     LinearOpMode op;
 
-    public RFFlippingIntake (String servoName, String servoName2, Servo.Direction servoDirection, LinearOpMode opMode){
-        super(servoName, servoName2, servoDirection, opMode);
+    public RFFlippingIntake (Servo.Direction servoDirection, LinearOpMode opMode){
+        super(servoDirection, opMode);
 
-        flippingIntake = new RFDualServo(servoName, servoName2, servoDirection, opMode);
+        flippingIntake = new RFDualServo(servoDirection, opMode);
 
         op = opMode;
     }

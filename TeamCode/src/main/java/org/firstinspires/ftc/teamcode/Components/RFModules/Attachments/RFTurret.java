@@ -3,15 +3,20 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 
+import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
 import static java.lang.Math.abs;
+import static java.lang.Math.pow;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
+import org.firstinspires.ftc.teamcode.Robot;
 
 public class RFTurret extends RFMotor {
+
+
 
     private RFMotor rotationMotor;
 
@@ -50,7 +55,44 @@ public class RFTurret extends RFMotor {
         }
         setVelocity(0);
     }
-    public void setVelocity(double target){rotationMotor.setVelocity(target);}
+
+    public void TurretRotate (double targetAngle) {
+        op.telemetry.addData("newAngle",targetAngle);
+        int curPos = (int)rotatePosition;
+        if(targetAngle>MAX_ROTATION_TICKS){
+            targetAngle = MAX_ROTATION_TICKS;
+        }
+        if(targetAngle<-MAX_ROTATION_TICKS){
+            targetAngle = -MAX_ROTATION_TICKS;
+        }
+        double dist = targetAngle - curPos;
+        if(abs(dist)<20){
+            Robot.rotated=true;
+            rotationMotor.setPower(0);
+        }
+        else {
+            Robot.rotated=false;
+            double targetVelocity = pow(abs(dist), 1.4) / 69 * dist / abs(dist) * (100);
+            rotationMotor.setMode(RUN_USING_ENCODER);
+            rotationMotor.setVelocity(targetVelocity-(rotationMotor.getVelocity()-targetVelocity)/3);
+        }
+
+    }
+
+    public void TurretManualRotation (double rotation) {
+        if((rotatePosition > MAX_ROTATION_TICKS && rotation > 0) || (rotatePosition< -MAX_ROTATION_TICKS && rotation < 0)) {
+            rotationMotor.setPower(0);
+        }
+        else {
+            rotationMotor.setPower(rotation/3);
+        }
+    }
+
+
+    public void setVelocity(double target) {
+        rotationMotor.setVelocity(target);
+    }
+
 
     public double getAngle() {
         return rotationMotor.getCurrentPosition();

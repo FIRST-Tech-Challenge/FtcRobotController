@@ -46,7 +46,7 @@ public class Turret {
     boolean downCap = false;
     public static double extendPosition=0, rotatePosition=0;
     boolean angleControlling = false, arming = false, basketing = false,areTeleop = false;
-    private StateMachine checker = null;
+    public static StateMachine checker = null;
 
 
     // initialization of outtakeMotor
@@ -106,10 +106,11 @@ public class Turret {
     public int turret_rotation_pos;
     public double turret_angle_control_rotations;
     double turret_angle_control_full_rotations; //will update this in teleop loop
+
     public int getCurrentPosition(DcMotorEx motor){
         return motor.getCurrentPosition()+adder;
     }
-    public void updateTurretPositions(){
+    public void updateTurretPositions(){ //pog
         extendPosition = getCurrentPosition(turret_Extension);
         rotatePosition = turret_Rotation.getCurrentPosition();
         if(extendPosition<300){
@@ -171,7 +172,7 @@ public class Turret {
         op.telemetry.addData("basketActuationDown", checker.getState(StateMachine.States.BASKET_TRANSFER));
 
     }
-    public void aimHigh(){
+    public void aimHigh(){ //pog
         FlipBasketArmToPosition(.45);
         AngleControlRotating(35);
         TurretExtend(17,24,0.8);
@@ -207,7 +208,7 @@ public class Turret {
         turret_Extension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         turret_Extension.setPower(power);
     }
-    public void runTurretWithoutEncoder(){
+    public void runTurretWithoutEncoder(){ //pog
         turret_Extension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -272,7 +273,7 @@ public class Turret {
 //        turret_Extension.setPower(power);
     }
 
-    public void TurretAngleControlRotating (double torget_point) {
+    public void TurretAngleControlRotating (double torget_point) { //pog
         double thisTime = op.getRuntime();
         if (torget_point > 1) {
             torget_point = 1;
@@ -297,7 +298,7 @@ public class Turret {
 //        op.telemetry.addData("difference", target_point - turret_Angle_Control.getPosition());
 
     }
-    public void AutoAngleControlRotating (double torget_point) {
+    public void AutoAngleControlRotating (double torget_point) { //pog
         torget_point*=DEG_PER_TICK_SERVO;
         double thisTime = op.getRuntime();
         if (torget_point > 1) {
@@ -340,7 +341,7 @@ public class Turret {
         turret_Rotation.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         turret_Rotation.setPower(0.5);
     }
-    public void TurretSlidesToPosition (double x, double y, double z, double power, boolean retract) {
+    public void TurretSlidesToPosition (double x, double y, double z, double power, boolean retract) { //pog
         updateTurretPositions();
         double v = x;
         x=y;
@@ -384,7 +385,7 @@ public class Turret {
         AngleControlRotating(elevation_angle);
     }
 
-    public void TurretManualRotation (double rotation) { //stick_x
+    public void TurretManualRotation (double rotation) {
         if((rotatePosition > MAX_ROTATION_TICKS && rotation > 0) || (rotatePosition< -MAX_ROTATION_TICKS && rotation < 0)) {
             turret_Rotation.setPower(0);
         }
@@ -393,7 +394,7 @@ public class Turret {
         }
     }
 
-    public void TurretManualExtension (double turret_extension) {
+    public void TurretManualExtension (double turret_extension) { //pog
         if (checker.checkIf(StateMachine.States.EXTENDED)) {
             if (((extendPosition > MAX_EXTENSION_TICKS && turret_extension >0) || (extendPosition < MIN_EXTENSION_TICKS && turret_extension<0))) {
                 turret_Extension.setPower(0);
@@ -413,7 +414,7 @@ public class Turret {
         op.telemetry.addData("turtext", extendPosition);
 
     }
-    public void turretExtendo(double whereExtendo){
+    public void turretExtendo(double whereExtendo){ //pog
         if(whereExtendo>MAX_EXTENSION_TICKS){
             whereExtendo=MAX_EXTENSION_TICKS-5;
         }
@@ -433,14 +434,14 @@ public class Turret {
         }
     }
     public void TurretManualFlip () {
-        if (turret_Angle_Control.getPosition() > 0.5) {
-            turret_Angle_Control.setPosition(0);
-            turret_Angle_Control2.setPosition(0);
-        }
-        else {
-            turret_Angle_Control.setPosition(1);
-            turret_Angle_Control2.setPosition(1);
-        }
+//        if (turret_Angle_Control.getPosition() > 0.5) {
+//            turret_Angle_Control.setPosition(0);
+//            turret_Angle_Control2.setPosition(0);
+//        }
+//        else {
+//            turret_Angle_Control.setPosition(1);
+//            turret_Angle_Control2.setPosition(1);
+//        }
     }
 
     public void FlipBasket (int up) {

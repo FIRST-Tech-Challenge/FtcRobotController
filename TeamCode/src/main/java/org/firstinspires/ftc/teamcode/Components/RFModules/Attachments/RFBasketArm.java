@@ -17,4 +17,9 @@ public class RFBasketArm extends RFServo {
 
         op = opMode;
     }
+
+    public void FlipBasketArmToPosition (double torget) {
+//        updateTurretPositions(); add later when rf3dturretslides is made
+        basketArmServo.setPosition(torget);
+    }
 }

@@ -37,5 +37,9 @@ public class RFMotor extends Motor {
         rfMotor.setMode(runMode);
     }
 
+    public double getVelocity() {
+        return rfMotor.getVelocity();
+    }
+
 
 }
