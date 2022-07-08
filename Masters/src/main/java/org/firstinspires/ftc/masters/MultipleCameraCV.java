@@ -52,7 +52,7 @@ public class MultipleCameraCV {
     public OpenCvWebcam duckWebcam;
     public OpenCvWebcam webcam;
 
-//    Initial declaration of pipelines (One for each webcam we use)
+//    Initial declaration of pipelines (One for each we use)
     public DuckDeterminationPipeline duckPipeline;
     public ShippingElementDeterminationPipeline pipeline;
     public WarehousePipeline warehousePipeline;

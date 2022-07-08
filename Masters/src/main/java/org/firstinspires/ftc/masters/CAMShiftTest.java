@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.masters;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -46,9 +44,9 @@ public class CAMShiftTest extends LinearOpMode {
             }
         });
         // Only if you are using ftcdashboard
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-        FtcDashboard.getInstance().startCameraStream(webcam, 10);
+//        FtcDashboard dashboard = FtcDashboard.getInstance();
+//        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+//        FtcDashboard.getInstance().startCameraStream(webcam, 10);
 
         telemetry.update();
         waitForStart();
