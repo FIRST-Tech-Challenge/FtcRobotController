@@ -69,7 +69,7 @@ public class MeepMeepTesting {
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.9f)
 
-                // Add both of our declared bot entities
+                // Add both bot entities
                 .addEntity(depotBot)
                 .addEntity(warehouseBot)
                 .start();

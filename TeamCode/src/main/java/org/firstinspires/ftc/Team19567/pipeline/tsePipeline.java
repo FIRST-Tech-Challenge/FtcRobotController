@@ -9,6 +9,15 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+/**
+ * An attempt at making an "all-in-one" pipeline that could detect whatever based on the information passed in the constructor <br>
+ * However, it never proved to be useful and was just too complicated; <br>
+ * A better use would have been creating a base thresholding pipeline class instead. <br> <br>
+ * This pipeline is a combination of {@link org.firstinspires.ftc.Team19567.pipeline.greenPipeline greenPipeline}, {@link org.firstinspires.ftc.Team19567.pipeline.redPipeline redPipeline}, and {@link org.firstinspires.ftc.Team19567.pipeline.bluePipeline bluePipeline}. <br>
+ * The logic and code behind this pipeline is scuffed and should have been executed differently.
+ * If you want to study a proper pipeline, see {@link org.firstinspires.ftc.Team19567.pipeline.greenPipeline greenPipeline.java} instead.
+ */
+@Deprecated
 public class tsePipeline extends OpenCvPipeline {
     private Mat output = new Mat();
     private static final double width = 544;

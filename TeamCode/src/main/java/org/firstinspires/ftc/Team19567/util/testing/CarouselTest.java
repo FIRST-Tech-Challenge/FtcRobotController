@@ -6,10 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/**
+ * Opmode to test the carousel motor; used prior to the first and second qualifiers
+ */
 @TeleOp(name="Carousel Test", group="Testing Programs")
 @Disabled
-public class CarouselTest extends OpMode
-{
+@Deprecated
+public class CarouselTest extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor carouselDC = null;
 

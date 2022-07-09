@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Disabled
 @Autonomous(name="OG Blue Depot", group="v1")
-
+@Deprecated
 public class blue_depot_v1 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -200,7 +200,7 @@ public class blue_depot_v1 extends LinearOpMode {
 
         // anytime power is being changed the heading may change. The IMU goes from
         // -180.0 to 180.0. The discontinuity at 180,-180 is a programming headache.
-        // if you rotate through that is takes a bunch of special programming logic
+        // if you rotate through that it takes a bunch of special programming logic
         // to figure out where you are. Instead, we will monitor going through that
         // discontinuity and increment a rotation counter so our heading will start
         // at 0 when the IMU is initialized, and be a continuous function from

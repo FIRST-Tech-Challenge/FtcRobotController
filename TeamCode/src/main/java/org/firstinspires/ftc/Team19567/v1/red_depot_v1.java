@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Disabled
 @Autonomous(name="OG Red Depot", group="v1")
-
+@Deprecated
 public class red_depot_v1 extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

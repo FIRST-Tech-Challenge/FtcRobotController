@@ -3,14 +3,12 @@ package org.firstinspires.ftc.Team19567.util.testing;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
+import org.firstinspires.ftc.Team19567.drive.MecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
 import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
@@ -22,7 +20,12 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+/**
+ * useless garbage, do not bother with this
+ */
 @Autonomous(name="Depot Spline Test", group="Testing")
+@Disabled
+@Deprecated
 public class DepotSplineTest extends LinearOpMode {
 
     private ElapsedTime timeout = new ElapsedTime();
@@ -43,7 +46,7 @@ public class DepotSplineTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SampleMecanumDriveCancelable chassis = new SampleMecanumDriveCancelable(hardwareMap);
+        MecanumDriveCancelable chassis = new MecanumDriveCancelable(hardwareMap);
 
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();

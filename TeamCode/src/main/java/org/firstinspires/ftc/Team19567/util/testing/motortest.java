@@ -9,10 +9,12 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+/**
+ * Opmode to test two motors on the robot using the gamepad
+ */
 @Disabled
 @TeleOp(name="motor_test", group="Testing")
-public class motortest extends OpMode
-{
+public class motortest extends OpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor motor1 = null;

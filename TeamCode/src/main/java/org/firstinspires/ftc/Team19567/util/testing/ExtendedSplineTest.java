@@ -1,36 +1,21 @@
 package org.firstinspires.ftc.Team19567.util.testing;
 
-import android.text.method.Touch;
-
-import com.acmerobotics.dashboard.canvas.Spline;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.Team19567.drive.SampleMecanumDriveCancelable;
-import org.firstinspires.ftc.Team19567.pipeline.greenPipeline;
-import org.firstinspires.ftc.Team19567.pipeline.LOCATION;
+import org.firstinspires.ftc.Team19567.drive.MecanumDriveCancelable;
 import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.Team19567.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.Team19567.util.AUTO_STATE;
 import org.firstinspires.ftc.Team19567.util.Mechanisms;
-import org.firstinspires.ftc.Team19567.util.Utility_Constants;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
+/**
+ * useless garbage, do not use
+ */
 @Autonomous(name="Extended Spline Test", group="Testing")
-
+@Disabled
+@Deprecated
 public class ExtendedSplineTest extends LinearOpMode {
     private Mechanisms mechanisms = null;
 
@@ -41,7 +26,7 @@ public class ExtendedSplineTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        SampleMecanumDriveCancelable chassis = new SampleMecanumDriveCancelable(hardwareMap);
+        MecanumDriveCancelable chassis = new MecanumDriveCancelable(hardwareMap);
 
         mechanisms = new Mechanisms(hardwareMap,telemetry);
         mechanisms.setModes();
