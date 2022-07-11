@@ -20,7 +20,7 @@ class TestOp : OpMode() {
     override fun loop() {
         drive()
         motors.logDriveMotorData(telemetry) { it.power }
-        telemetry.update()
+        updateTelemetry(telemetry)
     }
 
     private fun drive() = with(gamepad1) {
