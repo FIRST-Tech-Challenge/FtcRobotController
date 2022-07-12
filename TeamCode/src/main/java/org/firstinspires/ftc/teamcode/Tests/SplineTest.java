@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 //@Disabled
 
-@Autonomous(name= "SplineTest", preselectTeleOp = "OneGPTeleop")
+@Autonomous(name= "meSplineTest", preselectTeleOp = "OneGPTeleop")
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode(){
