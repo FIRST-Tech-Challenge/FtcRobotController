@@ -21,6 +21,9 @@ import static java.lang.Math.random;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -29,12 +32,15 @@ import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.LedColor;
+import org.firstinspires.ftc.teamcode.Components.LimitSwitches;
 import org.firstinspires.ftc.teamcode.Components.Logger;
 import org.firstinspires.ftc.teamcode.Components.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.Turret;
+import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.VSLAMChassis;
 import org.firstinspires.ftc.teamcode.Components.tseDepositor;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.util.Arrays;
 
@@ -72,6 +78,9 @@ public class Robot {
     public static boolean retracting = false;
     double time;
     boolean changed = false;
+    boolean ultra = false;
+    boolean touch = false;
+    public static double loopTime = 0;
     double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
     int CYCLE_MS = 30;     // period of each cycle
 
@@ -85,6 +94,7 @@ public class Robot {
 
     // Hardware Objects
     private BasicChassis drivetrain = null;
+    private SampleMecanumDrive roadrun = null;
     private CarouselCR rotation = null;
     private Intake intake = null;
     private Turret turret = null;
@@ -93,21 +103,26 @@ public class Robot {
     private tseDepositor TSE = null;
     private StateMachine checker = null;
     private Logger logger;
+    private Ultrasonics ultras = null;
+    private LimitSwitches touchs = null;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         op = opMode;
         startAngle = startAng;
         trueStartAngle=startAng;
-        logger = new Logger(opMode);
-        checker = new StateMachine(op, isTeleop, logger);
-        //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
-        rotation = new CarouselCR(op);
-        intake = new Intake(op, isTeleop, checker);
-//        led_bank = new LedColor(op); //LED has to be declared before calling it
-        turret = new Turret(op, led_bank, isTeleop, checker);
-        openCV = new OpenCVMasterclass(op);
-        TSE = new tseDepositor(op, isTeleop);
+//        logger = new Logger(opMode);
+//        checker = new StateMachine(op, isTeleop, logger);
+//        //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
+//        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
+//        rotation = new CarouselCR(op);
+//        intake = new Intake(op, isTeleop, checker);
+////        led_bank = new LedColor(op); //LED has to be declared before calling it
+//        turret = new Turret(op, led_bank, isTeleop, checker);
+//        openCV = new OpenCVMasterclass(op);
+//        TSE = new tseDepositor(op, isTeleop);
+        roadrun = new SampleMecanumDrive(op.hardwareMap);
+//        ultras = new Ultrasonics(op);
+//        touchs = new LimitSwitches(op);
 
     }
 
@@ -141,6 +156,33 @@ public class Robot {
 
     public void stopAllMotors() {
         drivetrain.stopAllMotors();
+    }
+    public void update(){
+        roadrun.update();
+        if(ultra){
+            Pose2d pos = roadrun.getPoseEstimate();
+            if(ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
+                roadrun.setPoseEstimate(ultras.getPose2d());
+            }
+        }
+        if(touch){
+            Pose2d pos = roadrun.getPoseEstimate();
+            if(touchs.updateTouch(pos.getX(),pos.getY(),pos.getHeading())){
+                roadrun.setPoseEstimate(touchs.getPose2d());
+            }
+        }
+    }
+    public TrajectoryBuilder trajectoryBuilder(Pose2d pose2d){
+        return roadrun.trajectoryBuilder(pose2d);
+    }
+    public void followTrajectoryAsync(Trajectory trajectory){
+        roadrun.followTrajectoryAsync(trajectory);
+    }
+    public void followTrajectory(Trajectory trajectory){
+        roadrun.followTrajectory(trajectory);
+    }
+    public Pose2d getPoseEstimate(){
+        return roadrun.getPoseEstimate();
     }
 
 
