@@ -43,19 +43,21 @@ public class ComputerVisionCodeAlong {
 //    Declare webcam
     public OpenCvWebcam webcam;
 
-//    Initial declaration of pipelines (One for each we use)
+//    Initial declaration of pipeline
     public ElementDetectionPipeline pipeline;
 
     public ComputerVisionCodeAlong(HardwareMap hardwareMap, Telemetry telemetry){
 
-//        Get and store camera monitor view id.
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        Get and store camera monitor view id. (If using multiple cameras.
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"));
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
         pipeline = new ElementDetectionPipeline(telemetry);
 
         webcam.setMillisecondsPermissionTimeout(2500);
 
+
+//         Prep template.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -75,14 +77,14 @@ public class ComputerVisionCodeAlong {
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                telemetry.addData("front webcam open", "yes");
+                telemetry.addData("webcam open", "yes");
                 webcam.setPipeline(pipeline);
                 webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode) {
-                telemetry.addLine("Can't open front camera");
+                telemetry.addLine("Can't open camera");
                 telemetry.update();
                 /*
                  * This will be called if the camera could not be opened
@@ -91,13 +93,12 @@ public class ComputerVisionCodeAlong {
         });
     }
 
-//    Function for stopping cameras and switching to a pipeline that don't burn cpu cycles.
+//    Function for stopping cameras and switching to a pipeline that we don't waste resources.
+
     public void stopCamera(){
         webcam.stopStreaming();
         webcam.setPipeline(new DoNothingPipeline());
     }
-
-
 
 
 //    The aforementioned pipeline. Aptly named.
@@ -110,8 +111,11 @@ public class ComputerVisionCodeAlong {
     }
 
 
+
 //    Element detection pipeline
     public static class ElementDetectionPipeline extends OpenCvPipeline {
+
+        public static int avg;
         Telemetry telemetry;
 
         public ElementDetectionPipeline(Telemetry telemetry) {
@@ -131,23 +135,27 @@ public class ComputerVisionCodeAlong {
         static final Scalar RED = new Scalar(255, 0, 0);
 
 //        Region sizes for freight submat, simplifies things if you're working with multiple regions.
-        static final int REGION_WIDTH = 30;
-        static final int REGION_HEIGHT = 42;
+        static final int REGION_WIDTH = 80;
+        static final int REGION_HEIGHT = 100;
+
+//        Keep in mind current dimensions are 640 x 360
 
         /*
-        * Top left anchor points for freight regions         */
-        static final Point REGION_TOP_LEFT_ANCHOR_POINT = new Point(45, 180);
-
-//      Threshold for freight presence
-        final int ELEMENT_PRESENT_THRESHOLD = 112;
+        * Top left anchor points for region       */
+        static final Point REGION_TOP_LEFT_ANCHOR_POINT = new Point(280, 80);
 
 //        Display rectangles to camera stream
-        Point region1_pointA = new Point(
+        Point region_pointA = new Point(
                 REGION_TOP_LEFT_ANCHOR_POINT.x,
                 REGION_TOP_LEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
+        Point region_pointB = new Point(
                 REGION_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+
+    //      Threshold for freight presence
+        final int ELEMENT_PRESENT_THRESHOLD = 158;
+
 
         /*
          * Working variables
@@ -158,8 +166,6 @@ public class ComputerVisionCodeAlong {
 
         Mat A = new Mat();
         Mat B = new Mat();
-
-        int avg = 0;
 
 
         // Volatile since accessed by OpMode thread w/o synchronization
@@ -182,27 +188,27 @@ public class ComputerVisionCodeAlong {
 
             inputToLAB(firstFrame);
 
-            region = A.submat(new Rect(region1_pointA, region1_pointB));
+            region = A.submat(new Rect(region_pointA, region_pointB));
         }
 
 
         @Override
         public Mat processFrame(Mat input) {
             inputToLAB(input);
-            region = A.submat(new Rect(region1_pointA, region1_pointB));
+            region = A.submat(new Rect(region_pointA, region_pointB));
 
             avg = (int) Core.mean(region).val[0];
 
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
+                    region_pointA, // First point which defines the rectangle
+                    region_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
 
-            if (avg < ELEMENT_PRESENT_THRESHOLD) {
+            if (avg > ELEMENT_PRESENT_THRESHOLD) {
                 position = ElementPosition.PRESENT;
             } else {
                 position = ElementPosition.NOT_PRESENT;
@@ -210,6 +216,8 @@ public class ComputerVisionCodeAlong {
 
             telemetry.addData("Analysis", avg);
             telemetry.addData("Position", position);
+            telemetry.update();
+
             return input;
         }
     }

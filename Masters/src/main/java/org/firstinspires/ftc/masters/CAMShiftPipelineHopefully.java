@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 public class CAMShiftPipelineHopefully extends OpenCvPipeline {
 
+    public String data;
     private int CAMERA_WIDTH;
     private int CAMERA_HEIGHT;
 
@@ -55,17 +56,28 @@ public class CAMShiftPipelineHopefully extends OpenCvPipeline {
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
         Imgproc.calcBackProject(Arrays.asList(hsv), channels, roi_hist, dst, range, 1);
 
+
         RotatedRect rot_rect = Video.CamShift(dst, trackWindow, term_crit);
+
+//        Experimentation
+//        if (rot_rect.size.width > 300){
+//            rot_rect.size.width = 300;
+//        }
+//
+//        if (rot_rect.size.height > 300){
+//            rot_rect.size.height = 300;
+//        }
+//        //        Experimentation
+
 
         Point[] points = new Point[4];
         rot_rect.points(points);
         for (int i = 0; i < 4 ;i++) {
             Imgproc.line(input, points[i], points[(i+1)%4], new Scalar(255, 0, 0),2);
         }
-
-        telemetry.addData("Center:", rot_rect.center);
+        data = rot_rect.toString();
+        telemetry.addData("rot_rect: ", rot_rect.toString());
         telemetry.update();
         return input;
     }
-
 }

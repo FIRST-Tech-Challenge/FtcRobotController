@@ -11,8 +11,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 //@Config //Disable if not using FTC Dashboard https://github.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022#opencv_freightfrenzy_2021-2022
-@Autonomous(name="CAMShift Test", group="drive")
-public class CAMShiftTest extends LinearOpMode {
+@Autonomous(name="Dense Optical Flow Test", group="drive")
+public class DenseOpticalFlowTest extends LinearOpMode {
     private OpenCvCamera webcam;
 
     private static final int CAMERA_WIDTH  = 640; // width  of wanted camera resolution
@@ -25,8 +25,10 @@ public class CAMShiftTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         //OpenCV Pipeline
-        CAMShiftPipelineHopefully myPipeline;
-        webcam.setPipeline(myPipeline = new CAMShiftPipelineHopefully(telemetry));
+        DenseOpticalFlowPipeline myPipeline;
+        webcam.setPipeline(myPipeline = new DenseOpticalFlowPipeline(telemetry));
+
+
         // Configuration of Pipeline
         // Webcam Streaming
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -55,14 +57,7 @@ public class CAMShiftTest extends LinearOpMode {
 
         while (opModeIsActive())
         {
-            try {
-                telemetry.addData("Center of rotated rectangle ", myPipeline.data);
-            }
-            catch (NullPointerException e)
-            {
-                telemetry.addData("Rot rect not yet initialized. ", e);
-            }
-
+            telemetry.addData("running","");
             telemetry.update();
 
         }
