@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.Turret.checker;
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Robot.faked;
@@ -76,7 +77,7 @@ public class RFSlides extends RFMotor{
     }
 
     public void TurretManualExtension (double turret_extension) { //pog
-        if (checker.checkIf(StateMachine.States.EXTENDED)) {
+        if (checker.checkIf(SLIDES_EXTENDED)) {
             if (((extendPosition > MAX_EXTENSION_TICKS && turret_extension >0) || (extendPosition < MIN_EXTENSION_TICKS && turret_extension<0))) {
                 extensionMotor.setPower(0);
                 op.telemetry.addData("extreme", extendPosition);

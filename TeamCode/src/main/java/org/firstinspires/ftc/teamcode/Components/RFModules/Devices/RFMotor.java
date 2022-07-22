@@ -40,6 +40,4 @@ public class RFMotor extends Motor {
     public double getVelocity() {
         return rfMotor.getVelocity();
     }
-
-
 }

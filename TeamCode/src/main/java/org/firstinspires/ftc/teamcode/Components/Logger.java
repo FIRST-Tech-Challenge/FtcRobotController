@@ -11,8 +11,15 @@ import java.util.Scanner;
 public class Logger {
     File myObj = new File("/storage/emulated/0/tmp/LogIndex.csv");
     Scanner myReader;
-    File logFile;
-    FileWriter wFTCfile;
+    public static File odometryFile;
+    FileWriter wFTCodometryfile;
+
+    public static File sequencingFile;
+    FileWriter wFTCsequencingfile;
+
+    public static File miscFile;
+    FileWriter wFTCmiscfile;
+
     FileWriter indexer;
     String data = "0";
     OpMode op;
@@ -22,7 +29,9 @@ public class Logger {
             try {
                 myReader = new Scanner(myObj);
                 data = myReader.nextLine();
-                logFile = new File("/storage/emulated/0/tmp/Log"+data+".csv");
+                odometryFile = new File("/storage/emulated/0/tmp/Log"+data+".csv");
+                sequencingFile = new File("/storage/emulated/0/tmp/Log"+data+".csv");
+                miscFile = new File("/storage/emulated/0/tmp/Log"+data+".csv");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -54,37 +63,77 @@ public class Logger {
 
         try {
             //Create File
-            if (logFile.createNewFile()) {
+            if (odometryFile.createNewFile()) {
                 op.telemetry.addData("Logger:", "File created:%S\n", "Logger");
                 op.telemetry.update();
             } else {
-                logFile.delete();
-                logFile.createNewFile();
+                odometryFile.delete();
+                odometryFile.createNewFile();
                 op.telemetry.addData("Logger:", "File already exists:%S\n", "Overriding");
                 op.telemetry.update();
             }
+
+            if (sequencingFile.createNewFile()) {
+                op.telemetry.addData("Logger:", "File created:%S\n", "Logger");
+                op.telemetry.update();
+            } else {
+                sequencingFile.delete();
+                sequencingFile.createNewFile();
+                op.telemetry.addData("Logger:", "File already exists:%S\n", "Overriding");
+                op.telemetry.update();
+            }
+
+            if (miscFile.createNewFile()) {
+                op.telemetry.addData("Logger:", "File created:%S\n", "Logger");
+                op.telemetry.update();
+            } else {
+                miscFile.delete();
+                miscFile.createNewFile();
+                op.telemetry.addData("Logger:", "File already exists:%S\n", "Overriding");
+                op.telemetry.update();
+            }
+
         } catch (IOException e) {
             new RuntimeException("create file: FAILED", e).printStackTrace();
         }
+
         {
             try {
-                wFTCfile = new FileWriter(logFile);
+                wFTCodometryfile = new FileWriter(odometryFile);
+                wFTCsequencingfile = new FileWriter(sequencingFile);
+                wFTCmiscfile = new FileWriter(miscFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    public void log(String newLog){
+    public void log(String newLog, File logFile){
         try {
-            wFTCfile.write(newLog);
+            if (logFile == odometryFile) {
+                wFTCodometryfile.write(newLog);
+            }
+            else if (logFile == sequencingFile) {
+                wFTCsequencingfile.write(newLog);
+            }
+            else {
+                wFTCmiscfile.write(newLog);
+            }
         }catch(IOException e){
             e.printStackTrace();
         }
 
     }
-    public void closeLog(){
+    public void closeLog(File logFile){
         try {
-            wFTCfile.close();
+            if (logFile == odometryFile) {
+                wFTCodometryfile.close();
+            }
+            else if (logFile == sequencingFile) {
+                wFTCsequencingfile.close();
+            }
+            else {
+                wFTCmiscfile.close();
+            }
         }
         catch(IOException e){
             e.printStackTrace();

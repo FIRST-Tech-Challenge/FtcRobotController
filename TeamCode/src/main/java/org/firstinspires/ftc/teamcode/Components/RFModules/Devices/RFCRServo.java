@@ -4,36 +4,27 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-public class RFServo implements Servo {
+public class RFCRServo implements CRServo {
     //all servo regular stuff
 
-    private Servo RFServo;
+    private CRServo RFCRServo;
 
     LinearOpMode op;
 
     Servo.Direction servodirection;
     String devicename;
 
-    public RFServo (double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
+    public RFCRServo (Servo.Direction direction, String deviceName, LinearOpMode opMode) {
         op = opMode;
         servodirection = direction;
         devicename = deviceName;
-        RFServo = opMode.hardwareMap.get(Servo.class, deviceName);
+        RFCRServo = opMode.hardwareMap.get(CRServo.class, deviceName);
     }
 
-    public void setPosition(double position) {
-        RFServo.setPosition(position);
-    }
 
-    public double getPosition() {
-        return RFServo.getPosition();
-    }
 
-    @Override
-    public void scaleRange(double min, double max) {
-
-    }
 
     @Override
     public ServoController getController() {
@@ -45,13 +36,24 @@ public class RFServo implements Servo {
         return 0;
     }
 
-    public void setDirection (Servo.Direction direction) {
-        RFServo.setDirection(direction);
+    @Override
+    public void setDirection(Direction direction) {
+
     }
 
     @Override
     public Direction getDirection() {
-        return servodirection;
+        return null;
+    }
+
+    @Override
+    public void setPower(double v) {
+        RFCRServo.setPower(v);
+    }
+
+    @Override
+    public double getPower() {
+        return 0;
     }
 
     @Override
@@ -61,7 +63,7 @@ public class RFServo implements Servo {
 
     @Override
     public String getDeviceName() {
-        return devicename;
+        return null;
     }
 
     @Override

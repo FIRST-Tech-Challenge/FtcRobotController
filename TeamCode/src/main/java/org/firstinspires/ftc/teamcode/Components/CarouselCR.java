@@ -10,7 +10,7 @@ public class CarouselCR
     static final double CAROUSEL_STOP   = 0;        //
     static final int    CYCLE_MS        =  500;      // period before reading the button status from  controller
     static final int    CYCLE_MS_AUTONOMOUS=3500; // This is time for one full run
-    static final int    CYCLE_MS_ONE_ROTATION= 2000; //
+    static final int    CYCLE_MS_ONE_ROTA8TION= 2000; //
     static final int    PAUSE_IN_MANUAL_MODE=750;  // pause carousel in manual mode to put duck
 
     // Define class members
