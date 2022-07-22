@@ -4,14 +4,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * TeleOp DriveTrain Only (with test modes).
  */
-@TeleOp(name="Teleop-DrivetrainSUS", group="7592")
-@Disabled
-public class TeleopDrivetrainOnly extends LinearOpMode {
+@TeleOp(name="Teleop-DrivetrainCNC", group="7592")
+//@Disabled
+public class TeleopDrivetrainCNC extends LinearOpMode {
     boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Single Wheel Control
     boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
     boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // UNUSED
@@ -412,4 +411,4 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
 
     } // processDriverCentricDriveMode
 
-} // TeleopDrivetrainOnly
+} // TeleopDrivetrainCNC

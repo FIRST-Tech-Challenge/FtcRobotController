@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
-    HardwareBothHubs robot = new HardwareBothHubs();
+    HardwareCNCbot robot = new HardwareCNCbot();
 
     static final int     DRIVE_TO             = 1;       // STOP  after the specified movement
     static final int     DRIVE_THRU           = 2;       // COAST after the specified movement
@@ -24,6 +24,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     static final double  DRIVE_SPEED_50       = 0.65;    //
     static final double  DRIVE_SPEED_55       = 0.77;    // Somewhat longer distances, go a little faster
     static final double  TURN_SPEED_20        = 0.28;    // Nominal half speed for better accuracy.
+    static final double  TURN_SPEED_80        = 0.80;    // Nominal half speed for better accuracy.
+
 
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle
@@ -31,8 +33,8 @@ public abstract class AutonomousBase extends LinearOpMode {
      */
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.cappingArmPosRun();
-        robot.freightArmPosRun();
+   //     robot.cappingArmPosRun();
+     //   robot.freightArmPosRun();
     }
 
     /*---------------------------------------------------------------------------------------------
@@ -251,7 +253,8 @@ public abstract class AutonomousBase extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             performEveryLoop();
-            sensorDistance = leftWall ? robot.singleSonarRangeL() : robot.singleSonarRangeR();
+            //sensorDistance = leftWall ? robot.singleSonarRangeL() : robot.singleSonarRangeR();
+            sensorDistance = 10;
             distanceError = sensorDistance - distanceFromWall;
             if(Math.abs(distanceError) > allowedError) {
                 // Right is negative angle, left positive
@@ -308,7 +311,9 @@ public abstract class AutonomousBase extends LinearOpMode {
         timer.reset();
         while(opModeIsActive() && !reachedDestination && (timer.milliseconds() < timeout)) {
             performEveryLoop();
-            sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
+ //           sensorDistance = frontWall ? robot.singleSonarRangeF() : robot.singleSonarRangeB();
+            sensorDistance = 10;
+
             distanceError = sensorDistance - distanceFromWall;
             if(Math.abs(distanceError) > allowedError) {
                 angleError = getError(driveAngle);

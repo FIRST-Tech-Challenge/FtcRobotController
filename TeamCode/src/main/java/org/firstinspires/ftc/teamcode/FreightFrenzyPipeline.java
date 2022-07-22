@@ -62,19 +62,15 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     private Mat alignBlueMat1;
     private Mat alignBlueMat2;
     private Mat alignBlueMat3;
-    private Mat garageBlueMat;
     private int alignBlueAvg1;
     private int alignBlueAvg2;
     private int alignBlueAvg3;
-    private int garageBlueAvg;
     private Mat alignRedMat1;
     private Mat alignRedMat2;
     private Mat alignRedMat3;
-    private Mat garageRedMat;
     private int alignRedAvg1;
     private int alignRedAvg2;
     private int alignRedAvg3;
-    private int garageRedAvg;
 
     private Point alignment1RedPointA = new Point(45,212);
     private Point alignment1RedPointB = new Point(55,222);
@@ -82,8 +78,6 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     private Point alignment2RedPointB = new Point(170,222);
     private Point alignment3RedPointA = new Point(273,212);
     private Point alignment3RedPointB = new Point(285,222);
-    private Point alignmentGarageRedPointA = new Point(35, 176);
-    private Point alignmentGarageRedPointB = new Point(45, 186);
     private final static double colorRedThreshold = 140.0;
 
     private Point alignment1BluePointA = new Point(47,209);
@@ -92,8 +86,6 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     private Point alignment2BluePointB = new Point(168,219);
     private Point alignment3BluePointA = new Point(274,209);
     private Point alignment3BluePointB = new Point(284,219);
-    private Point alignmentGarageBluePointA = new Point(280, 172);
-    private Point alignmentGarageBluePointB = new Point(290, 182);
     private final static double colorBlueThreshold = 140.0;
 
     // Public statics to be used by opMode
@@ -105,7 +97,6 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     public static boolean alignedBlueCenter;
     public static int rightBlueAverage;
     public static boolean alignedBlueRight;
-    public static boolean blueGarageDetected;
 
     public static int leftRedAverage;
     public static boolean alignedRedLeft;
@@ -113,7 +104,6 @@ class FreightFrenzyPipeline extends OpenCvPipeline
     public static boolean alignedRedCenter;
     public static int rightRedAverage;
     public static boolean alignedRedRight;
-    public static boolean redGarageDetected;
 
     public static Mat finalAutoImage = new Mat();
 
@@ -213,11 +203,9 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         alignBlueMat1 = Cb.submat(new Rect(alignment1BluePointA, alignment1BluePointB));
         alignBlueMat2 = Cb.submat(new Rect(alignment2BluePointA, alignment2BluePointB));
         alignBlueMat3 = Cb.submat(new Rect(alignment3BluePointA, alignment3BluePointB));
-        garageBlueMat = Cb.submat(new Rect(alignmentGarageBluePointA, alignmentGarageBluePointB));
         alignRedMat1 = Cr.submat(new Rect(alignment1RedPointA, alignment1RedPointB));
         alignRedMat2 = Cr.submat(new Rect(alignment2RedPointA, alignment2RedPointB));
         alignRedMat3 = Cr.submat(new Rect(alignment3RedPointA, alignment3RedPointB));
-        garageRedMat = Cr.submat(new Rect(alignmentGarageRedPointA, alignmentGarageRedPointB));
 
         // Average the three sample zones
         avg1 = (int)Core.mean(subMat1).val[0];
@@ -226,21 +214,17 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         alignBlueAvg1 = (int)Core.mean(alignBlueMat1).val[0];
         alignBlueAvg2 = (int)Core.mean(alignBlueMat2).val[0];
         alignBlueAvg3 = (int)Core.mean(alignBlueMat3).val[0];
-        garageBlueAvg = (int)Core.mean(garageBlueMat).val[0];
         alignRedAvg1 = (int)Core.mean(alignRedMat1).val[0];
         alignRedAvg2 = (int)Core.mean(alignRedMat2).val[0];
         alignRedAvg3 = (int)Core.mean(alignRedMat3).val[0];
-        garageRedAvg = (int)Core.mean(garageRedMat).val[0];
 
         // Draw alignment rectangles
         Imgproc.rectangle(input, alignment1BluePointA, alignment1BluePointB, new Scalar(0, 0, 255), 1);
         Imgproc.rectangle(input, alignment2BluePointA, alignment2BluePointB, new Scalar(0, 0, 255), 1);
         Imgproc.rectangle(input, alignment3BluePointA, alignment3BluePointB, new Scalar(0, 0, 255), 1);
-        Imgproc.rectangle(input, alignmentGarageBluePointA, alignmentGarageBluePointB, new Scalar(0, 0, 255), 1);
         Imgproc.rectangle(input, alignment1RedPointA, alignment1RedPointB, new Scalar(255, 0, 0), 1);
         Imgproc.rectangle(input, alignment2RedPointA, alignment2RedPointB, new Scalar(255, 0, 0), 1);
         Imgproc.rectangle(input, alignment3RedPointA, alignment3RedPointB, new Scalar(255, 0, 0), 1);
-        Imgproc.rectangle(input, alignmentGarageRedPointA, alignmentGarageRedPointB, new Scalar(255, 0, 0), 1);
 
         // Draw rectangles around the sample zones
         Imgproc.rectangle(input, sub1PointA, sub1PointB, new Scalar(0, 0, 255), 1);
@@ -274,7 +258,6 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         alignedBlueCenter = (alignBlueAvg2 >= colorBlueThreshold);
         rightBlueAverage = alignBlueAvg3;
         alignedBlueRight = (alignBlueAvg3 >= colorBlueThreshold);
-        blueGarageDetected = (garageBlueAvg >= colorBlueThreshold);
 
         leftRedAverage = alignRedAvg1;
         alignedRedLeft = (alignRedAvg1 >= colorRedThreshold);
@@ -282,7 +265,6 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         alignedRedCenter = (alignRedAvg2 >= colorRedThreshold);
         rightRedAverage = alignRedAvg3;
         alignedRedRight = (alignRedAvg3 >= colorRedThreshold);
-        redGarageDetected = (garageRedAvg >= colorRedThreshold);
 
         input.copyTo(finalAutoImage);
 
@@ -299,16 +281,12 @@ class FreightFrenzyPipeline extends OpenCvPipeline
         alignBlueMat2 = null;
         alignBlueMat3.release();
         alignBlueMat3 = null;
-        garageBlueMat.release();
-        garageBlueMat = null;
         alignRedMat1.release();
         alignRedMat1 = null;
         alignRedMat2.release();
         alignRedMat2 = null;
         alignRedMat3.release();
         alignRedMat3 = null;
-        garageRedMat.release();
-        garageRedMat = null;
 
         return input;
     }

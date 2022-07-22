@@ -33,7 +33,7 @@ import java.lang.Math;
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
  */
-@Autonomous(name="Autonomous Red (ducks)", group="7592", preselectTeleOp = "Teleop-Red")
+@Autonomous(name="Autonomous CNC", group="7592", preselectTeleOp = "Teleop-Red")
 //@Disabled
 public class AutonomousRducks extends AutonomousBase {
 
@@ -42,9 +42,9 @@ public class AutonomousRducks extends AutonomousBase {
     static final boolean DRIVE_Y              = true;    // Drive forward/backward
     static final boolean DRIVE_X              = false;   // Drive right/left (not DRIVE_Y)
 
-    double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
+//    double    sonarRangeL=0.0, sonarRangeR=0.0, sonarRangeF=0.0, sonarRangeB=0.0;
 
-    OpenCvCamera webcam;
+ //   OpenCvCamera webcam;
     public int hubLevel = 0;   // dynamic (gets updated every cycle during INIT)
 
     @Override
@@ -59,9 +59,10 @@ public class AutonomousRducks extends AutonomousBase {
         // Initialize webcams using OpenCV
         telemetry.addData("State", "Initializing webcam (please wait)");
         telemetry.update();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+  /*      int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+
         {
             @Override
             public void onOpened()
@@ -73,74 +74,36 @@ public class AutonomousRducks extends AutonomousBase {
             @Override
             public void onError(int errorCode)
             {
-                /*
+
                  * This will be called if the camera could not be opened
-                 */
+
             }
         });
-
+        */
         int redAlignedCount;
         int blueAlignedCount;
 		
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for team color/number
         while (!isStarted()) {
-            sonarRangeR = robot.updateSonarRangeR();
+
             telemetry.addData("ALLIANCE", "%s", "RED (ducks)");
-            telemetry.addData("Hub Level", "%d", hubLevel);
-            telemetry.addData("Sonar Range", "%.1f inches (28.0)", sonarRangeR/2.54 );
-            telemetry.addData("Left Red Alignment", "%d %b", FreightFrenzyPipeline.leftRedAverage, FreightFrenzyPipeline.alignedRedLeft);
-            telemetry.addData("Center Red Alignment", "%d %b", FreightFrenzyPipeline.centerRedAverage, FreightFrenzyPipeline.alignedRedCenter);
-            telemetry.addData("Right Red Alignment", "%d %b", FreightFrenzyPipeline.rightRedAverage, FreightFrenzyPipeline.alignedRedRight);
-            redAlignedCount = (FreightFrenzyPipeline.alignedRedLeft ? 1 : 0);
-            redAlignedCount += (FreightFrenzyPipeline.alignedRedCenter ? 1 : 0);
-            redAlignedCount += (FreightFrenzyPipeline.alignedRedRight ? 1 : 0);
-            blueAlignedCount = (FreightFrenzyPipeline.alignedBlueLeft ? 1 : 0);
-            blueAlignedCount += (FreightFrenzyPipeline.alignedBlueCenter ? 1 : 0);
-            blueAlignedCount += (FreightFrenzyPipeline.alignedBlueRight ? 1 : 0);
-            telemetry.addData("Red Garage Detected", "%b", FreightFrenzyPipeline.redGarageDetected);
-            if(redAlignedCount >= 2) {
-                telemetry.addLine("Red aligned for red autonomous. Good job!");
-                hubLevel = FreightFrenzyPipeline.hubLevel;
-            } else if (blueAlignedCount >= 2) {
-                telemetry.addLine("****************************************************");
-                telemetry.addLine("* WARNING: Blue aligned for RED autonomous. *");
-                telemetry.addLine("*          Something is wrong, so so wrong!             *");
-                telemetry.addLine("****************************************************");
-            } else {
-                telemetry.addLine("Robot is not aligned for autonomous. Robot so confused!");
-            }
-            if(!FreightFrenzyPipeline.redGarageDetected) {
-                telemetry.addLine("****************************************************");
-                telemetry.addLine("* WARNING: No Red Garage Detect for Ducks. *");
-                telemetry.addLine("*          Something is wrong, so so wrong!             *");
-                telemetry.addLine("****************************************************");
-            }
             telemetry.update();
             // Pause briefly before looping
             idle();
         } // !isStarted
 
-        // Sampling is completed during the INIT stage; No longer need camera active/streaming
-        webcam.stopStreaming();
-
-        // Only do these steps if we didn't hit STOP
-        if( opModeIsActive() ) {
-            hubLevel = FreightFrenzyPipeline.hubLevel;
-            FreightFrenzyPipeline.saveLastAutoImage();
-        }
-
-        webcam.closeCameraDevice();
+ //       webcam.closeCameraDevice();
 
         //---------------------------------------------------------------------------------
         // UNIT TEST: The following methods verify our basic robot actions.
         // Comment them out when not being tested.
-//      testGyroDrive();
+        testGyroDrive();
         //---------------------------------------------------------------------------------
 
         //---------------------------------------------------------------------------------
         // AUTONOMOUS ROUTINE:  The following method is our main autonomous.
         // Comment it out if running one of the unit tests above.
-        mainAutonomous();
+  //      mainAutonomous();
         //---------------------------------------------------------------------------------
 
         telemetry.addData("Program", "Complete");
@@ -149,295 +112,12 @@ public class AutonomousRducks extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void testGyroDrive() {
-        gyroDrive(DRIVE_SPEED_30, DRIVE_Y, 24.0, 999.9, DRIVE_THRU ); // Drive FWD 24" along current heading
-        gyroDrive(DRIVE_SPEED_30, DRIVE_X, 24.0, 999.9, DRIVE_THRU ); // Strafe RIGHT 24" along current heading
-        gyroTurn(TURN_SPEED_20, (getAngle() + 90.0) );       // Turn CW 90 Degrees
+        gyroDrive(DRIVE_SPEED_50, DRIVE_Y, 24.0, 999.9, DRIVE_THRU ); // Drive FWD 24" along current heading
+        gyroDrive(DRIVE_SPEED_50, DRIVE_X, 24.0, 999.9, DRIVE_THRU ); // Strafe RIGHT 24" along current heading
+        gyroDrive(DRIVE_SPEED_50, DRIVE_Y, -24.0, 999.9, DRIVE_THRU);
+        gyroDrive(DRIVE_SPEED_50, DRIVE_X, -24.0, 999.9, DRIVE_THRU);
+        gyroTurn(TURN_SPEED_80, (getAngle() + 160.0) );       // Turn CW 90 Degrees
+        gyroTurn(TURN_SPEED_80, (getAngle() + 155.0) );
     } // testGyroDrive
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void mainAutonomous() {
-
-        // Drive forward and collect the team element off the floor
-        if( opModeIsActive() ) {
-            telemetry.addData("Motion", "collectTeamElement");
-            telemetry.update();
-            collectTeamElement( hubLevel );
-        }
-
-        // Drive to the alliance hub to deposit freight
-        if( opModeIsActive() ) {
-            telemetry.addData("Motion", "moveToHub");
-            telemetry.update();
-            moveToHub( hubLevel );
-        }
-
-        // Deposit freight in top/middle/bottom
-        if( opModeIsActive() ) {
-            telemetry.addData("Skill", "dumpFreight");
-            telemetry.update();
-            dumpFreight( hubLevel );
-        }
-
-        // Drive to the duck carousel
-        if( opModeIsActive() ) {
-            telemetry.addData("Motion", "spinDuckCarousel");
-            telemetry.update();
-            spinDuckCarousel( hubLevel );
-        }
-
-        // Drive to square to park
-        if( opModeIsActive() ) {
-            telemetry.addData("Motion", "driveToSquare");
-            telemetry.update();
-            driveToSquare();
-        }
-
-    } // mainAutonomous
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void collectTeamElement( int level ) {
-        double turnAngle = 0.0;
-        double distanceToGrab = 3.2;
-
-        switch( level ) {
-            case 3 : turnAngle = 0.0;      // right/top
-                     distanceToGrab = -2.0;
-                     break;
-            case 2 : turnAngle = -25.0;    // middle/middle
-                     distanceToGrab = -1.8;
-                     break;
-            case 1 : turnAngle = -42.0;
-                     distanceToGrab = -3.5; // left/bottom
-                     break;
-        } // switch()
-
-        // Move forward away from field wall so it's safe to raise the arms
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, -4.2, 0.0, DRIVE_TO );
-
-        // Command capping arm into the grabbing position
-        robot.cappingArmPosInit( robot.CAPPING_ARM_POS_GRAB );
-
-        // Process the first 750 msec of motion
-        ElapsedTime fieldWallTimer = new ElapsedTime();
-        fieldWallTimer.reset();  // start now
-        while( opModeIsActive() && (fieldWallTimer.milliseconds() < 750) ) {
-            performEveryLoop();
-        }
-
-        // We're now a safe distance from the wall to rotate the wrist and open the claw
-        robot.clawServo.setPosition( robot.CLAW_SERVO_OPEN );    // open claw
-        robot.wristPositionAuto( robot.WRIST_SERVO_GRAB );       // rotate wrist into the grab position
-        robot.boxServo.setPosition( robot.BOX_SERVO_TRANSPORT );
-
-        // Finish capping arm movement before continuing
-        while( opModeIsActive() && (robot.cappingMotorAuto == true) ) {
-            performEveryLoop();
-        }
-
-        // Turn toward the team element
-        if( Math.abs(turnAngle) > 0.10 )
-            gyroTurn(TURN_SPEED_20, turnAngle );
-
-        // Drive forward to collect the element
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, distanceToGrab, 999.9, DRIVE_TO );
-        robot.clawServo.setPosition( robot.CLAW_SERVO_CLOSED );    // close claw
-        sleep( 500 );   // wait for claw to close
-
-        // With the team element in hand, raise both arms (opposite directions)
-        robot.cappingArmPosInit( robot.CAPPING_ARM_POS_LIBERTY );
-        robot.wristPositionAuto( robot.WRIST_SERVO_LIBERTY );  // store position (handles unpowered!)
-        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_VERTICAL );
-
-        // Finish both arm movements before continuing
-        while( opModeIsActive() &&
-                ((robot.cappingMotorAuto == true) || (robot.freightMotorAuto == true)) ) {
-            performEveryLoop();
-        }
-
-    } // collectTeamElement
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void moveToHub( int level ) {
-        double angleToHub = 0.0;
-        double distanceToHub = 0.0;
-        double finalDistanceToHub = 0.0;
-        int    freightArmPos = 0;
-
-        switch( level ) {
-            case 3 : angleToHub = 40.0;    // top
-                     distanceToHub = -9.0;
-                     finalDistanceToHub = 0.0;
-                     freightArmPos = robot.FREIGHT_ARM_POS_HUB_TOP_AUTO;
-                     break;
-            case 2 : angleToHub = 35.0;
-                     distanceToHub = -7.7;  // middle
-                     finalDistanceToHub = -3.0;
-                     freightArmPos = robot.FREIGHT_ARM_POS_HUB_MIDDLE_AUTO;
-                     break;
-            case 1 : angleToHub = 37.0;
-                     distanceToHub = -10.0;  // bottom
-                     finalDistanceToHub = -3.0;
-                     freightArmPos = robot.FREIGHT_ARM_POS_HUB_BOTTOM_AUTO;
-                     break;
-        } // switch()
-
-        // Start arm motion
-        robot.freightArmPosInit( freightArmPos );
-
-        // Turn toward hub
-        double currentAngle = robot.headingIMU();
-        if( Math.abs(angleToHub-currentAngle) > 2.0 )
-            gyroTurn(TURN_SPEED_20, angleToHub );
-
-        // Drive partially forward
-        if( Math.abs(distanceToHub) > 0.0 ) {
-            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, distanceToHub, angleToHub, DRIVE_TO);
-        }
-
-        // Ensure arm has reached it's final position
-        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
-            performEveryLoop();
-        }
-
-        // Drive forward the final amount
-        if( Math.abs(finalDistanceToHub) > 0 ) {
-            gyroDrive(DRIVE_SPEED_30, DRIVE_Y, finalDistanceToHub, angleToHub, DRIVE_TO );
-        }
-
-  } // moveToHub
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void dumpFreight(int level ) {
-        double servoPos = robot.BOX_SERVO_DUMP_TOP;
-        double backDistance = 3.0;
-
-        switch( level ) {
-            case 3 : servoPos = robot.BOX_SERVO_DUMP_TOP;
-                     backDistance = 4.7;
-                     break;
-            case 2 : servoPos = robot.BOX_SERVO_DUMP_MIDDLE;
-                     backDistance = 3.5;
-                     break;
-            case 1 : servoPos = robot.BOX_SERVO_DUMP_BOTTOM;
-                     backDistance = 3.5;
-                     break;
-        } // switch()
-
-        robot.boxServo.setPosition( servoPos );     // rotate the box to dump
-        sleep( 500 );                               // let cube drop out
-        // back away and store arm
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, backDistance, 999.9, DRIVE_TO );
-        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_TRANSPORT1 );
-        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
-            performEveryLoop();
-        }
-        robot.boxServo.setPosition( robot.BOX_SERVO_COLLECT );
-    } // dumpFreight
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void spinDuckCarousel( int level ) {
-        gyroTurn(TURN_SPEED_20, -90.0 );   // Turn toward wall
-        strafeToWall(false, DRIVE_SPEED_55, 27, 3000);
-        driveToWall(false, DRIVE_SPEED_55, 21, 3000);
-        timeDriveStraight(-DRIVE_SPEED_10, 1000);
-        robot.duckMotor.setPower( 0.44 );  // Enable the carousel motor
-        // We want to press against the carousel with out trying to reach a given point
-        for( int loop=0; loop<5; loop++ ) {
-            double barelyPressSpeed = 0.07;
-            switch(loop) {
-                case 0 : barelyPressSpeed = 0.07; break;
-                case 1 : barelyPressSpeed = 0.06; break;
-                case 2 : barelyPressSpeed = 0.03; break;
-                case 3 : barelyPressSpeed = 0.02; break;
-                case 4 : barelyPressSpeed = 0.02; break;
-            }
-            robot.driveTrainMotors( barelyPressSpeed, -barelyPressSpeed, -barelyPressSpeed, barelyPressSpeed );
-            sleep( 1000 );   // Spin the carousel for 5 seconds total
-        } // loop
-        robot.duckMotor.setPower( 0.0 );  // Disable carousel motor
-    } // spinDuckCarousel
-
-    /*--------------------------------------------------------------------------------------------*/
-    private void driveToSquare() {
-        timeDriveStrafe( DRIVE_SPEED_30, 750 );
-        gyroDrive(DRIVE_SPEED_20, DRIVE_Y, 4.0,-90.0, DRIVE_TO );
-        double squareDistance = 29.5 - robot.singleSonarRangeR()/2.54;
-        gyroDrive(DRIVE_SPEED_40, DRIVE_X, -squareDistance, 999.9, DRIVE_TO );
-        // Don't lower arm to floor until we get into the square, in case the freight box has rotated
-        // (the front edge will catch on the floor tile when we try to drive forward)
-        robot.freightArmPosInit( robot.FREIGHT_ARM_POS_COLLECT );
-        while( opModeIsActive() && (robot.freightMotorAuto == true) ) {
-            performEveryLoop();
-        }
-        timeDriveStraight(-DRIVE_SPEED_10, 1000);
-        // Until Autonomous ends (30 seconds), wait for arm to come down
-        while( opModeIsActive() ) {
-            sleep(75);  // wait for arm to lower
-        }
-    } // driveToSquare
-
-    /*---------------------------------------------------------------------------------*/
-    /*  TELE-OP: Capture range-sensor data (one reading! call from main control loop)  */
-    /*                                                                                 */
-    /*  Designed for test programs that are used to assess the mounting location of    */
-    /*  your sensors and whether you get reliable/repeatable returns off various field */
-    /*  elements.                                                                      */
-    /*                                                                                 */
-    /*  IMPORTANT!! updateSonarRangeL / updateSonarRangeR may call getDistanceSync(),  */
-    /*  which sends out an ultrasonic pulse and SLEEPS for the sonar propogation delay */
-    /*  (50 sec) before reading the range result.  Don't use in applications where an  */
-    /*  extra 50/100 msec (ie, 1 or 2 sensors) in the loop time will create problems.  */
-    /*  If getDistanceAsync() is used, then this warning doesn't apply.                */
-    /*---------------------------------------------------------------------------------*/
-    void processRangeSensors() {
-        sonarRangeL = robot.updateSonarRangeL();
-        sonarRangeR = robot.updateSonarRangeR();
-        sonarRangeF = robot.updateSonarRangeF();
-        sonarRangeB = robot.updateSonarRangeB();
-    } // processRangeSensors
-
-    /*---------------------------------------------------------------------------------*/
-    /*  TELE-OP: averaged range-sensor data (multiple readings!)                       */
-    /*                                                                                 */
-    /*  Designed for applications where continuous range updates are unnecessary, but  */
-    /*  we want to know the correct distance "right now".                              */
-    /*---------------------------------------------------------------------------------*/
-    void averagedRangeSensors() {
-        // repeatedly update all 4 readings.  Each loop adds a reading to the
-        // internal array from which we return the new MEDIAN value.
-        for( int i=0; i<5; i++ ) {
-            sonarRangeL = robot.updateSonarRangeL();
-            sonarRangeR = robot.updateSonarRangeR();
-            sonarRangeF = robot.updateSonarRangeF();
-            sonarRangeB = robot.updateSonarRangeB();
-        }
-    } // averagedRangeSensors
-
-    /*---------------------------------------------------------------------------------*/
-    double rightRangeSensor() {
-        for( int i=0; i<5; i++ ) {
-            sleep(50);
-            sonarRangeR = robot.updateSonarRangeR();
-        }
-        return sonarRangeR;
-    } // rightRangeSensor
-
-    /*---------------------------------------------------------------------------------*/
-    double backRangeSensor() {
-        for( int i=0; i<6; i++ ) {
-            sleep(50);
-            sonarRangeB = robot.updateSonarRangeB();
-        }
-        return sonarRangeB;
-    } // backRangeSensor
-
-    /*---------------------------------------------------------------------------------*/
-    double computeDriveAngle( double x0, double x1, double y0, double y1 ) {
-        double deltaX = (x1 - x0);
-        double deltaY = (y1 - y0);  // must drive at least 10 cm (also avoids trig error)
-        double driveAngle = (deltaY < 10.0)? 0.0 : Math.atan2(deltaX,deltaY);  // radians
-        driveAngle = driveAngle * (180.0 / Math.PI);  // degrees
-        return driveAngle;
-    } // computeDriveAngle
 
 } /* AutonomousRducks */
