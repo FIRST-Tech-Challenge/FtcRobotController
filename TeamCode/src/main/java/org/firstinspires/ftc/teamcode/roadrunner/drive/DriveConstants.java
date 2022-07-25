@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static java.lang.Math.PI;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -44,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.95; // in
+    public static double TRACK_WIDTH = 10.77; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -63,18 +65,18 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 90;
-    public static double MAX_ACCEL = 60;
-    public static double MAX_ANG_VEL = Math.toRadians(1338.1/4.0);
-    public static double MAX_ANG_ACCEL = Math.toRadians(60);
+    public static double MAX_VEL = MAX_RPM/60*GEAR_RATIO*WHEEL_RADIUS*2*PI*0.8;
+    public static double MAX_ACCEL = MAX_RPM/60*GEAR_RATIO*WHEEL_RADIUS*2*PI*0.8;
+    public static double MAX_ANG_VEL = 7.9;
+    public static double MAX_ANG_ACCEL = 7.3;
 
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_RADIUS * 2 * PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
     public static double rpmToVelocity(double rpm) {
-        return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
+        return rpm * GEAR_RATIO * 2 * PI * WHEEL_RADIUS / 60.0;
     }
 
     public static double getMotorVelocityF(double ticksPerSecond) {

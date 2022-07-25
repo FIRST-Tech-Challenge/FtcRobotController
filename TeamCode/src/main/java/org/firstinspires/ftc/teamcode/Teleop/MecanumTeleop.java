@@ -21,12 +21,17 @@ public class MecanumTeleop extends LinearOpMode {
     DcMotorEx motorRightFront;
     DcMotorEx motorLeftBack;
     DcMotorEx motorRightBack;
+    DcMotorEx extendIntake;
+    private final double MAX_INTAKE_EXTENSION_TICKS=545;
 
     public void runOpMode() {
         motorLeftFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
         motorRightFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
+        extendIntake = (DcMotorEx) op.hardwareMap.dcMotor.get("turret_Rotation");
+        extendIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -54,10 +59,14 @@ public class MecanumTeleop extends LinearOpMode {
 
             powera = -sin(angle + PI/4);
             powerb = -sin(angle - PI/4);
+            double extendPower = op.gamepad1.right_trigger-op.gamepad1.left_trigger;
+            if(extendIntake.getCurrentPosition()<MAX_INTAKE_EXTENSION_TICKS&&extendPower>0||extendIntake.getCurrentPosition()>5&&extendPower<0)
+                extendIntake.setPower((extendPower)*1.0);
             motorLeftFront.setPower(powerb * leftStickr + rightStick);
             motorRightBack.setPower(powerb * leftStickr - rightStick);
             motorRightFront.setPower(powera * leftStickr - rightStick);
             motorLeftBack.setPower(powera * leftStickr + rightStick);
+            op.telemetry.addData("extendTickles :p", extendIntake.getCurrentPosition());
             tracker.track();
         }
 
