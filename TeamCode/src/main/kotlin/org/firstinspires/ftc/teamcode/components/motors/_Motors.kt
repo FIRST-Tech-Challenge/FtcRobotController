@@ -17,7 +17,7 @@ fun initializedMotor(name: String, hwMap: HardwareMap, zpb: ZPB = ZPB.BRAKE, rev
         .apply {
             mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
             zeroPowerBehavior = zpb
-            direction = if (reversed) DCDirection.REVERSE else DCDirection.REVERSE
+            direction = if (reversed) DCDirection.REVERSE else DCDirection.FORWARD
         }
 }
 
@@ -26,12 +26,6 @@ fun initializedDriveMotors(hwMap: HardwareMap) = Motors().apply {
     frontRight = initializedMotor("FR", hwMap)
     backLeft = initializedMotor("BL", hwMap)
     backRight = initializedMotor("BR", hwMap)
-}
-
-fun initializedMotors(hwMap: HardwareMap) = initializedDriveMotors(hwMap).apply {
-    intake = initializedMotor("IN", hwMap, zpb = ZPB.FLOAT)
-    duck = initializedMotor("DU", hwMap, zpb = ZPB.FLOAT)
-    lift = initializedMotor("LI", hwMap, reversed = true)
 }
 
 fun Motors.logDriveMotorData(telemetry: Telemetry, dataSupplier: (DcMotorEx) -> Any) {

@@ -19,7 +19,7 @@ class TestOp : OpMode() {
 
     override fun loop() {
         drive()
-        motors.logDriveMotorData(telemetry) { it.power }
+        motors.logDriveMotorData(telemetry) { it.currentPosition }
         updateTelemetry(telemetry)
     }
 
