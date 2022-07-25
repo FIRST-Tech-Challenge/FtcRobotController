@@ -19,12 +19,15 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 
 @Config
 @TeleOp(name="Mechavator", group="AAA")
+
+// ****** STOP - This version of Mechavator is retired - use version built on OpenRC
+
 public class Mechavator extends OpMode {
 
-    AnalogInput leftInput, rightInput;
+    AnalogInput leftTrack, rightTrack;
     FtcDashboard dashboard;
     DcMotorEx motorLeft, motorRight, motorStick, motorSwing, motorBoom, motorBucket;
-    Servo deadManSafety, servoThumb;
+    Servo deadManSafety, servoThumb, camPan, camTilt;
     Servo deadManSafety2; //the backup safety is being moved to an independent RC controller
     StickyGamepad stickyGamepad1;
     PIDController leftController, rightController;
@@ -48,15 +51,18 @@ public class Mechavator extends OpMode {
 
     @Override
     public void init() {
-        leftInput = hardwareMap.analogInput.get("leftinput");
+        leftTrack = hardwareMap.analogInput.get("leftinput");
         motorLeft = hardwareMap.get(DcMotorEx.class, "leftmotor");
-        rightInput = hardwareMap.analogInput.get("rightinput");
+        rightTrack = hardwareMap.analogInput.get("rightinput");
         motorRight = hardwareMap.get(DcMotorEx.class, "rightmotor");
         motorStick = hardwareMap.get(DcMotorEx.class, "stick");
         motorSwing = hardwareMap.get(DcMotorEx.class, "swing");
         motorBoom = hardwareMap.get(DcMotorEx.class, "boom");
         motorBucket = hardwareMap.get(DcMotorEx.class, "bucket");
         deadManSafety = hardwareMap.get(Servo.class, "deadManSafety");
+        camPan = hardwareMap.get(Servo.class, "pan");
+        camTilt = hardwareMap.get(Servo.class, "tilt");
+
         //deadManSafety2 = hardwareMap.get(Servo.class, "backupSafety");
         //servoThumb = hardwareMap.get(Servo.class, "thumb");
         //deadManSafety2 = hardwareMap.get(ServoImplEx.class, "deadManSafety");
@@ -70,6 +76,8 @@ public class Mechavator extends OpMode {
         //motorSwing.setDirection(DcMotorSimple.Direction.REVERSE);
         //motorBoom.setDirection(DcMotorSimple.Direction.REVERSE);
         //motorBucket.setDirection(DcMotorSimple.Direction.REVERSE);
+        camPan.setPosition(.5);
+        camTilt.setPosition(.5);
 
         dashboard = FtcDashboard.getInstance();
         stickyGamepad1 = new StickyGamepad(gamepad1);
@@ -215,8 +223,8 @@ public class Mechavator extends OpMode {
             targetRightPosition = ZERO_POSITION;
         }
 
-        leftPosition = leftInput.getVoltage();
-        rightPosition = rightInput.getVoltage();
+        leftPosition = leftTrack.getVoltage();
+        rightPosition = rightTrack.getVoltage();
 
 
         if (gamepad1.left_trigger>.5) //hold in for safety disabled
