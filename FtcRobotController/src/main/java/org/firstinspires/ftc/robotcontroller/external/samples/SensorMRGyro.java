@@ -49,7 +49,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  * I2C channel and is configured with a name of "gyro".
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
 */
 @TeleOp(name = "Sensor: MR Gyro", group = "Sensor")
 @Disabled
@@ -83,7 +83,7 @@ public class SensorMRGyro extends LinearOpMode {
     // A similar approach will work for the Gyroscope interface, if that's all you need.
 
     // Start calibrating the gyro. This takes a few seconds and is worth performing
-    // during the initialization phase at the start of each opMode.
+    // during the initialization phase at the start of each OpMode.
     telemetry.log().add("Gyro Calibrating. Do Not Move!");
     modernRoboticsI2cGyro.calibrate();
 
