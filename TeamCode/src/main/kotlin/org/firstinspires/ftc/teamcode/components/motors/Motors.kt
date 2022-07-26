@@ -8,7 +8,4 @@ class Motors {
     var frontRight: DcMotorEx by initializableOnce()
     var backLeft: DcMotorEx by initializableOnce()
     var backRight: DcMotorEx by initializableOnce()
-    var intake: DcMotorEx by initializableOnce()
-    var lift: DcMotorEx by initializableOnce()
-    var duck: DcMotorEx by initializableOnce()
 }

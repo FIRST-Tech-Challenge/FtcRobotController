@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.teleops
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.components.deadwheels.Deadwheels
+import org.firstinspires.ftc.teamcode.components.deadwheels.initializedDeadwheels
+import org.firstinspires.ftc.teamcode.components.deadwheels.logDeadwheelData
 import org.firstinspires.ftc.teamcode.components.motors.Motors
 import org.firstinspires.ftc.teamcode.components.motors.initializedDriveMotors
-import org.firstinspires.ftc.teamcode.components.motors.logDriveMotorData
 import org.firstinspires.ftc.teamcode.util.initializableOnce
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -12,14 +14,16 @@ import kotlin.math.absoluteValue
 @TeleOp(name = "TestOpKt")
 class TestOp : OpMode() {
     private var motors: Motors by initializableOnce()
+    private var deadwheels: Deadwheels by initializableOnce()
 
     override fun init() {
         motors = initializedDriveMotors(hardwareMap)
+        deadwheels = initializedDeadwheels(motors)
     }
 
     override fun loop() {
         drive()
-        motors.logDriveMotorData(telemetry) { it.currentPosition }
+        deadwheels.logDeadwheelData(telemetry) { it.ticks }
         updateTelemetry(telemetry)
     }
 

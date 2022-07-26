@@ -17,19 +17,10 @@ fun initializedServo(name: String, hwMap: HardwareMap, pos: Double, reversed: Bo
         }
 }
 
-/*
-var Servos.armsPositions: Double
-    get() = arm1.position
-    set(value) {
-        arm1.position = value
-        arm2.position = value
-    }
-*/
-
 fun initializedServos(hardwareMap: HardwareMap) = Servos().apply {
     indexer = initializedServo("IND", hardwareMap, pos = .5)
 }
 
-fun Servos.logMotorData(telemetry: Telemetry, dataSupplier: (Servo) -> Any) {
+fun Servos.logServoData(telemetry: Telemetry, dataSupplier: (Servo) -> Any) {
     telemetry.addData("IND", dataSupplier(indexer))
 }
