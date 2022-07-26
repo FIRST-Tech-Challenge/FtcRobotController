@@ -7,7 +7,6 @@ import kotlin.reflect.KProperty
 inline fun <reified T> initializableOnce(): LateInitVal<T> = LateInitVal()
 
 class LateInitVal<T> {
-    private object Uninitialized
     private var value: Any? = Uninitialized
 
     operator fun getValue(thisRef: Any, property: KProperty<*>): T {
@@ -24,3 +23,5 @@ class LateInitVal<T> {
         value = _value
     }
 }
+
+private object Uninitialized
