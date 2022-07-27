@@ -2,10 +2,16 @@ package org.firstinspires.ftc.teamcode.components.deadwheels
 
 import com.qualcomm.robotcore.hardware.DcMotor
 
-@JvmInline
-value class Deadwheel(
+class Deadwheel(
     private val correspondingMotor: DcMotor,
 ) {
-    val ticks: Int
+    val ticks
         get() = correspondingMotor.currentPosition
+
+    var prevTicks = 0
+        private set
+
+    fun snapshotTicks() {
+        prevTicks = correspondingMotor.currentPosition
+    }
 }

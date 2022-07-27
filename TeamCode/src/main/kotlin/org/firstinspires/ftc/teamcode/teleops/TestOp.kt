@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.components.deadwheels.Deadwheels
 import org.firstinspires.ftc.teamcode.components.deadwheels.initializedDeadwheels
 import org.firstinspires.ftc.teamcode.components.deadwheels.logDeadwheelData
+import org.firstinspires.ftc.teamcode.components.deadwheels.snapshotTicks
 import org.firstinspires.ftc.teamcode.components.motors.Motors
 import org.firstinspires.ftc.teamcode.components.motors.initializedDriveMotors
 import org.firstinspires.ftc.teamcode.util.initializableOnce
@@ -24,6 +25,7 @@ class TestOp : OpMode() {
     override fun loop() {
         drive()
         deadwheels.logDeadwheelData(telemetry) { it.ticks }
+        deadwheels.snapshotTicks()
         updateTelemetry(telemetry)
     }
 

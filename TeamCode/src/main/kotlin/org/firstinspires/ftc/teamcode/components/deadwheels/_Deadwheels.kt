@@ -14,3 +14,9 @@ fun Deadwheels.logDeadwheelData(telemetry: Telemetry, dataSupplier: (Deadwheel) 
     telemetry.addData("Right wheel:", dataSupplier(right))
     telemetry.addData("Back wheel:", dataSupplier(back))
 }
+
+fun Deadwheels.snapshotTicks() = this.run {
+    left.snapshotTicks()
+    right.snapshotTicks()
+    back.snapshotTicks()
+}
