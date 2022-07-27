@@ -8,4 +8,5 @@ class Motors {
     var frontRight: DcMotorEx by initializableOnce()
     var backLeft: DcMotorEx by initializableOnce()
     var backRight: DcMotorEx by initializableOnce()
+    var shooter: DcMotorEx by initializableOnce()
 }
