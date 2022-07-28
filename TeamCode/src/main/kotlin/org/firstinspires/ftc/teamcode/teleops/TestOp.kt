@@ -64,7 +64,7 @@ class TestOp : OpMode() {
     }
 
     private fun shoot() {
-        shooter.power = gamepad1.right_trigger.toDouble()
-        shooter.indexerToggled = gamepad1.a
+        shooter.motor.power = gamepad1.right_trigger.toDouble().takeIf { it > 0.6 } ?: 0.0
+        shooter.setIndexerToggled(gamepad1.a)
     }
 }

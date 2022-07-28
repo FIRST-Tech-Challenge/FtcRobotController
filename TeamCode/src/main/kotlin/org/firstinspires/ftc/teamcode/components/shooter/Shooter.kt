@@ -15,17 +15,9 @@ class Shooter {
     var indexer: Servo by initializableOnce()
     var motor: DcMotorEx by initializableOnce()
 
-    var power
-        get() = motor.power
-        set(value) {
-            motor.power = if (value > 0.6) value else 0.0
-        }
-
-    var indexerToggled
-        get() = (indexer.position == INDEXER_FORWARD)
-        set(value) {
-            indexer.position = if (value) INDEXER_FORWARD else INDEXER_BACK
-        }
+    fun setIndexerToggled(value: Boolean) {
+        indexer.position = if (value) INDEXER_FORWARD else INDEXER_BACK
+    }
 
     fun logIndexerData(telemetry: Telemetry, dataSupplier: DataSupplier<Servo>) {
         telemetry.addData("Indexer", dataSupplier(indexer))
