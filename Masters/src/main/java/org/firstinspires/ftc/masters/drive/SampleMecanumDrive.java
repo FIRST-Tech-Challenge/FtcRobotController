@@ -634,17 +634,19 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void findDuckRed(){
 
         //strafe right
-        double speed = 0.35;
+        double speed = 0.30 * 2792;
 
         ElapsedTime elapsedTime= new ElapsedTime();
+
+        frontLeft.setVelocity(speed);
+        frontRight.setVelocity(-speed);
+        backLeft.setVelocity(-speed);
+        backRight.setVelocity(speed);
 
         while (this.opmode.opModeIsActive() && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT2 &&
                 analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.LEFT1
                 && analyzeDuck()!= MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.CENTER && elapsedTime.milliseconds()<2500){
-            frontLeft.setPower(speed);
-            frontRight.setPower(-speed);
-            backLeft.setPower(-speed);
-            backRight.setPower(speed);
+
         }
 
         intakeMotor.setPower(0.8);
@@ -656,7 +658,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void findDuckBlue(){
 
         //strafe right
-        double speed = 0.35 * 2792;
+        double speed = 0.30 * 2792;
         ElapsedTime elapsedTime= new ElapsedTime();
 
         frontLeft.setVelocity(-speed);
