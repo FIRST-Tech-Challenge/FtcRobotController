@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.components.motors.DCMode
 import org.firstinspires.ftc.teamcode.components.motors.ZPB
 import org.firstinspires.ftc.teamcode.components.motors.initializedMotor
 import org.firstinspires.ftc.teamcode.components.servos.initializedServo
+import org.firstinspires.ftc.teamcode.util.DataSupplier
 import org.firstinspires.ftc.teamcode.util.initializableOnce
 
 class Shooter {
@@ -26,11 +27,11 @@ class Shooter {
             indexer.position = if (value) INDEXER_FORWARD else INDEXER_BACK
         }
 
-    fun logIndexerData(telemetry: Telemetry, dataSupplier: (Servo) -> Any) {
+    fun logIndexerData(telemetry: Telemetry, dataSupplier: DataSupplier<Servo>) {
         telemetry.addData("Indexer", dataSupplier(indexer))
     }
 
-    fun logMotorData(telemetry: Telemetry, dataSupplier: (DcMotorEx) -> Any) {
+    fun logMotorData(telemetry: Telemetry, dataSupplier: DataSupplier<DcMotorEx>) {
         telemetry.addData("Motor", dataSupplier(motor))
     }
 
@@ -41,6 +42,6 @@ class Shooter {
 }
 
 fun initializedShooter(hwMap: HardwareMap) = Shooter().apply {
-    indexer = initializedServo("IND", hwMap, pos = .5)
+    indexer = initializedServo("IND", hwMap, pos = Shooter.INDEXER_BACK)
     motor = initializedMotor("SH", hwMap, zpb = ZPB.FLOAT, runMode = DCMode.RUN_USING_ENCODER)
 }

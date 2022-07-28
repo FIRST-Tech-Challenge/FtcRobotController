@@ -27,9 +27,3 @@ fun initializedMotor(
             direction = if (reversed) DCDirection.REVERSE else DCDirection.FORWARD
         }
 }
-
-//    shooter = initializedMotor("SH", hwMap, zpb = ZPB.FLOAT, runMode = DCMode.RUN_USING_ENCODER)
-
-//fun DriveMotors.logShooterData(telemetry: Telemetry, dataSupplier: (DcMotorEx) -> Any) {
-//    telemetry.addData("Shooter motor:", dataSupplier(shooter))
-//}
