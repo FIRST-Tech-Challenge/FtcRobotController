@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="TeleopBadV2")
+@TeleOp(name="TeleopBadOneControllerV2")
 
-public class TeleopBadV2 extends LinearOpMode {
+public class TeleopBadOneControllerV2 extends LinearOpMode {
 
     double MAX_SPEED = 0.9;
+    int LiftPos = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -112,34 +113,34 @@ public class TeleopBadV2 extends LinearOpMode {
             }
 
             // Dumps the cup which is attached to the linear slides
-            if (gamepad2.dpad_left) { // Dumps cup left
+            if (gamepad1.dpad_left) { // Dumps cup left
                 dump.setPosition(0.95);
                 sleep(700);
                 dump.setPosition(0.52);
             }
-            if (gamepad2.dpad_right) { // Dumps cup right
+            if (gamepad1.dpad_right) { // Dumps cup right
                 dump.setPosition(0.0);
                 sleep(700);
                 dump.setPosition(0.52);
             }
 
             // Spins the motor for the linear slides
-            if (gamepad2.dpad_up) { // Moves Slides Up
+            if (gamepad1.dpad_up) { // Moves Slides Up
                 slide.setPower(1);
             } else {
                 slide.setPower(0);
             }
 
-            if (gamepad2.dpad_down) { // Moves Slides Down
+            if (gamepad1.dpad_down) { // Moves Slides Down
                 slide.setPower(-0.5);
             } else {
                 slide.setPower(0);
             }
 
             // Spins the intake
-            if (gamepad2.right_trigger > 0.1) {
+            if (gamepad1.right_trigger > 0.1) {
                 intake.setPower(-1);
-            } else if (gamepad2.left_trigger > 0.1) {
+            } else if (gamepad1.left_trigger > 0.1) {
                 intake.setPower(1);
             } else {
                 intake.setPower(0);
@@ -151,9 +152,9 @@ public class TeleopBadV2 extends LinearOpMode {
     }
 
     protected void turnDuck(DcMotor carousel){
-        if(gamepad2.right_bumper){
+        if(gamepad1.right_bumper){
             carousel.setPower(-0.5 );
-        } else  if (gamepad2.left_bumper){
+        } else  if (gamepad1.left_bumper){
             carousel.setPower(0.5);
         }else {
             carousel.setPower(0);
@@ -162,5 +163,3 @@ public class TeleopBadV2 extends LinearOpMode {
     }
 
 }
-
-// Hello human it seems you have scrolled to the end of the code i hope you have a great rest of your day :)
