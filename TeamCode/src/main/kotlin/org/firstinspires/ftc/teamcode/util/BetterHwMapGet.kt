@@ -24,6 +24,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
  *
  * @param T The type of the component you want to get.
  * @param name The name of the component you want to get.
+ * @author KG
  */
 private class KDocBugsOutForSingleExpressionFunctionsAndDoesntRenderSoJustIgnoreThisClassPlease
 private class IJustPutTheseHereToMakeKDocsWorkIgnoreThemTheDocRefersToHardwareMapDotUnderscoreGet

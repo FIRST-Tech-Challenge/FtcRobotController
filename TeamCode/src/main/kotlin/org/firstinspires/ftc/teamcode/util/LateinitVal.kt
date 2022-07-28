@@ -33,6 +33,7 @@ import kotlin.reflect.KProperty
  * ```
  *
  * @param T The type of the value that is being delegated to.
+ * @author KG
  */
 class LateInitVal<T> {
     private var value: Any? = Uninitialized

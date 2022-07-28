@@ -29,5 +29,6 @@ package org.firstinspires.ftc.teamcode.util
  * less repetitive__
  *
  * @param Component The part being passed into the data supplier function
+ * @author KG
  */
 typealias DataSupplier<Component> = (Component) -> Any
