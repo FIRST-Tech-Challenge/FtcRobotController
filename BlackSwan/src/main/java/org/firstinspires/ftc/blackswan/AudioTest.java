@@ -109,6 +109,10 @@ public class AudioTest extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+        SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldSoundID);
+        telemetry.addData("Playing", "Resource Gold");
+        telemetry.update();
+
         telemetry.addData(">", "Press X, B to play sounds.");
         telemetry.update();
 
