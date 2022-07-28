@@ -16,11 +16,3 @@ fun initializedServo(name: String, hwMap: HardwareMap, pos: Double, reversed: Bo
             direction = if (reversed) SDirection.REVERSE else SDirection.FORWARD
         }
 }
-
-fun initializedServos(hardwareMap: HardwareMap) = Servos().apply {
-    indexer = initializedServo("IND", hardwareMap, pos = .5)
-}
-
-fun Servos.logServoData(telemetry: Telemetry, dataSupplier: (Servo) -> Any) {
-    telemetry.addData("IND", dataSupplier(indexer))
-}
