@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.components.deadwheels
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.components.motors.DriveMotors
 import org.firstinspires.ftc.teamcode.util.DataSupplier
-import org.firstinspires.ftc.teamcode.util.initializableOnce
+import org.firstinspires.ftc.teamcode.util.LateInitVal
 
 class Deadwheels {
-    var left: Deadwheel by initializableOnce()
-    var right: Deadwheel by initializableOnce()
-    var back: Deadwheel by initializableOnce()
+    var left: Deadwheel by LateInitVal()
+    var right: Deadwheel by LateInitVal()
+    var back: Deadwheel by LateInitVal()
 
     fun logData(telemetry: Telemetry, dataSupplier: DataSupplier<Deadwheel>) {
         telemetry.addData("Left wheel:", dataSupplier(left))

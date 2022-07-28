@@ -9,11 +9,11 @@ import org.firstinspires.ftc.teamcode.components.motors.ZPB
 import org.firstinspires.ftc.teamcode.components.motors.initializedMotor
 import org.firstinspires.ftc.teamcode.components.servos.initializedServo
 import org.firstinspires.ftc.teamcode.util.DataSupplier
-import org.firstinspires.ftc.teamcode.util.initializableOnce
+import org.firstinspires.ftc.teamcode.util.LateInitVal
 
 class Shooter {
-    var indexer: Servo by initializableOnce()
-    var motor: DcMotorEx by initializableOnce()
+    var indexer: Servo by LateInitVal()
+    var motor: DcMotorEx by LateInitVal()
 
     fun setIndexerToggled(value: Boolean) {
         indexer.position = if (value) INDEXER_FORWARD else INDEXER_BACK

@@ -4,8 +4,6 @@ package org.firstinspires.ftc.teamcode.util
 
 import kotlin.reflect.KProperty
 
-inline fun <reified T> initializableOnce(): LateInitVal<T> = LateInitVal()
-
 class LateInitVal<T> {
     private var value: Any? = Uninitialized
 

@@ -8,15 +8,15 @@ import org.firstinspires.ftc.teamcode.components.motors.DriveMotors
 import org.firstinspires.ftc.teamcode.components.motors.initializedDriveMotors
 import org.firstinspires.ftc.teamcode.components.shooter.Shooter
 import org.firstinspires.ftc.teamcode.components.shooter.initializedShooter
-import org.firstinspires.ftc.teamcode.util.initializableOnce
+import org.firstinspires.ftc.teamcode.util.LateInitVal
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @TeleOp(name = "TestOpKt")
 class TestOp : OpMode() {
-    private var motors: DriveMotors by initializableOnce()
-    private var deadwheels: Deadwheels by initializableOnce()
-    private var shooter: Shooter by initializableOnce()
+    private var motors: DriveMotors by LateInitVal()
+    private var deadwheels: Deadwheels by LateInitVal()
+    private var shooter: Shooter by LateInitVal()
 
     //TODO: Probably remove the deadwheels from the TeleOp
     override fun init() {
