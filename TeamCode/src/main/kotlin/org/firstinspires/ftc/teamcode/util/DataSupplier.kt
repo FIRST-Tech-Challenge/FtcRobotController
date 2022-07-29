@@ -11,7 +11,7 @@ package org.firstinspires.ftc.teamcode.util
  *
  * Example of usage; probably will not be used in your own code
  * ```
- * fun DriveMotors.logDriveMotorData(dataSupplier: DataSupplier<DcMotorEx>) {
+ * fun DriveMotors.logMotorData(dataSupplier: DataSupplier<DcMotorEx>) {
  *   telemetry.addData("Front-left motor:", dataSupplier(frontLeft))
  *   telemetry.addData("Front-right motor:", dataSupplier(frontRight))
  *   //...etc
@@ -19,13 +19,20 @@ package org.firstinspires.ftc.teamcode.util
  *
  * fun main() {
  *   val driveMotors = //...
- *   logDriveMotorData(driveMotors) { it.power } // logs the drive motors' powers.
- *   logDriveMotorData(driveMotors) { motor -> motor.velocity } // logs velocities.
- *   // ^ either way works, though 'it' is more idiomatic for single param lambdas
+ *   driveMotors.logMotorData { it.power } // logs the drive motors' powers
+ *   driveMotors.logMotorData { motor -> motor.velocity } // logs velocities
+ * }
+ *
+ * public static void main(String... args) {
+ *   DriveMotors driveMotors = //...
+ *   driveMotors.logMotorData(DcMotorEx::getPower); // logs the drive motors' powers
+ *   driveMotors.logMotorData((motor) -> motor.getVelocity()); // logs velocities
  * }
  * ```
  *
- * __Honestly, just don't worry about this. I just added it to make some of the code cleaner and
+ * _Note: Both language examples produce the exact same objects_
+ *
+ * __Honestly, just don't overthink this. I just added it to make some of the code cleaner and
  * less repetitive__
  *
  * @param Component The part being passed into the data supplier function
