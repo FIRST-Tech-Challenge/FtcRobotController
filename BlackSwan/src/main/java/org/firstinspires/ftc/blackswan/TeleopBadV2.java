@@ -126,14 +126,10 @@ public class TeleopBadV2 extends LinearOpMode {
             // Spins the motor for the linear slides
             if (gamepad2.dpad_up) { // Moves Slides Up
                 slide.setPower(1);
+            } else if (gamepad2.dpad_down) {
+                slide.setPower(-1);
             } else {
-                slide.setPower(0);
-            }
-
-            if (gamepad2.dpad_down) { // Moves Slides Down
-                slide.setPower(-0.5);
-            } else {
-                slide.setPower(0);
+                slide.setPower(0.0);
             }
 
             // Spins the intake
@@ -143,6 +139,11 @@ public class TeleopBadV2 extends LinearOpMode {
                 intake.setPower(1);
             } else {
                 intake.setPower(0);
+            }
+
+            // Returns cup to defaults position
+            if (gamepad2.y) {
+                dump.setPosition(0.52);
             }
 
             turnDuck(carousel);
