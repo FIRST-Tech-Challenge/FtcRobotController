@@ -21,7 +21,9 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 29
+    // androidx.preferences compatibility
+    // you may need to download sdk 31 support libraries
+    compileSdkVersion 31
 
     signingConfigs {
         release {
