@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -22,13 +23,10 @@ public class Robot {
     public Color colorSensor;
     Telemetry telemetry;
     DcMotor frontLeft, backLeft, frontRight, backRight;
-    DcMotor carousel, arm, intake;
+    DcMotor carousel, slide, intake;
+    Servo dump;
     BNO055IMU imu;
     LinearOpMode opMode;
-    RevColorSensorV3 colorSensorLeft;
-    RevColorSensorV3 colorSensorRight;
-    RevColorSensorV3 colorSensorBack;
-
 
     final int TICKS_PER_ROTATION = 537;
 
@@ -45,16 +43,13 @@ public class Robot {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
-        intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        colorSensorLeft = hardwareMap.get(RevColorSensorV3.class, "colorSensorLeft");
-        colorSensorRight = hardwareMap.get(RevColorSensorV3.class, "colorSensorRight");
-        colorSensorBack = hardwareMap.get(RevColorSensorV3.class,"colorSensorBack");
+
+        slide = hardwareMap.get(DcMotor.class, "slide");
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
+        dump = hardwareMap.get(Servo.class, "dump");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -248,38 +243,43 @@ public class Robot {
 
     public void armThing(int level) {
         if (level == 1) {
-            arm.setTargetPosition(500);
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(.5);
-            while (arm.isBusy() && this.opMode.opModeIsActive()) {
+            slide.setTargetPosition(500);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide.setPower(.5);
+            while (slide.isBusy() && this.opMode.opModeIsActive()) {
             }
         }
         if(level ==2){
 
-        arm.setTargetPosition(800);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(.5);
-        while (arm.isBusy() && this.opMode.opModeIsActive()) {
+        slide.setTargetPosition(800);
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slide.setPower(.5);
+        while (slide.isBusy() && this.opMode.opModeIsActive()) {
         }
     }
         if(level ==3){
-            arm.setTargetPosition(1200);
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(.5);
-            while (arm.isBusy() && this.opMode.opModeIsActive()) {
+            slide.setTargetPosition(1200);
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            slide.setPower(.5);
+            while (slide.isBusy() && this.opMode.opModeIsActive()) {
             }
     }
 
     }
 
-    public void eject(){
-        intake.setPower(-1);
-        pause(1000);
-        intake.setPower(0);
+    public void dumpLeft(){
+        dump.setPosition(0.80);
+        pause(700);
+        dump.setPosition(0.52);
+    }
+    public void dumpRight(){
+        dump.setPosition(0.15);
+        pause(700);
+        dump.setPosition(0.52);
     }
     public void liftForMovement() {
-        arm.setTargetPosition(125);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setPower(0.5);
+        slide.setTargetPosition(125);
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slide .setPower(0.5);
     }
 }

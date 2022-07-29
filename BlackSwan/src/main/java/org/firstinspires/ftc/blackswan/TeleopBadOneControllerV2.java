@@ -114,12 +114,12 @@ public class TeleopBadOneControllerV2 extends LinearOpMode {
 
             // Dumps the cup which is attached to the linear slides
             if (gamepad1.dpad_left) { // Dumps cup left
-                dump.setPosition(0.95);
+                dump.setPosition(0.80);
                 sleep(700);
                 dump.setPosition(0.52);
             }
             if (gamepad1.dpad_right) { // Dumps cup right
-                dump.setPosition(0.0);
+                dump.setPosition(0.15);
                 sleep(700);
                 dump.setPosition(0.52);
             }
@@ -145,6 +145,9 @@ public class TeleopBadOneControllerV2 extends LinearOpMode {
             } else {
                 intake.setPower(0);
             }
+
+            telemetry.addData("LiftPos", slide.getCurrentPosition());
+            telemetry.update();
 
             turnDuck(carousel);
 
