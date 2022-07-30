@@ -141,6 +141,11 @@ public class TeleopBadV2 extends LinearOpMode {
                 intake.setPower(0);
             }
 
+            // Returns cup to defaults position
+            if (gamepad2.y) {
+                dump.setPosition(0.52);
+            }
+
             turnDuck(carousel);
 
         }
