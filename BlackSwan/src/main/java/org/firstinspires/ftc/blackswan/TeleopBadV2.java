@@ -114,12 +114,12 @@ public class TeleopBadV2 extends LinearOpMode {
             // Dumps the cup which is attached to the linear slides
             if (gamepad2.dpad_left) { // Dumps cup left
                 dump.setPosition(0.90);
-                sleep(800);
+                sleep(1100);
                 dump.setPosition(0.52);
             }
             if (gamepad2.dpad_right) { // Dumps cup right
                 dump.setPosition(0.1);
-                sleep(800);
+                sleep(1100);
                 dump.setPosition(0.52);
             }
 

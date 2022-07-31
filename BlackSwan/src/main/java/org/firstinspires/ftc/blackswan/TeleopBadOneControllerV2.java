@@ -114,12 +114,12 @@ public class TeleopBadOneControllerV2 extends LinearOpMode {
 
             // Dumps the cup which is attached to the linear slides
             if (gamepad1.dpad_left) { // Dumps cup left
-                dump.setPosition(0.80);
+                dump.setPosition(0.90);
                 sleep(700);
                 dump.setPosition(0.52);
             }
             if (gamepad1.dpad_right) { // Dumps cup right
-                dump.setPosition(0.15);
+                dump.setPosition(0.1);
                 sleep(700);
                 dump.setPosition(0.52);
             }
@@ -127,11 +127,7 @@ public class TeleopBadOneControllerV2 extends LinearOpMode {
             // Spins the motor for the linear slides
             if (gamepad1.dpad_up) { // Moves Slides Up
                 slide.setPower(1);
-            } else {
-                slide.setPower(0);
-            }
-
-            if (gamepad1.dpad_down) { // Moves Slides Down
+            } else if (gamepad1.dpad_down) { // Moves Slides Down
                 slide.setPower(-0.5);
             } else {
                 slide.setPower(0);
