@@ -6,6 +6,7 @@ import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFDualServo implements Servo {
     /*fanmcy init
@@ -25,7 +26,7 @@ public class RFDualServo implements Servo {
 
     LinearOpMode op;
 
-    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode) {
+    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode, Logger log) {
         op = opMode;
 
         servoDirection1 = servoDirection;
@@ -36,8 +37,8 @@ public class RFDualServo implements Servo {
             servoDirection2 = FORWARD;
         }
 
-        rfServo = new RFServo(1.0, servoDirection, "RFServo", op);
-        rfServo2 = new RFServo(1.0, servoDirection2, "RFServo2", op);
+        rfServo = new RFServo(1.0, servoDirection, "RFServo", op, log);
+        rfServo2 = new RFServo(1.0, servoDirection2, "RFServo2", op, log);
 
         rfServo.setDirection(servoDirection);
 

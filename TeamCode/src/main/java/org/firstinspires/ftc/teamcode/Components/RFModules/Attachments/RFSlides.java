@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.StateMachine;
 
+import org.firstinspires.ftc.teamcode.Components.Logger;
+
 public class RFSlides extends RFMotor{
     /*init: reset, motorname, need encoder, zeroPowerBehavior brake
      * slideToPosition while loop, getEncoderPosition, setVelocity, DO NOT set_target_position
@@ -31,10 +33,10 @@ public class RFSlides extends RFMotor{
 
     LinearOpMode op;
 
-    public RFSlides(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, double MAX_EXTENSION_TICKS_INPUT, double MIN_EXTENSION_TICKS_INPUT, DcMotor.ZeroPowerBehavior zeroBehavior) {
-        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
+    public RFSlides(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, double MAX_EXTENSION_TICKS_INPUT, double MIN_EXTENSION_TICKS_INPUT, DcMotor.ZeroPowerBehavior zeroBehavior, Logger log) {
+        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
 
-        extensionMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
+        extensionMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
 
         MAX_EXTENSION_TICKS = MAX_EXTENSION_TICKS_INPUT;
         MIN_EXTENSION_TICKS = MIN_EXTENSION_TICKS_INPUT;

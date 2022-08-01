@@ -1,28 +1,26 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.tseDepositor;
 import org.firstinspires.ftc.teamcode.Components.Logger;
 
-@Autonomous(name="RFDualServoTest")
+@Autonomous(name="RFMotorServoLoggingTest")
 
-public class RFDualServoTest extends LinearOpMode{
-//    @Override
+public class RFMotorServoLoggingTest extends LinearOpMode{
 
     LinearOpMode op;
     Logger logger;
+    RFMotor rfmotor = new RFMotor("wobbleArmGoal", DcMotorSimple.Direction.FORWARD, this, DcMotor.RunMode.RUN_USING_ENCODER, true, DcMotor.ZeroPowerBehavior.BRAKE, logger);
 
     public void runOpMode() {
-        RFDualServo dualservo = new RFDualServo(FORWARD, op, logger);
-        dualservo.setPosition(0.9);
-        sleep(5000);
-        dualservo.setPosition(0.1);
+        rfmotor.setPower(0.9);
     }
 }
 

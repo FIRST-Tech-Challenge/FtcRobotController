@@ -32,6 +32,7 @@ public class RedRightTeleop extends LinearOpMode {
             robot.teleopLoop(-1,0,0);
         }
 
+
         idle();
     }
 }

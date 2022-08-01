@@ -8,6 +8,8 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBaske
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_RETRACTED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_RAISED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATING_CLOCKWISE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATING_COUNTER_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_STRAIGHT;
 import static org.firstinspires.ftc.teamcode.Robot.faked;
 import static org.firstinspires.ftc.teamcode.Robot.isBlue;
@@ -240,6 +242,14 @@ public class Turret {
         else {
             Robot.rotated=false;
             double targetVelocity = pow(abs(dist), 1.4) / 69 * dist / abs(dist) * (100);
+            if (targetVelocity < 0) {
+                checker.setState(TURRET_STRAIGHT, false);
+                checker.setState(TURRET_ROTATING_COUNTER_CLOCKWISE, true);
+            }
+            else if (targetVelocity > 0) {
+                checker.setState(TURRET_STRAIGHT, false);
+                checker.setState(TURRET_ROTATING_CLOCKWISE, true);
+            }
             turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             turret_Rotation.setVelocity(targetVelocity-(turret_Rotation.getVelocity()-targetVelocity)/3);
         }

@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Robot;
 
+import org.firstinspires.ftc.teamcode.Components.Logger;
+
 public class RFTurret extends RFMotor {
 
 
@@ -25,10 +27,10 @@ public class RFTurret extends RFMotor {
     LinearOpMode op;
 
     /*motor, rotateToAngle, getAngle*/
-    public RFTurret(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
-        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
+    public RFTurret(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior, Logger log) {
+        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
 
-        rotationMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
+        rotationMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
 
         op = opMode;
 

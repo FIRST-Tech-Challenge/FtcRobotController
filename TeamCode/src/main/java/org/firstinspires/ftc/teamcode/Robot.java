@@ -25,6 +25,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
+import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.random;
 import static java.lang.Math.sqrt;
@@ -81,6 +82,7 @@ public class Robot {
     boolean alliance_shipping_hub = false;
     public static boolean retracting = false;
     double time;
+    double lastlogtime = 0;
     boolean changed = false;
     double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
     int CYCLE_MS = 30;     // period of each cycle
@@ -102,7 +104,7 @@ public class Robot {
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
     private StateMachine checker = null;
-    private Logger logger;
+    public Logger logger;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         op = opMode;
@@ -111,7 +113,7 @@ public class Robot {
         logger = new Logger(opMode);
         checker = new StateMachine(op, isTeleop, logger);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
+        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop, logger);
         rotation = new CarouselCR(op);
         intake = new Intake(op, isTeleop, checker);
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
@@ -268,9 +270,15 @@ public class Robot {
         time = op.getRuntime();
         //according to blue side left auto next to barrier
         changed = false;
+        Logger.loopcounter++;
         int up = 0;
         intake.updateIntakeStates();
         turret.updateTurretPositions();
+
+        if (time - lastlogtime > 0.1) {
+//            log();
+            lastlogtime = time;
+        }
 //        if (xpos > (60) * red - startx) {
 //            if (!shared_shipping_hub && red == 1) {
 //                changed = true;

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 
-import static org.firstinspires.ftc.teamcode.Components.Logger.miscFile;
-import static org.firstinspires.ftc.teamcode.Components.Logger.sequencingFile;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_ALLIANCE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_REST;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_SHARED;
@@ -43,9 +41,9 @@ public class StateMachine {
         SEQUENCING(false, "SEQUENCING"),
         CAROUSEL_SPINNING_CLOCKWISE(false, "CAROUSEL_SPINNING_CLOCKWISE"),
         CAROUSEL_SPINNING_COUNTERCLOCKWISE(false, "CAROUSEL_SPINNING_COUNTERCLOCKWISE"),
-        CAROUSEL_STILL(false, "CAROUSEL_STILL"),
+        CAROUSEL_STILL(true, "CAROUSEL_STILL"),
         TSE_ARM_DOWN(false, "TSE_ARM_DOWN"),
-        TSE_ARM_UP(false, "TSE_ARM_DOWN"),
+        TSE_ARM_UP(true, "TSE_ARM_DOWN"),
         TSE_ARM_FIRST_CAP(false, "TSE_ARM_DOWN"),
         TSE_ARM_SECOND_CAP(false, "TSE_ARM_DOWN");
 
@@ -67,7 +65,7 @@ public class StateMachine {
         INTAKING(false, "INTAKING"),
         INTAKE_REVERSING(false, "INTAKE_REVERSING"),
         INTAKE_FLIPPING_UP(false, "INTAKE_FLIPPING_UP"),
-        INTAKE_UP(false, "INTAKE_UP"),
+        INTAKE_UP(true, "INTAKE_UP"),
         INTAKE_TRANSFERRING(false, "INTAKE_TRANSFERRING"),
         INTAKE_TRANSFERRED(false, "TRANSFERRED"),
         INTAKE_FLIPPING_DOWN(false, "INTAKE_FLIPPING_DOWN");
@@ -136,15 +134,17 @@ public class StateMachine {
         if (teleOp) {
             INTAKE_DOWN.setStatus(true);
         }
+        logger.createFile("SequencingStates", "Runtime,State,Value");
     }
 
     public void setState(RobotStates state, boolean value) {
         if(state.status!=value) {
             state.setStatus(value);
+
             if (value == true) {
-                logger.log("STATE:" + state.values()[1] + "true", miscFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
             } else {
-                logger.log("STATE:" + state.values()[1] + "false", miscFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
             }
         }
     }
@@ -152,20 +152,22 @@ public class StateMachine {
     public void setState(IntakeStates state, boolean value) {
         if(state.status!=value) {
             state.setStatus(value);
+
             if (value == true) {
-                logger.log("STATE:" + state.values()[1] + "true", sequencingFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
             } else {
-                logger.log("STATE:" + state.values()[1] + "false", sequencingFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
             }
+
         }
     }
     public void setState(TurretStates state, boolean value) {
         if(state.status!=value) {
             state.setStatus(value);
             if (value == true) {
-                logger.log("STATE:" + state.values()[1] + "true", sequencingFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
             } else {
-                logger.log("STATE:" + state.values()[1] + "false", sequencingFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
             }
         }
     }
@@ -173,9 +175,9 @@ public class StateMachine {
         if(state.status!=value) {
             state.setStatus(value);
             if (value == true) {
-                logger.log("STATE:" + state.values()[1] + "true", sequencingFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
             } else {
-                logger.log("STATE:" + state.values()[1] + "false", sequencingFile);
+                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
             }
         }
     }

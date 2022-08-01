@@ -15,16 +15,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.StateMachine;
+import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFBasketArm extends RFServo {
 
     private RFServo basketArmServo;
 
     LinearOpMode op;
-    public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
-        super(range, direction, deviceName, opMode);
+    public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode, Logger log) {
+        super(range, direction, deviceName, opMode, log);
 
-        basketArmServo = new RFServo(range, direction, deviceName, opMode);
+        basketArmServo = new RFServo(range, direction, deviceName, opMode, log);
 
         op = opMode;
     }
