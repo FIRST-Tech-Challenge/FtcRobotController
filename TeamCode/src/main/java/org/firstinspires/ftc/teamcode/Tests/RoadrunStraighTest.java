@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 
+import static org.firstinspires.ftc.teamcode.Robot.roadrun;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -19,9 +21,9 @@ public class RoadrunStraighTest extends LinearOpMode {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        Trajectory fortyEightX = robot.trajectoryBuilder(new Pose2d()).lineTo(new Vector2d(48,0)).build();
+        Trajectory fortyEightX = roadrun.trajectoryBuilder(new Pose2d()).lineTo(new Vector2d(48,0)).build();
         waitForStart();
-        robot.followTrajectory(fortyEightX);
+        roadrun.followTrajectory(fortyEightX);
         while(opModeIsActive()){}
         stop();
     }

@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.CarouselCR;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
+import org.firstinspires.ftc.teamcode.Components.IMU;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.LedColor;
 import org.firstinspires.ftc.teamcode.Components.LimitSwitches;
@@ -46,7 +47,7 @@ import java.util.Arrays;
 
 public class Robot {
 
-    private LinearOpMode op = null;
+    public static LinearOpMode op = null;
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
     public static int isBlue = 1;
@@ -78,7 +79,7 @@ public class Robot {
     public static boolean retracting = false;
     double time;
     boolean changed = false;
-    boolean ultra = false;
+    boolean ultra = true;
     boolean touch = false;
     public static double loopTime = 0;
     double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
@@ -94,7 +95,7 @@ public class Robot {
 
     // Hardware Objects
     private BasicChassis drivetrain = null;
-    private SampleMecanumDrive roadrun = null;
+    public static SampleMecanumDrive roadrun = null;
     private CarouselCR rotation = null;
     private Intake intake = null;
     private Turret turret = null;
@@ -103,7 +104,8 @@ public class Robot {
     private tseDepositor TSE = null;
     private StateMachine checker = null;
     private Logger logger;
-    private Ultrasonics ultras = null;
+    public static Ultrasonics ultras = null;
+    public static IMU imu = null;
     private LimitSwitches touchs = null;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
@@ -121,7 +123,8 @@ public class Robot {
 //        openCV = new OpenCVMasterclass(op);
 //        TSE = new tseDepositor(op, isTeleop);
         roadrun = new SampleMecanumDrive(op.hardwareMap);
-//        ultras = new Ultrasonics(op);
+        ultras = new Ultrasonics();
+        imu = new IMU();
 //        touchs = new LimitSwitches(op);
 
     }
@@ -171,18 +174,6 @@ public class Robot {
                 roadrun.setPoseEstimate(touchs.getPose2d());
             }
         }
-    }
-    public TrajectoryBuilder trajectoryBuilder(Pose2d pose2d){
-        return roadrun.trajectoryBuilder(pose2d);
-    }
-    public void followTrajectoryAsync(Trajectory trajectory){
-        roadrun.followTrajectoryAsync(trajectory);
-    }
-    public void followTrajectory(Trajectory trajectory){
-        roadrun.followTrajectory(trajectory);
-    }
-    public Pose2d getPoseEstimate(){
-        return roadrun.getPoseEstimate();
     }
 
 
