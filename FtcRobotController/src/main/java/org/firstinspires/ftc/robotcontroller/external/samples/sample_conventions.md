@@ -18,14 +18,14 @@ Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
             required to read and display the sensor values.
 
 Hardware:	This is not an actual OpMode, but a helper class that is used to describe
-            one particular robot's hardware configuration:   eg: For the K9 or Pushbot.
-            Look at any Pushbot sample to see how this can be used in an OpMode.
+            one particular robot's hardware configuration:   eg: For the K9 or Robot.
+            Look at any Robot sample to see how this can be used in an OpMode.
             Teams can copy one of these to create their own robot definition.
 
-Pushbot:	This is a Sample OpMode that uses the Pushbot robot hardware as a base.
-            It may be used to provide some standard baseline Pushbot opmodes, or
+Robot:	This is a Sample OpMode that uses the Robot robot hardware as a base.
+            It may be used to provide some standard baseline Robot opmodes, or
             to demonstrate how a particular sensor or concept can be used directly on the
-            Pushbot chassis.
+            Robot chassis.
 
 Concept:	This is a sample OpMode that illustrates performing a specific function or concept.
             These may be complex, but their operation should be explained clearly in the comments,
@@ -41,7 +41,7 @@ After the prefix, other conventions will apply:
 
 * Sensor class names should constructed as:       Sensor - Company - Type
 * Hardware class names should be constructed as:  Hardware - Robot type
-* Pushbot class names should be constructed as:   Pushbot - Mode - Action - OpModetype
+* Robot class names should be constructed as:   Robot - Mode - Action - OpModetype
 * Concept class names should be constructed as:   Concept - Topic - OpModetype
 * Library class names should be constructed as:   Library - Topic - OpModetype
 
