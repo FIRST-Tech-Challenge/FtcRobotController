@@ -14,7 +14,7 @@ public class MecanumTeleOp extends LinearOpMode {
      * @return the maximum value from the input array
      */
 
-    //amumususus
+    //amumusususus
 
     private double getMax(double[] input) {
         double max = Integer.MIN_VALUE;
