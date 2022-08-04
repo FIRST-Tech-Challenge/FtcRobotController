@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.floor;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -30,10 +33,26 @@ public class QuadUltraTest extends LinearOpMode {
         }
         waitForStart();
         while(opModeIsActive()){
+            if(floor(getRuntime())%2==0){
+                ultraBack.enable(false);
+                ultraRight.enable(false);
+                ultraFront.enable(false);
+                ultraLeft.enable(false);
+            }
+            else{
+                ultraBack.enable(true);
+                ultraRight.enable(true);
+                ultraFront.enable(true);
+                ultraLeft.enable(true);
+            }
             telemetry.addData("front", 90.48337 * ultrasonicFront.getVoltage() - 13.12465);
             telemetry.addData("back", 90.48337 * ultrasonicBack.getVoltage() - 13.12465);
             telemetry.addData("right", 90.48337 * ultrasonicRight.getVoltage() - 13.12465);
             telemetry.addData("left", 90.48337 * ultrasonicLeft.getVoltage() - 13.12465);
+            telemetry.addData("front", ultraFront.isLightOn());
+            telemetry.addData("back", ultraBack.isLightOn());
+            telemetry.addData("right", ultraRight.isLightOn());
+            telemetry.addData("left", ultraLeft.isLightOn());
             telemetry.update();
         }
         stop();

@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
@@ -28,6 +31,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -80,16 +84,17 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
-    private Ultrasonics ultras = null;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    private Robot robot=null;
+    private FtcDashboard dashboard= null;
+
+    public SampleMecanumDrive(HardwareMap hardwareMap, Robot p_robot) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -155,7 +160,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID, p_robot);
+        robot=p_robot;
+        dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -221,8 +229,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         updatePoseEstimate();
         if(ultrasonics){
             Pose2d pos = getPoseEstimate();
-            if(ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
-                setPoseEstimate(ultras.getPose2d());
+            if(robot.ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
+                Pose2d ultraPos = robot.ultras.getPose2d();
+                setPoseEstimate(new Pose2d(ultraPos.getX(),ultraPos.getY(),robot.imu.updateAngle()));
             }
         }
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());

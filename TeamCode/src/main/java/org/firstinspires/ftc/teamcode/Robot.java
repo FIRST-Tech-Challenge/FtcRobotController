@@ -95,7 +95,7 @@ public class Robot {
 
     // Hardware Objects
     private BasicChassis drivetrain = null;
-    public static SampleMecanumDrive roadrun = null;
+    public SampleMecanumDrive roadrun = null;
     private CarouselCR rotation = null;
     private Intake intake = null;
     private Turret turret = null;
@@ -104,8 +104,8 @@ public class Robot {
     private tseDepositor TSE = null;
     private StateMachine checker = null;
     private Logger logger;
-    public static Ultrasonics ultras = null;
-    public static IMU imu = null;
+    public Ultrasonics ultras = null;
+    public IMU imu = null;
     private LimitSwitches touchs = null;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
@@ -122,10 +122,10 @@ public class Robot {
 //        turret = new Turret(op, led_bank, isTeleop, checker);
 //        openCV = new OpenCVMasterclass(op);
 //        TSE = new tseDepositor(op, isTeleop);
-        roadrun = new SampleMecanumDrive(op.hardwareMap);
         ultras = new Ultrasonics();
         imu = new IMU();
 //        touchs = new LimitSwitches(op);
+        roadrun = new SampleMecanumDrive(op.hardwareMap, this);
 
     }
 

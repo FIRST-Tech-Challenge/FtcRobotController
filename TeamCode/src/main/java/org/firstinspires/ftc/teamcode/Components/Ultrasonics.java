@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.Robot.imu;
 import static org.firstinspires.ftc.teamcode.Robot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -14,12 +13,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.LED;
 
+import java.util.ArrayList;
+
 public class Ultrasonics {
     private AnalogInput ultrasonicFront, ultrasonicBack, ultrasonicRight, ultrasonicLeft;
     private LED ultraFront, ultraBack, ultraRight, ultraLeft;
     private double ultraRange = 35, lastUltraUpdate = -10, lastSetPos = -10, time = 0.0, robotWidth = 13, robotLength = 17.3;
     private double[] pos = {0, 0, 0};
+    private ArrayList<double[]> posLog= new ArrayList<>();
     private boolean high = false, updated = false;
+
+    public double[] dist={0,0,0,0};
 
     public Ultrasonics() {
         ultrasonicFront = op.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
@@ -30,28 +34,33 @@ public class Ultrasonics {
         ultraBack = op.hardwareMap.get(LED.class, "ultraBack");
         ultraRight = op.hardwareMap.get(LED.class, "ultraRight");
         ultraLeft = op.hardwareMap.get(LED.class, "ultraLeft");
-        ultraFront.enable(true);
         ultraBack.enable(true);
         ultraRight.enable(true);
+        ultraFront.enable(true);
         ultraLeft.enable(true);
+        posLog.add(new double[] {0,0});
     }
-
+    public void logPos(){
+        posLog.remove(0);
+        posLog.add(new double[] {pos[0],pos[1]});
+    }
     public boolean updateUltra(double xpos, double ypos, double angle) {
-        pos[0] = xpos;
-        pos[1] = ypos;
-        pos[2] = angle;
+//        pos[0] = xpos;
+//        pos[1] = ypos;
+//        pos[2] = angle;
         updated = false;
         angle*=180/PI;
         time = op.getRuntime();
-        if (time - lastUltraUpdate > 0.06 && !high) {
-            ultraBack.enable(true);
-            ultraRight.enable(true);
-            ultraFront.enable(true);
-            ultraLeft.enable(true);
+        if (time - lastUltraUpdate > 0.03 && !high) {
+            ultraBack.enable(false);
+            ultraRight.enable(false);
+            ultraFront.enable(false);
+            ultraLeft.enable(false);
             high = true;
         }
         if (time - lastUltraUpdate > 0.1&high) {
-            double distance = getDistance(ultrasonicRight)+robotWidth/2;
+            getDistance();
+            double distance = dist[0]+robotWidth/2;
             if (distance < 20 && distance > 0) {
                 if (abs(angle) < 5) {
                     if(abs(-70.5+distance-pos[1])<1) {
@@ -76,7 +85,7 @@ public class Ultrasonics {
                     }
                 }
             }
-            distance = getDistance(ultrasonicLeft)-robotWidth/2;
+            distance = dist[1]+robotWidth/2;
             if (distance < 20 && distance > 0) {
                 if (abs(180-angle) < 5) {
                     if(abs(-70.5+distance-pos[1])<1) {
@@ -101,7 +110,7 @@ public class Ultrasonics {
                     }
                 }
             }
-            distance = getDistance(ultrasonicFront)-robotLength/2;
+            distance = dist[2]+robotLength/2;
             if (distance < 20 && distance > 0) {
                 if (abs(180-angle) < 5) {
                     if(abs(-70.5+distance-pos[1])<1) {
@@ -126,7 +135,7 @@ public class Ultrasonics {
                     }
                 }
             }
-            distance = getDistance(ultrasonicBack)-robotLength/2;
+            distance = dist[3]+robotLength/2;
             if (distance < 20 && distance > 0) {
                 if (abs(180-angle) < 5) {
                     if(abs(-70.5+distance-pos[1])<1) {
@@ -145,15 +154,18 @@ public class Ultrasonics {
                     }
                 }
                 else if (abs(-90 - angle) < 5) {
-                    if(abs(70.5-distance-pos[0])<2) {
+                    if(abs(70.5-distance-pos[0])<1) {
                         pos[0] = 70.5 - distance;
                         updated =true;
                     }
                 }
             }
         }
-        if(updated&&lastSetPos-op.getRuntime()>1){
-            lastSetPos=op.getRuntime();
+        if(updated){
+            logPos();
+        }
+        if(updated&&time-lastSetPos>1){
+            lastSetPos=time;
             return true;
         }
         else {
@@ -161,17 +173,17 @@ public class Ultrasonics {
         }
     }
 
-    public double getDistance(AnalogInput sensor) {
-        ultraBack.enable(false);
-        ultraRight.enable(false);
-        ultraFront.enable(false);
-        ultraLeft.enable(false);
-        lastUltraUpdate=op.getRuntime();
+    private void getDistance() {
+        dist = new double[]{90.48337 * ultrasonicRight.getVoltage() - 13.12465,90.48337 * ultrasonicLeft.getVoltage() - 13.12465
+                ,90.48337 * ultrasonicFront.getVoltage() - 13.12465,90.48337 * ultrasonicBack.getVoltage() - 13.12465};
+        ultraBack.enable(true);
+        ultraRight.enable(true);
+        ultraFront.enable(true);
+        ultraLeft.enable(true);
+        lastUltraUpdate=time;
         high = false;
-        return 90.48337 * sensor.getVoltage() - 13.12465;
     }
-
     public Pose2d getPose2d() {
-        return new Pose2d(pos[0], pos[1], imu.updateAngle());
+        return new Pose2d(pos[0], pos[1], pos[2]);
     }
 }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static org.firstinspires.ftc.teamcode.Robot.roadrun;
 
 import static java.lang.Math.PI;
 
@@ -26,12 +25,12 @@ public class RoadrunTestTeleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY,true,false,0);
 
-        roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
         while (!isStopRequested()) {
-            roadrun.setWeightedDrivePower(
+            robot.roadrun.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x,
@@ -40,7 +39,7 @@ public class RoadrunTestTeleop extends LinearOpMode {
             );
 
             robot.update();
-            Pose2d poseEstimate = roadrun.getPoseEstimate();
+            Pose2d poseEstimate = robot.roadrun.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading()*180/PI);

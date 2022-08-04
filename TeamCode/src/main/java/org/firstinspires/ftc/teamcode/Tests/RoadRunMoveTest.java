@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import static org.firstinspires.ftc.teamcode.Robot.roadrun;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -21,13 +20,13 @@ public class RoadRunMoveTest extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(57, -54, 0);
 
-        roadrun.setPoseEstimate(startPose);
+        robot.roadrun.setPoseEstimate(startPose);
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        TrajectorySequence trajSeq = roadrun.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajSeq = robot.roadrun.trajectorySequenceBuilder(startPose)
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(57,-30))
                 .turn(Math.toRadians(90))
@@ -37,10 +36,10 @@ public class RoadRunMoveTest extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .lineTo(new Vector2d(57,-54))
                 .build();
-        roadrun.followTrajectorySequence(trajSeq);
-        roadrun.followTrajectorySequence(trajSeq);
-        roadrun.followTrajectorySequence(trajSeq);
-        roadrun.followTrajectorySequence(trajSeq);
-        roadrun.followTrajectorySequence(trajSeq);
+        robot.roadrun.followTrajectorySequence(trajSeq);
+        robot.roadrun.followTrajectorySequence(trajSeq);
+        robot.roadrun.followTrajectorySequence(trajSeq);
+        robot.roadrun.followTrajectorySequence(trajSeq);
+        robot.roadrun.followTrajectorySequence(trajSeq);
     }
 }
