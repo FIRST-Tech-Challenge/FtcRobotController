@@ -48,6 +48,7 @@ public class VuforiaWebCamSubsystem extends SubsystemBase {
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraName = hwMap.get(WebcamName.class, deviceName);
+        
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
