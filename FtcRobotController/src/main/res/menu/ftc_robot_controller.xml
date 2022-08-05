@@ -31,14 +31,14 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
     android:id="@+id/action_settings"
     android:orderInCategory="100"
-      android:title="@string/settings_menu_item"
-      app:showAsAction="never" />
+    app:showAsAction="never"
+    android:title="@string/settings_menu_item"/>
   <item
     android:id="@+id/action_restart_robot"
     android:orderInCategory="200"
@@ -58,10 +58,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:title="@string/program_and_manage_menu_item"/>
 
   <item
-      android:id="@+id/action_inspection_mode"
-      android:orderInCategory="600"
-      app:showAsAction="never"
-      android:title="@string/inspection_mode_menu_item"/>
+    android:id="@+id/action_inspection_mode"
+    android:orderInCategory="600"
+    app:showAsAction="never"
+    android:title="@string/inspection_mode_menu_item"/>
 
   <item
     android:id="@+id/action_about"

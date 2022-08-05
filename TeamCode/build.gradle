@@ -22,6 +22,7 @@ android {
     androidResources {
         noCompress 'tflite'
     }
+    namespace = 'org.firstinspires.ftc.teamcode'
 }
 
 dependencies {
@@ -36,5 +37,4 @@ dependencies {
         exclude group: 'org.deepboof'
     }
     implementation 'org.boofcv:boofcv-android:0.39'
-
 }
