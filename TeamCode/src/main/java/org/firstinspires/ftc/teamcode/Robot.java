@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_REST;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_TRANSFER;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_FLIPPING_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_TRANSFERRING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SEQUENCING;
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
@@ -11,11 +17,15 @@ import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xVelocity
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.yVelocity;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_RAISED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_STRAIGHT;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
+import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.random;
 import static java.lang.Math.sqrt;
@@ -27,6 +37,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.CarouselCR;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
@@ -38,10 +49,8 @@ import org.firstinspires.ftc.teamcode.Components.Logger;
 import org.firstinspires.ftc.teamcode.Components.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.Turret;
-import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.VSLAMChassis;
 import org.firstinspires.ftc.teamcode.Components.tseDepositor;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.util.Arrays;
 
@@ -78,6 +87,7 @@ public class Robot {
     boolean alliance_shipping_hub = false;
     public static boolean retracting = false;
     double time;
+    double lastlogtime = 0;
     boolean changed = false;
     boolean ultra = true;
     boolean touch = false;
@@ -103,6 +113,7 @@ public class Robot {
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
     private StateMachine checker = null;
+    public Logger logger;
     private Logger logger;
     public Ultrasonics ultras = null;
     public IMU imu = null;
@@ -112,6 +123,16 @@ public class Robot {
         op = opMode;
         startAngle = startAng;
         trueStartAngle=startAng;
+        logger = new Logger(opMode);
+        checker = new StateMachine(op, isTeleop, logger);
+        //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
+        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop, logger);
+        rotation = new CarouselCR(op);
+        intake = new Intake(op, isTeleop, checker);
+//        led_bank = new LedColor(op); //LED has to be declared before calling it
+        turret = new Turret(op, led_bank, isTeleop, checker);
+        openCV = new OpenCVMasterclass(op);
+        TSE = new tseDepositor(op, isTeleop);
 //        logger = new Logger(opMode);
 //        checker = new StateMachine(op, isTeleop, logger);
 //        //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm

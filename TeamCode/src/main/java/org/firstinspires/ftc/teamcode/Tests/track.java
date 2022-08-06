@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
+import org.firstinspires.ftc.teamcode.Components.Logger;
 
 @Autonomous(name= "track")
 public class track extends LinearOpMode {
@@ -14,7 +15,8 @@ public class track extends LinearOpMode {
     public void runOpMode(){
         //Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         ElapsedTime op = new ElapsedTime();
-        EncoderChassis odom = new EncoderChassis(this, false,false);
+        Logger logger = new Logger(this);
+        EncoderChassis odom = new EncoderChassis(this, false,false, logger);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

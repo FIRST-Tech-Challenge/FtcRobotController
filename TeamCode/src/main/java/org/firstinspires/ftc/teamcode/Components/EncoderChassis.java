@@ -36,6 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
 //2.0,1.7,1.1
 public class EncoderChassis extends BasicChassis {
     VuforiaThread vuforia = null;
+    Logger logger;
     double ticksPerInch = 29.8;
     public static double xVelocity = 0;
     public static double yVelocity = 0;
@@ -64,8 +65,7 @@ public class EncoderChassis extends BasicChassis {
     boolean navigation = false;
     private RangeSensor ultra = null;
     double[][] backLogs={{0,0},{0,0},{0,0},{0,0},{0,0}};
-    File logFile = new File("/storage/emulated/0/tmp/Log.csv");
-    File logyFile = new File("/storage/emulated/0/tmp/Logy.csv");
+
     FileWriter wFTCfile;
 
 
@@ -75,8 +75,9 @@ public class EncoderChassis extends BasicChassis {
     double lastTime = 0;
     double thisTime = 0;
 
-    public EncoderChassis(LinearOpMode opMode, boolean navigator, boolean isTeleop) {
+    public EncoderChassis(LinearOpMode opMode, boolean navigator, boolean isTeleop, Logger log) {
         super(opMode);
+        logger = log;
         navigation = navigator;
         op = opMode;
         if(!isTeleop) {
@@ -85,43 +86,6 @@ public class EncoderChassis extends BasicChassis {
             angle = 0;
         }
         ultra = new RangeSensor(opMode);
-        try {
-            //Create File
-            if (logFile.createNewFile()) {
-                op.telemetry.addData("VSLAMChassis:", "File created:%S\n", "Logger");
-                op.telemetry.update();
-            } else {
-                logFile.delete();
-                logFile.createNewFile();
-                op.telemetry.addData("VSLAMChassis:", "File already exists:%S\n", "Overriding");
-                op.telemetry.update();
-            }
-            if (logyFile.createNewFile()) {
-                op.telemetry.addData("VSLAMChassis:", "File created:%S\n", "Logger");
-                op.telemetry.update();
-            } else {
-                logyFile.delete();
-                logyFile.createNewFile();
-                op.telemetry.addData("VSLAMChassis:", "File already exists:%S\n", "Overriding");
-                op.telemetry.update();
-            }
-        } catch (IOException e) {
-            new RuntimeException("create file: FAILED", e).printStackTrace();
-        }
-        {
-            try {
-                wFTCfile = new FileWriter(logFile, true);
-                wFTCfile.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                FileWriter rr = new FileWriter(logyFile, true);
-                rr.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (navigator) {
 //            vuforia = new VuforiaThread(op, location);
@@ -158,7 +122,11 @@ public class EncoderChassis extends BasicChassis {
             op.sleep(50);
             op.idle();
         }
+
+        logger.createFile("odofile", "Runtime,X,Y,Angle");
+
         track();
+
 
 
     }
@@ -408,31 +376,16 @@ public class EncoderChassis extends BasicChassis {
 //                }
 //            }
             double[] raw = ultra.getLocation();
-            try {
-                FileWriter writer = new FileWriter(logFile,true);
-                writer.write(String.format("%4.2f", xpos) + "," + String.format("%4.2f", ultraPos[0]) + "," +String.format("%4.2f", raw[0])+","+String.format("%4.2f", except[0])+","+String.format("%4.2f", ypos) + "," + String.format("%4.2f", ultraPos[1]) + "," +String.format("%4.2f", raw[1])+","+String.format("%4.2f", except[1])+ "\n");
-                writer.close();
-            } catch (IOException e) {
-                new RuntimeException("write: FAILED", e).printStackTrace();
-            }
-            try {
-                FileWriter rr = new FileWriter(logyFile, true);
-                rr.write(String.format("%4.2f", ypos) + ","+String.format("%4.2f", raw[1])+ "\n");
-                rr.close();
-            } catch (IOException e) {
-                new RuntimeException("write: FAILED", e).printStackTrace();
-            }
         }
         if(thisTime-lastDigUp>0.1&&thisTime-lastUltraUpdate>0.05){
             ultra.setState(true,false);
         }
+
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();
-            try {
-                wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos)+"\n");} catch (IOException e) {
-                new RuntimeException("write: FAILED", e).printStackTrace();
-            }
+            logger.log("odofile", op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos));
         }
+
         if (bad) {
             op.telemetry.addData("BAD", true);
         }
@@ -508,29 +461,13 @@ public class EncoderChassis extends BasicChassis {
 //                }
 //            }
             double[] raw = ultra.getLocation();
-            try {
-                FileWriter writer = new FileWriter(logFile,true);
-                writer.write(String.format("%4.2f", xpos) + "," + String.format("%4.2f", ultraPos[0]) + "," +String.format("%4.2f", raw[0])+","+String.format("%4.2f", except[0])+","+String.format("%4.2f", ypos) + "," + String.format("%4.2f", ultraPos[1]) + "," +String.format("%4.2f", raw[1])+","+String.format("%4.2f", except[1])+ "\n");
-                writer.close();
-            } catch (IOException e) {
-                new RuntimeException("write: FAILED", e).printStackTrace();
-            }
-            try {
-                FileWriter rr = new FileWriter(logyFile, true);
-                rr.write(String.format("%4.2f", ypos) + ","+String.format("%4.2f", raw[1])+ "\n");
-                rr.close();
-            } catch (IOException e) {
-                new RuntimeException("write: FAILED", e).printStackTrace();
-            }
+
         }
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();
-//            try {
-//                wFTCfile.write(op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," +
-//                        String.format("%.2f", aVelocity) + "," + String.format("%.2f", angle) + "\n");
-//            } catch (IOException e) {
-//                new RuntimeException("write: FAILED", e).printStackTrace();
-//            }
+
+            logger.log("odofile", op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos) + "," + String.format("%.2f", angle));
+
         }
         if (bad) {
             op.telemetry.addData("BAD", true);
@@ -775,14 +712,14 @@ public class EncoderChassis extends BasicChassis {
             y = target_position[1] - ypos;
 
             difference = abs(sqrt(x * x + y * y));
-            if (op.getRuntime() > lastFuncLog + 0.01) {
-                lastFuncLog = op.getRuntime();
-                try {
-                    wFTCfile.write(String.format("%.2f", difference) + "\n");
-                } catch (IOException e) {
-                    new RuntimeException("write: FAILED", e).printStackTrace();
-                }
-            }
+//            if (op.getRuntime() > lastFuncLog + 0.01) {
+//                lastFuncLog = op.getRuntime();
+//                try {
+////                    wFTCfile.write(String.format("%.2f", difference) + "\n");
+//                } catch (IOException e) {
+//                    new RuntimeException("write: FAILED", e).printStackTrace();
+//                }
+//            }
         }
         turnInPlace(a, 1);
         stopAllMotors();
@@ -2784,22 +2721,22 @@ public class EncoderChassis extends BasicChassis {
                     pyError = yError;
                     pposxError = posxError;
                     pposyError = posyError;
-                    if (op.getRuntime() > lastLogs + 0.01) {
-                        lastLogs = op.getRuntime();
-                        try {
-                            wFTCfile.write(String.format("%.2f", target_position[0]) + "," + String.format("%.2f", target_position[1]) + "," +
-                                    String.format("%.2f", target_position[2]) + "\n");
-                        } catch (IOException e) {
-                            new RuntimeException("write: FAILED", e).printStackTrace();
-                        }
-                    }
+//                    if (op.getRuntime() > lastLogs + 0.01) {
+//                        lastLogs = op.getRuntime();
+//                        try {
+////                            wFTCfile.write(String.format("%.2f", target_position[0]) + "," + String.format("%.2f", target_position[1]) + "," +
+////                                    String.format("%.2f", target_position[2]) + "\n");
+//                        } catch (IOException e) {
+//                            new RuntimeException("write: FAILED", e).printStackTrace();
+//                        }
+//                    }
                 }
                 stopAllMotors();
-                try {
-                    wFTCfile.write("\n" + "\n" + "MOVED" + "\n" + "\n");
-                } catch (IOException e) {
-                    new RuntimeException("write: FAILED", e).printStackTrace();
-                }
+//                try {
+//                    wFTCfile.write("\n" + "\n" + "MOVED" + "\n" + "\n");
+//                } catch (IOException e) {
+//                    new RuntimeException("write: FAILED", e).printStackTrace();
+//                }
             }
         }
     }

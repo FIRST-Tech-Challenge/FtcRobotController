@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_REVERSING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_SWITCHED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_TRANSFERRING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKING;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -46,19 +52,19 @@ public class Intake {
     public void updateIntakeStates(){
         isSwitched();
         if(intakeServo.getPosition()<0.5){
-            checker.setState(StateMachine.States.INTAKE_DOWN, false);
+            checker.setState(INTAKE_DOWN, false);
         }
         else{
-            checker.setState(StateMachine.States.INTAKE_DOWN, true);
+            checker.setState(INTAKE_DOWN, true);
 
         }
         if(op.getRuntime()-flipTime>0.7){
-            checker.setState(StateMachine.States.FLIPPING, false);
+            checker.setState(StateMachine.IntakeStates.INTAKE_FLIPPING_UP, false);
         }
     }
 
     public boolean isSwitched() {
-            checker.setState(StateMachine.States.SWITCHED, sensorDistance.getSensorDistance()<1.5);
+            checker.setState(INTAKE_SWITCHED, sensorDistance.getSensorDistance()<1.5);
             op.telemetry.addData("switch", sensorDistance.getSensorDistance());
             return (sensorDistance.getSensorDistance()<1.5);
     }
@@ -66,22 +72,22 @@ public class Intake {
     public void startIntake() {
 
             intakeTimeStart = op.getRuntime();
-            checker.setState(StateMachine.States.INTAKING, true);
-            checker.setState(StateMachine.States.REVERSING, false);
+            checker.setState(INTAKING, true);
+            checker.setState(INTAKE_REVERSING, false);
             intakeMotor.setPower(intakeSpeed);
     }
 
     public void reverseIntake(double power) {
         intakeMotor.setPower(-power);
-        checker.setState(StateMachine.States.INTAKING, false);
-        checker.setState(StateMachine.States.REVERSING, true);
+        checker.setState(INTAKING, false);
+        checker.setState(INTAKE_REVERSING, true);
     }
 
 
     public void stopIntake() {
-        checker.setState(StateMachine.States.INTAKING, false);
-        checker.setState(StateMachine.States.REVERSING, false);
-        checker.setState(StateMachine.States.TRANSFERRING, false);
+        checker.setState(INTAKING, false);
+        checker.setState(INTAKE_REVERSING, false);
+        checker.setState(INTAKE_TRANSFERRING, false);
         intakeMotor.setPower(0);
     }
 
@@ -97,19 +103,19 @@ public class Intake {
         return sensorDistance.isBall();
     }
     public boolean flipIntake() {
-        if (checker.getState(StateMachine.States.INTAKE_DOWN)&&checker.checkIf(StateMachine.States.FLIPPING) &&op.getRuntime()-flipTime>0.4) {
+        if (checker.getState(INTAKE_DOWN)&&checker.checkIf(StateMachine.IntakeStates.INTAKE_FLIPPING_UP) &&op.getRuntime()-flipTime>0.4) {
             flipTime= op.getRuntime();
             intakeServo.setPosition(.21);
             intakeServo2.setPosition(.79);
-            checker.setState(StateMachine.States.FLIPPING, true);
-            checker.setState(StateMachine.States.INTAKE_DOWN, false);
+            checker.setState(StateMachine.IntakeStates.INTAKE_FLIPPING_UP, true);
+            checker.setState(INTAKE_DOWN, false);
             return true;
-        } else if(!checker.getState(StateMachine.States.FLIPPING)) {
+        } else if(!checker.getState(StateMachine.IntakeStates.INTAKE_FLIPPING_UP)) {
             flipTime = op.getRuntime();
             intakeServo.setPosition(1.0);
             intakeServo2.setPosition(0.0);
-            checker.setState(StateMachine.States.FLIPPING, true);
-            checker.setState(StateMachine.States.INTAKE_DOWN, true);
+            checker.setState(StateMachine.IntakeStates.INTAKE_FLIPPING_DOWN, true);
+            checker.setState(INTAKE_DOWN, true);
             return true;
         }
         else{
@@ -120,7 +126,13 @@ public class Intake {
     public void flipIntakeToPosition(double torget) {
         if(op.getRuntime()-flipTime>0.4) {
             flipTime= op.getRuntime();
-            checker.setState(StateMachine.States.FLIPPING, true);
+            if (torget > intakeServo2.getPosition()) {
+                checker.setState(StateMachine.IntakeStates.INTAKE_FLIPPING_UP, true);
+            }
+            else {
+                checker.setState(StateMachine.IntakeStates.INTAKE_FLIPPING_DOWN, true);
+
+            }
             intakeServo.setPosition(1 - torget);
             intakeServo2.setPosition(0 + torget);
         }
