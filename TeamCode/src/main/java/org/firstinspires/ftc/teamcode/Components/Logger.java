@@ -112,6 +112,66 @@ public class Logger {
 
     }
 
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, double input){
+        String inputstringversion = String.valueOf(input);
+        if (loopcounter % 30 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, int input){
+        String inputstringversion = String.valueOf(input);
+        if (loopcounter % 30 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, float input){
+        String inputstringversion = String.valueOf(input);
+        if (loopcounter % 30 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, boolean input){
+        String inputstringversion = String.valueOf(input);
+        if (loopcounter % 30 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     public void closeLog(){
 //        try {
 //            Collection<FileWriter> files = logList.values();

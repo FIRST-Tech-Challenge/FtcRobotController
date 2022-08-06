@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
+import static org.firstinspires.ftc.teamcode.Robot.checker;
+
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATED;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
@@ -69,11 +72,11 @@ public class RFTurret extends RFMotor {
         }
         double dist = targetAngle - curPos;
         if(abs(dist)<20){
-            Robot.rotated=true;
+            checker.setState(TURRET_ROTATED, true);
             rotationMotor.setPower(0);
         }
         else {
-            Robot.rotated=false;
+            checker.setState(TURRET_ROTATED, false);
             double targetVelocity = pow(abs(dist), 1.4) / 69 * dist / abs(dist) * (100);
             rotationMotor.setMode(RUN_USING_ENCODER);
             rotationMotor.setVelocity(targetVelocity-(rotationMotor.getVelocity()-targetVelocity)/3);

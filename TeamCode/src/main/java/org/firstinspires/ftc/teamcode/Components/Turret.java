@@ -11,10 +11,12 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretState
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_FLAT;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_LOWERING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_RAISED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATING_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATING_COUNTER_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_STRAIGHT;
 import static org.firstinspires.ftc.teamcode.Robot.faked;
+import static org.firstinspires.ftc.teamcode.Robot.checker;
 import static org.firstinspires.ftc.teamcode.Robot.isBlue;
 import static org.firstinspires.ftc.teamcode.Robot.resetten;
 import static org.firstinspires.ftc.teamcode.Robot.retracting;
@@ -61,7 +63,6 @@ public class Turret {
     public static double extendPosition=0, rotatePosition=0;
     boolean angleControlling = false, arming = false, basketing = false;
     public static boolean areTeleop = false;
-    public static StateMachine checker = null;
 
 
     // initialization of outtakeMotor
@@ -239,11 +240,11 @@ public class Turret {
         }
         double dist = targetAngle - curPos;
         if(abs(dist)<20){
-            Robot.rotated=true;
+            checker.setState(TURRET_ROTATED, true);
             turret_Rotation.setPower(0);
         }
         else {
-            Robot.rotated=false;
+            checker.setState(TURRET_ROTATED, false);
             double targetVelocity = pow(abs(dist), 1.4) / 69 * dist / abs(dist) * (100);
             if (targetVelocity < 0) {
                 checker.setState(TURRET_STRAIGHT, false);
@@ -269,11 +270,11 @@ public class Turret {
         }
         double dist = targetAngle - curPos;
         if(abs(dist)<20){
-            Robot.rotated=true;
+            checker.setState(TURRET_ROTATED, true);
             turret_Rotation.setPower(0);
         }
         else {
-            Robot.rotated=false;
+            checker.setState(TURRET_ROTATED, false);
             double targetVelocity = pow(abs(dist),1.2) / 50 * dist / abs(dist) * (50);
             turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             turret_Rotation.setVelocity(targetVelocity-(turret_Rotation.getVelocity()-targetVelocity)/4);

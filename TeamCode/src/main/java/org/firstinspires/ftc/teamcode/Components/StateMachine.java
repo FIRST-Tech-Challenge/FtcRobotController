@@ -151,7 +151,6 @@ public class StateMachine {
 
     public void setState(IntakeStates state, boolean value) {
         if(state.status!=value) {
-            logger.log("SequencingStates", "poggies");
             state.setStatus(value);
 
             if (value) {
@@ -164,9 +163,8 @@ public class StateMachine {
     }
     public void setState(TurretStates state, boolean value) {
         if(state.status!=value) {
-            logger.log("SequencingStates", "poggies");
             state.setStatus(value);
-            if (value == true) {
+            if (value) {
                 logger.log("SequencingStates", "STATE:" + TurretStates.values()[1] + ",true");
             } else {
                 logger.log("SequencingStates", "STATE:" + TurretStates.values()[1] + ",false");
@@ -175,7 +173,6 @@ public class StateMachine {
     }
     public void setState(BasketBasketArmStates state, boolean value) {
         if(state.status!=value) {
-            logger.log("SequencingStates", "poggies");
             state.setStatus(value);
             if (value) {
                 logger.log("SequencingStates", "STATE:" + BasketBasketArmStates.values()[1] + ",true");
