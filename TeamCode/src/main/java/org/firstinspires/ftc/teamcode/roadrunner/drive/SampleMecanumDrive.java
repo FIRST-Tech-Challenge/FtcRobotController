@@ -233,6 +233,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                 Pose2d ultraPos = robot.ultras.getPose2d();
                 setPoseEstimate(new Pose2d(ultraPos.getX(),ultraPos.getY(),robot.imu.updateAngle()));
             }
+            else{
+            }
         }
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);

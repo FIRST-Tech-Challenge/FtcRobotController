@@ -38,8 +38,5 @@ public class RoadRunMoveTest extends LinearOpMode {
                 .build();
         robot.roadrun.followTrajectorySequence(trajSeq);
         robot.roadrun.followTrajectorySequence(trajSeq);
-        robot.roadrun.followTrajectorySequence(trajSeq);
-        robot.roadrun.followTrajectorySequence(trajSeq);
-        robot.roadrun.followTrajectorySequence(trajSeq);
     }
 }
