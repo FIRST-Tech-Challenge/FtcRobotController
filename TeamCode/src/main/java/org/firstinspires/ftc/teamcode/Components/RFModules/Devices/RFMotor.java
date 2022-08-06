@@ -27,7 +27,7 @@ public class RFMotor extends Motor {
         rfMotor.setMode(runMode);
         rfMotor.setZeroPowerBehavior(zeroBehavior);
 
-        logger.createFile("RFMotorLog", "Action,Value");
+        logger.createFile("RFMotorLog", "Runtime,Action,Value");
     }
     public void setPower(double power){
         rfMotor.setPower(power);

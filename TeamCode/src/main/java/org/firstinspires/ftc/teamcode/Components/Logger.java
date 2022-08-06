@@ -28,7 +28,7 @@ public class Logger {
     String  currentTime;
     double runtime;
     double lastlogtime = 0;
-    public static int loopcounter=0;
+    public int loopcounter=0;
     String data = "0";
     OpMode op;
     public Logger (OpMode opMode){
@@ -76,12 +76,9 @@ public class Logger {
             } else {
                 file.delete();
                 file.createNewFile();
-                file = new File("/storage/emulated/0/tmp/"+fileName+data+"Log.csv");
                 op.telemetry.addData("Logger:", "File already exists:%S\n", "Overriding");
                 op.telemetry.update();
             }
-
-
 
             filewriter = new FileWriter(file, true);
             logList.put(fileName, file);

@@ -7,6 +7,9 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBaske
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.DROPPED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_RETRACTED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_RETRACTING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_FLAT;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_LOWERING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_RAISED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATING_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATING_COUNTER_CLOCKWISE;
@@ -583,31 +586,56 @@ public class Turret {
         turret_Rotation.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         boolean isReset = true;
+        double velocity;
         if(abs(startAngle-EncoderChassis.angle)<45) {
             if (checker.getState(SLIDES_EXTENDED)) {
                 turret_Extension.setVelocity(-extendPosition / abs(extendPosition) * 4 * (abs(extendPosition) + 200));
+                checker.setState(SLIDES_EXTENDED, false);
+                checker.setState(SLIDES_RETRACTING, true);
+
             } else {
                 turret_Extension.setPower(0);
             }
+            checker.setState(SLIDES_RETRACTING, false);
+            checker.setState(SLIDES_RETRACTED, true);
+
             if (checker.getState(SLIDES_RETRACTED) && !checker.getState(TURRET_STRAIGHT)) {
-                turret_Rotation.setVelocity(-rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 50));
+                velocity = -rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 50);
+                turret_Rotation.setVelocity(velocity);
+                if (velocity < 0) {
+                    checker.setState(TURRET_ROTATING_COUNTER_CLOCKWISE, true);
+                }
+                else if (velocity > 0) {
+                    checker.setState(TURRET_ROTATING_CLOCKWISE, true);
+                }
             } else {
                 turret_Rotation.setVelocity(0);
             }
+            checker.setState(TURRET_ROTATING_CLOCKWISE, false);
+            checker.setState(TURRET_ROTATING_COUNTER_CLOCKWISE, false);
+            checker.setState(TURRET_STRAIGHT, true);
+
             if (!arming&&extendPosition<70) {
                 flipStart=op.getRuntime();
                 basketArmServo.setPosition(0.00);
                 arming = true;
             }
+            checker.setState(BASKET_ARM_REST, true);
+
             if (!basketing&&checker.getState(SLIDES_EXTENDED)) {
                 basketActuationServo.setPosition(.5);
                 basketing = true;
             }
+            checker.setState(BASKET_TRANSFER, true);
+
             if (!angleControlling && checker.getState(SLIDES_RETRACTED)) {
                 turret_Angle_Control.setPosition(0);
                 turret_Angle_Control2.setPosition(118.0 / 270);basketActuationServo.setPosition(.92);
                 angleControlling = true;
+                checker.setState(TURRET_LOWERING, true);
             }
+            checker.setState(TURRET_LOWERING, false);
+            checker.setState(TURRET_FLAT, true);
         }
         else{
 
@@ -615,7 +643,11 @@ public class Turret {
                 turret_Angle_Control.setPosition(0);
                 turret_Angle_Control2.setPosition(118.0 / 270);
                 angleControlling = true;
+                checker.setState(TURRET_LOWERING, true);
             }
+            checker.setState(TURRET_LOWERING, false);
+            checker.setState(TURRET_FLAT, true);
+
             if (!arming) {
                 basketArmServo.setPosition(0.30);
                 arming = true;
@@ -624,20 +656,37 @@ public class Turret {
             if(abs(rotatePosition)<10){
                 basketArmServo.setPosition(0.00);
             }
+            checker.setState(BASKET_ARM_REST, true);
+
             if (rotatePosition<10&&op.getRuntime()-flipStart>0.5&&arming) {
                 FlipBasketToPosition(0.9);
             }
+
             if(op.getRuntime()-flipStart>0.5) {
                 if (checker.getState(SLIDES_EXTENDED)) {
                     turret_Extension.setVelocity(-extendPosition / abs(extendPosition) * 4 * (abs(extendPosition) + 100));
+                    checker.setState(SLIDES_RETRACTING, true);
                 } else {
                     turret_Extension.setVelocity(0);
                 }
+                checker.setState(SLIDES_RETRACTING, false);
+                checker.setState(SLIDES_RETRACTED, true);
+
                 if (checker.getState(SLIDES_RETRACTED) && !checker.getState(TURRET_STRAIGHT)) {
-                    turret_Rotation.setVelocity(-rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 30));
+                    velocity = -rotatePosition / abs(rotatePosition) * (5 * abs(rotatePosition) + 30);
+                    turret_Rotation.setVelocity(velocity);
+                    if (velocity < 0) {
+                        checker.setState(TURRET_ROTATING_COUNTER_CLOCKWISE, true);
+                    }
+                    else if (velocity > 0) {
+                        checker.setState(TURRET_ROTATING_CLOCKWISE, true);
+                    }
                 } else {
                     turret_Rotation.setVelocity(0);
                 }
+                checker.setState(TURRET_ROTATING_CLOCKWISE, false);
+                checker.setState(TURRET_ROTATING_COUNTER_CLOCKWISE, false);
+                checker.setState(TURRET_STRAIGHT, true);
             }
         }
 //        op.telemetry.addData("basketArmRest", checker.getState(StateMachine.States.BASKET_ARM_REST));

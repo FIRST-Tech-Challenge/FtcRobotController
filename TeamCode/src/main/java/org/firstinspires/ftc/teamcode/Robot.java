@@ -270,15 +270,11 @@ public class Robot {
         time = op.getRuntime();
         //according to blue side left auto next to barrier
         changed = false;
-        Logger.loopcounter++;
+        logger.loopcounter++;
         int up = 0;
         intake.updateIntakeStates();
         turret.updateTurretPositions();
 
-        if (time - lastlogtime > 0.1) {
-//            log();
-            lastlogtime = time;
-        }
 //        if (xpos > (60) * red - startx) {
 //            if (!shared_shipping_hub && red == 1) {
 //                changed = true;

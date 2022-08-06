@@ -141,43 +141,46 @@ public class StateMachine {
         if(state.status!=value) {
             state.setStatus(value);
 
-            if (value == true) {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
+            if (value) {
+                logger.log("SequencingStates", "STATE:" + RobotStates.values()[1] + ",true");
             } else {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
+                logger.log("SequencingStates", "STATE:" + RobotStates.values()[1] + ",false");
             }
         }
     }
 
     public void setState(IntakeStates state, boolean value) {
         if(state.status!=value) {
+            logger.log("SequencingStates", "poggies");
             state.setStatus(value);
 
-            if (value == true) {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
+            if (value) {
+                logger.log("SequencingStates", "STATE:" + IntakeStates.values()[1] + ",true");
             } else {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
+                logger.log("SequencingStates", "STATE:" + IntakeStates.values()[1] + ",false");
             }
 
         }
     }
     public void setState(TurretStates state, boolean value) {
         if(state.status!=value) {
+            logger.log("SequencingStates", "poggies");
             state.setStatus(value);
             if (value == true) {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
+                logger.log("SequencingStates", "STATE:" + TurretStates.values()[1] + ",true");
             } else {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
+                logger.log("SequencingStates", "STATE:" + TurretStates.values()[1] + ",false");
             }
         }
     }
     public void setState(BasketBasketArmStates state, boolean value) {
         if(state.status!=value) {
+            logger.log("SequencingStates", "poggies");
             state.setStatus(value);
-            if (value == true) {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",true");
+            if (value) {
+                logger.log("SequencingStates", "STATE:" + BasketBasketArmStates.values()[1] + ",true");
             } else {
-                logger.log("SequencingStates", "STATE:" + state.values()[1] + ",false");
+                logger.log("SequencingStates", "STATE:" + BasketBasketArmStates.values()[1] + ",false");
             }
         }
     }
