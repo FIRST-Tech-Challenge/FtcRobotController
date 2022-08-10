@@ -193,6 +193,8 @@ public class DriveSystem {
         }
         // Determine distance from desired target and stop if within acceptable tolerance
         for (DcMotor motor : motors.values()) {
+            Log.i("MOTOR", motor.getCurrentPosition() + "");
+            Log.i("MOTOR_POWER", motor.getPower() + "");
             int offset = Math.abs(motor.getCurrentPosition() - mTargetTicks);
             if (offset <= DriveParams.TICK_TOLERANCE) {
                 // Shut down motors and reset target

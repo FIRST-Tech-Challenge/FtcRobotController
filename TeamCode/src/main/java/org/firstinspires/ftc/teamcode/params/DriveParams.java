@@ -23,6 +23,6 @@ public class DriveParams {
     // Tightest threshold as we can make it with an integer gyro
     public static final double HEADING_THRESHOLD = 1 ;
     // Acceptable distance in ticks to stop motors at
-    public static final int TICK_TOLERANCE       = 15;
+    public static final int TICK_TOLERANCE       = 1;
 
 }
