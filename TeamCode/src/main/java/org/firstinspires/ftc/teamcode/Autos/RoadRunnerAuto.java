@@ -63,8 +63,5 @@ public class RoadRunnerAuto extends LinearOpMode {
          \*/
 
         bot.followTrajectory(strafeTrajectory);
-
-
-
     }
 }
