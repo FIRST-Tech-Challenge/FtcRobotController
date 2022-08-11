@@ -3,14 +3,15 @@ package org.firstinspires.ftc.teamcode.Autos;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+
+@Autonomous
 public class RoadRunnerAuto extends LinearOpMode {
     @Override
     public void runOpMode(){
@@ -23,9 +24,11 @@ public class RoadRunnerAuto extends LinearOpMode {
         //when we call the .build() method, it turns that special object into an actual trajectory
 
         //separated two actions (strafe and then forward) into different trajectories
+
         Trajectory strafeTrajectory = bot.trajectoryBuilder(startPose)
                 .strafeRight(10) //10 inches
                 .build();
+
 
         Trajectory forwardTrajectory = bot.trajectoryBuilder(strafeTrajectory.end())
                 .forward(5)
@@ -41,10 +44,11 @@ public class RoadRunnerAuto extends LinearOpMode {
                 .forward(5)
                 .build();
 
-        //Reverse Spline
+        //Reverse Spline which basically mirrors, or "reverses" the path itself
         Trajectory reverseSpline = bot.trajectoryBuilder(new Pose2d(), true) // you can also type Math.toRadians(180) in place of true, does the same thing
-                        .splineTo(new Vector2d(10,10), 0)
+                        .splineTo(new Vector2d(20,20), 0)
                         .build();
+
 
 
         waitForStart();
@@ -54,14 +58,22 @@ public class RoadRunnerAuto extends LinearOpMode {
         //These tell the bot to begin following the path, where each line is executed one by one
 
         /*\
-        bot.followTrajectory(forwardTrajectory);
-        bot.followTrajectory(reverseSpline);
+        bot.followTrajectory(strafeTrajectory);
 
+
+
+        bot.followTrajectory(reverseSpline);
+        bot.followTrajectory(forwardTrajectory);
         bot.followTrajectory(smoothTraj);
         bot.turn(Math.toRadians(90));
         bot.followTrajectory(goForward);
          \*/
 
-        bot.followTrajectory(strafeTrajectory);
+        bot.followTrajectory(reverseSpline);
+
+
+
+
+
     }
 }
