@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_REST;
-import static org.firstinspires.ftc.teamcode.Components.Turret.checker;
+import static org.firstinspires.ftc.teamcode.Robot.checker;
 import static org.firstinspires.ftc.teamcode.Components.Turret.servoPos;
 import static org.firstinspires.ftc.teamcode.Robot.isBlue;
 import static org.firstinspires.ftc.teamcode.Robot.startAngle;

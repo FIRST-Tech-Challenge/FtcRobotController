@@ -6,6 +6,9 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeState
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_FLIPPING_DOWN;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_TRANSFERRING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SEQUENCING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_RETRACTING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATED;
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
@@ -55,19 +58,17 @@ public class Robot {
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
     public static int isBlue = 1;
-    boolean isExtended = false;
     boolean flipped = false;
     double slowTime = 0.0;
     public static boolean isBall = false;
     public static boolean resetten = true;
-    public static boolean faked = false, rotated = false;
+    public static boolean faked = false;
     boolean outModed = false;
     double trueStartAngle = 0;
     boolean shouldFlipIntake = false;
     boolean isReversing = false;
     double shareFlipTime = 0,startRotateTime;
     boolean isFlipping = false;
-    boolean isExtending = false;
     double flipDelay = .3, reverseDelay = .7;
     double[] startTime = {-2, 0, 0, 0, 0, 0, 0, -10, 0, 100, 0, 0, 0};
     double magnitude;
@@ -103,7 +104,7 @@ public class Robot {
     private LedColor led_bank = null;
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
-    private StateMachine checker = null;
+    public static StateMachine checker = null;
     public Logger logger;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
@@ -270,15 +271,11 @@ public class Robot {
         time = op.getRuntime();
         //according to blue side left auto next to barrier
         changed = false;
-        Logger.loopcounter++;
+        logger.loopcounter++;
         int up = 0;
         intake.updateIntakeStates();
         turret.updateTurretPositions();
 
-        if (time - lastlogtime > 0.1) {
-//            log();
-            lastlogtime = time;
-        }
 //        if (xpos > (60) * red - startx) {
 //            if (!shared_shipping_hub && red == 1) {
 //                changed = true;
@@ -317,8 +314,8 @@ public class Robot {
             }
             //according to blue side left auto next to barrier
         }
-        if (isExtended) {
-            retracting = false;
+        if (checker.getState(SLIDES_EXTENDED)) {
+            checker.setState(SLIDES_RETRACTING, false);
             autoretractTurret = false;
             autoAim = false;
             autoAiming = false;
@@ -326,7 +323,7 @@ public class Robot {
         if(autoAiming){
             turret_angle_control_distance=17*118.0/270.0/35.0;
         }
-        if(retracting){
+        if(checker.getState(SLIDES_RETRACTING)){
             turret_angle_control_distance=0;
         }
         turret_angle_control_distance -= turretUpNDown / 300;
@@ -353,7 +350,7 @@ public class Robot {
         if (flipIntake && time > startTime[3] + .3) {
             startTime[3] = time;
             if (!intake.flipIntake()) {
-                retracting = true;
+                checker.setState(SLIDES_RETRACTING, true);
             }
         }
         if(resetTurret){
@@ -364,10 +361,10 @@ public class Robot {
             turret.plusExtension();
             op.sleep(200);
         }
-        if (turretTurn != 0&&!retracting) {
+        if (turretTurn != 0&&!checker.getState(SLIDES_RETRACTING)) {
             autoAiming = false;
             TurretManualRotation(turretTurn);
-        } else if (!retracting && !autoAiming && time > startTime[8] + 2) {
+        } else if (!checker.getState(SLIDES_RETRACTING) && !autoAiming && time > startTime[8] + 2) {
             turret.stopTurn();
         }
 //        if (extendAutoTSE) {
@@ -381,9 +378,9 @@ public class Robot {
             startTime[8] = time;
         }
         if (op.getRuntime() > .147 * 44 + startTime[6]) {
-            isExtending = false;
+            checker.setState(SLIDES_EXTENDING, false);
         }
-        if (extendTurret != 0 || retracting) {
+        if (extendTurret != 0 || checker.getState(SLIDES_RETRACTING)) {
             autoAiming = false;
             TurretManualExtension(extendTurret);
         } else if (time > startTime[8] + 2.0) {
@@ -411,7 +408,7 @@ public class Robot {
             op.telemetry.addData("robot position", Arrays.toString(new double[]{xpos, ypos, angle}));
         }
         spinCarousel();
-        if (autoAiming && !retracting) {
+        if (autoAiming && !checker.getState(SLIDES_RETRACTING)) {
             fakeAutoAim();
         }
         op.telemetry.addData("autoaiming", autoAiming);
@@ -480,7 +477,7 @@ public class Robot {
 //            }
 
         /** add stuff u want to do with intake when switch is on HERE **/
-        if ((checker.getState(SEQUENCING) || checker.checkIf(SEQUENCING)) && !retracting) {
+        if ((checker.getState(SEQUENCING) || checker.checkIf(SEQUENCING)) && !checker.getState(SLIDES_RETRACTING)) {
             op.telemetry.addData("el button", "is clicked");
             isFlipping = true;
             if (!checker.getState(SEQUENCING)) {
@@ -499,7 +496,7 @@ public class Robot {
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
             } else if (!checker.getState(INTAKE_FLIPPING_DOWN) && checker.getState(INTAKE_DOWN)) {
-                retracting = true;
+                checker.setState(SLIDES_RETRACTING, true);
             }
             op.telemetry.addData("transferring", !checker.getState(INTAKE_TRANSFERRING));
             op.telemetry.addData("flipping", !checker.getState(INTAKE_FLIPPING_DOWN));
@@ -539,12 +536,12 @@ public class Robot {
             }
 
         }
-        if (autoretractTurret || retracting) {
+        if (autoretractTurret || checker.getState(SLIDES_RETRACTING)) {
             autoAiming = false;
             if (!checker.getState(INTAKE_DOWN)&&abs(startAngle-EncoderChassis.angle)<45) {
                 intake.flipIntakeToPosition(0.0);
             }
-            retracting = TurretReset(0.5);
+            checker.setState(SLIDES_RETRACTING, TurretReset(0.5));
         }
 
         magnitude = forward;
@@ -590,7 +587,7 @@ public class Robot {
 
     public void fakeAutoAim() {
         double angle = -60;
-        retracting=false;
+        checker.setState(SLIDES_RETRACTING, false);
         if(abs(startAngle-EncoderChassis.angle)%360<45) {
             if(!flipped) {
                 flipBasketArmToPosition(0.55);
@@ -965,7 +962,7 @@ public class Robot {
                 if (ypos < 5) {
                     if (autoAiming) {
                         fakeAutoAim();
-                        if (faked && rotated) {
+                        if (faked && checker.getState(TURRET_ROTATED)) {
                             turret.stopExtend();
                             turret.stopTurn();
                             starterTimes[1] = 501;
@@ -1162,7 +1159,7 @@ public class Robot {
         }
         stopAllMotors();
         double nowTime = op.getRuntime();
-        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked || !rotated) {
+        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked || checker.getState(TURRET_STRAIGHT)) {
             nowTime = op.getRuntime();
             turret.updateTurretPositions();
             if (!resetten && !autoAiming && starterTimes[0] == 100) {
@@ -1203,7 +1200,7 @@ public class Robot {
             if (autoAiming) {
                 fakeAutoAim();
                 stopIntake();
-                if (faked && rotated) {
+                if (faked && checker.getState(TURRET_ROTATED)) {
                     turret.stopExtend();
                     turret.stopTurn();
                 }
@@ -1211,7 +1208,7 @@ public class Robot {
             op.telemetry.addData("autoAim", autoAiming);
             op.telemetry.addData("faked", faked);
             op.telemetry.addData("resetten", resetten);
-            op.telemetry.addData("start0", rotated);
+            op.telemetry.addData("start0", checker.getState(TURRET_ROTATED));
             op.telemetry.addData("start1", starterTimes[1]);
             op.telemetry.update();
         }

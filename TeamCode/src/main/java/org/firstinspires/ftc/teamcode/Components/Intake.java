@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeState
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKING;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.teamcode.Robot.checker;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,7 +23,6 @@ public class Intake {
     private ColorDistanceRevV3 sensorDistance;
     boolean isIntaking = false;
     double intakeTimeStart = -10;
-    StateMachine checker = null;
     double flipTime = 0;
 
     LinearOpMode op = null;
