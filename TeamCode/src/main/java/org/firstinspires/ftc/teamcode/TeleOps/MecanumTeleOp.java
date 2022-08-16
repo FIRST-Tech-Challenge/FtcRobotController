@@ -56,10 +56,12 @@ public class MecanumTeleOp extends LinearOpMode {
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        // pauses the Op-Mode until the START button is pressed on the driver station.
         waitForStart();
 
+        // "opModeIsActive()" returns a boolean that checks if the START button has been pressed, and if the STOP button has not been pressed
         while (opModeIsActive()) {
-           drive();
+           drive(); // calling drive() in a loop rather than running it in this one allows us to better organize different functions we want the bot to perform
 
 
 
@@ -67,6 +69,10 @@ public class MecanumTeleOp extends LinearOpMode {
         }//end of "while(OpmodeIsActive)"
 
     }// end of "runOpMode()"
+
+
+ //-------------------------------\\
+//        functional methods       \\
 
     public void drive(){
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
