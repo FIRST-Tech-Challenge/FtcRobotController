@@ -97,8 +97,6 @@ public class VSLAMChassis extends BasicChassis {
         }
         op.sleep(1000);
         track();
-
-
     }
 
     public static float getXpos() {

@@ -13,15 +13,19 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.LED;
 
+import org.firstinspires.ftc.teamcode.Robot;
+
 import java.util.ArrayList;
 
 public class Ultrasonics {
     private AnalogInput ultrasonicFront, ultrasonicBack, ultrasonicRight, ultrasonicLeft;
     private LED ultraFront, ultraBack, ultraRight, ultraLeft;
-    private double ultraRange = 35, lastUltraUpdate = -10, lastSetPos = -10, time = 0.0, robotWidth = 13, robotLength = 17.3;
+    private double ultraRange = 35, lastUltraUpdate = -10, lastSetPos = -10, time = 0.0, robotWidth = 13, robotLength = 15;
+    //x,y,a
     private double[] pos = {0, 0, 0}, error = {0, 0};
-    private ArrayList<double[]> errorLog = new ArrayList<>();
-    private boolean high = false, updated = false;
+    public ArrayList<double[]> errorLog = new ArrayList<>();
+    private boolean high = false;
+    public int updated = 0;
 
     public double[] dist = {0, 0, 0, 0};
 
@@ -41,39 +45,50 @@ public class Ultrasonics {
     }
 
     public void logError() {
-        if(errorLog.size()==5) {
-            errorLog.remove(0);
+        double[] potential_log = {0,0};
+        if(abs(error[0])<3){
+            potential_log[0] = error[0];
+        }else{
+            //data is bad
         }
-        if(abs(error[0])<20&&abs(error[1])<20) {
-            errorLog.add(new double[]{error[0], error[1]});
+        if(abs(error[1])<3){
+            potential_log[1] = error[1];
+        }else{
+            //data is bad
+        }
+        if(potential_log[0]!=0||potential_log[1]!=0) {
+            errorLog.add(potential_log);
         }
     }
-    public void clearError(){
+
+    public void clearError() {
         errorLog.clear();
     }
-    public boolean sufficientData(){
-        if(errorLog.size()<5){
+
+    public boolean sufficientData() {
+        if (errorLog.size() < 5) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
-    public double[] averageError(){
-        double[] aberage = {0,0};
-        for(int i=0;i<errorLog.size();i++){
+
+    public double[] averageError() {
+        double[] aberage = {0, 0};
+        for (int i = 0; i < errorLog.size(); i++) {
             aberage[0] += errorLog.get(i)[0];
             aberage[1] += errorLog.get(i)[1];
         }
-        aberage[0]/=errorLog.size();
-        aberage[1]/=errorLog.size();
+        aberage[0] /= errorLog.size();
+        aberage[1] /= errorLog.size();
         return aberage;
     }
+
     public boolean updateUltra(double xpos, double ypos, double angle) {
-//        pos[0] = xpos;
-//        pos[1] = ypos;
-//        pos[2] = angle;
-        updated = false;
+        pos[0] = xpos;
+        pos[1] = ypos;
+        pos[2] = angle;
+        updated = 0;
         angle *= 180 / PI;
         time = op.getRuntime();
         if (time - lastUltraUpdate > 0.03 && !high) {
@@ -84,95 +99,101 @@ public class Ultrasonics {
             high = true;
         }
         if (time - lastUltraUpdate > 0.1 & high) {
+            error[0]=0;
+            error[1]=0;
             getDistance();
             double distance = dist[0] + robotWidth / 2;
-            if (distance < 20 && distance > 0) {
+            if (distance < 20 + robotWidth/2 && distance > 0) {
                 if (abs(angle) < 5) {
                     error[1] = -70.5 + distance - pos[1];
-                    updated = true;
+                    updated = 5;
                 } else if (abs(180 - angle) < 5) {
                     error[1] = 70.5 - distance - pos[1];
-                    updated = true;
+                    updated = 5;
 
                 } else if (abs(-90 - angle) < 5) {
                     error[0] = -70.5 + distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
-                }
-                if (abs(90 - angle) < 5) {
+                } else if (abs(90 - angle) < 5) {
                     error[0] = 70.5 - distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
+                } else {
+                    //do nothing
                 }
             }
             distance = dist[1] + robotWidth / 2;
-            if (distance < 20 && distance > 0) {
+            if (distance < 20+ robotWidth/2 && distance > 0) {
                 if (abs(180 - angle) < 5) {
                     error[1] = -70.5 + distance - pos[1];
-                    updated = true;
+                    updated = 5;
 
                 } else if (abs(angle) < 5) {
                     error[1] = 70.5 - distance - pos[1];
-                    updated = true;
+                    updated = 5;
 
                 } else if (abs(90 - angle) < 5) {
                     error[0] = -70.5 + distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
                 } else if (abs(-90 - angle) < 5) {
                     error[0] = 70.5 - distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
+                } else {
+                    //do nothing
                 }
             }
             distance = dist[2] + robotLength / 2;
-            if (distance < 20 && distance > 0) {
+            if (distance < 20+ robotLength/2 && distance > 0) {
                 if (abs(180 - angle) < 5) {
                     error[0] = -70.5 + distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
                 } else if (abs(angle) < 5) {
                     error[0] = 70.5 - distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
                 } else if (abs(90 - angle) < 5) {
-                    error[1] = -70.5 + distance - pos[1];
-                    updated = true;
+                    error[1] = 70.5 - distance - pos[1];
+                    updated = 5;
 
                 } else if (abs(-90 - angle) < 5) {
-                    error[1] = 70.5 - distance - pos[1];
-                    updated = true;
+                    error[1] = -70.5 + distance - pos[1];
+                    updated = 5;
 
+                } else {
+                    //do nothing
                 }
             }
             distance = dist[3] + robotLength / 2;
-            if (distance < 20 && distance > 0) {
+            if (distance < 20+ robotWidth/2 && distance > 0) {
                 if (abs(180 - angle) < 5) {
-                    error[1] = -70.5 + distance - pos[1];
-                    updated = true;
+                    error[1] = 70.5 - distance - pos[0];
+                    updated = 5;
 
                 } else if (abs(angle) < 5) {
-                    error[1] = 70.5 - distance - pos[1];
-                    updated = true;
+                    error[1] = -70.5 + distance - pos[0];
+                    updated = 5;
 
                 } else if (abs(90 - angle) < 5) {
                     error[0] = -70.5 + distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
                 } else if (abs(-90 - angle) < 5) {
                     error[0] = 70.5 - distance - pos[0];
-                    updated = true;
+                    updated = 5;
 
+                } else {
+                    //do nothing
                 }
             }
-            if (updated) {
+            if (updated==5) {
                 logError();
             }
-            if(!updated){
-                clearError();
-            }
         }
-        if (sufficientData()&& time - lastSetPos > 1) {
+        if (sufficientData() && time - lastSetPos > 1) {
             lastSetPos = time;
             return true;
         } else {
@@ -190,9 +211,9 @@ public class Ultrasonics {
         lastUltraUpdate = time;
         high = false;
     }
-
     public Pose2d getPose2d() {
         double[] error = averageError();
-        return new Pose2d(pos[0]+error[0], pos[1]+error[1], pos[2]);
+        clearError();
+        return new Pose2d(pos[0] + error[0], pos[1] + error[1], pos[2]);
     }
 }

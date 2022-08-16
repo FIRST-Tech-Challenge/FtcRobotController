@@ -11,14 +11,16 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+
 @Autonomous(name = "RoadRunMoveTest")
 public class RoadRunMoveTest extends LinearOpMode {
     public static double DISTANCE = 48; // in
+
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY,false,false,0);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false, 0);
 
-        Pose2d startPose = new Pose2d(57, -54, 0);
+        Pose2d startPose = new Pose2d(55.5, -53.5, 0);
 
         robot.roadrun.setPoseEstimate(startPose);
 
@@ -28,15 +30,22 @@ public class RoadRunMoveTest extends LinearOpMode {
 
         TrajectorySequence trajSeq = robot.roadrun.trajectorySequenceBuilder(startPose)
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(57,-30))
+                .lineTo(new Vector2d(55.5, -29.5))
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(9,-30))
+                .lineTo(new Vector2d(7.5, -29.5))
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(9,-54))
+                .lineTo(new Vector2d(7.5, -53.5))
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(57,-54))
+                .lineTo(new Vector2d(55.5, -53.5))
                 .build();
-        robot.roadrun.followTrajectorySequence(trajSeq);
-        robot.roadrun.followTrajectorySequence(trajSeq);
+        while (opModeIsActive()) {
+            robot.followTrajectorySequenceAsync(trajSeq);
+            robot.followTrajectorySequenceAsync(trajSeq);
+            robot.followTrajectorySequenceAsync(trajSeq);
+            robot.followTrajectorySequenceAsync(trajSeq);
+            robot.followTrajectorySequenceAsync(trajSeq);
+            robot.setFirstLoop(false);
+            robot.roadrun.update();
+        }
     }
 }

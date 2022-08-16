@@ -191,12 +191,16 @@ public class TrajectorySequenceRunner {
         packet.put("x", poseEstimate.getX());
         packet.put("y", poseEstimate.getY());
         packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
+        Robot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getX())+",");
+        Robot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getY())+",");
+        Robot.logger.log("RoadrunLog", String.valueOf(Math.toDegrees(poseEstimate.getHeading()))+"\n");
 
         packet.put("xError", getLastPoseError().getX());
         packet.put("yError", getLastPoseError().getY());
         packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
-        packet.put("ultraYPos", -70.5+robot.ultras.dist[0]+6.5);
-        packet.put("ultraXPos", 70.5-robot.ultras.dist[2]-8.65);
+        packet.put("ultraYPos", robot.ultras.dist[0]);
+        packet.put("updated", robot.ultras.updated);
+        packet.put("errorLogSize", robot.ultras.errorLog.size());
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 

@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.firstinspires.ftc.teamcode.Robot.op;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
@@ -56,6 +57,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -70,7 +72,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
-    private final boolean ultrasonics = true;
+    private final boolean ultrasonics = false;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -164,6 +166,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         robot=p_robot;
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
+        Robot.logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -229,7 +232,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         updatePoseEstimate();
         if(ultrasonics){
             Pose2d pos = getPoseEstimate();
-            if(robot.ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
+            if(robot.ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())&& abs(Objects.requireNonNull(getPoseVelocity()).getHeading())<PI/4){
                 Pose2d ultraPos = robot.ultras.getPose2d();
                 setPoseEstimate(new Pose2d(ultraPos.getX(),ultraPos.getY(),robot.imu.updateAngle()));
             }
@@ -275,12 +278,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
 
-        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
-                + Math.abs(drivePower.getHeading()) > 1) {
+        if (abs(drivePower.getX()) + abs(drivePower.getY())
+                + abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
-            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
-                    + VY_WEIGHT * Math.abs(drivePower.getY())
-                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
+            double denom = VX_WEIGHT * abs(drivePower.getX())
+                    + VY_WEIGHT * abs(drivePower.getY())
+                    + OMEGA_WEIGHT * abs(drivePower.getHeading());
 
             vel = new Pose2d(
                     VX_WEIGHT * drivePower.getX(),
