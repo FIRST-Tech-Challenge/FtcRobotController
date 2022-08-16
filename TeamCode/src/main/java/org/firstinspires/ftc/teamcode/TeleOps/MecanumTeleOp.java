@@ -6,15 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp
+@TeleOp(name = "ChaoticMecanumTeleOp")
 public class MecanumTeleOp extends LinearOpMode {
     /**
      * Get the maximum absolute value from a static array of doubles
      * @param input the input array of double values
      * @return the maximum value from the input array
      */
-
-    //amumusus
 
     private double getMax(double[] input) {
         double max = Integer.MIN_VALUE;
@@ -34,6 +32,11 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotorEx motorBackLeft = (DcMotorEx)hardwareMap.dcMotor.get("BL");
         DcMotorEx motorFrontRight = (DcMotorEx)hardwareMap.dcMotor.get("FR");
         DcMotorEx motorBackRight = (DcMotorEx)hardwareMap.dcMotor.get("BR");
+
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -60,10 +63,10 @@ public class MecanumTeleOp extends LinearOpMode {
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
 
             // Calculate the mecanum motor powers
-            double frontLeftPower = (y + x + 2*rx) / denominator;
-            double backLeftPower = (y - x + 2*rx) / denominator;
-            double frontRightPower = (y - x - 2*rx) / denominator;
-            double backRightPower = (y + x - 2*rx) / denominator;
+            double frontLeftPower = (y + x + 2 * rx) / denominator;
+            double backLeftPower = (y - x + 2 * rx) / denominator;
+            double frontRightPower = (y - x - 2 * rx) / denominator;
+            double backRightPower = (y + x - 2 * rx) / denominator;
 
 
             // Cube the motor powers
@@ -73,26 +76,44 @@ public class MecanumTeleOp extends LinearOpMode {
             backRightPower = Math.pow(backRightPower, 3);
 
             // Calculate the maximum value of all the motor powers
+            // The argument here is just an array separated into different lines
             double maxValue = getMax(new double[]{
-                            frontLeftPower,
-                            frontRightPower,
-                            backLeftPower,
-                            backRightPower
-                    }
-            );
+                    frontLeftPower,
+                    frontRightPower,
+                    backLeftPower,
+                    backRightPower
+            });
+
 
             // Resize the motor power values
-            if(maxValue > 1) {
-                frontLeftPower/=maxValue;
-                frontRightPower/=maxValue;
-                backLeftPower/=maxValue;
-                backRightPower/=maxValue;
+            if (maxValue > 1) {
+                frontLeftPower /= maxValue;
+                frontRightPower /= maxValue;
+                backLeftPower /= maxValue;
+                backRightPower /= maxValue;
             }
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+            if (gamepad1.left_trigger > .5) {
+                motorFrontLeft.setPower(frontLeftPower * 0.35);
+                motorBackLeft.setPower(backLeftPower * 0.35);
+                motorFrontRight.setPower(frontRightPower * 0.35);
+                motorBackRight.setPower(backRightPower * 0.35);
+
+            } else {
+                motorFrontLeft.setPower(frontLeftPower);
+                motorBackLeft.setPower(backLeftPower);
+                motorFrontRight.setPower(frontRightPower);
+                motorBackRight.setPower(backRightPower);
+            }
+
+
+
+
+
+            //end of "while(OpmodeIsActive)"
         }
+
+      //end of "runOpMode()"
     }
+    //end of class
 }
