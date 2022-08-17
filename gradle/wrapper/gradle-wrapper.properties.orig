@@ -1,0 +1,9 @@
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.4.2-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+<<<<<<< HEAD
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.3.3-all.zip
+=======
+>>>>>>> aba72e566c381d65ba7b97ef4e5326b14881d4bc

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
+<<<<<<< HEAD
           package="com.qualcomm.ftcrobotcontroller"
           android:versionCode="44"
           android:versionName="7.10 0">
+=======
+    android:versionCode="45"
+          android:versionName="7.2">
+>>>>>>> aba72e566c381d65ba7b97ef4e5326b14881d4bc
 
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

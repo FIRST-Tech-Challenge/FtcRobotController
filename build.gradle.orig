@@ -4,18 +4,17 @@
  * It is extraordinarily rare that you will ever need to edit this file.
  */
 
-configurations {
-    doc { transitive false }
-}
-
 buildscript {
     repositories {
         mavenCentral()
         google()
-        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+<<<<<<< HEAD
+        classpath 'com.android.tools.build:gradle:7.2.1'
+=======
+        classpath 'com.android.tools.build:gradle:7.2.0'
+>>>>>>> aba72e566c381d65ba7b97ef4e5326b14881d4bc
     }
 }
 
@@ -25,7 +24,6 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        jcenter()
     }
 }
 
@@ -36,6 +34,7 @@ repositories {
         dirs '../libs'
     }
 }
+<<<<<<< HEAD
 
 dependencies {
     doc 'org.firstinspires.ftc:Hardware:6.2.0'
@@ -43,6 +42,7 @@ dependencies {
     doc 'org.firstinspires.ftc:FtcCommon:6.2.0'
     doc 'org.firstinspires.ftc:OnBotJava:6.2.0'
     doc 'org.firstinspires.ftc:Inspection:6.2.0'
+
 }
 
 task extractJavadoc {
@@ -67,3 +67,5 @@ task extractJavadoc {
     }
 }
 
+=======
+>>>>>>> aba72e566c381d65ba7b97ef4e5326b14881d4bc

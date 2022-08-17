@@ -35,12 +35,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * This OpMode scans a single servo back and forwards until Stop is pressed.
+ * This OpMode scans a single servo back and forward until Stop is pressed.
  * The code is structured as a LinearOpMode
  * INCREMENT sets how much to increase/decrease the servo position each cycle
  * CYCLE_MS sets the update period.
  *
- * This code assumes a Servo configured with the name "left_hand" as is found on a pushbot.
+ * This code assumes a Servo configured with the name "left_hand" as is found on a Robot.
  *
  * NOTE: When any servo position is set, ALL attached servos are activated, so ensure that any other
  * connected servos are able to move freely before running this test.
@@ -66,7 +66,7 @@ public class ConceptScanServo extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // Connect to servo (Assume PushBot Left Hand)
+        // Connect to servo (Assume Robot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
         servo = hardwareMap.get(Servo.class, "left_hand");
 
