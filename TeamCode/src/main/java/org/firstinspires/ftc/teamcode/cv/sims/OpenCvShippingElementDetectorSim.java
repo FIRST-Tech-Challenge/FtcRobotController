@@ -43,13 +43,13 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
     Map<TSELocation, Integer> levels = new HashMap<>();
 
 
-    private int width = 224; // width of the image
-    private int height = 224;
+    private int width = 320; // width of the image
+    private int height = 320;
     public double inScaleFactor = 0; //0.0278;
 
-    public double redMeanVal = 255; //5;
-    public double greenMeanVal = 255; //113;
-    public double blueMeanVal = 255; //119;
+    public double redMeanVal = 127.5; //5;
+    public double greenMeanVal = 127.5; //113;
+    public double blueMeanVal = 127.5; //119;
     public boolean cropDNN = true;
     private Dnn cvDNN = null;
     private Net net = null;
@@ -71,7 +71,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
     //private String[] classNames;
 
 
-    private final String modelTSE = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue_images_2/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
+    private final String modelTSE = "/Users/alex/Downloads/Docker/tse_g_o/saved_model/saved_model.pb";
     private final String modelPathDuckSideBlue = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_blue/converted_keras_duckside_blue/optimized/freight_frenzy_barcodes_duckside_blue_graph.pb";
     private final String modelPathDuckSideRed = "/Users/alex/FtcRobotController/TeamCode/src/main/assets/tf_models/freight_frenzy_barcodes/duckside_red/converted_keras_duckside_red/optimized/freight_frenzy_barcodes_duckside_red_graph.pb";
     private final String modelPathWarehouseSideBlue = "C:\\development\\BC4HStem\\FtcRobotController\\TeamCode\\src\\main\\assets\\tf_models\\freight_frenzy_barcodes\\warehouseside_blue\\converted_keras_warehouseside_blue\\optimized\\freight_frenzy_barcodes_warehouseside_blue_graph.pb";
@@ -106,7 +106,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
         location = TSELocation.DUCKSIDE_BLUE_LEVEL_3;
 
 
-        modelPath = modelPathDuckSideRed;
+        modelPath = modelTSE;
         modelPathConfig = modelPath + "txt";
         labelsPath = modelPath.substring(0, nthLastIndexOf(2, "/", modelPath)+1) + "labels.txt";
         inScaleFactor = 0.006; //0.0278;
@@ -273,7 +273,7 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
 
         cvDNN = new Dnn();
-        net = cvDNN.readNetFromTensorflow(modelPath,modelPathConfig);
+        net = cvDNN.readNetFromTensorflow(modelPath);
         net.setPreferableBackend(Dnn.DNN_BACKEND_DEFAULT);
         net.setPreferableTarget(Dnn.DNN_TARGET_CPU);
     }
@@ -286,16 +286,16 @@ public class OpenCvShippingElementDetectorSim extends OpenCvPipeline {
 
         telemetry.addData("labels",classNames);
         // Show the bounding area in which we will search -
-        Rect boundingRect = new Rect(50, 60, 180, 80);
-        Imgproc.rectangle(inputFrame, boundingRect, new Scalar(0, 0, 255), 2); // BLUE
+        //Rect boundingRect = new Rect(50, 60, 180, 80);
+        //Imgproc.rectangle(inputFrame, boundingRect, new Scalar(0, 0, 255), 2); // BLUE
 
-        Mat croppedMat = new Mat(inputFrame,boundingRect);
-        Imgproc.resize(croppedMat,imageRGB,new Size(224,224),0,0);
-        Imgproc.cvtColor(croppedMat,imageRGB,Imgproc.COLOR_BGR2RGB);
+        //Mat croppedMat = new Mat(inputFrame,boundingRect);
+        //Imgproc.resize(inputFrame,imageRGB,new Size(320,320),0,0);
+        Imgproc.cvtColor(inputFrame,imageRGB,Imgproc.COLOR_BGR2RGB);
 
-        telemetry.addData("imageRGB size",imageRGB.size());
+        //telemetry.addData("imageRGB size",imageRGB.size());
         blob = Dnn.blobFromImage(imageRGB, inScaleFactor,
-                new Size(224, 224),new Scalar(redMeanVal,greenMeanVal,blueMeanVal),false,cropDNN);
+                new Size(320, 320),new Scalar(redMeanVal,greenMeanVal,blueMeanVal),false,cropDNN);
 
         //Mat blobMat = blob.reshape(blob.get(0,2) * blob.get(0,1), blob.shape[3], 1)
         //telemetry.addData("blob shape", blob.);

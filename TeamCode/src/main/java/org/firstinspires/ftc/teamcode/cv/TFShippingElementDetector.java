@@ -24,11 +24,7 @@ public class TFShippingElementDetector {
             "TSE_Green",
             "TSE_Orange"
     };
-
-    private WebcamName webCamName;
-    private static final String VUFORIA_KEY =
-            "AWTJEXH/////AAABmbuVZOxvSE4FlyBk+KqcsosKyyBW4u6IeGmWn9xhW5LSSyEnwY5onmj8zZoi9hrQtpH8yqnsQN4mjGhEXfA1GGsIdnwFblzJ5RSVMCdoFBb9hR88M4kzu40QMEpM159aXk5wHLpWjUaIh1V8x4rcDZI0X9//Yw5oTvc5k7IS+w0mB2P2282wjFqSrM7Fsq7B37XYwfm74aFEbKQuPSXM3y73gVl1kFgHvdjF95eDkQw8pN/Y5/75fc+S8VXjhUxCnrx3jnCjRVPgzkrW6r3sgonNNXYrhixp1GX66GF2N/5egEmt0e4iQbBfC+nEk/iZ6TyXR839XGFxv16HAwjRUOwFj1FrpZbQhX9uQlZGHhNb";
-
+    
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
@@ -41,7 +37,7 @@ public class TFShippingElementDetector {
      */
     private TFObjectDetector tfod;
 
-    private static final String ID_NAME = "cameraMonitorViewId";
+    private static final String ID_NAME = "tfodMonitorViewId";
     private static final String ID_DEF_TYPE = "id";
 
     private static final float MIN_RESULT_CONFIDENCE = 0.8f;

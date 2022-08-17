@@ -167,6 +167,7 @@ public class CopyShippingElementPosition extends LinearOpMode
             telemetry.update();
             Mat resizeimage = new Mat();
             Size scaleSize = new Size(width,height);
+            Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2RGB);
             Imgproc.resize(input, resizeimage, scaleSize , 0, 0, Imgproc.INTER_AREA);
 
             String random = getSaltString();
