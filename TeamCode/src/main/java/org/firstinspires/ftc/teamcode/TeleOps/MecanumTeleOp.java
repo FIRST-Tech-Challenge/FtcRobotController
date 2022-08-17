@@ -71,7 +71,6 @@ public class MecanumTeleOp extends LinearOpMode {
     }// end of "runOpMode()"
 
 
- //-------------------------------\\
 //        functional methods       \\
 
     public void drive(){

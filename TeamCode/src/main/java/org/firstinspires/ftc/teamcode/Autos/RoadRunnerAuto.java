@@ -69,7 +69,11 @@ public class RoadRunnerAuto extends LinearOpMode {
         bot.followTrajectory(goForward);
          \*/
 
+
+        // Rather than use a for loop, we should copy and paste the same trajectory sequence and adjust accordingly.
+        // Using a for loop will create minor inconsistencies since our encoders are not perfect (error increases in magnitude each iteration)
         bot.followTrajectory(reverseSpline);
+
 
 
 
