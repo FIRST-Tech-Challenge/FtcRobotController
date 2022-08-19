@@ -48,10 +48,9 @@ public class MeepMeepPathVisualizer {
                     builder.back(25 + stepIncrement);
                     builder.waitSeconds(1);
                     builder.forward(25 + stepIncrement);
-                    builder.setReversed(true);
                     builder.lineToLinearHeading(new Pose2d(0,-42, Math.toRadians(125)));
                     builder.waitSeconds(1.5);
-                    stepIncrement++;
+                    stepIncrement += 3;
                     }
 
                     builder.setReversed(true);
