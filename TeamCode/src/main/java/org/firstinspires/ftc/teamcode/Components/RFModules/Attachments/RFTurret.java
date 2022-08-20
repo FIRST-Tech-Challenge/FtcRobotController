@@ -5,7 +5,7 @@ import static org.firstinspires.ftc.teamcode.Robot.checker;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATED;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;

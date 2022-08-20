@@ -100,7 +100,20 @@ public class Logger {
 //    }
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input){
-        if (loopcounter % 30 == 0) {
+//        if (loopcounter % 5 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void logRegulated(String fileName, String input){
+        if (loopcounter % 10 == 0) {
             try {
                 FileWriter filewriter = new FileWriter(logList.get(fileName), true);
                 filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
@@ -109,13 +122,16 @@ public class Logger {
                 e.printStackTrace();
             }
         }
-
     }
+
+
+
 
     @SuppressLint("DefaultLocale")
     public void log(String fileName, double input){
         String inputstringversion = String.valueOf(input);
         if (loopcounter % 30 == 0) {
+
             try {
                 FileWriter filewriter = new FileWriter(logList.get(fileName), true);
                 filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
