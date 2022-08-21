@@ -41,9 +41,6 @@ public class RoadRunMoveTest extends LinearOpMode {
         while (opModeIsActive()) {
             robot.followTrajectorySequenceAsync(trajSeq);
             robot.followTrajectorySequenceAsync(trajSeq);
-            robot.followTrajectorySequenceAsync(trajSeq);
-            robot.followTrajectorySequenceAsync(trajSeq);
-            robot.followTrajectorySequenceAsync(trajSeq);
             robot.setFirstLoop(false);
             robot.roadrun.update();
         }

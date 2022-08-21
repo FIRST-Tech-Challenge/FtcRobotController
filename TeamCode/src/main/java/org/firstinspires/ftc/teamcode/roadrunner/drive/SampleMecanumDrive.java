@@ -72,7 +72,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
-    private final boolean ultrasonics = false;
+    private final boolean ultrasonics = true, touches = false;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -237,6 +237,16 @@ public class SampleMecanumDrive extends MecanumDrive {
                 setPoseEstimate(new Pose2d(ultraPos.getX(),ultraPos.getY(),robot.imu.updateAngle()));
             }
             else{
+            }
+        }
+        if(touches){
+            Pose2d pos = getPoseEstimate();
+            if(robot.touchs.updateTouch(pos.getX(),pos.getY(),pos.getHeading())){
+                Pose2d touchaPos = robot.touchs.getPose2d();
+                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY(),robot.imu.updateAngle()));
+                op.telemetry.addData("touch-updated", true);
+            }else{
+                op.telemetry.addData("touch-updated", false);
             }
         }
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());

@@ -121,7 +121,7 @@ public class Robot {
     public static Logger logger;
     public Ultrasonics ultras = null;
     public IMU imu = null;
-    private LimitSwitches touchs = null;
+    public LimitSwitches touchs = null;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         op = opMode;
@@ -138,8 +138,8 @@ public class Robot {
 //        openCV = new OpenCVMasterclass(op);
 //        TSE = new tseDepositor(op, isTeleop);
         ultras = new Ultrasonics();
+        touchs = new LimitSwitches();
         imu = new IMU();
-//        touchs = new LimitSwitches(op);
         roadrun = new SampleMecanumDrive(op.hardwareMap, this);
         queuer = new Queuer();
 
@@ -189,21 +189,7 @@ public class Robot {
         drivetrain.stopAllMotors();
     }
 
-    public void update() {
-        roadrun.update();
-        if (ultra) {
-            Pose2d pos = roadrun.getPoseEstimate();
-            if (ultras.updateUltra(pos.getX(), pos.getY(), pos.getHeading())) {
-                roadrun.setPoseEstimate(ultras.getPose2d());
-            }
-        }
-        if (touch) {
-            Pose2d pos = roadrun.getPoseEstimate();
-            if (touchs.updateTouch(pos.getX(), pos.getY(), pos.getHeading())) {
-                roadrun.setPoseEstimate(touchs.getPose2d());
-            }
-        }
-    }
+
 
 
     /*/******** Left Front Motor **********/

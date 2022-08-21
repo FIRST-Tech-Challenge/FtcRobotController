@@ -66,7 +66,7 @@ public class Ultrasonics {
     }
 
     public boolean sufficientData() {
-        if (errorLog.size() < 5) {
+        if (errorLog.size() < 7) {
             return false;
         } else {
             return true;
@@ -91,7 +91,13 @@ public class Ultrasonics {
         updated = 0;
         angle *= 180 / PI;
         time = op.getRuntime();
-        if (time - lastUltraUpdate > 0.03 && !high) {
+        if(angle>180){
+            angle-=360;
+        }
+        if(angle<-180){
+            angle+=360;
+        }
+        if (time - lastUltraUpdate > 0.05 && !high) {
             ultraBack.enable(false);
             ultraRight.enable(false);
             ultraFront.enable(false);
@@ -107,7 +113,7 @@ public class Ultrasonics {
                 if (abs(angle) < 5) {
                     error[1] = -70.5 + distance - pos[1];
                     updated = 5;
-                } else if (abs(180 - angle) < 5) {
+                } else if (abs(180 - angle) < 5 || abs(-180 - angle)<5) {
                     error[1] = 70.5 - distance - pos[1];
                     updated = 5;
 
@@ -125,7 +131,7 @@ public class Ultrasonics {
             }
             distance = dist[1] + robotWidth / 2;
             if (distance < 20+ robotWidth/2 && distance > 0) {
-                if (abs(180 - angle) < 5) {
+            if (abs(180 - angle) < 5 || abs(-180 - angle)<5) {
                     error[1] = -70.5 + distance - pos[1];
                     updated = 5;
 
@@ -147,7 +153,7 @@ public class Ultrasonics {
             }
             distance = dist[2] + robotLength / 2;
             if (distance < 20+ robotLength/2 && distance > 0) {
-                if (abs(180 - angle) < 5) {
+            if (abs(180 - angle) < 5 || abs(-180 - angle)<5) {
                     error[0] = -70.5 + distance - pos[0];
                     updated = 5;
 
@@ -169,20 +175,20 @@ public class Ultrasonics {
             }
             distance = dist[3] + robotLength / 2;
             if (distance < 20+ robotWidth/2 && distance > 0) {
-                if (abs(180 - angle) < 5) {
-                    error[1] = 70.5 - distance - pos[0];
+            if (abs(180 - angle) < 5 || abs(-180 - angle)<5) {
+                    error[0] = 70.5 - distance - pos[0];
                     updated = 5;
 
                 } else if (abs(angle) < 5) {
-                    error[1] = -70.5 + distance - pos[0];
-                    updated = 5;
-
-                } else if (abs(90 - angle) < 5) {
                     error[0] = -70.5 + distance - pos[0];
                     updated = 5;
 
+                } else if (abs(90 - angle) < 5) {
+                    error[1] = -70.5 + distance - pos[0];
+                    updated = 5;
+
                 } else if (abs(-90 - angle) < 5) {
-                    error[0] = 70.5 - distance - pos[0];
+                    error[1] = 70.5 - distance - pos[0];
                     updated = 5;
 
                 } else {
@@ -212,8 +218,8 @@ public class Ultrasonics {
         high = false;
     }
     public Pose2d getPose2d() {
-        double[] error = averageError();
+        double[] errors = averageError();
         clearError();
-        return new Pose2d(pos[0] + error[0], pos[1] + error[1], pos[2]);
+        return new Pose2d(pos[0] + errors[0], pos[1] + errors[1], pos[2]);
     }
 }

@@ -201,6 +201,7 @@ public class TrajectorySequenceRunner {
         packet.put("ultraYPos", robot.ultras.dist[0]);
         packet.put("updated", robot.ultras.updated);
         packet.put("errorLogSize", robot.ultras.errorLog.size());
+        packet.put("averageError", robot.ultras.averageError()[0]);
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 

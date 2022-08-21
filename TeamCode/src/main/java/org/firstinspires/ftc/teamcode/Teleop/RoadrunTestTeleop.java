@@ -26,6 +26,7 @@ public class RoadrunTestTeleop extends LinearOpMode {
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY,true,false,0);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.roadrun.setPoseEstimate(new Pose2d(55.5,-53.5,0));
 
         waitForStart();
 
@@ -38,7 +39,7 @@ public class RoadrunTestTeleop extends LinearOpMode {
                     )
             );
 
-            robot.update();
+            robot.roadrun.update();
             Pose2d poseEstimate = robot.roadrun.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());

@@ -27,7 +27,7 @@ public class MecanumTeleop extends LinearOpMode {
     DcMotorEx extendIntake, intakeMotor;
     Servo intakeFlip;
     private final double MAX_INTAKE_EXTENSION_TICKS=545;
-    private boolean isSequencing = false, isReversing = false, isRetracting = false;
+    private boolean isSequencing = false, isReversing = false, isRetracting = false,isExtending = false;
     private double[] time={100,100,0};
 
     public void runOpMode() {
@@ -64,7 +64,7 @@ public class MecanumTeleop extends LinearOpMode {
         }
         resetStartTime();
         while (!isStopRequested()&&getRuntime()<90) {
-            float leftStickx = op.gamepad1.left_stick_x,leftSticky = -op.gamepad1.left_stick_y,
+            float leftStickx = op.gamepad1.left_stick_x,leftSticky = op.gamepad1.left_stick_y,
                     rightStick = op.gamepad1.right_stick_x*0.5f;
             double leftStickr = sqrt(pow(leftSticky, 2) + pow(leftStickx, 2))*0.5,powera,powerb,
                     angle = atan2(leftSticky,leftStickx);
@@ -72,8 +72,15 @@ public class MecanumTeleop extends LinearOpMode {
             powera = -sin(angle + PI/4);
             powerb = -sin(angle - PI/4);
             double extendPower = op.gamepad1.right_trigger-op.gamepad1.left_trigger;
-            if(extendIntake.getCurrentPosition()<MAX_INTAKE_EXTENSION_TICKS&&extendPower>0||extendIntake.getCurrentPosition()>5&&extendPower<0)
-                extendIntake.setPower((extendPower)*1.0);
+            if(extendIntake.getCurrentPosition()<MAX_INTAKE_EXTENSION_TICKS&&extendPower>0||extendIntake.getCurrentPosition()>5&&extendPower<0) {
+                extendIntake.setPower((extendPower) * 1.0);
+                isExtending = true;
+                if(extendPower>0){
+                    intakeMotor.setPower(1.0);
+                }
+            }else{
+                isExtending = false;
+            }
             motorLeftFront.setPower(powerb * leftStickr + rightStick);
             motorRightBack.setPower(powerb * leftStickr - rightStick);
             motorRightFront.setPower(powera * leftStickr - rightStick);
@@ -83,11 +90,16 @@ public class MecanumTeleop extends LinearOpMode {
             if(gamepad1.b){
                 intakeMotor.setPower(1.0);
             }
-            else if(!isSequencing){
+            else if(!isSequencing&&!isReversing&&!isExtending){
                 intakeMotor.setPower(0);
             }
             if(gamepad1.a&&getRuntime()-time[2]>0.2){
-                intakeFlip.setPosition(0.8-intakeFlip.getPosition());
+                if(intakeFlip.getPosition()<0.3){
+                    intakeFlip.setPosition(0.8);
+                }else{
+                    intakeFlip.setPosition(0.1);
+                }
+                time[2]=getRuntime();
             }
             if(intakeSensor.getSensorDistance()<1||isSequencing){
                 if(time[0]>getRuntime()){
