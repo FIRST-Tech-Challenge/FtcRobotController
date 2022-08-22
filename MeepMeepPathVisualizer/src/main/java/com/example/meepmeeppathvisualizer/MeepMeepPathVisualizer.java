@@ -12,10 +12,12 @@ public class MeepMeepPathVisualizer {
         final int NUM_CYCLES = 3;
 
         MeepMeep mm = new MeepMeep(800,90);
+
+        // Setting up Persist so visualizer window doesn't reset to middle of screen
+        MeepMeepPersistence persist = new MeepMeepPersistence(mm);
+        persist.restore();
+
         Pose2d startPose = new Pose2d(-12, -59, Math.toRadians(90)); // x, y, heading (angle in radians)
-
-
-        //new MeepMeep(111).getWindowFrame().;
 
         // Creating bot
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
@@ -36,22 +38,22 @@ public class MeepMeepPathVisualizer {
 
             // () -> {} is the syntax for taking in a function, aka a lambda
             // Assuming FRONT of the bot is the EXTAKE
-            .followTrajectorySequence(drive -> { 
+            .followTrajectorySequence(drive -> {
                 TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
-                
+
                 builder.forward(15);
                 builder.waitSeconds(1.5);
-                
+
                 for (int i = 0, stepIncrement = 0; i < NUM_CYCLES; i++) {
-                    
+
                     builder.lineToLinearHeading(new Pose2d(10,-63.5, Math.toRadians(180)));
                     builder.back(25 + stepIncrement);
                     builder.waitSeconds(1);
                     builder.forward(25 + stepIncrement);
                     builder.lineToLinearHeading(new Pose2d(0,-42, Math.toRadians(125)));
                     builder.waitSeconds(1.5);
-                    
-                    stepIncrement += 3;   
+
+                    stepIncrement += 3;
                 }
 
                 builder.setReversed(true);
