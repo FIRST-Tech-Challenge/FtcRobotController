@@ -14,6 +14,9 @@ public class MeepMeepPathVisualizer {
         MeepMeep mm = new MeepMeep(800,90);
         Pose2d startPose = new Pose2d(-12, -59, Math.toRadians(90)); // x, y, heading (angle in radians)
 
+
+        //new MeepMeep(111).getWindowFrame().;
+
         // Creating bot
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
             .setStartPose(startPose)
