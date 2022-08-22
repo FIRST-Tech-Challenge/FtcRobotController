@@ -50,7 +50,6 @@ public class FreightFrenzyAuto extends LinearOpMode {
                 .forward(5)
                 .build();
 
-
         Trajectory smoothTraj = bot.trajectoryBuilder(new Pose2d(0,0,0)) //added new pose with 90 angle to simulate turn
                 .forward(10)
                 .splineTo(new Vector2d(15,5), 0)
@@ -80,7 +79,6 @@ public class FreightFrenzyAuto extends LinearOpMode {
         bot.turn(Math.toRadians(90));
         bot.followTrajectory(goForward);
          \*/
-
 
         // Rather than use a for loop, we should copy and paste the same trajectory sequence and adjust accordingly.
         // Using a for loop will create minor inconsistencies since our encoders are not perfect (error increases in magnitude each iteration)
