@@ -54,7 +54,7 @@ public class MeepMeepPathVisualizer {
                     }
 
                     builder.setReversed(true);
-                    builder.splineToSplineHeading(new Pose2d(-59,-35), Math.toRadians(180));
+                    builder.splineToSplineHeading(new Pose2d(-59,-35), Math.toRadians(90));
 
                     return builder.build();
                 });
