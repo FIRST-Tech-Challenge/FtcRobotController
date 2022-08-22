@@ -7,6 +7,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATED;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
@@ -23,17 +24,17 @@ public class RFTurret extends RFMotor {
 
 
 
-    private RFMotor rotationMotor;
+    private final RFMotor rotationMotor;
 
     double MAX_ROTATION_TICKS = 570;
 
     LinearOpMode op;
 
     /*motor, rotateToAngle, getAngle*/
-    public RFTurret(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior, Logger log) {
-        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
+    public RFTurret(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
+        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
 
-        rotationMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
+        rotationMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
 
         op = opMode;
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -12,10 +14,10 @@ public class RFAngleAdjust extends RFDualServo{
     private final double DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime = 0.3;
 
     LinearOpMode op;
-    public RFAngleAdjust(Servo.Direction servoDirection, LinearOpMode opMode, Logger log) {
-        super(servoDirection, opMode, log);
+    public RFAngleAdjust(Servo.Direction servoDirection, LinearOpMode opMode) {
+        super(servoDirection, opMode);
 
-        angleAdjustServo = new RFDualServo(servoDirection, opMode, log);
+        angleAdjustServo = new RFDualServo(servoDirection, opMode);
 
         op = opMode;
     }

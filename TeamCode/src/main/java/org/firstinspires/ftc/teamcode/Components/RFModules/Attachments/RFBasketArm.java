@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmSt
 import static org.firstinspires.ftc.teamcode.Robot.checker;
 import static org.firstinspires.ftc.teamcode.Components.Turret.servoPos;
 import static org.firstinspires.ftc.teamcode.Robot.isBlue;
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static org.firstinspires.ftc.teamcode.Robot.startAngle;
 
 
@@ -22,10 +23,10 @@ public class RFBasketArm extends RFServo {
     private RFServo basketArmServo;
 
     LinearOpMode op;
-    public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode, Logger log) {
-        super(range, direction, deviceName, opMode, log);
+    public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
+        super(range, direction, deviceName, opMode);
 
-        basketArmServo = new RFServo(range, direction, deviceName, opMode, log);
+        basketArmServo = new RFServo(range, direction, deviceName, opMode);
 
         op = opMode;
     }

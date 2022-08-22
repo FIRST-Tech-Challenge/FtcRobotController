@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -37,7 +38,6 @@ import java.util.concurrent.locks.ReentrantLock;
 //2.0,1.7,1.1
 public class EncoderChassis extends BasicChassis {
     VuforiaThread vuforia = null;
-    Logger logger;
     double ticksPerInch = 29.8;
     public static double xVelocity = 0;
     public static double yVelocity = 0;
@@ -76,9 +76,8 @@ public class EncoderChassis extends BasicChassis {
     double lastTime = 0;
     double thisTime = 0;
 
-    public EncoderChassis(LinearOpMode opMode, boolean navigator, boolean isTeleop, Logger log) {
+    public EncoderChassis(LinearOpMode opMode, boolean navigator, boolean isTeleop) {
         super(opMode);
-        logger = log;
         navigation = navigator;
         op = opMode;
         if(!isTeleop) {

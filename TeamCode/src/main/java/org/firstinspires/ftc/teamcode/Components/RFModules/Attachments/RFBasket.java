@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Components.Turret.areTeleop;
 import static org.firstinspires.ftc.teamcode.Robot.checker;
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,9 +20,9 @@ public class RFBasket {
     private RFServo basketServo;
 
     LinearOpMode op;
-    public RFBasket(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode, Logger log) {
+    public RFBasket(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
 
-        basketServo = new RFServo(range, direction, deviceName, opMode, log);
+        basketServo = new RFServo(range, direction, deviceName, opMode);
 
         op = opMode;
     }

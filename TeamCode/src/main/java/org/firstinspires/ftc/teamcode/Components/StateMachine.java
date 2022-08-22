@@ -34,13 +34,13 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotat
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.INTAKE_SWITCHED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.IN_WAREHOUSE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SEQUENCING;
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.robot.RobotState;
 
 public class StateMachine {
     boolean teleOp = false;
-    Logger logger;
     IntakeServoStates lastIntakeServoState = INTAKE_DOWN;
     IntakeMotorStates lastIntakeMotorState = INTAKE_STILL;
     TurretRotationStates lastTurretRotationState = TURRET_STRAIGHT;
@@ -199,8 +199,7 @@ public class StateMachine {
         }
     }
 
-    public StateMachine(LinearOpMode op, boolean isTeleOp, Logger log) {
-        logger = log;
+    public StateMachine(LinearOpMode op, boolean isTeleOp) {
         teleOp = isTeleOp;
         logger.createFile("SequencingStates", "Runtime,State,Value");
         if (teleOp) {
@@ -224,9 +223,9 @@ public class StateMachine {
             state.setStatus(value);
 
             if (value) {
-                logger.log("SequencingStates", "STATE:" + state + ",true");
+                logger.log("SequencingStates", "STATE: " + state + " changed to true");
             } else {
-                logger.log("SequencingStates", "STATE:" + state + ",false");
+                logger.log("SequencingStates", "STATE: " + state + " changed to false");
             }
         }
 
@@ -248,9 +247,9 @@ public class StateMachine {
                 lastIntakeServoState = state;
 
                 if (value) {
-                    logger.log("SequencingStates", "STATE:" + state + ",true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.log("SequencingStates", "STATE:" + state + ",false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -271,9 +270,9 @@ public class StateMachine {
                 lastIntakeMotorState = state;
 
                 if (value) {
-                    logger.log("SequencingStates", "STATE:" + state + ",true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.log("SequencingStates", "STATE:" + state + ",false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -294,9 +293,9 @@ public class StateMachine {
                 lastTurretRotationState = state;
 
                 if (value) {
-                    logger.log("SequencingStates", "STATE:" + state + ",true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.log("SequencingStates", "STATE:" + state + ",false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -317,9 +316,9 @@ public class StateMachine {
                 lastSlidesState = state;
 
                 if (value) {
-                    logger.log("SequencingStates", "STATE:" + state + ",true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.log("SequencingStates", "STATE:" + state + ",false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -340,9 +339,9 @@ public class StateMachine {
                 lastTurretAAState = state;
 
                 if (value) {
-                    logger.log("SequencingStates", "STATE:" + state + ",true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.log("SequencingStates", "STATE:" + state + ",false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -363,9 +362,9 @@ public class StateMachine {
                 lastBasketState = state;
 
                 if (value) {
-                    logger.log("SequencingStates", "STATE:" + state + ",true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.log("SequencingStates", "STATE:" + state + ",false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -386,9 +385,9 @@ public class StateMachine {
                 lastBasketArmState = state;
 
                 if (value) {
-                    logger.log("SequencingStates", "STATE:" + state + ",true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.log("SequencingStates", "STATE:" + state + ",false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -398,13 +397,13 @@ public class StateMachine {
     }
 
     public void logCurrentStates() {
-        logger.logRegulated("SequencingStates", "lastIntakeServoState" + lastIntakeServoState);
-        logger.logRegulated("SequencingStates", "lastIntakeMotorState" + lastIntakeMotorState);
-        logger.logRegulated("SequencingStates", "lastTurretRotationState" + lastTurretRotationState);
-        logger.logRegulated("SequencingStates", "lastSlidesState" + lastSlidesState);
-        logger.logRegulated("SequencingStates", "lastTurretAAState" + lastTurretAAState);
-        logger.logRegulated("SequencingStates", "lastBasketState" + lastBasketState);
-        logger.logRegulated("SequencingStates", "lastBasketArmState" + lastBasketArmState);
+        logger.logRegulated("SequencingStates", "Last Intake Servo State: " + lastIntakeServoState);
+        logger.logRegulated("SequencingStates", "Last Intake MotorState: " + lastIntakeMotorState);
+        logger.logRegulated("SequencingStates", "Last Turret RotationState: " + lastTurretRotationState);
+        logger.logRegulated("SequencingStates", "Last Slides State: " + lastSlidesState);
+        logger.logRegulated("SequencingStates", "Last TurretAA State: " + lastTurretAAState);
+        logger.logRegulated("SequencingStates", "Last Basket State: " + lastBasketState);
+        logger.logRegulated("SequencingStates", "Last Basket ArmState: " + lastBasketArmState);
     }
 
     public boolean getState(RobotStates state) {

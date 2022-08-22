@@ -26,7 +26,7 @@ public class RFDualServo implements Servo {
 
     LinearOpMode op;
 
-    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode, Logger log) {
+    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode) {
         op = opMode;
 
         servoDirection1 = servoDirection;
@@ -37,8 +37,8 @@ public class RFDualServo implements Servo {
             servoDirection2 = FORWARD;
         }
 
-        rfServo = new RFServo(1.0, servoDirection, "RFServo", op, log);
-        rfServo2 = new RFServo(1.0, servoDirection2, "RFServo2", op, log);
+        rfServo = new RFServo(1.0, servoDirection, "RFServo", op);
+        rfServo2 = new RFServo(1.0, servoDirection2, "RFServo2", op);
 
         rfServo.setDirection(servoDirection);
 

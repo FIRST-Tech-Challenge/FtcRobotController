@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates
 import static org.firstinspires.ftc.teamcode.Robot.checker;
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Robot.faked;
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
@@ -33,10 +34,10 @@ public class RFSlides extends RFMotor{
 
     LinearOpMode op;
 
-    public RFSlides(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, double MAX_EXTENSION_TICKS_INPUT, double MIN_EXTENSION_TICKS_INPUT, DcMotor.ZeroPowerBehavior zeroBehavior, Logger log) {
-        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
+    public RFSlides(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, double MAX_EXTENSION_TICKS_INPUT, double MIN_EXTENSION_TICKS_INPUT, DcMotor.ZeroPowerBehavior zeroBehavior) {
+        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
 
-        extensionMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior, log);
+        extensionMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
 
         MAX_EXTENSION_TICKS = MAX_EXTENSION_TICKS_INPUT;
         MIN_EXTENSION_TICKS = MIN_EXTENSION_TICKS_INPUT;

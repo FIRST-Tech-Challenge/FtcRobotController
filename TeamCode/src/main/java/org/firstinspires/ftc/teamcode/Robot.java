@@ -89,7 +89,6 @@ public class Robot {
     boolean alliance_shipping_hub = false;
     public static boolean retracting = false;
     double time;
-    double lastlogtime = 0;
     boolean changed = false;
     double INCREMENT = 0.01;     // amount to slew servo each CYCLE_MS cycle
     int CYCLE_MS = 30;     // period of each cycle
@@ -118,9 +117,9 @@ public class Robot {
         startAngle = startAng;
         trueStartAngle=startAng;
         logger = new Logger(opMode);
-        checker = new StateMachine(op, isTeleop, logger);
+        checker = new StateMachine(op, isTeleop);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop, logger);
+        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
         rotation = new CarouselCR(op);
         intake = new Intake(op, isTeleop, checker);
 //        led_bank = new LedColor(op); //LED has to be declared before calling it

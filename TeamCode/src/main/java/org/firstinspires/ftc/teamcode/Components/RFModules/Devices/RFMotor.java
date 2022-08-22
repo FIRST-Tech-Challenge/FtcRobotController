@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
+
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,15 +12,13 @@ import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFMotor extends Motor {
     private DcMotorEx rfMotor;
-    Logger logger;
 
     /*Initializes the motor
         Inputs:
         motorName: the name of the device | Ex:'motorRightFront'
         motorDirection: the direction of the motor | 0 for Reverse, 1 for Forward | Ex: 0
      */
-    public RFMotor(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode op, DcMotor.RunMode runMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior, Logger log) {
-        logger = log;
+    public RFMotor(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode op, DcMotor.RunMode runMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
         rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
         rfMotor.setDirection(motorDirection);
         if (resetPos) {
@@ -29,6 +29,28 @@ public class RFMotor extends Motor {
 
         logger.createFile("RFMotorLog", "Runtime,Action,Value");
     }
+
+    public RFMotor(String motorName, LinearOpMode op, DcMotor.RunMode runMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
+        if (resetPos) {
+            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        rfMotor.setMode(runMode);
+        rfMotor.setZeroPowerBehavior(zeroBehavior);
+
+        logger.createFile("RFMotorLog", "Runtime,Action,Value");
+    }
+
+    public RFMotor(String motorName, LinearOpMode op, DcMotor.RunMode runMode, boolean resetPos) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
+        if (resetPos) {
+            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        rfMotor.setMode(runMode);
+
+        logger.createFile("RFMotorLog", "Runtime,Action,Value");
+    }
+
     public void setPower(double power){
         rfMotor.setPower(power);
         logger.log("RFMotorLog", "Setting Power," + power);
