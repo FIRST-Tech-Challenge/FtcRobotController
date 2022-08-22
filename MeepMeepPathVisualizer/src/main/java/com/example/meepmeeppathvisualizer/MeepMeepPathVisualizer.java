@@ -8,8 +8,6 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
-import java.util.Vector; //Why the fuck are you using a Vector, use an ArrayList instead (edit: wait nvm, that was just a mis-import)
-
 public class MeepMeepPathVisualizer {
     public static void main(String[] args){
         final int NUM_CYCLES = 3;
