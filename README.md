@@ -50,7 +50,7 @@ This project contains a large selection of Sample OpModes (robot code examples) 
 
 Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples](FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples)
 
-The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
+The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/Team19567) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
 
 # Release Information
 
@@ -291,7 +291,7 @@ Version 5.5 requires Android Studio 4.0 or later.
 
 ### New features
 * Adds support for calling custom Java classes from Blocks OpModes (fixes [SkyStone issue #161](https://github.com/FIRST-Tech-Challenge/SkyStone/issues/161)).
-    * Classes must be in the org.firstinspires.ftc.teamcode package.
+    * Classes must be in the Teamcode19567 package.
     * To have easy access to the opMode, hardwareMap, telemetry, gamepad1, and gamepad2, classes can
       extends org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.
     * Methods must be public static and have no more than 21 parameters.

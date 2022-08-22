@@ -52,7 +52,7 @@ This is done inside Android Studio directly, using the following steps:
 
  3) Expand the  TeamCode / java folder
 
- 4) Right click on the org.firstinspires.ftc.teamcode folder and select "Paste"
+ 4) Right click on the Teamcode19567 folder and select "Paste"
 
  5) You will be prompted for a class name for the copy.
     Choose something meaningful based on the purpose of this class.
@@ -112,7 +112,7 @@ Note: Some names start with "Team" and others start with "team".  This is intent
     to a matching name with a lowercase 'team' eg:  "team0417".
 
 4)  In the new Team0417/src/main folder, edit the "AndroidManifest.xml" file, change the line that contains
-         package="org.firstinspires.ftc.teamcode"
+         package="Teamcode19567"
     to be
          package="org.firstinspires.ftc.team0417"
 
