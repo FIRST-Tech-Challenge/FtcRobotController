@@ -21,52 +21,52 @@ public class MeepMeepPathVisualizer {
 
         // Creating bot
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
-            .setStartPose(startPose)
+                .setStartPose(startPose)
 
-            .setConstraints(
-                54, // Retrieves constants from the 'Drive Constants' file
-                54,
-                Math.toRadians(63.0254), //MAX_ANG_VEL
-                Math.toRadians(63.0254), //MAX_ANG_ACCEL
-                14.5
-            )
+                .setConstraints(
+                        54, // Retrieves constants from the 'Drive Constants' file
+                        54,
+                        Math.toRadians(63.0254), //MAX_ANG_VEL
+                        Math.toRadians(63.0254), //MAX_ANG_ACCEL
+                        14.5
+                )
 
-            .setColorScheme(new ColorSchemeRedDark())
+                .setColorScheme(new ColorSchemeRedDark())
 
-            // Dimensions of the bot
-            .setDimensions(13, 16)
+                // Dimensions of the bot
+                .setDimensions(13, 16)
 
-            // () -> {} is the syntax for taking in a function, aka a lambda
-            // Assuming FRONT of the bot is the EXTAKE
-            .followTrajectorySequence(drive -> {
-                TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
+                // () -> {} is the syntax for taking in a function, aka a lambda
+                // Assuming FRONT of the bot is the EXTAKE
+                .followTrajectorySequence(drive -> {
+                    TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
 
-                builder.forward(15);
-                builder.waitSeconds(1.5);
-
-                for (int i = 0, stepIncrement = 0; i < NUM_CYCLES; i++) {
-
-                    builder.lineToLinearHeading(new Pose2d(10,-63.5, Math.toRadians(180)));
-                    builder.back(25 + stepIncrement);
-                    builder.waitSeconds(1);
-                    builder.forward(25 + stepIncrement);
-                    builder.lineToLinearHeading(new Pose2d(0,-42, Math.toRadians(125)));
+                    builder.forward(15);
                     builder.waitSeconds(1.5);
 
-                    stepIncrement += 3;
-                }
+                    for (int i = 0, stepIncrement = 0; i < NUM_CYCLES; i++) {
 
-                builder.setReversed(true);
-                builder.splineToSplineHeading(new Pose2d(-59,-35), Math.toRadians(90));
+                        builder.lineToLinearHeading(new Pose2d(10,-63.5, Math.toRadians(180)));
+                        builder.back(25 + stepIncrement);
+                        builder.waitSeconds(1);
+                        builder.forward(25 + stepIncrement);
+                        builder.lineToLinearHeading(new Pose2d(0,-42, Math.toRadians(125)));
+                        builder.waitSeconds(1.5);
 
-                return builder.build();
-            });
+                        stepIncrement += 3;
+                    }
+
+                    builder.setReversed(true);
+                    builder.splineToSplineHeading(new Pose2d(-59,-35), Math.toRadians(90));
+
+                    return builder.build();
+                });
 
         //(MeepMeep.Background.GRID_GRAY)
         mm.setBackground(MeepMeep.Background.FIELD_FREIGHTFRENZY_ADI_DARK)
-            .setDarkMode(true)
-            .setBackgroundAlpha(1f)
-            .addEntity(bot)
-            .start();
-        }
+                .setDarkMode(true)
+                .setBackgroundAlpha(1f)
+                .addEntity(bot)
+                .start();
     }
+}
