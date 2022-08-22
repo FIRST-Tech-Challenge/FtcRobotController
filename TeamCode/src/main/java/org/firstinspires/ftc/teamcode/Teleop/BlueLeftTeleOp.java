@@ -32,6 +32,8 @@ public class BlueLeftTeleOp extends LinearOpMode {
         double[] ycoords = new double[4];
         FtcDashboard dashboard = FtcDashboard.getInstance();
         waitForStart();
+        double startx = 0;
+        double starty = 0;
 
 
         //Aiden - during competition day robot disconnected so we are trying this code
