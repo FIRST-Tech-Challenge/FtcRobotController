@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_REST;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_TRANSFER;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_DOWN;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_FLIPPING_DOWN;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_TRANSFERRING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_ALLIANCE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_SHARED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_TRANSFER;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_REVERSING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_FLIPPING_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_FLIPPING_UP;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_UP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SEQUENCING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_RETRACTING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TRANSFERRING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATED;
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
@@ -20,9 +26,9 @@ import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xVelocity
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.yVelocity;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_RAISED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_STRAIGHT;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretAAStates.TURRET_RAISED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -105,7 +111,7 @@ public class Robot {
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
     public static StateMachine checker = null;
-    public Logger logger;
+    public static Logger logger;
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         op = opMode;
@@ -248,7 +254,7 @@ public class Robot {
 //        boolean extendTSE = op.gamepad2.dpad_right;
 //        boolean manualretractTSE = op.gamepad2.dpad_left;
 //        boolean autoretractTSE = op.gamepad1.x;
-        boolean sequence = op.gamepad1.dpad_up;
+//        boolean sequence = op.gamepad1.dpad_up;
         boolean TSEArmUp = op.gamepad1.dpad_up;
         /** gamepad 2**/
         float turretTurn = op.gamepad2.left_stick_x;
@@ -275,6 +281,7 @@ public class Robot {
         int up = 0;
         intake.updateIntakeStates();
         turret.updateTurretPositions();
+        checker.logCurrentStates();
 
 //        if (xpos > (60) * red - startx) {
 //            if (!shared_shipping_hub && red == 1) {
@@ -314,12 +321,11 @@ public class Robot {
             }
             //according to blue side left auto next to barrier
         }
-        if (checker.getState(SLIDES_EXTENDED)) {
-            checker.setState(SLIDES_RETRACTING, false);
-            autoretractTurret = false;
-            autoAim = false;
-            autoAiming = false;
-        }
+//        if (checker.getState(SLIDES_EXTENDED)) {
+//            autoretractTurret = false;
+//            autoAim = false;
+//            autoAiming = false;
+//        }
         if(autoAiming){
             turret_angle_control_distance=17*118.0/270.0/35.0;
         }
@@ -335,26 +341,30 @@ public class Robot {
         }
         op.telemetry.addData("diSTANCE", turret_angle_control_distance);
 
-        if (startIntake && shouldIntake) {
-            intake.startIntake();
-        } else if (isReversing) {
-        } else {
+        if (startIntake && checker.checkIf(INTAKING)) {
+            startIntake();
+        }
+        else if (checker.getState(SEQUENCING)) {
+
+        }
+        else {
             stopIntake();
         }
 
-        if (reverseIntake && shouldIntake || isReversing) {
+        if (reverseIntake && checker.checkIf(INTAKE_REVERSING) || checker.getState(INTAKE_REVERSING)) {
             op.telemetry.addData("reversing", "intake");
-            intake.reverseIntake(0.7);
+            reverseIntake(0.7);
         }
 
         if (flipIntake && time > startTime[3] + .3) {
             startTime[3] = time;
-            if (!intake.flipIntake()) {
+            if (!intake.flipIntake() && checker.checkIf(SLIDES_RETRACTING)) {
                 checker.setState(SLIDES_RETRACTING, true);
             }
         }
         if(resetTurret){
             turret.resetExtension();
+            intake.flipIntakeToPosition(0);
             op.sleep(200);
         }
         if(plusTurret){
@@ -377,9 +387,9 @@ public class Robot {
             capThats();
             startTime[8] = time;
         }
-        if (op.getRuntime() > .147 * 44 + startTime[6]) {
-            checker.setState(SLIDES_EXTENDING, false);
-        }
+//        if (op.getRuntime() > .147 * 44 + startTime[6]) {
+//            checker.setState(SLIDES_EXTENDING, false);
+//        }
         if (extendTurret != 0 || checker.getState(SLIDES_RETRACTING)) {
             autoAiming = false;
             TurretManualExtension(extendTurret);
@@ -420,8 +430,9 @@ public class Robot {
             if(autoAiming) {
                 op.sleep(500);
             }
-            intake.flipIntakeToPosition(0.0);
-            op.sleep(200);
+//            intake.flipIntakeToPosition(0.0);
+//            checker.setState(INTAKE_FLIPPING_DOWN, true);
+//            op.sleep(200);
             SavePosition(up);
         }
         if (basketArm) {
@@ -434,7 +445,8 @@ public class Robot {
         if (TSEArmUp && time > startTime[12] + 0.2) {
             startTime[12] = time;
             TSE.toggleTSEPosition();
-            intake.flipIntakeToPosition(.79);
+//            intake.flipIntakeToPosition(.79);
+            checker.setState(INTAKE_FLIPPING_UP, true);
         }
 
 
@@ -477,61 +489,64 @@ public class Robot {
 //            }
 
         /** add stuff u want to do with intake when switch is on HERE **/
-        if ((checker.getState(SEQUENCING) || checker.checkIf(SEQUENCING)) && !checker.getState(SLIDES_RETRACTING)) {
+        if ((checker.getState(SEQUENCING) || intake.isSwitched() && !checker.getState(SLIDES_RETRACTING))) {
             op.telemetry.addData("el button", "is clicked");
             isFlipping = true;
             if (!checker.getState(SEQUENCING)) {
                 startTime[0] = op.getRuntime() + 9;
                 startTime[1] = op.getRuntime() + 10;
                 turret.FlipBasketToPosition(.89);
+                checker.setState(BASKET_TRANSFER, true);
                 intake.startIntake();
             }
             checker.setState(SEQUENCING, true);
             turret.FlipBasketArmToPosition(0.00);
-            if (checker.checkIf(INTAKE_FLIPPING_DOWN) && checker.getState(INTAKE_DOWN)) {
-                intake.startIntake();
-                intake.flipIntakeToPosition(0.77);
+            checker.setState(BASKET_ARM_REST, true);
+            if (checker.checkIf(INTAKE_FLIPPING_UP) && checker.getState(INTAKE_DOWN)) {
+                intake.spinIntake(0.2);
+                checker.setState(INTAKING, true);
+                intake.flipIntakeToPosition(0.72);
                 turret.FlipBasketToPosition(.89);
                 isBall = intake.isBall();
                 startTime[0] = op.getRuntime();
                 startTime[1] = op.getRuntime() + 10;
-            } else if (!checker.getState(INTAKE_FLIPPING_DOWN) && checker.getState(INTAKE_DOWN)) {
+            } else if (!checker.getState(INTAKE_FLIPPING_UP) && checker.getState(INTAKE_DOWN)) {
                 checker.setState(SLIDES_RETRACTING, true);
             }
-            op.telemetry.addData("transferring", !checker.getState(INTAKE_TRANSFERRING));
+            op.telemetry.addData("transferring", !checker.getState(TRANSFERRING));
             op.telemetry.addData("flipping", !checker.getState(INTAKE_FLIPPING_DOWN));
             op.telemetry.addData("straight", checker.getState(TURRET_STRAIGHT));
             op.telemetry.addData("extend", !checker.getState(SLIDES_EXTENDED));
             op.telemetry.addData("raise", !checker.getState(TURRET_RAISED));
             op.telemetry.addData("basket", checker.getState(BASKET_TRANSFER));
             op.telemetry.addData("intakedown", !checker.getState(INTAKE_DOWN));
-            if (op.getRuntime() > startTime[0] + 0.5 && !checker.getState(INTAKE_DOWN)&&!isReversing) {
+            if (op.getRuntime() > startTime[0] + 0.5 && checker.getState(INTAKE_UP)&&!checker.getState(TRANSFERRING)) {
                stopIntake();
             }
 
-            if (op.getRuntime() > startTime[0] + 0.8 && !checker.getState(INTAKE_DOWN)&&!checker.getState(INTAKE_TRANSFERRING)) {
-                checker.setState(INTAKE_TRANSFERRING, true);
-                isReversing = true;
+            if (op.getRuntime() > startTime[0] + 0.8 && checker.getState(INTAKE_UP)&&!checker.getState(TRANSFERRING)) {
                 op.telemetry.addData("reversing ", "intake");
                 startTime[1] = op.getRuntime();
                 if(!isBall) {
-                    intake.reverseIntake(0.63);
+                    reverseIntake(0.63);
+                    checker.setState(TRANSFERRING, true);
                 }
                 else{
-                    startTime[1]-=0.1;
-                    intake.reverseIntake(0.53);
+                    startTime[1]=0.1;
+                    reverseIntake(0.53);
+                    checker.setState(TRANSFERRING, true);
                 }
             }
 
-            if (op.getRuntime() > startTime[1] + 0.4) {
-                isReversing = false;
-                isFlipping = false;
-                flipped = false;
-                intake.stopIntake();
-                turret.FlipBasketToPosition(.6);
+            if (op.getRuntime() > startTime[1] + 1) {
+//                isReversing = false;
+//                isFlipping = false;
+//                flipped = false;
+                stopIntake();
+//                FlipBasketToPosition(.6);
 //                turret.FlipBasketArmToPosition(.3);
                 autoAiming = true;
-                checker.setState(INTAKE_TRANSFERRING, false);
+                checker.setState(TRANSFERRING, false);
                 checker.setState(SEQUENCING, false);
             }
 
@@ -539,9 +554,11 @@ public class Robot {
         if (autoretractTurret || checker.getState(SLIDES_RETRACTING)) {
             autoAiming = false;
             if (!checker.getState(INTAKE_DOWN)&&abs(startAngle-EncoderChassis.angle)<45) {
-                intake.flipIntakeToPosition(0.0);
+//                intake.flipIntakeToPosition(0.0);
             }
-            checker.setState(SLIDES_RETRACTING, TurretReset(0.5));
+            if (!TurretReset(0.5)) {
+                checker.setState(SLIDES_RETRACTED, true);
+            }
         }
 
         magnitude = forward;
@@ -567,30 +584,31 @@ public class Robot {
         drivetrain.moveMultidirectionalMecanum(0.9, strafe, forward, turning); // It is 0.95, because the robot DCs at full power.
     }
 
-    public void autoAim(double[][] turret_saved_positions, int red) {
-        double angle = 180 - Math.atan2(-(turret_saved_positions[1][0] - xpos), (turret_saved_positions[1][1] - ypos)) * 180 / PI - VSLAMChassis.angle;
-        angle %= 360;
-        if (angle > 180) {
-            angle -= 360;
-        }
-        if (angle < -180) {
-            angle += 360;
-        }
-        turret.TurretRotate(angle);
-        op.telemetry.addData("angle", angle);
-        op.telemetry.addData("trutx", turret_saved_positions[1][0]);
-        op.telemetry.addData("truty", turret_saved_positions[1][1]);
-
-        double turret_angle_control_pos = Math.atan2(turret_saved_positions[1][2], Math.sqrt(Math.pow(xpos - turret_saved_positions[1][0] * red, 2) + Math.pow(ypos - turret_saved_positions[1][1], 2)));
-        turret.AutoAngleControlRotating(turret_angle_control_pos);
-    }
+//    public void autoAim(double[][] turret_saved_positions, int red) {
+//        double angle = 180 - Math.atan2(-(turret_saved_positions[1][0] - xpos), (turret_saved_positions[1][1] - ypos)) * 180 / PI - VSLAMChassis.angle;
+//        angle %= 360;
+//        if (angle > 180) {
+//            angle -= 360;
+//        }
+//        if (angle < -180) {
+//            angle += 360;
+//        }
+//        turret.TurretRotate(angle);
+//        op.telemetry.addData("angle", angle);
+//        op.telemetry.addData("trutx", turret_saved_positions[1][0]);
+//        op.telemetry.addData("truty", turret_saved_positions[1][1]);
+//
+//        double turret_angle_control_pos = Math.atan2(turret_saved_positions[1][2], Math.sqrt(Math.pow(xpos - turret_saved_positions[1][0] * red, 2) + Math.pow(ypos - turret_saved_positions[1][1], 2)));
+//        turret.AutoAngleControlRotating(turret_angle_control_pos);
+//    }
 
     public void fakeAutoAim() {
         double angle = -60;
-        checker.setState(SLIDES_RETRACTING, false);
+//        checker.setState(SLIDES_RETRACTING, false);
         if(abs(startAngle-EncoderChassis.angle)%360<45) {
             if(!flipped) {
                 flipBasketArmToPosition(0.55);
+                checker.setState(BASKET_ARM_SHARED, true);
                 flipped=true;
                 shareFlipTime = op.getRuntime();
                 flipIntakeToPosition(0.0);
@@ -601,19 +619,23 @@ public class Robot {
                     turret.AutoAngleControlRotating(17);
                     if (abs(turret_saved_positions[0][0][1] * isBlue - rotatePosition) < 200||isBlue==-1) {
                         turret.turretExtendo(turret_saved_positions[0][0][0]);
+                        checker.setState(SLIDES_EXTENDED, true);
                     }
                 } else {
                     turret.TurretRotate(turret_saved_positions[0][1][1] * isBlue);
                     turret.AutoAngleControlRotating(0);
                     if (abs(turret_saved_positions[0][1][1] * isBlue - rotatePosition) < 200||isBlue==-1) {
                         turret.turretExtendo(turret_saved_positions[0][1][0]);
+                        checker.setState(SLIDES_EXTENDED, true);
                     }
                 }
             }
         }
         else{
+            logger.log("SequencingStates", "mogus");
             if(time-shareFlipTime>3.0&&checker.getState(BASKET_ARM_REST)&&!flipped) {
                 flipBasketArmToPosition(0.25);
+                checker.setState(BASKET_ARM_ALLIANCE, true);
                 shareFlipTime=time;
                 flipped = true;
             }
@@ -621,9 +643,11 @@ public class Robot {
                 flipIntakeToPosition(0.76);
             }
             if(time-shareFlipTime>0.1){
+                logger.log("SequencingStates", "mogus2");
                 turret.TurretSlotate(turret_saved_positions[0][2][1]*isBlue);
                 turret.AutoAngleControlRotating(0);
                 turret.turretExtendo(turret_saved_positions[0][2][0]);
+                checker.setState(SLIDES_EXTENDED, true);
             }
         }
     }
