@@ -1,6 +1,7 @@
 package com.example.meepmeeppathvisualizer;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -57,7 +58,7 @@ public class MeepMeepPathVisualizer {
                     }
 
                     builder.setReversed(true);
-                    builder.splineToSplineHeading(new Pose2d(-59,-35), Math.toRadians(90));
+                    builder.splineTo(new Vector2d(-59,-35), Math.toRadians(90));
 
                     return builder.build();
                 });
