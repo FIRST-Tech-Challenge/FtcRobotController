@@ -13,7 +13,7 @@ public class MeepMeepPathVisualizer {
         final int NUM_CYCLES = 3;
 
         MeepMeep mm = new MeepMeep(800,90);
-
+        new MeepMeepPersistence(mm, "");
         // Setting up Persist so visualizer window doesn't reset to middle of screen
         MeepMeepPersistence persist = new MeepMeepPersistence(mm);
         persist.restore();

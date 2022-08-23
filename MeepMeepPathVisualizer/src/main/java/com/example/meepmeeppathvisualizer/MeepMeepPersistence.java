@@ -89,7 +89,7 @@ public class MeepMeepPersistence {
      * the {@code MeepMeep} state every time it is called.
      */
     private void startPersistenceThread() {
-        // Basically utilizes a ScheduledExecutorService which launched a new thread which
+        // Basically utilizes a ScheduledExecutorService which launches a new thread which
         // can run a given piece of code at a fixed time.
 
         // The "thread" takes in a Runnable object, which can be implemented as a simple lambda
@@ -177,8 +177,8 @@ public class MeepMeepPersistence {
         // Sets the x, y coords of the MeepMeep window to the values stored in the properties object
         // Needs to be converted to an int first, as the properties object stores them as strings
         meepMeep.getWindowFrame().setLocation(
-                Integer.parseInt(properties.getProperty("windows_x")),
-                Integer.parseInt(properties.getProperty("windows_y"))
+                Integer.parseInt(properties.getProperty("windows_x", "0")),
+                Integer.parseInt(properties.getProperty("windows_y", "0"))
         );
     }
 
