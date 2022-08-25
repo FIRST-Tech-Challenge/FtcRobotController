@@ -200,6 +200,7 @@ public class TrajectorySequenceRunner {
         packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
         packet.put("ultraYPos", robot.ultras.dist[0]);
         packet.put("updated", robot.ultras.updated);
+        packet.put("updatedto", robot.ultras.updatedto);
         packet.put("errorLogSize", robot.ultras.errorLog.size());
         packet.put("averageError", robot.ultras.averageError()[0]);
 

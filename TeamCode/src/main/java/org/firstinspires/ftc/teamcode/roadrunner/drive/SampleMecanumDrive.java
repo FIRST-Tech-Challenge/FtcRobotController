@@ -232,9 +232,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         updatePoseEstimate();
         if(ultrasonics){
             Pose2d pos = getPoseEstimate();
-            if(robot.ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())&& abs(Objects.requireNonNull(getPoseVelocity()).getHeading())<PI/4){
+            if(robot.ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
                 Pose2d ultraPos = robot.ultras.getPose2d();
-                setPoseEstimate(new Pose2d(ultraPos.getX(),ultraPos.getY(),robot.imu.updateAngle()));
+                setPoseEstimate(ultraPos);
             }
             else{
             }
@@ -243,7 +243,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             Pose2d pos = getPoseEstimate();
             if(robot.touchs.updateTouch(pos.getX(),pos.getY(),pos.getHeading())){
                 Pose2d touchaPos = robot.touchs.getPose2d();
-                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY(),robot.imu.updateAngle()));
+                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY()));
                 op.telemetry.addData("touch-updated", true);
             }else{
                 op.telemetry.addData("touch-updated", false);

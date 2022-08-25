@@ -20,12 +20,12 @@ import java.util.ArrayList;
 public class Ultrasonics {
     private AnalogInput ultrasonicFront, ultrasonicBack, ultrasonicRight, ultrasonicLeft;
     private LED ultraFront, ultraBack, ultraRight, ultraLeft;
-    private double ultraRange = 35, lastUltraUpdate = -10, lastSetPos = -10, time = 0.0, robotWidth = 13, robotLength = 15;
+    public double ultraRange = 35, lastUltraUpdate = -10, lastSetPos = -10, time = 0.0, robotWidth = 13, robotLength = 15;
     //x,y,a
     private double[] pos = {0, 0, 0}, error = {0, 0};
     public ArrayList<double[]> errorLog = new ArrayList<>();
     private boolean high = false;
-    public int updated = 0;
+    public int updated = 0, updatedto = 0;
 
     public double[] dist = {0, 0, 0, 0};
 
@@ -85,6 +85,7 @@ public class Ultrasonics {
     }
 
     public boolean updateUltra(double xpos, double ypos, double angle) {
+        updatedto=0;
         pos[0] = xpos;
         pos[1] = ypos;
         pos[2] = angle;
@@ -218,8 +219,9 @@ public class Ultrasonics {
         high = false;
     }
     public Pose2d getPose2d() {
+        updatedto=5;
         double[] errors = averageError();
         clearError();
-        return new Pose2d(pos[0] + errors[0], pos[1] + errors[1], pos[2]);
+        return new Pose2d(pos[0] + errors[0], pos[1] + errors[1]);
     }
 }
