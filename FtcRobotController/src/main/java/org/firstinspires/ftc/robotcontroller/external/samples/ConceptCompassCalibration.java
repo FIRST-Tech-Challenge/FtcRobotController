@@ -33,11 +33,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CompassSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This file illustrates the concept of calibrating a MR Compass
+ * It uses the common Pushbot hardware class to define the drive on the robot.
+ * The code is structured as a LinearOpMode
+ *
  *   This code assumes there is a compass configured with the name "compass"
  *
  *   This code will put the compass into calibration mode, wait three seconds and then attempt
@@ -55,8 +57,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ConceptCompassCalibration extends LinearOpMode {
 
     /* Declare OpMode members. */
-    public DcMotor leftDrive   = null;
-    public DcMotor  rightDrive  = null;
+    HardwarePushbot     robot   = new HardwarePushbot();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
     CompassSensor       compass;
 
@@ -67,15 +68,10 @@ public class ConceptCompassCalibration extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // Initialize the drive system variables.
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        /* Initialize the drive system variables.
+         * The init() method of the hardware class does all the work here
+         */
+        robot.init(hardwareMap);
 
         // get a reference to our Compass Sensor object.
         compass = hardwareMap.get(CompassSensor.class, "compass");
@@ -97,8 +93,8 @@ public class ConceptCompassCalibration extends LinearOpMode {
         // Start the robot rotating clockwise
         telemetry.addData("Compass", "Calibration mode. Turning the robot...");
         telemetry.update();
-        leftDrive.setPower(MOTOR_POWER);
-        rightDrive.setPower(-MOTOR_POWER);
+        robot.leftDrive.setPower(MOTOR_POWER);
+        robot.rightDrive.setPower(-MOTOR_POWER);
 
         // run until time expires OR the driver presses STOP;
         runtime.reset();
@@ -107,8 +103,8 @@ public class ConceptCompassCalibration extends LinearOpMode {
         }
 
         // Stop all motors and turn off claibration
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+        robot.leftDrive.setPower(0);
+        robot.rightDrive.setPower(0);
         compass.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
         telemetry.addData("Compass", "Returning to measurement mode");
         telemetry.update();
