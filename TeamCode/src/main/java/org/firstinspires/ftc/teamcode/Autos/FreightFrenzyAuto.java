@@ -87,10 +87,5 @@ public class FreightFrenzyAuto extends LinearOpMode {
         }
         bot.followTrajectory(hubToParking);
 
-
-
-
-
-
     }
 }
