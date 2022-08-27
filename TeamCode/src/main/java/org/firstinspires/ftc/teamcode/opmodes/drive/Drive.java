@@ -12,8 +12,7 @@ import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerCarouse
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.driveop.ControllerLift;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedOnceEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 
 @TeleOp
 @Disabled

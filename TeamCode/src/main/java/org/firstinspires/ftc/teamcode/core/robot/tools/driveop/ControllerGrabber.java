@@ -6,7 +6,7 @@ import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 
 import androidx.annotation.NonNull;
 

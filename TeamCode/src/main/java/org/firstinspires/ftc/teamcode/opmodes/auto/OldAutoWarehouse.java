@@ -9,18 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoIntake;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.impl.TimedEvent;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
-
-import java.util.Objects;
 
 @Autonomous
 @Disabled

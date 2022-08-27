@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;

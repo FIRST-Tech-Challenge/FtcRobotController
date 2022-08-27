@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
 
 import androidx.annotation.NonNull;
 

@@ -7,21 +7,15 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cDevice;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.robot.tools.IMU;
-import org.firstinspires.ftc.teamcode.core.robot.tools.UltrasonicDistance;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.util.MyToggleButtonReader;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
-
-import java.util.Arrays;
 
 public class Movement {
     private final SampleMecanumDrive drive;

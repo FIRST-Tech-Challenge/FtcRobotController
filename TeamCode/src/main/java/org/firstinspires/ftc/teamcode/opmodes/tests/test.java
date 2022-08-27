@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,11 +9,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.core.robot.ControllerMovement;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoCarousel;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
 import org.firstinspires.ftc.teamcode.core.robot.vision.robot.TseDetector;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 import org.firstinspires.ftc.teamcode.opmodes.auto.CVAuto;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 

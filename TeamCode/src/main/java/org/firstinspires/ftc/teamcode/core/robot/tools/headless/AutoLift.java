@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
-import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerOnceEvent;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.api.RunListenerOnceEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.impl.TimedEvent;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;

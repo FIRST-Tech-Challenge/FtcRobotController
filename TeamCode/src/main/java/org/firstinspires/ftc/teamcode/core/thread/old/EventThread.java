@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.core.thread;
+package org.firstinspires.ftc.teamcode.core.thread.old;
 
-import org.firstinspires.ftc.teamcode.core.thread.types.api.Event;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.api.Event;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BooleanSupplier;
 
 /**
- * Thread to handle {@link Event events} as requests. Watch out, if it is overloaded with requests
- * and its not able to fulfill them faster than they are sent, it will not finish the queue.
+ * Thread to handle {@link Event events} as requests. Watch out, if it is overloaded with requests,
+ * and it's not able to fulfill them faster than they are sent, it will not finish the queue.
  */
 public class EventThread extends Thread {
     private final ConcurrentLinkedQueue<Event> queue = new ConcurrentLinkedQueue<>();

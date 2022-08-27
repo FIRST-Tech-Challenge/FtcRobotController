@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunEveryTimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.impl.RunEveryTimedEvent;
 import org.jetbrains.annotations.NotNull;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern.*;
 import static com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;

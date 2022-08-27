@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.core.thread.types.impl;
+package org.firstinspires.ftc.teamcode.core.thread.old.types.impl;
 
 import java.util.function.Supplier;
 

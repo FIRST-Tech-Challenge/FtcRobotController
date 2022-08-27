@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoGrabber;
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.AutoLift;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 
 import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.opmodes.util.GoodTriggerReader;

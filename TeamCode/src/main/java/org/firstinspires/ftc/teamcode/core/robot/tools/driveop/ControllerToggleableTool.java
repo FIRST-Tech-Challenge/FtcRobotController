@@ -9,8 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.core.robot.tools.headless.HeadlessToggleableTool;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.api.RunListenerIndefinitelyEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 
 /**
  * simple button push toggleable tool

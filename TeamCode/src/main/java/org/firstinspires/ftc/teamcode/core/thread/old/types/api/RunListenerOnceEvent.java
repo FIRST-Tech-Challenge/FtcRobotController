@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.core.thread.types.api;
+package org.firstinspires.ftc.teamcode.core.thread.old.types.api;
 
 /**
  * Abstract class for a event that runs a listener a single time.

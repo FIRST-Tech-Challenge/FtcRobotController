@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.impl.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.core.robot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.core.thread.EventThread;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.RunWhenOutputChangedIndefinitelyEvent;
-import org.firstinspires.ftc.teamcode.core.thread.types.impl.TimedEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.EventThread;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.impl.RunWhenOutputChangedIndefinitelyEvent;
+import org.firstinspires.ftc.teamcode.core.thread.old.types.impl.TimedEvent;
 
 import androidx.annotation.NonNull;
 
