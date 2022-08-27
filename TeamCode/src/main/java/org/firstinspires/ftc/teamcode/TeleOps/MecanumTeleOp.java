@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "ChaoticMecanumTeleOp")
+@TeleOp(name = "MecanumTeleOp")
 public class MecanumTeleOp extends LinearOpMode {
 
     // Declaring class members to be used in other methods
@@ -36,10 +36,10 @@ public class MecanumTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Declare our motors
         // Make sure your ID's match your configuration
-        DcMotorEx motorFrontLeft = (DcMotorEx)hardwareMap.dcMotor.get("FL");
-        DcMotorEx motorBackLeft = (DcMotorEx)hardwareMap.dcMotor.get("BL");
-        DcMotorEx motorFrontRight = (DcMotorEx)hardwareMap.dcMotor.get("FR");
-        DcMotorEx motorBackRight = (DcMotorEx)hardwareMap.dcMotor.get("BR");
+        motorFrontLeft = (DcMotorEx)hardwareMap.dcMotor.get("FL");
+        motorBackLeft = (DcMotorEx)hardwareMap.dcMotor.get("BL");
+        motorFrontRight = (DcMotorEx)hardwareMap.dcMotor.get("FR");
+        motorBackRight = (DcMotorEx)hardwareMap.dcMotor.get("BR");
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -62,9 +62,6 @@ public class MecanumTeleOp extends LinearOpMode {
         // "opModeIsActive()" returns a boolean that checks if the START button has been pressed, and if the STOP button has not been pressed
         while (opModeIsActive()) {
            drive(); // calling drive() in a loop rather than running it in this one allows us to better organize different functions we want the bot to perform
-
-
-
 
         }//end of "while(OpmodeIsActive)"
 
@@ -119,14 +116,13 @@ public class MecanumTeleOp extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower * 0.3);
             motorBackRight.setPower(backRightPower * 0.3);
         }
+
         else {
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
         }
-
-
 
     } // end of drive()
 

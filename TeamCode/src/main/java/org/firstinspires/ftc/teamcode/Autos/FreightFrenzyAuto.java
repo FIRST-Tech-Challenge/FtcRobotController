@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-
 @Autonomous
 public class FreightFrenzyAuto extends LinearOpMode {
     @Override
@@ -57,8 +56,6 @@ public class FreightFrenzyAuto extends LinearOpMode {
                 .build();
          */
 
-
-
         waitForStart();
 
         if(isStopRequested()) return;
@@ -67,7 +64,6 @@ public class FreightFrenzyAuto extends LinearOpMode {
 
         /*\
         bot.followTrajectory(strafeTrajectory);
-
 
 
         bot.followTrajectory(reverseSpline);
