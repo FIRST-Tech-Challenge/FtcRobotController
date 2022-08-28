@@ -57,5 +57,6 @@ public class MeepMeepTesting {
                 .addEntity(myFirstbot)
                 .addEntity(mySencondtbot)
                 .start();
+        System.out.println("\uD83D\uDE29");
     }
 }
