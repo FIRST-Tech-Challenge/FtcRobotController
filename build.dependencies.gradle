@@ -7,7 +7,15 @@ repositories {
     }
 }
 
-dependencies {
+// Gradle is programmed in either Groovy or Kotlin, hence the different syntax
+// Operates on a project object of type project (ex. project.dependencies, or project.implementation)
+// Parentheses are optional following a method (ex. print('hello') OR print 'hello' would pass through a String)
+// {  } indicate a closure that is being passed into a method ex. dependencies (  {closure} )
+// The code inside a closure is saved and used later
+// Closures help organize the code, and any slow code can be deferred through them to improve performance
+// This is the Gradle DSL (Domain-Specific Language), a specialized language for a particular area of code with common terminology/rules
+
+dependencies ({
     implementation 'org.firstinspires.ftc:Inspection:7.2.0'
     implementation 'org.firstinspires.ftc:Blocks:7.2.0'
     implementation 'org.firstinspires.ftc:Tfod:7.2.0'
@@ -20,5 +28,5 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.4'
-}
+})
 
