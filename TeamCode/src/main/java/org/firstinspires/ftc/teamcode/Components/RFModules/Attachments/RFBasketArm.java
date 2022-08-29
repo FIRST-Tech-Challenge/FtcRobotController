@@ -24,9 +24,9 @@ public class RFBasketArm extends RFServo {
 
     LinearOpMode op;
     public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
-        super(range, direction, deviceName, opMode);
+        super(direction, deviceName, opMode);
 
-        basketArmServo = new RFServo(range, direction, deviceName, opMode);
+        basketArmServo = new RFServo(direction, deviceName, opMode);
 
         op = opMode;
     }

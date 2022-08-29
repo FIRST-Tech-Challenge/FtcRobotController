@@ -13,24 +13,22 @@ public class RFServo implements Servo {
 
     LinearOpMode op;
 
-    Servo.Direction servodirection;
     String devicename;
 
     private double lasttime = 0;
 
 
 
-    public RFServo (double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
+    public RFServo (Servo.Direction direction, String deviceName, LinearOpMode opMode) {
         op = opMode;
-        servodirection = direction;
         devicename = deviceName;
         RFServo = opMode.hardwareMap.get(Servo.class, deviceName);
+        RFServo.setDirection(direction);
 
-        logger.createFile(deviceName + " Log", "Runtime,Action,Value");
     }
 
     public void setPosition(double position) {
-        if (lasttime - op.getRuntime() > 0.2) {
+        if (op.getRuntime() - lasttime > 0.2) {
             RFServo.setPosition(position);
             logger.log("RFServoLog", "Setting Position:" + position);
             lasttime = op.getRuntime();
@@ -63,7 +61,7 @@ public class RFServo implements Servo {
 
     @Override
     public Direction getDirection() {
-        return servodirection;
+        return null;
     }
 
     @Override

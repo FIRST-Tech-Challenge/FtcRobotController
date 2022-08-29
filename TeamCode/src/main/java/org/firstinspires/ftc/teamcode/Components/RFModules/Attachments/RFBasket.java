@@ -22,7 +22,7 @@ public class RFBasket {
     LinearOpMode op;
     public RFBasket(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
 
-        basketServo = new RFServo(range, direction, deviceName, opMode);
+        basketServo = new RFServo(direction, deviceName, opMode);
 
         op = opMode;
     }
@@ -39,6 +39,10 @@ public class RFBasket {
 //                SavePosition(0); add when 3d turret slides done
             }
         }
+    }
+
+    public void FlipBasketToPosition (double torget) {
+        basketServo.setPosition(torget);
     }
 
 }

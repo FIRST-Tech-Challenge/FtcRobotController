@@ -59,6 +59,7 @@ import org.firstinspires.ftc.teamcode.Components.Logger;
 import org.firstinspires.ftc.teamcode.Components.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.Turret;
+//import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.VSLAMChassis;
 import org.firstinspires.ftc.teamcode.Components.tseDepositor;
@@ -152,10 +153,10 @@ public class Robot {
 //        turret = new Turret(op, led_bank, isTeleop, checker);
 //        openCV = new OpenCVMasterclass(op);
 //        TSE = new tseDepositor(op, isTeleop);
-        ultras = new Ultrasonics();
-        touchs = new LimitSwitches();
-        imu = new IMU();
-        roadrun = new SampleMecanumDrive(op.hardwareMap, this);
+//        ultras = new Ultrasonics();
+//        touchs = new LimitSwitches();
+//        imu = new IMU();
+//        roadrun = new SampleMecanumDrive(op.hardwareMap, this);
         queuer = new Queuer();
 
     }
@@ -1029,7 +1030,7 @@ public class Robot {
                 if (ypos < 5) {
                     if (autoAiming) {
                         fakeAutoAim();
-                        if (faked && rotated) {
+                        if (faked && checker.getState(TURRET_ROTATED)) {
                             turret.stopExtend();
                             turret.stopTurn();
                             starterTimes[1] = 501;
@@ -1226,7 +1227,7 @@ public class Robot {
         }
         stopAllMotors();
         double nowTime = op.getRuntime();
-        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked || !rotated) {
+        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked || !checker.getState(TURRET_ROTATED)) {
             nowTime = op.getRuntime();
             turret.updateTurretPositions();
             if (!resetten && !autoAiming && starterTimes[0] == 100) {

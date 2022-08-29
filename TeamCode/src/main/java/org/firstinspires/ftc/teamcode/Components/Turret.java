@@ -31,6 +31,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFAngleAdjust;
 import org.firstinspires.ftc.teamcode.Robot;
 
 
@@ -39,8 +40,8 @@ public class Turret {
     private LinearOpMode op = null;
     private DcMotorEx turret_Rotation = null;
     private DcMotorEx turret_Extension = null;
-    private Servo turret_Angle_Control = null;
-    private Servo turret_Angle_Control2 = null;
+    private RFAngleAdjust turret_Angle_Control = null;
+//    private Servo turret_Angle_Control2 = null;
     private Servo basketArmServo = null;
     private Servo basketActuationServo = null;
     private double lastTime=0, lastServoPos=0,servoDist=0;
@@ -74,12 +75,12 @@ public class Turret {
         op = opMode;
         areTeleop = isTeleOp;
         if (hardware_present) {
+            turret_Angle_Control = new RFAngleAdjust(op, "turret_Angle_Control", "turret_Angle_Control2", 118.0/270);
             turret_Rotation = (DcMotorEx)opMode.hardwareMap.dcMotor.get("turret_Rotation");
             turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             turret_Extension = (DcMotorEx)opMode.hardwareMap.dcMotor.get("turret_Extension");
             turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            turret_Angle_Control = opMode.hardwareMap.get(Servo.class, "turret_Angle_Control");
-            turret_Angle_Control2 = opMode.hardwareMap.get(Servo.class, "turret_Angle_Control2");
+//            turret_Angle_Control = opMode.hardwareMap.get(Servo.class, "turret_Angle_Control");
             basketArmServo = op.hardwareMap.get(Servo.class, "basketActuationServo");
             basketActuationServo = op.hardwareMap.get(Servo.class, "basketArmServo");
             turret_Rotation.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -87,8 +88,9 @@ public class Turret {
         }
 
         basketActuationServo.setPosition(0.58);
-        turret_Angle_Control.setPosition(0);
-        turret_Angle_Control2.setPosition(118.0/270);
+
+        turret_Angle_Control.setPositions(0);
+//        turret_Angle_Control2.setPosition(118.0/270);
         turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -97,8 +99,7 @@ public class Turret {
 
         if(!isTeleOp) {
             basketActuationServo.setPosition(0.58);
-            turret_Angle_Control.setPosition(0);
-            turret_Angle_Control2.setPosition(118.0/270);
+            turret_Angle_Control.setPositions(0);
             turret_Rotation.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             turret_Extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -321,8 +322,7 @@ public class Turret {
 //        }
 
         if(thisTime-lastTime>minDiffTime) {
-            turret_Angle_Control.setPosition(torget_point);
-            turret_Angle_Control2.setPosition(118.0/270-torget_point);
+            turret_Angle_Control.setPositions(torget_point);
             lastTime=thisTime;
             servoDist=Math.abs(torget_point-lastServoPos);
             lastServoPos=torget_point;
@@ -343,8 +343,7 @@ public class Turret {
         }
 
         if(thisTime-lastTime>minDiffTime) {
-            turret_Angle_Control.setPosition(torget_point);
-            turret_Angle_Control2.setPosition(118.0/270-torget_point);
+            turret_Angle_Control.setPositions(torget_point);
             lastTime=thisTime;
             servoDist=Math.abs(torget_point-lastServoPos);
             lastServoPos=torget_point;
@@ -364,8 +363,8 @@ public class Turret {
         else if (torget_point < 0) {
             torget_point = 0;
         }
-        turret_Angle_Control.setPosition(torget_point);
-        turret_Angle_Control2.setPosition(118.0/270-torget_point);
+        turret_Angle_Control.setPositions(torget_point);
+
 //        turret_Angle_Control.setPosition(-.5);
 //        turret_Angle_Control2.setPosition(.5);
 //        op.telemetry.addData("difference", target_point - turret_Angle_Control.getPosition());
@@ -580,15 +579,15 @@ public class Turret {
         if (elevation < 0) {
             if (turret_Angle_Control.getPosition() >= 0.03) {
                 position = turret_Angle_Control.getPosition() - 0.01;
-                turret_Angle_Control.setPosition(position);
-                turret_Angle_Control2.setPosition(position);
+                turret_Angle_Control.setPositions(position);
+
             }
         }
         else {
             if (turret_Angle_Control.getPosition() <= 0.97) {
                 position = turret_Angle_Control.getPosition() + 0.01;
-                turret_Angle_Control.setPosition(position);
-                turret_Angle_Control2.setPosition(position);
+                turret_Angle_Control.setPositions(position);
+
             }
         }
     }
@@ -644,8 +643,8 @@ public class Turret {
 
 //             && checker.getState(SLIDES_RETRACTED)
             if (!angleControlling) {
-                turret_Angle_Control.setPosition(0);
-                turret_Angle_Control2.setPosition(118.0 / 270);basketActuationServo.setPosition(.92);
+                turret_Angle_Control.setPositions(0);
+                basketActuationServo.setPosition(.92);
                 angleControlling = true;
 //                checker.setState(TURRET_LOWERING, true);
             }
@@ -660,8 +659,7 @@ public class Turret {
         else{
 
             if (!angleControlling) {
-                turret_Angle_Control.setPosition(0);
-                turret_Angle_Control2.setPosition(118.0 / 270);
+                turret_Angle_Control.setPositions(0);
                 angleControlling = true;
 //                checker.setState(TURRET_LOWERING, true);
             }

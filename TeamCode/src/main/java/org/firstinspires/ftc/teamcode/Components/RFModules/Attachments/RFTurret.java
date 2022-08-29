@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotat
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
 import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
 import static java.lang.Math.pow;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,47 +21,50 @@ import org.firstinspires.ftc.teamcode.Robot;
 
 import org.firstinspires.ftc.teamcode.Components.Logger;
 
+import java.util.ArrayList;
+
 public class RFTurret extends RFMotor {
 
 
 
     private final RFMotor rotationMotor;
 
+    private ArrayList<Double> coefs = new ArrayList();
+
     double MAX_ROTATION_TICKS = 570;
 
     LinearOpMode op;
 
     /*motor, rotateToAngle, getAngle*/
-    public RFTurret(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
-        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
+    public RFTurret(String motorName, DcMotor.RunMode runMode, boolean resetPos, ArrayList<Double> coefficients, double maxtick,
+                    double mintick) {
+        super(motorName, runMode, resetPos, coefficients, maxtick, mintick);
 
-        rotationMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
-
-        op = opMode;
+        rotationMotor = new RFMotor(motorName, runMode, resetPos, coefficients, maxtick, mintick);
 
     }
 
-    public void rotateToAngle (double targetAngle) {
-        targetAngle /= (18.0/116);
-        op.telemetry.addData("newAngle",targetAngle);
-        int curPos = (int)getAngle();
-        if(targetAngle>MAX_ROTATION_TICKS){
-            targetAngle = MAX_ROTATION_TICKS - 5;
-        }
-        if(targetAngle<-MAX_ROTATION_TICKS){
-            targetAngle = -MAX_ROTATION_TICKS + 5;
-        }
-        double distance = targetAngle-getCurrentPosition();
-        while (Math.abs(distance) > 20) {
-
-            distance = targetAngle-getCurrentPosition();
-            op.telemetry.addData("current position:", getCurrentPosition());
-            setVelocity(distance/abs(distance) * 4 * (abs(distance) + 100));
-            op.telemetry.addData("distance", distance);
-            op.telemetry.update();
-        }
-        setVelocity(0);
-    }
+//    public void rotateToAngle (double targetAngle) {
+//        targetAngle /= (18.0/116);
+//
+//        int curPos = (int)getAngle();
+//        if(targetAngle>MAX_ROTATION_TICKS){
+//            targetAngle = MAX_ROTATION_TICKS - 5;
+//        }
+//        if(targetAngle<-MAX_ROTATION_TICKS){
+//            targetAngle = -MAX_ROTATION_TICKS + 5;
+//        }
+//        double distance = targetAngle-getCurrentPosition();
+//        while (Math.abs(distance) > 20) {
+//
+//            distance = targetAngle-getCurrentPosition();
+//            op.telemetry.addData("current position:", getCurrentPosition());
+//            setVelocity(distance/abs(distance) * 4 * (abs(distance) + 100));
+//            op.telemetry.addData("distance", distance);
+//            op.telemetry.update();
+//        }
+//        setVelocity(0);
+//    }
 
     public void TurretRotate (double targetAngle) {
         op.telemetry.addData("newAngle",targetAngle);
@@ -93,7 +97,6 @@ public class RFTurret extends RFMotor {
             rotationMotor.setPower(rotation/3);
         }
     }
-
 
     public void setVelocity(double target) {
         rotationMotor.setVelocity(target);

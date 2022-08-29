@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robot.logger;
+import static org.firstinspires.ftc.teamcode.Robot.op;
+
+import static java.lang.Math.abs;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,45 +13,74 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.Logger;
 
+import java.util.ArrayList;
+
 public class RFMotor extends Motor {
-    private DcMotorEx rfMotor;
+    private final DcMotorEx rfMotor;
+    private ArrayList<Double> coefs;
+    private double maxtickcount;
+    private double mintickcount;
 
     /*Initializes the motor
         Inputs:
         motorName: the name of the device | Ex:'motorRightFront'
         motorDirection: the direction of the motor | 0 for Reverse, 1 for Forward | Ex: 0
      */
-    public RFMotor(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode op, DcMotor.RunMode runMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
+    public RFMotor(String motorName, DcMotorSimple.Direction motorDirection, DcMotor.RunMode runMode,
+                   boolean resetPos, ArrayList<Double> coefficients,
+                   double maxtick, double mintick) {
         rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
         rfMotor.setDirection(motorDirection);
         if (resetPos) {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         rfMotor.setMode(runMode);
-        rfMotor.setZeroPowerBehavior(zeroBehavior);
+        coefs = coefficients;
+        maxtickcount = maxtick;
+        mintickcount = mintick;
 
         logger.createFile("RFMotorLog", "Runtime,Action,Value");
     }
 
-    public RFMotor(String motorName, LinearOpMode op, DcMotor.RunMode runMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
+    public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos,
+                   ArrayList<Double> coefficients, double maxtick, double mintick) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("turret_Rotation");
         if (resetPos) {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         rfMotor.setMode(runMode);
-        rfMotor.setZeroPowerBehavior(zeroBehavior);
+        coefs = coefficients;
+        maxtickcount = maxtick;
+        mintickcount = mintick;
 
         logger.createFile("RFMotorLog", "Runtime,Action,Value");
     }
 
-    public RFMotor(String motorName, LinearOpMode op, DcMotor.RunMode runMode, boolean resetPos) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
-        if (resetPos) {
-            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void setPosition (double targetpos) {
+        op.telemetry.addData("newPosition", targetpos);
+        if(targetpos>maxtickcount){
+            targetpos = maxtickcount - 5;
         }
-        rfMotor.setMode(runMode);
+        if(targetpos<-maxtickcount){
+            targetpos = -mintickcount + 5;
+        }
+        double distance = targetpos-getCurrentPosition();
+        while (Math.abs(distance) > 20) {
+            distance = targetpos-getCurrentPosition();
+            if (distance > 0) {
+                setVelocity(coefs.get(0) * distance + coefs.get(1));
+            }
+            else if (distance < 0) {
+                setVelocity(coefs.get(0) * distance - coefs.get(1));
+            }
+//            distance/abs(distance) * 4 * (abs(distance) + 100)
 
-        logger.createFile("RFMotorLog", "Runtime,Action,Value");
+            op.telemetry.addData("current position:", getCurrentPosition());
+
+            op.telemetry.addData("distance", distance);
+            op.telemetry.update();
+        }
+        setVelocity(0);
     }
 
     public void setPower(double power){

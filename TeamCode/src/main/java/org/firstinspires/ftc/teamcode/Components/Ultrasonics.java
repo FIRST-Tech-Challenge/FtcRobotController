@@ -31,14 +31,14 @@ public class Ultrasonics {
 
     public Ultrasonics() {
         ultrasonicFront = op.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
-        ultrasonicBack = op.hardwareMap.get(AnalogInput.class, "ultrasonicBack");
+//        ultrasonicBack = op.hardwareMap.get(AnalogInput.class, "ultrasonicBack");
         ultrasonicLeft = op.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
         ultrasonicRight = op.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
         ultraFront = op.hardwareMap.get(LED.class, "ultraFront");
-        ultraBack = op.hardwareMap.get(LED.class, "ultraBack");
+//        ultraBack = op.hardwareMap.get(LED.class, "ultraBack");
         ultraRight = op.hardwareMap.get(LED.class, "ultraRight");
         ultraLeft = op.hardwareMap.get(LED.class, "ultraLeft");
-        ultraBack.enable(true);
+//        ultraBack.enable(true);
         ultraRight.enable(true);
         ultraFront.enable(true);
         ultraLeft.enable(true);

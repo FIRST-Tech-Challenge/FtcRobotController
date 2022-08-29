@@ -14,9 +14,9 @@ public class RFTse extends RFServo {
 
     LinearOpMode op;
     public RFTse(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
-        super(range, direction, deviceName, opMode);
+        super(direction, deviceName, opMode);
 
-        tseArmServo = new RFServo(range, direction, deviceName, opMode);
+        tseArmServo = new RFServo(direction, deviceName, opMode);
 
         op = opMode;
     }

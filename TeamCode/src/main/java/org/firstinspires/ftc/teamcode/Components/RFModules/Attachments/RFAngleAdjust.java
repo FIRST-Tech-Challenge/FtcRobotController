@@ -14,12 +14,13 @@ public class RFAngleAdjust extends RFDualServo{
     private final double DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime = 0.3;
 
     LinearOpMode op;
-    public RFAngleAdjust(Servo.Direction servoDirection, LinearOpMode opMode) {
-        super(servoDirection, opMode);
+    public RFAngleAdjust(LinearOpMode opMode, String deviceName1, String deviceName2, double limit) {
+        super(opMode, deviceName1, deviceName2, limit);
 
-        angleAdjustServo = new RFDualServo(servoDirection, opMode);
+        angleAdjustServo = new RFDualServo(opMode, deviceName1, deviceName2, limit);
 
         op = opMode;
+
     }
 
     public void TurretAngleControlRotating (double torget_point) { //pog
@@ -55,6 +56,22 @@ public class RFAngleAdjust extends RFDualServo{
             lastServoPos=torget_point;
             op.telemetry.addData("lastTime",lastTime);
         }
+
+    }
+
+    public void AngleControlRotating (double torget_point) {
+        torget_point*=DEG_PER_TICK_SERVO;
+        if (torget_point > 1) {
+            torget_point = 1;
+        }
+        else if (torget_point < 0) {
+            torget_point = 0;
+        }
+//        turret_Angle_Control.setPosition(torget_point); current dual servo set position does not work with unique parameters
+//        turret_Angle_Control2.setPosition(118.0/270-torget_point);
+//        turret_Angle_Control.setPosition(-.5);
+//        turret_Angle_Control2.setPosition(.5);
+//        op.telemetry.addData("difference", target_point - turret_Angle_Control.getPosition());
 
     }
 }
