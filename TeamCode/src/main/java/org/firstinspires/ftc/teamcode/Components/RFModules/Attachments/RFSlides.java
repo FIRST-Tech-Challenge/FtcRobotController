@@ -1,25 +1,22 @@
 //package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 //
-//import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 //import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-//import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 //
 //import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
 //import static org.firstinspires.ftc.teamcode.Robot.checker;
 //import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 //import static org.firstinspires.ftc.teamcode.Robot.faked;
-//import static org.firstinspires.ftc.teamcode.Robot.logger;
+//import static org.firstinspires.ftc.teamcode.Robot.op;
+//
 //import static java.lang.Math.abs;
-//import static java.lang.Math.pow;
 //
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.DcMotorSimple;
 //
 //import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
-//import org.firstinspires.ftc.teamcode.Components.StateMachine;
 //
-//import org.firstinspires.ftc.teamcode.Components.Logger;
+//import java.util.ArrayList;
 //
 //public class RFSlides extends RFMotor{
 //    /*init: reset, motorname, need encoder, zeroPowerBehavior brake
@@ -28,43 +25,38 @@
 //
 //    private RFMotor extensionMotor;
 //
-//    private final double MAX_EXTENSION_TICKS;
-//    private final double MIN_EXTENSION_TICKS;
-//    private final double TICKS_PER_INCH = 100.0;
+//    private ArrayList<Double> coefs = new ArrayList();
 //
-//    LinearOpMode op;
 //
-//    public RFSlides(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, double MAX_EXTENSION_TICKS_INPUT, double MIN_EXTENSION_TICKS_INPUT, DcMotor.ZeroPowerBehavior zeroBehavior) {
-//        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
+//    public RFSlides(String motorName, DcMotor.RunMode runMode, boolean resetPos, ArrayList<Double> coefficients, double maxtick,
+//                    double mintick) {
+//        super(motorName, runMode, resetPos, coefficients, maxtick, mintick);
 //
-//        extensionMotor = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
-//
-//        MAX_EXTENSION_TICKS = MAX_EXTENSION_TICKS_INPUT;
-//        MIN_EXTENSION_TICKS = MIN_EXTENSION_TICKS_INPUT;
-//        op = opMode;
+//        extensionMotor = new RFMotor(motorName, runMode, resetPos, coefficients, maxtick, mintick);
 //
 //    }
-//    public void slidesToPosition(double targetPosition) {
-//        if (targetPosition > MAX_EXTENSION_TICKS) {
-//            targetPosition = MAX_EXTENSION_TICKS - 5;
-//        }
 //
-//        if (targetPosition < MIN_EXTENSION_TICKS) {
-//            targetPosition = MIN_EXTENSION_TICKS + 5;
-//        }
-//
-//        double distance = targetPosition-getCurrentPosition();
-//
-//        while (Math.abs(distance) > 20) {
-//
-//            distance = targetPosition-getCurrentPosition();
-//            op.telemetry.addData("current position:", getCurrentPosition());
-//            setVelocity(distance/abs(distance) * 4 * (abs(distance) + 100));
-//            op.telemetry.addData("distance", distance);
-//            op.telemetry.update();
-//        }
-//        setVelocity(0);
-//    }
+////    public void slidesToPosition(double targetPosition) {
+////        if (targetPosition > MAX_EXTENSION_TICKS) {
+////            targetPosition = MAX_EXTENSION_TICKS - 5;
+////        }
+////
+////        if (targetPosition < MIN_EXTENSION_TICKS) {
+////            targetPosition = MIN_EXTENSION_TICKS + 5;
+////        }
+////
+////        double distance = targetPosition-getCurrentPosition();
+////
+////        while (Math.abs(distance) > 20) {
+////
+////            distance = targetPosition-getCurrentPosition();
+////            op.telemetry.addData("current position:", getCurrentPosition());
+////            setVelocity(distance/abs(distance) * 4 * (abs(distance) + 100));
+////            op.telemetry.addData("distance", distance);
+////            op.telemetry.update();
+////        }
+////        setVelocity(0);
+////    }
 //
 //    public void slidesToPositionTeleop (double targetPosition) {
 //        if(targetPosition>MAX_EXTENSION_TICKS){

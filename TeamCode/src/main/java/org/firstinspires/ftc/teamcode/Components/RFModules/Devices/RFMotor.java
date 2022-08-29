@@ -44,7 +44,7 @@ public class RFMotor extends Motor {
 
     public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos,
                    ArrayList<Double> coefficients, double maxtick, double mintick) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("turret_Rotation");
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
         if (resetPos) {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
@@ -56,7 +56,33 @@ public class RFMotor extends Motor {
         logger.createFile("RFMotorLog", "Runtime,Action,Value");
     }
 
+    public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos,
+                   double maxtick, double mintick) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
+        if (resetPos) {
+            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        rfMotor.setMode(runMode);
+        coefs.add(1.5);
+        coefs.add(150.0);
+        maxtickcount = maxtick;
+        mintickcount = mintick;
+
+        logger.createFile("RFMotorLog", "Runtime,Action,Value");
+    }
+
+    public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
+        if (resetPos) {
+            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        rfMotor.setMode(runMode);
+
+        logger.createFile("RFMotorLog", "Runtime,Action,Value");
+    }
+
     public void setPosition (double targetpos) {
+        targetpos *= maxtickcount;
         op.telemetry.addData("newPosition", targetpos);
         if(targetpos>maxtickcount){
             targetpos = maxtickcount - 5;
@@ -65,7 +91,9 @@ public class RFMotor extends Motor {
             targetpos = -mintickcount + 5;
         }
         double distance = targetpos-getCurrentPosition();
+        op.telemetry.addData("distance", distance);
         while (Math.abs(distance) > 20) {
+            op.telemetry.addData("poggies", "lol");
             distance = targetpos-getCurrentPosition();
             if (distance > 0) {
                 setVelocity(coefs.get(0) * distance + coefs.get(1));
