@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+
+@TeleOp(name = "TankTele")
 public class TankTeleOp extends LinearOpMode {
 
     private DcMotorEx frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
