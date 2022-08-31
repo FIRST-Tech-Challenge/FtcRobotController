@@ -35,6 +35,8 @@ public class TankTeleOp extends LinearOpMode {
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        waitForStart();
+
         while (opModeIsActive()){
             drive();
         }
@@ -44,14 +46,14 @@ public class TankTeleOp extends LinearOpMode {
         double leftX = gamepad1.left_stick_x;
         double leftY = -gamepad1.left_stick_y;
         double turnVal = gamepad1.right_stick_x;
-        double rPower = leftX;
-        double lPower = leftX;
+        double rPower = leftY;
+        double lPower = leftY;
 
-        if (leftY > 0){
-            lPower -= leftY;
+        if (leftX > 0){
+            rPower -= leftX;
         }
-        else if(leftY < 0){
-            rPower -= leftY;
+        else if(leftX < 0){
+            lPower -= leftX;
         }
 
         frontRightMotor.setPower(rPower);
