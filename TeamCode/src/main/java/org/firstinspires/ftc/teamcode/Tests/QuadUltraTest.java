@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
-import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 
 @Autonomous(name= "QuadUltraTest")
 public class QuadUltraTest extends LinearOpMode {

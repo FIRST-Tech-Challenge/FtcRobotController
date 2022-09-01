@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,8 +17,7 @@ public class track extends LinearOpMode {
     public void runOpMode(){
         //Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         ElapsedTime op = new ElapsedTime();
-        Logger logger = new Logger(this);
-        EncoderChassis odom = new EncoderChassis(this, false,false, logger);
+        EncoderChassis odom = new EncoderChassis(this, false,false);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

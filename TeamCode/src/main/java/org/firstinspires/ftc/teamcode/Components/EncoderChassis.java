@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -15,6 +16,7 @@ import static java.lang.Math.tan;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -32,11 +34,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
+@Config
 //2.0,1.7,1.1
 public class EncoderChassis extends BasicChassis {
     VuforiaThread vuforia = null;
-    Logger logger;
     double ticksPerInch = 29.8;
     public static double xVelocity = 0;
     public static double yVelocity = 0;
@@ -47,7 +48,7 @@ public class EncoderChassis extends BasicChassis {
     private final BNO055IMU imu;
     private double lastAngleUpdate = 0.0, lastUltraUpdate=0.0, lastDigUp=0.0;
     private Orientation lastAngles = new Orientation();
-    private double globalAngle;
+    public static double globalAngle;
     private double correction;
     double maxVelocity = 0;
     double ticksPerRevolution = 2215.5;
@@ -56,9 +57,9 @@ public class EncoderChassis extends BasicChassis {
     boolean debug = false;
     private LinearOpMode op = null;
     Lock location = new ReentrantLock();
-    public static float xpos = 0;
-    public static float ypos = 0;
-    public static float angle = 0;
+    public static double xpos = 0;
+    public static double ypos = 0;
+    public static double angle = 0;
     public static boolean barrier = false;
     public static double differtime = 0.002;
     double lastLog = 0.0;
@@ -75,9 +76,8 @@ public class EncoderChassis extends BasicChassis {
     double lastTime = 0;
     double thisTime = 0;
 
-    public EncoderChassis(LinearOpMode opMode, boolean navigator, boolean isTeleop, Logger log) {
+    public EncoderChassis(LinearOpMode opMode, boolean navigator, boolean isTeleop) {
         super(opMode);
-        logger = log;
         navigation = navigator;
         op = opMode;
         if(!isTeleop) {
@@ -131,11 +131,11 @@ public class EncoderChassis extends BasicChassis {
 
     }
 
-    public static float getXpos() {
+    public static double getXpos() {
         return xpos;
     }
 
-    public static float getYpos() {
+    public static double getYpos() {
         return ypos;
     }
 
@@ -248,7 +248,7 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setPower(0);
     }
 
-    public static float getCurrentAngle() {
+    public static double getCurrentAngle() {
         return angle;
     }
 

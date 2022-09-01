@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import org.firstinspires.ftc.teamcode.Components.Logger;
@@ -14,11 +17,13 @@ public class RFDualServo implements Servo {
      * position seperation 1.0
      * if willy wills it, create a telly that has three buttons: flip first servo to 1.0/0.0, flip second servo to 1.0/0.0, flip both servos to 1.0/0.0*/
 
-    private RFServo rfServo;
-    private RFServo rfServo2;
+    private Servo dualServo1;
+    private Servo dualServo2;
 
     double MIN_POSITION = 0.0;
     double MAX_POSITION = 1.0;
+    double servolimit = 0;
+    boolean flipped = false;
 
     enum Direction { FORWARD, REVERSE }
 
@@ -26,34 +31,58 @@ public class RFDualServo implements Servo {
 
     LinearOpMode op;
 
-    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode, Logger log) {
+    public RFDualServo(LinearOpMode opMode, String deviceName1, String deviceName2, double limit) {
         op = opMode;
 
-        servoDirection1 = servoDirection;
+        dualServo1 = opMode.hardwareMap.servo.get(deviceName1);
+        dualServo2 = opMode.hardwareMap.servo.get(deviceName2);
 
-        Servo.Direction servoDirection2 = REVERSE;
+        servolimit = limit;
+    }
+
+    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode, String deviceName1, String deviceName2, double limit) {
+        op = opMode;
+
+        dualServo1 = opMode.hardwareMap.servo.get(deviceName1);
+        dualServo2 = opMode.hardwareMap.servo.get(deviceName2);
+
+        dualServo1.setDirection(servoDirection);
 
         if (servoDirection == REVERSE) {
-            servoDirection2 = FORWARD;
+            dualServo2.setDirection(FORWARD);
+        }
+        else {
+            dualServo2.setDirection(REVERSE);
         }
 
-        rfServo = new RFServo(1.0, servoDirection, "RFServo", op, log);
-        rfServo2 = new RFServo(1.0, servoDirection2, "RFServo2", op, log);
+        servolimit = limit;
+    }
 
-        rfServo.setDirection(servoDirection);
+    public void flipServos (){
+        if (!flipped) {
+            dualServo1.setPosition(servolimit);
+            dualServo2.setPosition(0);
+            flipped = true;
+        }
+        else {
+            dualServo1.setPosition(0);
+            dualServo2.setPosition(servolimit);
+            flipped = false;
+        }
 
     }
 
-
-    @Override
-    public void setPosition(double position) {
-        rfServo.setPosition(position);
-        rfServo2.setPosition(position);
+    public void setPositions(double position) {
+        if (position < servolimit) {
+            dualServo1.setPosition(position);
+            dualServo2.setPosition(servolimit - position);
+        }
     }
+
 
     @Override
     public double getPosition() {
-        return rfServo.getPosition();
+        return dualServo1.getPosition();
     }
 
     @Override
@@ -68,17 +97,22 @@ public class RFDualServo implements Servo {
 
     @Override
     public void setDirection (Servo.Direction direction) {
-        rfServo.setDirection(direction);
+        dualServo1.setDirection(direction);
 
-        rfServo2.setDirection(REVERSE);
+        dualServo2.setDirection(REVERSE);
 
         if (direction == REVERSE) {
-            rfServo2.setDirection(FORWARD);
+            dualServo2.setDirection(FORWARD);
         }
     }
 
     public Servo.Direction getDirection() {
         return servoDirection1;
+    }
+
+    @Override
+    public void setPosition(double position) {
+
     }
 
     public void scaleRange(double min, double max) {

@@ -66,10 +66,6 @@ public class Logger {
     public void createFile (String fileName, String headers) {
         File file = new File("/storage/emulated/0/tmp/"+fileName+data+"Log.csv");
         try {
-//            myReader = new Scanner(myFile);
-//            data = myReader.nextLine();
-//
-
             if (file.createNewFile()) {
                 op.telemetry.addData("Logger:", "File created:%S\n", "Logger");
                 op.telemetry.update();
@@ -91,8 +87,6 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
 //    public void createFile(String newLogName) {
@@ -100,10 +94,82 @@ public class Logger {
 //    }
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input){
+//        if (loopcounter % 5 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void logRegulated(String fileName, String input){
+        if (loopcounter % 10 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, double input){
+        if (loopcounter % 30 == 0) {
+
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, int input){
         if (loopcounter % 30 == 0) {
             try {
                 FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                filewriter.write(String.format("%.2f", op.getRuntime()) + "," + input + "\n");
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, float input){
+        if (loopcounter % 30 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, boolean input){
+        if (loopcounter % 30 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
                 filewriter.close();
             } catch (IOException e) {
                 e.printStackTrace();

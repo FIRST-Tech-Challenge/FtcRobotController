@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_REST;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
 import static org.firstinspires.ftc.teamcode.Components.Turret.areTeleop;
-import static org.firstinspires.ftc.teamcode.Components.Turret.checker;
+import static org.firstinspires.ftc.teamcode.Robot.checker;
 import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
 import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,9 +20,9 @@ public class RFBasket {
     private RFServo basketServo;
 
     LinearOpMode op;
-    public RFBasket(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode, Logger log) {
+    public RFBasket(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
 
-        basketServo = new RFServo(range, direction, deviceName, opMode, log);
+        basketServo = new RFServo(direction, deviceName, opMode);
 
         op = opMode;
     }
@@ -38,6 +39,10 @@ public class RFBasket {
 //                SavePosition(0); add when 3d turret slides done
             }
         }
+    }
+
+    public void FlipBasketToPosition (double torget) {
+        basketServo.setPosition(torget);
     }
 
 }

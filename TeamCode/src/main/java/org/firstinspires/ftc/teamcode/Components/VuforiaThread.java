@@ -19,6 +19,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.teamcode.Components.OdometryChassis.vuforia_on;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -65,6 +66,7 @@ public class VuforiaThread extends Thread {
          final float oneAndHalfTile   = 36 * mmPerInch;
 
         WebcamName webcamName = opMode.hardwareMap.get(WebcamName.class, "WebcamSide");
+
 
         // Show camera view on RC phone screen
         int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());

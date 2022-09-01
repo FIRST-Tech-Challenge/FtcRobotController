@@ -1,40 +1,42 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
-
-import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFServo implements Servo {
     //all servo regular stuff
 
-    private Servo RFServo;
+    private final Servo RFServo;
 
     LinearOpMode op;
-    Logger logger;
 
-    Servo.Direction servodirection;
     String devicename;
 
-    public RFServo (double range, Servo.Direction direction, String deviceName, LinearOpMode opMode, Logger log) {
-        logger = log;
+    private double lasttime = 0;
+
+
+
+    public RFServo (Servo.Direction direction, String deviceName, LinearOpMode opMode) {
         op = opMode;
-        servodirection = direction;
         devicename = deviceName;
         RFServo = opMode.hardwareMap.get(Servo.class, deviceName);
+        RFServo.setDirection(direction);
 
-        logger.createFile("RFServoLog", "Action,Value");
     }
 
     public void setPosition(double position) {
-        RFServo.setPosition(position);
-        logger.log("RFServoLog", "Setting Position," + position);
+        if (op.getRuntime() - lasttime > 0.2) {
+            RFServo.setPosition(position);
+            logger.log("RFServoLog", "Setting Position:" + position);
+            lasttime = op.getRuntime();
+        }
     }
 
     public double getPosition() {
-        logger.log("RFServoLog", "Current Position," + RFServo.getPosition());
+        logger.log("RFServoLog", "Current Position:" + RFServo.getPosition());
         return RFServo.getPosition();
     }
 
@@ -59,7 +61,7 @@ public class RFServo implements Servo {
 
     @Override
     public Direction getDirection() {
-        return servodirection;
+        return null;
     }
 
     @Override

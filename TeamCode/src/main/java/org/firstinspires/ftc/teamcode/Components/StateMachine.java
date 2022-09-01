@@ -1,42 +1,58 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_ALLIANCE;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_REST;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_ARM_SHARED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_CEILING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_DROP;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.BASKET_TRANSFER;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketBasketArmStates.DROPPED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_DOWN;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_FLIPPING_DOWN;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_FLIPPING_UP;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_REVERSING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_SWITCHED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_TRANSFERRED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_TRANSFERRING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKE_UP;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeStates.INTAKING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_ALLIANCE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_SHARED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_CEILING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_DROP;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_TRANSFER;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_STILL;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_FLIPPING_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_FLIPPING_UP;
+
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_REVERSING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TRANSFERRING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_UP;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.CAROUSEL_SPINNING_CLOCKWISE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.CAROUSEL_SPINNING_COUNTERCLOCKWISE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_DOWN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_FIRST_CAP;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_SECOND_CAP;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_UP;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretAAStates.TURRET_FLAT;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretAAStates.TURRET_RAISED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_CLOCKWISE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_COUNTER_CLOCKWISE;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.INTAKE_SWITCHED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.IN_WAREHOUSE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SEQUENCING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_EXTENDING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_RETRACTED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.SLIDES_RETRACTING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_FLAT;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_LOWERING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_RAISED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_RAISING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_ROTATED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretStates.TURRET_STRAIGHT;
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.robot.RobotState;
 
 public class StateMachine {
     boolean teleOp = false;
-    Logger logger;
+    IntakeServoStates lastIntakeServoState = INTAKE_DOWN;
+    IntakeMotorStates lastIntakeMotorState = INTAKE_STILL;
+    TurretRotationStates lastTurretRotationState = TURRET_STRAIGHT;
+    SlidesStates lastSlidesState = SLIDES_RETRACTED;
+    TurretAAStates lastTurretAAState = TURRET_FLAT;
+    BasketStates lastBasketState = BASKET_TRANSFER;
+    BasketArmStates lastBasketArmState = BASKET_ARM_REST;
 
     public enum RobotStates {
+        SLIDES_EXTENDED(false, "SLIDES_EXTENDED"),
+        INTAKE_SWITCHED(false, "INTAKE_SWITCHED"),
+        TRANSFERRING(false, "TRANSFERRING"),
         IN_WAREHOUSE(false, "IN_WAREHOUSE"),
         SEQUENCING(false, "SEQUENCING"),
         CAROUSEL_SPINNING_CLOCKWISE(false, "CAROUSEL_SPINNING_CLOCKWISE"),
@@ -59,22 +75,16 @@ public class StateMachine {
         }
     }
 
-    public enum IntakeStates {
-        INTAKE_SWITCHED(false, "INTAKE_SWITCHED"),
-        INTAKE_DOWN(false, "INTAKE_DOWN"),
-        INTAKING(false, "INTAKING"),
-        INTAKE_REVERSING(false, "INTAKE_REVERSING"),
+    public enum IntakeServoStates {
+        INTAKE_DOWN(true, "INTAKE_DOWN"),
         INTAKE_FLIPPING_UP(false, "INTAKE_FLIPPING_UP"),
-        INTAKE_UP(true, "INTAKE_UP"),
-        INTAKE_TRANSFERRING(false, "INTAKE_TRANSFERRING"),
-        INTAKE_TRANSFERRED(false, "TRANSFERRED"),
-        INTAKE_FLIPPING_DOWN(false, "INTAKE_FLIPPING_DOWN");
-
+        INTAKE_FLIPPING_DOWN(false, "INTAKE_FLIPPING_DOWN"),
+        INTAKE_UP(false, "INTAKE_UP");
 
         boolean status;
         String name;
 
-        IntakeStates(boolean value, String name) {
+        IntakeServoStates(boolean value, String name) {
             this.status = value;
         }
 
@@ -83,23 +93,35 @@ public class StateMachine {
         }
     }
 
-    public enum TurretStates {
-        SLIDES_EXTENDED(false, "SLIDES_EXTENDED"),
-        SLIDES_EXTENDING(false, "SLIDES_EXTENDING"),
-        SLIDES_RETRACTED(true, "SLIDES_RETRACTED"),
-        SLIDES_RETRACTING(false, "SLIDES_RETRACTING"),
-        TURRET_RAISED(false, "TURRET_RAISED"),
-        TURRET_RAISING(false, "TURRET_RAISING"),
-        TURRET_LOWERING(false, "TURRET_LOWERING"),
-        TURRET_FLAT(true, "TURRET_FLAT"),
+
+    public enum IntakeMotorStates {
+
+        INTAKE_STILL(true, "INTAKE_STILL"),
+        INTAKING(false, "INTAKING"),
+        INTAKE_REVERSING(false, "INTAKE_REVERSING");
+
+        boolean status;
+        String name;
+
+        IntakeMotorStates(boolean value, String name) {
+            this.status = value;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+    }
+
+    public enum TurretRotationStates {
         TURRET_STRAIGHT(true, "TURRET_STRAIGHT"),
         TURRET_ROTATING_CLOCKWISE(false, "TURRET_ROTATING_CLOCKWISE"),
         TURRET_ROTATING_COUNTER_CLOCKWISE(false, "TURRET_ROTATING_CLOCKWISE"),
         TURRET_ROTATED(false, "TURRET_ROTATED");
+
         boolean status;
         String name;
 
-        TurretStates(boolean value, String name) {
+        TurretRotationStates(boolean value, String name) {
             this.status = value;
         }
 
@@ -108,18 +130,49 @@ public class StateMachine {
         }
     }
 
-    public enum BasketBasketArmStates {
+    public enum SlidesStates {
+//        SLIDES_EXTENDING(false, "SLIDES_EXTENDING"),
+        SLIDES_RETRACTED(true, "SLIDES_RETRACTED"),
+        SLIDES_RETRACTING(false, "SLIDES_RETRACTING");
+
+        boolean status;
+        String name;
+
+        SlidesStates(boolean value, String name) {
+            this.status = value;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+    }
+
+    public enum TurretAAStates {
+
+        TURRET_RAISED(false, "TURRET_RAISED"),
+        TURRET_FLAT(true, "TURRET_FLAT");
+
+        boolean status;
+        String name;
+
+        TurretAAStates(boolean value, String name) {
+            this.status = value;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+    }
+
+    public enum BasketStates {
         BASKET_TRANSFER(true, "BASKET_TRANSFER"),
         BASKET_CEILING(false, "BASKET_CEILING"),
-        BASKET_DROP(false, "BASKET_DROP"),
-        BASKET_ARM_REST(true, "BASKET_ARM_REST"),
-        BASKET_ARM_ALLIANCE(true, "BASKET_ARM_ALLIANCE"),
-        BASKET_ARM_SHARED(true, "BASKET_ARM_REST"),
-        DROPPED(false, "DROPPED");
+        BASKET_DROP(false, "BASKET_DROP");
+
         boolean status;
         String name;
 
-        BasketBasketArmStates(boolean value, String name) {
+        BasketStates(boolean value, String name) {
             this.status = value;
         }
 
@@ -128,175 +181,406 @@ public class StateMachine {
         }
     }
 
-    public StateMachine(LinearOpMode op, boolean isTeleOp, Logger log) {
-        logger = log;
-        teleOp = isTeleOp;
-        if (teleOp) {
-            INTAKE_DOWN.setStatus(true);
+    public enum BasketArmStates {
+
+        BASKET_ARM_REST(true, "BASKET_ARM_REST"),
+        BASKET_ARM_ALLIANCE(false, "BASKET_ARM_ALLIANCE"),
+        BASKET_ARM_SHARED(false, "BASKET_ARM_REST");
+
+        boolean status;
+        String name;
+
+        BasketArmStates(boolean value, String name) {
+            this.status = value;
         }
-        logger.createFile("SequencingStates", "Runtime,State,Value");
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
     }
+
+    public StateMachine(LinearOpMode op, boolean isTeleOp) {
+        teleOp = isTeleOp;
+        logger.createFile("SequencingStates", "Runtime,State,Value");
+        if (teleOp) {
+            setState(INTAKE_DOWN, true);
+            setState(TSE_ARM_UP, true);
+            setState(INTAKE_STILL, true);
+            setState(TURRET_STRAIGHT, true);
+            setState(TURRET_FLAT, true);
+            setState(SLIDES_RETRACTED, true);
+            setState(BASKET_ARM_REST, true);
+            setState(BASKET_TRANSFER, true);
+        }
+
+
+    }
+
 
     public void setState(RobotStates state, boolean value) {
-        if(state.status!=value) {
+//        if (checkIf(state)) {
+        if (state.status != value) {
             state.setStatus(value);
 
             if (value) {
-                logger.log("SequencingStates", "STATE:" + RobotStates.values()[1] + ",true");
+                logger.log("SequencingStates", "STATE: " + state + " changed to true");
             } else {
-                logger.log("SequencingStates", "STATE:" + RobotStates.values()[1] + ",false");
+                logger.log("SequencingStates", "STATE: " + state + " changed to false");
             }
+        }
+
+//        else if (!checkIf(state) && !state.status) {
+//            state.setStatus(false);
+//        }
+    }
+
+
+    public void setState(IntakeServoStates state, boolean value) {
+        if (checkIf(state)) {
+            for (int i = 0; i < IntakeServoStates.values().length; i++) {
+                if (IntakeServoStates.values()[i] != state) {
+                    IntakeServoStates.values()[i].setStatus(false);
+                }
+            }
+            if (state.status != value) {
+                state.setStatus(value);
+                lastIntakeServoState = state;
+
+                if (value) {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
+                } else {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
+                }
+            }
+        }
+        else if (!checkIf(state) && !state.status) {
+            state.setStatus(false);
         }
     }
 
-    public void setState(IntakeStates state, boolean value) {
-        if(state.status!=value) {
-            logger.log("SequencingStates", "poggies");
-            state.setStatus(value);
-
-            if (value) {
-                logger.log("SequencingStates", "STATE:" + IntakeStates.values()[1] + ",true");
-            } else {
-                logger.log("SequencingStates", "STATE:" + IntakeStates.values()[1] + ",false");
+    public void setState(IntakeMotorStates state, boolean value) {
+        if (checkIf(state)) {
+            for (int i = 0; i < IntakeMotorStates.values().length; i++) {
+                if (IntakeMotorStates.values()[i] != state) {
+                    IntakeMotorStates.values()[i].setStatus(false);
+                }
             }
+            if (state.status != value) {
+                state.setStatus(value);
+                lastIntakeMotorState = state;
 
+                if (value) {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
+                } else {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
+                }
+            }
+        }
+        else if (!checkIf(state) && !state.status) {
+            state.setStatus(false);
         }
     }
-    public void setState(TurretStates state, boolean value) {
-        if(state.status!=value) {
-            logger.log("SequencingStates", "poggies");
-            state.setStatus(value);
-            if (value == true) {
-                logger.log("SequencingStates", "STATE:" + TurretStates.values()[1] + ",true");
-            } else {
-                logger.log("SequencingStates", "STATE:" + TurretStates.values()[1] + ",false");
+
+    public void setState(TurretRotationStates state, boolean value) {
+        if (checkIf(state)) {
+            for (int i = 0; i < TurretRotationStates.values().length; i++) {
+                if (TurretRotationStates.values()[i] != state) {
+                    TurretRotationStates.values()[i].setStatus(false);
+                }
             }
+            if (state.status != value) {
+                state.setStatus(value);
+                lastTurretRotationState = state;
+
+                if (value) {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
+                } else {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
+                }
+            }
+        }
+        else if (!checkIf(state) && !state.status) {
+            state.setStatus(false);
         }
     }
-    public void setState(BasketBasketArmStates state, boolean value) {
-        if(state.status!=value) {
-            logger.log("SequencingStates", "poggies");
-            state.setStatus(value);
-            if (value) {
-                logger.log("SequencingStates", "STATE:" + BasketBasketArmStates.values()[1] + ",true");
-            } else {
-                logger.log("SequencingStates", "STATE:" + BasketBasketArmStates.values()[1] + ",false");
+
+    public void setState(SlidesStates state, boolean value) {
+        if (checkIf(state)) {
+            for (int i = 0; i < SlidesStates.values().length; i++) {
+                if (SlidesStates.values()[i] != state) {
+                    SlidesStates.values()[i].setStatus(false);
+                }
+            }
+            if (state.status != value) {
+                state.setStatus(value);
+                lastSlidesState = state;
+
+                if (value) {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
+                } else {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
+                }
             }
         }
+        else if (!checkIf(state) && !state.status) {
+            state.setStatus(false);
+        }
+    }
+
+    public void setState(TurretAAStates state, boolean value) {
+        if (checkIf(state)) {
+            for (int i = 0; i < TurretAAStates.values().length; i++) {
+                if (TurretAAStates.values()[i] != state) {
+                    TurretAAStates.values()[i].setStatus(false);
+                }
+            }
+            if (state.status != value) {
+                state.setStatus(value);
+                lastTurretAAState = state;
+
+                if (value) {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
+                } else {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
+                }
+            }
+        }
+        else if (!checkIf(state) && !state.status) {
+            state.setStatus(false);
+        }
+    }
+
+    public void setState(BasketStates state, boolean value) {
+        if (checkIf(state)) {
+            for (int i = 0; i < BasketStates.values().length; i++) {
+                if (BasketStates.values()[i] != state) {
+                    BasketStates.values()[i].setStatus(false);
+                }
+            }
+            if (state.status != value) {
+                state.setStatus(value);
+                lastBasketState = state;
+
+                if (value) {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
+                } else {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
+                }
+            }
+        }
+        else if (!checkIf(state) && !state.status) {
+            state.setStatus(false);
+        }
+    }
+
+    public void setState(BasketArmStates state, boolean value) {
+        if (checkIf(state)) {
+            for (int i = 0; i < BasketArmStates.values().length; i++) {
+                if (BasketArmStates.values()[i] != state) {
+                    BasketArmStates.values()[i].setStatus(false);
+                }
+            }
+            if (state.status != value) {
+                state.setStatus(value);
+                lastBasketArmState = state;
+
+                if (value) {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
+                } else {
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
+                }
+            }
+        }
+        else if (!checkIf(state) && !state.status) {
+            state.setStatus(false);
+        }
+    }
+
+    public void logCurrentStates() {
+        logger.logRegulated("SequencingStates", "Last Intake Servo State: " + lastIntakeServoState);
+        logger.logRegulated("SequencingStates", "Last Intake MotorState: " + lastIntakeMotorState);
+        logger.logRegulated("SequencingStates", "Last Turret RotationState: " + lastTurretRotationState);
+        logger.logRegulated("SequencingStates", "Last Slides State: " + lastSlidesState);
+        logger.logRegulated("SequencingStates", "Last TurretAA State: " + lastTurretAAState);
+        logger.logRegulated("SequencingStates", "Last Basket State: " + lastBasketState);
+        logger.logRegulated("SequencingStates", "Last Basket ArmState: " + lastBasketArmState);
     }
 
     public boolean getState(RobotStates state) {
         return state.status;
     }
-    public boolean getState(IntakeStates state) {
+    public boolean getState(IntakeServoStates state) {
         return state.status;
     }
-    public boolean getState(TurretStates state) {
+    public boolean getState(IntakeMotorStates state) {
         return state.status;
     }
-    public boolean getState(BasketBasketArmStates state) {
+    public boolean getState(TurretRotationStates state) {
+        return state.status;
+    }
+    public boolean getState(SlidesStates state) {
+        return state.status;
+    }
+    public boolean getState(TurretAAStates state) {
+        return state.status;
+    }
+    public boolean getState(BasketStates state) {
+        return state.status;
+    }
+    public boolean getState(BasketArmStates state) {
         return state.status;
     }
 
-    public boolean checkIf(RobotStates state) {
-        return true;
-    }
-
-    public boolean checkIf(IntakeStates state) {
-        if (state == INTAKING) {
-            return (teleOp || IN_WAREHOUSE.status) && !INTAKING.status;
-        }
-        else if (state == INTAKE_REVERSING) {
-            return (!INTAKE_FLIPPING_UP.status && !INTAKE_FLIPPING_DOWN.status && !INTAKE_REVERSING.status);
-        }
-        else if (state == INTAKE_FLIPPING_UP) {
-            return TURRET_STRAIGHT.status && !SLIDES_EXTENDED.status && !TURRET_RAISED.status && BASKET_TRANSFER.status && !INTAKE_FLIPPING_UP.status;
-        }
-        else if (state == INTAKE_FLIPPING_DOWN) {
-            return !INTAKE_UP.status;
-        }
-        else if (state == INTAKE_TRANSFERRING) {
-            return !INTAKE_TRANSFERRING.status && !INTAKE_FLIPPING_UP.status && !INTAKE_FLIPPING_DOWN.status && TURRET_STRAIGHT.status && !SLIDES_EXTENDED.status && !TURRET_RAISED.status && BASKET_TRANSFER.status && !StateMachine.IntakeStates.INTAKE_DOWN.status && SEQUENCING.status;
-        }
-        else if (state == INTAKE_TRANSFERRED) {
-            return INTAKE_TRANSFERRING.status;
-        }
-        else if (state == INTAKE_DOWN) {
-            return !INTAKE_SWITCHED.status;
-        }
-        else if (state == INTAKE_UP) {
-            return !INTAKE_DOWN.status;
-        }
-        else if (state == INTAKE_SWITCHED) {
-            return true;
-        }
-        else {
-            return true;
-        }
-    }
-
-    public boolean checkIf(TurretStates state) {
-        if (state == SLIDES_EXTENDED) {
-            return TURRET_ROTATED.status || TURRET_RAISED.status;
-        }
-        else if (state == SLIDES_EXTENDING) {
-            return INTAKE_TRANSFERRED.status && !SLIDES_EXTENDING.status;
-        }
-        else if (state == SLIDES_RETRACTING) {
-            return SLIDES_EXTENDED.status && BASKET_CEILING.status && !SLIDES_RETRACTING.status;
-        }
-        else if (state == SLIDES_RETRACTED) {
-            return BASKET_TRANSFER.status; //TURRET_STRAIGHT.status || TURRET_FLAT.status;
-        }
-        else if (state == TURRET_RAISING) {
-            return INTAKE_TRANSFERRED.status && !TURRET_RAISING.status;
-        }
-        else if (state == TURRET_RAISED) {
-            return BASKET_DROP.status;
-        }
-
-        else if (state == TURRET_LOWERING) {
-            return BASKET_TRANSFER.status && TURRET_RAISED.status && !TURRET_LOWERING.status;
-        }
-
-        else if (state == TURRET_FLAT) {
-            return BASKET_TRANSFER.status;
-        }
-
-        else if (state == TURRET_STRAIGHT) {
-            return BASKET_TRANSFER.status;
-        }
-
-
-        else {
-            return true;
-        }
-    }
-
-    public boolean checkIf(BasketBasketArmStates state) {
-        if (state == BASKET_CEILING) {
-            return (BASKET_DROP.status && DROPPED.status) || (BASKET_TRANSFER.status && INTAKE_TRANSFERRED.status);
-        }
-        else if (state == BASKET_TRANSFER) {
-            return BASKET_ARM_REST.status && SLIDES_RETRACTED.status && TURRET_STRAIGHT.status;
-        }
-        else if (state == BASKET_DROP) {
-            return (BASKET_ARM_ALLIANCE.status || BASKET_ARM_SHARED.status) && SLIDES_EXTENDED.status;
-        }
-        else if (state == BASKET_ARM_REST) {
-            return BASKET_CEILING.status && SLIDES_RETRACTED.status && TURRET_STRAIGHT.status;
-        }
-        else if (state == DROPPED) {
-            return SLIDES_EXTENDED.status && TURRET_RAISED.status && TURRET_ROTATED.status && (BASKET_ARM_SHARED.status || BASKET_ARM_ALLIANCE.status) && BASKET_CEILING.status;
-        }
-        else {
-            return true;
-        }
-    }
+//INTAKE_SWITCHED(false, "INTAKE_SWITCHED"),
+//IN_WAREHOUSE(false, "IN_WAREHOUSE"),
+//SEQUENCING(false, "SEQUENCING"),
+//CAROUSEL_SPINNING_CLOCKWISE(false, "CAROUSEL_SPINNING_CLOCKWISE"),
+//CAROUSEL_SPINNING_COUNTERCLOCKWISE(false, "CAROUSEL_SPINNING_COUNTERCLOCKWISE"),
+//CAROUSEL_STILL(true, "CAROUSEL_STILL"),
+//TSE_ARM_DOWN(false, "TSE_ARM_DOWN"),
+//TSE_ARM_UP(true, "TSE_ARM_DOWN"),
+//TSE_ARM_FIRST_CAP(false, "TSE_ARM_DOWN"),
+//TSE_ARM_SECOND_CAP(false, "TSE_ARM_DOWN");
 
 //    public boolean checkIf(RobotStates state) {
-//        if (state == IN_WAREHOUSE) {
-//            return ();
+////        if (state == INTAKE_SWITCHED) {
+////            return (true);
+////        }
+////        if (state == SEQUENCING) {
+////            return (INTAKE_FLIPPING_UP.status || INTAKE_FLIPPING_DOWN.status || INTAKE_TRANSFERRING.status || SLIDES_EXTENDING.status || BASKET_ARM_ALLIANCE.status || BASKET_ARM_SHARED.status || BASKET_DROP.status);
+////        }
+//        if (state == CAROUSEL_SPINNING_CLOCKWISE) {
+//            return (!CAROUSEL_SPINNING_CLOCKWISE.status);
+//        }
+//        else if (state == TRANSFERRING) {
+//            return (INTAKE_UP.status && !TRANSFERRING.status);
+//        }
+//        else if (state == CAROUSEL_SPINNING_COUNTERCLOCKWISE) {
+//            return (!CAROUSEL_SPINNING_COUNTERCLOCKWISE.status);
+//        }
+//        else if (state == TSE_ARM_DOWN) {
+//            return (TSE_ARM_SECOND_CAP.status);
+//        }
+//        else if (state == TSE_ARM_UP) {
+//            return (TSE_ARM_DOWN.status);
+//        }
+//        else if (state == TSE_ARM_FIRST_CAP) {
+//            return (TSE_ARM_UP.status);
+//        }
+//        else if (state == TSE_ARM_SECOND_CAP) {
+//            return (TSE_ARM_FIRST_CAP.status);
+//        }
+//        else {
+//            return true;
 //        }
 //    }
+
+    public boolean checkIf(IntakeServoStates state) {
+        if (state == INTAKE_DOWN) {
+            return (INTAKE_FLIPPING_DOWN.status);
+        }
+        else if (state == INTAKE_FLIPPING_DOWN) {
+            return (INTAKE_FLIPPING_UP.status || INTAKE_UP.status);
+        }
+        else if (state == INTAKE_FLIPPING_UP) {
+            return (INTAKE_FLIPPING_DOWN.status || INTAKE_DOWN.status);
+        }
+        else if (state == INTAKE_UP) {
+            return (INTAKE_FLIPPING_UP.status);
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkIf(IntakeMotorStates state) {
+        if (state == INTAKE_STILL) {
+            return (!INTAKE_STILL.status);
+        }
+        else if (state == INTAKE_REVERSING) {
+            return (INTAKE_DOWN.status && !INTAKE_REVERSING.status);
+        }
+
+        else if (state == INTAKING) {
+            return (INTAKE_DOWN.status || INTAKE_FLIPPING_UP.status);
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkIf(TurretRotationStates state) {
+        if (state == TURRET_STRAIGHT) {
+            return (TURRET_ROTATING_COUNTER_CLOCKWISE.status || TURRET_ROTATING_CLOCKWISE.status);
+        }
+        else if (state == TURRET_ROTATING_CLOCKWISE) {
+            return (!TURRET_ROTATING_CLOCKWISE.status);
+        }
+        else if (state == TURRET_ROTATING_COUNTER_CLOCKWISE) {
+            return (!TURRET_ROTATING_COUNTER_CLOCKWISE.status);
+        }
+        else if (state == TURRET_ROTATED) {
+            return (TURRET_ROTATING_COUNTER_CLOCKWISE.status || TURRET_ROTATING_CLOCKWISE.status);
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkIf(SlidesStates state) {
+//        if (state == SLIDES_EXTENDED) {
+//            return (SLIDES_RETRACTING.status || SLIDES_RETRACTED.status);
+//        }
+        if (state == SLIDES_RETRACTED) {
+            return (SLIDES_RETRACTING.status);
+        }
+        else if (state == SLIDES_RETRACTING) {
+            return (SLIDES_EXTENDED.status);
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkIf(TurretAAStates state) {
+        if (state == TURRET_FLAT) {
+            return (!TURRET_FLAT.status);
+        }
+        else if (state == TURRET_RAISED) {
+            return (!TURRET_RAISED.status);
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkIf(BasketStates state) {
+        if (state == BASKET_CEILING) {
+            return (!BASKET_CEILING.status);
+        }
+        else if (state == BASKET_TRANSFER) {
+            return (BASKET_CEILING.status);
+        }
+        else if (state == BASKET_DROP) {
+            return (BASKET_CEILING.status);
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean checkIf(BasketArmStates state) {
+        if (state == BASKET_ARM_REST) {
+            return (!BASKET_ARM_REST.status);
+        }
+        else if (state == BASKET_ARM_ALLIANCE) {
+            return (BASKET_ARM_REST.status);
+        }
+        else if (state == BASKET_ARM_SHARED) {
+            return (BASKET_ARM_REST.status);
+        }
+        else {
+            return true;
+        }
+    }
 }

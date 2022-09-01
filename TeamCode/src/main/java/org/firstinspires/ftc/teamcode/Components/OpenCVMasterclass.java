@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static java.lang.Math.pow;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,6 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
+@Config
 
 public class OpenCVMasterclass {
     OpenCvWebcam backWebcam;
@@ -53,6 +56,7 @@ public class OpenCVMasterclass {
                  * away from the user.
                  */
                 backWebcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(backWebcam, 30);
             }
 
             @Override
