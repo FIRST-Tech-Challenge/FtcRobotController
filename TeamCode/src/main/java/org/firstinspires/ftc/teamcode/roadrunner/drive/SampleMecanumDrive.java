@@ -30,6 +30,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.Components.IMU;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -44,6 +45,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static org.firstinspires.ftc.teamcode.Robot.op;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
@@ -58,6 +60,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kSt
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.String.valueOf;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -84,7 +87,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private BNO055IMU imu;
+//    private IMU imus;
     private VoltageSensor batteryVoltageSensor;
 
     private Robot robot=null;
@@ -104,32 +107,32 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-
-        // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
-        // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
-        //
-        //             | +Z axis
-        //             |
-        //             |
-        //             |
-        //      _______|_____________     +Y axis
-        //     /       |_____________/|__________
-        //    /   REV / EXPANSION   //
-        //   /       / HUB         //
-        //  /_______/_____________//
-        // |_______/_____________|/
-        //        /
-        //       / +X axis
-        //
-        // This diagram is derived from the axes in section 3.4 https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
-        // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
-        //
-        // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-         BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
+//
+//        // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
+//        // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
+//        //
+//        //             | +Z axis
+//        //             |
+//        //             |
+//        //             |
+//        //      _______|_____________     +Y axis
+//        //     /       |_____________/|__________
+//        //    /   REV / EXPANSION   //
+//        //   /       / HUB         //
+//        //  /_______/_____________//
+//        // |_______/_____________|/
+//        //        /
+//        //       / +X axis
+//        //
+//        // This diagram is derived from the axes in section 3.4 https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
+//        // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
+//        //
+//        // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
+//         BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
@@ -166,7 +169,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         robot=p_robot;
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
-        Robot.logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
+        logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
+//        imus = new IMU();
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -232,9 +236,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         updatePoseEstimate();
         if(ultrasonics){
             Pose2d pos = getPoseEstimate();
+//            if(abs(pos.getHeading()-robot.imu.updateAngle())>PI/180*5){
+////                setPoseEstimate(new Pose2d(pos.getX(),pos.getY(),robot.imu.updateAngle()));
+//                logger.log("Ultrasonics", "angle"+valueOf(robot.imu.updateAngle()*180/PI)+","+pos.getHeading()*180/PI);
+//            }
             if(robot.ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
                 Pose2d ultraPos = robot.ultras.getPose2d();
-                setPoseEstimate(ultraPos);
+                setPoseEstimate(new Pose2d(ultraPos.getX(), ultraPos.getY(),pos.getHeading()));
+                logger.log("Ultrasonics", "angle"+valueOf(robot.imu.updateAngle()*180/PI)+","+pos.getHeading()*180/PI);
             }
             else{
             }
@@ -243,7 +252,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             Pose2d pos = getPoseEstimate();
             if(robot.touchs.updateTouch(pos.getX(),pos.getY(),pos.getHeading())){
                 Pose2d touchaPos = robot.touchs.getPose2d();
-                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY()));
+                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY(),robot.imu.updateAngle()));
                 op.telemetry.addData("touch-updated", true);
             }else{
                 op.telemetry.addData("touch-updated", false);
@@ -334,7 +343,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        return robot.imu.updateAngle();
     }
 
     @Override
@@ -344,7 +353,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // expected). This bug does NOT affect orientation. 
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) -imu.getAngularVelocity().xRotationRate;
+        return (double) -robot.imu.getAngularVelocity().xRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

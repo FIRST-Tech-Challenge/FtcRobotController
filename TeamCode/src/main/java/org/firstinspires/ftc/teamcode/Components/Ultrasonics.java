@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robot.logger;
 import static org.firstinspires.ftc.teamcode.Robot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.String.valueOf;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -42,16 +44,17 @@ public class Ultrasonics {
         ultraRight.enable(true);
         ultraFront.enable(true);
         ultraLeft.enable(true);
+        logger.createFile("Ultrasonics","error0, error1");
     }
 
     public void logError() {
         double[] potential_log = {0,0};
-        if(abs(error[0])<3){
+        if(abs(error[0])<5){
             potential_log[0] = error[0];
         }else{
             //data is bad
         }
-        if(abs(error[1])<3){
+        if(abs(error[1])<5){
             potential_log[1] = error[1];
         }else{
             //data is bad
@@ -66,7 +69,7 @@ public class Ultrasonics {
     }
 
     public boolean sufficientData() {
-        if (errorLog.size() < 7) {
+        if (errorLog.size() < 13) {
             return false;
         } else {
             return true;
@@ -111,7 +114,7 @@ public class Ultrasonics {
             getDistance();
             double distance = dist[0] + robotWidth / 2;
             if (distance < 20 + robotWidth/2 && distance > 0) {
-                if (abs(angle) < 5) {
+                if (abs(angle) < 5 || abs(angle-360) < 5) {
                     error[1] = -70.5 + distance - pos[1];
                     updated = 5;
                 } else if (abs(180 - angle) < 5 || abs(-180 - angle)<5) {
@@ -136,7 +139,7 @@ public class Ultrasonics {
                     error[1] = -70.5 + distance - pos[1];
                     updated = 5;
 
-                } else if (abs(angle) < 5) {
+                } else if (abs(angle) < 5 || abs(angle-360) < 5) {
                     error[1] = 70.5 - distance - pos[1];
                     updated = 5;
 
@@ -158,7 +161,7 @@ public class Ultrasonics {
                     error[0] = -70.5 + distance - pos[0];
                     updated = 5;
 
-                } else if (abs(angle) < 5) {
+                } else if (abs(angle) < 5 || abs(angle-360) < 5) {
                     error[0] = 70.5 - distance - pos[0];
                     updated = 5;
 
@@ -185,11 +188,11 @@ public class Ultrasonics {
                     updated = 5;
 
                 } else if (abs(90 - angle) < 5) {
-                    error[1] = -70.5 + distance - pos[0];
+                    error[1] = -70.5 + distance - pos[1];
                     updated = 5;
 
                 } else if (abs(-90 - angle) < 5) {
-                    error[1] = 70.5 - distance - pos[0];
+                    error[1] = 70.5 - distance - pos[1];
                     updated = 5;
 
                 } else {
@@ -200,7 +203,7 @@ public class Ultrasonics {
                 logError();
             }
         }
-        if (sufficientData() && time - lastSetPos > 1) {
+        if (sufficientData() && time - lastSetPos > 2) {
             lastSetPos = time;
             return true;
         } else {
@@ -222,6 +225,7 @@ public class Ultrasonics {
         updatedto=5;
         double[] errors = averageError();
         clearError();
+        logger.log("Ultrasonics", errors[0]+","+errors[1]);
         return new Pose2d(pos[0] + errors[0], pos[1] + errors[1]);
     }
 }
