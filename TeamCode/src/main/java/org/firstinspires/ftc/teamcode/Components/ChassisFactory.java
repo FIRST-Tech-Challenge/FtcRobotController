@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.Components;
-import static org.firstinspires.ftc.teamcode.Robot.logger;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 

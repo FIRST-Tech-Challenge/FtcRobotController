@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_STILL;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_DOWN;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_DOWN;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_REVERSING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_FLIPPING_DOWN;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_FLIPPING_UP;
@@ -11,8 +10,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKING;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import static org.firstinspires.ftc.teamcode.Robot.checker;
-import static org.firstinspires.ftc.teamcode.Robot.logger;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;

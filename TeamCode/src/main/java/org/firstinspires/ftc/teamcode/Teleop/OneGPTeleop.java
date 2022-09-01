@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.BlackoutRobot;
 
 /**
  * Teleop w/ drivetrain, shooter(still in testing), and wobblegoal
@@ -34,7 +34,7 @@ public class OneGPTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false,90);
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, false ,false,90);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
         //robot.navigateTeleOp();
@@ -77,7 +77,7 @@ public class OneGPTeleop extends LinearOpMode {
             boolean y_2 = gamepad2.y;
 
 
-            if(!Robot.isCorgi){
+            if(!BlackoutRobot.isCorgi){
                 angleInRadian = Math.atan2(left_stick_y_2*-1, left_stick_x_2*2);
             }
             else{

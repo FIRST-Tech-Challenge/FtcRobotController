@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.BlackoutRobot;
 @Disabled
 @Autonomous(name= "BlueRightPWarehouse", preselectTeleOp = "OneGPTeleop")
 public class BlueRightPWarehouse extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.VSLAM, false, false,90);
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.VSLAM, false, false,90);
         sleep(1000);
         int position = robot.BlueElemTest(this,0,0);
         double[] turretTarget = {12+10.6,-24+16.2,0};//{hubx-position*3/2,huby-position*3/2,1+7*position}

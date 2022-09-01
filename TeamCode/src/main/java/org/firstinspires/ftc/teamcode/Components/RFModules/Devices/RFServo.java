@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.Robot.logger;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;

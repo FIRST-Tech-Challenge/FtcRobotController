@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.Robot.logger;
-import static org.firstinspires.ftc.teamcode.Robot.op;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.op;
 
 import static java.lang.Math.abs;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
-import org.firstinspires.ftc.teamcode.Components.Logger;
 
 import java.util.ArrayList;
 

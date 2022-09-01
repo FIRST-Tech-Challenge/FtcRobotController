@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.setAngle;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
 
@@ -10,9 +9,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.BlackoutRobot;
 
 @Config
 @TeleOp(name = "BlueLeftTeleopRegionals")
@@ -22,7 +20,7 @@ public class BlueLeftTeleOp extends LinearOpMode {
     public void runOpMode() {
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true ,true,0);
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, true ,true,0);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 

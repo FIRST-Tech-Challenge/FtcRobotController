@@ -4,8 +4,6 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmSt
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_CEILING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_DROP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_TRANSFER;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_DROP;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTING;
@@ -15,13 +13,12 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotat
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_COUNTER_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
-import static org.firstinspires.ftc.teamcode.Robot.faked;
-import static org.firstinspires.ftc.teamcode.Robot.checker;
-import static org.firstinspires.ftc.teamcode.Robot.isBlue;
-import static org.firstinspires.ftc.teamcode.Robot.logger;
-import static org.firstinspires.ftc.teamcode.Robot.resetten;
-import static org.firstinspires.ftc.teamcode.Robot.retracting;
-import static org.firstinspires.ftc.teamcode.Robot.startAngle;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.faked;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.isBlue;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.resetten;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.retracting;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.startAngle;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
@@ -32,7 +29,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFAngleAdjust;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.BlackoutRobot;
 
 
 public class Turret {
@@ -56,15 +53,15 @@ public class Turret {
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
-    public static double [][][]turret_saved_positions={{{950,-440,0},{700,-440,0},{0,500,0},{12,-24,15}}};
+    public double [][][]turret_saved_positions={{{950,-440,0},{700,-440,0},{0,500,0},{12,-24,15}}};
 
     boolean hardware_present = true;
-    public static boolean servoPos = false;
+    public boolean servoPos = false;
     boolean servoPos2 = false;
     boolean downCap = false;
-    public static double extendPosition=0, rotatePosition=0;
+    public double extendPosition=0, rotatePosition=0;
     boolean angleControlling = false, arming = false, basketing = false;
-    public static boolean areTeleop = false;
+    public  boolean areTeleop = false;
 
 
 
@@ -553,7 +550,7 @@ public class Turret {
     public void SavePosition (int up) {
         updateTurretPositions();
         if(abs(EncoderChassis.angle)<45+ startAngle) {
-            if(!Robot.isBall) {
+            if(!BlackoutRobot.isBall) {
                 turret_saved_positions[0][0][1] = rotatePosition*isBlue;
                 turret_saved_positions[0][0][0] = extendPosition;
             }

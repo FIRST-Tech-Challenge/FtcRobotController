@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import static org.firstinspires.ftc.teamcode.Robot.logger;
-
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
-import org.firstinspires.ftc.teamcode.Components.Logger;
 
 @Autonomous(name= "track")
 public class track extends LinearOpMode {

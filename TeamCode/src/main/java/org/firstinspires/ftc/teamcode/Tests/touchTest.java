@@ -1,15 +1,9 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 
-import static org.firstinspires.ftc.teamcode.Robot.op;
-
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Robot;
 //@Disabled
 
 @Autonomous(name= "touchTest")

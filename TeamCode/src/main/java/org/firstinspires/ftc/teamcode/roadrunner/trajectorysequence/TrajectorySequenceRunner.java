@@ -16,7 +16,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.BlackoutRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TurnSegment;
@@ -57,9 +57,9 @@ public class TrajectorySequenceRunner {
 
     private final FtcDashboard dashboard;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
-    private Robot robot = null;
+    private BlackoutRobot robot = null;
 
-    public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, Robot p_robot) {
+    public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, BlackoutRobot p_robot) {
         this.follower = follower;
 
         turnController = new PIDFController(headingPIDCoefficients);
@@ -191,9 +191,9 @@ public class TrajectorySequenceRunner {
         packet.put("x", poseEstimate.getX());
         packet.put("y", poseEstimate.getY());
         packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
-        Robot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getX())+",");
-        Robot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getY())+",");
-        Robot.logger.log("RoadrunLog", String.valueOf(Math.toDegrees(poseEstimate.getHeading()))+"\n");
+        BlackoutRobot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getX())+",");
+        BlackoutRobot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getY())+",");
+        BlackoutRobot.logger.log("RoadrunLog", String.valueOf(Math.toDegrees(poseEstimate.getHeading()))+"\n");
 
         packet.put("xError", getLastPoseError().getX());
         packet.put("yError", getLastPoseError().getY());

@@ -1,21 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.Robot.logger;
-import static org.firstinspires.ftc.teamcode.Robot.op;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.lang.String.valueOf;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.LED;
-
-import org.firstinspires.ftc.teamcode.Robot;
 
 import java.util.ArrayList;
 

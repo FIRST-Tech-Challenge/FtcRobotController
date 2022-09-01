@@ -1,26 +1,19 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.setAngle;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
-import static org.firstinspires.ftc.teamcode.Robot.logger;
-import static org.firstinspires.ftc.teamcode.Robot.op;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFAngleAdjust;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.BlackoutRobot;
 
 import java.util.ArrayList;
 
@@ -36,7 +29,7 @@ public class RFModuleTeleOp extends LinearOpMode {
         coefs.add(400.0);
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, true ,true
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, true ,true
                 ,0);
         RFAngleAdjust angleAdjust = new RFAngleAdjust(this, "turret_Angle_Control",
                 "turret_Angle_Control2", 118.0/270);

@@ -3,13 +3,9 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
-import static org.firstinspires.ftc.teamcode.Robot.logger;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
-import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFDualServo implements Servo {
     /*fanmcy init

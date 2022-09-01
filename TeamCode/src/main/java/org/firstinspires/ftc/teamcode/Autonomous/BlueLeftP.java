@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.BlackoutRobot;
 @Disabled
 @Autonomous(name= "BlueLeftP", preselectTeleOp = "OneGPTeleop")
 public class BlueLeftP extends LinearOpMode {
     @Override
     public void runOpMode(){
-        Robot robot =  new Robot(this, BasicChassis.ChassisType.VSLAM, false, false,0);
+        BlackoutRobot robot =  new BlackoutRobot(this, BasicChassis.ChassisType.VSLAM, false, false,0);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

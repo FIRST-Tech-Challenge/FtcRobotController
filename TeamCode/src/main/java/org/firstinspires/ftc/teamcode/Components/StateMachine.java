@@ -14,14 +14,8 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServo
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_REVERSING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TRANSFERRING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_UP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.CAROUSEL_SPINNING_CLOCKWISE;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.CAROUSEL_SPINNING_COUNTERCLOCKWISE;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_DOWN;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_FIRST_CAP;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_SECOND_CAP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TSE_ARM_UP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTING;
@@ -31,13 +25,9 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotat
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_COUNTER_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.INTAKE_SWITCHED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.IN_WAREHOUSE;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SEQUENCING;
-import static org.firstinspires.ftc.teamcode.Robot.logger;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.robot.RobotState;
 
 public class StateMachine {
     boolean teleOp = false;

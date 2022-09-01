@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
-import static org.firstinspires.ftc.teamcode.Robot.checker;
-import static org.firstinspires.ftc.teamcode.Components.Turret.servoPos;
-import static org.firstinspires.ftc.teamcode.Robot.isBlue;
-import static org.firstinspires.ftc.teamcode.Robot.logger;
-import static org.firstinspires.ftc.teamcode.Robot.startAngle;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.isBlue;
+import static org.firstinspires.ftc.teamcode.BlackoutRobot.startAngle;
 
 
 import static java.lang.Math.abs;
@@ -15,12 +13,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Components.StateMachine;
-import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFBasketArm extends RFServo {
 
     private RFServo basketArmServo;
+    private boolean servoPos = false;
 
     LinearOpMode op;
     public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
