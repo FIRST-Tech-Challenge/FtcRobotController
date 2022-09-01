@@ -12,6 +12,7 @@ public class MeepMeepPathVisualizer {
     public static void main(String[] args){
         final int NUM_CYCLES = 3;
 
+
         MeepMeep mm = new MeepMeep(800,90);
         new MeepMeepPersistence(mm);
 

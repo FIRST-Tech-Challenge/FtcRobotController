@@ -32,8 +32,8 @@ public class TankTeleOp extends LinearOpMode {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -49,11 +49,12 @@ public class TankTeleOp extends LinearOpMode {
         double rPower = leftY;
         double lPower = leftY;
 
+
         if (leftX > 0){
             rPower -= leftX;
         }
         else if(leftX < 0){
-            lPower -= leftX;
+            lPower += leftX;
         }
 
         frontRightMotor.setPower(rPower);

@@ -7,8 +7,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
-@Disabled
-@Autonomous
+@Autonomous (name = "autoThing")
 public class Roadrunner_Preview extends LinearOpMode {
         @Override
         public void runOpMode(){
@@ -26,12 +25,19 @@ public class Roadrunner_Preview extends LinearOpMode {
                 .forward(10)
                 .build();
 
+            Trajectory leftTest = bot.trajectoryBuilder(startPose)
+                .strafeLeft(10)
+                .build();
+
+
+
             waitForStart();
             if(isStopRequested()) return;
 
 
 
-            bot.followTrajectory(forwardTest);
+            //bot.followTrajectory(forwardTest);
+            bot.followTrajectory(leftTest);
         }
 
 }

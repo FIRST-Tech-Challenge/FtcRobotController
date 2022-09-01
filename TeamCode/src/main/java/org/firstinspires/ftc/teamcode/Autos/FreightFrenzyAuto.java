@@ -29,7 +29,6 @@ public class FreightFrenzyAuto extends LinearOpMode {
         Trajectory hubToWarehouse = bot.trajectoryBuilder(forwardToHub.end())
                 .lineToLinearHeading(new Pose2d(10,-63.5, Math.toRadians(180)))
                 .back(25 + stepIncrement)
-                //.wait() <- isn't working for some reason?
                 .forward(25 + stepIncrement)
                 .build();
 
@@ -64,8 +63,6 @@ public class FreightFrenzyAuto extends LinearOpMode {
 
         /*\
         bot.followTrajectory(strafeTrajectory);
-
-
         bot.followTrajectory(reverseSpline);
         bot.followTrajectory(forwardTrajectory);
         bot.followTrajectory(smoothTraj);
@@ -81,7 +78,14 @@ public class FreightFrenzyAuto extends LinearOpMode {
             bot.followTrajectory(hubToWarehouse);
             bot.followTrajectory(warehouseToHub);
         }
+
+        // .wait() = bad
+        // .waitSeconds is better, but can only be used in Path Sequence
+        // sleep also works in both Trajectory and Path Sequence
         bot.followTrajectory(hubToParking);
+        sleep(1000);
+        bot.followTrajectory(forwardToHub);
+
 
     }
 }
