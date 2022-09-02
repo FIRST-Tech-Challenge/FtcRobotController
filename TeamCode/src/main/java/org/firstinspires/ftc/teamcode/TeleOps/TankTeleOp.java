@@ -56,6 +56,10 @@ public class TankTeleOp extends LinearOpMode {
         } else if (leftX < 0) {
             lPower += leftX;
         }
+        else{
+            lPower = leftY;
+            rPower = leftY;
+        }
 
         double y = -gamepad1.right_stick_y; // Remember, this is reversed!
         double x = gamepad1.right_stick_x;
