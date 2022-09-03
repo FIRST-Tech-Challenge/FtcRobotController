@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class CycleAutoBlue extends LinearOpMode {
     @Override
     public void runOpMode() {
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, false, true,0);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, false, true,0);
         robot.rotateToPosition(-88);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

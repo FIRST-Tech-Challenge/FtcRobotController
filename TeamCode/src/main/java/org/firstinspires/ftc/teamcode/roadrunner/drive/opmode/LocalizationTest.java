@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY,true,false,0);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ODOMETRY,true,false,0);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Pose2d startPose = new Pose2d(57, -54, 0);

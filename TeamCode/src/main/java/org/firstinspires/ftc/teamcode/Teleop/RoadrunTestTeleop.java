@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class RoadrunTestTeleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY,true,false,0);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ODOMETRY,true,false,0);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.setPoseEstimate(new Pose2d(55.5,-53.5,0));

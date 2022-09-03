@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class RedElemTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, false, false,90);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, false, false,90);
         robot.rotateToPosition(-80);
         sleep(1000);
         robot.rotateToPosition(5);

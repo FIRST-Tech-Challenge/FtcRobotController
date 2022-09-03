@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class Ticks_Per_Inch_Test extends LinearOpMode {
     @Override
     public void runOpMode(){
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY, true, false,90);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ODOMETRY, true, false,90);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }

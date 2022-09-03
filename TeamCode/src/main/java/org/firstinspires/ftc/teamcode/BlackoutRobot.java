@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_ALLIANCE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_SHARED;
@@ -17,20 +19,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesState
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretAAStates.TURRET_RAISED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
-import static java.lang.Math.E;
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.atan;
-import static java.lang.Math.atan2;
-import static java.lang.Math.log;
-import static java.lang.Math.pow;
-import static java.lang.Math.random;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.tan;
-
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -45,11 +34,8 @@ import org.firstinspires.ftc.teamcode.Components.LedColor;
 import org.firstinspires.ftc.teamcode.Components.LimitSwitches;
 import org.firstinspires.ftc.teamcode.Components.Logger;
 import org.firstinspires.ftc.teamcode.Components.OpenCVMasterclass;
-import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.Turret;
-//import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
-import org.firstinspires.ftc.teamcode.Components.VSLAMChassis;
 import org.firstinspires.ftc.teamcode.Components.tseDepositor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -58,7 +44,6 @@ import java.util.Arrays;
 
 public class BlackoutRobot{
 
-    public static LinearOpMode op = null;
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
     public static int isBlue = 1;
@@ -112,17 +97,14 @@ public class BlackoutRobot{
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
     public static StateMachine checker = null;
-    public static Logger logger;
     private Queuer queuer = null;
     public Ultrasonics ultras = null;
     public IMU imu = null;
     public LimitSwitches touchs = null;
 
-    public BlackoutRobot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
-        op = opMode;
+    public BlackoutRobot(BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
 //        startAngle = startAng;
 //        trueStartAngle=startAng;
-        logger = new Logger(opMode);
         checker = new StateMachine(op, isTeleop);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);

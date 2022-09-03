@@ -15,7 +15,7 @@ public class RedLeftTeleOp extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, true ,false,0);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, true ,false,0);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 

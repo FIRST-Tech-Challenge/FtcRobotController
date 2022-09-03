@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class RedLeftP extends LinearOpMode {
     @Override
     public void runOpMode(){
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.VSLAM, false, false,90);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.VSLAM, false, false,90);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

@@ -16,7 +16,7 @@ public class RoadRunMoveTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY, false, false, 0);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ODOMETRY, false, false, 0);
 
         Pose2d startPose = new Pose2d(57, -53.5, 0);
 

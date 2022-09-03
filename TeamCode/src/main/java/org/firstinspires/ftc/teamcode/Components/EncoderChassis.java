@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;

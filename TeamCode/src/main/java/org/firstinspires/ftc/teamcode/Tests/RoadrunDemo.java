@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 public class RoadrunDemo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY, false, false, 0);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ODOMETRY, false, false, 0);
 
         Pose2d startPose = new Pose2d(0, -48.5, 0);
 

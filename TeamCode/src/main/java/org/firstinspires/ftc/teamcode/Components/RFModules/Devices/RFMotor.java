@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.op;
-
-import static java.lang.Math.abs;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +15,8 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs;
     private double maxtickcount;
     private double mintickcount;
+    private final double TICK_BOUNDARY_PADDING = 5;
+    private final double TICK_STOP_PADDING = 20;
 
     /*Initializes the motor
         Inputs:
@@ -77,20 +77,26 @@ public class RFMotor extends Motor {
 
         logger.createFile("RFMotorLog", "Runtime,Action,Value");
     }
-
+    //targetpos expected in ticks
     public void setPosition (double targetpos) {
-        targetpos *= maxtickcount;
+//        if (targetpos >= -1 && targetpos <= 1) {
+//            targetpos *= maxtickcount;
+//        }
+//        else {
+//            logger.log("RFMotorLog", "ERROR: RFMotor:: setPosition targetpos expected between -1 -- 1, targetpos = " + targetpos);
+//            return;
+//        }
+
         op.telemetry.addData("newPosition", targetpos);
         if(targetpos>maxtickcount){
-            targetpos = maxtickcount - 5;
+            targetpos = maxtickcount - TICK_BOUNDARY_PADDING;
         }
-        if(targetpos<-maxtickcount){
-            targetpos = -mintickcount + 5;
+        if(targetpos<mintickcount){
+            targetpos = mintickcount + TICK_BOUNDARY_PADDING;
         }
         double distance = targetpos-getCurrentPosition();
         op.telemetry.addData("distance", distance);
-        while (Math.abs(distance) > 20) {
-            op.telemetry.addData("poggies", "lol");
+        while (Math.abs(distance) > TICK_STOP_PADDING) {
             distance = targetpos-getCurrentPosition();
             if (distance > 0) {
                 setVelocity(coefs.get(0) * distance + coefs.get(1));
@@ -115,6 +121,7 @@ public class RFMotor extends Motor {
     public void setVelocity(double velocity) {
         rfMotor.setVelocity(velocity);
         logger.log("RFMotorLog", "Setting Velocity," + velocity);
+
     }
 
     public int getCurrentPosition() {
@@ -127,6 +134,7 @@ public class RFMotor extends Motor {
     }
 
     public double getVelocity() {
+        logger.log("RFMotorLog", "Getting Velocity," + rfMotor.getVelocity());
         return rfMotor.getVelocity();
     }
 }

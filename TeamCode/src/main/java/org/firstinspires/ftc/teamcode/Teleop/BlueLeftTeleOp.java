@@ -20,7 +20,7 @@ public class BlueLeftTeleOp extends LinearOpMode {
     public void runOpMode() {
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, true ,true,0);
+        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, true ,true,0);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 

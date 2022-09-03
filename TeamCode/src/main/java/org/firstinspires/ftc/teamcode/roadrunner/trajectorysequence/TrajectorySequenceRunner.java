@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegm
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -191,9 +192,9 @@ public class TrajectorySequenceRunner {
         packet.put("x", poseEstimate.getX());
         packet.put("y", poseEstimate.getY());
         packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
-        BlackoutRobot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getX())+",");
-        BlackoutRobot.logger.log("RoadrunLog", String.valueOf(poseEstimate.getY())+",");
-        BlackoutRobot.logger.log("RoadrunLog", String.valueOf(Math.toDegrees(poseEstimate.getHeading()))+"\n");
+        logger.log("RoadrunLog", String.valueOf(poseEstimate.getX())+",");
+        logger.log("RoadrunLog", String.valueOf(poseEstimate.getY())+",");
+        logger.log("RoadrunLog", String.valueOf(Math.toDegrees(poseEstimate.getHeading()))+"\n");
 
         packet.put("xError", getLastPoseError().getX());
         packet.put("yError", getLastPoseError().getY());
