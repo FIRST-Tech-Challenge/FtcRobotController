@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -34,7 +36,7 @@ public class OneGPTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, false ,false,90);
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, false ,false,90);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
         //robot.navigateTeleOp();

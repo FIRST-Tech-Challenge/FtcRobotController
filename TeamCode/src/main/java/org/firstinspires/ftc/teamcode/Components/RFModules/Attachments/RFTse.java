@@ -12,7 +12,6 @@ public class RFTse extends RFServo {
 
     private RFServo tseArmServo;
 
-    LinearOpMode op;
     public RFTse(Servo.Direction direction, String deviceName) {
         super(direction, deviceName);
 

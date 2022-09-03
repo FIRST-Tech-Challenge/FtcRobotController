@@ -30,7 +30,7 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, new BlackoutRobot(BasicChassis.ChassisType.ODOMETRY,false,false,0));
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY,false,false,0));
 
 
         Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);

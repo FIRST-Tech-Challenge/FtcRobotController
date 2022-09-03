@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.angle;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.xpos;
 import static org.firstinspires.ftc.teamcode.Components.VSLAMChassis.ypos;
@@ -16,7 +17,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class RedTeamElem extends OpenCvPipeline {
-    LinearOpMode op;
     Telemetry telemetry;
     Mat mat= new Mat();
     public enum Location{
@@ -48,7 +48,7 @@ public class RedTeamElem extends OpenCvPipeline {
 
     static double PERCENT_COLOR_THRESHOLD = 0.1; //percentage of color
 
-    public RedTeamElem(LinearOpMode opMode){op=opMode; telemetry=op.telemetry;}
+    public RedTeamElem(){ telemetry=op.telemetry;}
 
     @Override
     public Mat processFrame(Mat input) {

@@ -19,7 +19,6 @@ public class RFBasket {
 
     private RFServo basketServo;
 
-    LinearOpMode op;
     public RFBasket(Servo.Direction direction, String deviceName) {
 
         basketServo = new RFServo(direction, deviceName);

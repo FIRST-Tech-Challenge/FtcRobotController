@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -13,7 +15,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class RedRightPWarehouse extends LinearOpMode {
     @Override
     public void runOpMode(){
-        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.VSLAM, false, false,90);
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.VSLAM, false, false,90);
         sleep(1000);
         int position = robot.RedElemTest(this,0,0);
         double[] turretTarget = {12+10.6,-24+16.2,0};//{hubx-position*3/2,huby-position*3/2,1+7*position}

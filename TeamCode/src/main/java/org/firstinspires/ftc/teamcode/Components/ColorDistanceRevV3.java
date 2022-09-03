@@ -10,6 +10,8 @@ package org.firstinspires.ftc.teamcode.Components;
     configuration. So had to do SCAN on configuration for it to make this work
 
  */
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,17 +29,14 @@ public class ColorDistanceRevV3
     /* local OpMode members. */
     ColorSensor sensorColor;
     DistanceSensor sensorDistance;
-    LinearOpMode op;
-
     // sometimes it helps to multiply the raw RGB values with a scale factor
     // to amplify/attentuate the measured values.
     final double SCALE_FACTOR = 255;
 
 
-    public ColorDistanceRevV3(LinearOpMode opMode) {
-        op = opMode;
+    public ColorDistanceRevV3() {
         // Save reference to Hardware map
-        hwMap = opMode.hardwareMap;
+        hwMap = op.hardwareMap;
         // get a reference to the color sensor.
         sensorColor = hwMap.get(ColorSensor.class, "intakeDistSensor");
 

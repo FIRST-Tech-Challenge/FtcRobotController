@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.Components.Logger;
 public class RFFlippingIntake extends RFDualServo{
     private RFDualServo flippingIntake;
 
-    LinearOpMode op;
-
     public RFFlippingIntake (String deviceName1, String devicename2, double limit){
         super(deviceName1, devicename2, limit);
 

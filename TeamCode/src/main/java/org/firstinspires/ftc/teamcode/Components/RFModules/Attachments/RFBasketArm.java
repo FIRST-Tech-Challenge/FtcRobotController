@@ -21,8 +21,6 @@ import org.firstinspires.ftc.teamcode.Components.Logger;
 public class RFBasketArm extends RFServo {
 
     private RFServo basketArmServo;
-
-    LinearOpMode op;
     public RFBasketArm(Servo.Direction direction, String deviceName) {
         super(direction, deviceName);
 

@@ -14,7 +14,7 @@ public class UltrasonicSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 //        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false, true,90);
-        RangeSensor ultrasonic = new RangeSensor(this);
+        RangeSensor ultrasonic = new RangeSensor();
 //        LED ultraFront =hardwareMap.get(LED.class, "ultraFront");
         ElapsedTime op = new ElapsedTime();
         double lastState=0.0;

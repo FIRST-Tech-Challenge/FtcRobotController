@@ -102,19 +102,19 @@ public class BlackoutRobot extends BasicRobot{
     public IMU imu = null;
     public LimitSwitches touchs = null;
 
-    public BlackoutRobot(BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
-        super(op);
+    public BlackoutRobot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
+        super(opMode);
         //        startAngle = startAng;
 //        trueStartAngle=startAng;
-        checker = new StateMachine(op, isTeleop);
+        checker = new StateMachine(isTeleop);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop);
-        rotation = new CarouselCR(op);
-        intake = new Intake(op, isTeleop, checker);
+        drivetrain = ChassisFactory.getChassis(chassisType,vuforiaNAVIGATIONneeded, isTeleop);
+        rotation = new CarouselCR();
+        intake = new Intake( isTeleop, checker);
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
-        turret = new Turret(op, led_bank, isTeleop, checker);
-        openCV = new OpenCVMasterclass(op);
-        TSE = new tseDepositor(op, isTeleop);
+        turret = new Turret( led_bank, isTeleop, checker);
+        openCV = new OpenCVMasterclass();
+        TSE = new tseDepositor(isTeleop);
 //        checker = new StateMachine(op, isTeleop, logger);
 //        //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
 //        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop, logger);

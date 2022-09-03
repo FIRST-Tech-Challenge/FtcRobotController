@@ -14,7 +14,7 @@ public class track extends LinearOpMode {
     public void runOpMode(){
         //Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         ElapsedTime op = new ElapsedTime();
-        EncoderChassis odom = new EncoderChassis(this, false,false);
+        EncoderChassis odom = new EncoderChassis( false,false);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

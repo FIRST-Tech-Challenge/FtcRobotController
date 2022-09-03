@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.angle;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -18,11 +19,11 @@ public class RangeSensor {
     private LED ultraFront;
 
 
-    public RangeSensor(LinearOpMode opMode) {
-        ultrasonicFront =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
-        ultrasonicLeft =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
-        ultrasonicRight =  opMode.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
-        ultraFront=opMode.hardwareMap.get(LED.class, "ultraFront");
+    public RangeSensor() {
+        ultrasonicFront =  op.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
+        ultrasonicLeft =  op.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
+        ultrasonicRight =  op.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
+        ultraFront=op.hardwareMap.get(LED.class, "ultraFront");
         ultraFront.enable(true);
     }
 

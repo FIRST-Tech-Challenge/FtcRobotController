@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -30,9 +32,7 @@ public class Logger {
     double lastlogtime = 0;
     public int loopcounter=0;
     String data = "0";
-    OpMode op;
-    public Logger (OpMode opMode){
-        op = opMode;
+    public Logger (){
 
         try {
             myReader = new Scanner(myFile);

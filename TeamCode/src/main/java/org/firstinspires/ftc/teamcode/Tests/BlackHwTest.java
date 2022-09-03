@@ -173,7 +173,7 @@ public class BlackHwTest extends LinearOpMode {
 
 
  */
-        Carousel carousel = new Carousel(this);
+        Carousel carousel = new Carousel();
         carousel.spinCarouselAutonomousBlue();
         carousel.spinCarouselAutonomousRed();
 

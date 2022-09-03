@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -18,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class OdometryTracker extends Tracker {
-    private LinearOpMode op = null;
     private DcMotorEx encoderLeft, encoderRight, encoderBack;
     private DigitalChannel limitSwitchRight, limitSwitchLeft;
     private AnalogInput ultrasonicFront, ultrasonicBack, ultrasonicRight, ultrasonicLeft;
@@ -30,9 +30,8 @@ public class OdometryTracker extends Tracker {
     private final BNO055IMU imu;
     private Orientation lastAngles = null;
     public static float globalAngle = 0;
-    public OdometryTracker(LinearOpMode opMode, boolean limitSwitch, boolean ultra) {
-        super(opMode);
-        op = opMode;
+    public OdometryTracker(boolean limitSwitch, boolean ultra) {
+        super();
         touch = limitSwitch;
         ultras = ultra;
         encoderLeft = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
@@ -58,20 +57,20 @@ public class OdometryTracker extends Tracker {
             op.idle();
         }
         if (limitSwitch) {
-            limitSwitchLeft = opMode.hardwareMap.get(DigitalChannel.class, "limitSwitchLeft");
-            limitSwitchRight = opMode.hardwareMap.get(DigitalChannel.class, "limitSwitchRight");
+            limitSwitchLeft = op.hardwareMap.get(DigitalChannel.class, "limitSwitchLeft");
+            limitSwitchRight = op.hardwareMap.get(DigitalChannel.class, "limitSwitchRight");
             limitSwitchLeft.setMode(DigitalChannel.Mode.INPUT);
             limitSwitchRight.setMode(DigitalChannel.Mode.INPUT);
         }
         if (ultra) {
-            ultrasonicFront = opMode.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
-            ultrasonicBack = opMode.hardwareMap.get(AnalogInput.class, "ultrasonicBack");
-            ultrasonicLeft = opMode.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
-            ultrasonicRight = opMode.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
-            ultraFront = opMode.hardwareMap.get(LED.class, "ultraFront");
-            ultraBack = opMode.hardwareMap.get(LED.class, "ultraBack");
-            ultraRight = opMode.hardwareMap.get(LED.class, "ultraRight");
-            ultraLeft = opMode.hardwareMap.get(LED.class, "ultraLeft");
+            ultrasonicFront = op.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
+            ultrasonicBack = op.hardwareMap.get(AnalogInput.class, "ultrasonicBack");
+            ultrasonicLeft = op.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
+            ultrasonicRight = op.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
+            ultraFront = op.hardwareMap.get(LED.class, "ultraFront");
+            ultraBack = op.hardwareMap.get(LED.class, "ultraBack");
+            ultraRight = op.hardwareMap.get(LED.class, "ultraRight");
+            ultraLeft = op.hardwareMap.get(LED.class, "ultraLeft");
             ultraFront.enable(true);
             ultraBack.enable(true);
             ultraRight.enable(true);

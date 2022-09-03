@@ -8,7 +8,7 @@ public class Switch {
 
     DigitalChannel touchSensor;
 
-    public Switch(LinearOpMode opMode) {
+    public Switch() {
 //        noMoSwitch
 //        touchSensor = opMode.hardwareMap.get(DigitalChannel.class, "touchSensor");
         touchSensor.setMode(DigitalChannel.Mode.INPUT);

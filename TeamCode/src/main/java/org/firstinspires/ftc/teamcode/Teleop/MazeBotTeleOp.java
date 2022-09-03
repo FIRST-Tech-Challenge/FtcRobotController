@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
 import static java.lang.Math.pow;
@@ -17,7 +18,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @Disabled
 
 public class MazeBotTeleOp extends LinearOpMode {
-    LinearOpMode op = this;
     DcMotorEx motorLeftFront;
     DcMotorEx motorRightFront;
     DcMotorEx motorLeftBack;

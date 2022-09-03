@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,7 +15,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode(){
-        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, true, false,90);
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, true, false,90);
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }

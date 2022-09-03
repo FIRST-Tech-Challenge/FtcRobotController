@@ -47,7 +47,7 @@ public class RFModuleTeleOp extends LinearOpMode {
         telemetry.update();
 
 
-        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, true ,true
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, true ,true
                 ,0);
 
         RFAngleAdjust angleAdjust = new RFAngleAdjust("turret_Angle_Control",

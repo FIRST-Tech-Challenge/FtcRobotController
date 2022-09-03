@@ -48,8 +48,7 @@ public class BlueWarehouseScam extends OpenCvPipeline {
 
     static double PERCENT_COLOR_THRESHOLD = 0.4; //percentage of color
 
-    public BlueWarehouseScam(LinearOpMode opMode) {
-        op = opMode;
+    public BlueWarehouseScam() {
         telemetry = op.telemetry;
     }
 

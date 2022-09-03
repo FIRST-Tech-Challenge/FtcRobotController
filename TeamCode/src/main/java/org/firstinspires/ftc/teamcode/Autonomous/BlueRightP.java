@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,7 +15,7 @@ import org.firstinspires.ftc.teamcode.BlackoutRobot;
 public class BlueRightP extends LinearOpMode {
     @Override
     public void runOpMode(){
-        BlackoutRobot robot = new BlackoutRobot(BasicChassis.ChassisType.ENCODER, false, false,90);
+        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, false, false,90);
 //       robot.rotateToPosition(-15);
 //       robot.rotateToPosition(-7.5);
         sleep(1000);
