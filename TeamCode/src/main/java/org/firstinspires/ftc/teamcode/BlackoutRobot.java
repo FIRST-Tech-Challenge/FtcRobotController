@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 
 import java.util.Arrays;
 
-public class BlackoutRobot{
+public class BlackoutRobot extends BasicRobot{
 
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
@@ -103,7 +103,8 @@ public class BlackoutRobot{
     public LimitSwitches touchs = null;
 
     public BlackoutRobot(BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
-//        startAngle = startAng;
+        super(op);
+        //        startAngle = startAng;
 //        trueStartAngle=startAng;
         checker = new StateMachine(op, isTeleop);
         //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm

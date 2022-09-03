@@ -7,10 +7,9 @@ public class BasicRobot{
     public static Logger logger;
     public static LinearOpMode op = null;
     public BasicRobot(LinearOpMode opMode){
-        logger.createFile("gamepad", "Value Name Time");
         op = opMode;
         logger = new Logger(opMode);
-
+        logger.createFile("gamepad", "Value Name Time");
     }
     public void readGamepad(float value, String name){
         logger.log("gamepad", name + ": " + value + "at time " + op.time);
