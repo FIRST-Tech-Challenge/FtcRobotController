@@ -58,7 +58,7 @@ import java.util.Arrays;
 
 public class BlackoutRobot {
 
-    public static LinearOpMode op = null;
+    public LinearOpMode op = null;
     public final static boolean isCorgi = true;
     boolean shouldIntake = true;
     public static int isBlue = 1;

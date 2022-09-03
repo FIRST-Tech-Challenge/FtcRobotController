@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.op;
 
 import static java.lang.Math.abs;
 
@@ -60,6 +60,7 @@ public class RFMotor extends Motor {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         rfMotor.setMode(runMode);
+        coefs = new ArrayList<Double>();
         coefs.add(1.5);
         coefs.add(150.0);
         maxtickcount = maxtick;

@@ -21,7 +21,7 @@ public class SummerMecRobot extends BasicRobot{
     public LimitSwitches touchs = null;
     public SummerMecRobot(LinearOpMode opMode){
         super(opMode);
-        intakeSlides = new IntakeSlides();
+          intakeSlides = new IntakeSlides();
         ultras = new Ultrasonics();
         touchs = new LimitSwitches();
         imu = new IMU();
