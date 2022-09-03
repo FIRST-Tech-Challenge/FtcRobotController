@@ -17,6 +17,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
 import org.firstinspires.ftc.teamcode.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.SummerMecRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TurnSegment;
@@ -57,9 +58,9 @@ public class TrajectorySequenceRunner {
 
     private final FtcDashboard dashboard;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
-    private BlackoutRobot robot = null;
+    private SummerMecRobot robot = null;
 
-    public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, BlackoutRobot p_robot) {
+    public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, SummerMecRobot p_robot) {
         this.follower = follower;
 
         turnController = new PIDFController(headingPIDCoefficients);

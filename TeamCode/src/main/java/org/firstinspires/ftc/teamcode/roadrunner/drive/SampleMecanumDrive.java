@@ -26,7 +26,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.BasicRobot;
 import org.firstinspires.ftc.teamcode.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.SummerMecRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -81,10 +83,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 //    private IMU imus;
     private VoltageSensor batteryVoltageSensor;
 
-    private BlackoutRobot robot=null;
+    private SummerMecRobot robot=null;
     private FtcDashboard dashboard= null;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, BlackoutRobot p_robot) {
+    public SampleMecanumDrive(HardwareMap hardwareMap, SummerMecRobot p_robot) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.SummerMecRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "RoadRunMoveTest")
@@ -16,7 +17,7 @@ public class RoadRunMoveTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY, false, false, 0);
+        SummerMecRobot robot = new SummerMecRobot(this);
 
         Pose2d startPose = new Pose2d(57, -53.5, 0);
 
@@ -38,6 +39,7 @@ public class RoadRunMoveTest extends LinearOpMode {
                 .build();
         while (opModeIsActive()) {
             robot.followTrajectorySequenceAsync(trajSeq);
+            robot.extendIntakeTo(540);
             robot.followTrajectorySequenceAsync(trajSeq);
             robot.setFirstLoop(false);
             robot.roadrun.update();

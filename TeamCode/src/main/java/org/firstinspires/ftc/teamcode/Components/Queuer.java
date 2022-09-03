@@ -19,15 +19,14 @@ public class Queuer {
     }
 
     public boolean queue(boolean p_asynchronous, boolean done_condition) {
-        op.telemetry.addData("currentEvent", currentEvent);
-        op.telemetry.addData("currentlyQueueing", currentlyQueueing);
-        for (int i = 0; i < queueElements.size(); i++) {
-            op.telemetry.addData("startCon" + i, queueElements.get(i).startCondition);
-            op.telemetry.addData("isStarted" + i, queueElements.get(i).isStarted());
-            op.telemetry.addData("done" + i, queueElements.get(i).isDone());
-            op.telemetry.addData("isReady" + i, queueElements.get(i).isReady(currentEvent));
-        }
-        op.telemetry.update();
+//        op.telemetry.addData("currentEvent", currentEvent);
+//        op.telemetry.addData("currentlyQueueing", currentlyQueueing);
+//        for (int i = 0; i < queueElements.size(); i++) {
+//            op.telemetry.addData("startCon" + i, queueElements.get(i).startCondition);
+//            op.telemetry.addData("isStarted" + i, queueElements.get(i).isStarted());
+//            op.telemetry.addData("done" + i, queueElements.get(i).isDone());
+//            op.telemetry.addData("isReady" + i, queueElements.get(i).isReady(currentEvent));
+//        }
         if (firstLoop) {
             int startCondition = -1;
             for (int i = 0; i < queueElements.size(); i++) {
