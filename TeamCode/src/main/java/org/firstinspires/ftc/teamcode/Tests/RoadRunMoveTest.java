@@ -18,7 +18,7 @@ public class RoadRunMoveTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY, false, false, 0);
 
-        Pose2d startPose = new Pose2d(57, -53.5, 0);
+        Pose2d startPose = new Pose2d(55.5, -53.5, 0);
 
         robot.roadrun.setPoseEstimate(startPose);
 
@@ -28,13 +28,13 @@ public class RoadRunMoveTest extends LinearOpMode {
 
         TrajectorySequence trajSeq = robot.roadrun.trajectorySequenceBuilder(startPose)
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(57, -29.5))
+                .lineTo(new Vector2d(55.5, -29.5))
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(9, -29.5))
+                .lineTo(new Vector2d(7.5, -29.5))
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(9, -53.5))
+                .lineTo(new Vector2d(7.5, -53.5))
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d(57, -53.5))
+                .lineTo(new Vector2d(55.5, -53.5))
                 .build();
         while (opModeIsActive()) {
             robot.followTrajectorySequenceAsync(trajSeq);

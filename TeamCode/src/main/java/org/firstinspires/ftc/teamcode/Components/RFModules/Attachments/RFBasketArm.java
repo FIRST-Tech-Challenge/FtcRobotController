@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
+import static org.firstinspires.ftc.teamcode.Components.Turret.servoPos;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.isBlue;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.startAngle;
 
@@ -17,7 +18,6 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class RFBasketArm extends RFServo {
 
     private RFServo basketArmServo;
-    private boolean servoPos = false;
 
     LinearOpMode op;
     public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {

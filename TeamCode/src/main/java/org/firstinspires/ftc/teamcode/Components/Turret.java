@@ -53,15 +53,15 @@ public class Turret {
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
-    public double [][][]turret_saved_positions={{{950,-440,0},{700,-440,0},{0,500,0},{12,-24,15}}};
+    public static double [][][]turret_saved_positions={{{950,-440,0},{700,-440,0},{0,500,0},{12,-24,15}}};
 
     boolean hardware_present = true;
-    public boolean servoPos = false;
+    public static boolean servoPos = false;
     boolean servoPos2 = false;
     boolean downCap = false;
-    public double extendPosition=0, rotatePosition=0;
+    public static double extendPosition=0, rotatePosition=0;
     boolean angleControlling = false, arming = false, basketing = false;
-    public  boolean areTeleop = false;
+    public static boolean areTeleop = false;
 
 
 
