@@ -21,7 +21,6 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.FWDRobot;
 
 @Config
 @TeleOp(name = "FWD")
@@ -36,7 +35,6 @@ public class FWD extends LinearOpMode {
     private DcMotor motorRightBack;
     private DcMotor motorLeftFront;
     private DcMotor motorRightFront;
-
 
     private PIDController controller;
     public static double p = 0, i = 0, d = 0;
@@ -59,12 +57,7 @@ public class FWD extends LinearOpMode {
     ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     @Override
-    public void runOpMode(){
-        FWDRobot robit = new FWDRobot(this);
-
-
-    }
-    public void OLDrunOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         discIntake = (DcMotorEx) hardwareMap.dcMotor.get("discIntake");
@@ -155,10 +148,10 @@ public class FWD extends LinearOpMode {
                 tapeHeight.setPosition(twoone%2);
             }
 
-            motorRightBack.setPower(gamepad1.left_stick_y*0.3+gamepad1.right_stick_x*0.4);
-            motorLeftBack.setPower(gamepad1.left_stick_y*0.3-gamepad1.right_stick_x*0.4);
-            motorRightFront.setPower(gamepad1.left_stick_y*0.3+gamepad1.right_stick_x*0.4);
-            motorLeftFront.setPower(gamepad1.left_stick_y*0.3-gamepad1.right_stick_x*0.4);
+            motorRightBack.setPower(gamepad1.left_stick_y * 0.3 );
+            motorLeftBack.setPower(gamepad1.left_stick_y * 0.3 );
+            motorRightFront.setPower(gamepad1.left_stick_y * 0.3 );
+            motorLeftFront.setPower(gamepad1.left_stick_y * 0.3 );
             // sussy telemetry
             telemetry.addData("Left Back Motor Pos", motorLeftBack.getCurrentPosition());
             telemetry.addData("Left Front Motor Pos", motorLeftFront.getCurrentPosition());

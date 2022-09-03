@@ -11,22 +11,10 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServo
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_FLIPPING_UP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_UP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SEQUENCING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.TRANSFERRING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATED;
-import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
-import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
-import static org.firstinspires.ftc.teamcode.Components.Turret.turret_saved_positions;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.Velocity;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.aVelocity;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.angle;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.differtime;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xVelocity;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.yVelocity;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretAAStates.TURRET_RAISED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
 import static java.lang.Math.E;
@@ -45,7 +33,6 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.Queuer;
 import org.firstinspires.ftc.teamcode.Components.StateMachine;
@@ -68,7 +55,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 import java.util.Arrays;
-//extend basicRobot
+
 public class BlackoutRobot {
 
     public static LinearOpMode op = null;
@@ -130,7 +117,6 @@ public class BlackoutRobot {
     public Ultrasonics ultras = null;
     public IMU imu = null;
     public LimitSwitches touchs = null;
-
 
     public BlackoutRobot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         op = opMode;
@@ -269,28 +255,8 @@ public class BlackoutRobot {
     public void partOfPolySplineToPositionHead(int direction, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, boolean start, boolean end, double power) {
         drivetrain.partOfPolySplineToPositionHead(direction, x0, y0, x1, y1, x2, y2, x3, y3, start, end, power);
     }
-
-    public void autonomousBarrierPathWarehouseToShared(double barrierX, double barrierY, double power) {
-        double targetY = barrierY - 20;
-        double targetX = barrierX;
-        double[] currentPos = {xpos, ypos, angle};
-        double maxAngle = 50;
-        double positionAngle = atan2(xpos - barrierX, ypos - barrierY);
-        if (maxAngle > positionAngle) {
-            drivetrain.partOfPolySplineToPositionHead(0, currentPos[0], currentPos[1], currentPos[0], currentPos[1], barrierX, barrierY, targetX, targetY, true, true, power);
-            drivetrain.partOfPolySplineToPositionHead(0, currentPos[0], currentPos[1], barrierX, barrierY, targetX, targetY, targetX - 10, targetY, true, true, power);
-        } else {
-            double[] position = {(barrierY * tan(50) + currentPos[1] / tan(50) - barrierX + currentPos[0]) / (tan(50) + 1 / tan(50)), ((barrierY * tan(50) + currentPos[1] / tan(50) - barrierX + currentPos[0]) / (tan(50) + 1 / tan(50)) - barrierY) * tan(50) + barrierX};
-            double[] newPosition = {(4 * position[0] + barrierX) / 5, (4 * position[1] + barrierY) / 5};
-            drivetrain.partOfPolySplineToPositionHead(0, currentPos[0], currentPos[1], currentPos[0], currentPos[1], newPosition[0], newPosition[1], barrierX, barrierY, true, true, power);
-            drivetrain.partOfPolySplineToPositionHead(0, currentPos[0], currentPos[1], newPosition[0], newPosition[1], barrierX, barrierY, targetX, targetY, true, true, power);
-            drivetrain.partOfPolySplineToPositionHead(0, newPosition[0], newPosition[1], barrierX, barrierY, targetX, targetY, targetX - 10, targetY, true, true, power);
-        }
-    }
-    // The purpose of this function is to log the time of a keypress & the new value of the variable & what happens
-    // ONLY WHEN value of variable != previous value of the variable
-
-
+    /** in the future, we will move this into a different class, robot class needs to be more tidy, with queue
+     * system robot classes will be more complex, get rid of empty space**/
     public void teleopLoop(int red, double startx, double starty) {
         /** gamepad 1**/
         isBlue = red;
@@ -329,7 +295,6 @@ public class BlackoutRobot {
         changed = false;
         logger.loopcounter++;
         int up = 0;
-
         intake.updateIntakeStates();
         turret.updateTurretPositions();
         checker.logCurrentStates();
@@ -465,7 +430,6 @@ public class BlackoutRobot {
                 TurretStop();
             }
 
-            op.telemetry.addData("robot position", Arrays.toString(new double[]{xpos, ypos, angle}));
         }
         spinCarousel();
         if (autoAiming && !checker.getState(SLIDES_RETRACTING)) {
@@ -665,17 +629,17 @@ public class BlackoutRobot {
             }
             if (op.getRuntime() - shareFlipTime > 0.3) {
                 if (!isBall) {
-                    turret.TurretRotate(turret_saved_positions[0][0][1] * isBlue);
+                    turret.TurretRotate(turret.turret_saved_positions[0][0][1] * isBlue);
                     turret.AutoAngleControlRotating(17);
-                    if (abs(turret_saved_positions[0][0][1] * isBlue - rotatePosition) < 200 || isBlue == -1) {
-                        turret.turretExtendo(turret_saved_positions[0][0][0]);
+                    if (abs(turret.turret_saved_positions[0][0][1] * isBlue - turret.rotatePosition) < 200 || isBlue == -1) {
+                        turret.turretExtendo(turret.turret_saved_positions[0][0][0]);
                         checker.setState(SLIDES_EXTENDED, true);
                     }
                 } else {
-                    turret.TurretRotate(turret_saved_positions[0][1][1] * isBlue);
+                    turret.TurretRotate(turret.turret_saved_positions[0][1][1] * isBlue);
                     turret.AutoAngleControlRotating(0);
-                    if (abs(turret_saved_positions[0][1][1] * isBlue - rotatePosition) < 200 || isBlue == -1) {
-                        turret.turretExtendo(turret_saved_positions[0][1][0]);
+                    if (abs(turret.turret_saved_positions[0][1][1] * isBlue - turret.rotatePosition) < 200 || isBlue == -1) {
+                        turret.turretExtendo(turret.turret_saved_positions[0][1][0]);
                         checker.setState(SLIDES_EXTENDED, true);
                     }
                 }
@@ -694,9 +658,9 @@ public class BlackoutRobot {
             }
             if(time-shareFlipTime>0.1){
                 logger.log("SequencingStates", "mogus2");
-                turret.TurretSlotate(turret_saved_positions[0][2][1]*isBlue);
+                turret.TurretSlotate(turret.turret_saved_positions[0][2][1]*isBlue);
                 turret.AutoAngleControlRotating(0);
-                turret.turretExtendo(turret_saved_positions[0][2][0]);
+                turret.turretExtendo(turret.turret_saved_positions[0][2][0]);
             }
         }
     }
@@ -798,13 +762,6 @@ public class BlackoutRobot {
     }
 
 
-    public void autoAim(double shipping_hub_x, double shipping_hub_y) {
-        double[] robot_position = {xpos, ypos, angle};
-        double turret_relative_rotation_angle = robot_position[2] - extendPosition;
-        double turret_target_rotation_angle = atan((robot_position[0] - shipping_hub_x) / (robot_position[1] - shipping_hub_y)) + turret_relative_rotation_angle;
-        turret.TurretRotate(turret_target_rotation_angle);
-    }
-
     public void AngleControlRotation(double degrees) {
         turret.AngleControlRotating(degrees);
     }
@@ -867,451 +824,6 @@ public class BlackoutRobot {
 
     public void tseToPosition(double position) {
         TSE.tseToPosition(position);
-    }
-
-    public boolean autoIntake(double power, double randRange, double times) {
-        resetten = false;
-        faked = false;
-        double[] thoseCurves = {0, 10, 12, 15, 5, 12, 8, 8};
-        double[] whereTonext = {.33, .66, 1.5, 1.8, 2.1, 2.4};
-        double starterTime = op.getRuntime();
-        boolean block = false;
-        intake.flipIntakeToPosition(0.0);
-        intake.startIntake();
-        turret.runTurretWithoutEncoder();
-        track();
-        double angleDiff = -angle;
-        drivetrain.turnInPlace(-atan2(EncoderChassis.xpos, 20) * 180 / PI, 1.0);
-        while (!block && op.getRuntime() < 27) {
-            starterTime = op.getRuntime();
-            double time = op.getRuntime();
-
-            while (time - starterTime < 1.85 + times / 10) {
-                if (ypos < 15) {
-                    angleDiff = -atan2(EncoderChassis.xpos + 2, 15 - ypos) * 180 / PI - angle;
-                } else {
-                    angleDiff = -angle;
-                }
-                drivetrain.track();
-                turret.updateTurretPositions();
-                time = op.getRuntime();
-                if (!resetten) {
-                    boolean isReset = turret.TurretReset(1.0);
-                } else if (resetten) {
-                    turret.stopExtend();
-                    turret.stopTurn();
-                }
-                if (resetten && time < startTime[9]) {
-                    turret.FlipBasketToPosition(.88);
-                    turret.FlipBasketArmToPosition(0.03);
-                    startTime[9] = time;
-                }
-                if (ypos < 15) {
-                    drivetrain.setRightMotorVelocities(pow(45 - EncoderChassis.ypos, 1 / 3.0) / 2.7 * 40 * 29.8 - angleDiff * 20);
-                    drivetrain.setLeftMotorVelocities(pow(45 - EncoderChassis.ypos, 1 / 3.0) / 2.7 * 40 * 29.8 + angleDiff * 20);
-//                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - angleDiff / 100 + 0.1);
-//                    drivetrain.setLeftMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + angleDiff / 100 - 0.1);
-                } else if (ypos < 45) {
-                    drivetrain.setRightMotorVelocities(pow(45 - EncoderChassis.ypos, 1 / 3.0) / 2.7 * 40 * 29.8 - (angleDiff + thoseCurves[(int) times]) * 20);
-                    drivetrain.setLeftMotorVelocities(pow(45 - EncoderChassis.ypos, 1 / 3.0) / 2.7 * 40 * 29.8 + (angleDiff + thoseCurves[(int) times]) * 20);
-//                    drivetrain.setRightMotorPowers(abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) - (angleDiff + thoseCurves[(int) times]) / 25);
-//                    drivetrain.setLeftMotorPowers( abs(pow((33 + 0.5 * times - ypos) / (35 + 0.5 * times), 2)) + (angleDiff + thoseCurves[(int) times]) / 25);
-                } else {
-                    drivetrain.setRightMotorVelocities((50 - EncoderChassis.ypos) * 29.8);
-                    drivetrain.setLeftMotorVelocities((50 - EncoderChassis.ypos) * 29.8);
-                }
-                if (intake.isSwitched()) {
-                    drivetrain.setRightMotorVelocities(-100);
-                    drivetrain.setLeftMotorVelocities(-100);
-                    if (time > 26) {
-                        stopIntake();
-                        return false;
-                    }
-                    sheeeeesh(0.0, 4, 0.8, 0);
-                    block = true;
-                    break;
-                }
-            }
-            if (!block) {
-//                turret.TurretReset(0.5);
-                drivetrain.setMotorPowers(-0.4);
-                op.sleep(500);
-                thoseCurves[(int) times] = 0.5 + random() * randRange;
-
-                drivetrain.turnInPlace(thoseCurves[(int) times], 0.5);
-            }
-        }
-        stopAllMotors();
-        return block;
-    }
-
-    public void sheeeeesh(double x, double y, double power, int direction) {
-        double[][] point = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
-        double[] currentPosition = track();
-        point[0][0] = currentPosition[0];
-        point[0][1] = currentPosition[1];
-        point[1][0] = currentPosition[0];
-        point[1][1] = currentPosition[1];
-        point[2][0] = 0.0;
-        point[2][1] = 15;
-        point[3][0] = x;
-        point[3][1] = y;
-        point[4][0] = x;
-        point[4][1] = y;
-        double startpower = power;
-        boolean autoAiming = false;
-        double[] startPosition = currentPosition;
-        double[] target_position = {0, 0, 0};
-        double anglecorrection = 0;
-        double tt = 0;
-        double difference = 0;
-        double error = 0;
-        double powerconst = 1, targetspeed = 0;
-        double mpconst = 0;
-        double p = .2;
-        double pd = .2;
-        double D = .02;
-        double I = 0;
-        double[] tarcurpos = {0, 0, 0};
-        double xError = 0, posxError = 0, yError = 0, posyError = 0, xCorrection = 0, yCorrection = 0, t = 0, yInt = 0, xInt = 0, angleConst;
-        double lastAngle = track()[2], anglediff = 0, targetaVelocity = 0;
-        double startTime = 400;
-        boolean reversing = false;
-        double[] starterTimes = {100, 100, 100, 100, 100, 100};
-        turret.runTurretWithoutEncoder();
-        intake.flipIntakeToPosition(0.77);
-        starterTimes[4] = op.getRuntime();
-        boolean resetting = false;
-        for (int i = 0; i < 2; i++) {
-            target_position[0] = point[i + 2][0];
-            target_position[1] = point[i + 2][1];
-            target_position[2] = 0;
-            difference = abs(sqrt(pow((point[i + 2][0] - currentPosition[0]), 2) + pow(point[i + 2][1] - currentPosition[1], 2)));
-            t = 0;
-            tt = 0;
-            double t2 = 0;
-            targetspeed = startpower * 30;
-            double xDerivative = 0, yDerivative = 0;
-            boolean td = true;
-            while (op.opModeIsActive() && (abs(difference) >= 2.5) && point[3][1] < ypos && op.getRuntime() < 29.8) {
-                turret.updateTurretPositions();
-                double nowTime = op.getRuntime();
-                if (!resetten && !autoAiming && starterTimes[1] == 100) {
-                    turret.TurretReset(0.5);
-                    resetting = true;
-                } else if (resetten && resetting) {
-                    resetting = false;
-
-                    turret.stopExtend();
-                    turret.stopTurn();
-                    turret.FlipBasketToPosition(.88);
-                    turret.FlipBasketArmToPosition(0.03);
-                }
-                if (resetten && starterTimes[0] == 100) {
-                    starterTimes[0] = nowTime;
-                }
-                if (nowTime - starterTimes[0] > .2 && resetten && nowTime - starterTimes[4] > 0.74) {
-                    intake.reverseIntake(1.0);
-                    reversing = true;
-                    starterTimes[0] = 500;
-                    starterTimes[1] = nowTime;
-                }
-                if (reversing) {
-                    intake.reverseIntake(1.0);
-                }
-                if (nowTime - starterTimes[1] > 0.4) {
-                    intake.flipIntakeToPosition(0.2);
-                    turret.FlipBasketToPosition(.58);
-                    starterTimes[1] = 101;
-                    starterTimes[2] = nowTime;
-                }
-                if (nowTime - starterTimes[2] > .1) {
-                    turret.FlipBasketArmToPosition(.55);
-                    intake.stopIntake();
-                    reversing = false;
-                    starterTimes[2] = 100;
-                    autoAiming = true;
-                    starterTimes[5] = nowTime;
-                }
-                if (ypos < 5) {
-                    if (autoAiming) {
-                        fakeAutoAim();
-                        if (faked && checker.getState(TURRET_ROTATED)) {
-                            turret.stopExtend();
-                            turret.stopTurn();
-                            starterTimes[1] = 501;
-                        }
-                        stopIntake();
-                    }
-                }
-                op.telemetry.addData("autoAim", autoAiming);
-                op.telemetry.addData("resetten", resetten);
-                op.telemetry.addData("start0", starterTimes[0]);
-                op.telemetry.addData("start1", starterTimes[1]);
-                currentPosition = track();
-                double twoDistance = sqrt(pow(point[i + 2][1] - currentPosition[1], 2) + pow(point[i + 2][0] - currentPosition[0], 2));
-                double oneDistance = sqrt(pow(point[i + 1][1] - currentPosition[1], 2) + pow(point[i + 1][0] - currentPosition[0], 2));
-                if ((oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance) > t && td) {
-                    t = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
-                    t2 = (oneDistance + Velocity / 5 + 1.0 / 4.0) / (oneDistance + twoDistance);
-                }
-                if (tt >= 1) {
-                    if (op.getRuntime() < startTime) {
-                        startTime = op.getRuntime();
-                    }
-                    if (op.getRuntime() > startTime + 1.5 / power) {
-                        break;
-                    }
-                    tt = 1;
-                }
-                if (t >= 1) {
-                    t = 1;
-                }
-                if (!td) {
-                    t = 1;
-                    td = true;
-                }
-                target_position[0] = 0.5 * ((2 * point[i + 1][0]) + (-point[i + 0][0] + point[i + 2][0]) * t2 + (2 * point[i + 0][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(t2, 2) +
-                        (-point[i + 0][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t2, 3));
-
-                target_position[1] = 0.5 * ((2 * point[i + 1][1]) + (-point[i + 0][1] + point[i + 2][1]) * t2 + (2 * point[i + 0][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t2, 2) +
-                        (-point[i + 0][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t2, 3));
-                xDerivative = (0.5 * (+(+point[i + 2][0] - point[i + 0][0]) + 2 * (2 * point[i][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * t +
-                        3 * (-point[i][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(t, 2)));
-                yDerivative = (0.5 * (+(+point[i + 2][1] - point[i + 0][1]) + 2 * (2 * point[i][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
-                        3 * (-point[i][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
-                if (yDerivative == 0) {
-                    yDerivative = 0.00001;
-                }
-                if (xDerivative == 0) {
-                    xDerivative = 0.00001;
-                }
-
-                mpconst = yDerivative / xDerivative;
-
-                target_position[2] = atan2(xDerivative, yDerivative) * 180 / PI + (direction - 1) * 180;
-                anglediff = target_position[2] - lastAngle;
-                targetaVelocity = anglediff / differtime;
-                lastAngle = target_position[2];
-                if (target_position[2] > 180) {
-                    target_position[2] -= 360;
-                }
-                if (target_position[2] < -180) {
-                    target_position[2] += 360;
-                }
-                op.telemetry.addData("angleTarget", target_position[2]);
-                if ((oneDistance + 1.0 / 4.0) / (oneDistance + twoDistance) > tt) {
-                    tt = (oneDistance + 1.0 / 4) / (oneDistance + twoDistance);
-                }
-                if (tt > 1) {
-                    tt = 1;
-                }
-                tarcurpos[0] = 0.5 * ((2 * point[i + 1][0]) + (+point[i + 2][0] - point[i + 0][1]) * tt + (-5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * pow(tt, 2) +
-                        (+3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(tt, 3));
-
-                tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1] - point[i + 0][1]) * tt + (-5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(tt, 2) +
-                        (+3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(tt, 3));
-                double txDerivative = (0.5 * (+(+point[i + 2][0] - point[i + 0][0]) + 2 * (2 * point[i][0] - 5 * point[i + 1][0] + 4 * point[i + 2][0] - point[i + 3][0]) * tt +
-                        3 * (-point[i][0] + 3 * point[i + 1][0] - 3 * point[i + 2][0] + point[i + 3][0]) * pow(tt, 2)));
-                double tyDerivative = (0.5 * (+(+point[i + 2][1] - point[i + 0][1]) + 2 * (2 * point[i][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * tt +
-                        3 * (-point[i][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(tt, 2)));
-                tarcurpos[2] = atan2(txDerivative, tyDerivative) * 180 / PI - (direction - 1) * 180;
-                if (tyDerivative == 0) {
-                    tyDerivative = 0.00001;
-                }
-                if (txDerivative == 0) {
-                    txDerivative = 0.00001;
-                }
-                double mpconst2 = tyDerivative / txDerivative;
-                if (mpconst == 1) {
-                    mpconst = 1.001;
-                }
-                if (mpconst2 == 1) {
-                    mpconst2 = 1.001;
-                }
-                if (xVelocity == 0) {
-                    xVelocity = 0.0001;
-                }
-                double targetXVelocity = txDerivative / abs(txDerivative) * ((sqrt(pow(startpower * 30, 2) / abs(1 - pow(mpconst2, 2)))));
-                double targetYVelocity = targetXVelocity * mpconst2;
-                xError = targetXVelocity - xVelocity;
-                posxError = tarcurpos[0] - currentPosition[0];
-                yError = targetYVelocity - yVelocity;
-                posyError = (tarcurpos[1] - currentPosition[1]);
-                targetXVelocity = xDerivative / abs(xDerivative) * ((sqrt(pow(startpower * 30, 2) / abs(1 - pow(mpconst, 2)))));
-                targetYVelocity = targetXVelocity * mpconst;
-
-                xCorrection = pd * xError + p * posxError + I * xInt + D * (xError + posxError / differtime);
-                yCorrection = pd * yError + p * posyError + I * yInt + D * (yError + posyError / differtime);
-                x = point[i + 2][0] - currentPosition[0];
-                y = point[i + 2][1] - currentPosition[1];
-                if (x == 0) {
-                    x = 0.0001;
-                }
-                if (y == 0) {
-                    y = 0.0001;
-                }
-                if (targetspeed == 0) {
-                    targetspeed = 0.01;
-                }
-                if (xCorrection == 0) {
-                    xCorrection = 0.001;
-                }
-                if (yCorrection == 0) {
-                    yCorrection = 0.001;
-                }
-
-                target_position[2] = (atan2(targetXVelocity + xCorrection, targetYVelocity + yCorrection) * 180 / PI) + (direction - 1) * 180;
-                target_position[2] %= 360;
-                if (target_position[2] > 180) {
-                    target_position[2] -= 360;
-                }
-                if (target_position[2] < -180) {
-                    target_position[2] += 360;
-                }
-                error = currentPosition[2] - target_position[2];
-                error %= 360;
-                if (error > 180) {
-                    error -= 360;
-                }
-                if (error < -180) {
-                    error += 360;
-                }
-                op.telemetry.addData("error", error);
-                double error2 = currentPosition[2] - atan2(x, y) * 180 / PI + (direction - 1) * 180;
-                error2 %= 360;
-                if (error2 > 180) {
-                    error2 -= 360;
-                }
-                if (error2 < -180) {
-                    error2 += 360;
-                }
-                double controlconst = pow(tt, 1.5);
-                op.telemetry.addData("erro2r", error2);
-                error = controlconst * error2 + ((1 - controlconst) * error);
-                error %= 360;
-                if (error > 180) {
-                    error -= 360;
-                }
-                if (error < -180) {
-                    error += 360;
-                }
-                targetaVelocity -= 2 * (error);
-                op.telemetry.addData("targetAVelocity", targetaVelocity);
-                anglecorrection = (error * 2 + (-targetaVelocity + aVelocity) * .2) / 216;
-                double powernum = pow(E, -10 * (tan((abs(error / 12) % 15) * PI / 180)));
-                if (powernum == -1) {
-                    powernum = -1.0001;
-                }
-                if (Double.isNaN(powernum)) {
-                    powernum = 99999;
-                }
-                if (error < 180 && error > -180) {
-                    power = startpower * (3 - (1 / (1 + powernum)) * 4);
-                } else {
-                    power = startpower * (-2.75 + (1 / (1 + powernum)) * 4);
-                }
-                if (direction == 0) {
-                    power *= -1;
-                }
-                if (difference < 10) {
-                    powerconst = pow(difference, 0.5);
-                }
-                op.telemetry.addData("t", t);
-                op.telemetry.addData("error", error);
-                op.telemetry.addData("targetXPosition", target_position[0]);
-                op.telemetry.addData("targetYPosition", target_position[1]);
-                drivetrain.setRightMotorPowers((powerconst) * power + anglecorrection);
-                drivetrain.setLeftMotorPowers((powerconst) * power - anglecorrection);
-                op.telemetry.addData("t", t);
-                op.telemetry.addData("error", error);
-                op.telemetry.addData("targetXPosition", target_position[0]);
-                op.telemetry.addData("targetYPosition", target_position[1]);
-
-                difference = sqrt(pow((point[i + 2][0] - currentPosition[0]), 2) + pow(point[i + 2][1] - currentPosition[1], 2));
-            }
-        }
-        stopAllMotors();
-        double nowTime = op.getRuntime();
-        while (op.opModeIsActive() && nowTime < 29.8 && starterTimes[1] < 500 && !faked || !checker.getState(TURRET_ROTATED)) {
-            nowTime = op.getRuntime();
-            turret.updateTurretPositions();
-            if (!resetten && !autoAiming && starterTimes[0] == 100) {
-                turret.TurretReset(0.5);
-                resetting = true;
-            } else if (resetten && resetting) {
-                resetting = false;
-                turret.stopExtend();
-                turret.stopTurn();
-                turret.FlipBasketToPosition(.9);
-                turret.FlipBasketArmToPosition(0.03);
-            }
-            if (resetten && starterTimes[0] == 100) {
-                starterTimes[0] = nowTime;
-            }
-            if (nowTime - starterTimes[0] > .2 && resetten && nowTime - starterTimes[4] > 0.74) {
-                intake.reverseIntake(0.77);
-                starterTimes[0] = 500;
-                reversing = true;
-                starterTimes[1] = nowTime;
-            }
-            if (reversing) {
-                intake.reverseIntake(0.6);
-            }
-            if (nowTime - starterTimes[1] > 0.4) {
-                intake.flipIntakeToPosition(0.2);
-                turret.FlipBasketToPosition(.58);
-                reversing = false;
-                starterTimes[1] = 100;
-                starterTimes[2] = nowTime;
-            }
-            if (nowTime - starterTimes[2] > .1) {
-                turret.FlipBasketArmToPosition(.55);
-                intake.stopIntake();
-                starterTimes[2] = 100;
-                autoAiming = true;
-            }
-            if (autoAiming) {
-                fakeAutoAim();
-                stopIntake();
-                if (faked && checker.getState(TURRET_ROTATED)) {
-                    turret.stopExtend();
-                    turret.stopTurn();
-                }
-            }
-            op.telemetry.addData("autoAim", autoAiming);
-            op.telemetry.addData("faked", faked);
-            op.telemetry.addData("resetten", resetten);
-            op.telemetry.addData("start0", checker.getState(TURRET_ROTATED));
-            op.telemetry.addData("start1", starterTimes[1]);
-            op.telemetry.update();
-        }
-    }
-
-    public void autoPark(double x, double y, double power) {
-        double[] currentPosition = track();
-        double[] target_position = {0, 0, 0};
-        double truestartpower = power;
-        target_position[0] = x;
-        target_position[1] = y;
-        target_position[2] = currentPosition[2];
-        double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        intake.flipIntakeToPosition(0.0);
-        drivetrain.turnInPlace(0, power);
-        while ((abs(difference) >= 4) && op.getRuntime() < 29.8) {
-            turret.TurretReset(0.5);
-            currentPosition = track();
-            x = target_position[0] - currentPosition[0];
-            y = target_position[1] - currentPosition[1];
-            drivetrain.setMotorPowers(power);
-            difference = abs(sqrt(x * x + y * y));
-        }
-        stopAllMotors();
-        while (op.getRuntime() < 29.95) {
-            turret.TurretReset(1.0);
-        }
-        turret.stopTurn();
-        turret.stopExtend();
     }
 
     /**
