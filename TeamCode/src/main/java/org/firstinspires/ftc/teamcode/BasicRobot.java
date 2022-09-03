@@ -7,6 +7,7 @@ public class BasicRobot{
     public static Logger logger;
     public static LinearOpMode op = null;
     public BasicRobot(LinearOpMode opMode){
+        logger.createFile("gamepad", "Value Name Time");
         op = opMode;
         logger = new Logger(opMode);
 

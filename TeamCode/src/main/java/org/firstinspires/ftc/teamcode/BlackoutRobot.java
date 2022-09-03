@@ -56,7 +56,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 
 import java.util.Arrays;
 
-public class BlackoutRobot {
+public class BlackoutRobot{
 
     public static LinearOpMode op = null;
     public final static boolean isCorgi = true;
