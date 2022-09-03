@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,7 +14,6 @@ public class tseDepositor {
     // Define class members
     CRServo tseCrServo;
     Servo TSEServo;
-    LinearOpMode op;
     ElapsedTime et;
     long initialTime;
     long retractTime;
@@ -22,9 +23,8 @@ public class tseDepositor {
     double reversePower;
     static final long FORWARD_ROTATION_PER_INCH = 147;
     static final long REVERSE_ROTATION_PER_INCH = 114;
-    public tseDepositor(LinearOpMode opMode, boolean isTeleop) {
-        op = opMode;
-        TSEServo = opMode.hardwareMap.get(Servo.class, "tsedepo");
+    public tseDepositor(boolean isTeleop) {
+        TSEServo = op.hardwareMap.get(Servo.class, "tsedepo");
 //        tseCrServo = opMode.hardwareMap.get(CRServo.class, "crtsedepositer");
         et = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         initialTime = retractTime = 0;

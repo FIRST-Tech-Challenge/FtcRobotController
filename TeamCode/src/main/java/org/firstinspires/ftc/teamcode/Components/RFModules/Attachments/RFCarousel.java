@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFCRServo;
@@ -9,13 +10,10 @@ public class RFCarousel extends RFCRServo {
 
     private RFCRServo carouselCRServo;
 
-    LinearOpMode op;
-    public RFCarousel(Servo.Direction direction, String deviceName, LinearOpMode opMode) {
-        super(direction, deviceName, opMode);
+    public RFCarousel(Servo.Direction direction, String deviceName) {
+        super(direction, deviceName);
 
-        carouselCRServo = new RFCRServo(direction, deviceName, opMode);
-
-        op = opMode;
+        carouselCRServo = new RFCRServo(direction, deviceName);
     }
 
     public  void spinCarouselAutonomousBlue (){

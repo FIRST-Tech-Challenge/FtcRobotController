@@ -25,7 +25,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotat
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATING_COUNTER_CLOCKWISE;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -189,7 +189,7 @@ public class StateMachine {
         }
     }
 
-    public StateMachine(LinearOpMode op, boolean isTeleOp) {
+    public StateMachine( boolean isTeleOp) {
         teleOp = isTeleOp;
         logger.createFile("SequencingStates", "Runtime,State,Value");
         if (teleOp) {

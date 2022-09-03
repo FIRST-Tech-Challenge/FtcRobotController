@@ -9,6 +9,7 @@
 
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
@@ -42,9 +43,7 @@ public class IMUChassis extends BasicChassis {
     //set true to enable imu vice versa
     final boolean enableIMU = true;
 
-    public IMUChassis(LinearOpMode opMode) {
-        super(opMode);
-        op = opMode;
+    public IMUChassis() {
 
         lastAngles  = new Orientation();
 

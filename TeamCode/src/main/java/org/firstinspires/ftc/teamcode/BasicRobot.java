@@ -8,8 +8,8 @@ public class BasicRobot{
     public static LinearOpMode op = null;
     public BasicRobot(LinearOpMode opMode){
         op = opMode;
-        logger = new Logger(opMode);
-
+        logger = new Logger();
+        logger.createFile("gamepad", "Value Name Time");
     }
     public void readGamepad(float value, String name){
         logger.log("gamepad", name + ": " + value + "at time " + op.time);

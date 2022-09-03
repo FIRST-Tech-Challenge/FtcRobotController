@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,18 +13,15 @@ public class RFServo implements Servo {
 
     private final Servo RFServo;
 
-    LinearOpMode op;
-
     String devicename;
 
     private double lasttime = 0;
 
 
 
-    public RFServo (Servo.Direction direction, String deviceName, LinearOpMode opMode) {
-        op = opMode;
+    public RFServo (Servo.Direction direction, String deviceName) {
         devicename = deviceName;
-        RFServo = opMode.hardwareMap.get(Servo.class, deviceName);
+        RFServo = op.hardwareMap.get(Servo.class, deviceName);
         RFServo.setDirection(direction);
 
     }

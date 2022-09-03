@@ -3,9 +3,13 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+
+
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFDualServo implements Servo {
     /*fanmcy init
@@ -25,22 +29,18 @@ public class RFDualServo implements Servo {
 
     Servo.Direction servoDirection1;
 
-    LinearOpMode op;
+    public RFDualServo(String deviceName1, String deviceName2, double limit) {
 
-    public RFDualServo(LinearOpMode opMode, String deviceName1, String deviceName2, double limit) {
-        op = opMode;
-
-        dualServo1 = opMode.hardwareMap.servo.get(deviceName1);
-        dualServo2 = opMode.hardwareMap.servo.get(deviceName2);
+        dualServo1 = op.hardwareMap.servo.get(deviceName1);
+        dualServo2 = op.hardwareMap.servo.get(deviceName2);
 
         servolimit = limit;
     }
 
-    public RFDualServo(Servo.Direction servoDirection, LinearOpMode opMode, String deviceName1, String deviceName2, double limit) {
-        op = opMode;
+    public RFDualServo(Servo.Direction servoDirection, String deviceName1, String deviceName2, double limit) {
 
-        dualServo1 = opMode.hardwareMap.servo.get(deviceName1);
-        dualServo2 = opMode.hardwareMap.servo.get(deviceName2);
+        dualServo1 = op.hardwareMap.servo.get(deviceName1);
+        dualServo2 = op.hardwareMap.servo.get(deviceName2);
 
         dualServo1.setDirection(servoDirection);
 

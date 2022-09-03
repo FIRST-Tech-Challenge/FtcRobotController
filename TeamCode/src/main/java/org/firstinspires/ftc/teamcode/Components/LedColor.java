@@ -13,13 +13,11 @@ public class LedColor
     /*Display devices */
     private DigitalChannel[] redLED;
     private DigitalChannel [] greenLED;
-    LinearOpMode op;
 
 
     public LedColor(LinearOpMode opMode) {
         redLED = new DigitalChannel[5];
         greenLED = new DigitalChannel[5];
-        op = opMode;
         // Save reference to Hardware map
         hwMap = opMode.hardwareMap;
 

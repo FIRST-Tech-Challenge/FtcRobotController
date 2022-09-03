@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,10 +27,8 @@ public abstract class BasicChassis {
 
     protected final double counts_per_motor_goBilda = 383.6;
     protected final double counts_per_inch = 2 * (counts_per_motor_goBilda / (wheel_diameter * Math.PI));
-    protected LinearOpMode op = null;
 
-    public BasicChassis(LinearOpMode opMode) {
-        op = opMode;
+    public BasicChassis() {
         //lastAngles  = new Orientation();
         // Chassis motors
         motorLeftFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");

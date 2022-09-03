@@ -14,7 +14,7 @@ public class colorSenseTest extends LinearOpMode {
     public void runOpMode(){
         //Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         ElapsedTime op = new ElapsedTime();
-        ColorDistanceRevV3 color = new ColorDistanceRevV3(this);
+        ColorDistanceRevV3 color = new ColorDistanceRevV3();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

@@ -9,9 +9,8 @@ public class CappingMechanism {
     private Servo capperServo = null;
 
 
-    public CappingMechanism(LinearOpMode opMode){
-        op = opMode;
-        capperServo = opMode.hardwareMap.get(Servo.class, "capperServo");
+    public CappingMechanism(){
+        capperServo = op.hardwareMap.get(Servo.class, "capperServo");
     }
 
 }

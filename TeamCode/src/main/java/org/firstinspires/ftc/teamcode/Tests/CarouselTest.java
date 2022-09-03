@@ -13,7 +13,7 @@ public class CarouselTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Carousel carousel = new Carousel(this);
+        Carousel carousel = new Carousel();
         carousel.spinCarouselAutonomousBlue();
         carousel.spinCarouselAutonomousRed();
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Components.Tracker.aVelocity;
 import static org.firstinspires.ftc.teamcode.Components.Tracker.xVelocity;
 import static org.firstinspires.ftc.teamcode.Components.Tracker.yVelocity;
@@ -22,12 +23,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 //2.0,1.7,1.1
 public class MecanumChassis{
-    private LinearOpMode op = null;
     Tracker tracker = null;
     final ElapsedTime runtime = new ElapsedTime();
     private final DcMotorEx motorLeftFront,motorLeftBack,motorRightFront,motorRightBack;
-    public MecanumChassis(LinearOpMode opMode, Tracker trackers) {
-        op = opMode;
+    public MecanumChassis( Tracker trackers) {
         tracker = trackers;
 
         motorLeftFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");

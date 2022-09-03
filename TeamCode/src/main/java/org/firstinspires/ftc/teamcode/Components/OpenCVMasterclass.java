@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static java.lang.Math.pow;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -18,9 +19,7 @@ import java.util.ArrayList;
 public class OpenCVMasterclass {
     OpenCvWebcam backWebcam;
     OpenCvWebcam frontWebcam;
-    LinearOpMode op;
-    public OpenCVMasterclass(LinearOpMode opMode) {
-        op=opMode;
+    public OpenCVMasterclass() {
         int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
 //        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
 //                .splitLayoutForMultipleViewports(
@@ -31,7 +30,7 @@ public class OpenCVMasterclass {
 //        frontWebcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "FrontWebcam"), viewportContainerIds[0]);
     }
     public int BlueTeamElem(){
-        BlueTeamElem opencv = new BlueTeamElem(op);
+        BlueTeamElem opencv = new BlueTeamElem();
         double starttime= op.getRuntime();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -88,7 +87,7 @@ public class OpenCVMasterclass {
         }
     }
     public int RedTeamElem(){
-        RedTeamElem opencv = new RedTeamElem(op);
+        RedTeamElem opencv = new RedTeamElem();
         double starttime= op.getRuntime();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -144,7 +143,7 @@ public class OpenCVMasterclass {
         }
     }
     public double[] BlueWarehouseScam(){
-        BlueWarehouseScam opencv = new BlueWarehouseScam(op);
+        BlueWarehouseScam opencv = new BlueWarehouseScam();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
             @Override
@@ -228,7 +227,7 @@ public class OpenCVMasterclass {
         return new double[]{};
     }
     public int[] RedWarehouseScam(){
-        RedWarehouseScam opencv = new RedWarehouseScam(op);
+        RedWarehouseScam opencv = new RedWarehouseScam();
         backWebcam.setPipeline(opencv);
         backWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
             @Override

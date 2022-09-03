@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_STILL;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeServoStates.INTAKE_DOWN;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.IntakeMotorStates.INTAKE_REVERSING;
@@ -29,23 +30,21 @@ public class Intake {
     double intakeTimeStart = -10;
     double flipTime = 100;
 
-    LinearOpMode op = null;
     final private double intakeSpeed = 1;
     boolean teleop = false;
     private boolean intakeUp = false; //position of intake in the lifted position
 
     // initialization of intakeMotor
-    public Intake(LinearOpMode opMode, boolean isTeleop, StateMachine checkers) {
+    public Intake(boolean isTeleop, StateMachine checkers) {
         checker = checkers;
-        op = opMode;
         teleop = isTeleop;
-        intakeMotor = (DcMotorEx) opMode.hardwareMap.dcMotor.get("IntakeMotor");
+        intakeMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("IntakeMotor");
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeServo = opMode.hardwareMap.get(Servo.class, "IntakeServo");
-        intakeServo2 = opMode.hardwareMap.get(Servo.class, "IntakeServo2");
+        intakeServo = op.hardwareMap.get(Servo.class, "IntakeServo");
+        intakeServo2 = op.hardwareMap.get(Servo.class, "IntakeServo2");
 //        touchSensor = opMode.hardwareMap.get(DigitalChannel.class, "touchSensor");
-        sensorDistance = new ColorDistanceRevV3(op);
+        sensorDistance = new ColorDistanceRevV3();
 //        touchSensor.setMode(DigitalChannel.Mode.INPUT);
         if (!isTeleop) {
             intakeServo.setPosition(.24);

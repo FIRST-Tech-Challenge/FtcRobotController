@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_CEILING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_DROP;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_TRANSFER;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketStates.BASKET_DROP;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.SlidesStates.SLIDES_RETRACTING;
@@ -29,12 +32,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFAngleAdjust;
+import org.firstinspires.ftc.teamcode.BasicRobot;
 import org.firstinspires.ftc.teamcode.BlackoutRobot;
 
 
 public class Turret {
 
-    private LinearOpMode op = null;
     private DcMotorEx turret_Rotation = null;
     private DcMotorEx turret_Extension = null;
     private RFAngleAdjust turret_Angle_Control = null;
@@ -53,29 +56,27 @@ public class Turret {
     private final double TORQUE_GEAR_RATIO = 10;
     private final double SPEED_GEAR_RATIO = 10;
     private final double ANGLE_CONTROL_SERVO_TOTAL_DEGREES = 35;
-    public double [][][]turret_saved_positions={{{950,-440,0},{700,-440,0},{0,500,0},{12,-24,15}}};
+    public static double [][][]turret_saved_positions={{{950,-440,0},{700,-440,0},{0,500,0},{12,-24,15}}};
 
     boolean hardware_present = true;
-    public boolean servoPos = false;
+    public static boolean servoPos = false;
     boolean servoPos2 = false;
     boolean downCap = false;
-    public double extendPosition=0, rotatePosition=0;
+    public static double extendPosition=0, rotatePosition=0;
     boolean angleControlling = false, arming = false, basketing = false;
-    public  boolean areTeleop = false;
+    public static boolean areTeleop = false;
 
 
 
     // initialization of outtakeMotor
-    public Turret(LinearOpMode opMode, LedColor led_bank, boolean isTeleOp, StateMachine checkers){
+    public Turret(LedColor led_bank, boolean isTeleOp, StateMachine checkers){
         checker = checkers;
-
-        op = opMode;
         areTeleop = isTeleOp;
         if (hardware_present) {
-            turret_Angle_Control = new RFAngleAdjust(op, "turret_Angle_Control", "turret_Angle_Control2", 118.0/270);
-            turret_Rotation = (DcMotorEx)opMode.hardwareMap.dcMotor.get("turret_Rotation");
+            turret_Angle_Control = new RFAngleAdjust("turret_Angle_Control", "turret_Angle_Control2", 118.0/270);
+            turret_Rotation = (DcMotorEx)op.hardwareMap.dcMotor.get("turret_Rotation");
             turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            turret_Extension = (DcMotorEx)opMode.hardwareMap.dcMotor.get("turret_Extension");
+            turret_Extension = (DcMotorEx)op.hardwareMap.dcMotor.get("turret_Extension");
             turret_Extension.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 //            turret_Angle_Control = opMode.hardwareMap.get(Servo.class, "turret_Angle_Control");
             basketArmServo = op.hardwareMap.get(Servo.class, "basketActuationServo");

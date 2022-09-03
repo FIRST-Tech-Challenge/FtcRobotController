@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -40,7 +41,6 @@ public class VSLAMChassis extends BasicChassis {
     public static double Velocity = 0;
     double maxVelocity = 0;
     boolean bad = false;
-    private LinearOpMode op = null;
     Lock location = new ReentrantLock();
     public static float xpos = 0;
     public static float ypos = 0;
@@ -58,9 +58,7 @@ public class VSLAMChassis extends BasicChassis {
     double lastTime = 0;
     double thisTime = 0;
 
-    public VSLAMChassis(LinearOpMode opMode, boolean navigator, boolean tobeCorgiornottobeCorgi) {
-        super(opMode);
-        op = opMode;
+    public VSLAMChassis(boolean navigator, boolean tobeCorgiornottobeCorgi) {
         xpos = 0;
         ypos = 0;
         angle = 0;

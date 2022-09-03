@@ -9,9 +9,7 @@ public abstract class Tracker {
         ENCODER,ODOMETRY,ODOMETRY_TOUCH,ODOMETRY_TOUCH_ULTRA
     }
 
-    protected LinearOpMode op = null;
-
-    public Tracker(LinearOpMode opMode) {
+    public Tracker() {
     }
     abstract public void track();
     public double[] getPos() {

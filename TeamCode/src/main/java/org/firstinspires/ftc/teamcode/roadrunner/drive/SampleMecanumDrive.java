@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
@@ -83,10 +85,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 //    private IMU imus;
     private VoltageSensor batteryVoltageSensor;
 
-    private SummerMecRobot robot=null;
+    private BlackoutRobot robot=null;
     private FtcDashboard dashboard= null;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, SummerMecRobot p_robot) {
+    public SampleMecanumDrive(HardwareMap hardwareMap, BlackoutRobot p_robot) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,

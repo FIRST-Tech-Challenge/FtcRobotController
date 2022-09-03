@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 
@@ -20,13 +22,12 @@ public class Carousel
 
     int runInManualMode=0;
     double speed = CAROUSEL_STOP; //  Initial position
-    LinearOpMode op;
 
 
-    public Carousel(LinearOpMode opMode) {
-        op = opMode;
-        crServo = opMode.hardwareMap.get(CRServo.class, "carousel");
-        crServo2 = opMode.hardwareMap.get(CRServo.class, "carousel2");
+    public Carousel() {
+
+        crServo = op.hardwareMap.get(CRServo.class, "carousel");
+        crServo2 = op.hardwareMap.get(CRServo.class, "carousel2");
     }
 
 

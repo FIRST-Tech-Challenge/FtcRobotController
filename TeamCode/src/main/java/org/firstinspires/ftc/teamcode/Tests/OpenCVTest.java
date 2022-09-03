@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -24,7 +26,7 @@ public class OpenCVTest extends LinearOpMode {
         robot.rotateToPosition(-7.5);
         sleep(1000);
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "BackWebcam"), cameraMonitorViewId);
-        BlueTeamElem opencv = new BlueTeamElem(this);
+        BlueTeamElem opencv = new BlueTeamElem();
         webcam.setPipeline(opencv);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {

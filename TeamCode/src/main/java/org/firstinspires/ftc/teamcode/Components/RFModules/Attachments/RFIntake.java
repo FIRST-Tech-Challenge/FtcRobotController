@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
-//public class RFIntake extends RFMotor {
-//    private RFMotor intake;
-//
-//    LinearOpMode op;
-//
-//    public RFIntake(String motorName, DcMotorSimple.Direction motorDirection, LinearOpMode opMode, boolean resetPos, DcMotor.ZeroPowerBehavior zeroBehavior) {
-//        super(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
-//
-//        intake = new RFMotor(motorName, motorDirection, opMode, RUN_USING_ENCODER, resetPos, zeroBehavior);
-//
-//        op = opMode;
-//
-//    }
-//}
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
+
+public class RFIntake extends RFMotor {
+    private RFMotor intake;
+
+
+    public RFIntake(String motorName, DcMotor.RunMode runMode, boolean resetPos) {
+        super(motorName, runMode, resetPos);
+
+        intake = new RFMotor(motorName, runMode, resetPos);
+
+    }
+}

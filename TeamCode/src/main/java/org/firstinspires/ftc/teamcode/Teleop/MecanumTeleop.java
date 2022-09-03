@@ -54,8 +54,8 @@ public class MecanumTeleop extends LinearOpMode {
         extendIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeFlip = (Servo) op.hardwareMap.servo.get("intakeFlip");
-        OdometryTracker tracker = new OdometryTracker(this,false,false);
-        ColorDistanceRevV3 intakeSensor = new ColorDistanceRevV3(this);
+        OdometryTracker tracker = new OdometryTracker(false,false);
+        ColorDistanceRevV3 intakeSensor = new ColorDistanceRevV3();
         tracker.setPosition(0,0,0);
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("status", "waiting for start command...");

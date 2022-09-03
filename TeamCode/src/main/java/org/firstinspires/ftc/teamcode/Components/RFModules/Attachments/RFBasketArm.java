@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
+import static org.firstinspires.ftc.teamcode.Components.Turret.servoPos;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.isBlue;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.BlackoutRobot.startAngle;
 
 
@@ -13,19 +15,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import org.firstinspires.ftc.teamcode.Components.StateMachine;
+import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFBasketArm extends RFServo {
 
     private RFServo basketArmServo;
-    private boolean servoPos = false;
+    public RFBasketArm(Servo.Direction direction, String deviceName) {
+        super(direction, deviceName);
 
-    LinearOpMode op;
-    public RFBasketArm(double range, Servo.Direction direction, String deviceName, LinearOpMode opMode) {
-        super(direction, deviceName, opMode);
-
-        basketArmServo = new RFServo(direction, deviceName, opMode);
-
-        op = opMode;
+        basketArmServo = new RFServo(direction, deviceName);
     }
 
     public void FlipBasketArmToPosition (double torget) {

@@ -15,7 +15,7 @@ public class ColorDistanceRevV3Test extends LinearOpMode {
     public void runOpMode() {
 
         float hsvValues[] = {0F, 0F, 0F};
-        ColorDistanceRevV3 colorDist = new ColorDistanceRevV3(this);
+        ColorDistanceRevV3 colorDist = new ColorDistanceRevV3();
 
         // wait for the start button to be pressed.
         waitForStart();

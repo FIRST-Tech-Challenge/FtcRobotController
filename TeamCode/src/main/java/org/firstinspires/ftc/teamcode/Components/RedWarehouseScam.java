@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,7 +14,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class RedWarehouseScam extends OpenCvPipeline {
-    LinearOpMode op;
     Telemetry telemetry;
     Mat mat= new Mat();
     public enum Location{
@@ -44,7 +45,7 @@ public class RedWarehouseScam extends OpenCvPipeline {
 
     static double PERCENT_COLOR_THRESHOLD = 0.4; //percentage of color
 
-    public RedWarehouseScam(LinearOpMode opMode){op=opMode; telemetry=op.telemetry;}
+    public RedWarehouseScam(){telemetry=op.telemetry;}
 
     @Override
     public Mat processFrame(Mat input) {

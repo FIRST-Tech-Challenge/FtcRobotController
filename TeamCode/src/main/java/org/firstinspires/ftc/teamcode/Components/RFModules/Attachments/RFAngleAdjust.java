@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
@@ -10,12 +12,10 @@ public class RFAngleAdjust extends RFDualServo{
     private final double DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime = 0.3;
 
     LinearOpMode op;
-    public RFAngleAdjust(LinearOpMode opMode, String deviceName1, String deviceName2, double limit) {
-        super(opMode, deviceName1, deviceName2, limit);
+    public RFAngleAdjust(String deviceName1, String deviceName2, double limit) {
+        super(deviceName1, deviceName2, limit);
 
-        angleAdjustServo = new RFDualServo(opMode, deviceName1, deviceName2, limit);
-
-        op = opMode;
+        angleAdjustServo = new RFDualServo(deviceName1, deviceName2, limit);
 
     }
 

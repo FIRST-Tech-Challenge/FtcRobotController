@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -45,7 +46,6 @@ public class OdometryChassis extends BasicChassis {
     final float ticks_per_inch = (float) (8640 * 2.54 / 38 * Math.PI);
     float robot_diameter = (float) sqrt(619.84);
     static final float[] odom = {0f,0f,0f};
-    private LinearOpMode op = null;
     Lock location = new ReentrantLock();
     private final BNO055IMU imu;
     private Orientation lastAngles = null;
@@ -64,9 +64,7 @@ public class OdometryChassis extends BasicChassis {
     double lastTime = 0;
     double thisTime = 0;
 
-    public OdometryChassis(LinearOpMode opMode, boolean navigator, boolean tobeCorgiornottobeCorgi) {
-        super(opMode);
-        op = opMode;
+    public OdometryChassis(boolean navigator, boolean tobeCorgiornottobeCorgi) {
         xpos = 0;
         ypos = 0;
         angle = 0;

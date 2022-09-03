@@ -1,26 +1,24 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class RFCRServo implements CRServo {
     //all servo regular stuff
 
     private CRServo RFCRServo;
 
-    LinearOpMode op;
-
     Servo.Direction servodirection;
     String devicename;
 
-    public RFCRServo (Servo.Direction direction, String deviceName, LinearOpMode opMode) {
-        op = opMode;
+    public RFCRServo (Servo.Direction direction, String deviceName) {
         servodirection = direction;
         devicename = deviceName;
-        RFCRServo = opMode.hardwareMap.get(CRServo.class, deviceName);
+        RFCRServo = op.hardwareMap.get(CRServo.class, deviceName);
     }
 
 
