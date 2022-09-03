@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.FWDRobot;
 
 @Config
 @TeleOp(name = "FWD")
@@ -30,11 +31,7 @@ public class FWD extends LinearOpMode {
     private CRServo tapeExtend;
     private Servo tapeHeight;
     private Servo tapeMove;
-    private DcMotor motorLeftBack;
     private DcMotorEx discIntake;
-    private DcMotor motorRightBack;
-    private DcMotor motorLeftFront;
-    private DcMotor motorRightFront;
 
     private PIDController controller;
     public static double p = 0, i = 0, d = 0;
@@ -48,6 +45,7 @@ public class FWD extends LinearOpMode {
     public static double ysensitivity = 0.3;
     public static double xsensitivity = 0.4;
     boolean isTurning = true;
+    FWDRobot robit = new FWDRobot(this);
 
     public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
 
@@ -72,10 +70,6 @@ public class FWD extends LinearOpMode {
         wobbleArmGoal.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wobbleArmGoal.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         wobbleArmGoal.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorLeftBack = hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = hardwareMap.dcMotor.get("motorRightBack");
-        motorLeftFront = hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = hardwareMap.dcMotor.get("motorRightFront");
         wobbleGoalGrabbyer.setPosition(0);
         f = 0; p = 0; d = 0; i = 0;
         waitForStart();
@@ -148,15 +142,15 @@ public class FWD extends LinearOpMode {
                 tapeHeight.setPosition(twoone%2);
             }
 
-            motorRightBack.setPower(gamepad1.left_stick_y * 0.3 );
-            motorLeftBack.setPower(gamepad1.left_stick_y * 0.3 );
-            motorRightFront.setPower(gamepad1.left_stick_y * 0.3 );
-            motorLeftFront.setPower(gamepad1.left_stick_y * 0.3 );
+            robit.motorRightBack.setPower(gamepad1.left_stick_y * 0.3 );
+            robit.motorLeftBack.setPower(gamepad1.left_stick_y * 0.3 );
+            robit.motorRightFront.setPower(gamepad1.left_stick_y * 0.3 );
+            robit.motorLeftFront.setPower(gamepad1.left_stick_y * 0.3 );
             // sussy telemetry
-            telemetry.addData("Left Back Motor Pos", motorLeftBack.getCurrentPosition());
-            telemetry.addData("Left Front Motor Pos", motorLeftFront.getCurrentPosition());
-            telemetry.addData("Right Back Motor Pos", motorRightBack.getCurrentPosition());
-            telemetry.addData("Right Front Motor Pos", motorRightFront.getCurrentPosition());
+            telemetry.addData("Left Back Motor Pos", robit.motorLeftBack.getCurrentPosition());
+            telemetry.addData("Left Front Motor Pos", robit.motorLeftFront.getCurrentPosition());
+            telemetry.addData("Right Back Motor Pos", robit.motorRightBack.getCurrentPosition());
+            telemetry.addData("Right Front Motor Pos", robit.motorRightFront.getCurrentPosition());
             telemetry.addData("wobble goal arm pos", wobbleArmGoal.getCurrentPosition());
             telemetry.addData("velo", wobbleArmGoal.getVelocity());
             telemetry.addData("pos", wobbleArmGoal.getCurrentPosition());

@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
 public class FWDRobot extends BasicRobot{
-    private RFMotor motorLeftBack;
-    private RFMotor motorRightBack;
-    private RFMotor motorLeftFront;
-    private RFMotor motorRightFront;
+    public RFMotor motorLeftBack;
+    public RFMotor motorRightBack;
+    public RFMotor motorLeftFront;
+    public RFMotor motorRightFront;
     private RFMotor wobbleArmGoal;
     private RFServo wobbleGoalGrabbyer;
     public FWDRobot(LinearOpMode op){
