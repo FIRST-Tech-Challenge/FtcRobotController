@@ -20,10 +20,10 @@ public class PIDballBalance extends LinearOpMode {
     Servo balServo;
 
 
-    public static double kp = 0.15;
+    public static double kp = 0.35;
     public static double ki = 0.005;
-    public static double kd = 30;
-
+    public static double kd = 130;
+//works on charged rev battery lol. retune if different. Around 13.5 volts = fully charged
     public static double PID_p_error = 0.0;
     public static double PID_i_error = 0.0;
     public static double PID_d_error = 0.0;
