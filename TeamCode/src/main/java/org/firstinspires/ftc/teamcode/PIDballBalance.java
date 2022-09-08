@@ -85,18 +85,11 @@ public class PIDballBalance extends LinearOpMode {
 
             sleep(50);
 
-            telemetry.addData("Running: ", running);
             telemetry.addData("kp: ", kp);
             telemetry.addData("ki: ", ki);
             telemetry.addData("kd: ", kd);
-            telemetry.addData("error: ", error);
             telemetry.addData("distance: ", distance);
-            telemetry.addData("setValue: ", setValue);
-            telemetry.addData("PID_p_error: ", PID_p_error);
-            telemetry.addData("PID_i_error: ", PID_i_error);
-            telemetry.addData("PID_d_error: ", PID_d_error);
             telemetry.addData("PID_total: ", PID_total);
-            telemetry.addData("servoPosition: ", servoPosition);
             previous_error = error;
             timer_1.reset();
             telemetry.update();
