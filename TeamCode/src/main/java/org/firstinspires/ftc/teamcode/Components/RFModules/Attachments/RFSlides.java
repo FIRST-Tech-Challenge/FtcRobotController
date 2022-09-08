@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.RobotStates.SLIDES_EXTENDED;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
-import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.faked;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.RobotStates.SLIDES_EXTENDED;
+import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.checker;
+import static org.firstinspires.ftc.teamcode.Old.Components.Hardware.Turret.extendPosition;
+import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.faked;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import static java.lang.Math.abs;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 

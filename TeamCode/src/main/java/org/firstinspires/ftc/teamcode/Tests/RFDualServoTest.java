@@ -9,7 +9,7 @@
 //import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 //
 //import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
-//import org.firstinspires.ftc.teamcode.Components.tseDepositor;
+//import org.firstinspires.ftc.teamcode.Old.Components.Hardware.tseDepositor;
 //import org.firstinspires.ftc.teamcode.Components.Logger;
 //
 //@Autonomous(name="RFDualServoTest")

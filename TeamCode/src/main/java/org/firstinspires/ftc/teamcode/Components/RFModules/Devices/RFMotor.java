@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.logger;
 
 import static java.lang.Math.abs;
-import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;

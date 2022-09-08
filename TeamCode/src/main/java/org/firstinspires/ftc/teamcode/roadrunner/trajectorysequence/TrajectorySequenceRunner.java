@@ -16,14 +16,14 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-import org.firstinspires.ftc.teamcode.BlackoutRobot;
-import org.firstinspires.ftc.teamcode.SummerMecRobot;
+import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
-import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,9 +59,9 @@ public class TrajectorySequenceRunner {
 
     private final FtcDashboard dashboard;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
-    private SummerMecRobot robot = null;
+    private SampleMecanumDrive drive = null;
 
-    public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, SummerMecRobot p_robot) {
+    public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, SampleMecanumDrive p_drive) {
         this.follower = follower;
 
         turnController = new PIDFController(headingPIDCoefficients);
@@ -72,7 +72,7 @@ public class TrajectorySequenceRunner {
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
 
-        robot = p_robot;
+        drive = p_drive;
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
@@ -200,11 +200,6 @@ public class TrajectorySequenceRunner {
         packet.put("xError", getLastPoseError().getX());
         packet.put("yError", getLastPoseError().getY());
         packet.put("headingError (deg)", Math.toDegrees(getLastPoseError().getHeading()));
-        packet.put("ultraYPos", robot.ultras.dist[0]);
-        packet.put("updated", robot.ultras.updated);
-        packet.put("updatedto", robot.ultras.updatedto);
-        packet.put("errorLogSize", robot.ultras.errorLog.size());
-        packet.put("averageError", robot.ultras.averageError()[0]);
 
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 

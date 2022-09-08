@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.op;
-
 import java.util.ArrayList;
 
 public class Queuer {

@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
+import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.checker;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.TurretRotationStates.TURRET_ROTATED;
-import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.TurretRotationStates.TURRET_ROTATED;
+import static org.firstinspires.ftc.teamcode.Old.Components.Hardware.Turret.rotatePosition;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 

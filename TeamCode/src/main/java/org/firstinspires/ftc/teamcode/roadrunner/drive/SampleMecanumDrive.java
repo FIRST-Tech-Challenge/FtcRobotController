@@ -26,22 +26,21 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.BasicRobot;
-import org.firstinspires.ftc.teamcode.BlackoutRobot;
-import org.firstinspires.ftc.teamcode.SummerMecRobot;
+import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
+import org.firstinspires.ftc.teamcode.roadrunner.util.LimitSwitches;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.roadrunner.util.Ultrasonics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -70,7 +69,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
-    private final boolean ultrasonics = true, touches = false;
+    private final boolean ultrasonics = false, touches = false;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -82,13 +81,13 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-//    private IMU imus;
     private VoltageSensor batteryVoltageSensor;
-
-    private SummerMecRobot robot=null;
     private FtcDashboard dashboard= null;
+    private Ultrasonics ultras = null;
+    private LimitSwitches touch = null;
+    private IMU imu = null;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, SummerMecRobot p_robot) {
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -160,12 +159,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID, p_robot);
-        robot=p_robot;
+        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID, this);
+        if(ultrasonics) {
+            ultras = new Ultrasonics();
+        }
+        if(touches) {
+            touch = new LimitSwitches();
+        }
+        imu = new IMU();
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
         logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
-//        imus = new IMU();
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -231,23 +235,18 @@ public class SampleMecanumDrive extends MecanumDrive {
         updatePoseEstimate();
         if(ultrasonics){
             Pose2d pos = getPoseEstimate();
-//            if(abs(pos.getHeading()-robot.imu.updateAngle())>PI/180*5){
-////                setPoseEstimate(new Pose2d(pos.getX(),pos.getY(),robot.imu.updateAngle()));
-//                logger.log("Ultrasonics", "angle"+valueOf(robot.imu.updateAngle()*180/PI)+","+pos.getHeading()*180/PI);
-//            }
-            if(robot.ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
-                Pose2d ultraPos = robot.ultras.getPose2d();
+            if(ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){
+                Pose2d ultraPos = ultras.getPose2d();
                 setPoseEstimate(new Pose2d(ultraPos.getX(), ultraPos.getY(),pos.getHeading()));
-                logger.log("Ultrasonics", "angle"+valueOf(robot.imu.updateAngle()*180/PI)+","+pos.getHeading()*180/PI);
             }
             else{
             }
         }
         if(touches){
             Pose2d pos = getPoseEstimate();
-            if(robot.touchs.updateTouch(pos.getX(),pos.getY(),pos.getHeading())){
-                Pose2d touchaPos = robot.touchs.getPose2d();
-                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY(),robot.imu.updateAngle()));
+            if(touch.updateTouch(pos.getX(),pos.getY(),pos.getHeading())){
+                Pose2d touchaPos = touch.getPose2d();
+                setPoseEstimate(new Pose2d(touchaPos.getX(),touchaPos.getY(),pos.getHeading()));
                 op.telemetry.addData("touch-updated", true);
             }else{
                 op.telemetry.addData("touch-updated", false);
@@ -338,7 +337,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return robot.imu.updateAngle();
+        return imu.updateAngle();
     }
 
     @Override
@@ -348,7 +347,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // expected). This bug does NOT affect orientation. 
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
-        return (double) -robot.imu.getAngularVelocity().xRotationRate;
+        return (double) -imu.getAngularVelocity().xRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

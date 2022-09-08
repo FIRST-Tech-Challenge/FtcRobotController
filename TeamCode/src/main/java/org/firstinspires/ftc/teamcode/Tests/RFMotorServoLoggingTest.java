@@ -10,7 +10,7 @@
 //
 //import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
 //import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
-//import org.firstinspires.ftc.teamcode.Components.tseDepositor;
+//import org.firstinspires.ftc.teamcode.Old.Components.Hardware.tseDepositor;
 //import org.firstinspires.ftc.teamcode.Components.Logger;
 //
 //@Autonomous(name="RFMotorServoLoggingTest", preselectTeleOp = "OneGPTeleop")

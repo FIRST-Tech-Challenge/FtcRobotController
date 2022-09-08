@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
+import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal

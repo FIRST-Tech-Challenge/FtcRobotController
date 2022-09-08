@@ -1,29 +1,22 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.setAngle;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.xpos;
-import static org.firstinspires.ftc.teamcode.Components.EncoderChassis.ypos;
-import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Old.Components.Chassis.EncoderChassis.xpos;
+import static org.firstinspires.ftc.teamcode.Old.Components.Chassis.EncoderChassis.ypos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFAngleAdjust;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFFlippingIntake;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFIntake;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFSlides;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
-import org.firstinspires.ftc.teamcode.BasicRobot;
-import org.firstinspires.ftc.teamcode.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 
 import java.util.ArrayList;
 
