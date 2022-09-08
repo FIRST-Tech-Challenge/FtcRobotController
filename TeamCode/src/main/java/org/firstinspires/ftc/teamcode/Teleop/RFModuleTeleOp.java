@@ -107,6 +107,7 @@ public class RFModuleTeleOp extends LinearOpMode {
                 if (intakeup) {
                     intakeServos.setPositions(0.21);
                     intakeup = false;
+                    //stop looking here willy
                 }
                 else {
                     intakeServos.setPositions(1);

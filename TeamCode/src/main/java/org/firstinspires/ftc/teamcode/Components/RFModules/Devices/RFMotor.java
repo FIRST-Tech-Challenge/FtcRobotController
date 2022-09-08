@@ -19,6 +19,7 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs;
     private double maxtickcount;
     private double mintickcount;
+    private double TICK_BOUNDARY_PADDING = 5, TICK_STOP_PADDING=5;
 
     /*Initializes the motor
         Inputs:

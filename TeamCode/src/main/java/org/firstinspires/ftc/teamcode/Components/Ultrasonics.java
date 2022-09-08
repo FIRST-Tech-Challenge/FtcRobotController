@@ -95,7 +95,7 @@ public class Ultrasonics {
             angle+=360;
         }
         if (time - lastUltraUpdate > 0.05 && !high) {
-            ultraBack.enable(false);
+//            ultraBack.enable(false);
             ultraRight.enable(false);
             ultraFront.enable(false);
             ultraLeft.enable(false);
@@ -206,8 +206,8 @@ public class Ultrasonics {
 
     private void getDistance() {
         dist = new double[]{90.48337 * ultrasonicRight.getVoltage() - 13.12465, 90.48337 * ultrasonicLeft.getVoltage() - 13.12465
-                , 90.48337 * ultrasonicFront.getVoltage() - 13.12465, 90.48337 * ultrasonicBack.getVoltage() - 13.12465};
-        ultraBack.enable(true);
+                , 90.48337 * ultrasonicFront.getVoltage() - 13.12465, - 13.12465};
+//        ultraBack.enable(true);
         ultraRight.enable(true);
         ultraFront.enable(true);
         ultraLeft.enable(true);

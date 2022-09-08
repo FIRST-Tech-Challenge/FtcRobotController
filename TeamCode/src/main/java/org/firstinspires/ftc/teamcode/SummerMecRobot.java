@@ -21,18 +21,16 @@ public class SummerMecRobot extends BasicRobot{
     public LimitSwitches touchs = null;
     public SummerMecRobot(LinearOpMode opMode){
         super(opMode);
-          intakeSlides = new IntakeSlides();
         ultras = new Ultrasonics();
         touchs = new LimitSwitches();
         imu = new IMU();
+        intakeSlides = new IntakeSlides();
         roadrun = new SampleMecanumDrive(op.hardwareMap, this);
         queuer = new Queuer();
     }
     public void extendIntakeTo(double position){
         if (queuer.queue(true, abs(position- intakeSlides.getPosition())<10)) {
-            if (abs(position- intakeSlides.getPosition())>10) {
                 intakeSlides.extendIntakeTo(position);
-            }
         }
     }
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
