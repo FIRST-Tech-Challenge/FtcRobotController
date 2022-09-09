@@ -30,7 +30,8 @@ public class PIDballBalance extends LinearOpMode {
     public static double kp = 0.15; //affects sensitivity for proportional controller
     public static double ki = 0.005; //affects sensitivity for integral controller
     public static double kd = 30; //affects sensitivity for derivative controller
-
+                                    //varies based on your system
+    
     public static double PID_p_error = 0.0; //kp * error
     public static double PID_i_error = 0.0; //Ki * error + Previous Integral correction
     public static double PID_d_error = 0.0; //kd * ((prev. error - current error) / ElapsedTime)
@@ -90,14 +91,8 @@ public class PIDballBalance extends LinearOpMode {
             telemetry.addData("kp: ", kp);
             telemetry.addData("ki: ", ki);
             telemetry.addData("kd: ", kd);
-            telemetry.addData("error: ", error);
             telemetry.addData("distance: ", currentValue);
             telemetry.addData("setValue: ", setValue);
-            telemetry.addData("PID_p_error: ", PID_p_error);
-            telemetry.addData("PID_i_error: ", PID_i_error);
-            telemetry.addData("PID_d_error: ", PID_d_error);
-            telemetry.addData("PID_total: ", PID_total);
-            telemetry.addData("servoPosition: ", servoPosition);
             telemetry.update();
 
             previous_error = error; //the current error for this round will be previous error for next cycle
