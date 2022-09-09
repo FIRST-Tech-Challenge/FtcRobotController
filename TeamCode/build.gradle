@@ -32,6 +32,8 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
 
     implementation 'com.github.NoahBres:MeepMeep:2.0.0'
+
+    implementation 'org.openftc:easyopencv:1.5.1'
 }
 
 

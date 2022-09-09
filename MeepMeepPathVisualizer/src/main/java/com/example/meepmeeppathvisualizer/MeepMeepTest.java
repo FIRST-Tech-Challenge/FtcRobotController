@@ -2,6 +2,7 @@ package com.example.meepmeeppathvisualizer;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
@@ -51,16 +52,23 @@ public class MeepMeepTest {
                         }
                     };
 
+                    TrajectoryVelocityConstraint STVE = (a, b, c, d) -> 5;
+                    TrajectoryVelocityConstraint SpTVC = (a, b, c, d) -> 1000;
+                    TrajectoryAccelerationConstraint SpTAC = (a, b, c, d) -> 1000;
+
                     builder.forward(15);
 
                     builder.waitSeconds(1.5);
                     builder.lineToLinearHeading(new Pose2d(-55, -55, Math.toRadians(40)));
                     builder.waitSeconds(3);
                     builder.lineToLinearHeading(new Pose2d(-57, -57, Math.toRadians(90)));
-                    builder.strafeRight(15, STVC);
+                    builder.strafeRight(15, STVE);
                     builder.lineToLinearHeading(new Pose2d(-12.3, -44, Math.toRadians(90)));
                     builder.waitSeconds(2);
                     builder.lineToLinearHeading(new Pose2d(-60, -34, Math.toRadians(180)));
+                    builder.splineTo(new Vector2d(5, 10), 2, SpTVC, SpTAC);
+
+
 
 
 
