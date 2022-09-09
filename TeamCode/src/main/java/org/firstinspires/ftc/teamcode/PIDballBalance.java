@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -16,33 +17,33 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class PIDballBalance extends LinearOpMode {
 
     //hardware
-    private DistanceSensor sensorRange;
+    DistanceSensor sensorRange;
     Servo balServo;
 
 
-    public static double kp = 0.15;
-    public static double ki = 0.005;
-    public static double kd = 30;
-//works on charged rev battery lol. retune if different. Around 13.5 volts = fully charged
-    public static double PID_p_error = 0.0;
-    public static double PID_i_error = 0.0;
-    public static double PID_d_error = 0.0;
+    public static double currentValue = 0.0; //currentValue obtained from Distance Sensor
+    public static double setValue = 20; //Desired position from sensor (cm)
+    public static double error = 0.0; //setValue - CurrentValue
+    public static double previous_error = 0.0; //error before current error
+
+
+    public static double kp = 0.15; //affects sensitivity for proportional controller
+    public static double ki = 0.005; //affects sensitivity for integral controller
+    public static double kd = 30; //affects sensitivity for derivative controller
+
+    public static double PID_p_error = 0.0; //kp * error
+    public static double PID_i_error = 0.0; //Ki * error + Previous Integral correction
+    public static double PID_d_error = 0.0; //kd * ((prev. error - current error) / ElapsedTime)
     public static double PID_total = 0.0;
 
-    public static double distance = 0.0;
-    public static double error = 0.0;
-    public static double previous_error = 0.0;
-    public static double setValue = 20;
-
-    // public static double a = 0.9;
-    //LowPassFilter filter = new LowPassFilter(a);
-
-    boolean running = false;
-    double servoPosition = 0.0;
+    boolean running = false; //state variable for PID
+    double servoPosition = 0.0; //calculated to set servo position
 
     @Override
     public void runOpMode() {
 
+
+        //telemetry for FTC dashboard
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //hardware mapping our hardware
@@ -62,44 +63,49 @@ public class PIDballBalance extends LinearOpMode {
             if(gamepad1.a)   running = true;
             if(gamepad1.b)   running = false;
 
-            double currentValue = sensorRange.getDistance(DistanceUnit.CM);
-            //double estimate = filter.estimate(currentValue);
-            distance = sensorRange.getDistance(DistanceUnit.CM);
-            error = distance - setValue;
+            currentValue = sensorRange.getDistance(DistanceUnit.CM);
+            error = currentValue - setValue;
 
             if(running) {
-                PID_p_error = kp * error;
-                PID_d_error = kd * (error - previous_error) / timer_1.milliseconds();
-                balServo.setPosition(servoPosition);
+
                 if (-2 < error && error < 2) {
                     PID_i_error = 0;
                     PID_p_error = 0;
                     PID_d_error = 0;
                 } else {
+                    PID_p_error = kp * error;
                     PID_i_error = ki * error + PID_i_error;
+                    PID_d_error = kd * (error - previous_error) / timer_1.milliseconds();
+
+                    PID_total = PID_p_error + PID_i_error + PID_d_error;
+                    servoPosition = myMap(PID_total, -17.0, 10.0, 0.62, 0.0);
+                    balServo.setPosition(servoPosition);
                 }
+
+
             }
+            sleep(50); //time to allow the servo to settle down
 
-            PID_total = PID_p_error + PID_i_error + PID_d_error;
-            servoPosition = myMap(PID_total,-17.0, 10.0, 0.62, 0.0);
-
-            sleep(50);
-
+            telemetry.addData("Running: ", running);
             telemetry.addData("kp: ", kp);
             telemetry.addData("ki: ", ki);
             telemetry.addData("kd: ", kd);
-            telemetry.addData("distance: ", distance);
+            telemetry.addData("error: ", error);
+            telemetry.addData("distance: ", currentValue);
+            telemetry.addData("setValue: ", setValue);
+            telemetry.addData("PID_p_error: ", PID_p_error);
+            telemetry.addData("PID_i_error: ", PID_i_error);
+            telemetry.addData("PID_d_error: ", PID_d_error);
             telemetry.addData("PID_total: ", PID_total);
-            previous_error = error;
-            timer_1.reset();
+            telemetry.addData("servoPosition: ", servoPosition);
             telemetry.update();
 
-            //telemetry.addData("low pass", estimate);
-            //telemetry.addData("a", a);
+            previous_error = error; //the current error for this round will be previous error for next cycle
+            timer_1.reset(); //resetting elapsed time
 
         }
     }
-
+    //to normalize values between in range and out range
     public double myMap(double value, double inLow, double inHigh, double outLow, double outHigh) {
         return outLow + (outHigh-outLow)*(value - inLow)/(inHigh-inLow);
     }
