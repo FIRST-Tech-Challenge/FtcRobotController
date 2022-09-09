@@ -1,13 +1,17 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.poopoogarabge;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-@TeleOp(name="TeleopBadOne")
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class TeleopBadOneController extends LinearOpMode {
+@TeleOp(name="TeleopBad")
+
+public class TeleopBad extends LinearOpMode {
 
     double MAX_SPEED = 0.9;
 
@@ -120,26 +124,26 @@ public class TeleopBadOneController extends LinearOpMode {
                 backRight.setPower(0);
                 detection = "None";
             }
-            if (gamepad1.dpad_up) { //up
+            if (gamepad2.dpad_up) { //up
                 arm.setTargetPosition(1250);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
 
             }
-            if (gamepad1.dpad_left) { //middle
+            if (gamepad2.dpad_left) { //middle
                 arm.setTargetPosition(825);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
 
             }
-            if (gamepad1.dpad_right) { //low
+            if (gamepad2.dpad_right) { //low
                 arm.setTargetPosition(500);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.5);
 
             }
 
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 arm.setTargetPosition(75);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 arm.setPower(.3);
@@ -151,9 +155,9 @@ public class TeleopBadOneController extends LinearOpMode {
 
             }
 
-            if (gamepad1.right_trigger > 0.1) {
+            if (gamepad2.right_trigger > 0.1) {
                 intake.setPower(-1);
-            } else if (gamepad1.left_trigger > 0.1) {
+            } else if (gamepad2.left_trigger > 0.1) {
                 intake.setPower(1);
             } else {
                 intake.setPower(0);
@@ -178,9 +182,9 @@ public class TeleopBadOneController extends LinearOpMode {
     }
 
     protected void turnDuck(DcMotor carousel){
-        if(gamepad1.right_bumper){
+        if(gamepad2.right_bumper){
             carousel.setPower(-0.5 );
-        } else  if (gamepad1.left_bumper){
+        } else  if (gamepad2.left_bumper){
             carousel.setPower(0.5);
         }else {
             carousel.setPower(0);
