@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous
-public class SquareTrajectories extends LinearOpMode {
+public class EXAMPLE_TurningWithTrajectories extends LinearOpMode {
     @Override
     public void runOpMode() {
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
@@ -42,7 +42,7 @@ public class SquareTrajectories extends LinearOpMode {
             if (isStopRequested()) return;
 
             bot.followTrajectory(forward);
-            bot.turn(Math.toRadians(90));
+            bot.turn(Math.toRadians(90)); // turns are not actually a part of the trajectoryBuilder core
             bot.followTrajectory(left);
             bot.turn(Math.toRadians(90));
             bot.followTrajectory(back);

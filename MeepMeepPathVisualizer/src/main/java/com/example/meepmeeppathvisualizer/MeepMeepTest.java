@@ -43,6 +43,7 @@ public class MeepMeepTest {
 
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
+
                     TrajectoryVelocityConstraint STVC = new TrajectoryVelocityConstraint() {
                         @Override
                         public double get(double v, @NotNull Pose2d pose2d, @NotNull Pose2d pose2d1, @NotNull Pose2d pose2d2) {

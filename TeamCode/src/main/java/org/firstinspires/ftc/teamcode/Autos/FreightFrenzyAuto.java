@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous
@@ -40,35 +39,14 @@ public class FreightFrenzyAuto extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(-59,-35), Math.toRadians(180))
                 .build();
 
-        /*
-        Trajectory forwardTrajectory = bot.trajectoryBuilder(strafeTrajectory.end())
-                .forward(5)
-                .build();
-
-        Trajectory smoothTraj = bot.trajectoryBuilder(new Pose2d(0,0,0)) //added new pose with 90 angle to simulate turn
-                .forward(10)
-                .splineTo(new Vector2d(15,5), 0)
-                .build();
-
-        Trajectory goForward = bot.trajectoryBuilder(smoothTraj.end().plus(new Pose2d(0,0, Math.toRadians(90))), false)
-                .forward(5)
-                .build();
-         */
-
         waitForStart();
-
         if(isStopRequested()) return;
 
-        //These tell the bot to begin following the path, where each line is executed one by one
+
 
         /*\
-        bot.followTrajectory(strafeTrajectory);
-        bot.followTrajectory(reverseSpline);
-        bot.followTrajectory(forwardTrajectory);
-        bot.followTrajectory(smoothTraj);
-        bot.turn(Math.toRadians(90));
-        bot.followTrajectory(goForward);
-         \*/
+        BOT FOLLOW COMMANDS
+        \*/
 
         // Rather than use a for loop, we should copy and paste the same trajectory sequence and adjust accordingly.
         // Using a for loop will create minor inconsistencies since our encoders are not perfect (error increases in magnitude each iteration)
@@ -82,10 +60,9 @@ public class FreightFrenzyAuto extends LinearOpMode {
         // .wait() = bad
         // .waitSeconds is better, but can only be used in Path Sequence
         // sleep also works in both Trajectory and Path Sequence
+        // .sleep() = bad
         bot.followTrajectory(hubToParking);
         sleep(1000);
         bot.followTrajectory(forwardToHub);
-
-
     }
 }
