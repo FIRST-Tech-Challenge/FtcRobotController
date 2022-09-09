@@ -129,6 +129,8 @@ public class TeleopBadOneControllerV2 extends LinearOpMode {
                 slide.setPower(1);
             } else if (gamepad1.dpad_down) { // Moves Slides Down
                 slide.setPower(-0.5);
+            } else if (slide.getCurrentPosition() >= 0){
+                slide.setPower(0);
             } else {
                 slide.setPower(0);
             }
