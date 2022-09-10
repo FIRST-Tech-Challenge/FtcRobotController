@@ -14,6 +14,10 @@ public class BasicRobot{
         logger.createFile("gamepad", "Value Name Time");
         queuer = new Queuer();
     }
+    public void stop(){
+        logger.closeLog();
+        op.stop();
+    }
     public void readGamepad(float value, String name){
         logger.log("gamepad", name + ": " + value + "at time " + op.time);
     }
