@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Components.Queuer;
 public class BasicRobot{
     public static Logger logger;
     public static LinearOpMode op = null;
-    private Queuer queuer = null;
+    protected Queuer queuer = null;
     public BasicRobot(LinearOpMode opMode){
         op = opMode;
         logger = new Logger();
