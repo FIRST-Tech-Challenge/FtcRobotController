@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot;
+package org.firstinspires.ftc.teamcode.robots.ri2d;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.VisionProvider;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.VisionProvider;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.vision.Viewpoint;
  */
 public class Autonomous {
 
-    private PoseUG robot;
+    private PoseRi2D robot;
     private Telemetry telemetry;
     private Gamepad gamepad1;
 
@@ -47,7 +47,7 @@ public class Autonomous {
     private static final float TURN_TIME = 2;
     private static final float DUCKY_TIME = 1.0f;
 
-    public Autonomous(PoseUG robot, Telemetry telemetry, Gamepad gamepad1) {
+    public Autonomous(PoseRi2D robot, Telemetry telemetry, Gamepad gamepad1) {
         this.robot = robot;
         this.telemetry = telemetry;
         this.gamepad1 = gamepad1;

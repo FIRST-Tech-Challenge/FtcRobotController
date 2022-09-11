@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode.robots.goodBot;
+package org.firstinspires.ftc.teamcode.robots.ri2d;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -43,13 +43,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
-import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE;
-import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.ALLIANCE_INT_MOD;
-import static org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants.isInner;
+import static org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants.ALLIANCE;
+import static org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants.ALLIANCE_INT_MOD;
+import static org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants.isInner;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.nearZero;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.notdeadzone;
 
@@ -58,17 +58,17 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.notdeadzone;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "AAAGoodBot_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@TeleOp(name = "AAA_Ri2D_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
-public class UG_6832 extends OpMode {
+public class Ri2D_6832 extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
-    private PoseUG.RobotType currentBot = PoseUG.RobotType.goodBot;
+    private PoseRi2D.RobotType currentBot = PoseRi2D.RobotType.Ri2d;
 
-    private PoseUG robot;
+    private PoseRi2D robot;
 
     private Autonomous auto;
 
@@ -308,7 +308,7 @@ public class UG_6832 extends OpMode {
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
 
-        robot = new PoseUG(currentBot);
+        robot = new PoseRi2D(currentBot);
         robot.init(this.hardwareMap);
 
         auto = new Autonomous(robot, dummyT, gamepad1);
@@ -349,7 +349,7 @@ public class UG_6832 extends OpMode {
 
                 // this test suppresses pregame driving while a calibration articulation is
                 // active
-                if (robot.articulation == PoseUG.Articulation.manual)
+                if (robot.articulation == PoseRi2D.Articulation.manual)
                     joystickDrivePregameMode();
 
                 if(!auto.visionProviderFinalized) {

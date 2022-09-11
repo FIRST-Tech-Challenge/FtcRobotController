@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot.vision;
+package org.firstinspires.ftc.teamcode.robots.ri2d.vision;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot;
+package org.firstinspires.ftc.teamcode.robots.ri2d;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.utilMethods;
 
 public class LiftNClaw {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot.utils;
+package org.firstinspires.ftc.teamcode.robots.ri2d.utils;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 

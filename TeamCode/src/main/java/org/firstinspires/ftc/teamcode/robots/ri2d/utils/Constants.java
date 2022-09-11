@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot.utils;
-
-import com.acmerobotics.dashboard.config.Config;
+package org.firstinspires.ftc.teamcode.robots.ri2d.utils;
 
 //@Config
 public class Constants {

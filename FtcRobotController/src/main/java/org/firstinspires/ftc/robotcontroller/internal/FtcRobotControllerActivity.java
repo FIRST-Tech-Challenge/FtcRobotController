@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.internal;
 
+import static org.firstinspires.ftc.robotcontroller.internal.LegacyGamepad.isGamepadDevice;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -867,7 +869,7 @@ public class FtcRobotControllerActivity extends Activity
 
     @Override
     public boolean dispatchGenericMotionEvent(MotionEvent event) {
-      if (!Gamepad.isGamepadDevice(event.getDeviceId())) {
+      if (!LegacyGamepad.isGamepadDevice(event.getDeviceId())) {
         return super.dispatchGenericMotionEvent(event);
       } else {
         GamepadRC.gamepadRC.update(event);
@@ -877,7 +879,7 @@ public class FtcRobotControllerActivity extends Activity
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-      if (!Gamepad.isGamepadDevice(event.getDeviceId())) {
+      if (!LegacyGamepad.isGamepadDevice(event.getDeviceId())) {
         return super.dispatchKeyEvent(event);
       } else {
         handleCartbot(event);

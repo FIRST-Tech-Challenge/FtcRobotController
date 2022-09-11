@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot.vision;
+package org.firstinspires.ftc.teamcode.robots.ri2d.vision;
 
 import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.BlobStats;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;

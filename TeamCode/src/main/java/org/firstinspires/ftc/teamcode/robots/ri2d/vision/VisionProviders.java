@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot.vision;
+package org.firstinspires.ftc.teamcode.robots.ri2d.vision;
 
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.dummy.FourDummyVisionIntegration;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.dummy.OneDummyVisionIntegration;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.dummy.ZeroDummyVisionIntegration;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.dummy.FourDummyVisionIntegration;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.dummy.OneDummyVisionIntegration;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.dummy.ZeroDummyVisionIntegration;
 
 public class VisionProviders {
     private VisionProviders() { throw new RuntimeException("Utility Class"); }

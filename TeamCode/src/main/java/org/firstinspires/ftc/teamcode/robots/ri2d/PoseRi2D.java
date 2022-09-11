@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot;
+package org.firstinspires.ftc.teamcode.robots.ri2d;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -14,10 +14,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.CanvasUtils.Point;
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.CanvasUtils;
-import org.firstinspires.ftc.teamcode.robots.goodBot.utils.Constants;
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.ri2d.utils.CanvasUtils.Point;
+import org.firstinspires.ftc.teamcode.robots.ri2d.utils.CanvasUtils;
+import org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -48,7 +48,7 @@ import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;
  */
 
 @Config
-public class PoseUG {
+public class PoseRi2D {
 
     // setup
     HardwareMap hwMap;
@@ -164,7 +164,7 @@ public class PoseUG {
     }
 
     public enum RobotType {
-        BigWheel, Icarus, Minimech, TomBot, UGBot, goodBot;
+        BigWheel, Icarus, Minimech, TomBot, UGBot, Ri2d;
     }
 
     public RobotType currentBot;
@@ -201,7 +201,7 @@ public class PoseUG {
      * @param heading The heading of the robot
      * @param speed   The speed of the robot
      */
-    public PoseUG(double x, double y, double heading, double speed) {
+    public PoseRi2D(double x, double y, double heading, double speed) {
 
         poseX = x;
         poseY = y;
@@ -219,7 +219,7 @@ public class PoseUG {
      * @param y     The position relative to the y axis of the field
      * @param angle The vuAngle of the robot
      */
-    public PoseUG(double x, double y, double angle) {
+    public PoseRi2D(double x, double y, double angle) {
 
         poseX = x;
         poseY = y;
@@ -235,7 +235,7 @@ public class PoseUG {
 
 
 
-    public PoseUG(RobotType name) {
+    public PoseRi2D(RobotType name) {
 
         poseX = Constants.startingXOffset;
         poseY = Constants.startingYOffset;

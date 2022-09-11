@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.robots.goodBot.vision.dummy;
+package org.firstinspires.ftc.teamcode.robots.ri2d.vision.dummy;
 
-import org.firstinspires.ftc.teamcode.robots.goodBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.ri2d.vision.StackHeight;
 
 public class FourDummyVisionIntegration extends AbstractDummyVisionIntegration {
 
