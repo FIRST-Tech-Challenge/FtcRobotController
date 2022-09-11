@@ -56,8 +56,15 @@ public class Crane implements Subsystem {
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
 
+    //these 5 config variables won't have any effect if changed in dashboard since they are currently assigned at compile
+    public static double HITIER_ELBOW = 76;
+    public static double HITIER_SHOULDER = -4.9;
+    public static double HITIER_WRIST=70;
+    public static double HITIER_TURRET = 90;
+    public static double HITIER_DUMP = -174;
+
     public static double P = 0.995;
-    public static double BUCKET_TRIGGER_DISTANCE = 7.75;
+    public static double BUCKET_TRIGGER_DISTANCE = 8; //7.75
 
     public Turret turret;
 
@@ -138,9 +145,10 @@ public class Crane implements Subsystem {
         HIGH_TIER(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 9, 0.85f),
 //        HIGH_TIER_LEFT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 9, -90, 1.875f),
 //        HIGH_TIER_RIGHT(15, HIGH_TIER_SHIPPING_HUB_HEIGHT + 9, 90, 1.875f),
-        HIGH_TIER_LEFT(-4.920813143253326, 72.16384265571833, 70.09306891262531, -90, 1f, -174.03407676517963),
-        HIGH_TIER_RIGHT(-4.920813143253326, 72.16384265571833, 70.09306891262531, 90, 1f, -174.03407676517963),
-
+//        HIGH_TIER_LEFT(-4.920813143253326, 72.16384265571833, 70.09306891262531, -90, 1f, -174.03407676517963),
+//        HIGH_TIER_RIGHT(-4.920813143253326, 72.16384265571833, 70.09306891262531, 90, 1f, -174.03407676517963),
+        HIGH_TIER_LEFT(HITIER_SHOULDER, HITIER_ELBOW, HITIER_WRIST, -HITIER_TURRET, 1f, HITIER_DUMP),
+        HIGH_TIER_RIGHT(HITIER_SHOULDER, HITIER_ELBOW, HITIER_WRIST, HITIER_TURRET, 1f, HITIER_DUMP),
 
         TRANSFER(-45.598692297935486, -67.18511611223221, -19.45390723645687, 0, 0.4f, 0),
         POST_DUMP(-24.44047723710537, 75.32890900969505, 180.0, 0.6f, 0),
