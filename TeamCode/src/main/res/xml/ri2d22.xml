@@ -3,7 +3,7 @@
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
         <LynxModule name="Expansion Hub 1" port="1">
             <RevRobotics40HDHexMotor name="duckSpinner" port="0" />
-            <RevRobotics40HDHexMotor name="lift" port="1" />
+            <RevRobotics20HDHexMotor name="lift" port="1" />
             <RevBlinkinLedDriver name="blinkin" port="0" />
             <Servo name="gripperActuator" port="1" />
             <Servo name="gripperPitchServo" port="2" />

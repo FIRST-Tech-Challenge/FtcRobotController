@@ -103,6 +103,8 @@ public class Ri2D_6832 extends OpMode {
     // sensors/sensing-related variables
     private Orientation angles;
 
+    //toggle variables
+    private boolean a_pressed_last_loop = false;
     // these are meant as short term testing variables, don't expect their usage
     // to be consistent across development sessions
     // private double testableDouble = robot.kpDrive;
@@ -303,7 +305,7 @@ public class Ri2D_6832 extends OpMode {
      */
     @Override
     public void init() {
-
+        telemetry.addLine("this is a system.out.prinlnt from init");
         telemetry.addData("Status", "Initializing " + currentBot + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
@@ -316,7 +318,7 @@ public class Ri2D_6832 extends OpMode {
         logger = new CsvLogKeeper("test",3,"tps, armTicks, targetDistance");
 
 
-        debugTelemetry = gamepad1.right_trigger > .3;
+        //debugTelemetry = gamepad1.right_trigger > .3;
         debugTelemetry = true;
         if (debugTelemetry)
             configureDashboardDebug();
@@ -457,6 +459,7 @@ public class Ri2D_6832 extends OpMode {
          */
         @Override
         public void start() {
+            telemetry.addLine("this is println from start");
             runtime.reset();
 
 
@@ -478,6 +481,7 @@ public class Ri2D_6832 extends OpMode {
      */
     @Override
     public void loop() {
+        telemetry.addLine("this is system println from loop");
         //orange
             stateSwitch();
             if (active) {
@@ -558,6 +562,7 @@ public class Ri2D_6832 extends OpMode {
 
     private void joystickDrive() { //apple
 
+        telemetry.addLine("this is println from joystickdrive");
         if (!joystickDriveStarted) {
             joystickDriveStarted = true;
             robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
@@ -605,15 +610,19 @@ public class Ri2D_6832 extends OpMode {
             robot.driveMixerMec(pwrFwd * pwrDamper, pwrStf, pwrRot);
         }
 
-        if(toggleAllowed(gamepad1.x,x,1)) {
-            robot.toggleDuckSpinner();
+        if(gamepad1.x) {
+            //robot.toggleDuckSpinner();
         }
-
-        if(toggleAllowed(gamepad1.a,a,1)){
-            robot.lnc.toggleGripper();
+       
+        if(gamepad1.a) {
+            if(!a_pressed_last_loop) robot.lnc.toggleGripper();
         }
-
-        if(toggleAllowed(gamepad1.y,y,1)){
+        else{
+            if(a_pressed_last_loop) robot.lnc.toggleGripper();
+        }
+        telemetry.addLine(""+toggleAllowed(gamepad1.a,a,1));
+        telemetry.addLine(""+gamepad1.a);
+        if(gamepad1.y){
             robot.lnc.toggleLiftHeight();
         }
     }

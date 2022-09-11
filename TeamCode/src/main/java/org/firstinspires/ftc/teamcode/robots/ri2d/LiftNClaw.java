@@ -18,7 +18,7 @@ public class LiftNClaw {
 
     private int gripperPitchPos = foldedBackPitch;
     private int liftMin = 15;
-    private int liftMax = 3000;
+    private int liftMax = 4035;
     private int liftTopPrefered = 2600;
     private int liftHeight = liftMin;
 
@@ -29,6 +29,7 @@ public class LiftNClaw {
         this.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.lift.setTargetPosition(lift.getCurrentPosition());
         this.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.lift.setDirection(DcMotor.Direction.REVERSE);
 
         this.gripperActuator = gripperActuator;
         this.gripperPitchServo = gripperPitch;
