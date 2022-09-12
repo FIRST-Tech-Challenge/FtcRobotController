@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -9,11 +10,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
-import org.firstinspires.ftc.teamcode.params.VuforiaParams;
+import org.firstinspires.ftc.teamcode.BuildConfig;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +33,10 @@ public class Vuforia {
         public VuforiaLocalizer(Parameters parameters) {
             super(parameters);
         }
-
         public void close() {
             super.close();
         }
     }
-
-    private static final String VUFORIA_KEY = VuforiaParams.VUFORIA_KEY;
 
     private static final float mmPerInch      = 25.4f;
     private static final float mmTargetHeight = (6) * mmPerInch;  // the height of the center of the target image above the floor
@@ -114,7 +113,7 @@ public class Vuforia {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.useExtendedTracking = false;
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.vuforiaLicenseKey = BuildConfig.VUFORIA_KEY;
         switch (cameraChoice) {
             case PHONE_FRONT:
                 parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
