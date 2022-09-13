@@ -24,4 +24,19 @@ public class ScoringSystem {
     public void moveToPosition(int tics, double power){
 
     }
+
+    public void setPower(double power){
+        rLift.setPower(power);
+        lLift.setPower(power);
+    }
+
+    public void setLinkagePosition(double position){
+        //TODO: tune position values
+        /*lLinkage.setPosition();
+        rLinkage.setPosition();*/
+    }
+
+    public void setGrabberPosition(double position){
+        grabber.setPosition(position);
+    }
 }
