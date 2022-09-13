@@ -153,15 +153,19 @@ public class MecanumTeleOp extends OpMode {
 
    public void lift(boolean precisionToggle){
    if(gamepad1.right_trigger > 0){
-        if(precisionToggle = true) liftMotor.setPower(gamepad1.right_trigger * 0.6);
-        else                       liftMotor.setPower(gamepad1.right_trigger);
+        if(precisionToggle)
+            liftMotor.setPower(gamepad1.right_trigger * 0.6);
+
+        else
+            liftMotor.setPower(gamepad1.right_trigger);
        }
 
    if(gamepad1.left_trigger > 0){
-        if (precisionToggle = true){
-        liftMotor.setPower(-(gamepad1.left_trigger * 0.6)); // making this value negative because we want the motor to spin in the opposite direction
-        }
-        else liftMotor.setPower(-gamepad1.left_trigger);
+        if (precisionToggle)
+            liftMotor.setPower(-(gamepad1.left_trigger * 0.6)); // making this value negative because we want the motor to spin in the opposite direction
+
+        else
+            liftMotor.setPower(-gamepad1.left_trigger);
        }
    }// end of lift()
 
