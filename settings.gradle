@@ -1,3 +1,3 @@
 include ':FtcRobotController'
-include ':A16750'
-include ':B20403'
+include ':Sixteen750'
+include ':Twenty403'
