@@ -1,22 +1,20 @@
 package org.firstinspires.ftc.teamcode.opmodes.base;
 
-import android.util.Log;
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-import org.firstinspires.ftc.teamcode.components.IMUSystem;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 
 import java.util.EnumMap;
 
+
+
 /**
  * Basic OpMode template
  */
-public abstract class BaseOpMode extends OpMode {
+public abstract class TestingOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
     protected Vuforia vuforia;
@@ -31,7 +29,8 @@ public abstract class BaseOpMode extends OpMode {
         // Initialize motors
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
-            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));BaseOpMode
+            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
+            TestingOpMode
         }
         driveSystem = new DriveSystem(driveMap);
     }
