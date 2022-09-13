@@ -19,7 +19,14 @@ android {
     namespace = 'org.firstinspires.ftc.teamcode'
 }
 
+repositories {
+  maven { url = 'https://maven.brott.dev/' }
+  maven { url = 'https://jitpack.io' }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'com.github.technototes:TechnoLib:1.0.2'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
 }
