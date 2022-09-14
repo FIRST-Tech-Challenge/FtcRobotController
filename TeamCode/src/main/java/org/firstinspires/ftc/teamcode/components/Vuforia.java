@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -37,20 +39,19 @@ public class Vuforia {
         }
     }
 
-    private static final String VUFORIA_KEY = VuforiaParams.VUFORIA_KEY;
 
-    private static final float mmPerInch      = 25.4f;
+    private static final float mmPerInch = 25.4f;
     private static final float mmTargetHeight = (6) * mmPerInch;  // the height of the center of the target image above the floor
-    private static final float stoneZ         = 2.00f * mmPerInch;
-    private static final float bridgeZ        = 6.42f * mmPerInch;
-    private static final float bridgeY        = 23 * mmPerInch;
-    private static final float bridgeX        = 5.18f * mmPerInch;
-    private static final float bridgeRotY     = 59;                    // Units are degrees
-    private static final float bridgeRotZ     = 180;
-    private static final float halfField      = 72 * mmPerInch;
-    private static final float quadField      = 36 * mmPerInch;
-    private OpenGLMatrix lastLocation         = null;
-    private VuforiaLocalizer vuforia          = null;
+    private static final float stoneZ = 2.00f * mmPerInch;
+    private static final float bridgeZ = 6.42f * mmPerInch;
+    private static final float bridgeY = 23 * mmPerInch;
+    private static final float bridgeX = 5.18f * mmPerInch;
+    private static final float bridgeRotY = 59;                    // Units are degrees
+    private static final float bridgeRotZ = 180;
+    private static final float halfField = 72 * mmPerInch;
+    private static final float quadField = 36 * mmPerInch;
+    private OpenGLMatrix lastLocation = null;
+    private VuforiaLocalizer vuforia = null;
     public VuforiaTrackables targetsPictures;
     private List<VuforiaTrackable> allTrackables;
 
@@ -72,9 +73,9 @@ public class Vuforia {
 
     public boolean isTargetVisible(VuforiaTrackable targetTrackable) {
         for (VuforiaTrackable trackable : allTrackables) {
-            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
                 if (trackable.getName().equals(targetTrackable.getName())) {
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
                     if (robotLocationTransform != null) {
                         lastLocation = robotLocationTransform;
                     }
@@ -87,8 +88,8 @@ public class Vuforia {
 
     public boolean isAnyTargetVisible() {
         for (VuforiaTrackable trackable : allTrackables) {
-            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
@@ -96,6 +97,15 @@ public class Vuforia {
             }
         }
         return false;
+    }
+
+    public String nameOfTargetVisible() {
+        for (VuforiaTrackable trackable : allTrackables) {
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                return trackable.getName();
+            }
+        }
+        return "None.";
     }
 
     public void activate() {
@@ -114,7 +124,7 @@ public class Vuforia {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         parameters.useExtendedTracking = false;
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.vuforiaLicenseKey = BuildConfig.VUFORIA_KEY;
         switch (cameraChoice) {
             case PHONE_FRONT:
                 parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
@@ -130,7 +140,8 @@ public class Vuforia {
                 break;
         }
         vuforia = new VuforiaLocalizer(parameters);
-        initializeTrackables(vuforia, "Power Play");
+        initializeTrackables(vuforia, "PowerPlay");
+
         return vuforia;
     }
 
@@ -139,52 +150,29 @@ public class Vuforia {
         targetsPictures = vuforia.loadTrackablesFromAsset(game);
 
 
-
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
         allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsPictures);
 
 
 
-        //Set the position of the perimeter targets with relation to origin (center of field)
-        //4 target that stay constant each year, add more if needed
-//        red1.setLocation(OpenGLMatrix
-//                .translation(quadField, -halfField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180)));
-//
-//        red2.setLocation(OpenGLMatrix
-//                .translation(-quadField, -halfField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180)));
-//
-//        front1.setLocation(OpenGLMatrix
-//                .translation(-halfField, -quadField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
-//
-//        front2.setLocation(OpenGLMatrix
-//                .translation(-halfField, quadField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 90)));
-//
-//        blue1.setLocation(OpenGLMatrix
-//                .translation(-quadField, halfField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
-//
-//        blue2.setLocation(OpenGLMatrix
-//                .translation(quadField, halfField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
-//
-//        rear1.setLocation(OpenGLMatrix
-//                .translation(halfField, quadField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , -90)));
-//
-//        rear2.setLocation(OpenGLMatrix
-//                .translation(halfField, -quadField, mmTargetHeight)
-//                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
-
         // TODO most likely will need to end up establishing precise positions in the future
         /**  Let all the trackable listeners know where the phone is.  */
-        final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
+        final float CAMERA_FORWARD_DISPLACEMENT = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
         final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
-        final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
+        final float CAMERA_LEFT_DISPLACEMENT = 0;     // eg: Camera is ON the robot's center line
+
+        for (VuforiaTrackable trackable : allTrackables) {
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+
+                // getUpdatedRobotLocation() will return null if no new information is available since
+                // the last time that call was made, or if the trackable is not currently visible.
+                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
+                if (robotLocationTransform != null) {
+                    lastLocation = robotLocationTransform;
+                }
+                break;
+            }
 
 //        OpenGLMatrix robotFromCamera = OpenGLMatrix
 //                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -193,6 +181,16 @@ public class Vuforia {
 //        for (VuforiaTrackable trackable : allTrackables) {
 //            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
 
-        targetsPictures.activate();
+            targetsPictures.activate();
+        }
+
+
     }
+    public void identifyTarget(int targetIndex, String targetName, float dx, float dy, float dz, float rx, float ry, float rz) {
+        VuforiaTrackable aTarget = targetsPictures.get(targetIndex);
+        aTarget.setName(targetName);
+        aTarget.setLocation(OpenGLMatrix.translation(dx, dy, dz)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, rx, ry, rz)));
+    }
+
 }
