@@ -32,17 +32,48 @@ public class MecDrive {
         this.robot = robot;
         this.pidEnabled = pidEnabled;
         this.telemetry = telemetry;
+
+        robot.setShouldUpdate(false);
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.setShouldUpdate(true);
+
+
+
+
         CorrectMotors();
     }
 
-    //TODO: fix this cuz wont run if all then dont run to same position(all ands in while loop)
-    public void newMoveToPosition(Point p, double power){
-        double direction = Utils.wrapAngle(p.getDirection()) - (Math.PI/4);
+    public void rotate(double angle, double power){
+        if(angle < 0){
+            power *= -1;
+        }
 
-        int flPosition = (int)(Math.cos(direction) * p.magFromOrigin());
-        int frPosition = (int)(Math.sin(direction) * p.magFromOrigin());
-        int blPosition = (int)(Math.sin(direction) * p.magFromOrigin());
-        int brPosition = (int)(Math.cos(direction) * p.magFromOrigin());
+        angle = Utils.wrapAngle(angle);
+
+        while(Math.abs(robot.getDirection()) < Math.abs(angle)){
+            setPower(-power, power, -power, power);
+        }
+
+        brake();
+
+    }
+
+    //TODO: fix this cuz wont run if all then dont run to same position(all ands in while loop)
+    public void newMoveToPosition(Point p, double power) {
+        double direction = Utils.wrapAngle(p.getDirection()) - (Math.PI / 4);
+
+        int flPosition = (int) (Math.cos(direction) * p.magFromOrigin());
+        int frPosition = (int) (Math.sin(direction) * p.magFromOrigin());
+        int blPosition = (int) (Math.sin(direction) * p.magFromOrigin());
+        int brPosition = (int) (Math.cos(direction) * p.magFromOrigin());
 
         /*double flVelocity = Math.max(1, velocity * Math.cos(direction));
         double frVelocity = Math.max(1, velocity * Math.sin(direction));
@@ -55,18 +86,44 @@ public class MecDrive {
         double brPower = Math.cos(direction) * power;
 
 
-        if(pidEnabled){
+        if (pidEnabled) {
             //setPIDVelocity(flVelocity, flPosition, frVelocity, frPosition, blVelocity, blPosition, brVelocity, brPosition);
-        }else {
+        } else {
             LynxModule.BulkData data = robot.getBulkPacket(isDriveOnChub);
 
             int flPos = data.getMotorCurrentPosition(0);
             int frPos = data.getMotorCurrentPosition(1);
             int blPos = data.getMotorCurrentPosition(2);
             int brPos = data.getMotorCurrentPosition(3);
-            while (opModeIsRunning() && flPos < flPosition && frPos < frPosition && blPos < blPosition && brPos < brPosition) {
+
+            //TODO: might need to change this direction thing
+            if(direction + (Math.PI/4) > 0) {
+                frPos *= -1;
+                brPos *= -1;
+            }else{
+                flPos *= -1;
+                blPos *= -1;
+            }
+            //TODO:check if might need to change abs condition
+            while (opModeIsRunning() && (flPos < Math.abs(flPosition) || frPos < Math.abs(frPosition) || blPos < Math.abs(blPosition) || brPos < Math.abs(brPosition))) {
                 //setMotorVelocity(flVelocity, frVelocity, blVelocity, brVelocity);
+
+                if (flPos >= flPosition) {
+                    flPower = 0;
+
+                } else if (frPos >= frPosition) {
+                    frPower = 0;
+
+                } else if (blPos >= blPosition) {
+                    blPower = 0;
+
+                } else if (brPos >= brPosition) {
+                    brPower = 0;
+
+                }
+
                 setPower(flPower, frPower, blPower, brPower);
+
 
                 //setPower(0.3, 0.3, 0.3, 0.3);
                 data = robot.getBulkPacket(isDriveOnChub);
@@ -76,6 +133,13 @@ public class MecDrive {
                 blPos = data.getMotorCurrentPosition(2);
                 brPos = data.getMotorCurrentPosition(3);
 
+                if(direction + (Math.PI/4) > 0) {
+                    frPos *= -1;
+                    brPos *= -1;
+                }else{
+                    flPos *= -1;
+                    blPos *= -1;
+                }
                 telemetry.addData("fl: ", flPos);
                 telemetry.addData("fr: ", frPos);
                 telemetry.addData("bl: ", blPos);
@@ -86,24 +150,23 @@ public class MecDrive {
                 telemetry.addData("target bl: ", blPosition);
                 telemetry.addData("target br: ", brPosition);
 
+                telemetry.addData("flPower: ", flPower);
+                telemetry.addData("frPower: ", frPower);
+                telemetry.addData("blPower: ", blPower);
+                telemetry.addData("brPower: ", brPower);
+
 
                 telemetry.update();
 
             }
             brake();
         }
-
-
-
-
-
-
     }
 
 
 
 
-    public void moveToPosition(Point p, double velocity){
+        public void moveToPosition(Point p, double velocity){
 
         double robotDirection = robot.getDirection();
         double direction = Utils.wrapAngle(p.getDirection()) - Utils.wrapAngle(robotDirection);
@@ -169,10 +232,7 @@ public class MecDrive {
 
     private void brake() {
         robot.setShouldUpdate(false);
-        fl.setVelocity(0);
-        fr.setVelocity(0);
-        bl.setVelocity(0);
-        br.setVelocity(0);
+        setPower(0,0,0,0);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
