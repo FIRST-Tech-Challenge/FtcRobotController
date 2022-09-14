@@ -10,12 +10,25 @@
 
 
 // Custom definitions may go here
+def apikeyPropertiesFile = rootProject.file("local.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+android {
+    namespace = 'org.firstinspires.ftc.teamcode'
+    defaultConfig {
+        buildConfigField "String", "VUFORIA_KEY", apikeyProperties['VUFORIA_KEY']
+        minSdkVersion 24
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
+
