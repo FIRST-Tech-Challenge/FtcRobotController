@@ -4,30 +4,63 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.League1.Common.Constants;
+import org.firstinspires.ftc.teamcode.League1.Common.Robot;
+
 public class ScoringSystem {
+
+    public enum ExtensionHeight{
+        HIGH,
+        MEDIUM
+    }
 
     //TODO: See if this is what we are actually using
     DcMotorEx rLift, lLift;
-    Servo grabber, lLinkage, rLinkage; //dont know whether there r two linkage servos or one
+    Servo grabber, /*lLinkage,*/ Linkage; //dont know whether there are two linkage servos or one
+    private Robot robot;
 
-    public ScoringSystem(HardwareMap hardwareMap){
+    Constants constants;
+    boolean fullyExtended = false;
+
+    public ScoringSystem(HardwareMap hardwareMap, Robot robot, Constants constants){
+        this.robot = robot;
+        this.constants = constants;
         rLift = hardwareMap.get(DcMotorEx.class, "RightLift");
         lLift = hardwareMap.get(DcMotorEx.class, "LeftLift");
 
-        lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
-        rLinkage = hardwareMap.get(Servo.class, "RightLinkage");
+        //lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
+        Linkage = hardwareMap.get(Servo.class, "RightLinkage");
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
     }
 
     //TODO: change to velocity later if possible and add PID implementation
     public void moveToPosition(int tics, double power){
+        if(!fullyExtended || tics == 0){
+
+        }
+
+
 
     }
 
-    public void setPower(double power){
+    public void extend(ExtensionHeight height){
+        if(height == ExtensionHeight.HIGH){
+            moveToPosition(constants.highHeight, 0.2);
+        }else{
+            moveToPosition(constants.mediumHeight, 0.2);
+        }
+
+    }
+
+    private void setPower(double power){
         rLift.setPower(power);
         lLift.setPower(power);
+    }
+
+    private void setVelocity(int velocity){
+        rLift.setVelocity(velocity);
+        lLift.setVelocity(velocity);
     }
 
     public void setLinkagePosition(double position){

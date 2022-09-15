@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.League1.Autonomous;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.OpModeWrapper;
 import org.firstinspires.ftc.teamcode.League1.Common.Point;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.MecDrive;
+import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 
 import java.io.FileNotFoundException;
 
@@ -14,11 +16,16 @@ import java.io.FileNotFoundException;
 public class RedCircuitAuto extends OpModeWrapper {
     Robot robot;
     MecDrive drive;
+    ScoringSystem score;
+
+    Constants constants;
 
     @Override
     protected void onInitialize() throws FileNotFoundException {
+        constants = new Constants();
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
+        score = new ScoringSystem(hardwareMap, robot, constants);
 
         robot.start();
 

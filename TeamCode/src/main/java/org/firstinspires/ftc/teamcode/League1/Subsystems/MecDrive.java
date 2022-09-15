@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -415,10 +416,9 @@ public class MecDrive {
         brake();
     }
 
-    PIDFCoefficients pid = new PIDFCoefficients(0,0,0,0);
 
 
-
+    PIDCoefficients pid = new PIDCoefficients(0,0,0);
 
     //TODO: see if can make more efficient using timer.reset() and maybe add pid for each motor
     private void setPIDRotateVelocity(double targetAngle){
@@ -438,7 +438,7 @@ public class MecDrive {
 
             double derivative = (error - previousError)/(currentTime - startTime);
 
-            double power = (pid.p * error) + (pid.i * integralSum) + (pid.d * derivative) + (pid.f * targetAngle);
+            double power = (pid.p * error) + (pid.i * integralSum) + (pid.d * derivative);
 
             if(targetAngle < 0){
                 power *= -1;
