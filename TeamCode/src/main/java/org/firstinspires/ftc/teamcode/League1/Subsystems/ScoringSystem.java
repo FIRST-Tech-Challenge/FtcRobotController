@@ -20,7 +20,7 @@ public class ScoringSystem {
         grabber = hardwareMap.get(Servo.class, "Grabber");
     }
 
-    //TODO: change to velocity later if possible
+    //TODO: change to velocity later if possible and add PID implementation
     public void moveToPosition(int tics, double power){
 
     }
