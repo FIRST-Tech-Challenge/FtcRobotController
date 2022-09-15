@@ -7,10 +7,15 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.League1.Common.OpModeWrapper;
 import org.firstinspires.ftc.teamcode.League1.Common.Point;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Common.Utils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 public class MecDrive {
 
@@ -19,6 +24,9 @@ public class MecDrive {
     private boolean isDriveOnChub = true;
     private boolean pidEnabled;
     Telemetry telemetry;
+
+    File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
+    String loggingString;
 
     /*
     localizer -> Arm/actuator -> drive
@@ -48,6 +56,9 @@ public class MecDrive {
 
 
 
+
+
+
         CorrectMotors();
     }
 
@@ -66,14 +77,13 @@ public class MecDrive {
 
     }
 
-    //TODO: fix this cuz wont run if all then dont run to same position(all ands in while loop)
     public void newMoveToPosition(Point p, double power) {
         double direction = Utils.wrapAngle(p.getDirection()) - (Math.PI / 4);
 
-        int flPosition = (int) (Math.cos(direction) * p.magFromOrigin());
-        int frPosition = (int) (Math.sin(direction) * p.magFromOrigin());
-        int blPosition = (int) (Math.sin(direction) * p.magFromOrigin());
-        int brPosition = (int) (Math.cos(direction) * p.magFromOrigin());
+        int flPosition = Math.abs((int) (Math.cos(direction) * p.magFromOrigin()));
+        int frPosition = Math.abs((int) (Math.sin(direction) * p.magFromOrigin()));
+        int blPosition = Math.abs((int) (Math.sin(direction) * p.magFromOrigin()));
+        int brPosition = Math.abs((int) (Math.cos(direction) * p.magFromOrigin()));
 
         /*double flVelocity = Math.max(1, velocity * Math.cos(direction));
         double frVelocity = Math.max(1, velocity * Math.sin(direction));
@@ -105,7 +115,7 @@ public class MecDrive {
                 blPos *= -1;
             }
             //TODO:check if might need to change abs condition
-            while (opModeIsRunning() && (flPos < Math.abs(flPosition) || frPos < Math.abs(frPosition) || blPos < Math.abs(blPosition) || brPos < Math.abs(brPosition))) {
+            while (opModeIsRunning() && (flPos < flPosition || frPos < frPosition || blPos < blPosition || brPos < brPosition)) {
                 //setMotorVelocity(flVelocity, frVelocity, blVelocity, brVelocity);
 
                 if (flPos >= flPosition) {
@@ -140,20 +150,45 @@ public class MecDrive {
                     flPos *= -1;
                     blPos *= -1;
                 }
+
+                //Telemetry and logging for current motor positions
                 telemetry.addData("fl: ", flPos);
                 telemetry.addData("fr: ", frPos);
                 telemetry.addData("bl: ", blPos);
                 telemetry.addData("br: ", brPos);
 
+                loggingString += "flCurrentPosition: " + flPos + "\n";
+                loggingString += "frCurrentPosition: " + flPos + "\n";
+                loggingString += "blCurrentPosition: " + flPos + "\n";
+                loggingString += "brCurrentPosition: " + flPos + "\n";
+                loggingString += "\n";
+
+                //Telemetry and logging for target motor positions
                 telemetry.addData("target fl: ", flPosition);
                 telemetry.addData("target fr: ", frPosition);
                 telemetry.addData("target bl: ", blPosition);
                 telemetry.addData("target br: ", brPosition);
 
+                loggingString += "flTargetPosition: " + flPosition + "\n";
+                loggingString += "frTargetPosition: " + frPosition + "\n";
+                loggingString += "blTargetPosition: " + blPosition + "\n";
+                loggingString += "brTargetPosition: " + brPosition + "\n";
+                loggingString += "\n";
+
+                //Telemetry and logging for power that each motor is set to
                 telemetry.addData("flPower: ", flPower);
                 telemetry.addData("frPower: ", frPower);
                 telemetry.addData("blPower: ", blPower);
                 telemetry.addData("brPower: ", brPower);
+
+                loggingString += "flPower: " + flPower + "\n";
+                loggingString += "frPower: " + frPower + "\n";
+                loggingString += "blPower: " + blPower + "\n";
+                loggingString += "brPower: " + brPower + "\n";
+                loggingString += "\n";
+                loggingString += "\n";
+                loggingString += "\n";
+
 
 
                 telemetry.update();
@@ -453,5 +488,14 @@ public class MecDrive {
 
         return Math.abs(tics - data.getMotorCurrentPosition(0)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(1)) > TIC_TOLERANCE
                 && Math.abs(tics - data.getMotorCurrentPosition(2)) > TIC_TOLERANCE && Math.abs(tics - data.getMotorCurrentPosition(3)) > TIC_TOLERANCE;
+    }
+
+    public void writeLoggerToFile(){
+        try{
+            PrintStream toFile = new PrintStream(loggingFile);
+            toFile.println(loggingString);
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 }

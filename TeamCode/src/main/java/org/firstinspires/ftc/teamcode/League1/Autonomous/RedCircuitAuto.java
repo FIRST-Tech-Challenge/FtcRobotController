@@ -58,6 +58,7 @@ public class RedCircuitAuto extends OpModeWrapper {
     @Override
     protected void onStop() {
         drive.setPower(0, 0, 0, 0);
+        drive.writeLoggerToFile();
 
     }
 }
