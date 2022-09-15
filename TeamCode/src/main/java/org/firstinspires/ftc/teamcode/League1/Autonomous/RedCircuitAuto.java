@@ -44,7 +44,7 @@ public class RedCircuitAuto extends OpModeWrapper {
 
         /*
         drive.rotate(Math.PI/4, 0.2);
-        sleep(1000);
+        sleep(1000); //score
         drive.rotate(Math.PI/2, 0.2);
         drive.newMoveToPosition(new Point(-1000, 0),0.5);
         drive.newMoveToPosition(new Point(0, -1000), 0.5);

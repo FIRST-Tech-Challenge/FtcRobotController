@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -24,6 +26,7 @@ public class MecDrive {
     private boolean isDriveOnChub = true;
     private boolean pidEnabled;
     Telemetry telemetry;
+
 
     File loggingFile = AppUtil.getInstance().getSettingsFile("telemetry.txt");
     String loggingString;
@@ -68,14 +71,25 @@ public class MecDrive {
         }
 
         angle = Utils.wrapAngle(angle);
+        if(pidEnabled){
+            setPIDRotateVelocity(angle);
 
-        while(Math.abs(robot.getDirection()) < Math.abs(angle)){
-            setPower(-power, power, -power, power);
+        }else {
+
+            while (Math.abs(robot.getDirection()) < Math.abs(angle)) {
+
+
+                setPower(-power, power, -power, power);
+
+            }
         }
 
         brake();
 
     }
+
+
+
 
     public void newMoveToPosition(Point p, double power) {
         double direction = Utils.wrapAngle(p.getDirection()) - (Math.PI / 4);
@@ -399,6 +413,49 @@ public class MecDrive {
             //previousFilterEstimate = currentFilterEstimate;
         }
         brake();
+    }
+
+    PIDFCoefficients pid = new PIDFCoefficients(0,0,0,0);
+
+
+
+
+    //TODO: see if can make more efficient using timer.reset() and maybe add pid for each motor
+    private void setPIDRotateVelocity(double targetAngle){
+        ElapsedTime time = new ElapsedTime();
+        double startTime = time.seconds();
+        double integralSum = 0;
+        double previousError = targetAngle;
+
+
+        while(opModeIsRunning() && robot.getDirection() < targetAngle){
+            double error = Utils.wrapAngle(targetAngle - robot.getDirection());
+            double currentTime = time.seconds();
+
+            //TODO: add an integral sum limit
+            integralSum += (0.5 * (currentTime - startTime) * (previousError + error));
+
+
+            double derivative = (error - previousError)/(currentTime - startTime);
+
+            double power = (pid.p * error) + (pid.i * integralSum) + (pid.d * derivative) + (pid.f * targetAngle);
+
+            if(targetAngle < 0){
+                power *= -1;
+            }
+
+            setPower(-power, power, -power, power);
+
+
+
+            previousError = error;
+            startTime = currentTime;
+
+        }
+
+        brake();
+
+
     }
 
 
