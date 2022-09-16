@@ -51,6 +51,8 @@ public class ScoringSystem {
         rLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        //TODO: Initialize Servos to correct position
+
         robot.setShouldUpdate(true);
 
         pidEnabled = pid;

@@ -56,6 +56,8 @@ public class RedCircuitAuto extends OpModeWrapper {
         drive.newMoveToPosition(new Point(-1000, 0),0.5);
         drive.newMoveToPosition(new Point(0, -1000), 0.5);
 
+        //At the stack of elements
+
          */
 
         //drive.newMoveToPosition(new Point(-1000, -1000), 0.5);

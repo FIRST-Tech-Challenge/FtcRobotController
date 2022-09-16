@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.League1.Common.OpModeWrapper;
 import org.firstinspires.ftc.teamcode.League1.Common.Point;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Common.Utils;
+import org.firstinspires.ftc.teamcode.League1.Common.Vector2D;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,7 +74,7 @@ public class MecDrive {
 
         angle = Utils.wrapAngle(angle);
         if(pidEnabled){
-            setPIDRotateVelocity(angle);
+            setPIDRotateVelocity(angle, power);
 
         }else {
 
@@ -421,7 +422,7 @@ public class MecDrive {
     PIDCoefficients pid = new PIDCoefficients(0,0,0);
 
     //TODO: see if can make more efficient using timer.reset() and maybe add pid for each motor
-    private void setPIDRotateVelocity(double targetAngle){
+    private void setPIDRotateVelocity(double targetAngle, double targetPower){
         ElapsedTime time = new ElapsedTime();
         double startTime = time.seconds();
         double integralSum = 0;
@@ -440,13 +441,15 @@ public class MecDrive {
 
             double derivative = (error - previousError)/(currentTime - startTime);
 
-            double power = (pid.p * error) + (pid.i * integralSum) + (pid.d * derivative);
+            double out = (pid.p * error) + (pid.i * integralSum) + (pid.d * derivative);
+
+
 
             if(targetAngle < 0){
-                power *= -1;
+                out *= -1;
             }
 
-            setPower(-power, power, -power, power);
+            setPower(-out * targetPower, out * targetPower, -out * targetPower, out * targetPower);
 
 
 
@@ -521,6 +524,27 @@ public class MecDrive {
         fr.setPower(frPow) ;
         bl.setPower(-blPow);
         br.setPower(brPow);
+    }
+
+
+    public void setPower(Vector2D velocity, double turnValue, boolean isSwapped){
+        turnValue = -turnValue;
+        double direction =  velocity.getDirection();
+
+
+        double power = velocity.magnitude();
+
+        double angle = direction + 3*Math.PI / 4.0;
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+
+        if(!isSwapped) {
+            setPower((power * sin - turnValue), (power * cos + turnValue),
+                    (power * cos - turnValue), (power * sin + turnValue));
+        } else {
+            setPower(-(power * sin - turnValue), -(power * cos + turnValue),
+                    -(power * cos - turnValue), -(power * sin + turnValue));
+        }
     }
 
 /*
