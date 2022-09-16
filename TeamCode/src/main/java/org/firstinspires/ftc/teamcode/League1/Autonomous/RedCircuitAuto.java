@@ -25,7 +25,7 @@ public class RedCircuitAuto extends OpModeWrapper {
         constants = new Constants();
         robot = new Robot(hardwareMap);
         drive = new MecDrive(hardwareMap, robot, false, telemetry);
-        score = new ScoringSystem(hardwareMap, robot, constants);
+        score = new ScoringSystem(hardwareMap, robot, constants, false);
 
         robot.start();
 
