@@ -1,4 +1,5 @@
 repositories {
+    maven { url = 'https://maven.brott.dev/' }
     mavenCentral()
     google() // Needed for androidx
     flatDir {
@@ -16,7 +17,9 @@ dependencies {
     implementation 'org.firstinspires.ftc:Hardware:8.0.0'
     implementation 'org.firstinspires.ftc:FtcCommon:8.0.0'
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.4'
 }
 
