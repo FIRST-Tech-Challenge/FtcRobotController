@@ -4,16 +4,12 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.forteaching.TankDriveDemo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.forteaching.TankDrive;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "StickTankDrive")
 
@@ -77,6 +73,7 @@ public class StickTankDrive extends OpMode {
         telemetry.addData("Servo Power", srvpos);
         telemetry.update();
     }
+
     @Override
     public void start() {
 
