@@ -51,9 +51,9 @@ public class ParkPosition extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            telemetry.addData("RED", pipeline.AVG_R);
-            telemetry.addData("GREEN", pipeline.AVG_G);
-            telemetry.addData("BLUE", pipeline.AVG_B);
+            telemetry.addData("Lightness", pipeline.AVG_L);
+            telemetry.addData("GM", pipeline.AVG_A);
+            telemetry.addData("BY", pipeline.AVG_B);
 
             telemetry.update();
 
@@ -92,41 +92,48 @@ public class ParkPosition extends LinearOpMode {
                 DETECTION_ANCHOR.x + DETECTION_WIDTH,
                 DETECTION_ANCHOR.y - DETECTION_HEIGHT);
 
-        Mat DETECTION_R;
-        Mat DETECTION_G;
+        Mat DETECTION_L;
+        Mat DETECTION_A;
         Mat DETECTION_B;
-        Mat RGB = new Mat();
-        Mat red = new Mat();
-        Mat green = new Mat();
-        Mat blue = new Mat();
-        int AVG_R;
-        int AVG_G;
+        Mat LAB = new Mat();
+        Mat l = new Mat();
+        Mat a = new Mat();
+        Mat b = new Mat();
+        int AVG_L;
+        int AVG_A;
         int AVG_B;
 
         public volatile ParkingPos pos = ParkingPos.UNKNOWN;
 
-        void inputToRGB(Mat input) {
-            Core.extractChannel(RGB, red, 1);
-            Core.extractChannel(RGB, green, 1);
-            Core.extractChannel(RGB, blue, 1);
+        void inputToLAB(Mat input) {
+
+            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
+
+            Core.extractChannel(LAB, l, 0);
+            Core.extractChannel(LAB, a, 1);
+            Core.extractChannel(LAB, b, 2);
         }
 
         public void init(Mat firstFrame) {
-            inputToRGB(firstFrame);
+            inputToLAB(firstFrame);
 
-            DETECTION_R = red.submat(new Rect(region1_pointA, region1_pointB));
-            DETECTION_G = green.submat(new Rect(region1_pointA, region1_pointB));
-            DETECTION_B = blue.submat(new Rect(region1_pointA, region1_pointB));
+            DETECTION_L = l.submat(new Rect(region1_pointA, region1_pointB));
+            DETECTION_A = a.submat(new Rect(region1_pointA, region1_pointB));
+            DETECTION_B = b.submat(new Rect(region1_pointA, region1_pointB));
 
         }
 
         @Override
         public Mat processFrame(Mat input) {
 
-            inputToRGB(input);
+            inputToLAB(input);
 
-            AVG_R = (int) Core.mean(DETECTION_R).val[0];
-            AVG_G = (int) Core.mean(DETECTION_G).val[0];
+            DETECTION_L = l.submat(new Rect(region1_pointA, region1_pointB));
+            DETECTION_A = a.submat(new Rect(region1_pointA, region1_pointB));
+            DETECTION_B = b.submat(new Rect(region1_pointA, region1_pointB));
+
+            AVG_L = (int) Core.mean(DETECTION_L).val[0];
+            AVG_A = (int) Core.mean(DETECTION_A).val[0];
             AVG_B = (int) Core.mean(DETECTION_B).val[0];
 
             Imgproc.rectangle(
@@ -149,11 +156,11 @@ public class ParkPosition extends LinearOpMode {
         }
 
         public int getAnalysis1() {
-            return AVG_R;
+            return AVG_L;
         }
 
         public int getAnalysis2() {
-            return AVG_G;
+            return AVG_A;
         }
 
         public int getAnalysis3() {
