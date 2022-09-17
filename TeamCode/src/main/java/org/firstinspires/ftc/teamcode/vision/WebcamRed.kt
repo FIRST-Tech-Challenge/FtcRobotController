@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.vision
 
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.teamcode.util.Subsystem
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 
-class WebcamRed : Subsystem{
+class WebcamRed : Subsystem {
     private lateinit var webcam : OpenCvCamera
     lateinit var pipeline : PipelineRed
 
-
-    fun init(hardwareMap: HardwareMap) {
+    override fun init(hardwareMap: HardwareMap) {
         val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName)
         val webcamName = hardwareMap[WebcamName::class.java, "Webcam"]
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId)
@@ -28,12 +29,6 @@ class WebcamRed : Subsystem{
 
             }
         })
-
-    }
-
-
-    override fun sendDashboardPacket(debugging: Boolean) {
-
     }
 
     override fun update() {
@@ -55,6 +50,10 @@ class WebcamRed : Subsystem{
         else {
             pipeline.cupState = PipelineRed.CupStates.RIGHT
         }
+    }
+
+    override fun updateTelemetry() {
+        telemetry.update()
     }
 
     override fun reset() {

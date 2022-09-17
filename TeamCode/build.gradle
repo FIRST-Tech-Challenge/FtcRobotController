@@ -34,4 +34,5 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'org.apache.commons:commons-text:1.6'
+    implementation 'org.openftc:rev-extensions-2:1.2'
 }

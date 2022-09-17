@@ -1,4 +1,4 @@
-package robotuprising.lib.system.statemachine.transition
+package org.firstinspires.ftc.teamcode.stateMachine.transition
 
 fun interface TransitionCondition {
     fun shouldTransition(): Boolean

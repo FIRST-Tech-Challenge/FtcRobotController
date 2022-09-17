@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.stateMachine
 
-import robotuprising.lib.system.statemachine.transition.TransitionCondition
+import org.firstinspires.ftc.teamcode.stateMachine.transition.TransitionCondition
 
 data class State<StateEnum>(
     var state: StateEnum,

@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.util.rr;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.teamcode.util.rr.AxesSigns;
+import org.firstinspires.ftc.teamcode.util.rr.AxisDirection;
 
 /**
  * Various utility functions for the BNO055 IMU.

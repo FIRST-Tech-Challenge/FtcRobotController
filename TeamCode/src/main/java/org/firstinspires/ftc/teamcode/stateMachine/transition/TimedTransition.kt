@@ -1,4 +1,4 @@
-package robotuprising.lib.system.statemachine.transition
+package org.firstinspires.ftc.teamcode.stateMachine.transition
 
 class TimedTransition(val time: Double) : TransitionCondition {
     private var startTime = 0L

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.stateMachine
 
-import robotuprising.lib.system.statemachine.transition.TimedTransition
+import org.firstinspires.ftc.teamcode.stateMachine.transition.TimedTransition
 
 class StateMachine<StateEnum>(private val stateList: List<State<StateEnum>>, private val exitToState: StateEnum?) {
     var running = false

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.stateMachine
 
-import robotuprising.lib.system.statemachine.transition.TimedTransition
-import robotuprising.lib.system.statemachine.transition.TransitionCondition
+import org.firstinspires.ftc.teamcode.stateMachine.transition.TimedTransition
+import org.firstinspires.ftc.teamcode.stateMachine.transition.TransitionCondition
 
 class StateMachineBuilder<StateEnum> {
 
