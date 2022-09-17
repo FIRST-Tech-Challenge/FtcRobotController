@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.stateMachine.StateMachineBuilder
 import org.firstinspires.ftc.teamcode.util.Subsystem
 
 class Robot: Subsystem {
-    private val  intake = Intake()
+    val  intake = Intake()
     private val subsystems = mutableListOf(
         intake
     )
@@ -52,10 +52,6 @@ class Robot: Subsystem {
 
     override fun update() {
         subsystems.forEach{it.update()}
-    }
-
-    override fun updateTelemetry() {
-        subsystems.forEach{it.updateTelemetry()}
     }
 
     override fun reset() {

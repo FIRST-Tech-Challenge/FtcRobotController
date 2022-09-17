@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.powerplay.opmodes
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.powerplay.Robot
 import org.firstinspires.ftc.teamcode.util.GamepadUtil.left_trigger_pressed
 import org.firstinspires.ftc.teamcode.util.GamepadUtil.right_trigger_pressed
@@ -54,6 +55,10 @@ class TestOp: OpMode() {
         }
     }
 
+    private fun getTelemetry() {
+        telemetry.addData("dSensor", robot.intake.dSensor.getDistance(DistanceUnit.MM))
+    }
+
     override fun init() {
         robot.init(hardwareMap)
         robot.reset()
@@ -62,7 +67,7 @@ class TestOp: OpMode() {
     override fun loop() {
         driveControl()
         intakeControl()
+        getTelemetry()
         robot.update()
-        robot.updateTelemetry()
     }
 }

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.powerplay.subsystems
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.util.Globals
 import org.firstinspires.ftc.teamcode.util.Subsystem
@@ -57,13 +56,6 @@ class Intake: Subsystem {
             sensorRead < sensorThreshold -> SensorStates.CONE_IN
             else -> SensorStates.NONE
         }
-    }
-
-    override fun updateTelemetry() {
-        telemetry.addData("intake power", intake.power)
-        telemetry.addData("dSensor read", sensorRead)
-        telemetry.addData("dSensor state", sensorState)
-        telemetry.update()
     }
 
     override fun reset() {
