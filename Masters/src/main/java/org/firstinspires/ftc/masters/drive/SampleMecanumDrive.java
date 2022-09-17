@@ -46,7 +46,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.masters.FreightFrenzyConstants;
+import org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.MultipleCameraCV;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
