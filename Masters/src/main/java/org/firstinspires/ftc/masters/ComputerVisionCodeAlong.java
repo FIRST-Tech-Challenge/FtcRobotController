@@ -57,7 +57,6 @@ public class ComputerVisionCodeAlong {
         webcam.setMillisecondsPermissionTimeout(2500);
 
 
-//         Prep template.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -78,6 +77,7 @@ public class ComputerVisionCodeAlong {
                  * away from the user.
                  */
                 telemetry.addData("webcam open", "yes");
+                telemetry.update();
                 webcam.setPipeline(pipeline);
                 webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
@@ -144,7 +144,6 @@ public class ComputerVisionCodeAlong {
         * Top left anchor points for region       */
         static final Point REGION_TOP_LEFT_ANCHOR_POINT = new Point(280, 80);
 
-//        Display rectangles to camera stream
         Point region_pointA = new Point(
                 REGION_TOP_LEFT_ANCHOR_POINT.x,
                 REGION_TOP_LEFT_ANCHOR_POINT.y);
@@ -154,7 +153,7 @@ public class ComputerVisionCodeAlong {
 
 
     //      Threshold for freight presence
-        final int ELEMENT_PRESENT_THRESHOLD = 158;
+        final int ELEMENT_PRESENT_THRESHOLD = 108;
 
 
         /*
@@ -208,7 +207,7 @@ public class ComputerVisionCodeAlong {
                     2); // Thickness of the rectangle lines
 
 
-            if (avg > ELEMENT_PRESENT_THRESHOLD) {
+            if (avg <= ELEMENT_PRESENT_THRESHOLD) {
                 position = ElementPosition.PRESENT;
             } else {
                 position = ElementPosition.NOT_PRESENT;

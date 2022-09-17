@@ -14,19 +14,18 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.video.Video;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public class CAMShiftPipelineHopefully extends OpenCvPipeline {
 
     public String data;
-    private int CAMERA_WIDTH;
-    private int CAMERA_HEIGHT;
+
+
+    Mat hsv_roi = new Mat();
+    Mat mask = new Mat();
 
     // hardcode the initial location of window
-
-    Mat hsv_roi = new Mat(), mask = new Mat(), roi;
-
-    private Rect trackWindow = new Rect(150, 60, 63, 125);
+    private final Rect trackWindow = new Rect(150, 60, 63, 125);
     Telemetry telemetry;
 
     public CAMShiftPipelineHopefully(Telemetry telemetry) {
@@ -35,8 +34,6 @@ public class CAMShiftPipelineHopefully extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        CAMERA_WIDTH = input.width();
-        CAMERA_HEIGHT = input.height();
 
         Mat roi = input.submat(trackWindow);
         Imgproc.cvtColor(roi, hsv_roi, Imgproc.COLOR_BGR2HSV);
@@ -46,7 +43,7 @@ public class CAMShiftPipelineHopefully extends OpenCvPipeline {
         Mat roi_hist = new Mat();
         MatOfInt histSize = new MatOfInt(180);
         MatOfInt channels = new MatOfInt(0);
-        Imgproc.calcHist(Arrays.asList(hsv_roi), channels, mask, roi_hist, histSize, range);
+        Imgproc.calcHist(Collections.singletonList(hsv_roi), channels, mask, roi_hist, histSize, range);
         Core.normalize(roi_hist, roi_hist, 0, 255, Core.NORM_MINMAX);
 
         TermCriteria term_crit = new TermCriteria(TermCriteria.EPS | TermCriteria.COUNT, 100, .1);
@@ -54,20 +51,10 @@ public class CAMShiftPipelineHopefully extends OpenCvPipeline {
 
         Mat hsv = new Mat() , dst = new Mat();
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
-        Imgproc.calcBackProject(Arrays.asList(hsv), channels, roi_hist, dst, range, 1);
+        Imgproc.calcBackProject(Collections.singletonList(hsv), channels, roi_hist, dst, range, 1);
 
 
         RotatedRect rot_rect = Video.CamShift(dst, trackWindow, term_crit);
-
-//        Experimentation
-//        if (rot_rect.size.width > 300){
-//            rot_rect.size.width = 300;
-//        }
-//
-//        if (rot_rect.size.height > 300){
-//            rot_rect.size.height = 300;
-//        }
-//        //        Experimentation
 
 
         Point[] points = new Point[4];

@@ -14,10 +14,11 @@ public class ComputerVisionCodeAlongAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ComputerVisionCodeAlong CV = new ComputerVisionCodeAlong(hardwareMap, telemetry);
 
-        ComputerVisionCodeAlong.ElementDetectionPipeline.ElementPosition itemLocation = null;
+        ComputerVisionCodeAlong.ElementDetectionPipeline.ElementPosition itemLocation;
 
         itemLocation = CV.pipeline.position;
 
+//        If you're using dashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         FtcDashboard.getInstance().startCameraStream(CV.webcam, 10);

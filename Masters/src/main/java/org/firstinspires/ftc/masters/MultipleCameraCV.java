@@ -223,8 +223,8 @@ public class MultipleCameraCV {
          * Some color constants used for displaying rectangles on the camera stream
          */
         static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
-        static final Scalar RED = new Scalar(255, 0, 0);
+//        static final Scalar GREEN = new Scalar(0, 255, 0);
+//        static final Scalar RED = new Scalar(255, 0, 0); e
 
 
 //        Sizes for subregions of the camera from which our data is extracted
@@ -232,12 +232,12 @@ public class MultipleCameraCV {
         static final int REGION_HEIGHT = 100;
 
         /*
-         * List for the storage of points, if you're only dealing with a few regions declare them all seperately, the freight regions in the other pipeline
+         * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
          * are done like this.
          */
 
-        ArrayList<Point> topLeftPoints = new ArrayList<Point>();
-        ArrayList<Point> bottomRightPoints = new ArrayList<Point>();
+        ArrayList<Point> topLeftPoints = new ArrayList<>();
+        ArrayList<Point> bottomRightPoints = new ArrayList<>();
 
 
 //        The threshold to which the averages are compared.
@@ -246,7 +246,7 @@ public class MultipleCameraCV {
 
 
         /*
-         * Empty matrixes that data will be stored in
+         * Empty matrices that data will be stored in
          */
 
         Mat LAB = new Mat();
@@ -293,13 +293,13 @@ public class MultipleCameraCV {
 
         }
 
-//        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutly essential to CV functioning
+//        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutely essential to CV functioning
         @Override
         public Mat processFrame(Mat input) {
             inputToLAB(input);
 
 //            Declare list of regions
-            ArrayList<Mat> region = new ArrayList<Mat>();
+            ArrayList<Mat> region = new ArrayList<>();
 
 
 //            Put the necessary data from the frame to each region
@@ -307,7 +307,7 @@ public class MultipleCameraCV {
                 region.add(B.submat(new Rect(topLeftPoints.get(i), bottomRightPoints.get(i))));
             }
 
-            ArrayList<Integer> regionAvgs = new ArrayList<Integer>();
+            ArrayList<Integer> regionAvgs = new ArrayList<>();
 
             for (int i = 0; i<33; i++) {
                 regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
@@ -376,12 +376,6 @@ public class MultipleCameraCV {
             RIGHT
         }
 
-        public enum HubPosition {
-            LEFT,
-            CENTER,
-            RIGHT,
-            SHRUG_NOISES
-        }
 
         /*
          * Some color constants for display
@@ -400,15 +394,13 @@ public class MultipleCameraCV {
         static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(300, 180);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(575, 180);
 
-        ArrayList<Point> hubPositionArrayTopLeftPoint = new ArrayList<Point>();
-        ArrayList<Point> hubPositionArrayBottomRightPoint = new ArrayList<Point>();
+        ArrayList<Point> hubPositionArrayTopLeftPoint = new ArrayList<>();
+        ArrayList<Point> hubPositionArrayBottomRightPoint = new ArrayList<>();
 
 //      Threshold for freight presence
         final int FREIGHT_PRESENT_THRESHOLD = 112;
 
-        final int HUB_PRESENT_THRESHOLD = 129;
-
-//        Display rectangles to camera stream
+        //        Display rectangles to camera stream
         Point region1_pointA = new Point(
                 REGION1_TOP_LEFT_ANCHOR_POINT.x,
                 REGION1_TOP_LEFT_ANCHOR_POINT.y);
@@ -490,8 +482,8 @@ public class MultipleCameraCV {
             avg2 = (int) Core.mean(region2).val[0];
             avg3 = (int) Core.mean(region3).val[0];
 
-            ArrayList<Mat> hubRegionRed = new ArrayList<Mat>();
-            ArrayList<Mat> hubRegionBlue = new ArrayList<Mat>();
+            ArrayList<Mat> hubRegionRed = new ArrayList<>();
+            ArrayList<Mat> hubRegionBlue = new ArrayList<>();
 
 
             for (int i = 0; i<32; i++) {
@@ -499,8 +491,8 @@ public class MultipleCameraCV {
                 hubRegionBlue.add(B.submat(new Rect(hubPositionArrayTopLeftPoint.get(i), hubPositionArrayBottomRightPoint.get(i))));
             }
 
-            ArrayList<Integer> hubRegionAvgRed = new ArrayList<Integer>();
-            ArrayList<Integer> hubRegionAvgBlue = new ArrayList<Integer>();
+            ArrayList<Integer> hubRegionAvgRed = new ArrayList<>();
+            ArrayList<Integer> hubRegionAvgBlue = new ArrayList<>();
 
             for (int i = 0; i<32; i++) {
                 hubRegionAvgRed.add((int) Core.mean(hubRegionRed.get(i)).val[0]);
@@ -602,8 +594,6 @@ public class MultipleCameraCV {
          * Some color constants used for displaying rectangles on the camera stream
          */
         static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
-        static final Scalar RED = new Scalar(255, 0, 0);
 
 
         //        Sizes for subregions of the camera from which our data is extracted
@@ -611,12 +601,12 @@ public class MultipleCameraCV {
         static final int REGION_HEIGHT = 120;
 
         /*
-         * List for the storage of points, if you're only dealing with a few regions declare them all seperately, the freight regions in the other pipeline
+         * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
          * are done like this.
          */
 
-        ArrayList<Point> topLeftPoints = new ArrayList<Point>();
-        ArrayList<Point> bottomRightPoints = new ArrayList<Point>();
+        ArrayList<Point> topLeftPoints = new ArrayList<>();
+        ArrayList<Point> bottomRightPoints = new ArrayList<>();
 
 
         //        The threshold to which the averages are compared.
@@ -625,7 +615,7 @@ public class MultipleCameraCV {
 
 
         /*
-         * Empty matrixes that data will be stored in
+         * Empty matrices that data will be stored in
          */
 
         Mat LAB = new Mat();
@@ -679,7 +669,7 @@ public class MultipleCameraCV {
             inputToLAB(input);
 
 //            Declare list of regions
-            ArrayList<Mat> region = new ArrayList<Mat>();
+            ArrayList<Mat> region = new ArrayList<>();
 
 
 //            Put the necessary data from the frame to each region
@@ -687,7 +677,7 @@ public class MultipleCameraCV {
                 region.add(B.submat(new Rect(topLeftPoints.get(i), bottomRightPoints.get(i))));
             }
 
-            ArrayList<Integer> regionAvgs = new ArrayList<Integer>();
+            ArrayList<Integer> regionAvgs = new ArrayList<>();
 
             for (int i = 0; i<27; i++) {
                 regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
@@ -706,7 +696,6 @@ public class MultipleCameraCV {
 
 //            The next several lines determine which region has the highest B average.
             int indexOfMaximumBAvg = 0;
-            int maxIndexDistance = 2794;
 
             for (int i = 0; i<27; i++) {
                 if (regionAvgs.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
@@ -718,21 +707,6 @@ public class MultipleCameraCV {
             telemetry.addData("B Averages", regionAvgs);
             telemetry.addData("Index of highest likelihood.", indexOfMaximumBAvg);
 
-//            Fix indexes (Regions are stacked 11 to a row)
-//            if (regionAvgs.get(indexOfMaximumBAvg) >= DUCK_PRESENT_THRESHOLD) {
-//                if (indexOfMaximumBAvg > 21) {
-//                    indexOfMaximumBAvg -= 22;
-//                    maxIndexDistance = 0;
-//                } else if (indexOfMaximumBAvg > 10) {
-//                    indexOfMaximumBAvg -= 11;
-//                    maxIndexDistance = 1;
-//                } else {
-//                    maxIndexDistance = 0;
-//                }
-//                position = MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.values()[indexOfMaximumBAvg];
-//            } else {
-//                position = MultipleCameraCV.DuckDeterminationPipeline.DuckPosition.SHRUG_NOISES; // Default enum result. Aptly named
-//            }
             List<Integer> nearRow = (List<Integer>) regionAvgs.subList(18,27);
             List<Integer> middleRow = (List<Integer>) regionAvgs.subList(9,18);
             List<Integer> farRow = (List<Integer>) regionAvgs.subList(0,9);
