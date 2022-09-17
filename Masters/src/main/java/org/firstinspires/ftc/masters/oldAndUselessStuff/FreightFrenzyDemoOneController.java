@@ -15,11 +15,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region1;
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region2;
 
 @TeleOp(name="FF Demo OC", group = "competition")
 public class FreightFrenzyDemoOneController extends LinearOpMode {
@@ -456,18 +454,18 @@ public class FreightFrenzyDemoOneController extends LinearOpMode {
 
             encoderPos = carouselMotor.getCurrentPosition() - encoderCorrection;
 
-            if (encoderPos < region1) {
+            if (encoderPos < 1200) {
                 velocity = Math.sqrt(2 * FreightFrenzyConstants.accelerate1 * encoderPos) + FreightFrenzyConstants.startVelocity;
                 vel1Max = velocity;
                 carouselMotor.setVelocity(velocity);
                 //telemetry.update();
-            } else if (encoderPos >= region1 && encoderPos < region2) {
-                velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (encoderPos - region1));
+            } else if (encoderPos >= 1200 && encoderPos < 2100) {
+                velocity = vel1Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate2 * (encoderPos - 1200));
                 vel2Max = velocity;
                 carouselMotor.setVelocity(velocity);
                 //telemetry.update();
-            } else if (encoderPos >= region2 && encoderPos < FreightFrenzyConstants.goal) {
-                velocity = vel2Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate3 * (encoderPos - region2));
+            } else if (encoderPos >= 2100 && encoderPos < FreightFrenzyConstants.goal) {
+                velocity = vel2Max + Math.sqrt(2 * FreightFrenzyConstants.accelerate3 * (encoderPos - 2100));
                 carouselMotor.setVelocity(velocity);
                 //telemetry.update();
             } else if (encoderPos >= FreightFrenzyConstants.goal) {

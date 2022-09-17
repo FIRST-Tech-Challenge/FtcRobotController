@@ -1,17 +1,20 @@
 package org.firstinspires.ftc.masters.oldAndUselessStuff;
 
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region1;
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region2;
+import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 
 
 @TeleOp(name="freightFrenzy Blue", group = "competition")
 public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
+
+    public static int region1 = 1200;
+    public static int region2 = 2100;
 
     public FreightFrenzyTeleOpBlue(){
         super();
@@ -40,7 +43,7 @@ public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
             encoderPos = carouselMotor.getCurrentPosition()-encoderCorrection;
 
             if (encoderPos > -region1) {
-                velocity = Math.sqrt(2* FreightFrenzyConstants.accelerate1*-encoderPos)+FreightFrenzyConstants.startVelocity;
+//                velocity = Math.sqrt(2* FreightFrenzyConstants.accelerate1*-encoderPos)+ getObject().startVelocity;
                 vel1Max = velocity;
                 carouselMotor.setVelocity(-velocity);
                 telemetry.update();
@@ -63,6 +66,10 @@ public class FreightFrenzyTeleOpBlue extends FreightFrenzyTeleOpRed{
         }
 
     }
+
+//    private Object getObject() {
+//        return FreightFrenzyConstants;
+//    }
 
     protected Trajectory getHubTrajectory(){
         return    drive.trajectoryBuilder(new Pose2d(new Vector2d(26, 66),Math.toRadians(180)))

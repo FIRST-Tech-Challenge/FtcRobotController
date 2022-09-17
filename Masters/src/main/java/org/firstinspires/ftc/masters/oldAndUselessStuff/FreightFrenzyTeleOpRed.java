@@ -15,15 +15,17 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region1;
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region2;
 
 @TeleOp(name="freight Frenzy Red", group = "competition")
 public class FreightFrenzyTeleOpRed extends LinearOpMode {
 
+
+
+    public static int region1 = 1200;
+    public static int region2 = 2100;
 
     //RobotClass robot;
     SampleMecanumDriveCancelable drive;
@@ -460,7 +462,7 @@ telemetry.addData("right x", gamepad1.right_stick_x);
             encoderPos = carouselMotor.getCurrentPosition()-encoderCorrection;
 
             if (encoderPos < region1) {
-                velocity = Math.sqrt(2*FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
+                velocity = Math.sqrt(2* FreightFrenzyConstants.accelerate1*encoderPos)+FreightFrenzyConstants.startVelocity;
                 vel1Max = velocity;
                 carouselMotor.setVelocity(velocity);
                 //telemetry.update();

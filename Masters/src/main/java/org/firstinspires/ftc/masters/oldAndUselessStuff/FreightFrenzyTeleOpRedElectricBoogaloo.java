@@ -13,14 +13,16 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region1;
-import static org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.region2;
 @Disabled
 @TeleOp(name="Freight Frenzy Red 2: Electric Boogaloo", group = "competition")
 public class FreightFrenzyTeleOpRedElectricBoogaloo extends LinearOpMode {
+
+    public static int region1 = 1200;
+    public static int region2 = 2100;
 
 
     //RobotClass robot;

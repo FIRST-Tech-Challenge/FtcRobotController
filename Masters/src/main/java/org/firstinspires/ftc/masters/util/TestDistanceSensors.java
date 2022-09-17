@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.masters.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.masters.RobotClass;
@@ -20,7 +19,7 @@ public class TestDistanceSensors extends LinearOpMode {
 
         while (true && opModeIsActive()) {
             telemetry.addData("intake", robot.distanceSensorIntake.getDistance(DistanceUnit.CM));
-            telemetry.addData("top sensor distance = ", robot.intakeColor.getDistance(DistanceUnit.CM));
+//            telemetry.addData("top sensor distance = ", robot.intakeColor.getDistance(DistanceUnit.CM));
             telemetry.update();
             sleep(50);
         }
