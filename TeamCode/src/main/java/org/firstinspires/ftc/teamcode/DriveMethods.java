@@ -1,15 +1,17 @@
+// Please work.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class DriveMethods {
-    public void driveForDistance(double distanceMeters, double power) {
+    // Self explanatory, drives a certain distance in meters.
+    public void driveForDistance(double distanceInMeters, double power) {
         motor01.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor02.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor03.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor04.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         double distanceTraveled = 0;
-        int targetPos = (int) (distanceMeters * encoders * rotationsPerMeter);
+        int targetPos = (int) (distanceInMeters * encoders * rotationsPerMeter);
         motor01.setTargetPosition((targetPos));
         motor02.setTargetPosition((targetPos));
         motor03.setTargetPosition((targetPos));
