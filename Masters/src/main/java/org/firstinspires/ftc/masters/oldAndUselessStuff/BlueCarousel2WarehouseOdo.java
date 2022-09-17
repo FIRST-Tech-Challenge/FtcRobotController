@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.ContourDetectionPipeline;
+import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.MultipleCameraCV;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
@@ -44,7 +45,7 @@ public class BlueCarousel2WarehouseOdo extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
-        drive.openCVInnitShenanigans("red");
+        drive.openCVInnitShenanigans();
         MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition freightLocation = null;
         freightLocation = drive.analyze();
 

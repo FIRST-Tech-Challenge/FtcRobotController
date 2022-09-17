@@ -15,7 +15,7 @@ public class TestDuckRobot extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
-        drive.openCVInnitShenanigans("blue");
+        drive.openCVInnitShenanigans();
         MultipleCameraCV.DuckDeterminationPipeline.DuckPosition freightPosition = drive.analyzeDuck();
         waitForStart();
       //  drive.CV.webcam.stopStreaming();

@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.masters.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.MultipleCameraCV;
 import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
@@ -28,14 +28,14 @@ public class RedCarouselOdo extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
-        drive.openCVInnitShenanigans("red");
+        drive.openCVInnitShenanigans();
         MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition freightLocation = drive.analyze();
 
         Pose2d startPose = new Pose2d(new Vector2d(-35, -63), Math.toRadians(90));
 
         drive.setPoseEstimate(startPose);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.DUMP_SERVO_LIFT);
+        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.DUMP_SERVO_LIFT);
 
         waitForStart();
 //        Mecha Knight Changes: ALERT
@@ -55,16 +55,16 @@ public class RedCarouselOdo extends LinearOpMode {
         }
         switch (freightLocation) {
             case LEFT:
-                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.SLIDE_LOW);
+                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.SLIDE_LOW);
                 break;
             case MIDDLE:
-                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.SLIDE_MIDDLE);
+                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.SLIDE_MIDDLE);
                 break;
             case RIGHT:
-                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.SLIDE_TOP);
+                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.SLIDE_TOP);
                 break;
             default:
-                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.SLIDE_TOP);
+                drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.SLIDE_TOP);
         }
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         drive.linearSlideMotor.setPower(.8);
@@ -91,9 +91,9 @@ public class RedCarouselOdo extends LinearOpMode {
                 drive.followTrajectorySequence(toHubHigh);
                 break;
         }
-        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.DUMP_SERVO_DROP);
+        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
-        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         if (freightLocation == MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition.LEFT) {
             drive.pause(300);
         }
@@ -124,10 +124,10 @@ public class RedCarouselOdo extends LinearOpMode {
         drive.CV.duckWebcam.stopStreaming();
 
         drive.pause(350);
-        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.DUMP_SERVO_LIFT);
+        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.DUMP_SERVO_LIFT);
         drive.pause(250);
         drive.intakeMotor.setPower(0);
-        drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.SLIDE_TOP);
+        drive.linearSlideMotor.setTargetPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.SLIDE_TOP);
         drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         drive.linearSlideMotor.setPower(.7);
 
@@ -138,7 +138,7 @@ public class RedCarouselOdo extends LinearOpMode {
                 .build();
         drive.followTrajectorySequence(trajSeq6);
 
-        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.oldAndUselessStuff.FreightFrenzyConstants.DUMP_SERVO_DROP);
+        drive.linearSlideServo.setPosition(org.firstinspires.ftc.masters.FreightFrenzyConstants.DUMP_SERVO_DROP);
         drive.pause(SERVO_DROP_PAUSE);
         drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
         if (freightLocation == MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition.LEFT) {

@@ -1,5 +1,19 @@
 package org.firstinspires.ftc.masters.drive;
 
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_VEL;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TICKS_PER_REV;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TRACK_WIDTH;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.encoderTicksToInches;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kA;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kStatic;
+import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kV;
+import static java.lang.Math.abs;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -46,20 +60,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import static java.lang.Math.abs;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ACCEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_ANG_VEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MAX_VEL;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TICKS_PER_REV;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.TRACK_WIDTH;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.encoderTicksToInches;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kA;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.kStatic;
-import static org.firstinspires.ftc.masters.drive.DriveConstantsDeadWheels.  kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.

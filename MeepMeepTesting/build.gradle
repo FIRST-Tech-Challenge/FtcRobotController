@@ -1,16 +1,16 @@
-apply plugin: 'java-library'
-
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}
-
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
-
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    implementation 'com.github.NoahBres:MeepMeep:2.0.0'
-}
+//apply plugin: 'java-library'
+//
+//dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar'])
+//}
+//
+//sourceCompatibility = "1.8"
+//targetCompatibility = "1.8"
+//
+//repositories {
+//    maven { url 'https://jitpack.io' }
+//}
+//
+//dependencies {
+//    implementation 'com.github.NoahBres:MeepMeep:2.0.1'
+//}
