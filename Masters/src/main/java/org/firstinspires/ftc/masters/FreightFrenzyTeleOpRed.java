@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.masters;
 
+import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region1;
+import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region2;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -17,9 +20,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region1;
-import static org.firstinspires.ftc.masters.FreightFrenzyConstants.region2;
 
 @TeleOp(name="freight Frenzy Red", group = "competition")
 public class FreightFrenzyTeleOpRed extends LinearOpMode {

@@ -24,16 +24,38 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Mat;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvPipeline;
-
+import org.openftc.easyopencv.OpenCvWebcam;
 
 public class ComputerVisionCodeAlongTemplate {
+
+    public OpenCvWebcam webcam;
 
     public ElementDetectionPipeline pipeline;
 
     public ComputerVisionCodeAlongTemplate(HardwareMap hardwareMap, Telemetry telemetry){
+        webcam = OpenCvCameraFactory.getInstance()
+                .createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
+        pipeline = new ElementDetectionPipeline(telemetry);
 
+        webcam.setMillisecondsPermissionTimeout(2500);
+
+//        Open the camera
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
     }
 
 //    Element detection pipeline
@@ -50,7 +72,6 @@ public class ComputerVisionCodeAlongTemplate {
         public void init(Mat firstFrame) {
 
         }
-
 
         @Override
         public Mat processFrame(Mat input) {

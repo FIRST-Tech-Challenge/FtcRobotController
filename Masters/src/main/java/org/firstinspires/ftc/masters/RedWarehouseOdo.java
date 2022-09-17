@@ -2,7 +2,6 @@ package org.firstinspires.ftc.masters;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,7 +22,7 @@ public class RedWarehouseOdo extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, this, telemetry);
 
-        drive.openCVInnitShenanigans("red");
+        drive.openCVInnitShenanigans();
         MultipleCameraCV.ShippingElementDeterminationPipeline.ElementPosition freightLocation = null;
 
         freightLocation = drive.analyze();
@@ -104,74 +103,74 @@ public class RedWarehouseOdo extends LinearOpMode {
       // drive.retract();
 
         drive.followTrajectorySequence(fromHubToWarehouse);
-
-        //pick up cube
-        boolean gotCube= drive.getCube(1400);
-        if (!gotCube){
-            drive.forward(-.5, .3);
-            drive.strafeRight(.5,.35);
-            gotCube = drive.getCube(1400);
-        }
-        if (gotCube) {
-            TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-
-                    .lineTo(new Vector2d(15, -66))
-                    .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
-                    .addDisplacementMarker(() -> {
-                        drive.intakeMotor.setPower(1);
-                        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-                        drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
-                        drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        drive.linearSlideMotor.setPower(.8);
-                        drive.intakeMotor.setPower(0);
-                    })
-                    .splineToSplineHeading(new Pose2d(-10, -46, Math.toRadians(90)), Math.toRadians(90))
-                    .build();
-            drive.followTrajectorySequence(trajSeq3);
-//            fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-//                    .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
-//                    .addTemporalMarker(1,()->{drive.retract();})
-//                    .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+//
+//        //pick up cube
+//        boolean gotCube= drive.getCube(1400);
+//        if (!gotCube){
+//            drive.forward(-.5, .3);
+//            drive.strafeRight(.5,.35);
+//            gotCube = drive.getCube(1400);
+//        }
+//        if (gotCube) {
+//            TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//
+//                    .lineTo(new Vector2d(15, -66))
+//                    .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
+//                    .addDisplacementMarker(() -> {
+//                        drive.intakeMotor.setPower(1);
+//                        drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+//                        drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
+//                        drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                        drive.linearSlideMotor.setPower(.8);
+//                        drive.intakeMotor.setPower(0);
+//                    })
+//                    .splineToSplineHeading(new Pose2d(-10, -46, Math.toRadians(90)), Math.toRadians(90))
 //                    .build();
-            drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-            drive.pause(SERVO_DROP_PAUSE);
-            drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-            drive.retract();
-
-            drive.followTrajectorySequence(fromHubToWarehouse);
-             if (drive.getCube(2000)) {
-
-                 trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-
-                         .lineTo(new Vector2d(15, -66))
-                         .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
-
-                         .addDisplacementMarker(() -> {
-                             drive.intakeMotor.setPower(1);
-                             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
-                             drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
-                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                             drive.linearSlideMotor.setPower(.8);
-                             drive.intakeMotor.setPower(0);
-                         })
-                         .splineToSplineHeading(new Pose2d(-10, -46, Math.toRadians(90)), Math.toRadians(90))
-
-                         .build();
-                 drive.followTrajectorySequence(trajSeq3);
-//                 fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
-//                         .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
-//                         .addTemporalMarker(1,()->{drive.retract();})
-//                         .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+//            drive.followTrajectorySequence(trajSeq3);
+////            fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+////                    .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
+////                    .addTemporalMarker(1,()->{drive.retract();})
+////                    .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+////                    .build();
+//            drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+//            drive.pause(SERVO_DROP_PAUSE);
+//            drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+//            drive.retract();
+//
+//            drive.followTrajectorySequence(fromHubToWarehouse);
+//             if (drive.getCube(2000)) {
+//
+//                 trajSeq3 = drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+//
+//                         .lineTo(new Vector2d(15, -66))
+//                         .addDisplacementMarker(()->drive.intakeMotor.setPower(0))
+//
+//                         .addDisplacementMarker(() -> {
+//                             drive.intakeMotor.setPower(1);
+//                             drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_LIFT);
+//                             drive.linearSlideMotor.setTargetPosition(FreightFrenzyConstants.SLIDE_TOP);
+//                             drive.linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                             drive.linearSlideMotor.setPower(.8);
+//                             drive.intakeMotor.setPower(0);
+//                         })
+//                         .splineToSplineHeading(new Pose2d(-10, -46, Math.toRadians(90)), Math.toRadians(90))
+//
 //                         .build();
-                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
-                 drive.pause(SERVO_DROP_PAUSE);
-                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
-                 drive.retract();
-
-                 drive.followTrajectorySequence(fromHubToWarehouse);
-                 drive.getCube(2000);
-             }
-        }
+//                 drive.followTrajectorySequence(trajSeq3);
+////                 fromHubToWarehouse=drive.trajectorySequenceBuilder(drive.getLocalizer().getPoseEstimate())
+////                         .lineToSplineHeading(new Pose2d(new Vector2d(5, -60), Math.toRadians(180)))
+////                         .addTemporalMarker(1,()->{drive.retract();})
+////                         .splineToLinearHeading(new Pose2d( new Vector2d(48, -66), Math.toRadians(180)), Math.toRadians(0))
+////                         .build();
+//                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_DROP);
+//                 drive.pause(SERVO_DROP_PAUSE);
+//                 drive.linearSlideServo.setPosition(FreightFrenzyConstants.DUMP_SERVO_BOTTOM);
+//                 drive.retract();
+//
+//                 drive.followTrajectorySequence(fromHubToWarehouse);
+//                 drive.getCube(2000);
+//             }
+//        }
 
         //drive.followTrajectorySequence(roomyWarehouse);
 
