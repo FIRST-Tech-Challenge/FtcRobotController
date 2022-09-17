@@ -7,5 +7,5 @@ public abstract class BaseOpMode extends LinearOpMode {
     DcMotor FlMotor;
     DcMotor FrMotor;
     DcMotor BlMotor;
-    DcMotor BrMotor;
+    DcMotor Brmotor;
 }
