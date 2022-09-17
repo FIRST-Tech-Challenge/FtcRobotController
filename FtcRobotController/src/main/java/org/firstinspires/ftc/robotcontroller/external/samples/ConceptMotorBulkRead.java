@@ -46,21 +46,28 @@ import java.util.List;
 
         Three scenarios are tested:
         Cache Mode = OFF    This is the normal default, where no cache is used, and every read produces a discrete transaction with
-                            an expansion hub, which is the slowest approach.
+                            an expansion hub, which is the slowest approach, but guarentees that the value is as fresh (recent) as possible..
+
         Cache Mode = AUTO   This mode will attempt to minimize the number of discrete read commands, by performing bulk-reads
-                            and then returning values that have been cached.  The cache is updated automatically whenever a specific read operation is repeated.
-                            This mode will always return fresh data, but it may perform more bulk-reads than absolutely required.
-                            Extra reads will be performed if multiple identical encoder/velocity reads are performed in one control cycle.
+                            and then returning values that have been cached.  The cache is updated automatically whenever any specific encoder is re-read.
+                            This mode will always return new data, but it may perform more bulk-reads than absolutely required.
+                            Extra reads will be performed if multiple encoder/velocity reads are performed on the same encoder in one control cycle.
                             This mode is a good compromise between the OFF and MANUAL modes.
-        Cache Mode = MANUAL This mode enables the user's code to determine the best time to refresh the cached bulk-read data.
-                            Well organized code can place all the sensor reads in one location, and then just reset the cache once per control cycle.
-                            The approach will produce the shortest cycle times, but it does require the user to manually clear the cache.
+                            Note: If there are significant user-program delays between encoder reads, the cached value may not be fresh (recent).
+                            You can issue a clearBulkCache() call at any time force a fresh bulk-read on the next encoder read.
+
+        Cache Mode = MANUAL This mode requires the user's code to determine the best time to clear the cached bulk-read data.
+                            Well organized code will reset the cache once at the beginning of the control cycle, and then immediately read and store all the encoder values.
+                            This approach will produce the shortest cycle times, but it does require the user to manually clear the cache.
+                            Since NO automatic Bulk-Reads are performed, neglecting to clear the bulk cache will result in the same values being returned
+                            each time an encoder read is performed.
 
         -------------------------------------
 
         General tip to speed up your control cycles:
+
         No matter what method you use to read encoders and other inputs, you should try to
-        avoid reading the same input multiple times around a control loop.
+        avoid reading the same encoder input multiple times around a control loop.
         Under normal conditions, this will slow down the control loop.
         The preferred method is to read all the required inputs ONCE at the beginning of the loop,
         and save the values in variable that can be used by other parts of the control code.

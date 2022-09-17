@@ -90,8 +90,8 @@ public class RobotAutoDriveToLine_Linear extends LinearOpMode {
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
