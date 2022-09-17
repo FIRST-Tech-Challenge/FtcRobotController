@@ -47,8 +47,8 @@ public class Constants {
 
     public static int gripperClosedPos = 0;
     public static int gripperOpenPos = 1000;
-    public static int pitchMax = 1500;
-    public static int pitchMin = 1290;
+    public static int pitchMax = 2200;
+    public static int pitchMin = 900;
 
     public enum Alliance {
         RED,
