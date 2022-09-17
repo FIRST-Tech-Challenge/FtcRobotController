@@ -1,0 +1,46 @@
+    Key: android.blackLevel.lock Value: false
+    Key: android.colorCorrection.aberrationMode Value: 1
+MAN Key: android.colorCorrection.mode Value: 0
+AUT Key: android.colorCorrection.mode Value: 1
+    Key: android.control.aeAntibandingMode Value: 3
+    Key: android.control.aeExposureCompensation Value: 0
+    Key: android.control.aeLock Value: false
+MAN Key: android.control.aeMode Value: 0
+AUT Key: android.control.aeMode Value: 1
+    Key: android.control.aePrecaptureTrigger Value: 0
+    Key: android.control.aeRegions Value: [Landroid.hardware.camera2.params.MeteringRectangle;@80fb0b6
+MAN Key: android.control.aeTargetFpsRange Value: [30, 30]
+MAN Key: android.control.afMode Value: 0
+AUT Key: android.control.aeTargetFpsRange Value: [7, 30]
+AUT Key: android.control.afMode Value: 4
+    Key: android.control.afRegions Value: [Landroid.hardware.camera2.params.MeteringRectangle;@949e1b7
+    Key: android.control.afTrigger Value: 0
+    Key: android.control.awbLock Value: false
+MAN Key: android.control.awbMode Value: 0
+MAN Key: android.control.captureIntent Value: 6
+AUT Key: android.control.awbMode Value: 1
+AUT Key: android.control.captureIntent Value: 1
+    Key: android.control.effectMode Value: 0
+MAN Key: android.control.mode Value: 0
+AUT Key: android.control.mode Value: 1
+    Key: android.control.postRawSensitivityBoost Value: 100
+    Key: android.control.sceneMode Value: 1
+    Key: android.control.videoStabilizationMode Value: 0
+    Key: android.edge.mode Value: 1
+    Key: android.flash.mode Value: 0
+    Key: android.hotPixel.mode Value: 1
+    Key: android.lens.aperture Value: 2.0
+    Key: android.lens.filterDensity Value: 0.0
+    Key: android.lens.focalLength Value: 4.67
+    Key: android.lens.focusDistance Value: 0.0
+    Key: android.lens.opticalStabilizationMode Value: 0
+    Key: android.noiseReduction.mode Value: 1
+    Key: android.scaler.cropRegion Value: Rect(0, 0 - 4048, 3036)
+    Key: android.sensor.exposureTime Value: 10746
+    Key: android.sensor.frameDuration Value: 33000000
+    Key: android.sensor.sensitivity Value: 100
+    Key: android.sensor.testPatternMode Value: 0
+    Key: android.statistics.faceDetectMode Value: 0
+    Key: android.statistics.hotPixelMapMode Value: false
+    Key: android.statistics.lensShadingMapMode Value: 0
+    Key: android.tonemap.mode Value: 1

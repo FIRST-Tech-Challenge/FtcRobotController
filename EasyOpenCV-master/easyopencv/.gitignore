@@ -1,0 +1,4 @@
+/build
+
+# For the symlink
+/src/main/cpp/include/opencv2

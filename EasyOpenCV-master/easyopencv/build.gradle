@@ -1,0 +1,69 @@
+apply plugin: 'com.android.library'
+
+ext {
+    PUBLISH_GROUP_ID = 'org.openftc'
+    PUBLISH_ARTIFACT_ID = 'easyopencv'
+    PUBLISH_VERSION = '1.5.1'
+}
+
+android {
+    compileSdkVersion 23
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 23
+        versionCode 1
+        versionName PUBLISH_VERSION
+    }
+
+    packagingOptions {
+        exclude '/lib/armeabi-v7a/libOpenCvAndroid453.so'
+        exclude '/lib/arm64-v8a/libOpenCvAndroid453.so'
+    }
+
+    buildTypes {
+
+        debug {
+            ndk {
+                abiFilters "armeabi-v7a"
+            }
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            ndk {
+                abiFilters "armeabi-v7a"
+            }
+        }
+    }
+
+    // Encapsulates your external native build configurations.
+    externalNativeBuild {
+
+        // Encapsulates your CMake build configurations.
+        cmake {
+
+            // Provides a relative path to your CMake build script.
+            path "CMakeLists.txt"
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    ndkVersion '21.3.6528147'
+}
+
+dependencies {
+    //compileOnly fileTree(include: ['*.aar'], dir: '../libs')
+    api 'org.openftc:opencv-repackaged:4.5.3-B'
+    compileOnly 'org.firstinspires.ftc:RobotCore:7.0.0'
+}
+
+apply from: '../sonatype-publish.gradle'

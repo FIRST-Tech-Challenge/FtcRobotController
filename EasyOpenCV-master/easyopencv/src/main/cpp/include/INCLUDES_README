@@ -1,0 +1,2 @@
+While CMakeLists.txt is set up to properly find the OpenCV native lib and headers for compile time (see the comment there),
+you probably also will wish to setup a symlink to this directory for the includes so that Android Studio's autocomplete will be happy.

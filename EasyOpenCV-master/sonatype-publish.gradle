@@ -1,0 +1,126 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+task eocvDocs(type: Javadoc) {
+    group = "Documentation"
+    description = "Generate Javadoc"
+    failOnError = false
+    source = android.sourceSets.main.java.srcDirs
+    classpath = project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.memberLevel = JavadocMemberLevel.PROTECTED
+    options.addStringOption('Xmaxwarns', '1')
+    options.addStringOption('Xmaxerrs', '1')
+    options.links "http://developer.android.com/reference"
+}
+
+task javadocJar(type: Jar) {
+    dependsOn eocvDocs
+    from eocvDocs.destinationDir
+    archiveClassifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = 'sources'
+}
+
+def lcl_groupId = project.PUBLISH_GROUP_ID
+def lcl_artifactId = project.PUBLISH_ARTIFACT_ID
+def lcl_version = project.PUBLISH_VERSION
+
+ext["signing.keyId"] = System.getenv('OPENFTC_GPG_KEY_ID')
+ext["signing.password"] = System.getenv('OPENFTC_GPG_KEY_PASSWORD')
+ext["signing.secretKeyRingFile"] = System.getenv('OPENFTC_GPG_KEY_FILE')
+ext["ossrhUsername"] = System.getenv('OPENFTC_SONATYPE_USER')
+ext["ossrhPassword"] = System.getenv('OPENFTC_SONATYPE_PASSWORD')
+
+/*ext {
+    signing.keyId = System.getenv('OPENFTC_GPG_KEY_ID')
+    signing.password = System.getenv('OPENFTC_GPG_KEY_PASSWORD')
+    signing.secretKeyRingFile = System.getenv('OPENFTC_GPG_KEY_FILE')
+    ossrhUsername = System.getenv('OPENFTC_SONATYPE_USER')
+    ossrhPassword = System.getenv('OPENFTC_SONATYPE_PASSWORD')
+}*/
+
+signing {
+    sign publishing.publications
+}
+
+/*
+ * https://developer.android.com/studio/build/maven-publish-plugin
+ *
+ * components.release automatically pulls the AAR for the library this
+ * plugin is applied to.
+ */
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifact sourcesJar
+                artifact javadocJar
+
+                // The coordinates of the library, being set from variables that
+                // we'll set up in a moment
+                groupId lcl_groupId
+                artifactId lcl_artifactId
+                version lcl_version
+
+                // Two artifacts, the `aar` and the sources
+                // artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+                // artifact androidSourcesJar
+
+                // Self-explanatory metadata for the most part
+                pom {
+                    name = lcl_artifactId
+                    description = 'EasyOpenCV'
+                    // If your project has a dedicated site, use its URL here
+                    url = 'https://github.com/OpenFTC/EasyOpenCV'
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'openftc'
+                            name = 'OpenFTC Team'
+                            email = 'contact@openftc.org'
+                            organization = 'OpenFTC'
+                            organizationUrl = 'openftc.org'
+                        }
+                    }
+                    // Version control info, if you're using GitHub, follow the format as seen here
+                    scm {
+                        connection = 'scm:git:github.com/OpenFTC/EasyOpenCV.git'
+                        url = 'https://github.com/OpenFTC/EasyOpenCV/tree/master'
+                    }
+                }
+            }
+        }
+
+        repositories {
+            // The repository to publish to, Sonatype/MavenCentral
+            maven {
+                // This is an arbitrary name, you may also use "mavencentral" or
+                // any other name that's descriptive for you
+                name = "mavencentral"
+
+                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                // You only need this if you want to publish snapshots, otherwise just set the URL
+                // to the release repo directly
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+                // The username and password we've fetched earlier
+                credentials {
+                    username System.getenv("OPENFTC_SONATYPE_USER")
+                    password System.getenv("OPENFTC_SONATYPE_PASSWORD")
+                }
+            }
+        }
+    }
+}
