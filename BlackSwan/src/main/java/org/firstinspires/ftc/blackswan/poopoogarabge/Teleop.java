@@ -1,18 +1,16 @@
-package org.firstinspires.ftc.blackswan;
+package org.firstinspires.ftc.blackswan.poopoogarabge;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import static java.lang.Math.abs;
 
+import org.firstinspires.ftc.blackswan.Robot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="Teleop")
@@ -20,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Teleop extends LinearOpMode {
     BNO055IMU imu;
     double MAX_SPEED = 0.9;
-    Robot  robot;
+    Robot robot;
     final int TICKS_PER_ROTATION = 537;
 
     int GyroSensorVariable = 1;
