@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.forteaching.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.forteaching.CRServoCode;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "CRServoDemo")
+@Disabled
+@TeleOp(name = "CRServoDemo")
 public class CRServoDemo extends OpMode {
     private CRServoCode servoCode;
     private CRServo servo;

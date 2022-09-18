@@ -4,8 +4,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -31,6 +30,7 @@ Analog Inputs:
 3: leftRearEncoder
 */
 
+@Disabled
 @TeleOp(name = "PIDTuner")
 public class SwerveModuleTester extends LinearOpMode {
     SwerveModule leftFront;

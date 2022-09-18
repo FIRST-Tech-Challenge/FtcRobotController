@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.forteaching.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.forteaching.SensorCode;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "SensorDemo")
-
+@Disabled
+@TeleOp(name = "SensorDemo")
 public class SensorDemo extends OpMode {
 
     private SensorCode sensorCode;

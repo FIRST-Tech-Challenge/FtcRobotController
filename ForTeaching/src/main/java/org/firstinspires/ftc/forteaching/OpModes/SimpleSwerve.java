@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.forteaching.OpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.forteaching.SimpleSwerveDrive;
 
+@Disabled
 @TeleOp(name = "Simple Swerve")
 public class SimpleSwerve extends LinearOpMode {
     private static double ROT_DEAD_ZONE = 0.1;

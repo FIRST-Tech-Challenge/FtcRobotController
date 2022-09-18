@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.forteaching.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.forteaching.TankDriveDemo;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TankCubed")
-
+@TeleOp(name = "TankCubed")
 public class StickCubedTank extends OpMode {
     
     private static final double DEAD_ZONE = 0.1;
