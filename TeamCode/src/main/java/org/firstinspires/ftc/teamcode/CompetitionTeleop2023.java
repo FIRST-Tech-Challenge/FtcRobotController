@@ -25,8 +25,8 @@ public class CompetitionTeleop2023 extends OpMode {
     */private double PowerFactor = 1.0f;
     //private Servo platform = null;
     //private Servo tester = null;
-    double tgtPower = 0;
-    /*private static final float BUCKETCLEAR = .65f;
+    /*double tgtPower = 0;
+    private static final float BUCKETCLEAR = .65f;
     private static final float BUCKETDUMP = 0f;
     private static final float BUCKETIN = 1f;
     boolean spinthatduck = false;
@@ -87,10 +87,10 @@ public class CompetitionTeleop2023 extends OpMode {
     /*
      * Code to run ONCE when the driver hits PLAY
      */
-    @Override
-    public void start() {
-        runtime.reset();
-    }
+    //@Override
+    //public void start() {
+     //   runtime.reset();
+    //}
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
@@ -125,7 +125,7 @@ public class CompetitionTeleop2023 extends OpMode {
         }
 
 
-        if(gamepad1.a && !changed) {
+        /*if(gamepad1.a && !changed) {
             if(platform.getPosition() == 0) platform.setPosition(.8);
             else platform.setPosition(0);
             changed = true;
@@ -221,7 +221,7 @@ public class CompetitionTeleop2023 extends OpMode {
             }
         }
 */
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * PowerFactor;
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y)  * PowerFactor;
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
         double rightX = Math.pow(gamepad1.right_stick_x,5.0);
         //double rightX = (-gamepad1.right_stick_x);
@@ -235,14 +235,14 @@ public class CompetitionTeleop2023 extends OpMode {
         LFPower = r * Math.sin(robotAngle) + rightX;
         RFPower = r * Math.cos(robotAngle) - rightX;
 */
-        double tgtPower1 = 0;
+        /*double tgtPower1 = 0;
         tgtPower1 = this.gamepad2.left_stick_y;
       //  rainbow.setPower(tgtPower1);
         //rainbow.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
-        tgtPower = -this.gamepad2.right_stick_y;
+        //tgtPower = -this.gamepad2.right_stick_y;
     //    superShooter.setPower(tgtPower);
 
 
