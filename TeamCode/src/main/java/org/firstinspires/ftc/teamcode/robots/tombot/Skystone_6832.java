@@ -469,7 +469,7 @@ public class Skystone_6832 extends LinearOpMode {
                             active = false;
                         break;
                     case 10:
-
+                        coordDrive();
                         break;
                     default:
                         robot.stopAll();
@@ -742,6 +742,13 @@ public class Skystone_6832 extends LinearOpMode {
 
         robot.crane.update();
         robot.turret.update(opModeIsActive());
+    }
+
+    private int targetX;
+    private int targetY;
+
+    private void coordDrive(){
+
     }
 
     private void joystickDrivePregameMode() {
