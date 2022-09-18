@@ -45,6 +45,8 @@ class Intake: Subsystem {
 
     override fun init (hardwareMap: HardwareMap) {
         intake = hardwareMap.dcMotor["Intake"]
+        intake.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
         dSensor = hardwareMap.get(Rev2mDistanceSensor::class.java, "distanceSensor") as Rev2mDistanceSensor
     }
 

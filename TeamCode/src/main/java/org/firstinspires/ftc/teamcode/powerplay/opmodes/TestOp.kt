@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.powerplay.opmodes
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.powerplay.Robot
 import org.firstinspires.ftc.teamcode.util.GamepadUtil.left_trigger_pressed
@@ -62,6 +63,19 @@ class TestOp: OpMode() {
     override fun init() {
         robot.init(hardwareMap)
         robot.reset()
+
+        fl = hardwareMap.get(DcMotor::class.java, "FL")
+        fr = hardwareMap.get(DcMotor::class.java, "FR")
+        bl = hardwareMap.get(DcMotor::class.java, "BL")
+        br = hardwareMap.get(DcMotor::class.java, "BR")
+
+        fl.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        fr.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        bl.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        br.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        fl.direction = DcMotorSimple.Direction.REVERSE
+        bl.direction = DcMotorSimple.Direction.REVERSE
     }
 
     override fun loop() {
