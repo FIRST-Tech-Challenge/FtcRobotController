@@ -18,6 +18,8 @@ public class Mecanum extends LinearOpMode {
     private DcMotor leftbackmotor;
     private DcMotor rightfrontmotor;
     private DcMotor rightbackmotor;
+    // armservo, linearslide
+
     double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive;
     double driveSpeed = 1.0;
     @Override
