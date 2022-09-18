@@ -17,14 +17,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //TODO: check which port right and left lift are plugged into
 public class ScoringSystem {
 
+    //TODO: Decide whether I want a zero height
     public enum ExtensionHeight{
         HIGH,
-        MEDIUM
+        MEDIUM,
+        ZERO
     }
+
+
 
     //TODO: See if this is what we are actually using
     DcMotorEx rLift, lLift;
-    Servo grabber, /*lLinkage,*/ Linkage; //dont know whether there are two linkage servos or one
+    Servo grabber, /*lLinkage,*/ linkage; //dont know whether there are two linkage servos or one
     private Robot robot;
 
 
@@ -76,7 +80,7 @@ public class ScoringSystem {
 
 
         //lLinkage = hardwareMap.get(Servo.class, "LeftLinkage");
-        Linkage = hardwareMap.get(Servo.class, "Linkage");
+        linkage = hardwareMap.get(Servo.class, "Linkage");
 
         grabber = hardwareMap.get(Servo.class, "Grabber");
 
@@ -258,9 +262,26 @@ public class ScoringSystem {
         //TODO: tune position values
         /*lLinkage.setPosition();
         rLinkage.setPosition();*/
+        linkage.setPosition(position);
+    }
+
+    public void linkageUpAndDown(boolean up){
+        if(up) {
+            setLinkagePosition(constants.linkageUp);
+        }else{
+            setLinkagePosition(constants.linkageDown);
+        }
     }
 
     public void setGrabberPosition(double position){
         grabber.setPosition(position);
+    }
+
+    public void grabberOpenAndClose(boolean close){
+        if(close) {
+            setGrabberPosition(constants.grabbing);
+        }else{
+            setGrabberPosition(constants.open);
+        }
     }
 }

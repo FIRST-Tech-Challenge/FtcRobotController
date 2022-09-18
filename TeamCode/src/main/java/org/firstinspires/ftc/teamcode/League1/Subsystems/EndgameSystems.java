@@ -33,7 +33,7 @@ public class EndgameSystems {
 
 
 
-    public EndgameSystems(HardwareMap hardwareMap, boolean isBlue){
+    public EndgameSystems(HardwareMap hardwareMap){
         xCap = hardwareMap.crservo.get("xCap");
         yCap = hardwareMap.servo.get("yCap");
         capstoneExtension = hardwareMap.dcMotor.get("WinchEncoder");
@@ -41,7 +41,6 @@ public class EndgameSystems {
         //carouselEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //carouselEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        this.isBlue = isBlue;
         // zeroCap();
 
     }
