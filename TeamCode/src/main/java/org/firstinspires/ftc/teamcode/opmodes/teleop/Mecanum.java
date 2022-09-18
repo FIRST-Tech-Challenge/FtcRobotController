@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -21,7 +21,7 @@ public class Mecanum extends LinearOpMode {
     @Override
     public void runOpMode() {
         TurtleRobot robot = new TurtleRobot(this);
-        robot.init(hardwareMap);`
+        robot.init(hardwareMap);
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
