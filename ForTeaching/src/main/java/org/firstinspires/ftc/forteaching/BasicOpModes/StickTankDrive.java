@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.forteaching.TankDriveDemo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name = "StickTankDrive")
+@TeleOp(name = "StickTankDrive", group = "demo")
 public class StickTankDrive extends OpMode {
     private static final double DEAD_ZONE = 0.1;
     private TankDriveDemo tankDrive;

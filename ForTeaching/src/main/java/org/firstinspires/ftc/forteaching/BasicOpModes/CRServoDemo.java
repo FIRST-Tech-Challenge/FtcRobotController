@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.forteaching.CRServoCode;
 
 @Disabled
-@TeleOp(name = "CRServoDemo")
+@TeleOp(name = "CRServoDemo", group = "Demo")
 public class CRServoDemo extends OpMode {
     private CRServoCode servoCode;
     private CRServo servo;
@@ -22,7 +22,7 @@ public class CRServoDemo extends OpMode {
     }
 
     @Override
-    public void start(){
+    public void start() {
         // Called when PLAY button being pressed
         this.servoCode.stop();
     }

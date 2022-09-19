@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
 import android.util.Log;
 
@@ -29,7 +29,7 @@ Analog Inputs:
 3: leftRearEncoder
 */
 @Disabled
-@TeleOp(name = "Servo Thing")
+@TeleOp(name = "Servo Thing", group = "demo")
 public class SwerveServoTest extends LinearOpMode {
     SwerveModule leftFront;
     SwerveModule rightFront;

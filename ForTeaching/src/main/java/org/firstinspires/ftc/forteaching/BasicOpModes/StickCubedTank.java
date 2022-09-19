@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.forteaching.TankDriveDemo;
 
-@Disabled
-@TeleOp(name = "StickTankDriveForVideo")
-public class StickTankDriveForVideo extends OpMode {
+@TeleOp(name = "TankCubed", group = "demo")
+public class StickCubedTank extends OpMode {
 
     private static final double DEAD_ZONE = 0.1;
     private TankDriveDemo tankDrive;
@@ -26,13 +24,15 @@ public class StickTankDriveForVideo extends OpMode {
 
     @Override
     public void loop() {
-        if (Math.abs(gamepad1.left_stick_y) > DEAD_ZONE) {
-            tankDrive.motorLPower(gamepad1.left_stick_y);
+        float ly = gamepad1.left_stick_y;
+        float ry = gamepad1.right_stick_y;
+        if (Math.abs(ly) > DEAD_ZONE) {
+            tankDrive.motorLPower(ly * ly * ly);
         } else {
             tankDrive.motorLPower(0);
         }
-        if (Math.abs(gamepad1.right_stick_y) > DEAD_ZONE) {
-            tankDrive.motorRPower(gamepad1.right_stick_y);
+        if (Math.abs(ry) > DEAD_ZONE) {
+            tankDrive.motorRPower(ry * ry * ry);
         } else {
             tankDrive.motorRPower(0);
         }

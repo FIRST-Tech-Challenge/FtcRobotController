@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.forteaching.SensorCode;
 
 @Disabled
-@TeleOp(name = "SensorDemo")
+@TeleOp(name = "SensorDemo", group = "demo")
 public class SensorDemo extends OpMode {
 
     private SensorCode sensorCode;
@@ -27,18 +27,20 @@ public class SensorDemo extends OpMode {
         sensorCode = new SensorCode(motorL, motorR, distanceSensor, touchSensor, colorSensor);
     }
 
-    enum State{started, foundColor, isClose, isFinished};
+    enum State {started, foundColor, isClose, isFinished}
+
+    ;
     State state;
 
     @Override
     public void start() {
         state = State.started;
-        sensorCode.moveForward(1,5 );
+        sensorCode.moveForward(1, 5);
     }
 
     @Override
     public void loop() {
-        switch(state) {
+        switch (state) {
 
             case started:
                 if (colorSensor.blue() > 67) {

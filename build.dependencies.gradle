@@ -1,6 +1,8 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://jitpack.io' }
     flatDir {
         dirs rootProject.file('libs')
     }
@@ -19,5 +21,12 @@ dependencies {
     // implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
+
+    // TechnoLib:
+    implementation 'com.github.technototes:TechnoLib:1.1.1'
+    // RoadRunner:
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
+    // Last, but not least: FTC Dashboard
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
 }
 

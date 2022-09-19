@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
 import android.util.Log;
 import android.util.Pair;
@@ -31,7 +31,7 @@ Analog Inputs:
 */
 
 @Disabled
-@TeleOp(name = "PIDTuner")
+@TeleOp(name = "PIDTuner", group = "demo")
 public class SwerveModuleTester extends LinearOpMode {
     SwerveModule leftFront;
     SwerveModule rightFront;
