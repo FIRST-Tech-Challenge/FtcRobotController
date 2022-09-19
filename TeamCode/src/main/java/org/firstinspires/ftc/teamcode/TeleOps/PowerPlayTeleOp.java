@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,16 +11,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 *it workedd?!
  */
 
-@TeleOp(name = "MecanumTeleOp")
-public class MecanumTeleOp extends LinearOpMode {
 
+@TeleOp(name = "PowerPlayTeleOp")
+public class PowerPlayTeleOp extends OpMode {
     //"MC ABHI IS ON THE REPO!!!"
-
 
     // Declaring class members to be used in other methods
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
-    private Servo exampleThing1, exampleThing2;
+    private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, intakeMotor, liftMotor;
+    private Servo armJoint, clawJoint, wristJoint;
 
     /**
      * Get the maximum absolute value from a static array of doubles
@@ -39,42 +38,59 @@ public class MecanumTeleOp extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        // Declare our motors
-        // Make sure your ID's match your configuration
+    public void init() {
+        // Declaring our motors
         motorFrontLeft = (DcMotorEx)hardwareMap.dcMotor.get("FL");
         motorBackLeft = (DcMotorEx)hardwareMap.dcMotor.get("BL");
         motorFrontRight = (DcMotorEx)hardwareMap.dcMotor.get("FR");
         motorBackRight = (DcMotorEx)hardwareMap.dcMotor.get("BR");
+        intakeMotor = (DcMotorEx)hardwareMap.dcMotor.get("intakeMotor");
+        liftMotor = (DcMotorEx)hardwareMap.dcMotor.get("liftMotor");
+
+        // Declaring our servos
+        armJoint = hardwareMap.get(Servo.class, "armJoint");
+        clawJoint = hardwareMap.get(Servo.class, "clawJoint");
+        wristJoint = hardwareMap.get(Servo.class, "wristJoint");
+
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // pauses the Op-Mode until the START button is pressed on the driver station.
-        waitForStart();
-
-        // "opModeIsActive()" returns a boolean that checks if the START button has been pressed, and if the STOP button has not been pressed
-        while (opModeIsActive()) {
-           drive(); // calling drive() in a loop rather than running it in this one allows us to better organize different functions we want the bot to perform
-
-        }//end of "while(OpmodeIsActive)"
-
-    }// end of "runOpMode()"
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-//        functional methods       \\
+        }// end of init
+
+        @Override
+        public void loop(){
+        boolean precisionToggle = gamepad1.b;
+        boolean rightBumperPressed = gamepad1.right_bumper;
+        boolean leftBumperPressed = gamepad1.left_bumper;
+
+        drive();
+
+        intake(rightBumperPressed, leftBumperPressed);  // left_bumper = extake | right_bumper = intake
+
+        lift(precisionToggle); // left trigger = lower | right trigger = raise
+        }
+
+
+
+//        bot methods       \\
 
     public void drive(){
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -132,4 +148,38 @@ public class MecanumTeleOp extends LinearOpMode {
 
     } // end of drive()
 
-} // end of class
+   public void intake(boolean rightBumperPressed, boolean leftBumperPressed){
+    if(rightBumperPressed){
+       intakeMotor.setPower(1);
+     }
+     else if (leftBumperPressed){
+        intakeMotor.setPower(-1);
+     }
+   }// end of intake()
+
+   public void lift(boolean precisionToggle){
+   if(gamepad1.right_trigger > 0){
+        if(precisionToggle)
+            liftMotor.setPower(gamepad1.right_trigger * 0.6);
+
+        else
+            liftMotor.setPower(gamepad1.right_trigger);
+       }
+
+   if(gamepad1.left_trigger > 0){
+        if (precisionToggle)
+            liftMotor.setPower(-(gamepad1.left_trigger * 0.6)); // making this value negative because we want the motor to spin in the opposite direction
+
+        else
+            liftMotor.setPower(-gamepad1.left_trigger);
+       }
+   }// end of lift()
+
+
+
+
+
+
+
+
+}// end of class
