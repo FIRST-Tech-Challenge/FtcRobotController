@@ -1,12 +1,13 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.forteaching.BasicServoCode;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "ServoDirection00")
-public class ServoDirection00 extends OpMode {
+@Disabled
+@TeleOp(name = "ServoDirection02Then09", group = "demo")
+public class ServoDirection02Then09 extends OpMode {
     private BasicServoCode servoCode;
     private Servo servo;
 
@@ -18,9 +19,10 @@ public class ServoDirection00 extends OpMode {
     }
 
     @Override
-    public void start(){
+    public void start() {
         // Called when PLAY button being pressed
-        this.servoCode.setPosition(0.0);
+        this.servoCode.setPosition(0.2);
+        this.servoCode.setPosition(0.9);
     }
 
     @Override

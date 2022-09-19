@@ -1,13 +1,14 @@
-package org.firstinspires.ftc.forteaching.OpModes;
+package org.firstinspires.ftc.forteaching.BasicOpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.forteaching.BasicServoCode;
 import org.firstinspires.ftc.forteaching.util.MathHelper;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "IntermediateServoDemo")
+@Disabled
+@TeleOp(name = "IntermediateServoDemo", group = "demo")
 public class IntermediateServoDemo extends OpMode {
     private BasicServoCode servoCode;
     private Servo servo;
@@ -24,7 +25,7 @@ public class IntermediateServoDemo extends OpMode {
     }
 
     @Override
-    public void start(){
+    public void start() {
         // Called when PLAY button being pressed
         // this.servoCode.toLeft();
         this.servoCode.toMiddle();
