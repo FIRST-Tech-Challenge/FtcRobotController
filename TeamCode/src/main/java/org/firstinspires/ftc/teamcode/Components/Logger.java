@@ -1,21 +1,19 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import android.annotation.SuppressLint;
-
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Logger {
@@ -28,8 +26,6 @@ public class Logger {
     FileWriter indexer;
     FileWriter filewriter = null;
     String  currentTime;
-    double runtime;
-    double lastlogtime = 0;
     public int loopcounter=0;
     String data = "0";
     public Logger (){
@@ -37,16 +33,6 @@ public class Logger {
         try {
             myReader = new Scanner(myFile);
             data = myReader.nextLine();
-
-//            if (myFile.createNewFile()) {
-//                op.telemetry.addData("Logger:", "File created:%S\n", "Logger");
-//                op.telemetry.update();
-//            } else {
-//                myFile.delete();
-//                myFile.createNewFile();
-//                op.telemetry.addData("Logger:", "File already exists:%S\n", "Overriding");
-//                op.telemetry.update();
-//            }
             indexer = new FileWriter(myFile);
             char a = data.charAt(0);
             a++;
@@ -89,9 +75,7 @@ public class Logger {
         }
     }
 
-//    public void createFile(String newLogName) {
-//        public static File newLogName;
-//    }
+
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input){
 //        if (loopcounter % 5 == 0) {
@@ -179,17 +163,17 @@ public class Logger {
     }
 
     public void closeLog(){
-//        try {
-//            Collection<FileWriter> files = logList.values();
-//            for (FileWriter file: files
-//                 ) {
-//                file.close();
-//            }
-//        }
-//        catch(IOException e){
-//            e.printStackTrace();
-//        }
-
-
+        Collection<File> fileCollection = logList.values();
+        Object[] fileArrayList= fileCollection.toArray();
+        File[] fileArray = (File[]) Arrays.stream(fileArrayList).toArray();
+        try {
+            for (int i=0; i< fileArray.length;i++){
+                FileWriter file = new FileWriter(fileArray[i]);
+                file.close();
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }

@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
-import org.firstinspires.ftc.teamcode.BasicRobot;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Components.Logger;
 
 import java.util.ArrayList;

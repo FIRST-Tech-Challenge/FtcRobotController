@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.logger;
+
+import static java.lang.Math.abs;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,8 +17,7 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs;
     private double maxtickcount;
     private double mintickcount;
-    private final double TICK_BOUNDARY_PADDING = 5;
-    private final double TICK_STOP_PADDING = 20;
+    private double TICK_BOUNDARY_PADDING = 5, TICK_STOP_PADDING=5;
 
     /*Initializes the motor
         Inputs:
@@ -122,7 +123,6 @@ public class RFMotor extends Motor {
     public void setVelocity(double velocity) {
         rfMotor.setVelocity(velocity);
         logger.log("RFMotorLog", "Setting Velocity," + velocity);
-
     }
 
     public int getCurrentPosition() {
@@ -135,7 +135,6 @@ public class RFMotor extends Motor {
     }
 
     public double getVelocity() {
-        logger.log("RFMotorLog", "Getting Velocity," + rfMotor.getVelocity());
         return rfMotor.getVelocity();
     }
 }

@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.BasketArmStates.BASKET_ARM_REST;
-import static org.firstinspires.ftc.teamcode.Components.Turret.areTeleop;
-import static org.firstinspires.ftc.teamcode.BlackoutRobot.checker;
-import static org.firstinspires.ftc.teamcode.Components.Turret.extendPosition;
-import static org.firstinspires.ftc.teamcode.Components.Turret.rotatePosition;
-import static org.firstinspires.ftc.teamcode.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.BasketArmStates.BASKET_ARM_REST;
+import static org.firstinspires.ftc.teamcode.Old.Components.Hardware.Turret.areTeleop;
+import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.checker;
+import static org.firstinspires.ftc.teamcode.Old.Components.Hardware.Turret.extendPosition;
+import static org.firstinspires.ftc.teamcode.Old.Components.Hardware.Turret.rotatePosition;
 import static java.lang.Math.abs;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Components.StateMachine;
-import org.firstinspires.ftc.teamcode.Components.Logger;
 
 public class RFBasket {
 

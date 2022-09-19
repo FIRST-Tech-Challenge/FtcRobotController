@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 
@@ -46,7 +45,7 @@ public class TrackingWheelForwardOffsetTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY,false,false,0));
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
 
         if (!(drive.getLocalizer() instanceof StandardTrackingWheelLocalizer)) {

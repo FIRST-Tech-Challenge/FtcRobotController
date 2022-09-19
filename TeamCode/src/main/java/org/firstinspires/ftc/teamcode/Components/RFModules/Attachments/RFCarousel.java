@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Attachments;
 
-import static org.firstinspires.ftc.teamcode.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
