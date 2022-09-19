@@ -7,13 +7,13 @@ import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 
-public class LinkageUpCommand extends CommandBase {
+public class LinkageCommand extends CommandBase {
 
     boolean up;
     ScoringSystem score;
 
 
-    public LinkageUpCommand(ScoringSystem score, Constants constants, HardwareMap hardwareMap, Robot robot, boolean up){
+    public LinkageCommand(ScoringSystem score, Constants constants, HardwareMap hardwareMap, Robot robot, boolean up){
         score = new ScoringSystem(hardwareMap, robot, constants, false);
         this.up = up;
 

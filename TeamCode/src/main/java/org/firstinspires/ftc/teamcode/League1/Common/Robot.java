@@ -19,11 +19,12 @@ public class Robot extends Thread{
 
 
     private volatile LynxModule.BulkData ehData, chData;
-    private volatile NormalizedRGBA rgba;
+    private volatile NormalizedRGBA grabberRGBA, driveRGBA;
     private volatile Orientation imuAngle;
 
     private LynxModule ch, eh;
     private ExpansionHubEx ehub, chub;
+    private ColorRangeSensor grabberColor, driveColor;
     private BNO055IMU imu;
 
     AtomicBoolean shouldUpdate;
@@ -41,7 +42,8 @@ public class Robot extends Thread{
         ehData = eh.getBulkData();
         imuAngle = imu.getAngularOrientation();
 
-        //rgba = color.getNormalizedColors();
+        grabberRGBA = grabberColor.getNormalizedColors();
+        driveRGBA = driveColor.getNormalizedColors();
 
         eh.clearBulkCache();
         ch.clearBulkCache();
@@ -91,8 +93,11 @@ public class Robot extends Thread{
         ehub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
         chub.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FAST_400K);
 
-        //color = hardwareMap.get(ColorRangeSensor.class, "Color");
-        //color.setGain(COLOR_GAIN);
+        grabberColor = hardwareMap.get(ColorRangeSensor.class, "Color");
+        grabberColor.setGain(COLOR_GAIN);
+
+        driveColor = hardwareMap.get(ColorRangeSensor.class, "Color");
+        driveColor.setGain(COLOR_GAIN);
 
 
         eh.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -102,6 +107,14 @@ public class Robot extends Thread{
 
         shouldUpdate = new AtomicBoolean(true);
         controlProcessRunning = new AtomicBoolean(true);
+    }
+
+    public NormalizedRGBA getRGBA(boolean grabber){
+        if(grabber){
+            return grabberRGBA;
+        }else{
+            return driveRGBA;
+        }
     }
 
 

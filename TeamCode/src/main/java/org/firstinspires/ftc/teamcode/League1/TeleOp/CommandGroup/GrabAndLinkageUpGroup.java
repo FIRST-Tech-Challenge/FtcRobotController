@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.League1.Common.Constants;
 import org.firstinspires.ftc.teamcode.League1.Common.Robot;
 import org.firstinspires.ftc.teamcode.League1.Subsystems.ScoringSystem;
 import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.GrabCommand;
-import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LinkageUpCommand;
+import org.firstinspires.ftc.teamcode.League1.TeleOp.Command.LinkageCommand;
 
 public class GrabAndLinkageUpGroup extends SequentialCommandGroup {
 
@@ -17,7 +17,7 @@ public class GrabAndLinkageUpGroup extends SequentialCommandGroup {
         super(
             new GrabCommand(score, constants, hardwareMap, robot, true),
             new WaitCommand(500),
-            new LinkageUpCommand(score, constants, hardwareMap, robot, true)
+            new LinkageCommand(score, constants, hardwareMap, robot, true)
         );
     }
 }

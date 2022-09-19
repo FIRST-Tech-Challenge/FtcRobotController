@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.League1.TeleOp.CommandGroup.ResetScoringGr
 
 
 @TeleOp
-public class FirstTeleOp extends CommandOpMode {
+public class FirstTeleOpRed extends CommandOpMode {
 
     private final double NORMAL_LINEAR_MODIFIER = 0.8;
     private final double NORMAL_ROTATIONAL_MODIFIER = 0.8;
@@ -50,17 +50,18 @@ public class FirstTeleOp extends CommandOpMode {
         beaconMechDriver = new GamepadEx(gamepad2);
 
 
+        //TODO: Check all the commands and command groups
         //Close Grabber and Lift up linkage
         driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new GrabAndLinkageUpGroup(lift, constants, hardwareMap, robot));
 
         //Lift up slides to medium height
-        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.MEDIUM, 0.5));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.MEDIUM, 0.5));
 
         //Lift up slides to height height
-        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.HIGH, 0.5));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new LiftCommand(lift, constants, hardwareMap, robot, ScoringSystem.ExtensionHeight.HIGH, 0.5));
 
         //Slides back to zero, open grabber and linkage goes down
-        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(new ResetScoringGroup(lift, constants, hardwareMap, robot));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ResetScoringGroup(lift, constants, hardwareMap, robot));
 
 
         //Initializing objects
@@ -82,9 +83,6 @@ public class FirstTeleOp extends CommandOpMode {
     public void run() {
         super.run();
 
-        schedule(
-
-        );
 
 
         //Drive code
@@ -92,6 +90,12 @@ public class FirstTeleOp extends CommandOpMode {
             drive.setPower(new Vector2D(driver.getLeftX() * SPRINT_LINEAR_MODIFIER, driver.getLeftY() * SPRINT_LINEAR_MODIFIER), driver.getRightX() * SPRINT_ROTATIONAL_MODIFIER, false);
         } else {
             drive.setPower(new Vector2D(driver.getLeftX() * NORMAL_LINEAR_MODIFIER, driver.getLeftY() * NORMAL_LINEAR_MODIFIER), driver.getRightX() * NORMAL_ROTATIONAL_MODIFIER, false);
+        }
+
+        //TODO:Tune this value later
+        if(robot.getRGBA(true).red > 500){
+            schedule(new GrabAndLinkageUpGroup(lift, constants, hardwareMap, robot));
+
         }
 
 
