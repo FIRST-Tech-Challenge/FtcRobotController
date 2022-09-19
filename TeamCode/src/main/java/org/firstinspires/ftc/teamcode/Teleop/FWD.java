@@ -1,5 +1,3 @@
-// CONTROLS - UPDATED 8/19/22 6:02 PM
-//
 package org.firstinspires.ftc.teamcode.Teleop;
 
 import static java.lang.Math.abs;
@@ -21,11 +19,34 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.BasicRobot;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.FWDRobot;
+
+/*
+FOUR WHEEL DRIVE ROBOT CONTROLS
+UPDATED 9/2/2022 10:04 PM - Harry
+
+GAMEPAD 1:
+Y - open claw
+X - close claw
+A - raise arm
+B - lower arm
+Left Stick Y axis - forward/backwards
+Right Stick X axis - left/right
+Right Stick Y axis - Extend/retract tape
+LB - toggle disc intake off
+RB - toggle disc intake on
+DPAD_Right - move tape Y axis
+DPAD_Left - move tape X axis
+
+GAMEPAD 2: NONE
+ */
 
 @Config
 @TeleOp(name = "FWD")
 public class FWD extends LinearOpMode {
+    // motors & servos
     private DcMotorEx wobbleArmGoal;
     private Servo wobbleGoalGrabbyer;
     private CRServo tapeExtend;
@@ -33,31 +54,21 @@ public class FWD extends LinearOpMode {
     private Servo tapeMove;
     private DcMotorEx discIntake;
 
-    private PIDController controller;
-    public static double p = 0, i = 0, d = 0;
+    private PIDController controller; // pid controller creation
+    public static double p = 0, i = 0, d = 0; // initialize pidf variables
     public static double f = 0;
 
-    public static int target = 0;
+    public static int target = 0; // default initialization of target position
 
-    private final double ticks_in_degree = 1680 / 360;
-
-    // need to specify public static bc otherwise it no show up in the dashboard
-    public static double ysensitivity = 0.3;
-    public static double xsensitivity = 0.4;
-    boolean isTurning = true;
-    FWDRobot robit = new FWDRobot(this);
-
-    public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
-
-    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0); //PID coefficients that need to be tuned probably through FTC dashboard
-    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); //PID gains which we will define later in the process
-
-    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    private final double ticks_in_degree = 1680 / 360; // constant ratio of ticks to degrees
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        FWDRobot robit = new FWDRobot(this); // declaration of FWDRobot constructor, pass in this opmode
+        RFGamepad gp = new RFGamepad(this);
 
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()); // ftc dashboard telemetry functionality
+        // hardwaremapping most of the motor/servos
         discIntake = (DcMotorEx) hardwareMap.dcMotor.get("discIntake");
         discIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wobbleArmGoal = (DcMotorEx) hardwareMap.dcMotor.get("wobbleArmGoal");
@@ -65,67 +76,44 @@ public class FWD extends LinearOpMode {
         tapeExtend = hardwareMap.crservo.get("tapeExtend");
         tapeHeight = hardwareMap.servo.get("tapeHeight");
         tapeMove = hardwareMap.servo.get("tapeMove");
-        controller = new PIDController(p,i,d);
+        controller = new PIDController(p, i, d); // pid controller declaration
 
         wobbleArmGoal.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         wobbleArmGoal.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         wobbleArmGoal.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        wobbleGoalGrabbyer.setPosition(0);
-        f = 0; p = 0; d = 0; i = 0;
+        wobbleGoalGrabbyer.setPosition(0); //set servo to open position as default
+        f = 0; p = 0; d = 0; i = 0; // reset PIDF coeffs when init so you don't carry over previous run's values
         waitForStart();
+        // used to make tape meausure need less buttons
         int onetwo = 0;
         int twoone = 0;
 
         resetStartTime();
-        while (opModeIsActive() && getRuntime() < 90) {
-            //wobbleArmGoal.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(p,i,d,f));
+        while (opModeIsActive() && getRuntime() < 90 ) { // opmode active check & set time limit
 
-            if(gamepad1.a){ //lifted pos
-                target = 450;
-            }
-            else if(gamepad1.b){ //pickup pos
+            if (gamepad1.a) { // arm raised position
+                target = 460;
+            } else if (gamepad1.b) { // arm lowered position
                 target = 45;
             }
 
-            controller.setPID(p,i,d);
-            int armPos = wobbleArmGoal.getCurrentPosition();
-            double pid = controller.calculate(armPos, target);
-            double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
-            double power = pid + ff;
-            double diff = armPos - target;
+            controller.setPID(p, i, d); // pid controller
+            int armPos = wobbleArmGoal.getCurrentPosition(); // self explanatory
+            double pid = controller.calculate(armPos, target); // calculate only pid power needed given current arm position & target position
+            double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f; // maths
+            double power = pid + ff; // adding ff coeff to the pidf, hence the "f"
             wobbleArmGoal.setPower(power);
-//            if(diff<0 && abs(diff)>20 ) {
-//                wobbleArmGoal.setVelocity(50);
-//            }
-//            else if(diff>0 && abs(diff)<20){
-//                wobbleArmGoal.setVelocity(-50);
-//            }
-//            else{
-//                wobbleArmGoal.setVelocity(0);
-//            }
-            // NO WEIGHT PIDF VALUES:
-            // d = 0, f = 0.006, i = 0, p = 0.002
-            // WEIGHT PIDF VALUES:
-            // PIDF REFERENCE: f = gravity resist, d = dampening of oscillations, i = idk, p = power-sorta thing
-            //460 and 45
             if (gamepad1.y) {
                 wobbleGoalGrabbyer.setPosition(0);
+                // tuned values
                 f = 0;
                 p = 0.00025;
             }
             if (gamepad1.x) {
                 wobbleGoalGrabbyer.setPosition(1);
+                // tuned values
                 p = 0.0004;
             }
-
-//            if(abs(gamepad1.left_trigger - gamepad1.right_trigger)>0.2) {
-////                wobbleArmGoal.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//                wobbleArmGoal.setVelocity(200 * (gamepad1.left_trigger - gamepad1.right_trigger));
-//            }
-//            else{
-//                wobbleArmGoal.setVelocity(0);
-//            }
-//            discIntake.setPower(gamepad1.right_stick_x*xsensitivity);
             if (gamepad1.right_bumper) {
                 discIntake.setPower(0.5);
             }
@@ -133,20 +121,31 @@ public class FWD extends LinearOpMode {
                 discIntake.setPower(0);
             }
             tapeExtend.setPower(gamepad1.right_stick_y);
-            if(gamepad1.dpad_left){
+            if (gamepad1.dpad_left) {
                 onetwo += 1;
-                tapeMove.setPosition(onetwo%2);
+                tapeMove.setPosition(onetwo % 2);
             }
-            if(gamepad1.dpad_right){
+            if (gamepad1.dpad_right) {
                 twoone += 1;
-                tapeHeight.setPosition(twoone%2);
+                tapeHeight.setPosition(twoone % 2);
             }
 
-            robit.motorRightBack.setPower(gamepad1.left_stick_y * 0.3 );
-            robit.motorLeftBack.setPower(gamepad1.left_stick_y * 0.3 );
-            robit.motorRightFront.setPower(gamepad1.left_stick_y * 0.3 );
-            robit.motorLeftFront.setPower(gamepad1.left_stick_y * 0.3 );
-            // sussy telemetry
+            gp.readGamepad(gamepad1.y, "gamepad1_y", "Open Claw");
+            gp.readGamepad(gamepad1.x, "gamepad1_x", "Close Claw");
+            gp.readGamepad(gamepad1.a, "gamepad1_a", "Riase Arm");
+            gp.readGamepad(gamepad1.b, "gamepad1_b", "Lower Arm");
+            gp.readGamepad(gamepad1.left_stick_y, "gamepad1_left_stick_y", "Forward/Backwards");
+            gp.readGamepad(gamepad1.right_stick_x, "gamepad1_right_stick_x", "Left/Right");
+            gp.readGamepad(gamepad1.right_stick_y, "gamepad1_right_stick_y", "Extend/Retract Tape");
+            gp.readGamepad(gamepad1.left_bumper, "gamepad1_left_bumper", "Disc intake Off");
+            gp.readGamepad(gamepad1.right_bumper, "gamepad1_right_bumper", "Disc Intake On");
+            gp.readGamepad(gamepad1.dpad_left, "gamepad1_dpad_left", "Tape Up/Down");
+            gp.readGamepad(gamepad1.dpad_right, "gamepad1_dpad_right", "Tape Left/Right");
+
+            robit.motorRightBack.setPower(gamepad1.left_stick_y * 0.3 + gamepad1.right_stick_x * 0.4);
+            robit.motorLeftBack.setPower(gamepad1.left_stick_y * 0.3 - gamepad1.right_stick_x * 0.4);
+            robit.motorRightFront.setPower(gamepad1.left_stick_y * 0.3 + gamepad1.right_stick_x * 0.4);
+            robit.motorLeftFront.setPower(gamepad1.left_stick_y * 0.3 - gamepad1.right_stick_x * 0.4);
             telemetry.addData("Left Back Motor Pos", robit.motorLeftBack.getCurrentPosition());
             telemetry.addData("Left Front Motor Pos", robit.motorLeftFront.getCurrentPosition());
             telemetry.addData("Right Back Motor Pos", robit.motorRightBack.getCurrentPosition());
@@ -155,46 +154,10 @@ public class FWD extends LinearOpMode {
             telemetry.addData("velo", wobbleArmGoal.getVelocity());
             telemetry.addData("pos", wobbleArmGoal.getCurrentPosition());
             telemetry.addData("target", target);
-            // restart robit to make all values go back to default(0)
             telemetry.update();
             sleep(40);
 
+
         }
     }
-
-    double lastError = 0;
-    double integral = 0;
-    //initializing our variables
-/*
-    public void PID(double targetVelocity){
-        PIDTimer.reset(); //resets the timer
-
-        double currentVelocity = wobbleArmGoal.getVelocity();
-        double error = targetVelocity - currentVelocity; //pretty self explanatory--just finds the error
-
-        double deltaError = error - lastError; //finds how the error changes from the previous cycle
-        double derivative = deltaError / PIDTimer.time(); //deltaError/time gives the rate of change (sensitivity of the system)
-
-        integral += error * PIDTimer.time();
-        //continuously sums error accumulation to prevent steady-state error (friction, not enough p-gain to cause change)
-
-        pidGains.p = error * pidCoeffs.p;
-        //acts directly on the error; p-coefficient identifies how much to act upon it
-        // p-coefficient (very low = not much effect; very high = lots of overshoot/oscillations)
-        pidGains.i = integral * pidCoeffs.i;
-        //multiplies integrated error by i-coefficient constant
-        // i-coefficient (very high = fast reaction to steady-state error but lots of overshoot; very low = slow reaction to steady-state error)
-        // for velocity, because friction isn't a big issue, only reason why you would need i would be for insufficient correction from p-gain
-        pidGains.d = derivative * pidCoeffs.d;
-        //multiplies derivative by d-coefficient
-        // d-coefficient (very high = increased volatility; very low = too little effect on dampening system)
-
-        wobbleArmGoal.setVelocity(pidGains.p + pidGains.i + pidGains.d + targetVelocity);
-        //adds up the P I D gains with the targetVelocity bias
-
-        lastError = error;
-        //makes our current error as our new last error for the next cycle
-    }
-}
- */
 }
