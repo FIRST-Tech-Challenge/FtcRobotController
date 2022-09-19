@@ -9,14 +9,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name = "MecanumTeleOp")
-public class MecanumTeleOp extends OpMode {
+@TeleOp(name = "PowerPlayTeleOp")
+public class PowerPlayTeleOp extends OpMode {
     //"MC ABHI IS ON THE REPO!!!"
 
     // Declaring class members to be used in other methods
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, intakeMotor, liftMotor;
-    private Servo exampleThing1, exampleThing2;
+    private Servo armJoint, clawJoint, wristJoint;
 
     /**
      * Get the maximum absolute value from a static array of doubles
@@ -36,14 +36,19 @@ public class MecanumTeleOp extends OpMode {
 
     @Override
     public void init() {
-        // Declare our motors
-        // Make sure your ID's match your configuration
+        // Declaring our motors
         motorFrontLeft = (DcMotorEx)hardwareMap.dcMotor.get("FL");
         motorBackLeft = (DcMotorEx)hardwareMap.dcMotor.get("BL");
         motorFrontRight = (DcMotorEx)hardwareMap.dcMotor.get("FR");
         motorBackRight = (DcMotorEx)hardwareMap.dcMotor.get("BR");
         intakeMotor = (DcMotorEx)hardwareMap.dcMotor.get("intakeMotor");
         liftMotor = (DcMotorEx)hardwareMap.dcMotor.get("liftMotor");
+
+        // Declaring our servos
+        armJoint = hardwareMap.get(Servo.class, "armJoint");
+        clawJoint = hardwareMap.get(Servo.class, "clawJoint");
+        wristJoint = hardwareMap.get(Servo.class, "wristJoint");
+
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -60,7 +65,6 @@ public class MecanumTeleOp extends OpMode {
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -79,12 +83,11 @@ public class MecanumTeleOp extends OpMode {
         intake(rightBumperPressed, leftBumperPressed);  // left_bumper = extake | right_bumper = intake
 
         lift(precisionToggle); // left trigger = lower | right trigger = raise
-
-
         }
 
 
-//        functional methods       \\
+
+//        bot methods       \\
 
     public void drive(){
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
