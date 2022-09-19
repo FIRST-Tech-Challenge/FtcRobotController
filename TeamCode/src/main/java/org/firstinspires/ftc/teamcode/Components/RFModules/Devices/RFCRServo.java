@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,8 +21,22 @@ public class RFCRServo implements CRServo {
         RFCRServo = op.hardwareMap.get(CRServo.class, deviceName);
     }
 
+    public RFCRServo (String deviceName) {
+        devicename = deviceName;
+        RFCRServo = op.hardwareMap.get(CRServo.class, deviceName);
+    }
 
+    public void spinClockwise() {
+        RFCRServo.setPower(1.0);
+    }
 
+    public void spinCounterClockwise() {
+        RFCRServo.setPower(-1.0);
+    }
+
+    public void stopSpinning() {
+        RFCRServo.setPower(0);
+    }
 
     @Override
     public ServoController getController() {

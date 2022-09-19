@@ -10,6 +10,4 @@ public class RFFlippingIntake extends RFDualServo{
 
         flippingIntake = new RFDualServo(deviceName1, devicename2, limit);
     }
-
-
 }

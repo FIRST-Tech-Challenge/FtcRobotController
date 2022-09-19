@@ -7,40 +7,98 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
+import java.util.ArrayList;
+
 public class RFServo implements Servo {
     //all servo regular stuff
 
     private final Servo RFServo;
 
-    String devicename;
-
     private double lasttime = 0;
 
+    double servolimit = 0;
 
+    boolean flipped = false;
 
-    public RFServo (Servo.Direction direction, String deviceName) {
-        devicename = deviceName;
+    private String rfServoName;
+
+    private ArrayList<String> inputlogs = new ArrayList<>();
+
+    public RFServo (Servo.Direction direction, String deviceName, double limit) {
         RFServo = op.hardwareMap.get(Servo.class, deviceName);
+        rfServoName = deviceName;
         RFServo.setDirection(direction);
 
+        logger.createFile("/ServoLogs/RFServo", "sigh");
+
+        servolimit = limit;
+    }
+
+    public RFServo (String deviceName, double limit) {
+        RFServo = op.hardwareMap.get(Servo.class, deviceName);
+        rfServoName = deviceName;
+
+        logger.createFile("/ServoLogs/RFServo", "sigh");
+
+        servolimit = limit;
     }
 
     public void setPosition(double position) {
         if (op.getRuntime() - lasttime > 0.2) {
+            if (RFServo.getPosition() != position) {
+                inputlogs.clear();
+                inputlogs.add(rfServoName);
+                inputlogs.add("setPosition()");
+                inputlogs.add("Setting Position: " + RFServo.getPosition());
+                logger.log("/RobotLogs/GeneralRobot", inputlogs);
+                inputlogs.clear();
+
+//                logger.logRegulated("/ServoLogs/RFServo", "Setting Position:" + position);
+//                logger.logRegulated("/RobotLogs/GeneralRobot", rfServoName + "\nsetPosition():\nSetting Position:" + position);
+            }
             RFServo.setPosition(position);
-            logger.log("RFServoLog", "Setting Position:" + position);
+            lasttime = op.getRuntime();
+        }
+    }
+
+    public void flipServoInterval(double lowerpos, double upperpos) {
+        if (op.getRuntime() - lasttime > 0.2) {
+            if (flipped) {
+                setPosition(lowerpos);
+                flipped = false;
+            }
+            else {
+                setPosition(upperpos);
+                flipped = true;
+            }
+            lasttime = op.getRuntime();
+        }
+    }
+
+    public void flipServoMax() {
+        if (op.getRuntime() - lasttime > 0.2) {
+            if (flipped) {
+                setPosition(0);
+                flipped = false;
+            } else {
+                setPosition(servolimit);
+                flipped = true;
+            }
             lasttime = op.getRuntime();
         }
     }
 
     public double getPosition() {
-        logger.log("RFServoLog", "Current Position:" + RFServo.getPosition());
+//        inputlogs.add(rfServoName);
+//        inputlogs.add("getPosition()");
+//        inputlogs.add("Getting Position: " + RFServo.getPosition());
+//        logger.log("/RobotLogs/GeneralRobot", inputlogs);
+//        logger.log("RFServoLog", "Current Position:" + RFServo.getPosition());
         return RFServo.getPosition();
     }
 
     @Override
     public void scaleRange(double min, double max) {
-
     }
 
     @Override
@@ -69,7 +127,7 @@ public class RFServo implements Servo {
 
     @Override
     public String getDeviceName() {
-        return devicename;
+        return rfServoName;
     }
 
     @Override

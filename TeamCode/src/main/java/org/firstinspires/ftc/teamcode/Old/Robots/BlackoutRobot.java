@@ -19,7 +19,9 @@ import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.Tu
 import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
 import static java.lang.Math.abs;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.Queuer;
@@ -37,6 +39,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.tseDepositor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+
+import java.util.ArrayList;
 
 public class BlackoutRobot extends BasicRobot {
 
@@ -85,21 +89,22 @@ public class BlackoutRobot extends BasicRobot {
 
     // Hardware Objects
     private BasicChassis drivetrain = null;
-    public SampleMecanumDrive roadrun = null;
     private CarouselCR rotation = null;
     private Intake intake = null;
     private Turret turret = null;
+    private RFTurret rfTurret = null;
     private LedColor led_bank = null;
     private OpenCVMasterclass openCV = null;
     private tseDepositor TSE = null;
     public static StateMachine checker = null;
-    private Queuer queuer = null;
-    public Ultrasonics ultras = null;
-    public IMU imu = null;
-    public LimitSwitches touchs = null;
 
     public BlackoutRobot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
         super(opMode);
+
+        ArrayList<Double> rotationCoefs = new ArrayList<>();
+        rotationCoefs.add(4.0);
+        rotationCoefs.add(400.0);
+
         //        startAngle = startAng;
 //        trueStartAngle=startAng;
         checker = new StateMachine(isTeleop);
@@ -108,9 +113,11 @@ public class BlackoutRobot extends BasicRobot {
         rotation = new CarouselCR();
         intake = new Intake( isTeleop, checker);
 //        led_bank = new LedColor(op); //LED has to be declared before calling it
-        turret = new Turret( led_bank, isTeleop, checker);
+        turret = new Turret(led_bank, isTeleop, checker);
         openCV = new OpenCVMasterclass();
         TSE = new tseDepositor(isTeleop);
+        rfTurret = new RFTurret("turret_Rotation", DcMotor.RunMode.RUN_USING_ENCODER,
+                true, rotationCoefs, 570, -570);
 //        checker = new StateMachine(op, isTeleop, logger);
 //        //This link has a easy to understand explanation of ClassFactories. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
 //        drivetrain = ChassisFactory.getChassis(chassisType, op, vuforiaNAVIGATIONneeded, isTeleop, logger);
@@ -124,17 +131,9 @@ public class BlackoutRobot extends BasicRobot {
 //        touchs = new LimitSwitches();
 //        imu = new IMU();
 //        roadrun = new SampleMecanumDrive(op.hardwareMap, this);
-        queuer = new Queuer();
 
     }
 
-    public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        if (queuer.queue(false, !roadrun.isBusy())) {
-            if (!roadrun.isBusy()) {
-                roadrun.followTrajectorySequenceAsync(trajectorySequence);
-            }
-        }
-    }
 
     public void setFirstLoop(boolean value) {
         queuer.setFirstLoop(value);
@@ -143,7 +142,6 @@ public class BlackoutRobot extends BasicRobot {
     public int BlueElemTest(LinearOpMode opMode, float cameraX, float cameraY) {
         return openCV.BlueTeamElem();
     }
-
     public int RedElemTest(LinearOpMode opMode, float cameraX, float cameraY) {
         return openCV.RedTeamElem();
     }
@@ -172,7 +170,11 @@ public class BlackoutRobot extends BasicRobot {
         drivetrain.stopAllMotors();
     }
 
-
+    public void rotateTo (double position) {
+        if (queuer.queue(true, abs(position- rfTurret.getCurrentPosition())<10)) {
+            rfTurret.setPosition(position);
+        }
+    }
 
 
     /*/******** Left Front Motor **********/
@@ -625,7 +627,6 @@ public class BlackoutRobot extends BasicRobot {
             }
         }
         else{
-            logger.log("SequencingStates", "mogus");
             if(time-shareFlipTime>3.0&&checker.getState(BASKET_ARM_REST)&&!flipped) {
                 flipBasketArmToPosition(0.25);
                 checker.setState(BASKET_ARM_ALLIANCE, true);
@@ -636,7 +637,6 @@ public class BlackoutRobot extends BasicRobot {
                 flipIntakeToPosition(0.76);
             }
             if(time-shareFlipTime>0.1){
-                logger.log("SequencingStates", "mogus2");
                 turret.TurretSlotate(turret.turret_saved_positions[0][2][1]*isBlue);
                 turret.AutoAngleControlRotating(0);
                 turret.turretExtendo(turret.turret_saved_positions[0][2][0]);

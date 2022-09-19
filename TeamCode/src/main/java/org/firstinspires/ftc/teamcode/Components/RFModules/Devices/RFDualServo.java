@@ -3,11 +3,14 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+
+import java.util.ArrayList;
 
 public class RFDualServo implements Servo {
     /*fanmcy init
@@ -18,14 +21,16 @@ public class RFDualServo implements Servo {
     private Servo dualServo1;
     private Servo dualServo2;
 
-    double MIN_POSITION = 0.0;
-    double MAX_POSITION = 1.0;
+    private double lasttime = 0;
+
     double servolimit = 0;
     boolean flipped = false;
 
-    enum Direction { FORWARD, REVERSE }
-
     Servo.Direction servoDirection1;
+
+    private String rfDualServoName;
+
+    private ArrayList<String> inputlogs = new ArrayList<>();
 
     public RFDualServo(String deviceName1, String deviceName2, double limit) {
 
@@ -33,6 +38,10 @@ public class RFDualServo implements Servo {
         dualServo2 = op.hardwareMap.servo.get(deviceName2);
 
         servolimit = limit;
+
+        rfDualServoName = deviceName1;
+
+        logger.createFile("/DualServoLogs/RFDualServo", "sigh");
     }
 
     public RFDualServo(Servo.Direction servoDirection, String deviceName1, String deviceName2, double limit) {
@@ -50,27 +59,58 @@ public class RFDualServo implements Servo {
         }
 
         servolimit = limit;
+
+        rfDualServoName = deviceName1;
     }
 
-    public void flipServos (){
-        if (!flipped) {
-            dualServo1.setPosition(servolimit);
-            dualServo2.setPosition(0);
-            flipped = true;
+    public void flipServosMax (){
+        if (op.getRuntime() - lasttime > 0.2) {
+            if (!flipped) {
+//                dualServo1.setPosition(servolimit);
+//                dualServo2.setPosition(0);
+                setPositions(servolimit);
+                flipped = true;
+            } else {
+//                dualServo1.setPosition(0);
+//                dualServo2.setPosition(servolimit);
+                setPositions(0);
+                flipped = false;
+            }
+            lasttime = op.getRuntime();
         }
-        else {
-            dualServo1.setPosition(0);
-            dualServo2.setPosition(servolimit);
-            flipped = false;
-        }
+    }
 
+    public void flipServosInterval (double servo1lowerpos, double servo1upperpos){
+        if (op.getRuntime() - lasttime > 0.2) {
+            if (!flipped) {
+                setPositions(servo1upperpos);
+                flipped = true;
+            } else {
+                setPositions(servo1lowerpos);
+                flipped = false;
+            }
+            lasttime = op.getRuntime();
+        }
     }
 
     public void setPositions(double position) {
-        if (position < servolimit) {
+        if (position <= servolimit) {
+            if (dualServo1.getPosition() != position) {
+                inputlogs.add(rfDualServoName);
+                inputlogs.add("setPositions()");
+                inputlogs.add("Setting Positions: servo 1: " + position + ", servo 2: " + (servolimit - position));
+                logger.log("/RobotLogs/GeneralRobot", inputlogs);
+                inputlogs.clear();
+
+//                logger.log("/DualServoLogs/RFDualServo", " Setting Positions: " + position + ", " + servolimit + position);
+//                logger.log("/RobotLogs/GeneralRobot", rfDualServoName + "\nsetPositions():\nSetting Positions:\nservo 1: " + position + "\nservo 2: " + (servolimit - position));
+
+            }
             dualServo1.setPosition(position);
             dualServo2.setPosition(servolimit - position);
+            lasttime = op.getRuntime();
         }
+
     }
 
 
@@ -106,11 +146,11 @@ public class RFDualServo implements Servo {
 
     @Override
     public void setPosition(double position) {
-
+        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 
     public void scaleRange(double min, double max) {
-
+        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 
     @Override
@@ -135,11 +175,11 @@ public class RFDualServo implements Servo {
 
     @Override
     public void resetDeviceConfigurationForOpMode() {
-
+        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 
     @Override
     public void close() {
-
+        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 }

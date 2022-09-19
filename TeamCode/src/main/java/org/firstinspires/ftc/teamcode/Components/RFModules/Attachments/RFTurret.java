@@ -12,6 +12,7 @@ import static java.lang.Math.pow;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Components.Queuer;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class RFTurret extends RFMotor {
         rotationMotor = new RFMotor(motorName, runMode, resetPos, coefficients, maxtick, mintick);
 
     }
+
 
 //    public void rotateToAngle (double targetAngle) {
 //        targetAngle /= (18.0/116);

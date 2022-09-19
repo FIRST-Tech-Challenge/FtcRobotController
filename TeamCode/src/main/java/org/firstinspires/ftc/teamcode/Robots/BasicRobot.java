@@ -11,6 +11,10 @@ public class BasicRobot{
     public BasicRobot(LinearOpMode opMode){
         op = opMode;
         logger = new Logger();
+        logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
+                "Function         Action");
+        logger.createFile("gamepad", "Value Name Time");
+
         queuer = new Queuer();
 
     }

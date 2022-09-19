@@ -193,9 +193,9 @@ public class TrajectorySequenceRunner {
         packet.put("x", poseEstimate.getX());
         packet.put("y", poseEstimate.getY());
         packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
-        logger.log("RoadrunLog", String.valueOf(poseEstimate.getX())+",");
-        logger.log("RoadrunLog", String.valueOf(poseEstimate.getY())+",");
-        logger.log("RoadrunLog", String.valueOf(Math.toDegrees(poseEstimate.getHeading()))+"\n");
+        logger.logMessage("RoadrunLog", String.valueOf(poseEstimate.getX())+",");
+        logger.logMessage("RoadrunLog", String.valueOf(poseEstimate.getY())+",");
+        logger.logMessage("RoadrunLog", String.valueOf(Math.toDegrees(poseEstimate.getHeading()))+"\n");
 
         packet.put("xError", getLastPoseError().getX());
         packet.put("yError", getLastPoseError().getY());

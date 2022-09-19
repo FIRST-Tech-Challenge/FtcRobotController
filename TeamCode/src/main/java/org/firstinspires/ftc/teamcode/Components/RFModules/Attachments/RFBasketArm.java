@@ -17,10 +17,10 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 public class RFBasketArm extends RFServo {
 
     private RFServo basketArmServo;
-    public RFBasketArm(Servo.Direction direction, String deviceName) {
-        super(direction, deviceName);
+    public RFBasketArm(Servo.Direction direction, String deviceName, double limit) {
+        super(direction, deviceName, limit);
 
-        basketArmServo = new RFServo(direction, deviceName);
+        basketArmServo = new RFServo(direction, deviceName, limit);
     }
 
     public void FlipBasketArmToPosition (double torget) {

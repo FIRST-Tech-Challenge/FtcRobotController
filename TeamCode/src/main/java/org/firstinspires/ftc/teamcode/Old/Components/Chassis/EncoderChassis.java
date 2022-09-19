@@ -82,7 +82,7 @@ public class EncoderChassis extends BasicChassis {
             ypos = 0;
             angle = 0;
         }
-        ultra = new Ultrasonics();
+//        ultra = new Ultrasonics();
 
         if (navigator) {
 //            vuforia = new VuforiaThread(op, location);
@@ -380,7 +380,7 @@ public class EncoderChassis extends BasicChassis {
 
         if (op.getRuntime() > lastLog + 0.01) {
             lastLog = op.getRuntime();
-            logger.log("odofile", op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos));
+//            logger.log("odofile", op.getRuntime() + "," + String.format("%.2f", xpos) + "," + String.format("%.2f", ypos));
         }
 
         if (bad) {

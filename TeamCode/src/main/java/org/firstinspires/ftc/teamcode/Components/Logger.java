@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -17,30 +16,44 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Logger {
-    File myFile = new File("/storage/emulated/0/tmp/LogIndex.csv");
-    Scanner myReader;
-
+    File LogIndex = new File("/storage/emulated/0/tmp/LogIndex.csv");
+    Scanner logindexReader;
 
     HashMap<String, File> logList = new HashMap<>();
 
-    FileWriter indexer;
+    HashMap<File, ArrayList<Integer>> headerList = new HashMap<>();
+
+    ArrayList<Integer> tempheaderPositions = new ArrayList<>();
+
+    FileWriter logindexer;
     FileWriter filewriter = null;
-    String  currentTime;
+    String currentTime;
     public int loopcounter=0;
     String data = "0";
-    public Logger (){
+    String loggingString;
+    char prevchar;
 
+    @SuppressLint("SdCardPath")
+    public Logger (){
+        new File("/sdcard/tmp/MotorLogs").mkdirs();
+        new File("/sdcard/tmp/ServoLogs").mkdirs();
+        new File("/sdcard/tmp/DualServoLogs").mkdirs();
+        new File("/sdcard/tmp/CRServoLogs").mkdirs();
+        new File("/sdcard/tmp/RobotLogs").mkdirs();
         try {
-            myReader = new Scanner(myFile);
-            data = myReader.nextLine();
-            indexer = new FileWriter(myFile);
+            logindexReader = new Scanner(LogIndex);
+            data = logindexReader.nextLine();
+            logindexer = new FileWriter(LogIndex);
+
             char a = data.charAt(0);
             a++;
             if(a == '9'){
                 a='0';
             }
-            indexer.write(a);
-            indexer.close();
+
+            logindexer.write(a);
+            logindexer.close();
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -49,8 +62,18 @@ public class Logger {
 
     }
 
+    @SuppressLint("SdCardPath")
     public void createFile (String fileName, String headers) {
-        File file = new File("/storage/emulated/0/tmp/"+fileName+data+"Log.csv");
+        File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
+        headerList.computeIfAbsent(file, k -> new ArrayList<>());
+        headerList.get(file).add(0);
+        for (int i = 2; i < headers.length(); i++) {
+            prevchar = headers.charAt(i - 1);
+            if (prevchar == ' ' && headers.charAt(i) != prevchar) {
+                headerList.get(file).add(i);
+            }
+        }
+
         try {
             if (file.createNewFile()) {
                 op.telemetry.addData("Logger:", "File created:%S\n", "Logger");
@@ -68,6 +91,10 @@ public class Logger {
 
             filewriter.write(currentTime + "\n");
             filewriter.write(headers + "\n");
+            for (int i = 0; i < headers.length(); i++) {
+                filewriter.write("=");
+            }
+            filewriter.write("\n");
             filewriter.close();
 
         } catch (IOException e) {
@@ -75,26 +102,67 @@ public class Logger {
         }
     }
 
-
     @SuppressLint("DefaultLocale")
-    public void log(String fileName, String input){
-//        if (loopcounter % 5 == 0) {
+    public void log(String fileName, ArrayList<String> input){
+        loggingString = "";
+        tempheaderPositions = headerList.get(logList.get(fileName));
+        for (int i = 0; i < input.size(); i++) {
+
+            while (tempheaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", op.getRuntime()).length() - 1 >0) {
+                loggingString += " ";
+            }
+            loggingString += input.get(i);
+        }
+
             try {
                 FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
                 filewriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+    }
+
+    public void logMessage(String fileName, String input){
+//        if (loopcounter % 5 == 0) {
+        try {
+            FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+            filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+            filewriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        }
     }
 
     @SuppressLint("DefaultLocale")
-    public void logRegulated(String fileName, String input){
+    public void logRegulated(String fileName, ArrayList<String> input) {
+        loggingString = "";
+        tempheaderPositions = headerList.get(logList.get(fileName));
+        for (int i = 0; i < input.size(); i++) {
+            while (tempheaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
+                loggingString += " ";
+            }
+            loggingString += input.get(i);
+        }
+
         if (loopcounter % 10 == 0) {
             try {
                 FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
+                filewriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        loggingString = "";
+    }
+
+    public void logRegulatedMessage(String fileName, String input) {
+        if (loopcounter % 10 == 0) {
+            try {
+                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
                 filewriter.close();
             } catch (IOException e) {
                 e.printStackTrace();

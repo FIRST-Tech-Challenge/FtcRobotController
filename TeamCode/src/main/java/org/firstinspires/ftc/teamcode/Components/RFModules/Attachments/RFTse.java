@@ -8,9 +8,9 @@ public class RFTse extends RFServo {
 
     private RFServo tseArmServo;
 
-    public RFTse(Servo.Direction direction, String deviceName) {
-        super(direction, deviceName);
+    public RFTse(Servo.Direction direction, String deviceName, double limit) {
+        super(direction, deviceName, limit);
 
-        tseArmServo = new RFServo(direction, deviceName);
+        tseArmServo = new RFServo(direction, deviceName, limit);
     }
 }

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
+import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
 import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 
 /**
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ODOMETRY,true,false,0);
+        SummerMecRobot robot = new SummerMecRobot(this);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Pose2d startPose = new Pose2d(57, -54, 0);

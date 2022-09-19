@@ -218,7 +218,7 @@ public class Ultrasonics {
         updatedto=5;
         double[] errors = averageError();
         clearError();
-        logger.log("Ultrasonics", errors[0]+","+errors[1]);
+        logger.logMessage("Ultrasonics", errors[0]+","+errors[1]);
         return new Pose2d(pos[0] + errors[0], pos[1] + errors[1]);
     }
 }
