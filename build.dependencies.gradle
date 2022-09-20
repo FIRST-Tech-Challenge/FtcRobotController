@@ -5,6 +5,7 @@ repositories {
         dirs rootProject.file('libs')
     }
     maven { url = 'https://maven.brott.dev/' }
+    maven { url 'https://jitpack.com' } //add jitpack as a maven repo
 }
 
 dependencies {
@@ -20,5 +21,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.4'
+    implementation 'com.github.deltacv:EOCV-Sim:3.3.2' //add the EOCV-Sim dependency
 }
 
