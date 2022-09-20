@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.prototyping;
+package org.firstinspires.ftc.teamcode.Prototyping;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class Prototype extends LinearOpMode {
     ServoEx servo;
