@@ -33,6 +33,8 @@ public class TestingCommandRedCircuitAuto extends CommandOpMode {
 
 
         schedule(
+
+
                 new SequentialCommandGroup(
                         new InstantCommand(() -> drive.newMoveToPosition(new Point(0, -1000), 0.5)),
                         new ParallelCommandGroup(
@@ -53,7 +55,15 @@ public class TestingCommandRedCircuitAuto extends CommandOpMode {
                 )
         );
 
+
+    }
+
+    @Override
+    public void run() {
         super.run();
 
+        while(opModeIsActive()){
+
+        }
     }
 }
