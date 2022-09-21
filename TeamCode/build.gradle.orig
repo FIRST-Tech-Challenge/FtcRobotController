@@ -17,23 +17,17 @@ apply from: '../build.dependencies.gradle'
 
 android {
 <<<<<<< HEAD
-
     androidResources {
         noCompress 'tflite'
-    }
-    packagingOptions {
-        jniLibs {
-            pickFirsts += ['**/*.so']
-        }
     }
 }
 
 
 =======
-    namespace = 'org.firstinspires.ftc.teamcode'
+    def namespace = 'org.firstinspires.ftc.teamcode'
 }
 
->>>>>>> aba72e566c381d65ba7b97ef4e5326b14881d4bc
+>>>>>>> a7267beebfb7411304064676974b43a5a710db46
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
