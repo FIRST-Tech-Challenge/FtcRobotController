@@ -8,13 +8,13 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
     double driveSpeed = 1.0;
 
-    public void driveRobot(){
+    public void driveRobot() {
         double y = gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
         double rotationalPower = gamepad1.right_stick_x;
     }
 
-    public void driveRobotSpeed(){
+    public void driveRobotSpeed() {
         isSlowMode = driveSpeedToggle.toggle(gamepad1.left_bumper);
         if (isSlowMode) {
             driveSpeed = 0.25;
