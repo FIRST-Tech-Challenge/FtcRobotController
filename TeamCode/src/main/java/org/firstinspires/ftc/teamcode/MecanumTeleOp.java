@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,37 +11,40 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class MecanumTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-
         // declare motors
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
+        DcMotor leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
+        DcMotor rightEncoder = hardwareMap.dcMotor.get("motorBackRight");
+        DcMotor perpendicularEncoder = hardwareMap.dcMotor.get("perpendicularEncoder");
+
         // reverse right motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight);
+        Odometry odometry = new Odometry(leftEncoder, rightEncoder, perpendicularEncoder);
+
         waitForStart();
+
+        odometry.runOdom();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            double power = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double strafe = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double turn = gamepad1.right_stick_x;
 
-            // denominator is largest motor power
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            drive.mecanum(power, strafe, turn);
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+            telemetry.addData("X: ", odometry.getX());
+            telemetry.addData("Y: ", odometry.getY());
+            telemetry.addData("Heading: ", odometry.getHeading());
+            telemetry.update();
         }
     }
 }
