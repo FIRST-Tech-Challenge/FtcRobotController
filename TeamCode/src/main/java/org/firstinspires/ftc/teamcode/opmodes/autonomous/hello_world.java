@@ -2,20 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 
 @Autonomous(name="hello world")
-@Disabled
 public class hello_world extends LinearOpMode{
     private ElapsedTime     runtime = new ElapsedTime();
     @Override
