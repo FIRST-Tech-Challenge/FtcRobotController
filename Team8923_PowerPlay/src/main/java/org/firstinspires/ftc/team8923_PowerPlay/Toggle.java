@@ -15,12 +15,9 @@ public class Toggle {
             toggleState = !toggleState;
         }
 
-        if(! prevState && button)
-        {
+        if (!prevState && button) {
             press = true;
-        }
-        else if(press)
-        {
+        } else if (press) {
             press = false;
         }
         prevState = button;
