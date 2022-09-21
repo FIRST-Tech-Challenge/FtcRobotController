@@ -1,4 +1,8 @@
-## FTC14169 2021 Ultimate Goal
+## FTC14169 2021/2022 Preseason Practice Members
+Enter your name and role to the list below
+- Lydia, Mentor
+- Colby, Programmer
+
 ## TeamCode Module
 
 Welcome!

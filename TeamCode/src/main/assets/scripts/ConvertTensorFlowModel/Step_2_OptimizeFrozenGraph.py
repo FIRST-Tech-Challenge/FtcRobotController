@@ -1,0 +1,1 @@
+python -m tensorflow.python.tools.optimize_for_inference --input ../tf_models/freight_frenzy_emma/converted_freight_frenzy_emma_frozen/freight_frenzy_emma_frozen_graph.pb --output ../tf_models/freight_frenzy_emma/converted_freight_frenzy_emma_optimized/freight_frenzy_emma_optimized_graph.pb --frozen_graph=True --input_names=x --output_names=Identity

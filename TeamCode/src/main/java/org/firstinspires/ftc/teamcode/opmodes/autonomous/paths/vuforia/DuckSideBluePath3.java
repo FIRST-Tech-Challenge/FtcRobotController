@@ -1,0 +1,156 @@
+/*
+starting blue carousel
+strafe to spin carousel
+forward to end of blue block
+move to deliver cube
+spline to blue square to park storage unit
+ */
+package org.firstinspires.ftc.teamcode.opmodes.autonomous.paths.vuforia;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.commands.arm.SetArmLevel;
+import org.firstinspires.ftc.teamcode.commands.drive.roadrunner.TrajectoryFollowerCommand;
+import org.firstinspires.ftc.teamcode.commands.webcam.CloseDetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.DetectTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.vuforia.CloseDetectVuforiaTSEPosition;
+import org.firstinspires.ftc.teamcode.commands.webcam.vuforia.DetectVuforiaTSEPosition;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.globals.Levels;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateArm;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateCarousel;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateIntake;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateVuforiaWebCam;
+import org.firstinspires.ftc.teamcode.opmodes.createmechanism.CreateWebCam;
+import org.firstinspires.ftc.teamcode.subsystems.drive.roadrunner.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.webcam.VuforiaWebCamSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.webcam.WebCamSubsystem;
+
+public class DuckSideBluePath3 {
+
+    private MecanumDriveSubsystem drive;
+    private TrajectoryFollowerCommand sample1Follower1;
+    private TrajectoryFollowerCommand sample1Follower2;
+    private TrajectoryFollowerCommand sample1Follower3;
+    private TrajectoryFollowerCommand sample1Follower4;
+    private TrajectoryFollowerCommand sample1Follower5;
+
+    private InstantCommand detect;
+
+    private SequentialCommandGroup carouselGroupBlue1;
+    private SequentialCommandGroup intakeGroup;
+
+    private final Pose2d startPose;
+    private final HardwareMap hwMap;
+    private final Telemetry telemetry;
+
+    private CloseDetectVuforiaTSEPosition closeDetectVuforiaTSEPosition;
+    private InstantCommand stopDetect;
+
+
+    public DuckSideBluePath3(HardwareMap hwMap, Pose2d sp, Telemetry telemetry){
+        this.hwMap = hwMap;
+        startPose = sp;
+        this.telemetry = telemetry;
+        drive = new MecanumDriveSubsystem(new SampleMecanumDrive(hwMap), false);
+
+    }
+
+
+    public void createPath(){
+        drive.setPoseEstimate(startPose);
+
+        CreateCarousel createCarousel = new CreateCarousel(hwMap,"carousel",telemetry);
+        CreateVuforiaWebCam createWebCam = new CreateVuforiaWebCam(hwMap, "Webcam 1", telemetry);
+        CreateArm createArm = new CreateArm(hwMap, "arm", telemetry);
+
+        createArm.createAuto();
+
+        createWebCam.createAuto();
+        VuforiaWebCamSubsystem webCamSubsystem = createWebCam.getVuforiaWebCamSubsystem();
+
+        DetectVuforiaTSEPosition detectTSEPosition = createWebCam.getDetectTSEPositionCommand();
+        closeDetectVuforiaTSEPosition = createWebCam.getCloseDetectTSEPosition();
+        detectTSEPosition.schedule();
+
+        createCarousel.createAuto();
+        carouselGroupBlue1 = new SequentialCommandGroup(createCarousel.getMoveCarouselToPosition(),
+                new WaitUntilCommand(createCarousel.hasMaxEncoderCountSupplier()).andThen(createCarousel.getStopCarousel()));
+
+        CreateIntake createIntake = new CreateIntake(hwMap, "intake", telemetry);
+        createIntake.createAuto();
+
+        intakeGroup = new SequentialCommandGroup(
+                createIntake.getSeGrabber(),
+                new WaitCommand(800)
+                        .andThen(createIntake.getStopIntake())
+        );
+
+
+        Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                .splineToLinearHeading(new Pose2d(-63, 60, Math.toRadians(245)),Math.toRadians(180))
+                .addDisplacementMarker(()-> {
+                    telemetry.addData("Path 1", "performing path 1 action");
+                })
+                .build();
+
+
+        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
+                .strafeTo(new Vector2d(-60, 22))
+                .addDisplacementMarker(()->{
+                    telemetry.addData("Path 2", "performing path 2 action");
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(Levels.getInstance().getTSELevel());
+                    setArmLevel.schedule();
+                })
+                .build();
+
+        // Drive to the shipping hub (then deliver the element)
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .splineToLinearHeading(new Pose2d(-35, 22, Math.toRadians(0)),Math.toRadians(90))
+                .build();
+
+        // Drive around the shipping hub
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .strafeTo(new Vector2d(-35,12))
+                .splineToLinearHeading(new Pose2d(10, 12, Math.toRadians(0)),Math.toRadians(90))
+                .strafeTo(new Vector2d(10,50))
+                .addDisplacementMarker(()->{
+                    SetArmLevel setArmLevel = createArm.createSetArmLevel(1);
+                    setArmLevel.schedule();
+                })
+                .build();
+
+        // Drive over the barriers
+        Trajectory traj5 = drive.trajectoryBuilder(traj4.end())
+                .strafeTo(new Vector2d(48,50))
+
+                .build();
+
+        sample1Follower1 = new TrajectoryFollowerCommand(drive,traj1);
+        sample1Follower2 = new TrajectoryFollowerCommand(drive,traj2);
+        sample1Follower3 = new TrajectoryFollowerCommand(drive,traj3);
+        sample1Follower4 = new TrajectoryFollowerCommand(drive,traj4);
+        sample1Follower5 = new TrajectoryFollowerCommand(drive,traj5);
+
+        stopDetect = new InstantCommand(()->{
+            closeDetectVuforiaTSEPosition.schedule();
+        });
+
+    }
+
+    public void execute(CommandOpMode commandOpMode){
+        commandOpMode.schedule(new WaitUntilCommand(commandOpMode::isStarted).andThen(
+                stopDetect.andThen(sample1Follower1,carouselGroupBlue1,sample1Follower2, sample1Follower3, intakeGroup, sample1Follower4, sample1Follower5)
+        ));
+    }
+}
