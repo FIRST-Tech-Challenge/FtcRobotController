@@ -11,8 +11,7 @@ public class Toggle {
 
     public boolean toggle(boolean button)
     {
-        if(press)
-        {
+        if (press) {
             toggleState = !toggleState;
         }
 
