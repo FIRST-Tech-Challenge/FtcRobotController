@@ -40,4 +40,29 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
     }
+    public void driveMecanum(double driveAngle, double drivePower, double turnPower){
+        // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
+        double x = drivePower * -Math.sin(Math.toRadians(driveAngle));
+        double y = drivePower * Math.cos(Math.toRadians(driveAngle));
+
+        double powerFL = x - y + turnPower;
+        double powerFR = x + y + turnPower;
+        double powerBL = -x + y + turnPower;
+        double powerBR = -x - y + turnPower;
+
+        // gets the largest power
+        double scaleFactor = Math.max(Math.max(powerFL, powerFR), Math.max(powerBL, powerBR));
+        // scale the power between the range of -1 and 1
+        if (scaleFactor > 1) {
+            powerFL /= scaleFactor;
+            powerFR /= scaleFactor;
+            powerBL /= scaleFactor;
+            powerBR /= scaleFactor;
+        }
+
+        motorFL.setPower(powerFL);
+        motorFR.setPower(powerFR);
+        motorBL.setPower(powerBL);
+        motorBR.setPower(powerBR);
+    }
 }
