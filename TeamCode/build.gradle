@@ -19,7 +19,18 @@ android {
     namespace = 'org.firstinspires.ftc.teamcode'
 }
 
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
+    implementation 'com.acmerobotics.roadrunner:core:1.0.0-beta0'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
 }

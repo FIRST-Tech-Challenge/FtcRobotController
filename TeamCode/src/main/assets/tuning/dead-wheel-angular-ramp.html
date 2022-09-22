@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+  <head>
+    <title>RR Dead Wheel Angular Ramp Regression</title>
+
+    <style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.content {
+  max-width: 600px;
+  margin: auto;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+fieldset {
+  display: flex;
+  justify-content: space-between;
+}
+
+h1 {
+  margin-bottom: 0;
+}
+
+details, a {
+  display: block;
+  margin: 1rem 0 1rem 0;
+}
+    </style>
+
+    <script src="/tuning/plotly-2.12.1.min.js"></script>
+
+    <!-- https://tom-alexander.github.io/regression-js/ -->
+    <script src="/tuning/regression-2.0.1.min.js"></script>
+
+    <!-- <script src="/tuning/common.js"></script> -->
+    <script src="common.js"></script>
+  </head>
+  <body>
+    <div class="content">
+      <h1>RR Dead Wheel Angular Ramp Regression</h1>
+      <details></details>
+
+      <div id="download"></div>
+
+      <fieldset>
+        <legend>Feedforward Parameters</legend>
+        <div>
+          kV: <input id="kv" type="text" />
+        </div>
+        <div>
+          kS: <input id="ks" type="text" />
+        </div>
+        <input id="update" type="button" value="update" />
+      </fieldset>
+
+      <div id="trackWidthChart">
+        <p>
+          <button id="latest">Latest</button>
+          <input id="browse" type="file" accept="application/json">
+        </p>
+      </div>
+    
+      <div id="deadWheelCharts"></div>
+    </div>
+
+    <script>
+function loadRegression(data) {
+  const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
+    const vs = vsArg.map(v => Math.abs(v));
+    const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
+    const [accMaxV, _] = acc;
+    if (maxV >= accMaxV) {
+      return [maxV, vs];
+    }
+    return acc;
+  }, [0, []]);
+  
+  const deadWheelCharts = document.getElementById('deadWheelCharts');
+  data.parEncVels.forEach((vs, i) => {
+    const div = document.createElement('div');
+    newLinearRegressionChart(div, 
+      angVels.slice(1, angVels.length - 1),
+      fixVels(data.encTimes, data.parEncPositions[i], vs),
+      {title: `Parallel Wheel ${i} Regression`, slope: 'y-position'});
+    deadWheelCharts.appendChild(div);
+  });
+  data.perpEncVels.forEach((vs, i) => {
+    const div = document.createElement('div');
+    newLinearRegressionChart(div, 
+      angVels.slice(1, angVels.length - 1),
+      fixVels(data.encTimes, data.perpEncPositions[i], vs),
+      {title: `Perpendicular Wheel ${i} Regression`, slope: 'x-position'});
+    deadWheelCharts.appendChild(div);
+  });
+
+  const setParams = (() => {
+    const appliedVoltages = data.voltages.map((v, i) => 
+      [...data.leftPowers, ...data.rightPowers].reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
+
+    const setTrackWidthData = newLinearRegressionChart(
+      document.getElementById('trackWidthChart'),
+      [], [],
+      {title: 'Track Width Regression', slope: 'track width'}
+    );
+
+    return (kV, kS) => setTrackWidthData(angVels, appliedVoltages.map((v, i) => 
+      (v - kS) / kV * (data.type === 'mecanum' ? 2 : 1)));
+  })();
+
+  const kvInput = document.getElementById('kv');
+  const ksInput = document.getElementById('ks');
+  document.getElementById('update').addEventListener('click', () => {
+    setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
+  });
+}
+
+const latestButton = document.getElementById('latest');
+latestButton.addEventListener('click', function() {
+  fetch('/tuning/angular-ramp/latest.json')
+    .then(res => {
+      if (res.ok) {
+        const filename = res.headers.get('X-Filename');
+
+        const a = document.createElement('a');
+        a.innerText = 'Download';
+        a.href = `/tuning/forward-ramp/${filename}`;
+        a.download = `forward-ramp-${filename}`;
+
+        document.getElementById('download').appendChild(a);
+
+        return res.json();
+      } else {
+        document.getElementById('trackWidthChart').innerText = 'No data files found';
+        throw new Error();
+      }
+    })
+    .then(loadRegression)
+    .catch(console.log.bind(console));
+});
+
+const browseInput = document.getElementById('browse');
+browseInput.addEventListener('change', function(evt) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    loadRegression(JSON.parse(reader.result.trim()));
+  };
+
+  reader.readAsText(browseInput.files[0]);
+});
+    </script>
+  </body>
+</html>

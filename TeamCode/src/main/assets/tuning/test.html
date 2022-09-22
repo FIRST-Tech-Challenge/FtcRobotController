@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+  <head>
+    <title>RR Tests</title>
+
+    <style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#content {
+  max-width: 600px;
+  margin: auto;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+fieldset {
+  display: flex;
+  justify-content: space-between;
+}
+    </style>
+
+    <script src="/tuning/plotly-2.12.1.min.js"></script>
+
+    <!-- https://tom-alexander.github.io/regression-js/ -->
+    <script src="/tuning/regression-2.0.1.min.js"></script>
+
+    <!-- <script src="/tuning/common.js"></script> -->
+    <script src="common.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <h1>RR Tests</h1>
+      <p></p>
+    </div>
+
+    <script>
+function newChart(container, xs, ys, options) {
+  if (xs.length !== ys.length) {
+    throw new Error();
+  }
+
+  // cribbed from https://plotly.com/javascript/plotlyjs-events/#select-event
+  const color = '#777';
+  const colorLight = '#bbb';
+
+  const chartDiv = document.createElement('div');
+  Plotly.newPlot(chartDiv, [{
+    type: 'scatter',
+    mode: 'markers',
+    x: xs,
+    y: ys,
+    name: 'Samples',
+  }], {
+    title: options.title || '',
+    // sets the starting tool from the modebar
+    dragmode: 'zoom',
+    showlegend: false,
+    hovermode: false,
+    width: 600,
+  }, {
+    // 'zoom2d', 'select2d', 'resetScale2d' left
+    modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d'],
+  });
+
+  container.appendChild(chartDiv);
+}
+
+function numDeriv(xs, ys) {
+  const ret = ys.slice(1).map((y, i) => (y - ys[i]) / (xs[i + 1] - xs[i]));
+  ret.unshift(0);
+  return ret;
+}
+
+const params = new URLSearchParams(window.location.search);
+const online = params.get('online') === 'true';
+
+fetch(`/tuning/test/${params.get('file')}.csv`)
+  .then(res => res.text())
+  .then(text => {
+    const lines = text.split('\n');
+    const data = lines
+      .slice(1, lines.length - 1)
+      .map(line => line.split(',').map(x => parseFloat(x)))
+    
+    const xs = data.map(xs => xs[0]);
+    const vs = data.map(xs => xs[1]);
+    const ts = data.map(xs => xs[2]);
+
+    const container = document.getElementById('content');
+    newChart(container, ts, vs, {title: 'Raw Velocity Over Time'});
+
+    const tsNew = (online ? ts.slice(1) : ts.slice(1, ts.length - 1));
+    const dxdts = (online ? numDerivOnline : numDerivOffline)(ts, xs);
+    newChart(
+      container, 
+      tsNew,
+      dxdts, 
+      {title: `${online ? 'Online' : 'Offline'} Position Derivative Over Time`}
+    );
+
+    const vsNew = dxdts.map((est, i) => inverseOverflow(vs[i + 1], est));
+    newChart(
+      container, 
+      tsNew,
+      vsNew, 
+      {title: 'Corrected Velocity Over Time'}
+    );
+  })
+  .catch(console.log.bind(console));
+    </script>
+  </body>
+</html>

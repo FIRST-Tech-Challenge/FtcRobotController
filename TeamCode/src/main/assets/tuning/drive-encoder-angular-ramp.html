@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+  <head>
+    <title>RR Drive Encoder Angular Ramp Regression</title>
+
+    <style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.content {
+  max-width: 600px;
+  margin: auto;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  margin-bottom: 0;
+}
+
+details, a {
+  display: block;
+  margin: 1rem 0 1rem 0;
+}
+    </style>
+
+    <script src="/tuning/plotly-2.12.1.min.js"></script>
+
+    <!-- https://tom-alexander.github.io/regression-js/ -->
+    <script src="/tuning/regression-2.0.1.min.js"></script>
+
+    <!-- <script src="/tuning/common.js"></script> -->
+    <script src="common.js"></script>
+  </head>
+  <body>
+    <div class="content">
+      <h1>RR Drive Encoder Angular Ramp Regression</h1>
+      <details></details>
+
+      <div id="download"></div>
+      
+      <div id="rampChart">
+        <p>
+          <button id="latest">Latest</button>
+          <input id="browse" type="file" accept="application/json">
+        </p>
+      </div>
+      <div id="trackWidthChart"></div>
+    </div>
+
+    <script>
+function loadRegression(data) {
+  const leftEncVels = data.leftEncVels.map((vs, i) =>
+        fixVels(data.encTimes, data.leftEncPositions[i], vs));
+  const rightEncVels = data.rightEncVels.map((vs, i) =>
+        fixVels(data.encTimes, data.rightEncPositions[i], vs));
+
+  newLinearRegressionChart(
+    document.getElementById('rampChart'),
+    [
+      ...leftEncVels.flatMap(vs => vs.map(v => -v)), 
+      ...rightEncVels.flatMap(vs => vs),
+    ],
+    [
+      ...data.leftPowers.flatMap(ps => {
+        const psNew = ps.map((p, i) => -p * data.voltages[i]);
+        return psNew.slice(1, psNew.length - 1);
+      }),
+      ...data.rightPowers.flatMap(ps => {
+        const psNew = ps.map((p, i) => p * data.voltages[i]);
+        return psNew.slice(1, psNew.length - 1);
+      }),
+    ],
+    {title: 'Ramp Regression', slope: 'kV', intercept: 'kS'}
+  );
+
+  const p = data.angVels.reduce((acc, vsArg) => {
+    const vs = vsArg.map(v => Math.abs(v));
+    const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
+    const [accMaxV, _] = acc;
+    if (maxV >= accMaxV) {
+      return [maxV, vs];
+    }
+    return acc;
+  }, [0, []]);
+  const angVels = p[1].slice(1, p[1].length - 1);
+
+  newLinearRegressionChart(
+    document.getElementById('trackWidthChart'),
+    angVels,
+    angVels.map((_, i) => 
+      (leftEncVels.reduce((acc, vs) => acc - vs[i], 0)
+        + rightEncVels.reduce((acc, vs) => acc + vs[i], 0))
+        / (data.leftEncVels.length + data.rightEncVels.length)
+        * (data.type === 'mecanum' ? 1 : 2)
+    ),
+    {title: 'Track Width Regression', slope: 'track width'}
+  );
+}
+
+const latestButton = document.getElementById('latest');
+latestButton.addEventListener('click', function() {
+  fetch('/tuning/angular-ramp/latest.json')
+    .then(res => {
+      if (res.ok) {
+        const filename = res.headers.get('X-Filename');
+
+        const a = document.createElement('a');
+        a.innerText = 'Download';
+        a.href = `/tuning/forward-ramp/${filename}`;
+        a.download = `forward-ramp-${filename}`;
+
+        document.getElementById('download').appendChild(a);
+
+        return res.json();
+      } else {
+        document.getElementById('trackWidthChart').innerText = 'No data files found';
+        throw new Error();
+      }
+    })
+    .then(loadRegression)
+    .catch(console.log.bind(console));
+});
+
+const browseInput = document.getElementById('browse');
+browseInput.addEventListener('change', function(evt) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    loadRegression(JSON.parse(reader.result.trim()));
+  };
+
+  reader.readAsText(browseInput.files[0]);
+});
+    </script>
+  </body>
+</html>
