@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name = "PowerPlayTeleOp")
-public class PowerPlayTeleOp extends OpMode {
+@TeleOp(name = "MecanumTeleOp")
+public class MecanumTeleOp extends OpMode {
     //"MC ABHI IS ON THE REPO!!!"
 
     // Declaring class members to be used in other methods
