@@ -17,9 +17,8 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
 
-        //DcMotor leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
-        //DcMotor rightEncoder = hardwareMap.dcMotor.get("motorBackRight");
-        //DcMotor perpendicularEncoder = hardwareMap.dcMotor.get("perpendicularEncoder");
+//        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // reverse right motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -30,21 +29,17 @@ public class MecanumTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        //odometry.runOdom();
-
         if (isStopRequested()) return;
 
+
         while (opModeIsActive()) {
-            double power = gamepad1.left_stick_y/5; // Remember, this is reversed!
-            double strafe = -gamepad1.left_stick_x * 1.1/5; // Counteract imperfect strafing
-            double turn = -gamepad1.right_stick_x/5;
+            double power = gamepad1.left_stick_y/3; // Remember, this is reversed!
+            double strafe = -gamepad1.left_stick_x * 1.1/3; // Counteract imperfect strafing
+            double turn = -gamepad1.right_stick_x/3;
 
             drive.mecanum(power, strafe, turn);
 
-            //telemetry.addData("X: ", odometry.getX());
-            //telemetry.addData("Y: ", odometry.getY());
-            //telemetry.addData("Heading: ", odometry.getHeading());
-            telemetry.addData("HI", 1);
+            telemetry.addData("Back_Left Encoder: ", motorBackLeft.getCurrentPosition());
             telemetry.update();
         }
     }
