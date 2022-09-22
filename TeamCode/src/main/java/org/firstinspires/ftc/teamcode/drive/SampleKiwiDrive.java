@@ -114,8 +114,8 @@ public class SampleKiwiDrive extends KiwiDrive {
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         left  = hardwareMap.get(DcMotorEx.class, "left");
-        rear  = hardwareMap.get(DcMotorEx.class, "rear");
-        right = hardwareMap.get(DcMotorEx.class, "rightFront");
+        rear  = hardwareMap.get(DcMotorEx.class, "back");
+        right = hardwareMap.get(DcMotorEx.class, "right");
 
         motors = Arrays.asList(left, rear, right);
 
@@ -135,10 +135,7 @@ public class SampleKiwiDrive extends KiwiDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        // TODO: reverse any motors using DcMotor.setDirection()
-
-        // TODO: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }

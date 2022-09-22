@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.drive.DriveSignal
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.kinematics.Kinematics
-import com.acmerobotics.roadrunner.kinematics.MecanumKinematics
 import com.acmerobotics.roadrunner.localization.Localizer
 import com.acmerobotics.roadrunner.util.Angle
 
@@ -30,8 +29,8 @@ abstract class KiwiDrive @JvmOverloads constructor(
      * @param useExternalHeading use external heading provided by an external sensor (e.g., IMU, gyroscope)
      */
     class KiwiLocalizer @JvmOverloads constructor(
-            private val drive: KiwiDrive,
-            private val useExternalHeading: Boolean = true
+        private val drive: KiwiDrive,
+        private val useExternalHeading: Boolean = true
     ) : Localizer {
         private var _poseEstimate = Pose2d()
         override var poseEstimate: Pose2d
@@ -55,7 +54,7 @@ abstract class KiwiDrive @JvmOverloads constructor(
                         .zip(lastWheelPositions)
                         .map { it.first - it.second }
                 val robotPoseDelta = KiwiKinematics.wheelToRobotVelocities(
-                        wheelDeltas
+                    wheelDeltas
                 )
                 val finalHeadingDelta = if (useExternalHeading) {
                     Angle.normDelta(extHeading - lastExtHeading)
@@ -72,7 +71,7 @@ abstract class KiwiDrive @JvmOverloads constructor(
             val extHeadingVel = drive.getExternalHeadingVelocity()
             if (wheelVelocities != null) {
                 poseVelocity = KiwiKinematics.wheelToRobotVelocities(
-                        wheelVelocities,
+                    wheelVelocities,
                 )
                 if (useExternalHeading && extHeadingVel != null) {
                     poseVelocity = Pose2d(poseVelocity!!.vec(), extHeadingVel)
@@ -88,10 +87,10 @@ abstract class KiwiDrive @JvmOverloads constructor(
 
     override fun setDriveSignal(driveSignal: DriveSignal) {
         val velocities = KiwiKinematics.robotToWheelVelocities(
-                driveSignal.vel
+            driveSignal.vel
         )
         val accelerations = KiwiKinematics.robotToWheelAccelerations(
-                driveSignal.accel
+            driveSignal.accel
         )
         val powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic)
         setMotorPowers(powers[0], powers[1], powers[2])
@@ -99,7 +98,7 @@ abstract class KiwiDrive @JvmOverloads constructor(
 
     override fun setDrivePower(drivePower: Pose2d) {
         val powers = KiwiKinematics.robotToWheelVelocities(
-                drivePower
+            drivePower
         )
         setMotorPowers(powers[0], powers[1], powers[2])
     }

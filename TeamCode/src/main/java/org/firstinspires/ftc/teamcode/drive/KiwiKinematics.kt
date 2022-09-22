@@ -24,9 +24,9 @@ object KiwiKinematics {
             lateralMultiplier: Double = 1.0
     ): List<Double> {
         return listOf(
-                robotVel.heading - (0.866 * robotVel.x) - (0.5 * robotVel.y),
-                robotVel.heading + robotVel.y,
-                robotVel.heading + (0.866 * robotVel.x) - (0.5 * robotVel.y)
+                robotVel.heading - (0.866 * robotVel.x) + (0.5 * robotVel.y),
+                robotVel.heading - robotVel.y,
+                robotVel.heading + (0.866 * robotVel.x) + (0.5 * robotVel.y)
         )
     }
 
