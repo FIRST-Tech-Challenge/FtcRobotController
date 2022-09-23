@@ -38,15 +38,64 @@ public class BackAndForth extends LinearOpMode {
                 .forward(DISTANCE)
                 .build();
 
-        Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
+        Trajectory trajectoryLeft = drive.trajectoryBuilder(trajectoryForward.end())
+                .strafeLeft(DISTANCE/2)
+                .build();
+
+        Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryLeft.end())
                 .back(DISTANCE)
+                .build();
+
+        Trajectory trajectoryRight = drive.trajectoryBuilder(trajectoryBackward.end())
+                .strafeRight(DISTANCE/2)
                 .build();
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.followTrajectory(trajectoryForward);
+            drive.update();
+
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading Rad.", poseEstimate.getHeading());
+            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.update();
+            while (opModeIsActive() && !gamepad1.y) {};
+
+            drive.followTrajectory(trajectoryLeft);
+
+            poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading Rad.", poseEstimate.getHeading());
+            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.update();
+            while (opModeIsActive() && !gamepad1.y) {};
+
             drive.followTrajectory(trajectoryBackward);
+
+            poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading Rad.", poseEstimate.getHeading());
+            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.update();
+            while (opModeIsActive() && !gamepad1.y) {};
+
+            drive.followTrajectory(trajectoryRight);
+
+            poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("x", poseEstimate.getX());
+            telemetry.addData("y", poseEstimate.getY());
+            telemetry.addData("heading Rad.", poseEstimate.getHeading());
+            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.update();
+            while (opModeIsActive() && !gamepad1.y) {};
         }
     }
+
+
+
 }

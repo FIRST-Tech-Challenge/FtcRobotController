@@ -51,11 +51,14 @@ import java.util.List;
  */
 @Config
 public class SampleKiwiDrive extends KiwiDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(20, 3, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(60, 4, 0);
 
-    public static double VX_WEIGHT = 1;
-    public static double VY_WEIGHT = 1;
+//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
+//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+
+    public static double VX_WEIGHT    = 1;
+    public static double VY_WEIGHT    = 1;
     public static double OMEGA_WEIGHT = 1;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
@@ -75,7 +78,7 @@ public class SampleKiwiDrive extends KiwiDrive {
         super(kV, kA, kStatic);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, Math.toRadians(0.5)), 0.5);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 

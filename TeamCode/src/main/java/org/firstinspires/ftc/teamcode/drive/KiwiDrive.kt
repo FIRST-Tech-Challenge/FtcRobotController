@@ -86,20 +86,14 @@ abstract class KiwiDrive @JvmOverloads constructor(
     override var localizer: Localizer = KiwiLocalizer(this)
 
     override fun setDriveSignal(driveSignal: DriveSignal) {
-        val velocities = KiwiKinematics.robotToWheelVelocities(
-            driveSignal.vel
-        )
-        val accelerations = KiwiKinematics.robotToWheelAccelerations(
-            driveSignal.accel
-        )
+        val velocities = KiwiKinematics.robotToWheelVelocities(driveSignal.vel)
+        val accelerations = KiwiKinematics.robotToWheelAccelerations(driveSignal.accel)
         val powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic)
         setMotorPowers(powers[0], powers[1], powers[2])
     }
 
     override fun setDrivePower(drivePower: Pose2d) {
-        val powers = KiwiKinematics.robotToWheelVelocities(
-            drivePower
-        )
+        val powers = KiwiKinematics.robotToWheelVelocities(drivePower)
         setMotorPowers(powers[0], powers[1], powers[2])
     }
 

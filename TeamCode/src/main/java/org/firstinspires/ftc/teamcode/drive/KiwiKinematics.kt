@@ -20,8 +20,7 @@ object KiwiKinematics {
     @JvmStatic
     @JvmOverloads
     fun robotToWheelVelocities(
-            robotVel: Pose2d,
-            lateralMultiplier: Double = 1.0
+            robotVel: Pose2d
     ): List<Double> {
         return listOf(
                 robotVel.heading - (0.866 * robotVel.x) + (0.5 * robotVel.y),
