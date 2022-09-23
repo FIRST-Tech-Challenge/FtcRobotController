@@ -156,6 +156,10 @@ public class Vuforia {
 
         teamAssetTrackables = new ArrayList<VuforiaTrackable>();
         teamAssetTrackables.addAll(targetsAsset);
+        teamAssetTrackables.get(0).setName("7330");
+        teamAssetTrackables.get(1).setName("David");
+        teamAssetTrackables.get(2).setName("Brian");
+
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
         allTrackables = new ArrayList<VuforiaTrackable>();
