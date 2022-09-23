@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Components.StickObserver;
-import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
-import org.firstinspires.ftc.teamcode.Old.Components.CVPipelines.BlueTeamElem;
-import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.Components.CV.StickObserverPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -24,7 +20,7 @@ public class StickObserverTest extends LinearOpMode {
 
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
-        StickObserver opencv = new StickObserver();
+        StickObserverPipeline opencv = new StickObserverPipeline();
         ;
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {

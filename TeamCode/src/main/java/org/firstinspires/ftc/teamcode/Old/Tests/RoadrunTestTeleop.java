@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
-@Disabled
 @TeleOp(name = "RoadrunTestTeleop")
 public class RoadrunTestTeleop extends LinearOpMode {
     @Override
@@ -28,7 +27,7 @@ public class RoadrunTestTeleop extends LinearOpMode {
         SummerMecRobot robot = new SummerMecRobot(this);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.roadrun.setPoseEstimate(new Pose2d(55.5,-53.5,0));
+        robot.roadrun.setPoseEstimate(new Pose2d(-34,-58,0));
 
         waitForStart();
 

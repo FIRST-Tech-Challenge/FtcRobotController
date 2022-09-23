@@ -17,7 +17,6 @@ abstract class RFThreeTrackingWheelLocalizer(
     wheelPoses: List<Pose2d>
 ) : Localizer {
     private var _poseEstimate = Pose2d()
-    private var gum = emptyList<Double>()
     override var poseEstimate: Pose2d
         get() = _poseEstimate
         set(value) {
