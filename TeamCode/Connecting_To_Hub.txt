@@ -1,0 +1,7 @@
+- Install "ADB Wifi" extension on android studio
+- Connect to FTC-PQ15 wifi (If you cannot connect, run Windows Wifi Troubleshooting)
+- Connect to the Rev CONTROL HUB in the "ADB Wifi" extension
+- Press green triangle to build/install the code
+
+
+DO NOT TRY TO INSTALL CODE ONTO THE DRIVER STATION (the one with a screen)
