@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -23,6 +27,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
      * Initialization of systems for autonomous
      * @param team current team in this game
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void init(BaseAutonomous.Team team) {
         super.init();
 
