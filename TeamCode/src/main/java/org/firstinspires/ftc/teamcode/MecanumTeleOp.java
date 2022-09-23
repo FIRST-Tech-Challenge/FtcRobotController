@@ -33,13 +33,13 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            // double power = gamepad1.left_stick_y/3; // Remember, this is reversed!
-            // double strafe = -gamepad1.left_stick_x * 1.1/3; // Counteract imperfect strafing
-            // double turn = -gamepad1.right_stick_x/3;
+            double power = gamepad1.left_stick_y/3; // Remember, this is reversed!
+            double strafe = -gamepad1.left_stick_x * 1.1/3; // Counteract imperfect strafing
+            double turn = -gamepad1.right_stick_x/3;
             
-            double power = gamepad2.left_stick_y/3; // Remember, this is reversed!
-            double strafe = -gamepad2.left_stick_x * 1.1/3; // Counteract imperfect strafing
-            double turn = -gamepad2.right_stick_x/3;
+//            double power = gamepad2.left_stick_y/3; // Remember, this is reversed!
+//            double strafe = -gamepad2.left_stick_x * 1.1/3; // Counteract imperfect strafing
+//            double turn = -gamepad2.right_stick_x/3;
 
             drive.mecanum(power, strafe, turn);
 
