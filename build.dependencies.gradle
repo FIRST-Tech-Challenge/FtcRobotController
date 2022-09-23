@@ -1,8 +1,21 @@
 repositories {
     mavenCentral()
-    google() // Needed for androidx
-    maven { url = 'https://maven.brott.dev/' }
+
+    // Needed for androidx
+    google() 
+
+    // TODO: figure out which package/library using this repository
     maven { url = 'https://jitpack.io' }
+
+    // Specifically for Road Runner and FTC Dashboard
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://acmerobotics.z13.web.core.windows.net/' }  // don't remove unless maven.brott.dev redirecting to something else
+    // `maven.brott.dev` is 302 redirecting to `acmerobotics.z13.web.core.windows.net`
+    // if unable to access `maven.brott.dev` the above code can fail-over to `acmerobotics.z13.web.core.windows.net`
+    // if experiencing DNS poisoning, try to add this to etc/hosts `52.239.247.97 acmerobotics.z13.web.core.windows.net`
+    // alternatively you can add `142.251.33.115 maven.brott.dev` to your etc/hosts, `nslookup ghs.googlehosted.com` to get the latest IP address
+
+    // TODO: list which package/library is in this
     flatDir {
         dirs rootProject.file('libs')
     }
@@ -24,6 +37,7 @@ dependencies {
 
     // TechnoLib:
     implementation 'com.github.technototes:TechnoLib:1.1.1'
+
     // RoadRunner:
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     // Last, but not least: FTC Dashboard
