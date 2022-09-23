@@ -65,4 +65,10 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setPower(powerBL);
         motorBR.setPower(powerBR);
     }
+
+    // Used for calculating distances between 2 points
+    double calculateDistance(double deltaX, double deltaY)
+    {
+        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+    }
 }
