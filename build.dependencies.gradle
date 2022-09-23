@@ -1,15 +1,33 @@
+// Please add description for each new repositories
 repositories {
+    // Official packages from FIRST
     mavenCentral()
-    google() // Needed for androidx
-    maven { url = 'https://maven.brott.dev/' }
+
+    // Needed for androidx
+    google() 
+
+    // Used by TechnoLib; jitpack.io can turn GitHub Releases into package repository like jsDelivr
     maven { url = 'https://jitpack.io' }
+
+    // Specifically for Road Runner and FTC Dashboard
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://acmerobotics.z13.web.core.windows.net/' }  // don't remove unless maven.brott.dev redirecting to something else
+    // `maven.brott.dev` is 302 redirecting to `acmerobotics.z13.web.core.windows.net`
+    // if unable to access `maven.brott.dev` the above code can fail-over to `acmerobotics.z13.web.core.windows.net`
+    // if experiencing DNS poisoning, try to add this to etc/hosts `52.239.247.97 acmerobotics.z13.web.core.windows.net`
+    // alternatively you can add `142.251.33.115 maven.brott.dev` to your etc/hosts, `nslookup ghs.googlehosted.com` to get the latest IP address
+
+    // For Vuforia only, not really necessary, the only functionality is making 'flatDir/flatDir2' warning from gradle
     flatDir {
         dirs rootProject.file('libs')
     }
 }
 
 // Removed the TensorFlow dependencies, cuz we're not using it
+// Would be nice if group these dependencies by author/developer
 dependencies {
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+
     implementation 'org.firstinspires.ftc:Inspection:8.0.0'
     implementation 'org.firstinspires.ftc:Blocks:8.0.0'
     // implementation 'org.firstinspires.ftc:Tfod:8.0.0'
@@ -19,14 +37,14 @@ dependencies {
     implementation 'org.firstinspires.ftc:Hardware:8.0.0'
     implementation 'org.firstinspires.ftc:FtcCommon:8.0.0'
     // implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
 
     // TechnoLib:
     implementation 'com.github.technototes:TechnoLib:1.1.1'
+
     // RoadRunner:
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
-    // Last, but not least: FTC Dashboard
+    // FTC Dashboard:
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.5'
 }
 
