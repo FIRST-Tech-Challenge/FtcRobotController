@@ -42,13 +42,17 @@ public class MecanumTeleOp extends LinearOpMode {
 //            double turn = -gamepad2.right_stick_x/3;
             if(gamepad1.right_trigger==1){
                 motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+                motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             drive.mecanum(power, strafe, turn);
 
-            telemetry.addData("Back_Left Encoder: ", motorBackLeft.getCurrentPosition());
+            if(power > 0.1) {
+                gamepad1.rumble(200);
+            }
+
+            telemetry.addData("Back_Left Encoder: ", motorBackLeft.getCurrentPosition()/7.06858347058);
+            telemetry.addData("Power: ", power);
             telemetry.update();
         }
     }

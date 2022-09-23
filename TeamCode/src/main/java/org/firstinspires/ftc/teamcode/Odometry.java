@@ -12,7 +12,7 @@ public class Odometry {
     private DcMotor perpendicularEncoder;
     private double trackWidth;
     private double forwardOffset;
-
+    private final double wheel_circumference_inches = 7.06858347058;
     private double prev_left_encoder_pos = 0.0;
     private double prev_right_encoder_pos = 0.0;
     private double prev_perpendicular_encoder_pos = 0.0;
@@ -58,11 +58,11 @@ public class Odometry {
     }
 
     public double getX() {
-        return x_pos;
+        return x_pos/wheel_circumference_inches;
     }
 
     public double getY() {
-        return y_pos;
+        return y_pos/wheel_circumference_inches;
     }
 
     public double getHeading() {
