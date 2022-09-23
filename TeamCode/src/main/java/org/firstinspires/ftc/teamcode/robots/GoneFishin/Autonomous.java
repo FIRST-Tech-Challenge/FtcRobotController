@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robots.GoneFishin;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProvider;
+import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
@@ -26,6 +28,7 @@ public class Autonomous {
     public static boolean sampleContinue = false;
 
     // vision-related configuration
+    public VisionProvider visionProvider;
     public SkystoneVisionProvider vp;
     public int visionProviderState = 2;
     public boolean visionProviderFinalized;
@@ -315,5 +318,12 @@ public class Autonomous {
 
         }
         return -1; // this would be a fail
+    }
+    public void createVisionProvider(int visionProviderIndex) {
+        try {
+            visionProvider = VisionProviders.VISION_PROVIDERS[visionProviderIndex].newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException("Error while instantiating vision provider");
+        }
     }
 }

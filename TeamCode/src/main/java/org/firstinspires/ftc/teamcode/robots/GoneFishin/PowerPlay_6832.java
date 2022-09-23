@@ -32,23 +32,42 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.robots.GoneFishin;
 
+import static org.firstinspires.ftc.teamcode.robots.GoneFishin.util.Constants.LOW_BATTERY_VOLTAGE;
+import static org.firstinspires.ftc.teamcode.robots.GoneFishin.util.Constants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.robots.GoneFishin.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.nearZero;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.notdeadzone;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.servoNormalize;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.analysis.function.Pow;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.GoneFishin.util.Constants;
+import org.firstinspires.ftc.teamcode.robots.GoneFishin.util.ExponentialSmoother;
+import org.firstinspires.ftc.teamcode.robots.GoneFishin.util.StickyGamepad;
+import org.firstinspires.ftc.teamcode.robots.GoneFishin.util.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.robots.GoneFishin.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.vision.SkystoneTargetInfo;
 import org.firstinspires.ftc.teamcode.vision.StonePos;
 import org.opencv.core.Mat;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This file contains the code for Iron Reign's main OpMode, used for both
@@ -58,7 +77,7 @@ import org.opencv.core.Mat;
 @TeleOp(name = "PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
-public class PowerPlay_6832 extends LinearOpMode {
+public class PowerPlay_6832 extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,18 +85,35 @@ public class PowerPlay_6832 extends LinearOpMode {
     private PoseFishin.RobotType currentBot = PoseFishin.RobotType.TomBot;
 
     private PoseFishin robot;
+    private FtcDashboard dashboard;
 
     private Autonomous auto;
 
-    private boolean active = true;
     private boolean joystickDriveStarted = false;
 
     static public int state = 0;
 
+    // global state
+    private boolean active, initializing, debugTelemetryEnabled, numericalDashboardEnabled, smoothingEnabled, antiTippingEnabled;
+    private Constants.Alliance alliance;
+    private Constants.Position startingPosition;
+    private GameState gameState;
+    private int gameStateIndex;
+    private StickyGamepad stickyGamepad1, stickyGamepad2;
+    private long startTime;
+
+    // vision state
+    private int visionProviderIndex;
+    private boolean visionProviderFinalized;
+
     // loop time profile
-    long lastLoopClockTime;
+    long lastLoopClockTime, loopTime;
     double loopAvg = 0;
     private static final double loopWeight = .1;
+    private double averageLoopTime;
+    private ExponentialSmoother loopTimeSmoother, averageUpdateTimeSmoother;
+    public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
+    public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
 
     // drive train control variables
     private double pwrDamper = 1;
@@ -126,6 +162,8 @@ public class PowerPlay_6832 extends LinearOpMode {
     // values associated with the buttons in the toggleAllowedGP2 method
     private boolean[] buttonSavedStates2 = new boolean[16];
 
+    public static double RUMBLE_DURATION = 0.5;
+
     boolean debugTelemetry = false;
 
     int stateLatched = -1;
@@ -140,6 +178,51 @@ public class PowerPlay_6832 extends LinearOpMode {
     private int gameMode = 0;
     private static final int NUM_MODES = 4;
     private static final String[] GAME_MODES = { "REVERSE", "ENDGAME", "PRE-GAME", "REGULAR" };
+    private boolean endGameHandled;
+
+    public enum GameState {
+        AUTONOMOUS("Autonomous", true),
+
+        TELE_OP("Tele-Op"),
+        DEMO("Demo"),
+        MANUAL_DIAGNOSTIC("Manual Diagnostic"),
+
+        CRANE_DEBUG("Crane Debug"),
+
+        BACK_AND_FORTH("Back And Forth"),
+        SQUARE("Square"),
+        SQUARENORR("Square No RR"),
+        TURN("Turn");
+
+        private final String name;
+        private final boolean autonomous;
+
+        GameState(String name, boolean autonomous) {
+            this.name = name;
+            this.autonomous = autonomous;
+        }
+
+        GameState(String name) {
+            this(name, false);
+        }
+
+        public String getName() { return name; }
+
+        public boolean isAutonomous() { return autonomous; }
+
+        public static GameState getGameState(int index) {
+            return GameState.values()[index];
+        }
+
+        public static int getNumGameStates() {
+            return GameState.values().length;
+        }
+
+        public static int indexOf(GameState gameState) {
+            return Arrays.asList(GameState.values()).indexOf(gameState);
+        }
+    }
+
 
     // sound related configuration
     private int soundState = 0;
@@ -281,17 +364,37 @@ public class PowerPlay_6832 extends LinearOpMode {
 
     };
 
+    // Code to run ONCE when the driver hits INIT
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
 
         telemetry.addData("Status", "Initializing " + currentBot + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
 
+        // global state
+        active = true;
+        initializing = true;
+        debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
+        gameState = GameState.TELE_OP;
+
+        // timing
+        lastLoopClockTime = System.nanoTime();
+        loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
+        averageUpdateTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
+
+
         robot = new PoseFishin(currentBot);
         robot.init(this.hardwareMap);
 
+        // gamepads
+        stickyGamepad1 = new StickyGamepad(gamepad1);
+        stickyGamepad2 = new StickyGamepad(gamepad2);
+
         auto = new Autonomous(robot, dummyT, gamepad1);
+        dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25);
+        telemetry.setMsTransmissionInterval(25);
 
         debugTelemetry = gamepad1.right_trigger > .3;
         debugTelemetry = true;
@@ -301,110 +404,136 @@ public class PowerPlay_6832 extends LinearOpMode {
             configureDashboardMatch();
         telemetry.update();
 
-        // waitForStart();
-        // this is commented out but left here to document that we are still doing the
-        // functions that waitForStart() normally does, but needed to customize it.
+    }
+    private void handleStateSwitch() {
+        if (!active) {
+            if (stickyGamepad1.left_bumper || stickyGamepad2.left_bumper)
+                gameStateIndex -= 1;
+            if (stickyGamepad1.right_bumper || stickyGamepad2.right_bumper)
+                gameStateIndex += 1;
 
-        robot.resetMotors(true);
-        auto.visionProviderFinalized = false;
+            if(gameStateIndex < 0)
+                gameStateIndex = GameState.getNumGameStates() - 1;
+            gameStateIndex %= GameState.getNumGameStates();
+            gameState = GameState.getGameState(gameStateIndex);
+        }
 
-        while (!isStarted()) { // Wait for the game to start (driver presses PLAY)
+        if (stickyGamepad1.back || stickyGamepad2.back)
+            active = !active;
+    }
 
-
-            synchronized (this) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
+    private void handleVisionProviderSwitch() {
+        if(!active) {
+            if(!visionProviderFinalized) {
+                if (stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) {
+                    visionProviderIndex = (visionProviderIndex + 1) % VisionProviders.VISION_PROVIDERS.length; // switch vision provider
+                    auto.createVisionProvider(visionProviderIndex);
                 }
+                if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
+                    auto.visionProvider.initializeVision(hardwareMap); // this is blocking
+                    visionProviderFinalized = true;
+                }
+            } else if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
+                auto.visionProvider.shutdownVision(); // also blocking, but should be very quick
+                visionProviderFinalized = false;
             }
+        }
+        else if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right) && visionProviderFinalized)
+        {
+            auto.visionProvider.saveDashboardImage();
+        }
+        if(visionProviderFinalized)
+            auto.visionProvider.update();
+    }
 
-            stateSwitch();
+    private void handlePregameControls() {
+        Constants.Position previousStartingPosition = startingPosition;
+        if(stickyGamepad1.x || stickyGamepad2.x) {
+            alliance = Constants.Alliance.BLUE;
+            startingPosition = Constants.Position.START_BLUE_UP;
+        }
+        if(stickyGamepad1.a || stickyGamepad2.a) {
+            alliance = Constants.Alliance.BLUE;
+            startingPosition = Constants.Position.START_BLUE_DOWN;
+        }
+        if(stickyGamepad1.b || stickyGamepad2.b) {
+            alliance = Constants.Alliance.RED;
+            startingPosition = Constants.Position.START_RED_DOWN;
+        }
+        if(stickyGamepad1.y || stickyGamepad2.y) {
+            alliance = Constants.Alliance.RED;
+            startingPosition = Constants.Position.START_RED_UP;
+        }
+        if(previousStartingPosition != startingPosition) {
+            //todo these lines need to be enabled once we build the drivetrain and auton routines for powerplay
+            //robot.driveTrain.setPoseEstimate(startingPosition.getPose());
+            //auto.build(startingPosition);
+        }
+/*
+        if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
+            debugTelemetryEnabled = !debugTelemetryEnabled;
+        if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
+            if (robot.crane.shoulderInitialized)
+                robot.articulate(Robot.Articulation.START_DOWN); //stow crane to the starting position
+            else
+                robot.crane.configureShoulder(); //setup the shoulder - do this only when the
+        if(stickyGamepad1.left_trigger || stickyGamepad2.left_trigger)
+            numericalDashboardEnabled = !numericalDashboardEnabled;
+        if(stickyGamepad1.right_trigger || stickyGamepad2.right_trigger)
+            antiTippingEnabled = !antiTippingEnabled;
+        if(stickyGamepad1.right_stick_button || stickyGamepad2.right_stick_button)
+            smoothingEnabled = !smoothingEnabled;
+        if(stickyGamepad1.left_stick_button || stickyGamepad2.left_stick_button)
+            robot.crane.articulate(Crane.Articulation.TEST_INIT);
 
-            if (active) {
+ */
+        // we can do very basic driving to get to calibration position
+        // turret and drive controls on gamepad1 only since we don't always have 2 pads
+        // for auton testing
 
-                // we can do very basic driving to get to calibration position
-                // turret and drive controls on gamepad1 only since we don't always have 2 pads
-                // for auton testing
+        // this test suppresses pregame driving while a calibration articulation is
+        // active
+        if (robot.articulation == PoseFishin.Articulation.manual)
+            joystickDrivePregameMode();
 
-                // this test suppresses pregame driving while a calibration articulation is
-                // active
-                if (robot.articulation == PoseFishin.Articulation.manual)
-                    joystickDrivePregameMode();
+        // red alliance
+        if (toggleAllowed(gamepad1.b, b, 1)) {
+            calibrateInitStageMethod(false);
+        }
 
-                // red alliance
-                if (toggleAllowed(gamepad1.b, b, 1)) {
-                    calibrateInitStageMethod(false);
-                }
+        // blue alliance
+        if (toggleAllowed(gamepad1.x, x, 1)) {
+            calibrateInitStageMethod(true);
+        }
+        //resets the headings of the turret and chassis to initial values - press only after careful alignment perpendicular to alliance wall
+        if (toggleAllowed(gamepad1.y, y, 1)) {
+            robot.setHeadingAlliance();
+        }
 
-                // blue alliance
-                if (toggleAllowed(gamepad1.x, x, 1)) {
-                    calibrateInitStageMethod(true);
-                }
-                //resets the headings of the turret and chassis to initial values - press only after careful alignment perpendicular to alliance wall
-                if (toggleAllowed(gamepad1.y, y, 1)) {
-                    robot.setHeadingAlliance();
-                }
+        if (toggleAllowed(gamepad1.a, a, 1)) {
+            robot.setHeadingBase(90.0);
+        }
 
-                if (toggleAllowed(gamepad1.a, a, 1)) {
-                    robot.setHeadingBase(90.0);
-                }
 
-            }
 
-            else { // if inactive we are in configuration mode
+    }
 
-                if(auto.visionProviderFinalized)
-                    auto.sample();
+    // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+    @Override
+    public void init_loop() {
+        handleStateSwitch();
+        handleVisionProviderSwitch();
+        handlePregameControls();
 
-                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_left, dpad_left, 1)) {
-                    auto.visionProviderState = (auto.visionProviderState + 1) % auto.visionProviders.length; // switch
-                                                                                                             // vision
-                                                                                                             // provider
-                }
-                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
-                    auto.initVisionProvider(); // this is blocking
-                } else if (auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
-                    auto.deinitVisionProvider(); // also blocking, but should be very quick
-                }
-                if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-                    auto.enableTelemetry = !auto.enableTelemetry; // enable/disable FtcDashboard telemetry
-                    // CenterOfGravityCalculator.drawRobotDiagram =
-                    // !CenterOfGravityCalculator.drawRobotDiagram;
-                }
-                if (auto.visionProviderFinalized && gamepad1.left_trigger > 0.3) {
-                    SkystoneTargetInfo sp = auto.vp.detectSkystone();
-                    if (sp.getQuarryPosition() != StonePos.NONE_FOUND)
-                        initGoldPosTest = sp;
-                    telemetry.addData("Vision", "Prep detection: %s%s", initGoldPosTest,
-                            sp.getQuarryPosition() == StonePos.NONE_FOUND ? " (NONE_FOUND)" : "");
-                }
+        update();
+    }
+    private void rumble() {
+        gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
+        gamepad2.rumble((int) (RUMBLE_DURATION * 1000));
+    }
 
-                if (soundState == 0 && toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
-                    initialization_initSound();
-                }
-
-                telemetry.addData("Vision", "Backend: %s (%s)",
-                        auto.visionProviders[auto.visionProviderState].getSimpleName(),
-                        auto.visionProviderFinalized ? "finalized"
-                                : System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : " NOT FINALIZED ");
-                telemetry.addData("Vision", "FtcDashboard Telemetry: %s",
-                        auto.enableTelemetry ? "Enabled" : "Disabled");
-                telemetry.addData("Vision", "Viewpoint: %s", auto.viewpoint);
-                telemetry.addData("Status", "Initialized");
-                telemetry.addData("Status", "Auto Delay: " + Integer.toString((int) auto.autoDelay) + "seconds");
-
-            }
-            telemetry.update();
-
-            robot.ledSystem.setColor(LEDSystem.Color.GAME_OVER);
-
-            robot.updateSensors(active);
-
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
-        } // end of stuff that happens during Init, but before Start
-
+    @Override
+    public void start(){
         //
         // THIS SECTION EXECUTES ONCE RIGHT AFTER START IS PRESSED
         //
@@ -418,80 +547,72 @@ public class PowerPlay_6832 extends LinearOpMode {
         robot.crane.restart(.4, .5);
 
         lastLoopClockTime = System.nanoTime();
+        startTime = System.currentTimeMillis();
 
-        //
-        // END OF SECTION THAT EXECUTES ONCE RIGHT AFTER START IS PRESSED
-        //
+        rumble();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            stateSwitch();
+
+    }
+
+        @Override
+    public void loop() {
+
+            handleStateSwitch();
+
             if (active) {
-                switch (state) {
-                    case 0: // auton full
+                long currentTime = System.currentTimeMillis();
+                if (!endGameHandled && gameState == PowerPlay_6832.GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
+//                robot.articulate(Robot.Articulation.START_END_GAME);
+                    endGameHandled = true;
+                    rumble();
+                }
+                switch(gameState) {
+                    case TELE_OP:
+                        joystickDrive();
+                        break;
+                    case DEMO:
+                        demo();
+                        break;
+                    case MANUAL_DIAGNOSTIC:
+                        //handleManualDiagnostic();
+                        if (auto.simultaneousStateTest.execute())
+                            active = false;
+                        break;
+
+                    case CRANE_DEBUG:
+                        //handleCraneDebug();
+                        break;
+                    case AUTONOMOUS:
+                        //if(auto.getStateMachine(startingPosition, org.firstinspires.ftc.teamcode.robots.reachRefactor.Autonomous.Mode.SPLINE).execute())
+                        //    changeGameState(FF_6832.GameState.TELE_OP);
+                        // auton full
                         if (auto.AutoFull.execute()) {
                             active = false;
                             state = 1;
                         }
                         break;
-                    case 1: // teleop
-                        joystickDrive();
+                    case BACK_AND_FORTH:
+                        //auto.backAndForth.execute();
                         break;
-                    case 2:
-                        robot.crane.alignGripperForwardFacing();
+                    case SQUARE:
+                        //auto.square.execute();
                         break;
-
-                    case 3: // autonomous that starts in our crater
-                        if (auto.walkOfShame.execute()) {
-                            active = false;
-                            state = 1;
-                        }
+                    case SQUARENORR:
+                        //auto.squareNoRR.execute();
                         break;
-                    case 4:
-                        break;
-                    case 5:
-                        if (auto.autoMethodTesterTool.execute()) {
-                            state = 1;
-                        }
-                        break;
-                    case 6:
-                        demo();
-                        break;
-                    case 7:
-                        robot.driveIMUDistanceWithReset(.6,robot.getHeading(),true,.470);
-                        break;
-                    case 8:
-                        demo();
-                        break;
-                    case 9:
-                        if (auto.simultaneousStateTest.execute())
-                            active = false;
-                        break;
-                    case 10:
-
-                        break;
-                    default:
-                        robot.stopAll();
-                        break;
+                    case TURN:
+                        //auto.turn.execute();
                 }
-                robot.updateSensors(active);
             } else {
-                //robot.stopAll();
+                handlePregameControls();
             }
 
-            long loopClockTime = System.nanoTime();
-            long loopTime = loopClockTime - lastLoopClockTime;
-            if (loopAvg == 0)
-                loopAvg = loopTime;
-            else
-                loopAvg = loopWeight * loopTime + (1 - loopWeight) * loopAvg;
-            lastLoopClockTime = loopClockTime;
+            update();
 
-            telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
-    }
+
+
 
     public boolean driveStraight() {
         return robot.driveForward(true, 1, .5);
@@ -741,7 +862,7 @@ public class PowerPlay_6832 extends LinearOpMode {
         // robot.articulate(PoseSkystone.Articulation.yoinkStone);
 
         robot.crane.update();
-        robot.turret.update(opModeIsActive());
+        robot.turret.update(true);
     }
 
     private void joystickDrivePregameMode() {
@@ -942,6 +1063,111 @@ public class PowerPlay_6832 extends LinearOpMode {
         int idx = (int) ((System.currentTimeMillis() / 2000) % LEDSystem.Color.values().length);
         robot.ledSystem.setColor(LEDSystem.Color.values()[idx]);
         telemetry.addData("Color", LEDSystem.Color.values()[idx].name());
+    }
+    private void updateTiming() {
+        long loopClockTime = System.nanoTime();
+        loopTime = loopClockTime - lastLoopClockTime;
+        averageLoopTime = loopTimeSmoother.update(loopTime);
+        lastLoopClockTime = loopClockTime;
+    }
+
+    private void handleTelemetry(Map<String, Object> telemetryMap, String telemetryName, TelemetryPacket packet) {
+        telemetry.addLine(telemetryName);
+        packet.addLine(telemetryName);
+
+        //todo use this once we have stuff moved into drivetrain
+        // if(robot.driveTrain.getVoltage() <= LOW_BATTERY_VOLTAGE) {
+        if(robot.getVoltage() <= LOW_BATTERY_VOLTAGE) {
+            telemetryMap = new LinkedHashMap<>();
+            for(int i = 0; i < 20; i++) {
+                telemetryMap.put(i +
+                                (System.currentTimeMillis() / 500 % 2 == 0 ? "**BATTERY VOLTAGE LOW**" : "  BATTERY VOLTAGE LOW  "),
+                        (System.currentTimeMillis() / 500 % 2 == 0 ? "**CHANGE BATTERY ASAP!!**" : "  CHANGE BATTERY ASAP!!  "));
+            }
+        }
+        for (Map.Entry<String, Object> entry : telemetryMap.entrySet()) {
+            String line = Misc.formatInvariant("%s: %s", entry.getKey(), entry.getValue());
+            if(numericalDashboardEnabled)
+                packet.put(entry.getKey(), entry.getValue());
+            else
+                packet.addLine(line);
+            telemetry.addLine(line);
+        }
+
+        telemetry.addLine();
+        packet.addLine("");
+    }
+
+    private void update() {
+        stickyGamepad1.update();
+        stickyGamepad2.update();
+
+        // handling dashboard changes
+        //forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
+        //rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
+
+        TelemetryPacket packet = new TelemetryPacket();
+
+        long updateStartTime = System.nanoTime();
+        //robot.update(packet.fieldOverlay());
+        robot.updateSensors(true);
+        long updateTime = (System.nanoTime() - updateStartTime);
+        double averageUpdateTime = averageUpdateTimeSmoother.update(updateTime);
+
+        Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
+
+        // handling op mode telemetry
+        opModeTelemetryMap.put("Active", active);
+        if(initializing) {
+            opModeTelemetryMap.put("Starting Position", startingPosition);
+            opModeTelemetryMap.put("Anti-Tipping Enabled", antiTippingEnabled);
+            opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
+        }
+        opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+        opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+        if(debugTelemetryEnabled) {
+            opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));
+            opModeTelemetryMap.put("Last Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (updateTime * 1e-6), (int) (1 / (updateTime * 1e-9))));
+        }
+
+        //here we can add telemetry specific to certain gameStates
+        switch(gameState) {
+            case TELE_OP:
+                //opModeTelemetryMap.put("Double Duck", robot.isDoubleDuckEnabled());
+                break;
+            case MANUAL_DIAGNOSTIC:
+                //opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
+                break;
+        }
+        handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
+        //todo renable once we put stuff into refactored subsystems
+        // handling subsystem telemetry
+        /*
+        for(TelemetryProvider telemetryProvider: robot.subsystems)
+            handleTelemetry(telemetryProvider.getTelemetry(debugTelemetryEnabled), telemetryProvider.getTelemetryName(), packet);
+        handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
+
+        // handling vision telemetry
+        Map<String, Object> visionTelemetryMap = auto.visionProvider.getTelemetry(debugTelemetryEnabled);
+        visionTelemetryMap.put("Backend",
+                Misc.formatInvariant("%s (%s)",
+                        VisionProviders.VISION_PROVIDERS[visionProviderIndex].getSimpleName(),
+                        visionProviderFinalized ?
+                                "finalized" :
+                                System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : "  NOT FINALIZED  "
+                )
+        );
+        */
+
+        //handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
+
+        dashboard.sendTelemetryPacket(packet);
+        telemetry.update();
+
+        //if(!initializing)
+            //dashboard.sendImage(robot.getBitmap());
+
+        updateTiming();
     }
 
 }

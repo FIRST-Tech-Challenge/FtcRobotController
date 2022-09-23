@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -54,6 +55,7 @@ public class PoseFishin {
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
+    private VoltageSensor batteryVoltageSensor;
 
     public static double kpDrive = 0.02; // proportional constant multiplier
     public static double kiDrive = 0.01; // integral constant multiplier
@@ -297,6 +299,8 @@ public class PoseFishin {
         // create hwmap with config values
         // this.driveLeft = this.hwMap.dcMotor.get("driveLeft");
         // this.driveRight = this.hwMap.dcMotor.get("driveRight");
+
+        batteryVoltageSensor = this.hwMap.voltageSensor.iterator().next();
         this.elbow = this.hwMap.dcMotor.get("elbow");
 
         this.extender = this.hwMap.dcMotor.get("extender");
@@ -1975,5 +1979,7 @@ public class PoseFishin {
     public void setOdometer(double distance) {
         odometer = 0;
     }
+
+    public double getVoltage(){return batteryVoltageSensor.getVoltage();}
 
 }
