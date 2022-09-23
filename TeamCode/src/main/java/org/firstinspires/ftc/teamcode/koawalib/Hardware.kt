@@ -49,7 +49,7 @@ class Hardware(startPose: Pose) {
         leftEncoder,
         rightEncoder,
         auxEncoder,
-        10.0,
+        9.75,
         8.0,
         startPose
     )
