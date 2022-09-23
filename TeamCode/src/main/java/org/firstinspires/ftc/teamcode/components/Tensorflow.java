@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.BuildConfig;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 import org.firstinspires.ftc.teamcode.params.VuforiaParams;
 
@@ -30,7 +31,7 @@ public class Tensorflow {
     public Tensorflow(WebcamName name, int tfodMonitorId) {
         // Initialize Vuforia parameters
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey           = VuforiaParams.VUFORIA_KEY;
+        parameters.vuforiaLicenseKey           = BuildConfig.VUFORIA_KEY;
         parameters.cameraName                  = name;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 

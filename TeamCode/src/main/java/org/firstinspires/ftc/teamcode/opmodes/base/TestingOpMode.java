@@ -30,7 +30,6 @@ public abstract class TestingOpMode extends OpMode {
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
-            TestingOpMode
         }
         driveSystem = new DriveSystem(driveMap);
     }

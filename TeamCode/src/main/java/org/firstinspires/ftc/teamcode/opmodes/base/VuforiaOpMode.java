@@ -58,7 +58,8 @@ public abstract class VuforiaOpMode extends OpMode {
         vuforia.identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
         vuforia.identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
         telemetry.addData("is a target visible? : ",  vuforia.isAnyTargetVisible());
-        telemetry.addData("Visible Target", vuforia.nameOfTargetVisible());
+        telemetry.addData("Visible Target: ", vuforia.nameOfTargetVisible());
+        telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
         telemetry.update();
     }
 

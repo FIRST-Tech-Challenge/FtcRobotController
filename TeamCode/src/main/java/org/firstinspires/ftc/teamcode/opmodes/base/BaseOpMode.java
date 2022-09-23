@@ -31,7 +31,7 @@ public abstract class BaseOpMode extends OpMode {
         // Initialize motors
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
-            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));BaseOpMode
+            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
         driveSystem = new DriveSystem(driveMap);
     }
