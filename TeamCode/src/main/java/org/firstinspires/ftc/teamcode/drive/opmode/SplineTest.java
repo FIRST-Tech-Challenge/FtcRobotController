@@ -27,6 +27,14 @@ public class SplineTest extends LinearOpMode {
 
         drive.followTrajectory(traj);
 
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("heading Rad.", poseEstimate.getHeading());
+        telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.update();
+        while (opModeIsActive() && !gamepad1.y) {};
+
         sleep(2000);
 
         drive.followTrajectory(
@@ -34,5 +42,14 @@ public class SplineTest extends LinearOpMode {
                         .splineTo(new Vector2d(0, 0), Math.toRadians(180))
                         .build()
         );
+
+        poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("heading Rad.", poseEstimate.getHeading());
+        telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.update();
+        while (opModeIsActive() && !gamepad1.y) {};
+
     }
 }

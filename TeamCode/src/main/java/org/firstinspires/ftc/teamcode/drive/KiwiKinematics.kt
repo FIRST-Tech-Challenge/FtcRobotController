@@ -20,12 +20,13 @@ object KiwiKinematics {
     @JvmStatic
     @JvmOverloads
     fun robotToWheelVelocities(
-            robotVel: Pose2d
+            robotVel: Pose2d,
+            trackRadius: Double
     ): List<Double> {
         return listOf(
-                robotVel.heading - (0.866 * robotVel.x) + (0.5 * robotVel.y),
-                robotVel.heading - robotVel.y,
-                robotVel.heading + (0.866 * robotVel.x) + (0.5 * robotVel.y)
+            (robotVel.heading * trackRadius) - (0.866 * robotVel.x) + (0.5 * robotVel.y),
+            (robotVel.heading * trackRadius) - robotVel.y,
+            (robotVel.heading * trackRadius) + (0.866 * robotVel.x) + (0.5 * robotVel.y)
         )
     }
 
@@ -40,9 +41,10 @@ object KiwiKinematics {
     // follows from linearity of the derivative
     fun robotToWheelAccelerations(
             robotAccel: Pose2d,
+            trackRadius: Double
     ) =
             robotToWheelVelocities(
-                    robotAccel,
+                    robotAccel, trackRadius
             )
 
     /**
@@ -54,12 +56,13 @@ object KiwiKinematics {
     @JvmOverloads
     fun wheelToRobotVelocities(
             wheelVelocities: List<Double>,
+            trackRadius: Double
     ): Pose2d {
         val (left, rear, right) = wheelVelocities
         return Pose2d(
                 (right - left) ,  // * 2 / 2
                 (rear - ((right + left) * 1.155 )) / 3.0,
-                wheelVelocities.sum() / 3.0,
+                wheelVelocities.sum() / (trackRadius * 3.0),
                 )
     }
 }
