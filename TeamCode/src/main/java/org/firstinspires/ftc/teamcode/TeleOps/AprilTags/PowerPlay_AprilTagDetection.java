@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.EOCV;
+package org.firstinspires.ftc.teamcode.TeleOps.AprilTags;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,7 +7,6 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 public class PowerPlay_AprilTagDetection extends LinearOpMode
 {
     OpenCvCamera camera; // Calls the camera
-    AprilTagDetectionPipeline aprilTagDetectionPipeline; // Calls the pipeline
+    PowerPlay_AprilTagDetectionPipeline aprilTagDetectionPipeline; // Calls the pipeline
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -44,7 +43,7 @@ public class PowerPlay_AprilTagDetection extends LinearOpMode
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         // Make sure the name of the camera on the DS is the same as "Webcam 1" above
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        aprilTagDetectionPipeline = new PowerPlay_AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
