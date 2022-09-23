@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.base;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -14,7 +15,8 @@ import java.util.EnumMap;
 /**
  * Basic OpMode template
  */
-public abstract class VuforiaOpMode extends OpMode {
+@Autonomous(name = "Vuforia Signal Sleeve", group = "Autonomous")
+public class VuforiaOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
     protected Vuforia vuforia;
@@ -32,11 +34,8 @@ public abstract class VuforiaOpMode extends OpMode {
         this.msStuckDetectInit     = 20000;
         this.msStuckDetectInitLoop = 20000;
         // Initialize motors
-        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
-        for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
-            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        driveSystem = new DriveSystem(driveMap);
+        setCamera(CameraChoice.PHONE_BACK);
+
     }
 
     /** Initialize Vuforia object with given camera
@@ -51,8 +50,7 @@ public abstract class VuforiaOpMode extends OpMode {
     public final boolean isStopRequested() {
         return this.stopRequested || Thread.currentThread().isInterrupted();
     }
-    public void runOpMode(){
-        setCamera(CameraChoice.WEBCAM1);
+    public void loop(){
         vuforia.identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
         vuforia.identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
         vuforia.identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);

@@ -202,13 +202,13 @@ public class Vuforia {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, rx, ry, rz)));
     }
 
-    public boolean identifyTeamAsset(){
-        for(VuforiaTrackable t : teamAssetTrackables){
-            if (((VuforiaTrackableDefaultListener) t.getListener()).isVisible()){
-                return true;
+    public String identifyTeamAsset(){
+        for (VuforiaTrackable trackable : teamAssetTrackables) {
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                return trackable.getName();
             }
         }
-        return false;
+        return "None.";
     }
 
 }
