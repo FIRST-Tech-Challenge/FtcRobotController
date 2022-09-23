@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.EOCV;
+package org.firstinspires.ftc.teamcode.TeleOps.AprilTags;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -37,7 +37,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-class AprilTagDetectionPipeline extends OpenCvPipeline
+class PowerPlay_AprilTagDetectionPipeline extends OpenCvPipeline
 {
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
@@ -67,7 +67,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy)
+    public PowerPlay_AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy)
     {
         this.tagsize = tagsize;
         this.tagsizeX = tagsize;
@@ -95,7 +95,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         }
         else
         {
-            System.out.println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
+            System.out.println("PowerPlay_AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL");
         }
     }
 
