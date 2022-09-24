@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components;
 //TODO: capitalize c in ClawExtension
-public class clawExtension {
-    public clawExtension(){
+public class ClawExtension {
+    public ClawExtension(){
         // hardware mapping
+    }
+    public void extendToPosition(double inches){
+        //use rfservo setRange for variable distance
+        //input is inches that claw should extend in inches
+        //set servo range
+        //log when & what range is set to
     }
     public void extendClaw(){
         //no input TODO: maybe a seperate function for setPosition so you have variable distance
