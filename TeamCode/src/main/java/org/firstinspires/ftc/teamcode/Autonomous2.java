@@ -29,43 +29,44 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.teamcode.Variables.motorBL;
+import static org.firstinspires.ftc.teamcode.Variables.motorBR;
+import static org.firstinspires.ftc.teamcode.Variables.motorFL;
+import static org.firstinspires.ftc.teamcode.Variables.motorFR;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import static org.firstinspires.ftc.teamcode.Variables.*;
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
-public class TeliOp extends LinearOpMode {
+@Autonomous(name="Autonomous2", group="Linear Opmode")
+
+public class Autonomous2 extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+
+
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        initMotors();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        double leftY;
-        double leftX;
+
+        driveForDistance(2, false, 0.5);
+        driveForDistance(2, true, 0.5);
+        driveForDistance(2, false, -0.5);
+        driveForDistance(2, true, -0.5);
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            //update doubles
-            leftY = gamepad1.left_stick_y;
-            leftX = gamepad1.left_stick_x;
-
-            motorFL.setPower(leftY);
-            motorBL.setPower(leftY);
-            motorFR.setPower(leftY);
-            motorBR.setPower(leftY);
-
 
 
             // Show the elapsed game time and wheel power.
