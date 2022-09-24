@@ -17,13 +17,12 @@ import java.util.List;
 
 public class StickObserverPipeline extends OpenCvPipeline {
     int width = 320, height = 240;
-    double centerOfPole = -1000, poleSize = -1000, centerAverage = 0, sizeAverage=0, degPerPix=0.5, widTimesDist=200;
+    double centerOfPole = -1000, poleSize = -1000, centerAverage = 0, sizeAverage = 0, degPerPix = 0.5, widTimesDist = 200;
     int numberOfFrames = 0;
-    double[] acceptedRangeSize = {0,200}, acceptedRangeCenter = {-100,100};
+    double[] acceptedRangeSize = {0, 60}, acceptedRangeCenter = {-200, 200};
 
 
     public StickObserverPipeline() {
-//        logger.log()
     }
 
     @Override
@@ -37,7 +36,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         Scalar highHSV = new Scalar(40, 255, 255); // higher bound HSV for yellow
 
         Mat thresh = new Mat();
-        Mat thresh2 = new Mat();
 
 
         // We'll get a black and white image. The white regions represent the regular stones.
@@ -46,11 +44,11 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
         Mat test = new Mat();
         thresh.copyTo(test);
-        Core.bitwise_and(input,input, thresh, test);
+        Core.bitwise_and(input, input, thresh, test);
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
         Mat edges = new Mat();
-        Imgproc.Canny(thresh, edges,100,200,3,false);
+        Imgproc.Canny(thresh, edges, 100, 200, 3, false);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
@@ -68,44 +66,44 @@ public class StickObserverPipeline extends OpenCvPipeline {
             rectangle[i] = Imgproc.minAreaRect(contoursPoly[i]);
         }
         int maxAreaIndex = 0;
-        for(int i=0;i<rectangle.length;i++){
-                if(rectangle[i].size.width>rectangle[maxAreaIndex].size.width){
-                    maxAreaIndex=i;
-                }
-        }
-        if(maxAreaIndex!=rectangle.length) {
-            centerOfPole = rectangle[maxAreaIndex].center.x-320;
-            poleSize = rectangle[maxAreaIndex].size.width;
-            if(centerOfPole<acceptedRangeCenter[1]&&centerOfPole>acceptedRangeCenter[0]&&poleSize>acceptedRangeSize[0]&&poleSize<acceptedRangeSize[1]){
-                if(numberOfFrames==0){
-                    centerAverage = centerOfPole;
-                    sizeAverage = poleSize;
-                    numberOfFrames++;
-                }
-                else{
-                    numberOfFrames++;
-                    centerAverage = (centerAverage*(numberOfFrames-1) + centerOfPole)/numberOfFrames;
-                    sizeAverage = (sizeAverage*(numberOfFrames-1) + poleSize)/numberOfFrames;
-                }
-
+        for (int i = 0; i < rectangle.length; i++) {
+            if (rectangle[i].size.width > rectangle[maxAreaIndex].size.width) {
+                maxAreaIndex = i;
             }
         }
+        centerOfPole = rectangle[maxAreaIndex].center.x - 320;
+        poleSize = rectangle[maxAreaIndex].size.width;
+//        if (centerOfPole < acceptedRangeCenter[1] && centerOfPole > acceptedRangeCenter[0] && poleSize > acceptedRangeSize[0] && poleSize < acceptedRangeSize[1]) {
+            if (numberOfFrames == 0) {
+                centerAverage = centerOfPole;
+                sizeAverage = poleSize;
+                numberOfFrames++;
+            } else {
+                numberOfFrames++;
+                centerAverage = (centerAverage * (numberOfFrames - 1) + centerOfPole) / numberOfFrames;
+                sizeAverage = (sizeAverage * (numberOfFrames - 1) + poleSize) / numberOfFrames;
+            }
 
+//        }
+//        input.release();
         mat.release();
         edges.release();
-//        thresh.release();
+        thresh.copyTo(input);
+        thresh.release();
         hierarchy.release();
         test.release();
-        return thresh;
+        return input;
     }
 
     public double centerOfPole() {
-        return centerOfPole;
+        return centerAverage;
     }
-    public double poleSize(){
-        return poleSize;
+
+    public double poleSize() {
+        return sizeAverage;
     }
-    public double[] poleRotatedPolarCoordDelta(){
-        return new double[]{degPerPix*centerOfPole*PI/180,widTimesDist/poleSize};
+
+    public double[] poleRotatedPolarCoordDelta() {
+        return new double[]{degPerPix * centerOfPole * PI / 180, widTimesDist / poleSize};
     }
 }

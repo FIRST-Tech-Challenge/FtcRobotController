@@ -1,15 +1,10 @@
-package org.firstinspires.ftc.teamcode.Components.Claw;
+package org.firstinspires.ftc.teamcode.Components;
 
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-
-public class ClawServo {
-//    extends RFServo
-
+public class Claw {
     //constructor
-    public ClawServo() {
-        super();
+    public Claw(){
+        //init RFServo & Distance sensor
     }
-
     //close the claw
     public void closeClaw() {
         //no input
@@ -26,5 +21,18 @@ public class ClawServo {
         //set servo position
         //set state of claw open to true
         //log to general robot log that the claw has been opened through function openClaw()
+    }
+    //look at and return distance to the nearest cone
+    public double getConeDistance() {
+        //no input
+        //no state conditions
+        //execute algorithm for observing
+        //no setting state
+        //log to general robot log that the cone has been observed through function closeClaw()
+
+
+
+        //just placeholder so that there are no errors
+        return 2.0;
     }
 }

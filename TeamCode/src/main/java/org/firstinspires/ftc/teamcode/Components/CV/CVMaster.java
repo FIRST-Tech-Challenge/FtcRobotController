@@ -12,8 +12,9 @@ public class CVMaster {
     OpenCvWebcam webcam;
     public CVMaster(){
         int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
-
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+    }
+    public void observeStick(){
         StickObserverPipeline opencv = new StickObserverPipeline();
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
