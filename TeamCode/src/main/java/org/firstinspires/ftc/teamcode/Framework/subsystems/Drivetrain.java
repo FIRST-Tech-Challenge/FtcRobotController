@@ -1,15 +1,14 @@
-package Framework.subsystems;
+package org.firstinspires.ftc.teamcode.Framework.subsystems;
+
+import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import Framework.Subsystem;
-
-public class Drivetrain implements Subsystem {
+public class Drivetrain extends SubsystemBase {
 
     private DcMotorEx frontR;
     private DcMotorEx frontL;
@@ -18,18 +17,21 @@ public class Drivetrain implements Subsystem {
     private List<DcMotorEx> motors;
     private HardwareMap hw;
 
-    public Drivetrain(HardwareMap hw){
-        this.hw = hw;
-    }
 
-    public void init(){
-        DcMotorEx [] motorArr = {frontL, frontR, backR, backL};
+    public Drivetrain(HardwareMap hw) {
+        this.hw = hw;
+        DcMotorEx[] motorArr = {frontL, frontR, backR, backL};
         motors = Arrays.asList(motorArr);
 
         // Initialize all motors with the name of their variable
-        for(int i = 0; i < motorArr.length; i++){
+        for (int i = 0; i < motorArr.length; i++)
             motorArr[i] = hw.get(DcMotorEx.class, motorArr[i].getClass().getSimpleName());
-        }
     }
+
+    @Override
+    public void periodic() {
+
+    }
+
 
 }

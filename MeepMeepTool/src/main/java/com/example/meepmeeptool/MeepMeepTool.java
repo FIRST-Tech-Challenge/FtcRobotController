@@ -15,8 +15,9 @@ public class MeepMeepTool {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(200, 200, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
-                                .forward(50)
+                        drive.trajectorySequenceBuilder(new Pose2d(-60.5, 35, 0))
+                                .lineToLinearHeading(new Pose2d(15,25, 17))
+                                .lineToLinearHeading(new Pose2d(0,-34, 270))
                                 .turn(Math.toRadians(180))
                                 .strafeLeft(50)
                                 .forward(15)
