@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-=import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveCancelable;
 
 /**
  * Example opmode demonstrating how to break out from a live trajectory at any arbitrary point in
@@ -17,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * 3 seconds into the start of the opmode, `drive.breakFollowing()` is called, breaking out of all
  * trajectory following.
  * <p>
- * This sample utilizes the SampleMecanumDriveCancelable.java and TrajectorySequenceRunnerCancelable.java
+ * This sample utilizes the GFORCE_KiwiDriveCancelable.java and TrajectorySequenceRunnerCancelable.java
  * classes. Please ensure that these files are copied into your own project.
  */
 @Autonomous(group = "advanced")
@@ -25,7 +24,7 @@ public class AutoBreakTrajectory extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize custom cancelable SampleMecanumDrive class
+        // Initialize custom cancelable GFORCE_KiwiDrive class
         SampleMecanumDriveCancelable drive = new SampleMecanumDriveCancelable(hardwareMap);
 
         // Set the pose estimate to where you know the bot will start in autonomous

@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drive.SampleKiwiDrive;
+import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 
 import java.util.Objects;
 
@@ -46,7 +46,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    private SampleKiwiDrive drive;
+    private GFORCE_KiwiDrive drive;
 
     enum Mode {
         DRIVER_MODE,
@@ -70,7 +70,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new SampleKiwiDrive(hardwareMap);
+        drive = new GFORCE_KiwiDrive(hardwareMap);
 
         mode = Mode.TUNING_MODE;
 

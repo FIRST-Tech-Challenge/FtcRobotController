@@ -6,7 +6,8 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
+import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
 /**
  * Example opmode demonstrating how to hand-off the pose from your autonomous opmode to your teleop
@@ -35,7 +36,7 @@ public class AutoTransferPose extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare your drive class
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         // Set the pose estimate to where you know the bot will start in autonomous
         // Refer to https://www.learnroadrunner.com/trajectories.html#coordinate-system for a map

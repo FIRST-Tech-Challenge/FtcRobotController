@@ -1,5 +1,3 @@
-package org.firstinspires.ftc.teamcode.drive.advanced;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,17 +9,22 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
 /**
  * This opmode demonstrates how one would implement field centric control using
- * `GFORCE_KiwiDrive.java`. This file is essentially just `TeleOpDrive.java` with the addition of
+ * `SampleMecanumDrive.java`. This file is essentially just `TeleOpDrive.java` with the addition of
  * field centric control. To achieve field centric control, the only modification one needs is to
  * rotate the input vector by the current heading before passing it into the inverse kinematics.
  * <p>
  * See lines 42-57.
  */
-@TeleOp(group = "advanced")
-public class TeleOpFieldCentric extends LinearOpMode {
+@TeleOp(name="G-FORCE TELEOP", group = "advanced")
+public class GFORCE_TELEOP extends LinearOpMode {
+
+    boolean headingLock = false;
+    double  headingSetpoint = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize GFORCE_KiwiDrive
+
+        // Initialize SampleMecanumDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
@@ -36,9 +39,15 @@ public class TeleOpFieldCentric extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive()) {
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
+
+            // reset heading if double button press
+            if (gamepad1.back && gamepad1.start) {
+                drive.setPoseEstimate( new Pose2d(poseEstimate.getX(), poseEstimate.getY(), 0));
+                drive.setExternalHeading(0);
+            }
 
             // Create a vector from the gamepad x/y inputs
             // Then, rotate that vector by the inverse of that heading
@@ -47,23 +56,44 @@ public class TeleOpFieldCentric extends LinearOpMode {
                     -gamepad1.left_stick_x
             ).rotated(-poseEstimate.getHeading());
 
-            // Pass in the rotated input + right stick value for rotation
-            // Rotation is not part of the rotated input thus must be passed in separately
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            input.getX(),
-                            input.getY(),
-                            -gamepad1.right_stick_x
-                    )
-            );
+            // are we turning or should heading be locked.
+            if (Math.abs(gamepad1.right_stick_x) < 0.01) {
+                if (!headingLock) {
+                    headingLock = true;
+                    headingSetpoint = poseEstimate.getHeading();
+                }
+            } else {
+                headingLock = false;
+            }
+
+            if (headingLock) {
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                                input.getX(),
+                                input.getY(),
+                                -gamepad1.right_stick_x / 10
+                        )
+                );
+            } else {
+                // Pass in the rotated input + right stick value for rotation
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                                input.getX(),
+                                input.getY(),
+                                -gamepad1.right_stick_x / 10
+                        )
+                );
+            }
 
             // Update everything. Odometry. Etc.
             drive.update();
 
             // Print pose to telemetry
+            telemetry.addData("Lock", headingLock);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("ODO  heading", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
             telemetry.update();
         }
     }

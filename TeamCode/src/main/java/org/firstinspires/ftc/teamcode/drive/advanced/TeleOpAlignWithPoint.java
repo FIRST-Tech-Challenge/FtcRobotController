@@ -12,7 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
+import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /**
@@ -41,8 +42,8 @@ public class TeleOpAlignWithPoint extends LinearOpMode {
     private Mode currentMode = Mode.NORMAL_CONTROL;
 
     // Declare a PIDF Controller to regulate heading
-    // Use the same gains as SampleMecanumDrive's heading controller
-    private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
+    // Use the same gains as GFORCE_KiwiDrive's heading controller
+    private PIDFController headingController = new PIDFController(GFORCE_KiwiDrive.HEADING_PID);
 
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
@@ -50,8 +51,8 @@ public class TeleOpAlignWithPoint extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initialize SampleMecanumDrive
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        // Initialize GFORCE_KiwiDrive
+        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto

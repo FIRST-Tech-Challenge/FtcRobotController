@@ -21,7 +21,7 @@ public class DriveConstants {
      * These are motor constants that should be listed online for your motors.
      */
     public static final double TICKS_PER_REV = 537.7;
-    public static final double MAX_RPM = 312;
+    public static final double MAX_RPM = 300;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -46,9 +46,8 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO   = 1;    // output (wheel) speed / input (motor) speed
-    public static double TRACK_RADIUS = 7.2;  // in.  Used for Kiwi Drive
     public static double TRACK_WIDTH  = 14.4; // in.  Used for Mecanum and Tank drives
-
+                                              // For 3 Wheel Kiwi drive, enter drive wheel circle diameter
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
      * the built-in velocity PID, *these values are fine as is*. However, if you do not have drive
@@ -70,8 +69,8 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL   = 40;  // ips
-    public static double MAX_ACCEL = 40; // ipsps
+    public static double MAX_VEL   = 40;  // in/s
+    public static double MAX_ACCEL = 40; // in/s/s
     public static double MAX_ANG_VEL = Math.toRadians(180);   // Measured at 340 deg/sec
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 

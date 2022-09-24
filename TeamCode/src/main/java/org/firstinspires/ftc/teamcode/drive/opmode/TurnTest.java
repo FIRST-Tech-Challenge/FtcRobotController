@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleKiwiDrive;
+import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 
 /*
  * This is a simple routine to test turning capabilities.
@@ -17,7 +17,7 @@ public class TurnTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleKiwiDrive drive = new SampleKiwiDrive(hardwareMap);
+        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         waitForStart();
 
