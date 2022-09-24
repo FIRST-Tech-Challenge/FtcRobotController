@@ -22,9 +22,11 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
+
     // This is basically the range of colors the pipeline will accept
+    // In this case every color would be shown since pixel values range from 0-255
     public Scalar lower = new Scalar(0, 0, 0);
-    public Scalar upper = new Scalar(255, 255, 255);
+    public Scalar upper = new Scalar(195, 195, 90); // 195, 195, 90
 
     /*
      * A good practice when typing EOCV pipelines is
@@ -36,6 +38,7 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
      * memory leak and causing the app to crash due to an
      * "Out of Memory" error.
      */
+
     private Mat ycrcbMat       = new Mat();
     private Mat binaryMat      = new Mat();
     private Mat maskedInputMat = new Mat();

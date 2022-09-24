@@ -33,10 +33,8 @@ public class WebcamTest extends LinearOpMode
         // OR...  Do Not Activate the Camera Monitor View:
         // webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
-
         // Specify the image processing pipeline we wish to use on a frame from the camera
         webcam.setPipeline(new SamplePipeline());
-
 
         // Open the connection to the camera device
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
@@ -45,7 +43,6 @@ public class WebcamTest extends LinearOpMode
             @Override
             public void onOpened()
             {
-
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -82,27 +79,6 @@ public class WebcamTest extends LinearOpMode
             //The "if" statement below will stop streaming from the camera when the "A" button on gamepad 1 is pressed.
             if(gamepad1.a)
             {
-                /*\
-                 DO NOT DELETE
-                 ~~~~~~~~~~~~~~~~~~~~~
-                 ☆ Calling stopStreaming() will indeed stop the stream of images
-                   from the camera and stop calling your vision pipeline
-
-                 ☆ If the reason you wish to stop the stream early is to switch use of the camera
-                   over to, say, Vuforia or TFOD, you will also need to call closeCameraDevice()
-                   (commented out below), because according to the Android Camera API documentation:
-
-                          "Your application should only have one Camera object active at a time for
-                           a particular hardware camera."
-
-                 ☆ Calling closeCameraDevice() will internally call stopStreaming() if applicable, but it doesn't hurt to
-                   call it anyway, if for no other reason than clarity.
-
-                 ☆ If you are stopping the camera stream temporarily, it is recommended to NOT call closeCameraDevice() as
-                   you will then need to re-open it the next time you wish to activate your vision pipeline
-                ~~~~~~~~~~~~~~~~~~~~~
-                \*/
-
                 webcam.stopStreaming();
                 //webcam.closeCameraDevice();
             }
@@ -113,20 +89,7 @@ public class WebcamTest extends LinearOpMode
         }
     }
 
-    /*\
-    DO NOT DELETE
-    ~~~~~~~~~~~~~~~~~~~~~
-     ☆ Below is an example image processing pipeline to be run upon receipt of each frame from the camera.
-
-     ☆ A new camera frame will not come in while you're still processing a previous one.
-       In other words, the processFrame() method will never be called multiple times simultaneously.
-
-     ☆ However, the rendering of your processed image to the viewport is done in parallel to the
-       frame worker thread. That is, the amount of time it takes to render the image to the
-       viewport does NOT impact the amount of frames per second that your pipeline can process.
-    ~~~~~~~~~~~~~~~~~~~~~
-    \*/
-
+    // put our pipeline class inside of our WebcamTest class
     public static class SamplePipeline extends OpenCvPipeline
     {
         private static final Scalar BLUE = new Scalar(0,0,255);
