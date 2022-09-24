@@ -14,28 +14,49 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.apache.commons.math3.stat.descriptive.summary.Sum;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFSlides;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
 import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
 import org.firstinspires.ftc.teamcode.Old.Components.Localizer.OdometryTracker;
-@Disabled
+
+import java.util.ArrayList;
+
 @TeleOp(name = "MecanumTeleOp(Weakened)")
 public class MecanumTeleop extends LinearOpMode {
+
     LinearOpMode op = this;
-    DcMotorEx motorLeftFront;
-    DcMotorEx motorRightFront;
-    DcMotorEx motorLeftBack;
-    DcMotorEx motorRightBack;
-    DcMotorEx extendIntake, intakeMotor;
-    Servo intakeFlip;
+
     private final double MAX_INTAKE_EXTENSION_TICKS=545;
     private boolean isSequencing = false, isReversing = false, isRetracting = false,isExtending = false;
     private double[] time={100,100,0};
 
+    RFSlides extendIntake;
+
     public void runOpMode() {
+
+        ArrayList<Double> extensionCoefs = new ArrayList<>();
+        extensionCoefs.add(4.0);
+        extensionCoefs.add(400.0);
+
+
+        DcMotorEx motorLeftFront;
+        DcMotorEx motorRightFront;
+        DcMotorEx motorLeftBack;
+        DcMotorEx motorRightBack;
+        DcMotorEx intakeMotor;
+        Servo intakeFlip;
+
+        SummerMecRobot summermecrobot = new SummerMecRobot(this);
+
+        extendIntake = new RFSlides("turret_Rotation", DcMotor.RunMode.RUN_USING_ENCODER,
+                true, extensionCoefs, 545, 0);
+
         motorLeftFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
         motorRightFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
-        extendIntake = (DcMotorEx) op.hardwareMap.dcMotor.get("turret_Rotation");
+//        extendIntake = (DcMotorEx) op.hardwareMap.dcMotor.get("turret_Rotation");
         extendIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -57,12 +78,15 @@ public class MecanumTeleop extends LinearOpMode {
         OdometryTracker tracker = new OdometryTracker(false,false);
         ColorDistanceRevV3 intakeSensor = new ColorDistanceRevV3();
         tracker.setPosition(0,0,0);
+
+
+
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("status", "waiting for start command...");
             telemetry.update();
             intakeFlip.setPosition(0.8);
         }
-        resetRuntime();
+//        resetRuntime();
         while (!isStopRequested()&&getRuntime()<90) {
             float leftStickx = op.gamepad1.left_stick_x,leftSticky = op.gamepad1.left_stick_y,
                     rightStick = op.gamepad1.right_stick_x*0.5f;

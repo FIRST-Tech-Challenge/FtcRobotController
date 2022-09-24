@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class RFDualServo implements Servo {
@@ -22,6 +23,8 @@ public class RFDualServo implements Servo {
     private Servo dualServo2;
 
     private double lasttime = 0;
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     double servolimit = 0;
     boolean flipped = false;
@@ -96,11 +99,14 @@ public class RFDualServo implements Servo {
     public void setPositions(double position) {
         if (position <= servolimit) {
             if (dualServo1.getPosition() != position) {
-                inputlogs.add(rfDualServoName);
-                inputlogs.add("setPositions()");
-                inputlogs.add("Setting Positions: servo 1: " + position + ", servo 2: " + (servolimit - position));
-                logger.log("/RobotLogs/GeneralRobot", inputlogs);
-                inputlogs.clear();
+                logger.log("/RobotLogs/GeneralRobot", rfDualServoName + ",setPositions()," +
+                        "Setting Positions: servo 1: " + df.format(position) + "; servo 2: " +
+                        df.format(servolimit - position));
+//                inputlogs.add(rfDualServoName);
+//                inputlogs.add("setPositions()");
+//                inputlogs.add("Setting Positions: servo 1: " + position + ", servo 2: " + (servolimit - position));
+//                logger.log("/RobotLogs/GeneralRobot", inputlogs);
+//                inputlogs.clear();
 
 //                logger.log("/DualServoLogs/RFDualServo", " Setting Positions: " + position + ", " + servolimit + position);
 //                logger.log("/RobotLogs/GeneralRobot", rfDualServoName + "\nsetPositions():\nSetting Positions:\nservo 1: " + position + "\nservo 2: " + (servolimit - position));

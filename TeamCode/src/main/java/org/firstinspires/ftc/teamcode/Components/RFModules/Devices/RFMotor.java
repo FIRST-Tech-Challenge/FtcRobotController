@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot.logger;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+import static java.lang.Math.round;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class RFMotor extends Motor {
@@ -25,6 +27,8 @@ public class RFMotor extends Motor {
     private double TICK_BOUNDARY_PADDING = 5, TICK_STOP_PADDING=5;
     private double velocity = 0;
     private String rfMotorName;
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     /*Initializes the motor
         Inputs:
@@ -140,28 +144,30 @@ public class RFMotor extends Motor {
     }
 
     public void setPower(double power){
-        rfMotor.setPower(power);
         if (rfMotor.getPower() != power) {
-            inputlogs.add(rfMotorName);
-            inputlogs.add("setPower()");
-            inputlogs.add("Setting Power: " + power);
-            logger.logRegulated("/RobotLogs/GeneralRobot", inputlogs);
-            inputlogs.clear();
+//            inputlogs.add(rfMotorName);
+//            inputlogs.add("setPower()");
+//            inputlogs.add("Setting Power: " + power);
+            logger.logRegulated("/RobotLogs/GeneralRobot", rfMotorName + ",setPower()," +
+                    "Setting Power: " + df.format(power));
+//            inputlogs.clear();
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power);
 //            logger.log("/RobotLogs/GeneralRobotLog", rfMotorName + "\nsetPower():\nSetting Power:" + power);
         }
+        rfMotor.setPower(power);
     }
     public void setVelocity(double velocity) {
-        rfMotor.setVelocity(velocity);
         if (rfMotor.getVelocity() != velocity) {
-            inputlogs.add(rfMotorName);
-            inputlogs.add("setVelocity()");
-            inputlogs.add("Setting Velocity: " + velocity);
-            logger.logRegulated("/RobotLogs/GeneralRobot", inputlogs);
-            inputlogs.clear();
+//            inputlogs.add(rfMotorName);
+//            inputlogs.add("setVelocity()");
+//            inputlogs.add("Setting Velocity: " + velocity);
+            logger.logRegulated("/RobotLogs/GeneralRobot", rfMotorName + ",setVelocity()," +
+                    "Setting Velocity: " + df.format(velocity));
+//            inputlogs.clear();
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Velocity," + velocity);
 //            logger.log("/RobotLogs/GeneralRobot", rfMotorName + "\nsetVelocity():\nSetting Velocity:" + velocity);
         }
+        rfMotor.setVelocity(velocity);
     }
 
     public int getCurrentPosition() {
@@ -177,11 +183,11 @@ public class RFMotor extends Motor {
     public void setMode(DcMotor.RunMode runMode) {
         rfMotor.setMode(runMode);
         if (rfMotor.getMode() != runMode) {
-            inputlogs.add(rfMotorName);
-            inputlogs.add("setMode()");
-            inputlogs.add("Setting RunMode: " + runMode);
-            logger.log("/RobotLogs/GeneralRobot", inputlogs);
-            inputlogs.clear();
+//            inputlogs.add(rfMotorName);
+//            inputlogs.add("setMode()");
+//            inputlogs.add("Setting RunMode: " + runMode);
+            logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setMode(),Setting RunMode: " + runMode);
+//            inputlogs.clear();
 
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Mode," + runMode);
 //            logger.log("/RobotLogs/GeneralRobot", rfMotorName + "setMode():\nSetting Mode," + runMode);

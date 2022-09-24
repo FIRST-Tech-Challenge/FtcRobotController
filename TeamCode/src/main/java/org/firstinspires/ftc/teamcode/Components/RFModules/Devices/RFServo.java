@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class RFServo implements Servo {
@@ -23,6 +24,8 @@ public class RFServo implements Servo {
     private String rfServoName;
 
     private ArrayList<String> inputlogs = new ArrayList<>();
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public RFServo (Servo.Direction direction, String deviceName, double limit) {
         RFServo = op.hardwareMap.get(Servo.class, deviceName);
@@ -46,12 +49,13 @@ public class RFServo implements Servo {
     public void setPosition(double position) {
         if (op.getRuntime() - lasttime > 0.2) {
             if (RFServo.getPosition() != position) {
-                inputlogs.clear();
-                inputlogs.add(rfServoName);
-                inputlogs.add("setPosition()");
-                inputlogs.add("Setting Position: " + RFServo.getPosition());
-                logger.log("/RobotLogs/GeneralRobot", inputlogs);
-                inputlogs.clear();
+//                inputlogs.clear();
+//                inputlogs.add(rfServoName);
+//                inputlogs.add("setPosition()");
+//                inputlogs.add("Setting Position: " + RFServo.getPosition());
+                logger.log("/RobotLogs/GeneralRobot", rfServoName + ",setPosition(),Setting Position: "
+                        + df.format(RFServo.getPosition()));
+//                inputlogs.clear();
 
 //                logger.logRegulated("/ServoLogs/RFServo", "Setting Position:" + position);
 //                logger.logRegulated("/RobotLogs/GeneralRobot", rfServoName + "\nsetPosition():\nSetting Position:" + position);
