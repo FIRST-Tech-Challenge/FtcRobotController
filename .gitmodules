@@ -1,0 +1,3 @@
+[submodule "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/libs/brightonCollege"]
+	path = TeamCode/src/main/java/org/firstinspires/ftc/teamcode/libs/brightonCollege
+	url = https://github.com/Brighton-FTC/brightonCollege.git
