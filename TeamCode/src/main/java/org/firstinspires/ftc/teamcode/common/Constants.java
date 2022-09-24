@@ -9,7 +9,8 @@ public class Constants {
     public double WHEEL_DIAMETER = 96 / 25.4; //unit is in inches
     public double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public double MAX_VELOCITY_DT = 2700; // unit is clicks/sec
-    public double TOLERANCE = 3; //number of clicks or degrees the robot can be off by
+    public double clickTOLERANCE = 3; //number of clicks or degrees the robot can be off by
+    public double degreeTOLERANCE = 1;
 
     //Swerve constants
         //module translation
@@ -26,6 +27,9 @@ public class Constants {
 
     public double DEGREES_PER_INCH = CLICKS_PER_INCH * DEGREES_PER_CLICK;
     public double INCHES_PER_DEGREE = 1.0 / DEGREES_PER_INCH;
+
+    public double tableSpinRotPercAllocation = 0.5;
+    public double tableSpinSpinPercAllocation = 0.5;
 
     //Distance Between swerve module and Center
     public double DISTANCE_BETWEEN_MODULE_AND_CENTER;

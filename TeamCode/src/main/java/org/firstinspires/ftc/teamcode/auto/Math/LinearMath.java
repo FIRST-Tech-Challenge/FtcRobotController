@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.auto.Math;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
-import org.firstinspires.ftc.teamcode.common.Kinematics;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
     Constants constants = new Constants();
     SpinPID spinPID;
-
 
     private double initialX;
     private double initialY;
@@ -30,7 +28,7 @@ public class LinearMath { //Note: snap() is used in the auto class separately. T
         this.x = x;
         this.y = y;
         this.theta = theta;
-        spinPID.setTargets(getDistance(), 0, 0, 0);
+        spinPID.setTargets(getDistance(), 0.1, 0, 0);
     }
 
     private double getDistance(){

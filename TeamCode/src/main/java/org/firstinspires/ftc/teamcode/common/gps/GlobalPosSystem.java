@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.robotcore.internal.android.dx.util.IntIterator;
+
 import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
-import org.firstinspires.ftc.teamcode.common.Kinematics;
+import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 
 import java.util.HashMap;
 
@@ -102,7 +100,7 @@ public class GlobalPosSystem {
         positionArr[1] += y * constants.INCHES_PER_CLICK;
         positionArr[2] += kinematics.clamp(wheelR * constants.DEGREES_PER_CLICK);
         positionArr[3] += kinematics.clamp(robotR * constants.DEGREES_PER_CLICK);
-
+        //wth does "R" stand for in "wheelR" and "robotR" ?????????????
         try {
             FileWriter myWriter = new FileWriter("gpsLog.txt");
             myWriter.write("GPS Log\n");
@@ -126,13 +124,14 @@ public class GlobalPosSystem {
         //Reset Motor Clicks
         for (DcMotorEx motors : robot.dtMotors){
             motorClicksPose.put(motors, 0);
+            prevMotorClicks.put(motors, 0); //(key, value)
         }
     }
 
     private boolean goodGap(){
         for (int i = 0; i < 3; i++) {
             try{
-                if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.TOLERANCE) return false;
+                if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.clickTOLERANCE) return false;
             } catch (NullPointerException e){
                 return false;
             }

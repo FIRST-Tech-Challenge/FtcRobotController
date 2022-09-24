@@ -79,14 +79,12 @@ public class HardwareDrive
     Top Left  0                              Top Right 2
 
 
-
-
     Bottom Left 1                           Bottom Right 3
 
      */
 
     //imu
-    public BNO055IMU imu;
+    public BNO055IMU imu; //delete if we don't use it
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
