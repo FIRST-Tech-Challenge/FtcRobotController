@@ -50,31 +50,49 @@ public class DriveMethods extends LinearOpMode{
             motorFR.setPower(power);
             motorBR.setPower(power);
         }
-        targetPos = motorFL.getTargetPosition();
+        //targetPos = motorFL.getTargetPosition();
         int currentPos = motorFL.getCurrentPosition();
+        int FLPosition;
+        int BLPosition;
+        int FRPosition;
+        int BRPosition;
+        int avgPosition = 0;
         boolean hasNotReachedTarget = true;
-        while (hasNotReachedTarget) {
-            if(currentPos == targetPos){
-                hasNotReachedTarget = false;
-                motorFL.setPower(0);
-                motorBL.setPower(0);
-                motorFR.setPower(0);
-                motorBR.setPower(0);
-            }
-            telemetry.addLine("Current Position: " + currentPos);
+        while (targetPos >= avgPosition) {
+            FLPosition = Math.abs(motorFL.getCurrentPosition());
+            BLPosition = Math.abs(motorBL.getCurrentPosition());
+            FRPosition = Math.abs(motorFR.getCurrentPosition());
+            BRPosition = Math.abs(motorBR.getCurrentPosition());
+            avgPosition = (int)(FLPosition + BLPosition + FRPosition + BRPosition)/4;
+            telemetry.addLine("Current Position: " + avgPosition);                      
+            telemetry.addLine("targetPos " + targetPos);
             telemetry.update();
         }
-
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
     }
 
-    public void initMotors() {
+    public void initMotorsRed() {
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        motorFL.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFR.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBR.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
+
+       public void initMotorsBlue() {
+           motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
+           motorBL = hardwareMap.get(DcMotor.class, "motorBL");
+           motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
+           motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+           motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+           motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
+           motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
+           motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
+       }
 }

@@ -54,7 +54,7 @@ public class Autonomous2 extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        initMotors();
+        initMotorsBlue();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

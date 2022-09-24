@@ -53,7 +53,7 @@ public class TeleOp1 extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        initMotors();
+        initMotorsBlue();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -66,15 +66,15 @@ public class TeleOp1 extends DriveMethods {
         while (opModeIsActive()) {
 
             //update doubles
-            leftY = gamepad1.left_stick_y;
+            leftY = -gamepad1.left_stick_y;
             leftX = gamepad1.left_stick_x;
             rightX = gamepad1.right_stick_x;
 
             if (!gamepad1.right_bumper) {
-                motorFL.setPower((leftY + leftX - rightX) / speedDiv);
-                motorBL.setPower((leftY - leftX - rightX) / speedDiv);
-                motorFR.setPower((leftY - leftX + rightX) / speedDiv);
-                motorBR.setPower((leftY + leftX + rightX) / speedDiv);
+                motorFL.setPower((leftY + leftX + rightX) / speedDiv);
+                motorBL.setPower((leftY - leftX + rightX) / speedDiv);
+                motorFR.setPower((leftY - leftX - rightX) / speedDiv);
+                motorBR.setPower((leftY + leftX - rightX) / speedDiv);
             } else {
                 motorFL.setPower(0);
                 motorBL.setPower(0);
