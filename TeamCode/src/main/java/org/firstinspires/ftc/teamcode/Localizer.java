@@ -45,6 +45,7 @@ public class Localizer {
     private WebcamName webcamName = null;
     private List<VuforiaTrackable> allTrackables = null;
     private boolean targetVisible = false;
+    private double lastT = 0;
 
     public Localizer(HardwareMap hardwareMap) {
         ElapsedTime runtime = new ElapsedTime();
@@ -122,13 +123,15 @@ public class Localizer {
             VectorF translation = lastLocation.getTranslation();
             double lastX = x;
             double lastY = y;
-            double lastT = runtime.;
+            double t = runtime.seconds();
             x = translation.get(0)/mmPerInch;
             y = translation.get(1)/mmPerInch;
-            xVelocity = x
+            xVelocity = (x-lastX) /(t-lastT);
+            yVelocity = (y-lastY) /(t-lastT);
+
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-
+            lastT = runtime.seconds();
         }
     }
 }
