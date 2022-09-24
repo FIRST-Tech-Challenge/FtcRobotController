@@ -62,7 +62,7 @@ public class MecanumTeleop extends LinearOpMode {
             telemetry.update();
             intakeFlip.setPosition(0.8);
         }
-        resetStartTime();
+        resetRuntime();
         while (!isStopRequested()&&getRuntime()<90) {
             float leftStickx = op.gamepad1.left_stick_x,leftSticky = op.gamepad1.left_stick_y,
                     rightStick = op.gamepad1.right_stick_x*0.5f;

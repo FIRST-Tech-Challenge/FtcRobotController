@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Old.Teleop;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -28,7 +27,7 @@ public class RWD extends LinearOpMode
 
         waitForStart();
 
-        resetStartTime();
+        resetRuntime();
         while(opModeIsActive()&&getRuntime()<90)
         {
             motorRightBack.setPower(gamepad1.left_stick_y*0.15+gamepad1.right_stick_x*0.2);

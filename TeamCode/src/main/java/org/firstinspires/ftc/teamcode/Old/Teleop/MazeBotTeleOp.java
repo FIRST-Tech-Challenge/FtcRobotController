@@ -41,7 +41,7 @@ public class MazeBotTeleOp extends LinearOpMode {
             telemetry.addData("status", "waiting for start command...");
             telemetry.update();
         }
-        resetStartTime();
+        resetRuntime();
         while (!isStopRequested()&&getRuntime()<90) {
             float leftStickx = op.gamepad1.left_stick_x;
             float leftSticky = op.gamepad1.left_stick_y;

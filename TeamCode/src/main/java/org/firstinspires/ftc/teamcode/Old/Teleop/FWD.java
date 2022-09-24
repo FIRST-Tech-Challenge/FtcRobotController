@@ -1,25 +1,16 @@
 package org.firstinspires.ftc.teamcode.Old.Teleop;
 
-import static java.lang.Math.abs;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Old.Robots.FWDRobot;
 /*
@@ -87,7 +78,7 @@ public class FWD extends LinearOpMode {
         int onetwo = 0;
         int twoone = 0;
 
-        resetStartTime();
+        resetRuntime();
         while (opModeIsActive() && getRuntime() < 90 ) { // opmode active check & set time limit
 
             if (gamepad1.a) { // arm raised position

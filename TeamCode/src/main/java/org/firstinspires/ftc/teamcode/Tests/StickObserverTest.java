@@ -21,7 +21,7 @@ public class StickObserverTest extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
         StickObserverPipeline opencv = new StickObserverPipeline();
-        ;
+
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override

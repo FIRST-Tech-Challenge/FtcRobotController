@@ -47,6 +47,7 @@ dependencies {
     doc 'org.firstinspires.ftc:Inspection:6.2.0'
 }
 
+
 task extractJavadoc {
     doLast {
         def componentIds = configurations.doc.incoming.resolutionResult.allDependencies.collect { it.selected.id }

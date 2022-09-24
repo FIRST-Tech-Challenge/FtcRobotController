@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.cos;
-import static java.lang.Math.pow;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
@@ -31,7 +23,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
 
     public StickObserverPipeline() {
-
+//        logger.log()
     }
 
     @Override
@@ -77,14 +69,9 @@ public class StickObserverPipeline extends OpenCvPipeline {
         }
         int maxAreaIndex = 0;
         for(int i=0;i<rectangle.length;i++){
-            if(rectangle[i].size.height>50&&hierarchy.get(0,i)[2]==-1){
                 if(rectangle[i].size.width>rectangle[maxAreaIndex].size.width){
                     maxAreaIndex=i;
                 }
-            }
-            else if(i==maxAreaIndex){
-                maxAreaIndex++;
-            }
         }
         if(maxAreaIndex!=rectangle.length) {
             centerOfPole = rectangle[maxAreaIndex].center.x-320;
@@ -105,11 +92,11 @@ public class StickObserverPipeline extends OpenCvPipeline {
         }
 
         mat.release();
-//        edges.release();
-        thresh.release();
+        edges.release();
+//        thresh.release();
         hierarchy.release();
         test.release();
-        return edges;
+        return thresh;
     }
 
     public double centerOfPole() {
