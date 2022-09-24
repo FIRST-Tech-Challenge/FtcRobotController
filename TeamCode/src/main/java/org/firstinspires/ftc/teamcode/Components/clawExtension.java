@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components;
-
+//TODO: capitalize c in ClawExtension
 public class clawExtension {
     public clawExtension(){
         // hardware mapping
     }
     public void extendClaw(){
-        //no input
+        //no input TODO: maybe a seperate function for setPosition so you have variable distance
         //state of extendClaw has to be false(retracted state)
         //set servo position
         //set state of claw extended to true

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Lift {
+    //TODO: RFMotor
     private DcMotorEx liftMotor = null;
     public Lift(){ //constructor
         // hardware map
@@ -25,7 +26,7 @@ public class Lift {
 //        }
         //make enum for all the tick counts for ground low med high junctions, can set with setGoal(int goal);
     }
-    public void liftToJunction(liftStates junctions){
+    public void liftToJunction(liftStates junctions){//TODO: make sure this is async
         //use rfmotor setPosition function to lift in accordance with the enum
         // no conditions
         // log when movement starts & when reach target position
