@@ -1,9 +1,11 @@
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
@@ -21,10 +23,16 @@ public class GFORCE_TELEOP extends LinearOpMode {
     boolean headingLock = false;
     double  headingSetpoint = 0;
 
+    // Declare a PIDF Controller to regulate heading
+    // Use the same gains as GFORCE_KiwiDrive's heading controller
+    private PIDFController headingController = new PIDFController(GFORCE_KiwiDrive.HEADING_PID);
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // Initialize SampleMecanumDrive
+        headingController.setInputBounds(0.0, 2.0 * Math.PI);
+
+        // Initialize GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
@@ -45,33 +53,45 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             // reset heading if double button press
             if (gamepad1.back && gamepad1.start) {
-                drive.setPoseEstimate( new Pose2d(poseEstimate.getX(), poseEstimate.getY(), 0));
+//                drive.setPoseEstimate( new Pose2d(poseEstimate.getX(), poseEstimate.getY(), 0));
+                drive.setPoseEstimate( new Pose2d() );
                 drive.setExternalHeading(0);
+                headingSetpoint = 0;
+                headingController.setTargetPosition(headingSetpoint);
             }
 
             // Create a vector from the gamepad x/y inputs
             // Then, rotate that vector by the inverse of that heading
             Vector2d input = new Vector2d(
                     -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x
-            ).rotated(-poseEstimate.getHeading());
+                    -gamepad1.right_stick_x
+            ).rotated(-drive.getExternalHeading());
+//            ).rotated(-poseEstimate.getHeading());
+
+            double rotate = (gamepad1.left_trigger - gamepad1.right_trigger) / 10 ;
 
             // are we turning or should heading be locked.
-            if (Math.abs(gamepad1.right_stick_x) < 0.01) {
+            if (Math.abs(rotate) < 0.01) {
                 if (!headingLock) {
                     headingLock = true;
-                    headingSetpoint = poseEstimate.getHeading();
+                    headingSetpoint = drive.getExternalHeading();
+                    headingController.setTargetPosition(headingSetpoint);
                 }
             } else {
                 headingLock = false;
             }
 
             if (headingLock) {
+                // Set desired angular velocity to the heading controller output + angular
+                // velocity feedforward
+                double headingInput = headingController.update(drive.getExternalHeading())
+                        * DriveConstants.kV / 4;
+
                 drive.setWeightedDrivePower(
                         new Pose2d(
                                 input.getX(),
                                 input.getY(),
-                                -gamepad1.right_stick_x / 10
+                                headingInput
                         )
                 );
             } else {
@@ -80,7 +100,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
                         new Pose2d(
                                 input.getX(),
                                 input.getY(),
-                                -gamepad1.right_stick_x / 10
+                                rotate
                         )
                 );
             }
