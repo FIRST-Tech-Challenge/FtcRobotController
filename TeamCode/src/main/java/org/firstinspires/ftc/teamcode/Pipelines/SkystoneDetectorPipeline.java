@@ -33,8 +33,8 @@ public class SkystoneDetectorPipeline extends OpenCvPipeline {
     );
     static final double PERCENTAGE_COLOR_THRESHOLD = 0.4; // 40% of yellow --> stone detected
 
-    public SkystoneDetectorPipeline(Telemetry telemetry){this.telemetry = telemetry;}
 
+    public SkystoneDetectorPipeline(Telemetry telemetry){this.telemetry = telemetry;}
     @Override
     public Mat processFrame(Mat input){
         // It is difficult to specify color ranges using RGB, so people use HSRV or YCrCb
