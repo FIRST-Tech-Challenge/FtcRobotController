@@ -39,7 +39,6 @@ public class MotorPID {
         return Kd * derivative;
     }
 
-
     public double getTunedPosition(ElapsedTime timer){
         return getProportionalTerm(error) + getIntegralTerm(error, timer) + getDerivativeTerm(error, timer);
     }

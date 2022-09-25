@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,7 +18,7 @@ public class FF_AsyncTrajectorySequence_Auto extends LinearOpMode {
     private DcMotorEx intakeMotor, liftMotorLeft, liftMotorRight;
     private Servo armJoint, clawJoint, wristJoint;
 
-    double targetPosition = liftMotorLeft.getPower();// This would equate to motor.setPosition(targetPosition); we just have two motors
+    double targetEncoderPosition = 30;
 
     MotorPID motorPID = new MotorPID(1,1,1); // This is where we tune PID values
 
@@ -67,8 +66,9 @@ public class FF_AsyncTrajectorySequence_Auto extends LinearOpMode {
         while (opModeIsActive()){
             bot.update();
 
-            double leftError = targetPosition - liftMotorLeft.getCurrentPosition();
-            double rightError = targetPosition - liftMotorRight.getCurrentPosition();
+            // Updating motorPID
+            double leftError = targetEncoderPosition - liftMotorLeft.getCurrentPosition();
+            double rightError = targetEncoderPosition - liftMotorRight.getCurrentPosition();
 
             // Run the left motor through the PID
             double leftTunedPosition = motorPID.getTunedPosition(timer);
@@ -76,8 +76,11 @@ public class FF_AsyncTrajectorySequence_Auto extends LinearOpMode {
             // Run the right motor through the PID
             double rightTunedPosition = motorPID.getTunedPosition(timer);
 
-            liftMotorRight.setPower(leftTunedPosition);
+            liftMotorRight.setPower(leftTunedPosition); // I'm like 99% sure this does not work ¯\_(ツ)_/¯
             liftMotorLeft.setPower(rightTunedPosition);
+
+            liftMotorRight.setTargetPosition(30); // We want the lift to be the same height on both sides, not uneven
+            liftMotorRight.setTargetPosition(30);
         }
     }
 
