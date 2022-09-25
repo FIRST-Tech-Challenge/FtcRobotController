@@ -12,10 +12,10 @@ public class basic_controls extends LinearOpMode{
         robot.init(hardwareMap);
         waitForStart();
         if (opModeIsActive()) {
-            straight(0.25, 1000);
-            stopRobot();
+            straight(1, 1000);
+            stopRobot();sleep(1000);
             left(0.25, 1000);
-            stopRobot();
+            stopRobot();sleep(1000);
             right(0.5, 250);
             stopRobot();
         }
