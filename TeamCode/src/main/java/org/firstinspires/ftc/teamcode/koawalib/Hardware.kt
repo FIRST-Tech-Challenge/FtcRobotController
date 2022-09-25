@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.koawalib
 
-import com.asiankoala.koawalib.control.controller.Bounds
 import com.asiankoala.koawalib.control.controller.PIDGains
 import com.asiankoala.koawalib.control.motor.FFGains
 import com.asiankoala.koawalib.hardware.motor.KEncoder
@@ -29,21 +28,21 @@ class Hardware(startPose: Pose) {
         .brake
         .build()
 
-//    val arm = MotorFactory("arm")
-//        .forward
-//        .float
-//        .createEncoder(TODO(), false)
-//        .zero(-35.0)
-//        .withPositionControl(
-//            PIDGains(0.05, 0.0, 0.0),
-//            FFGains(kCos = 0.05),
-//            allowedPositionError = 2.0,
-//            bounds = Bounds()
-//        )
+    val arm = MotorFactory("arm")
+        .forward
+        .float
+        .createEncoder(672.0/90.0, false)
+        .zero(-55.0)
+        .withPositionControl(
+            PIDGains(0.09, 0.0, 0.0009),
+            FFGains(kCos = 0.1),
+            allowedPositionError = 2.0,
+        )
+        .build()
 
     private val leftEncoder = KEncoder(fr, ticksPerUnit, true).reverse.zero()
     private val rightEncoder = KEncoder(fl, ticksPerUnit, true).zero()
-    private val auxEncoder = KEncoder(br, ticksPerUnit, true).reverse.zero()
+    private val auxEncoder = KEncoder(br, ticksPerUnit, true).zero()
 
     val odometry = KThreeWheelOdometry(
         leftEncoder,

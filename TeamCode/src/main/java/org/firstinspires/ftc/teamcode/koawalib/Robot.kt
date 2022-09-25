@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.koawalib
 
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
 
 class Robot(startPose: Pose) {
-    private val hardware = Hardware(startPose)
+    val hardware = Hardware(startPose)
 
     val drive = KMecanumOdoDrive(
         hardware.fl,
@@ -14,4 +15,10 @@ class Robot(startPose: Pose) {
         hardware.odometry,
         true
     )
+
+    val arm = Arm(hardware.arm)
+
+    init {
+        arm.motor.setPositionTarget(Arm.homePosition)
+    }
 }
