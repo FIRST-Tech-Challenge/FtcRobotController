@@ -14,9 +14,9 @@ public class basic_controls extends LinearOpMode{
         if (opModeIsActive()) {
             straight(1, 1000);
             stopRobot();sleep(1000);
-            left(0.25, 1000);
+            left(0.5, 1000);
             stopRobot();sleep(1000);
-            right(0.5, 250);
+            right(0.5, 1000);
             stopRobot();
         }
     }
