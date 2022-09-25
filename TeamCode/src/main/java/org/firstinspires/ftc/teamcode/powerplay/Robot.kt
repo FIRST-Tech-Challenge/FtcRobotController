@@ -1,49 +1,35 @@
 package org.firstinspires.ftc.teamcode.powerplay
 
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.powerplay.subsystems.Intake
-import org.firstinspires.ftc.teamcode.stateMachine.StateMachineBuilder
+import org.firstinspires.ftc.teamcode.powerplay.subsystems.Claw
+import org.firstinspires.ftc.teamcode.powerplay.subsystems.Slides
 import org.firstinspires.ftc.teamcode.util.Subsystem
 
 class Robot: Subsystem {
-    val  intake = Intake()
+    private val claw = Claw()
+    private val slides = Slides()
     private val subsystems = mutableListOf(
-        intake
+        claw,slides
     )
 
-    enum class IntakeSequenceStates {
-        START_INTAKE,
-        STOP_INTAKE
+    fun clawOpened() {
+        claw.openClaw()
     }
 
-    val intakeSequence = StateMachineBuilder<IntakeSequenceStates>()
-        .state(IntakeSequenceStates.START_INTAKE)
-        .onEnter {
-            startIntake()
-        }
-        .transition{
-            isConeIn()
-        }
-        .state(IntakeSequenceStates.STOP_INTAKE)
-        .onEnter{
-            stopIntake()
-        }
-        .build()
-
-    fun startIntake() {
-        intake.turnOn()
+    fun clawClosed() {
+        claw.closeClaw()
     }
 
-    fun stopIntake() {
-        intake.turnOff()
+    fun slidesUp() {
+        slides.up()
     }
 
-    fun reverseIntake() {
-        intake.turnReverse()
+    fun slidesDown() {
+        slides.down()
     }
 
-    fun isConeIn(): Boolean {
-        return intake.isConeIn()
+    fun slidesOff() {
+        slides.off()
     }
 
     override fun init(hardwareMap: HardwareMap) {

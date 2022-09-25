@@ -4,10 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.powerplay.Robot
-import org.firstinspires.ftc.teamcode.util.GamepadUtil.left_trigger_pressed
-import org.firstinspires.ftc.teamcode.util.GamepadUtil.right_trigger_pressed
 import org.firstinspires.ftc.teamcode.util.math.MathUtil
 
 @TeleOp
@@ -33,31 +30,32 @@ class TestOp: OpMode() {
         br.power = drive + strafe - rotate
     }
 
-    private fun intakeControl() {
-        if (gamepad1.right_trigger_pressed) {
-            robot.reverseIntake()
+    private fun clawControl() {
+        if (gamepad1.a) {
+            robot.clawOpened()
+        }
+        if(gamepad1.b) {
+            robot.clawClosed()
+        }
+    }
+
+    private fun slidesControl() {
+        if (gamepad1.dpad_up) {
+            robot.slidesUp()
+        }
+        else {
+            robot.slidesOff()
         }
 
-        if (!gamepad1.right_trigger_pressed && !gamepad1.left_trigger_pressed) {
-            robot.stopIntake()
+        if (gamepad1.dpad_down) {
+            robot.slidesDown()
         }
-
-        if (gamepad1.left_trigger_pressed && !robot.intakeSequence.running && robot.isConeIn()) {
-            robot.intakeSequence.start()
-        }
-
-        if (!gamepad1.left_trigger_pressed && robot.intakeSequence.running) {
-            robot.intakeSequence.stop()
-            robot.intakeSequence.reset()
-        }
-
-        if (robot.intakeSequence.running && gamepad1.left_trigger_pressed) {
-            robot.intakeSequence.update()
+        else {
+            robot.slidesOff()
         }
     }
 
     private fun getTelemetry() {
-        telemetry.addData("dSensor", robot.intake.dSensor.getDistance(DistanceUnit.MM))
     }
 
     override fun init() {
@@ -80,7 +78,8 @@ class TestOp: OpMode() {
 
     override fun loop() {
         driveControl()
-        intakeControl()
+        clawControl()
+        slidesControl()
         getTelemetry()
         robot.update()
     }
