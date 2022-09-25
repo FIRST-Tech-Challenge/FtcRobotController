@@ -84,8 +84,8 @@ public class RobotTeleopTank_Iterative extends OpMode{
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
         leftClaw  = hardwareMap.get(Servo.class, "left_hand");
@@ -94,7 +94,7 @@ public class RobotTeleopTank_Iterative extends OpMode{
         rightClaw.setPosition(MID_SERVO);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Hello Driver");    //
+        telemetry.addData(">", "Robot Ready.  Press Play.");    //
     }
 
     /*
