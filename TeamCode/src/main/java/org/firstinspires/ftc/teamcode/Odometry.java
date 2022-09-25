@@ -13,6 +13,7 @@ public class Odometry {
     private double trackWidth;
     private double forwardOffset;
     private final double wheel_circumference_inches = 7.06858347058;
+    private final double mm_to_inches = 0.03937008;
     private double prev_left_encoder_pos = 0.0;
     private double prev_right_encoder_pos = 0.0;
     private double prev_perpendicular_encoder_pos = 0.0;
@@ -27,8 +28,8 @@ public class Odometry {
         leftEncoder = getLeftEncoder;
         rightEncoder = getRightEncoder;
         perpendicularEncoder = getPerpEncoder;
-        trackWidth = 20; // get actual measurement
-        forwardOffset = 20; // get actual measurement
+        trackWidth = 15.25; // get actual measurement
+        forwardOffset = 1.5; // get actual measurement
     }
 
     // run odometry and return list of doubles in form [x, y, heading]
