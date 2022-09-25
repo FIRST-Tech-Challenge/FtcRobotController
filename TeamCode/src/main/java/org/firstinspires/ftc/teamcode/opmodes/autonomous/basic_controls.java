@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.tests;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
