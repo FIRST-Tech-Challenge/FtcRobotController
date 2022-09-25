@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "TeleOp Competition")
 
-abstract public class TeleOpCompetition extends BaseTeleOp{
+public class TeleOpCompetition extends BaseTeleOp{
 
-    public void runOpmode() throws InterruptedException{
+    @Override
+    public void runOpMode() throws InterruptedException{
         initHardware();
         waitForStart();
 
