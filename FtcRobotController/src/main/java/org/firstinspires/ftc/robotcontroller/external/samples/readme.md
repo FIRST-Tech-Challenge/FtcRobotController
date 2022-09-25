@@ -37,14 +37,9 @@ Concept:	This is a sample OpMode that illustrates performing a specific function
             Each OpMode should try to only demonstrate a single concept so they are easy to
             locate based on their name.  These OpModes may not produce a drivable robot. 
 
-Library:    This is a class, or set of classes used to implement some strategy.
-            These will typically NOT implement a full OpMode.  Instead they will be included
-            by an OpMode to provide some stand-alone capability.
-
 After the prefix, other conventions will apply:
 
 * Sensor class names are constructed as:    Sensor - Company - Type
 * Robot class names are constructed as:     Robot - Mode - Action - OpModetype
 * Concept class names are constructed as:   Concept - Topic - OpModetype
-* Library class names are constructed as:   Library - Topic - OpModetype
 
