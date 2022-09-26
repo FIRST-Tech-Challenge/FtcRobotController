@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.PIDs.MotorPID;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -18,14 +17,21 @@ public class FF_AsyncTrajectorySequence_Auto extends LinearOpMode {
     private DcMotorEx intakeMotor, liftMotorLeft, liftMotorRight;
     private Servo armJoint, clawJoint, wristJoint;
 
-    double targetEncoderPosition = 30;
-
-    MotorPID motorPID = new MotorPID(1,1,1); // This is where we tune PID values
-
     ElapsedTime timer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
+        double integralSum = 0;
+        double error = 0;
+        double lastError = 0;
+
+        // This is where we tune our pid values
+        double Kp = 0;
+        double Ki = 0;
+        double Kd = 0;
+
+        int reference = 30;
+
         final int NUM_CYCLES = 3;
         final int stepIncrement = 0;
 
@@ -65,22 +71,7 @@ public class FF_AsyncTrajectorySequence_Auto extends LinearOpMode {
 
         while (opModeIsActive()){
             bot.update();
-
-            // Updating motorPID
-            double leftError = targetEncoderPosition - liftMotorLeft.getCurrentPosition();
-            double rightError = targetEncoderPosition - liftMotorRight.getCurrentPosition();
-
-            // Run the left motor through the PID
-            double leftTunedPosition = motorPID.getTunedPosition(timer);
-
-            // Run the right motor through the PID
-            double rightTunedPosition = motorPID.getTunedPosition(timer);
-
-            liftMotorRight.setPower(leftTunedPosition); // I'm like 99% sure this does not work ¯\_(ツ)_/¯
-            liftMotorLeft.setPower(rightTunedPosition);
-
-            liftMotorRight.setTargetPosition(30); // We want the lift to be the same height on both sides, not uneven
-            liftMotorRight.setTargetPosition(30);
+            // motorPID.update();
         }
     }
 
