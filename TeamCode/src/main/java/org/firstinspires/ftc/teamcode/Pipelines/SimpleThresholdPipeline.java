@@ -22,9 +22,11 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
+
     // This is basically the range of colors the pipeline will accept
+    // In this case every color would be shown since pixel values range from 0-255
     public Scalar lower = new Scalar(0, 0, 0);
-    public Scalar upper = new Scalar(255, 255, 255);
+    public Scalar upper = new Scalar(195, 195, 90); // 195, 195, 90
 
     /*
      * A good practice when typing EOCV pipelines is
@@ -36,13 +38,14 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
      * memory leak and causing the app to crash due to an
      * "Out of Memory" error.
      */
+
     private Mat ycrcbMat       = new Mat();
     private Mat binaryMat      = new Mat();
     private Mat maskedInputMat = new Mat();
 
     @Override
     public Mat processFrame(Mat input) {
-        /*
+        /**
          * Converts our input mat from RGB to YCrCb.
          * EOCV ALWAYS returns RGB mats, so you'd
          * always convert from RGB to the color
@@ -53,7 +56,7 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
          */
         Imgproc.cvtColor(input, ycrcbMat, Imgproc.COLOR_RGB2YCrCb);
 
-        /*
+        /**
          * This is where our thresholding actually happens.
          * Takes our "ycrcbMat" as input and outputs a "binary"
          * Mat to "binaryMat" of the same size as our input.
@@ -69,13 +72,13 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
          */
         Core.inRange(ycrcbMat, lower, upper, binaryMat);
 
-        /*
+        /**
          * Release the reusable Mat so that old data doesn't
          * affect the next step in the current processing
          */
         maskedInputMat.release();
 
-        /*
+        /**
          * Now, with our binary Mat, we perform a "bitwise and"
          * to our input image, meaning that we will perform a mask
          * which will include the pixels from our input Mat which
@@ -85,7 +88,7 @@ public class SimpleThresholdPipeline extends OpenCvPipeline {
          */
         Core.bitwise_and(input, input, maskedInputMat, binaryMat);
 
-        /*
+        /**
          * The Mat returned from this method is the
          * one displayed on the viewport.
          *

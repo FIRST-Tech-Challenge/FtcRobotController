@@ -9,7 +9,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class SkystoneDetector extends OpenCvPipeline {
+public class SkystoneDetectorPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
 
@@ -33,8 +33,8 @@ public class SkystoneDetector extends OpenCvPipeline {
     );
     static final double PERCENTAGE_COLOR_THRESHOLD = 0.4; // 40% of yellow --> stone detected
 
-    public SkystoneDetector(Telemetry telemetry){this.telemetry = telemetry;}
 
+    public SkystoneDetectorPipeline(Telemetry telemetry){this.telemetry = telemetry;}
     @Override
     public Mat processFrame(Mat input){
         // It is difficult to specify color ranges using RGB, so people use HSRV or YCrCb
@@ -90,8 +90,8 @@ public class SkystoneDetector extends OpenCvPipeline {
 
         // <location = skystoneLocation.LEFT?> checks to see if the skystone is on the left
         // If it is, pass through the skystone color into the .rectangle() method, and if not, pass through the stone color
-        Imgproc.rectangle(mat, LEFT_ROI, skystoneLocation == skystoneLocation.LEFT? colorSkystone : colorStone);
-        Imgproc.rectangle(mat, RIGHT_ROI, skystoneLocation == skystoneLocation.RIGHT? colorSkystone : colorStone);
+        Imgproc.rectangle(mat, LEFT_ROI, skystoneLocation == skystoneLocation.LEFT? colorSkystone : colorStone, 2);
+        Imgproc.rectangle(mat, RIGHT_ROI, skystoneLocation == skystoneLocation.RIGHT? colorSkystone : colorStone, 2);
 
         // Now we can return the matrix of pixel values (and our rectangle we just made) since they have been analyzed for skystone locations
         return mat;

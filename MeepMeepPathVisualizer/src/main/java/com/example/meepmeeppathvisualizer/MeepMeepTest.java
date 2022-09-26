@@ -52,6 +52,13 @@ public class MeepMeepTest {
                         }
                     };
 
+                    TrajectoryAccelerationConstraint STAC = new TrajectoryAccelerationConstraint() {
+                        @Override
+                        public double get(double v, @NotNull Pose2d pose2d, @NotNull Pose2d pose2d1, @NotNull Pose2d pose2d2) {
+                            return 0;
+                        }
+                    };
+
                     TrajectoryVelocityConstraint STVE = (a, b, c, d) -> 5;
                     TrajectoryVelocityConstraint SpTVC = (a, b, c, d) -> 1000;
                     TrajectoryAccelerationConstraint SpTAC = (a, b, c, d) -> 1000;
@@ -62,15 +69,11 @@ public class MeepMeepTest {
                     builder.lineToLinearHeading(new Pose2d(-55, -55, Math.toRadians(40)));
                     builder.waitSeconds(3);
                     builder.lineToLinearHeading(new Pose2d(-57, -57, Math.toRadians(90)));
-                    builder.strafeRight(15, STVE);
+                    builder.strafeRight(15, STVE, STAC); // You have to pass both a velo and accel constraint
                     builder.lineToLinearHeading(new Pose2d(-12.3, -44, Math.toRadians(90)));
                     builder.waitSeconds(2);
                     builder.lineToLinearHeading(new Pose2d(-60, -34, Math.toRadians(180)));
                     builder.splineTo(new Vector2d(5, 10), 2, SpTVC, SpTAC);
-
-
-
-
 
                     builder.setReversed(true);
 
