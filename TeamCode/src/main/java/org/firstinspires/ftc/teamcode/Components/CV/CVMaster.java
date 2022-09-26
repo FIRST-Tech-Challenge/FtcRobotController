@@ -52,4 +52,10 @@ public class CVMaster {
             }
         });
     }
+    public void resetCV(){
+
+    }
+    public void stopCamera(){
+        webcam.stopStreaming();
+    }
 }

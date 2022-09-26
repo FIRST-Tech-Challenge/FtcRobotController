@@ -17,7 +17,7 @@ import java.util.List;
 
 public class StickObserverPipeline extends OpenCvPipeline {
     int width = 320, height = 240;
-    double centerOfPole = -1000, poleSize = -1000, centerAverage = 0, sizeAverage = 0, degPerPix = 0.5, widTimesDist = 200;
+    double centerOfPole = -1000, poleSize = -1000, centerAverage = 0, sizeAverage = 0, degPerPix = 0.5, widTimesDist = 2150;
     int numberOfFrames = 0;
     double[] acceptedRangeSize = {0, 60}, acceptedRangeCenter = {-200, 200};
 
@@ -103,7 +103,9 @@ public class StickObserverPipeline extends OpenCvPipeline {
         return sizeAverage;
     }
 
+    public void resetAverages(){centerAverage=0;sizeAverage=0;numberOfFrames=0;}
+
     public double[] poleRotatedPolarCoordDelta() {
-        return new double[]{degPerPix * centerOfPole * PI / 180, widTimesDist / poleSize};
+        return new double[]{degPerPix * centerAverage * PI / 180, widTimesDist / sizeAverage};
     }
 }
