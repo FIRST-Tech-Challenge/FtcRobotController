@@ -109,6 +109,12 @@ public class GFORCE_TELEOP extends LinearOpMode {
             drive.update();
 
             // Print pose to telemetry
+            telemetry.addData("Raw Left",  drive.localizer.leftEncoder.getCurrentPosition());
+            telemetry.addData("Raw Right", drive.localizer.rightEncoder.getCurrentPosition());
+            telemetry.addData("Sum", drive.localizer.rightEncoder.getCurrentPosition() + drive.localizer.leftEncoder.getCurrentPosition());
+            telemetry.addData("Dif", drive.localizer.rightEncoder.getCurrentPosition() - drive.localizer.leftEncoder.getCurrentPosition());
+
+
             telemetry.addData("Lock", headingLock);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());

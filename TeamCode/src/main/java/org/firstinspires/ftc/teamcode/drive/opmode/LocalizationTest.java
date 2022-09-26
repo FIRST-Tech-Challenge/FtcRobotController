@@ -17,7 +17,10 @@ import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
     @Override
+
+
     public void runOpMode() throws InterruptedException {
+
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -29,17 +32,25 @@ public class LocalizationTest extends LinearOpMode {
                     new Pose2d(
                             -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x / 4
+                            -gamepad1.right_stick_x / 10
                     )
             );
 
             drive.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
+
+            // Print pose to telemetry
+            telemetry.addData("Raw Left",  drive.localizer.leftEncoder.getCurrentPosition());
+            telemetry.addData("Raw Right", drive.localizer.rightEncoder.getCurrentPosition());
+            telemetry.addData("Sum", drive.localizer.rightEncoder.getCurrentPosition() + drive.localizer.leftEncoder.getCurrentPosition());
+            telemetry.addData("Dif", drive.localizer.rightEncoder.getCurrentPosition() - drive.localizer.leftEncoder.getCurrentPosition());
+
+
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading Rad.", poseEstimate.getHeading());
-            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("heading ODO. ", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("heading GYRO.", Math.toDegrees(drive.getExternalHeading()));
             telemetry.update();
         }
     }

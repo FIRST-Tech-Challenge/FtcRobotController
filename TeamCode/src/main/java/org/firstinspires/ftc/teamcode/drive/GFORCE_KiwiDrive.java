@@ -52,7 +52,7 @@ import java.util.List;
 @Config
 public class GFORCE_KiwiDrive extends KiwiDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(20, 3, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(20, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(20, 2, 0);
 
 //    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
 //    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
@@ -64,6 +64,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     public static double OMEGA_WEIGHT = 1.0;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
+    public StandardTrackingWheelLocalizer localizer;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
@@ -130,8 +131,12 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } else {
+            setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -140,7 +145,8 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        localizer = new StandardTrackingWheelLocalizer(hardwareMap);
+        setLocalizer(localizer);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
