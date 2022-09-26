@@ -1,1 +1,0 @@
-this directory is meant for commands belonging to single subsystems

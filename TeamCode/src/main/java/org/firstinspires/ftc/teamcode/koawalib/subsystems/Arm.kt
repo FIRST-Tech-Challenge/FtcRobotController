@@ -1,18 +1,23 @@
 package org.firstinspires.ftc.teamcode.koawalib.subsystems
 
-import com.asiankoala.koawalib.hardware.motor.KMotor
+import com.asiankoala.koawalib.command.commands.InstantCmd
+import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.subsystem.Subsystem
 
-class Arm(val motor: KMotor) : Subsystem() {
+class Arm(val servo: KServo) : Subsystem() {
     companion object {
-        const val topPosition = 13.0
-        const val midPosition = -15.0
-        const val bottomPosition = -30.0
-        const val sharedPosition = -30.0
-        const val sharedLow = 25.0
-        const val sharedHigh = 35.0
-        const val homePosition = -35.0
-        const val armIntakeExt = -32.0
-        const val armIntakePos = -40.0
+        const val restPos = 0.0
+        const val outtakePos = 1.0
     }
+
+    fun rest(){
+        servo.position = restPos
+    }
+
+    fun outtake(){
+        servo.position = outtakePos
+    }
+
+    class ArmReset(arm : Arm) : InstantCmd(arm::rest, arm)
+    class ArmOut(arm : Arm) : InstantCmd(arm::outtake, arm)
 }
