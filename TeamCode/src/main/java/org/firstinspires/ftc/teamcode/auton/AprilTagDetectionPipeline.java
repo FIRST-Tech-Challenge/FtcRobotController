@@ -105,6 +105,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 
+
         synchronized (decimationSync)
         {
             if(needToSetDecimation)

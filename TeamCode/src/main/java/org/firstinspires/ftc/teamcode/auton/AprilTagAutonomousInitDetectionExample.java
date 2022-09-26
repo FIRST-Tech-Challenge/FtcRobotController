@@ -120,8 +120,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                     {
                         telemetry.addLine("(The tag has never been seen)");
                     }
-                    else
-                    {
+                    else {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
