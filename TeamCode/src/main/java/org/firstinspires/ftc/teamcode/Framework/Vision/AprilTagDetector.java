@@ -1,4 +1,4 @@
-package Framework.Vision;
+package org.firstinspires.ftc.teamcode.Framework.Vision;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
