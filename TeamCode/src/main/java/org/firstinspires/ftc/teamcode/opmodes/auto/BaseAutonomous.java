@@ -10,13 +10,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.Tensorflow;
+import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
 
 public abstract class BaseAutonomous extends BaseOpMode {
-    Tensorflow tensorflow;
     Team currentTeam;
+    Vuforia vuforia;
 
     // Which team are we on?
     public enum Team {
@@ -31,19 +32,15 @@ public abstract class BaseAutonomous extends BaseOpMode {
     public void init(BaseAutonomous.Team team) {
         super.init();
 
+        // set up vuforia and targets
+
+        vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
         // Initialize drive system
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
-
-        // Set up tensorflow
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        tensorflow = new Tensorflow(camName, tfodMonitorViewId);
-
         // Set team
         currentTeam = team;
     }

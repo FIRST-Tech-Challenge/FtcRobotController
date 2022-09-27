@@ -215,4 +215,13 @@ public class Vuforia {
         return "None.";
     }
 
+    public boolean isTeamAssetVisible(){
+        for (VuforiaTrackable trackable : teamAssetTrackables) {
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

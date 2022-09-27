@@ -34,7 +34,7 @@ public class VuforiaOpMode extends OpMode {
         this.msStuckDetectInit     = 20000;
         this.msStuckDetectInitLoop = 20000;
         // Initialize motors
-        setCamera(CameraChoice.PHONE_BACK);
+        setCamera(CameraChoice.WEBCAM1);
 
     }
 
