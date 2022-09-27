@@ -1,5 +1,5 @@
 ## NOTICE
-TEAM BINDING ENERGY 20434
+TEAM BINDING ENERGY 20434 (the best team)
 This repository contains the public FTC SDK for the Freight Frenzy (2021-2022) competition season.
 
 ## Welcome!
