@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.Reno;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -56,6 +57,12 @@ public class HardwareRobot
     public DcMotor  rightDriveFront  = null;
     public DcMotor  leftDriveBack = null;
     public DcMotor rightDriveBack = null;
+
+    // definitions for slider motor, servo motor, and claw motors
+    public DcMotor sliderMotor     = null;
+
+    public Servo  gripperServo    = null;
+
     public DcMotor  leftArm     = null;
     //public Servo    leftClaw    = null;
     //public Servo    rightClaw   = null;
@@ -83,6 +90,10 @@ public class HardwareRobot
         rightDriveFront = hwMap.get(DcMotor.class, "FrontRight");
         leftDriveBack  = hwMap.get(DcMotor.class, "BackLeft");
         rightDriveBack = hwMap.get(DcMotor.class, "BackRight");
+        sliderMotor = hwMap.get(DcMotor.class, "SliderMotor");  // for slider dc motor
+
+        gripperServo = hwMap.get(Servo.class, "TestServo");  // for gripper servo motor
+
         leftDriveFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors// Drive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
         // Set all motors to zero power
@@ -90,7 +101,9 @@ public class HardwareRobot
         rightDriveFront.setPower(0);
         leftDriveBack.setPower(0);
         rightDriveBack.setPower(0);
+        sliderMotor.setPower(0);
 
+        gripperServo.setPosition(0.0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
