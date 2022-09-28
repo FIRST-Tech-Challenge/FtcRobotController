@@ -10,6 +10,9 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorFR;
     DcMotor motorBL;
     DcMotor motorBR;
+    DcMotor leftEncoder;
+    DcMotor rightEncoder;
+    DcMotor frontEncoder;
 
     public void initializeHardware() {
         motorFL = hardwareMap.dcMotor.get("motorFL");
@@ -17,15 +20,27 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
 
+        leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
+        rightEncoder = hardwareMap.dcMotor.get("rightEncoder");
+        frontEncoder = hardwareMap.dcMotor.get("frontEncoder");
+
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -41,5 +56,22 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
+    }
+
+    public void mecanumDrive(double Xdrive, double Ydrive, double Turningdrive) {
+        double FLPower;
+        double FRPower;
+        double BLPower;
+        double BRPower;
+
+        FLPower = Ydrive + Xdrive + Turningdrive;
+        FRPower = Ydrive - Xdrive - Turningdrive;
+        BLPower = Ydrive - Xdrive + Turningdrive;
+        BRPower = Ydrive + Xdrive - Turningdrive;
+
+        motorFL.setPower(FLPower);
+        motorFR.setPower(FRPower);
+        motorBL.setPower(BLPower);
+        motorBR.setPower(BRPower);
     }
 }
