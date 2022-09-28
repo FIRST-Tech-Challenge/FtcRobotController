@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -28,27 +28,30 @@ public class Localizer {
     private static final float halfField = 72 * mmPerInch;
     private static final float halfTile = 12 * mmPerInch;
     private static final float oneAndHalfTile = 36 * mmPerInch;
+    private static final float loopSpeedHT = 0.1f;
+
     private static final String VUFORIA_KEY =
             "ATCNswP/////AAABmboo62E3M0RLvUoBrala8GQowW4hvn2lz0v4xIUqDcerBojdZbFDT7KxueF7R6JgJY9tQ+gV9sHXv6aOcnznTsupwlzsqujeV1pIN0j5/uZNqLkxZCORToVMVD/kd8XY5y58Pnml+lS3pqkZee6pSUTNWfmWgJAu/oKPGVrOm5GwCPObOM9Mx3NSbWeRVSiKcaN9o6QyqV+Knuf2xYpF87rKiH0pbWGRIFSy8JgVQ6dabuIoDCKbXpDeTwK3PJ2VtgON+8PA2TIIn95Yq8UmBYJRJc6kDyvCDyCnKJ63oPRfzth3P8DM4IchQd69ccU6vqeto4JNQbPZh5JB5KRXFS8CcmQJLkSRcHDIP92eIhv/";
-    final float CAMERA_FORWARD_DISPLACEMENT = 3.0f * mmPerInch;   // FIXME
-    final float CAMERA_VERTICAL_DISPLACEMENT = 2.0f * mmPerInch;   // FIXME
-    final float CAMERA_LEFT_DISPLACEMENT = -6.0f * mmPerInch;   // FIXME
+    final float CAMERA_FORWARD_DISPLACEMENT = 0.0f * mmPerInch;   // FIXME
+    final float CAMERA_VERTICAL_DISPLACEMENT = 6.0f * mmPerInch;   // FIXME
+    final float CAMERA_LEFT_DISPLACEMENT = 0.0f * mmPerInch;   // FIXME
     public double y         = 0;
     public double x         = 0;
+    public double z         = 0;
     public double yVelocity = 0;
     public double xVelocity = 0;
     public double heading   = 0;
-    private ElapsedTime runtime = null;
-    private OpenGLMatrix lastLocation = null;
-    private VuforiaLocalizer vuforia  = null;
-    private VuforiaTrackables targets = null;
-    private WebcamName webcamName = null;
+    private ElapsedTime runtime = new ElapsedTime();
+    private OpenGLMatrix lastLocation            = null;
+    private VuforiaLocalizer vuforia             = null;
+    private VuforiaTrackables targets            = null;
+    private WebcamName webcamName                = null;
     private List<VuforiaTrackable> allTrackables = null;
-    private boolean targetVisible = false;
-    private double lastT = 0;
+    private boolean targetVisible                = false;
+    private double lastT       = 0;
 
     public Localizer(HardwareMap hardwareMap) {
-        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -94,13 +97,22 @@ public class Localizer {
 
 
     public void displayTelemetry(Telemetry telemetry) {
-        telemetry.addData("y position", y);
+        telemetry.addData("Runtime", runtime.seconds());
+        telemetry.addData("Delta T", runtime.seconds() - lastT);
         telemetry.addData("x position", x);
+        telemetry.addData("y position", y);
+        telemetry.addData("z position", z);
+        telemetry.addData("x velocity", xVelocity);
         telemetry.addData("y velocity", yVelocity);
-        telemetry.addData("y velocity", yVelocity);
+        telemetry.addData("Heading", heading);
+        telemetry.addData("target visible?", targetVisible);
+
     }
 
     public void handleTracking() {
+        if ((runtime.seconds() - lastT) < loopSpeedHT) {
+            return;
+        }
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
@@ -123,14 +135,16 @@ public class Localizer {
             VectorF translation = lastLocation.getTranslation();
             double lastX = x;
             double lastY = y;
-            double t = runtime.seconds();
+            double t     = runtime.seconds();
             x = translation.get(0)/mmPerInch;
             y = translation.get(1)/mmPerInch;
+            z = translation.get(2)/mmPerInch;
             xVelocity = (x-lastX) /(t-lastT);
             yVelocity = (y-lastY) /(t-lastT);
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+            heading = rotation.thirdAngle;
             lastT = runtime.seconds();
         }
     }
