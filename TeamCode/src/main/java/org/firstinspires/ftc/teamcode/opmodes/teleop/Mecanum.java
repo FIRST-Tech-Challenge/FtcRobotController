@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 public class Mecanum extends LinearOpMode {
 
     double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive;
-    double driveSpeed = 1.0;
+    double driveSpeed = 0.5;
     @Override
     public void runOpMode() {
         TurtleRobot robot = new TurtleRobot(this);
@@ -38,10 +38,10 @@ public class Mecanum extends LinearOpMode {
 
             telemetry.addLine("motor name               motor speed");
             telemetry.addLine();
-            telemetry.addData("Front right drive speed = ", robot.rightfrontmotor);
-            telemetry.addData("Front left drive speed  = ", robot.leftfrontmotor);
-            telemetry.addData("Back right drive speed  = ", robot.rightbackmotor);
-            telemetry.addData("Back left drive speed   = ", robot.leftbackmotor);
+            telemetry.addData("Front right drive speed = ", frontRightDrive);
+            telemetry.addData("Front left drive speed  = ", frontLeftDrive);
+            telemetry.addData("Back right drive speed  = ", backRightDrive);
+            telemetry.addData("Back left drive speed   = ", backLeftDrive);
             telemetry.update();
             }
         }

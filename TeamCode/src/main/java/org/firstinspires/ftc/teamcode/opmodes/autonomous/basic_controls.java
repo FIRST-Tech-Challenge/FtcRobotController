@@ -13,10 +13,15 @@ public class basic_controls extends LinearOpMode{
         waitForStart();
         if (opModeIsActive()) {
             straight(0.5, 1000);
+            stopRobot();
+            sleep(1000);
+            strafeLeft(0.25, 1000);
             stopRobot();sleep(1000);
+            strafeRight(0.25, 1000);
+            stopRobot();
             left(0.25, 1000);
-            stopRobot();sleep(1000);
-            right(0.25, 1000);
+            stopRobot();
+            right(0.75, 500);
             stopRobot();
         }
     }
@@ -27,18 +32,32 @@ public class basic_controls extends LinearOpMode{
         robot.rightbackmotor.setPower(power);
         sleep(time);
     }
-    public void right(double power, int time) {
+    public void strafeRight(double power, int time) {
         robot.leftfrontmotor.setPower(power);
         robot.leftbackmotor.setPower(-power);
         robot.rightfrontmotor.setPower(-power);
         robot.rightbackmotor.setPower(power);
         sleep(time);
     }
-    public void left(double power, int time) {
+    public void strafeLeft(double power, int time) {
         robot.leftfrontmotor.setPower(-power);
         robot.leftbackmotor.setPower(power);
         robot. rightfrontmotor.setPower(power);
         robot.rightbackmotor.setPower(-power);
+        sleep(time);
+    }
+    public void left(double power, int time) {
+        robot.leftfrontmotor.setPower(power);
+        robot.leftbackmotor.setPower(power);
+        robot. rightfrontmotor.setPower(-power);
+        robot.rightbackmotor.setPower(-power);
+        sleep(time);
+    }
+    public void right(double power, int time) {
+        robot.leftfrontmotor.setPower(-power);
+        robot.leftbackmotor.setPower(-power);
+        robot. rightfrontmotor.setPower(power);
+        robot.rightbackmotor.setPower(power);
         sleep(time);
     }
     public void stopRobot() {
