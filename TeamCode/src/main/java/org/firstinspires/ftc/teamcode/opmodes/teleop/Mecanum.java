@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 public class Mecanum extends LinearOpMode {
 
     double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive;
-    double driveSpeed = 0.5;
+    double driveSpeed = 1;
     @Override
     public void runOpMode() {
         TurtleRobot robot = new TurtleRobot(this);
@@ -25,6 +25,7 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
+                //                 FORWARD                  TURN                    STRAFE
             frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
             frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
