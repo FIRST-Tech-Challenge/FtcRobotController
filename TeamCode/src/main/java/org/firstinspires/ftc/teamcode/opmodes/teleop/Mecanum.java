@@ -25,7 +25,6 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-            
             frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
             frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
@@ -36,12 +35,22 @@ public class Mecanum extends LinearOpMode {
             robot.leftbackmotor.setPower(backLeftDrive);
             robot.leftfrontmotor.setPower(frontLeftDrive);
 
+
+            if (frontLeftDrive>0 && frontRightDrive>0 && backLeftDrive>0 && backRightDrive>0) {
+                telemetry.addLine("Going forward");
+            }
+            if (frontLeftDrive>0 && frontRightDrive>0 && backLeftDrive<0 && backRightDrive<0 || frontLeftDrive<0 && frontRightDrive<0 && backLeftDrive<0 && backRightDrive<0) {
+                telemetry.addLine("Turning");
+            }
+            if (frontLeftDrive>0 && frontRightDrive<0 && backLeftDrive>0 && backRightDrive<0 || frontLeftDrive<0 && frontRightDrive>0 && backLeftDrive<0 && backRightDrive>0) {
+                telemetry.addLine("Strafing");
+            }
             telemetry.addLine("motor name               motor speed");
             telemetry.addLine();
-            telemetry.addData("Front right drive speed = ", frontRightDrive);
-            telemetry.addData("Front left drive speed  = ", frontLeftDrive);
-            telemetry.addData("Back right drive speed  = ", backRightDrive);
-            telemetry.addData("Back left drive speed   = ", backLeftDrive);
+            telemetry.addData("Front right drive power = ", frontRightDrive);
+            telemetry.addData("Front left drive power  = ", frontLeftDrive);
+            telemetry.addData("Back right drive power  = ", backRightDrive);
+            telemetry.addData("Back left drive power   = ", backLeftDrive);
             telemetry.update();
             }
         }
