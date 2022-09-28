@@ -66,11 +66,11 @@ public class Odometry {
     }
 
     public double getX() {
-        return x_pos;
+        return y_pos;
     }
 
     public double getY() {
-        return y_pos;
+        return x_pos;
     }
 
     public double getHeading() {
