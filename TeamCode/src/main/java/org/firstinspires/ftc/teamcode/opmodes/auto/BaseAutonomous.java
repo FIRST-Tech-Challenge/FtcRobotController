@@ -28,20 +28,4 @@ public abstract class BaseAutonomous extends BaseOpMode {
      * Initialization of systems for autonomous
      * @param team current team in this game
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void init(BaseAutonomous.Team team) {
-        super.init();
-
-        // set up vuforia and targets
-
-        vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
-        // Initialize drive system
-        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
-        for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
-            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
-        // Set team
-        currentTeam = team;
-    }
 }

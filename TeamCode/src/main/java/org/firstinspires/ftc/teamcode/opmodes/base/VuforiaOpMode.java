@@ -36,6 +36,7 @@ public class VuforiaOpMode extends OpMode {
         // Initialize motors
         setCamera(CameraChoice.WEBCAM1);
 
+
     }
 
     /** Initialize Vuforia object with given camera

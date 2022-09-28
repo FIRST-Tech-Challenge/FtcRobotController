@@ -35,14 +35,14 @@ public class BaseStateMachine extends BaseAutonomous {
     private ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
 
     /** Initializes State Machine
-     * @param team current team
      */
-    public void init(Team team) {
-        super.init(team);
+    public void init() {
+        super.init();
         this.msStuckDetectInit     = 15000;
         this.msStuckDetectInitLoop = 15000;
         // Starts state machine
         newState(State.IDENTIFY_TARGET);
+
     }
 
     @Override
