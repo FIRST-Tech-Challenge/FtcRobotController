@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.opmodes.auto.BaseAutonomous;
 
 import java.util.ArrayList;
@@ -41,7 +42,9 @@ public class BaseStateMachine extends BaseAutonomous {
         this.msStuckDetectInit     = 15000;
         this.msStuckDetectInitLoop = 15000;
         // Starts state machine
+        vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
         newState(State.IDENTIFY_TARGET);
+
 
     }
 

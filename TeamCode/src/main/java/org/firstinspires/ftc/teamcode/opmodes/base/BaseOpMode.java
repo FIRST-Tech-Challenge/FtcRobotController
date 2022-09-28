@@ -34,7 +34,7 @@ public abstract class BaseOpMode extends OpMode {
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
         driveSystem = new DriveSystem(driveMap);
-        vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
+
     }
 
     /** Initialize Vuforia object with given camera
