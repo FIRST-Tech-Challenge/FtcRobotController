@@ -25,7 +25,8 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                //                 FORWARD                  TURN                    STRAFE
+
+            //                   FORWARD                     TURN                       STRAFE
             frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
             frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
