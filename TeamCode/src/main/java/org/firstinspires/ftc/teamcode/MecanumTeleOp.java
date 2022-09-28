@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp(name="Drive")
 public class MecanumTeleOp extends LinearOpMode {
     private final double inches_per_revolution = 60/25.4*Math.PI; //60 mm * (1 inches)/(25.4 mm) is the diameter of the wheel in inches, *pi for circumference
-    private final double ticks_per_revolution = 360*6.0; //6 ticks per degrees & 360 degrees per revolution
+    private final double ticks_per_revolution = 360*6.0; //4 ticks per cycle & 360 cycle per revolution
     private final double mm_to_inches = 0.03937008;
 
     @Override
@@ -45,6 +45,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight);
         Odometry odometry = new Odometry(motorBackRight, motorBackLeft, motorFrontLeft);
+        odometry.reset();
 
         waitForStart();
 
@@ -69,13 +70,15 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             //7.06858347058
-            telemetry.addData("Left Encoder: ", motorBackRight.getCurrentPosition()/ticks_per_revolution); //Converting encoder units to inches
-            telemetry.addData("Right Encoder: ", motorBackLeft.getCurrentPosition()/ticks_per_revolution); //Converting encoder units to inches
-            telemetry.addData("Perpendicular Encoder: ", motorFrontLeft.getCurrentPosition()/ticks_per_revolution); //Converting encoder units to inches
+            telemetry.addData("Left Encoder: ", motorBackRight.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
+            telemetry.addData("Right Encoder: ", motorBackLeft.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
+            telemetry.addData("Perpendicular Encoder: ", motorFrontLeft.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
             telemetry.addData("Power: ", power);
-            telemetry.addData("X: ", odometry.getX()*mm_to_inches);
-            telemetry.addData("Y: ", odometry.getY()*mm_to_inches);
-            telemetry.addData("Heading: ", odometry.getHeading()*mm_to_inches);
+            telemetry.addData("X: ", odometry.getX());
+            telemetry.addData("Y: ", odometry.getY());
+            telemetry.addData("Heading: ", odometry.getHeading());
+            telemetry.addData("Track Width: ", odometry.getTrackWidth());
+            telemetry.addData("Forward Offset", odometry.getForwardOffset());
             telemetry.update();
         }
     }
