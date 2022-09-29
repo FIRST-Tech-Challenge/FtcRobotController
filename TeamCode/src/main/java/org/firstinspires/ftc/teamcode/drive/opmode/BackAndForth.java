@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
@@ -50,49 +51,40 @@ public class BackAndForth extends LinearOpMode {
                 .strafeRight(DISTANCE/2)
                 .build();
 
+        TrajectorySequence trajectorySquare = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(DISTANCE)
+                .strafeLeft(DISTANCE/2)
+                .back(DISTANCE)
+                .strafeRight(DISTANCE/2)
+                .build();
+
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+
             drive.followTrajectory(trajectoryForward);
-            drive.update();
+            drive.followTrajectory(trajectoryLeft);
+            drive.followTrajectory(trajectoryBackward);
+            drive.followTrajectory(trajectoryRight);
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading Rad.", poseEstimate.getHeading());
-            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("heading ODO. ", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("heading GYRO.", Math.toDegrees(drive.getExternalHeading()));
             telemetry.update();
+
             while (opModeIsActive() && !gamepad1.y) {};
 
-            drive.followTrajectory(trajectoryLeft);
+            drive.followTrajectorySequence(trajectorySquare);
 
             poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading Rad.", poseEstimate.getHeading());
-            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("heading ODO. ", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("heading GYRO.", Math.toDegrees(drive.getExternalHeading()));
             telemetry.update();
-            while (opModeIsActive() && !gamepad1.y) {};
 
-            drive.followTrajectory(trajectoryBackward);
-
-            poseEstimate = drive.getPoseEstimate();
-            telemetry.addData("x", poseEstimate.getX());
-            telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading Rad.", poseEstimate.getHeading());
-            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
-            telemetry.update();
-            while (opModeIsActive() && !gamepad1.y) {};
-
-            drive.followTrajectory(trajectoryRight);
-
-            poseEstimate = drive.getPoseEstimate();
-            telemetry.addData("x", poseEstimate.getX());
-            telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading Rad.", poseEstimate.getHeading());
-            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
-            telemetry.update();
-            while (opModeIsActive() && !gamepad1.y) {};
         }
     }
 
