@@ -69,7 +69,6 @@ public class MecanumTeleOp extends LinearOpMode {
                 gamepad1.rumble(200);
             }
 
-            //7.06858347058
             telemetry.addData("Left Encoder: ", motorBackRight.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
             telemetry.addData("Right Encoder: ", motorBackLeft.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
             telemetry.addData("Perpendicular Encoder: ", motorFrontLeft.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches

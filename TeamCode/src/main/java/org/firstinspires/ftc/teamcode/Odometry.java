@@ -12,7 +12,6 @@ public class Odometry {
     private DcMotor perpendicularEncoder;
     private double trackWidth;
     private double forwardOffset;
-    private double sideOffset;
     private final double wheel_circumference_inches = 60/25.4*Math.PI;
     private final double mm_to_inches = 0.03937008;
 
