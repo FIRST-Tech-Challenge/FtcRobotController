@@ -31,8 +31,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 30/25.4; // in, 30mm to inches
     public static double GEAR_RATIO = 0.5; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 10; // in; distance between the left and right wheels, haven't configured yet
-    public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel, haven't configured yet
+    public static double LATERAL_DISTANCE = 15.5; // in; distance between the left and right wheels, haven't configured yet
+    public static double FORWARD_OFFSET = 8; // in; offset of the lateral wheel, haven't configured yet
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 

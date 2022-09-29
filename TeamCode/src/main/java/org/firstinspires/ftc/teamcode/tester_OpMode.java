@@ -44,20 +44,17 @@ import com.qualcomm.robotcore.util.Range;
 public class tester_OpMode extends LinearOpMode {
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
+                .strafeRight(10)
+                .forward(5)
+                .build();
+
         waitForStart();
-        //runtime.reset();
 
-        int counter = 0;
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        if(isStopRequested()) return;
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", Integer.toString(counter));
-            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.update();
-            counter++;
-        }
+        drive.followTrajectory(myTrajectory);
     }
 }
