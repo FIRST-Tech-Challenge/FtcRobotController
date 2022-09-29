@@ -5,6 +5,9 @@ public class Malevolent_Trauma_Test_Code {
 
     //imaginary numbers confuzle me
 
+    //Confuzzle*
+
     //projectile motion trash
 
+    //Wow, rude :(
 }
