@@ -36,25 +36,29 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
+@TeleOp(name="Basic: Roadrunner Drive Testing", group="Linear Opmode")
 //@Disabled
 public class tester_OpMode extends LinearOpMode {
     @Override
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .strafeRight(10)
-                .forward(5)
+        TrajectorySequence myTrajectory = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(24)
+                .turn(Math.toRadians(90))
+                .back(24)
                 .build();
 
         waitForStart();
 
         if(isStopRequested()) return;
 
-        drive.followTrajectory(myTrajectory);
+        drive.followTrajectorySequence(myTrajectory);
     }
 }

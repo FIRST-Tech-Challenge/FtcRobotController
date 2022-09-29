@@ -17,6 +17,9 @@ apply from: '../build.dependencies.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
+    dexOptions{
+        javaMaxHeapSize "4G"
+    }
 }
 
 dependencies {
