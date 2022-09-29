@@ -1,4 +1,4 @@
-package asiankoala.testing.opmodes
+package org.firstinspires.ftc.teamcode.testing.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.logger.Logger
@@ -7,7 +7,6 @@ import com.asiankoala.koawalib.math.radians
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import asiankoala.testing.Robot
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.path.PathBuilder
 import com.asiankoala.koawalib.command.commands.*
@@ -15,7 +14,7 @@ import com.asiankoala.koawalib.logger.LoggerConfig
 
 @TeleOp
 @Config
-class KTeleOp : KOpMode() {
+class BlueOp : KOpMode() {
     private val startPose = Pose(-36.0, -60.0, 90.0.radians)
     private val robot by lazy { Robot(startPose) }
 
