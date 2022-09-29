@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /**
@@ -27,10 +23,8 @@ public class GFORCE_Auto extends LinearOpMode {
     boolean headingLock = false;
     double  headingSetpoint = 0;
 
-
-
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
 
         // Initialize GFORCE_KiwiDrive
@@ -44,37 +38,50 @@ public class GFORCE_Auto extends LinearOpMode {
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(new Pose2d(new Vector2d(-62,-35), Math.toRadians(0)));
 
-        waitForStart();
-sleep(100);
-        if (isStopRequested()) return;
+        TrajectorySequence ourTrajectory = null;
 
-        if (gamepad1.x) {
-            TrajectorySequence trajectoryForward = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                    .forward(51)
-                    .strafeLeft(59)
-                    .build();
-            drive.followTrajectorySequence(trajectoryForward);
-            drive.update();
-
-
-        }
-        if (gamepad1.b) {
-                TrajectorySequence trajectoryForward = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .forward(85)
-                        .splineTo(new Vector2d(42,-41), Math.toRadians(-45))
-                        .build();
-                drive.followTrajectorySequence(trajectoryForward);
-                drive.update();
-        }
-
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("x", poseEstimate.getX());
-        telemetry.addData("y", poseEstimate.getY());
-        telemetry.addData("heading gyro.", Math.toDegrees(drive.getExternalHeading()));
-        telemetry.addData("heading odo.", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.addData("Trajectory", "press X or B button to select.");
         telemetry.update();
-        while (opModeIsActive() && !gamepad1.y) {
+
+        while (opModeInInit()) {
+            // Select the desired trajectory
+
+            if (gamepad1.x) {
+                telemetry.addData("Trajectory", "Far Right Floor");
+                telemetry.update();
+                ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .forward(51)
+                        .strafeLeft(59)
+                        .build();
+            }
+
+            if (gamepad1.b) {
+                telemetry.addData("Trajectory", "Cross Near Mid");
+                telemetry.update();
+                ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .forward(85)
+                        .splineTo(new Vector2d(42, -41), Math.toRadians(-45))
+                        .build();
+            }
+        }
+
+        if (opModeIsActive()) {
+            // if we have a trajectory, run it.
+            if (ourTrajectory != null) {
+                drive.followTrajectorySequence(ourTrajectory);
+                drive.update();
+
+                Pose2d poseEstimate = drive.getPoseEstimate();
+                telemetry.addData("x", poseEstimate.getX());
+                telemetry.addData("y", poseEstimate.getY());
+                telemetry.addData("heading gyro.", Math.toDegrees(drive.getExternalHeading()));
+                telemetry.addData("heading odo.", Math.toDegrees(poseEstimate.getHeading()));
+            }
+
+            // Wait for button prrss to exit;
+            while (opModeIsActive()) {
+                sleep(10);
+            }
         }
     }
-
 }
