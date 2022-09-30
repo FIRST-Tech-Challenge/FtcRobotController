@@ -39,6 +39,7 @@ public class GFORCE_Auto extends LinearOpMode {
         drive.setPoseEstimate(new Pose2d(new Vector2d(-62,-35), Math.toRadians(0)));
 
         TrajectorySequence ourTrajectory = null;
+        TrajectorySequence reverseTrajectory = null;
 
         telemetry.addData("Trajectory", "press X or B button to select.");
         telemetry.update();
@@ -50,8 +51,9 @@ public class GFORCE_Auto extends LinearOpMode {
                 telemetry.addData("Trajectory", "Far Right Floor");
                 telemetry.update();
                 ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .forward(51)
-                        .strafeLeft(59)
+                        .forward(27)
+                        .strafeLeft(72)
+                        //.forward(12)
                         .build();
             }
 
@@ -59,16 +61,47 @@ public class GFORCE_Auto extends LinearOpMode {
                 telemetry.addData("Trajectory", "Cross Near Mid");
                 telemetry.update();
                 ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .forward(85)
-                        .splineTo(new Vector2d(42, -41), Math.toRadians(-45))
+                        .forward(25)
+                        .strafeTo(new Vector2d(-12, 0))
                         .build();
             }
+            if (gamepad1.y) {
+                telemetry.addData("Trajectory", "Other Corner Spline ");
+                telemetry.update();
+                ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .forward(14)
+                        .splineTo(new Vector2d(-36,-24), Math.toRadians(90))
+                        .forward(24)
+                        .splineTo(new Vector2d(-24,12), Math.toRadians(0))
+                        .forward(24)
+                        .forward(24)
+                        .splineTo(new Vector2d(36,24), Math.toRadians(90))
+                        .forward(12)
+                        .build();
+
+                reverseTrajectory = drive.trajectorySequenceBuilder(ourTrajectory.end())
+                        .back(12)
+                        .setReversed(true)
+                        .splineTo(new Vector2d(24,12), Math.toRadians(180))
+
+                        /*.forward(24)
+                        .forward(24)
+                        .splineTo(new Vector2d(-24,12), Math.toRadians(0))
+                        .forward(24)
+                        .splineTo(new Vector2d(-36,-24), Math.toRadians(90))
+                        .forward(14)*/
+                        .build();
+            }
+
         }
 
         if (opModeIsActive()) {
             // if we have a trajectory, run it.
             if (ourTrajectory != null) {
                 drive.followTrajectorySequence(ourTrajectory);
+                if (reverseTrajectory != null) {
+                    drive.followTrajectorySequence(reverseTrajectory);
+                }
                 drive.update();
 
                 Pose2d poseEstimate = drive.getPoseEstimate();
@@ -76,6 +109,7 @@ public class GFORCE_Auto extends LinearOpMode {
                 telemetry.addData("y", poseEstimate.getY());
                 telemetry.addData("heading gyro.", Math.toDegrees(drive.getExternalHeading()));
                 telemetry.addData("heading odo.", Math.toDegrees(poseEstimate.getHeading()));
+                telemetry.update();
             }
 
             // Wait for button prrss to exit;

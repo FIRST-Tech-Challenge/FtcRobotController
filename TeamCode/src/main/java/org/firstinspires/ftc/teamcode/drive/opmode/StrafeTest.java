@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
-    public static double DISTANCE = 24; // in
+    public static double DISTANCE = 48; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,7 +37,8 @@ public class StrafeTest extends LinearOpMode {
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("finalX", poseEstimate.getX());
         telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
+        telemetry.addData("Heading odo", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.addData("Heading gyro", Math.toDegrees(drive.getExternalHeading()));
         telemetry.update();
 
         while (!isStopRequested() && opModeIsActive()) ;
