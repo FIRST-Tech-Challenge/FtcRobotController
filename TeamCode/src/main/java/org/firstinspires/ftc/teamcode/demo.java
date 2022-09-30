@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Compiler.enable;
-
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
-public class jimmy extends LinearOpMode {
+public class demo extends LinearOpMode {
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
@@ -23,12 +20,40 @@ public class jimmy extends LinearOpMode {
 
         telemetry.addData("Initialized", "Ready to start");
         waitForStart();
-        strafeRight(0.4, 200);
-//        spinRight(0.4, 200);
-//        forward(0.4, 200);
-//        backward(0.4, 200);
-//        strafeLeft(0.4, 200);
-//        strafeRight(0.4, 200);
+
+        spinLeftRaw(1);
+        sleep(1000);
+        spinLeftRaw(0);
+
+        sleep(1000);
+
+        spinRightRaw(1);
+        sleep(1000);
+        spinRightRaw(0);
+
+        sleep(1000);
+
+        forwardRaw(1);
+        sleep(1000);
+        forwardRaw(0);
+
+        sleep(1000);
+
+        backwardRaw(1);
+        sleep(1000);
+        backwardRaw(0);
+
+        sleep(1000);
+
+        strafeLeftRaw(1);
+        sleep(1000);
+        strafeLeftRaw(0);
+
+        sleep(1000);
+
+        strafeRightRaw(1);
+        sleep(1000);
+        strafeRightRaw(0);
     }
 
     public void spinLeftRaw(double power) {
