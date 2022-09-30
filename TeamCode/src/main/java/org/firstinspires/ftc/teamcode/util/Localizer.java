@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
+import com.qualcomm.robotcore.hardware.CompassSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -45,14 +46,18 @@ public class Localizer {
     private OpenGLMatrix lastLocation            = null;
     private VuforiaLocalizer vuforia             = null;
     private VuforiaTrackables targets            = null;
+    private CompassSensor compass;
     private WebcamName webcamName                = null;
     private List<VuforiaTrackable> allTrackables = null;
     private boolean targetVisible                = false;
-    private double lastT       = 0;
+    private double lastT          = 0;
+    private double headingOffSet  = 0;
+    private double compassHeading = 0;
 
     public Localizer(HardwareMap hardwareMap) {
         runtime.reset();
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        compass    = hardwareMap.get(CompassSensor.class, "compass");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -110,6 +115,8 @@ public class Localizer {
     }
 
     public void handleTracking() {
+        compassHeading = compass.getDirection();
+        heading = compassHeading + headingOffSet;
         if ((runtime.seconds() - lastT) < loopSpeedHT) {
             return;
         }
@@ -144,8 +151,12 @@ public class Localizer {
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-            heading = rotation.thirdAngle;
+            heading = rotation.thirdAngle%360;
+            headingOffSet  = heading - compass.getDirection();
             lastT = runtime.seconds();
+        }
+        else {
+            heading = (compass.getDirection() + headingOffSet)%360;
         }
     }
 }
