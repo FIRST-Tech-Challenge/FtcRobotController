@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.sin;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,12 +18,12 @@ import java.util.List;
 
 public class StickObserverPipeline extends OpenCvPipeline {
     int width = 320, height = 240;
-    double centerOfPole = -1000, poleSize = -1000, centerAverage = 0, sizeAverage = 0, degPerPix = 0.5, widTimesDist = 2150;
-    int numberOfFrames = 0;
-    double[] acceptedRangeSize = {0, 60}, acceptedRangeCenter = {-200, 200};
+    double centerOfPole = 0, poleSize = 0, degPerPix = 0.047*11.25/6.6, widTimesDist = 930;
+    ArrayList<double[]> frameList;
 
 
     public StickObserverPipeline() {
+        frameList=new ArrayList<>();
     }
 
     @Override
@@ -71,20 +72,12 @@ public class StickObserverPipeline extends OpenCvPipeline {
                 maxAreaIndex = i;
             }
         }
-        centerOfPole = rectangle[maxAreaIndex].center.x - 320;
+        centerOfPole = rectangle[maxAreaIndex].center.x+sin(rectangle[maxAreaIndex].angle)*rectangle[maxAreaIndex].size.height/2 - 320;
         poleSize = rectangle[maxAreaIndex].size.width;
-//        if (centerOfPole < acceptedRangeCenter[1] && centerOfPole > acceptedRangeCenter[0] && poleSize > acceptedRangeSize[0] && poleSize < acceptedRangeSize[1]) {
-            if (numberOfFrames == 0) {
-                centerAverage = centerOfPole;
-                sizeAverage = poleSize;
-                numberOfFrames++;
-            } else {
-                numberOfFrames++;
-                centerAverage = (centerAverage * (numberOfFrames - 1) + centerOfPole) / numberOfFrames;
-                sizeAverage = (sizeAverage * (numberOfFrames - 1) + poleSize) / numberOfFrames;
-            }
-
-//        }
+        frameList.add(new double[]{centerOfPole,poleSize});
+        if(frameList.size()>5) {
+            frameList.remove(0);
+        }
 //        input.release();
         mat.release();
         edges.release();
@@ -96,16 +89,28 @@ public class StickObserverPipeline extends OpenCvPipeline {
     }
 
     public double centerOfPole() {
-        return centerAverage;
+        //256.227,257.307,252.9,253.414: 4,11.75|| 18.8 .073
+        //2.5,12.75: 162.7,161.6, 161.7,162.5||  11.09 .068
+        //2,9.5 : 187.45, 187.26|| 11.88  .0648
+         //1,8,7.8 : 273 || 12.99 .047
+        //10.6,22.2 :
+        //4.1,20.6 :
+        double average=0;
+        for(int i=0;i<frameList.size();i++){
+            average+=frameList.get(i)[0];
+        }
+        return average/frameList.size();
     }
 
     public double poleSize() {
-        return sizeAverage;
+        double average=0;
+        for(int i=0;i<frameList.size();i++){
+            average+=frameList.get(i)[1];
+        }
+        return average/frameList.size();
     }
 
-    public void resetAverages(){centerAverage=0;sizeAverage=0;numberOfFrames=0;}
-
     public double[] poleRotatedPolarCoordDelta() {
-        return new double[]{degPerPix * centerAverage * PI / 180, widTimesDist / sizeAverage};
+        return new double[]{degPerPix * centerOfPole() * PI / 180, widTimesDist / poleSize()};
     }
 }

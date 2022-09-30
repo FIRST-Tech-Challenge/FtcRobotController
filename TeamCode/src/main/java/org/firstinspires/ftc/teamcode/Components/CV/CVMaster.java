@@ -3,19 +3,24 @@ package org.firstinspires.ftc.teamcode.Components.CV;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Components.Field;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CVMaster {
-    OpenCvWebcam webcam;
-    public CVMaster(){
+    private OpenCvWebcam webcam;
+    private SampleMecanumDrive roadrun = null;
+    private StickObserverPipeline opencv = null;
+    public CVMaster(SampleMecanumDrive p_roadrun, Field p_field){
         int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        roadrun = p_roadrun;
     }
     public void observeStick(){
-        StickObserverPipeline opencv = new StickObserverPipeline();
+        opencv = new StickObserverPipeline();
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -52,9 +57,16 @@ public class CVMaster {
             }
         });
     }
-    public void resetCV(){
-
+    public double centerOfPole(){
+        return opencv.centerOfPole();
     }
+    public double poleSize(){
+        return opencv.poleSize();
+    }
+    public double[] rotatedPolarCoordDelta(){
+        return opencv.poleRotatedPolarCoordDelta();
+    }
+
     public void stopCamera(){
         webcam.stopStreaming();
     }
