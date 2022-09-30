@@ -79,20 +79,22 @@ public class DriveMethods extends LinearOpMode{
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+        
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-       public void initMotorsBlue() {
-           motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
-           motorBL = hardwareMap.get(DcMotor.class, "motorBL");
-           motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
-           motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-           motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
-           motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
-           motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
-           motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
-       }
+    public void initMotorsBlue() {
+        motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
+        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
+        motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
+        motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+        
+        motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
 }
