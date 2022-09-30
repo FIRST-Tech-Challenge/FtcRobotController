@@ -1,4 +1,3 @@
-// Please work.
 package org.firstinspires.ftc.teamcode;
 
 
