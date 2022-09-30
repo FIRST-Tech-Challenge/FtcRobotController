@@ -47,8 +47,6 @@ public class DamienAutonomous extends DriveMethods {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-
-
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
