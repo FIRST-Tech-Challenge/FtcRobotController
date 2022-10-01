@@ -29,10 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Variables.motorBL;
-import static org.firstinspires.ftc.teamcode.Variables.motorBR;
-import static org.firstinspires.ftc.teamcode.Variables.motorFL;
-import static org.firstinspires.ftc.teamcode.Variables.motorFR;
+import static org.firstinspires.ftc.teamcode.Variables.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -60,10 +57,10 @@ public class Autonomous2 extends DriveMethods {
         waitForStart();
         runtime.reset();
 
-        driveForDistance(2, false, 0.5);
-        driveForDistance(2, true, 0.5);
-        driveForDistance(2, false, -0.5);
-        driveForDistance(2, true, -0.5);
+        driveForDistance(2, FORWARD, 0.5);
+        driveForDistance(2, RIGHT, 0.5);
+        driveForDistance(2, BACKWARD, -0.5);
+        driveForDistance(2, LEFT, -0.5);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {

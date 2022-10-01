@@ -18,11 +18,6 @@ public class DriveMethods extends LinearOpMode{
     public void runOpMode() {}
 
 
-    public enum Direction{
-        FORWARD_OR_BACKWARD,
-        ROTATE_LEFT_OR_ROTATE_RIGHT,
-        RIGHT_OR_LEFT,
-    }
     public void driveForDistance(double distanceMeters, boolean doStrafe, double power) { // distance: 2, strafe: false, power: 0.5
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -76,7 +71,9 @@ public class DriveMethods extends LinearOpMode{
         motorFR.setPower(0);
         motorBR.setPower(0);
     }
-    public void driveForDistanceWithNewEnum(double distanceMeters, Direction movementDirection, double power) { // distance: 2, strafe: false, power: 0.5
+
+    @Override
+    public void driveForDistance(double distanceMeters, Direction movementDirection, double power) { // distance: 2, strafe: false, power: 0.5
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -94,21 +91,32 @@ public class DriveMethods extends LinearOpMode{
         motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        power = Math.abs(power);
         switch(movementDirection) {
-            case FORWARD_OR_BACKWARD:
+            case FORWARD:
                 motorFL.setPower(power);
                 motorBL.setPower(power);
                 motorFR.setPower(power);
                 motorBR.setPower(power);
-                
                 break;
-            case ROTATE_LEFT_OR_ROTATE_RIGHT:
+            case BACKWARD:
+                motorFL.setPower(-power);
+                motorBL.setPower(-power);
+                motorFR.setPower(-power);
+                motorBR.setPower(-power);
                 break;
-            case RIGHT_OR_LEFT:
+            case RIGHT:
                 motorFL.setPower(power);
                 motorBL.setPower(-power);
                 motorFR.setPower(-power);
                 motorBR.setPower(power);
+                break;
+            case LEFT:
+                motorFL.setPower(-power);
+                motorBL.setPower(power);
+                motorFR.setPower(power);
+                motorBR.setPower(-power);
+                break;
                 
         }
         /*
@@ -123,8 +131,8 @@ public class DriveMethods extends LinearOpMode{
             motorFR.setPower(power);
             motorBR.setPower(power);
         }
-        */
         //targetPos = motorFL.getTargetPosition();
+        */
         int currentPos = motorFL.getCurrentPosition();
         int FLPosition;
         int BLPosition;
