@@ -45,16 +45,6 @@ public class CoordinateSystem {
     public Vector2Int getTarget(){
         return target;
     }
-
-    public Vector2Int calcNormal(Vector2Int vec){ //assumes robot always faces inwards except for corners then calulates direction robot is facing when it starts. May not use tho idk
-        if(vec.x == vec.y){ // if its in the corners then always faces towards the cone stack
-            return new Vector2Int(-vec.x/Math.abs(vec.x),0);
-        }else if(Math.max(vec.x, vec.y) == vec.x){
-            return new Vector2Int(-vec.x/Math.abs(vec.x),0);
-        }else{
-            return new Vector2Int(0,-vec.y/Math.abs(vec.y));
-        }
-    }
 }
 
 

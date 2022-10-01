@@ -201,8 +201,8 @@ public class Crane {
         pos_latched = 2764;
         pos_postlatch = 1240;
 
-        servoGripperOpen = 1350;
-        servoGripperClosed = 800;
+        servoGripperOpen = 1500;
+        servoGripperClosed = 1250;
 
         motorHooked = 120;
         motorUnhooked = 5;
@@ -327,27 +327,10 @@ public class Crane {
         return (int)(2.0/9 * ((belt+offset)-620)) ;
     }
 
-    int grabState = 2;
+    boolean grabState = false;
     double grabTimer;
 
     public void updateGripper() {
-        switch(grabState){
-            case 0:
-                servoGripper.setPosition(servoNormalize(SERVO_MAX));
-                //if(setElbowTargetPos(elbow.getCurrentPosition(),.2)) {
-                    grabTimer = futureTime(1);
-                    grabState++;
-                //}
-                break;
-
-            case 1:
-                if (System.nanoTime() >= grabTimer) {
-                    servoGripper.setPosition(servoNormalize(1700));
-                    grabState++;
-                }
-                break;
-
-        }
 
     }
 
@@ -499,17 +482,20 @@ public class Crane {
         return true;
     }
 
-    public boolean grabStone(){
-        servoGripper.setPosition(servoNormalize(servoGripperClosed));
+    public void openGripper(){
+        setGripperPos(true);
+        gripperState = true;
+    }
 
-        //gripperState = 1;
-        return true;
+    public void closeGripper(){
+        setGripperPos(false);
+        gripperState = false;
     }
-    public boolean ejectStone(){
-        servoGripper.setPosition(servoNormalize(servoGripperOpen));
-        //gripperState = 2;
-        return true;
+
+    public void joystickToggleGripper(){
+        setGripperPos(!gripperState);
     }
+
     public boolean setGripperPos(boolean open){
         if(open)
             servoGripper.setPosition(servoNormalize(servoGripperOpen));
@@ -632,12 +618,6 @@ public class Crane {
 
     public void setElbowActivePID(boolean isActive){elbowActivePID = isActive;}
     public void setExtendABobActivePID(boolean isActive){extendABobActivePID = isActive;}
-
-
-    public boolean toggleGripper() {
-        grabState = 0;
-        return true;
-    }
 
 
     public void collect(){

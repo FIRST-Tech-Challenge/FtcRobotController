@@ -690,7 +690,7 @@ public class PowerPlay_6832 extends OpMode {
 
         }
         if (toggleAllowed(gamepad1.dpad_right, dpad_right, 1)) {
-            robot.crane.toggleGripper();
+            robot.crane.openGripper();
         }
         if (toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseFishin.Articulation.retractFromTower);
@@ -770,9 +770,9 @@ public class PowerPlay_6832 extends OpMode {
 
         }
 
-        if (toggleAllowed(gamepad1.x, x, 1)) {
+        if (stickyGamepad1.x) {
 
-            robot.crane.hookToggle();
+            robot.crane.joystickToggleGripper();
         }
 
         if (toggleAllowed(gamepad1.b, b, 1)) {
@@ -780,20 +780,8 @@ public class PowerPlay_6832 extends OpMode {
             robot.crane.extendToPosition(1500, 1.0);
         }
 
-        // // Foundation Gripper
-        // if (toggleAllowed(gamepad1.x, x, 1)) {
-        //// robot.crane.hookToggle();
-        // robot.crane.currentTowerHeight = 3;
-        // robot.articulate(PoseSkystone.Articulation.extendToTowerHeightArticulation);
-        // }
-
         if (toggleAllowed(gamepad1.dpad_left, dpad_left, 1)) {
             robot.articulate(PoseFishin.Articulation.yoinkStone);
-        }
-
-        if (toggleAllowed(gamepad1.y, y, 1) && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-            robot.crane.servoGripper.setPosition(servoNormalize(800));
-
         }
 
         // Pad1 Bumbers - Rotate Cardinal
@@ -809,7 +797,7 @@ public class PowerPlay_6832 extends OpMode {
         // gamepad2 controls
 
         if (toggleAllowed(gamepad2.a, a, 2)) {
-            robot.crane.toggleGripper();
+            robot.crane.joystickToggleGripper();
         }
 
         if (toggleAllowed(gamepad2.b, b, 2)) {

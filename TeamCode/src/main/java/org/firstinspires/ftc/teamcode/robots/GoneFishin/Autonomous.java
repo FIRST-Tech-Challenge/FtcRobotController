@@ -110,7 +110,6 @@ public class Autonomous {
                     robot.turret.rotateIMUTurret(270,3))
             .addState(() -> (robot.crane.setElbowTargetPos(600, 1)))
             .addTimedState(3f, () -> sample(),  () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.crane.toggleGripper())
             .addSingleState(() -> robot.crane.hookOff()) // makes sure the hook is down properly
             .addState(() -> robot.crane.setGripperSwivelRotation(robot.crane.swivel_Front-100))
             .addState(() -> (robot.crane.setElbowTargetPos(500, 1)))
@@ -253,7 +252,7 @@ public class Autonomous {
 
     private StateMachine.Builder getStateMachine(Stage stage) {
         return
-                StateMachine.builder().stateSwitchAction(() -> robot.crane.setGripperPos(robot.crane.toggleGripper())) // resetMotors(true)
+                StateMachine.builder().stateSwitchAction(() -> robot.resetMotors(true))
                 .stateEndAction(() -> robot.turret.maintainHeadingTurret(false)).stage(stage);
     }
 
