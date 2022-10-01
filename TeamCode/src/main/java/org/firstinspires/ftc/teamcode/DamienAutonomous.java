@@ -29,7 +29,10 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Variables.*;
+import static org.firstinspires.ftc.teamcode.Variables.motorBL;
+import static org.firstinspires.ftc.teamcode.Variables.motorBR;
+import static org.firstinspires.ftc.teamcode.Variables.motorFL;
+import static org.firstinspires.ftc.teamcode.Variables.motorFR;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,14 +40,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Autonomous2", group="Linear Opmode")
+@Autonomous(name="DamienAutonomous", group="Linear Opmode")
 
-public class Autonomous2 extends DriveMethods {
+public class DamienAutonomous extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-
-
 
     @Override
     public void runOpMode() {
@@ -57,10 +58,10 @@ public class Autonomous2 extends DriveMethods {
         waitForStart();
         runtime.reset();
 
-        driveForDistance(1, Direction.FORWARD, 0.5);
-        driveForDistance(1, Direction.RIGHT, 0.5);
-        driveForDistance(1, Direction.BACKWARD, 0.5);
-        driveForDistance(1, Direction.LEFT, 0.5);
+        driveForDistance(2, false, 0.5);
+        driveForDistance(2, true, 0.5);
+        driveForDistance(2, false, -0.5);
+        driveForDistance(2, true, -0.5);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
