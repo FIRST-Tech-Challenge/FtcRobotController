@@ -16,10 +16,13 @@ public class TeleOp extends OpMode
 {
     private Localizer localizer        = null;
     private MecanumDriveBase mecanumDriveBase = null;
+    private PacManTurnToPos pacMan;
+
     public void init() {
         telemetry.addData("Status", "Initialized");
         localizer = new Localizer(hardwareMap);
         mecanumDriveBase = new MecanumDriveBase(hardwareMap);
+        pacMan = new PacManTurnToPos(localizer, mecanumDriveBase);
         double max;
     }
     @Override
@@ -29,5 +32,6 @@ public class TeleOp extends OpMode
         mecanumDriveBase.gamepadController(gamepad1);
         mecanumDriveBase.driveBaseTelemetry(telemetry);
         telemetry.update();
+
     }
 }
