@@ -98,6 +98,6 @@ public class JamesAuto extends DriveMethods {
         motorFL.setPower(0);
         motorBL.setPower(0);
         motorFR.setPower(0);
-        motorBR.setPower(0;
+        motorBR.setPower(0);
     }
 }
