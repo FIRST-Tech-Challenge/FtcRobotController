@@ -72,23 +72,23 @@ public class Kinematics {
         //determine how much modules must turn in which direction (optimization)
         double turnAmount = target - currentW;
         double turnDirection = Math.signum(turnAmount);
-        double switchMotors = Math.signum(turnAmount);
 
         if(Math.abs(turnAmount) > 180){
             turnAmount = 360 - Math.abs(turnAmount);
             turnDirection *= -1;
         }
+
         if(Math.abs(turnAmount) > 90){
             target += 180;
             target = clamp(target);
             turnAmount = target - currentW;
-            switchMotors = -1;
+            turnDirection *= -1;
             if(Math.abs(turnAmount) > 180){
                 turnAmount = 360 - Math.abs(turnAmount);
             }
         }
-        directionArr[0] = (turnAmount * turnDirection);
-        directionArr[2] = switchMotors;
+        directionArr[0] = Math.abs(turnAmount);
+        directionArr[2] = turnDirection;
 
         return directionArr;
     }

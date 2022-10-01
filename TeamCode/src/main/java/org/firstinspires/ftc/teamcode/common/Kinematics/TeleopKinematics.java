@@ -59,7 +59,11 @@ public class TeleopKinematics extends Kinematics{
             case SPLINE:
                 setLinearSpin();
                 if (Math.abs(currentW - targetW) >= constants.degreeTOLERANCE){
-                    double throttle = (lx==0? 1: Math.tanh(Math.abs(ly / lx)));
+
+                    double throttle;
+                    if (lx != 0) throttle = 1;
+                    else throttle = (lx > ly ? Math.abs(ly/lx) : Math.abs(lx/ly));
+
                     rightThrottle = (rotationSwitchMotors == 1 ? throttle : 1);
                     leftThrottle = (rotationSwitchMotors == 1 ? 1 : throttle);
                     translateSwitchMotors = 1; //robot is always going to spline forward I think
@@ -143,7 +147,7 @@ public class TeleopKinematics extends Kinematics{
     public void setLinearSpin(){
         spinPower = Math.sqrt(Math.pow(lx,2) + Math.pow(ly, 2));
         rotatePower = 0;
-        if (Math.abs(spinPower) >= 1) spinPower = 1 * Math.signum(spinPower);
+        if (Math.abs(spinPower) >= 1) spinPower = 1;
         rightThrottle = 1;
         leftThrottle = 1;
         translationPowerPercentage = 1;
