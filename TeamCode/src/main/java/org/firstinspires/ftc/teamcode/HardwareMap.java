@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+/*
+Wheaton Academy Robotics Team: WARHOG
+This file is the hardware map of robot for FTC 2022-2023
+ */
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
