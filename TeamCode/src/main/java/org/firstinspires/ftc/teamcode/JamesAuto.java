@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -12,19 +12,16 @@ import org.firstinspires.ftc.teamcode.DriveMethods;
 import static org.firstinspires.ftc.teamcode.Variables.*;
 
 @Autonomous(name="JamesAuto", group="B")
-public class JamesAuto extends DriveMethods {
+public class
+JamesAuto extends DriveMethods {
     @Override
 
     public void runOpMode() {
+        initMotorsBlue();
 
         waitForStart();
 
-        driveForTime(10,1,Direction.FORWARD);
-        driveForTime(10,1,Direction.BACKWARD);
-        driveForTime(10,1,Direction.LEFT);
-        driveForTime(10,1,Direction.RIGHT);
-
-        initMotorsBlue();
+        driveForDistance(2,0.5,Direction.FORWARD);
 
         while (opModeIsActive()) {
 
@@ -88,8 +85,8 @@ public class JamesAuto extends DriveMethods {
     public void driveForTime(int seconds, double power, Direction direction){
         //Fl is 0
         //Bl is 1
-        //Br is 2
-        //Fr is 3
+        //Fr is 2
+        //Br is 3
         driveDirection(direction,power);
 
         int mili = seconds*1000;
@@ -99,5 +96,44 @@ public class JamesAuto extends DriveMethods {
         motorBL.setPower(0);
         motorFR.setPower(0);
         motorBR.setPower(0);
+
+    }
+
+    public void driveForDistance(double distance, double power, Direction direction) {
+
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double targetClicks = distance*clicksPerRotation*rotationsPerMeter;
+
+        motorBL.setTargetPosition((int)(targetClicks));
+        motorBR.setTargetPosition((int)(targetClicks));
+        motorFR.setTargetPosition((int)(targetClicks));
+        motorFL.setTargetPosition((int)(targetClicks));
+
+        motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        double avg = 0;
+
+        while (avg<=targetClicks){
+
+            driveDirection(direction,power);
+
+            avg = (Math.abs((motorFL.getCurrentPosition()))+ Math.abs(motorBL.getCurrentPosition())+ Math.abs(motorFR.getCurrentPosition())+ Math.abs(motorBR.getCurrentPosition()))/4;
+
+            telemetry.addLine("Current Distance: " + (avg/(clicksPerRotation*rotationsPerMeter)));
+            telemetry.update();
+        }
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+
+
     }
 }
