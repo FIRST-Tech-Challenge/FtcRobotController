@@ -9,16 +9,19 @@ import org.firstinspires.ftc.teamcode.util.Localizer;
 
 public class PacManTurnToPos {
 private double heading        = 0;
-private double headingOffSet = 0;
-private double compassHeading = 0;
+private double goalHeading    = 0;
+private boolean rightTurn  = false;
 private Localizer localizer   = null;
 CompassSensor                compass;
 
     public PacManTurnToPos(HardwareMap hardwareMap, OpMode opMode, Gamepad gamepad){
         localizer = new Localizer(hardwareMap);
         localizer.handleTracking();
-        compassHeading = compass.getDirection();
-        headingOffSet  = localizer.heading - compassHeading;
-        heading = compassHeading + headingOffSet;
+        localizer.displayTelemetry(opMode.telemetry);
+
+        if(heading > goalHeading){
+
+        }
+
     }
 }
