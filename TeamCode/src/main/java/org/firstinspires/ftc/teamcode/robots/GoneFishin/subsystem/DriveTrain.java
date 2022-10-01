@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.diffEncoderTicksToInches;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -47,7 +48,7 @@ public class DriveTrain implements Subsystem {
 
     private double targetHeading, targetVelocity = 0;
 
-    private Pose2d poseEstimate, poseError, poseVelocity;
+    private Pose2d currentPose;
     private Pose2d driveVelocity, lastDriveVelocity;
 
     private long lastLoopTime, loopTime;
@@ -124,7 +125,7 @@ public class DriveTrain implements Subsystem {
         velocityPID.setOutputRange(-100, 100);
         velocityPID.setContinuous(true);
         velocityPID.setTolerance(HEADING_PID_TOLERANCE);
-        velocityPID.enable();
+        velocityPID.enable();                                                                                     
 
 
 
@@ -133,9 +134,14 @@ public class DriveTrain implements Subsystem {
 
     }
 
+    public void updatePose(){
+        double dLeft = diffEncoderTicksToInches(leftMotor.getCurrentPosition());
+        double dRight = diffEncoderTicksToInches(rightMotor.getCurrentPosition());
+    }
+
     @Override
     public void update(Canvas fieldOverlay) {
-        double currentHeading = imu.getAngularOrientation();
+
     }
 
     @Override

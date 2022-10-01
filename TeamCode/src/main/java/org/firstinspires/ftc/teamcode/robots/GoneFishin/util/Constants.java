@@ -18,33 +18,13 @@ public class Constants {
     // Physical Constants
     //----------------------------------------------------------------------------------------------
 
-    // distance measurements
-    public static final double MIN_CHASSIS_LENGTH = 14.8;
-    public static final double MAX_CHASSIS_LENGTH = 25;
-    public static final double TRACK_WIDTH = 12.132362205;
-    public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
-    public static final double DISTANCE_TARGET_TO_BACK_WHEEL = 8.75;
-    public static final double SHOULDER_TO_ELBOW = 14.031496;
-    public static final double ELBOW_TO_WRIST = 11.0236;
+    // driveTrain
 
-    public static final double HIGH_TIER_SHIPPING_HUB_HEIGHT = 20.25;
-    public static final double MIDDLE_TIER_SHIPPING_HUB_HEIGHT = 16.625;
-    public static final double LOW_TIER_SHIPPING_HUB_HEIGHT = 5.75;
-    public static final double HIGH_TIER_RADIUS = 6;
-    public static final double MIDDLE_TIER_RADIUS = 7.5;
-    public static final double LOW_TIER_RADIUS = 9;
+    public static final double WHEELS_WIDTH = 12.132362205;
+    public static final double DIFF_TICKS_PER_INCH = 3600;
 
-    public static final double SHOULDER_AXLE_TO_GROUND_HEIGHT = 13.75;
 
-    public static double DIFF_WHEEL_RADIUS = 6.5 / 16.0 + 2.991;
-    public static double SWERVE_WHEEL_RADIUS = 6.5 / 16.0 + 3.175;
 
-    // ratios
-    public static double SWIVEL_TICKS_PER_REVOLUTION = 1696.5;
-    public static double DIFF_TICKS_PER_REV = 768;
-    public static double SWERVE_TICKS_PER_REV = 768;
-    public static double DIFF_TICKS_PER_INCH = 30.7708333333;
-    public static double SWERVE_TICKS_PER_INCH = 30.7708333333;
 
     //----------------------------------------------------------------------------------------------
     // Control Constants
@@ -113,17 +93,12 @@ public class Constants {
         return ticks / DIFF_TICKS_PER_INCH;
     }
 
-    public static double swerveEncoderTicksToInches(double ticks) {
-        return ticks / SWERVE_TICKS_PER_INCH;
-    }
+
 
     public static double diffInchesToEncoderTicks(double inches) {
         return inches * DIFF_TICKS_PER_INCH;
     }
 
-    public static double swerveInchesToEncoderTicks(double inches) {
-        return inches * SWERVE_TICKS_PER_INCH;
-    }
 
     public static double getMotorVelocityF(double ticksPerSecond) {
         return 32767 / ticksPerSecond;
