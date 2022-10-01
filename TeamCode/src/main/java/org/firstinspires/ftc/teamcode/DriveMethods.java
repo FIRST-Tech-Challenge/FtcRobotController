@@ -78,7 +78,7 @@ public class DriveMethods extends LinearOpMode{
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         double distanceTraveled = 0;
-        int targetPos = (int) (distanceMeters * clicksPerRotation * rotationsPerMeter);
+        int targetPos = (int) ((distanceMeters * clicksPerRotation * rotationsPerMeter)/1.15);
         motorFL.setTargetPosition((targetPos));
         motorBL.setTargetPosition((targetPos));
         motorFR.setTargetPosition((targetPos));

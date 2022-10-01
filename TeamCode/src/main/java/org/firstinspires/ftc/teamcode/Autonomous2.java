@@ -58,9 +58,9 @@ public class Autonomous2 extends DriveMethods {
         runtime.reset();
 
         driveForDistance(1, Direction.FORWARD, 0.5);
-        driveForDistance(1, Direction.RIGHT, 0.5);
-        driveForDistance(1, Direction.BACKWARD, 0.5);
-        driveForDistance(1, Direction.LEFT, 0.5);
+        //driveForDistance(1, Direction.RIGHT, 0.25);
+        //driveForDistance(1, Direction.BACKWARD, 0.25);
+        //driveForDistance(1, Direction.LEFT, 0.25);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
