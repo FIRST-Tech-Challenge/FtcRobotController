@@ -20,8 +20,9 @@ public class Constants {
 
     // driveTrain
 
-    public static final double WHEELS_WIDTH = 12.132362205;
+    public static final double DISTANCE_BETWEEN_WHEELS= 12.132362205;
     public static final double DIFF_TICKS_PER_INCH = 3600;
+
 
 
 

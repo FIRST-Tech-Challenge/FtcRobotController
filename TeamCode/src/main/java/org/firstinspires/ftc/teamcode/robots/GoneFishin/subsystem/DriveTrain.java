@@ -7,7 +7,8 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.diffEncoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.*;
+
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -26,8 +27,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.GoneFishin.simulation.ServoSim;
 
+import org.firstinspires.ftc.teamcode.robots.GoneFishin.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.CRServoSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DistanceSensorSim;
@@ -84,7 +90,7 @@ public class DriveTrain implements Subsystem {
             leftMotor = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
             rightMotor = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
 
-            List<DcMotorEx> motors = Arrays.asList(leftMotor, rightMotor, swerveMotor, swivelMotor);
+            List<DcMotorEx> motors = Arrays.asList(leftMotor, rightMotor);
 
             for (DcMotorEx motor : motors) {
                 MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -131,17 +137,99 @@ public class DriveTrain implements Subsystem {
 
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
+        currentPose = new Pose2d(0,0,0);
 
+        //TODO, starting pose
+
+
+    }
+    public double updateHeading(double dtheta){
+        //TODO Mix IMU data with encoder data
+        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS);
+
+        return orientation.firstAngle;
     }
 
     public void updatePose(){
         double dLeft = diffEncoderTicksToInches(leftMotor.getCurrentPosition());
         double dRight = diffEncoderTicksToInches(rightMotor.getCurrentPosition());
+
+        if(dLeft == dRight) {
+            //in this case, robot just moves foreward, and just use simple trig to update pose
+            currentPose = new Pose2d(currentPose.getX() + dLeft*Math.sin(currentPose.getHeading()),
+                    currentPose.getY() + dRight*Math.cos(currentPose.getHeading()));
+            return;
+        }
+        if((dLeft > 0 && dRight > 0) || (dLeft < 0 && dRight < 0)){
+
+        // in this case, robot is turning with both motors in the same direction.
+
+                double R = Constants.DISTANCE_BETWEEN_WHEELS / (1 - Math.min(dLeft / dRight, dRight/dLeft));
+                double midpointRadius = R - Constants.DISTANCE_BETWEEN_WHEELS/2;
+
+                double thetaModifier = (Math.abs(dRight) > Math.abs(dLeft) ? 0 : Math.PI);
+                double x1 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
+                double y1 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
+
+                double newTheta = updateHeading(R/Math.max(Math.abs(dRight), Math.abs(dLeft)));
+                //if turning left, we use normal theta
+                //if turning right, we use theta + pi
+
+                double x2 = Math.cos(newTheta + thetaModifier) * midpointRadius;
+                double y2 = Math.sin(newTheta + thetaModifier) * midpointRadius;
+                currentPose = new Pose2d( currentPose.getX() + (x2 - x1),
+                        currentPose.getY() + (y2 - y1), newTheta);
+                return;
+
+        }
+        if (dLeft != 0 && dRight != 0) {
+            //r + l = L
+            //r = dr/dl l
+
+            double rLeft = Constants.DISTANCE_BETWEEN_WHEELS / (1 + Math.abs(dRight/dLeft));
+            // if rLeft is greater than half the distance between the wheels, the center of the circle is to the right
+            // if rLeft is less than half the distance between the wheels, the center of the circle is to the left.
+            double rRight = Constants.DISTANCE_BETWEEN_WHEELS - rLeft;
+            double midpointRadius = Math.max(rLeft, rRight) - Constants.DISTANCE_BETWEEN_WHEELS/2;
+
+
+            double thetaModifier = (rRight > rLeft ? 0 : Math.PI);
+            double x1 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
+            double y1 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
+
+            double newTheta = updateHeading(Math.abs(rRight/dRight));
+            double x2 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
+            double y2 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
+            currentPose = new Pose2d( currentPose.getX() + (x2 - x1),
+                    currentPose.getY() + (y2 - y1), newTheta);
+            return;
+
+
+        }
+        else {
+
+            double midpointRadius = Constants.DISTANCE_BETWEEN_WHEELS/2;
+
+
+            double thetaModifier = (dLeft == 0 ? 0 : Math.PI);
+            double x1 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
+            double y1 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
+
+            double newTheta = updateHeading(Math.max(Math.abs(dRight), Math.abs(dLeft)) / Constants.DISTANCE_BETWEEN_WHEELS);
+            double x2 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
+            double y2 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
+            currentPose = new Pose2d( currentPose.getX() + (x2 - x1),
+                    currentPose.getY() + (y2 - y1), newTheta);
+            return;
+
+
+        }
+
     }
 
     @Override
     public void update(Canvas fieldOverlay) {
-
+        updatePose();
     }
 
     @Override
