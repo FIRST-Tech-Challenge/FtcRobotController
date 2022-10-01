@@ -18,7 +18,11 @@ public class DriveMethods extends LinearOpMode{
     public void runOpMode() {}
 
 
-
+    public enum Direction{
+        FORWARD_OR_BACKWARD,
+        ROTATE_LEFT_OR_ROTATE_RIGHT,
+        RIGHT_OR_LEFT,
+    }
     public void driveForDistance(double distanceMeters, boolean doStrafe, double power) { // distance: 2, strafe: false, power: 0.5
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -49,6 +53,77 @@ public class DriveMethods extends LinearOpMode{
             motorFR.setPower(power);
             motorBR.setPower(power);
         }
+        //targetPos = motorFL.getTargetPosition();
+        int currentPos = motorFL.getCurrentPosition();
+        int FLPosition;
+        int BLPosition;
+        int FRPosition;
+        int BRPosition;
+        int avgPosition = 0;
+        boolean hasNotReachedTarget = true;
+        while (targetPos >= avgPosition) {
+            FLPosition = Math.abs(motorFL.getCurrentPosition());
+            BLPosition = Math.abs(motorBL.getCurrentPosition());
+            FRPosition = Math.abs(motorFR.getCurrentPosition());
+            BRPosition = Math.abs(motorBR.getCurrentPosition());
+            avgPosition = (int)(FLPosition + BLPosition + FRPosition + BRPosition)/4;
+            telemetry.addLine("Current Position: " + avgPosition);                      
+            telemetry.addLine("targetPos " + targetPos);
+            telemetry.update();
+        }
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+    }
+    public void driveForDistanceWithNewEnum(double distanceMeters, Direction movementDirection, double power) { // distance: 2, strafe: false, power: 0.5
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        double distanceTraveled = 0;
+        int targetPos = (int) (distanceMeters * clicksPerRotation * rotationsPerMeter);
+        motorFL.setTargetPosition((targetPos));
+        motorBL.setTargetPosition((targetPos));
+        motorFR.setTargetPosition((targetPos));
+        motorBR.setTargetPosition((targetPos));
+
+
+
+        motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        switch(movementDirection) {
+            case FORWARD_OR_BACKWARD:
+                motorFL.setPower(power);
+                motorBL.setPower(power);
+                motorFR.setPower(power);
+                motorBR.setPower(power);
+                
+                break;
+            case ROTATE_LEFT_OR_ROTATE_RIGHT:
+                break;
+            case RIGHT_OR_LEFT:
+                motorFL.setPower(power);
+                motorBL.setPower(-power);
+                motorFR.setPower(-power);
+                motorBR.setPower(power);
+                
+        }
+        /*
+        if (doStrafe) {
+            motorFL.setPower(power);
+            motorBL.setPower(-power);
+            motorFR.setPower(-power);
+            motorBR.setPower(power);
+        } else {
+            motorFL.setPower(power);
+            motorBL.setPower(power);
+            motorFR.setPower(power);
+            motorBR.setPower(power);
+        }
+        */
         //targetPos = motorFL.getTargetPosition();
         int currentPos = motorFL.getCurrentPosition();
         int FLPosition;
