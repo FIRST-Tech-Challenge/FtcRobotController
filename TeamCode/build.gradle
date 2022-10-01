@@ -18,7 +18,7 @@ apply from: '../build.dependencies.gradle'
 android {
    sourceSets {
         main.java.srcDirs += '../../terkel/java'
-        main.java.srcDirs += '../../FTC-Team-5218/2022'
+        main.java.srcDirs += '../../FTC-Team-5218/2023'
     }
     namespace = 'org.firstinspires.ftc.teamcode'
 }
@@ -26,4 +26,6 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'org.openftc:apriltag:1.1.0'
+    implementation 'org.openftc:easyopencv:1.5.2'
 }
