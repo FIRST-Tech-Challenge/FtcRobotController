@@ -124,5 +124,10 @@ public class marksAutonomous extends DriveMethods {
             telemetry.addLine("Current Distance: " + currentClicks/clicksPerRotation/rotationsPerMeter);
             telemetry.update();
         }
+
+        motorBL.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorFR.setPower(0);
     }
 }
