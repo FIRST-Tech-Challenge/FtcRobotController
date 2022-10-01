@@ -29,10 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Variables.motorBL;
-import static org.firstinspires.ftc.teamcode.Variables.motorBR;
-import static org.firstinspires.ftc.teamcode.Variables.motorFL;
-import static org.firstinspires.ftc.teamcode.Variables.motorFR;
+import static org.firstinspires.ftc.teamcode.Variables.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
