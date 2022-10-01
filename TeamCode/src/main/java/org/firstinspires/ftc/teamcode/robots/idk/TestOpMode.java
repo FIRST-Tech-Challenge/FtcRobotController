@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@TeleOp(name="Basic: OpMode", group="Challenge")
+@TeleOp(name="Iron Core OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
     //variable setup
     private DcMotor motorFrontRight = null;
