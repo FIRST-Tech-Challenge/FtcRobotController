@@ -37,14 +37,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Autonomous2", group="Linear Opmode")
+@Autonomous(name="DamienAutonomous", group="Linear Opmode")
 
-public class Autonomous2 extends DriveMethods {
+public class DamienAutonomous extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-
-
 
     @Override
     public void runOpMode() {
@@ -58,9 +56,9 @@ public class Autonomous2 extends DriveMethods {
         runtime.reset();
 
         driveForDistance(1, Direction.FORWARD, 0.5);
-        //driveForDistance(1, Direction.RIGHT, 0.25);
-        //driveForDistance(1, Direction.BACKWARD, 0.25);
-        //driveForDistance(1, Direction.LEFT, 0.25);
+        driveForDistance(1, Direction.RIGHT, 0.5);
+        driveForDistance(1, Direction.BACKWARD, 0.5);
+        driveForDistance(1, Direction.LEFT, 0.5);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
