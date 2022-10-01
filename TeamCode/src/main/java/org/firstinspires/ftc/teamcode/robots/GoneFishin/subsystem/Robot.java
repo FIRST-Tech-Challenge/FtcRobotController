@@ -44,7 +44,7 @@ import java.util.Map;
 @Config(value = "FFRobot")
 public class Robot implements Subsystem {
 
-    public DriveTrain driveTrain;
+    public OldDriveTrain driveTrain;
     public Turret turret;
     public Crane crane;
     public Gripper gripper;
@@ -70,7 +70,7 @@ public class Robot implements Subsystem {
         }
 
         // initializing subsystems
-        driveTrain = new DriveTrain(hardwareMap, simulated);
+        driveTrain = new OldDriveTrain(hardwareMap, simulated);
         turret = new Turret(hardwareMap, simulated);
         crane = new Crane(hardwareMap, turret, simulated);
         gripper = new Gripper(hardwareMap, simulated);
