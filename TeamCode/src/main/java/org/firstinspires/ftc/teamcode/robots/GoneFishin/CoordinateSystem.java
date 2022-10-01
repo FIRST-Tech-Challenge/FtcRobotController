@@ -22,19 +22,19 @@ public class CoordinateSystem {
     }
 
 
-    public int deltaX(){
+    public double deltaX(){
         return target.x - pos.x;
     }
 
-    public int deltaY(){
+    public double deltaY(){
         return target.y - pos.y;
     }
 
-    public int x(){
+    public double x(){
         return pos.x;
     }
 
-    public int y(){
+    public double y(){
         return pos.y;
     }
 
