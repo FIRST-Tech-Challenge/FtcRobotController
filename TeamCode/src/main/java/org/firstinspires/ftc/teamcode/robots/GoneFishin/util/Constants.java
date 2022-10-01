@@ -7,6 +7,13 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Config(value = "FFConstants")
 public class Constants {
 
+
+    //Subsystems
+    //----------------------------------------------------------------------------------------------
+
+    //Crane Subsystems
+    public static final int BULB_SERVO_OPEN= 0;
+    public static final int BULB_SERVO_CLOSED = 0;
     //----------------------------------------------------------------------------------------------
     // Physical Constants
     //----------------------------------------------------------------------------------------------
