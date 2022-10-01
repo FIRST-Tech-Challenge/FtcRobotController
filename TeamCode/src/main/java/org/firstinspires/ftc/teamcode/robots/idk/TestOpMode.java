@@ -31,6 +31,8 @@ public class TestOpMode extends OpMode {
         motorBackLeft = this.hardwareMap.get(DcMotor.class, "motorBackLeft");
         motorFrontRight = this.hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
+        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
     }
     @Override
     public void loop() {
@@ -39,6 +41,10 @@ public class TestOpMode extends OpMode {
     }
     public void tankDrive()
     {
+        powerRight = 0;
+        powerLeft = 0;
+
+
         if(Math.abs(gamepad1.left_stick_y) > DEADZONE)
         {
             powerLeft = gamepad1.left_stick_y;
@@ -57,13 +63,13 @@ public class TestOpMode extends OpMode {
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
         double rightX = gamepad1.right_stick_x;
-        final double v1 = r * Math.cos(robotAngle) + rightX;
-        final double v2 = r * Math.sin(robotAngle) - rightX;
-        final double v3 = r * Math.sin(robotAngle) + rightX;
-        final double v4 = r * Math.cos(robotAngle) - rightX;
+        final double v1 = r * Math.cos(robotAngle) - rightX;
+        final double v2 = r * Math.sin(robotAngle) + rightX;
+        final double v3 = r * Math.sin(robotAngle) - rightX;
+        final double v4 = r * Math.cos(robotAngle) + rightX;
         motorFrontLeft.setPower(v1);
-        motorFrontRight.setPower(v2);
+        motorFrontRight.setPower(v4);
         motorBackLeft.setPower(v3);
-        motorBackRight.setPower(v4);
+        motorBackRight.setPower(v2);
     }
 }
