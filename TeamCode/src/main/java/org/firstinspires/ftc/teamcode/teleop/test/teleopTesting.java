@@ -94,7 +94,7 @@ public class teleopTesting extends OpMode {
 
     private void DriveTrainMove(){
 //        posSystem.calculatePos();
-
+        testMove(1, 0);
         telemetry.update();
     }
 
