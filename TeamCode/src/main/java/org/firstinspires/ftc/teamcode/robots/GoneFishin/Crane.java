@@ -83,9 +83,6 @@ public class Crane {
         this.extendArm = extendArm;
         this.bulbServo = bulbServo;
 
-
-        //PID
-        extendPID = new PIDController(kpExtendArm, kiExtendArm, kdExtendArm);
         elbowPID = new PIDController(kpElbow, kiElbow, kdElbow);
         elbowPID.setIntegralCutIn(40);
         elbowPID.enableIntegralZeroCrossingReset(false);

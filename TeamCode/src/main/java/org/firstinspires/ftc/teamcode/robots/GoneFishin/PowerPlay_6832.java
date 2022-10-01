@@ -521,11 +521,24 @@ public class PowerPlay_6832 extends OpMode {
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
     @Override
     public void init_loop() {
+
         handleStateSwitch();
         handleVisionProviderSwitch();
         handlePregameControls();
 
         update();
+
+
+        /*
+        try {
+            Thread.sleep(0);
+        }catch(InterruptedException e){}
+
+
+         */
+
+
+
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
@@ -690,7 +703,7 @@ public class PowerPlay_6832 extends OpMode {
 
         }
         if (toggleAllowed(gamepad1.dpad_right, dpad_right, 1)) {
-            robot.crane.toggleGripper();
+            robot.crane.openGripper();
         }
         if (toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseFishin.Articulation.retractFromTower);
@@ -770,9 +783,9 @@ public class PowerPlay_6832 extends OpMode {
 
         }
 
-        if (toggleAllowed(gamepad1.x, x, 1)) {
+        if (stickyGamepad1.x) {
 
-            robot.crane.hookToggle();
+            robot.crane.joystickToggleGripper();
         }
 
         if (toggleAllowed(gamepad1.b, b, 1)) {
@@ -780,20 +793,8 @@ public class PowerPlay_6832 extends OpMode {
             robot.crane.extendToPosition(1500, 1.0);
         }
 
-        // // Foundation Gripper
-        // if (toggleAllowed(gamepad1.x, x, 1)) {
-        //// robot.crane.hookToggle();
-        // robot.crane.currentTowerHeight = 3;
-        // robot.articulate(PoseSkystone.Articulation.extendToTowerHeightArticulation);
-        // }
-
         if (toggleAllowed(gamepad1.dpad_left, dpad_left, 1)) {
             robot.articulate(PoseFishin.Articulation.yoinkStone);
-        }
-
-        if (toggleAllowed(gamepad1.y, y, 1) && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-            robot.crane.servoGripper.setPosition(servoNormalize(800));
-
         }
 
         // Pad1 Bumbers - Rotate Cardinal
@@ -809,7 +810,7 @@ public class PowerPlay_6832 extends OpMode {
         // gamepad2 controls
 
         if (toggleAllowed(gamepad2.a, a, 2)) {
-            robot.crane.toggleGripper();
+            robot.crane.joystickToggleGripper();
         }
 
         if (toggleAllowed(gamepad2.b, b, 2)) {
@@ -1115,7 +1116,6 @@ public class PowerPlay_6832 extends OpMode {
         double averageUpdateTime = averageUpdateTimeSmoother.update(updateTime);
 
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
-
         // handling op mode telemetry
         opModeTelemetryMap.put("Active", active);
         if(initializing) {
@@ -1139,6 +1139,7 @@ public class PowerPlay_6832 extends OpMode {
                 //opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
                 break;
         }
+
         handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
         //todo renable once we put stuff into refactored subsystems
         // handling subsystem telemetry
@@ -1160,7 +1161,6 @@ public class PowerPlay_6832 extends OpMode {
         */
 
         //handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
-
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
 

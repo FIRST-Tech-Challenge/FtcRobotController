@@ -837,7 +837,7 @@ public class PoseFishin {
             case 3:
                 ///todo: DANGER - we are temporarily overriding extendMin so the robat can fully retract to a start-legal position Onece the opmode goes active it is very important that extendMin gets reset to 320
                 if(crane.extendToPositionUnsafe(0, 1)) {
-                    crane.toggleGripper();
+                    crane.openGripper();
                     calibrateOtherStage = 0;
                     return true;
                 }
@@ -1122,7 +1122,7 @@ public class PoseFishin {
     public boolean retractFromTower() {
         switch (miniStateRetTow) {
             case (0):
-                crane.toggleGripper();
+                crane.openGripper();
                 retractTimer = futureTime(.1f);
                 miniStateRetTow++;
                 break;
