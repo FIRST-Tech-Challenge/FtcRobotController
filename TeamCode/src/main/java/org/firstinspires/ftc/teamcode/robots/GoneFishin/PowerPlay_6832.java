@@ -521,11 +521,24 @@ public class PowerPlay_6832 extends OpMode {
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
     @Override
     public void init_loop() {
+
         handleStateSwitch();
         handleVisionProviderSwitch();
         handlePregameControls();
 
         update();
+
+
+        /*
+        try {
+            Thread.sleep(0);
+        }catch(InterruptedException e){}
+
+
+         */
+
+
+
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
@@ -1103,7 +1116,6 @@ public class PowerPlay_6832 extends OpMode {
         double averageUpdateTime = averageUpdateTimeSmoother.update(updateTime);
 
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
-
         // handling op mode telemetry
         opModeTelemetryMap.put("Active", active);
         if(initializing) {
@@ -1127,6 +1139,7 @@ public class PowerPlay_6832 extends OpMode {
                 //opModeTelemetryMap.put("Diagnostic Step", diagnosticStep);
                 break;
         }
+
         handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
         //todo renable once we put stuff into refactored subsystems
         // handling subsystem telemetry
@@ -1148,7 +1161,6 @@ public class PowerPlay_6832 extends OpMode {
         */
 
         //handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
-
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
 

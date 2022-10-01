@@ -57,6 +57,9 @@ public class SampleOpMode extends LinearOpMode {
     private DcMotor extension = null;
     private DcMotor turret = null;
 
+    long loopTime;
+    long lastLoopClockTime;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -65,13 +68,14 @@ public class SampleOpMode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        extension = hardwareMap.get(DcMotor.class, "extender");
-        turret = hardwareMap.get(DcMotor.class, "turret");
-
+        extension = hardwareMap.get(DcMotor.class, "motorBackLeft");
+        //turret = hardwareMap.get(DcMotor.class, "motorBackLeft");
+        extension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         extension.setDirection(DcMotor.Direction.FORWARD);
-        turret.setDirection(DcMotor.Direction.REVERSE);
+        //turret.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -100,12 +104,125 @@ public class SampleOpMode extends LinearOpMode {
             // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
-            extension.setPower(leftPower);
-            turret.setPower(rightPower);
+            //extension.setPower(leftPower);
+            //turret.setPower(rightPower);
+            long loopClockTime = System.nanoTime();
+            loopTime = loopClockTime - lastLoopClockTime;
+            lastLoopClockTime = loopClockTime;
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Status", "Loop Time: "+(loopTime* 1e-6));
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+            extension.getCurrentPosition();
+
+            try{
+                Thread.sleep(30);
+            }catch(InterruptedException e){}
+
+
+
+
+
+            //telemetry.addData("Status", "Wheel: "+turret.getCurrentPosition());
+            //telemetry.addData("Status", "Wheel: "+extension.getCurrentPosition());
+            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }

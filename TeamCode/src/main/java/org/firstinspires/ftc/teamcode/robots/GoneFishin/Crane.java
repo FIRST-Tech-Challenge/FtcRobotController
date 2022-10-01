@@ -527,7 +527,7 @@ public class Crane {
 
         switch(calibrateStage){
             case 0: //open elbow with limited power until it stalls at top of travel
-                // retract extendabob same way
+                //  retract extendabob same way
                 setElbowActivePID(false);
                 setExtendABobPwr(1);
                 setElbowPwr(1);
