@@ -58,7 +58,8 @@ public class DriveMethods extends LinearOpMode{
         boolean hasNotReachedTarget = true;
         while (targetPos >= avgPosition) {
             FLPosition = Math.abs(motorFL.getCurrentPosition());
-            BLPosition = Math.abs(motorBL.getCurrentPosition());
+            BLPosition = Mat
+            h.abs(motorBL.getCurrentPosition());
             FRPosition = Math.abs(motorFR.getCurrentPosition());
             BRPosition = Math.abs(motorBR.getCurrentPosition());
             avgPosition = (int)(FLPosition + BLPosition + FRPosition + BRPosition)/4;
