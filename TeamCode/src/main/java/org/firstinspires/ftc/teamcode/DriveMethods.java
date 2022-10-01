@@ -17,7 +17,7 @@ public class DriveMethods extends LinearOpMode{
     @Override
     public void runOpMode() {}
 
-
+    /*
     public void driveForDistance(double distanceMeters, boolean doStrafe, double power) { // distance: 2, strafe: false, power: 0.5
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -71,6 +71,7 @@ public class DriveMethods extends LinearOpMode{
         motorFR.setPower(0);
         motorBR.setPower(0);
     }
+    */
 
     public void driveForDistance(double distanceMeters, Direction movementDirection, double power) { // distance: 2, strafe: false, power: 0.5
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
