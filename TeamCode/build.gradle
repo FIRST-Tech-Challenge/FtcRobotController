@@ -16,6 +16,10 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
+   sourceSets {
+        main.java.srcDirs += '../../terkel/java'
+        main.java.srcDirs += '../../FTC-Team-5218/2022'
+    }
     namespace = 'org.firstinspires.ftc.teamcode'
 }
 
