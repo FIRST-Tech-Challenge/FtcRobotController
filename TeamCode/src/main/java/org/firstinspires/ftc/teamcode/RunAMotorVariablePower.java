@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
@@ -19,7 +18,7 @@ public class RunAMotorVariablePower extends LinearOpMode {
         telemetry.update();
 
         myMotor = hardwareMap.get(DcMotor.class, "myMotor");
-        myMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        myMotor.setDirection(DcMotor.Direction.FORWARD);
         waitForStart();
 
         while(opModeIsActive()){

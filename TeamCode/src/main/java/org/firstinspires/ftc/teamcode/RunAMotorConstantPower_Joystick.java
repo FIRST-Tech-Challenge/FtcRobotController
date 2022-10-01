@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
-public class RunAMotorConstantPower extends LinearOpMode{
+public class RunAMotorConstantPower_Joystick extends LinearOpMode{
 
     // Declare Motor
     private DcMotor myMotor = null;
@@ -26,7 +26,7 @@ public class RunAMotorConstantPower extends LinearOpMode{
         // runs until the end of the match (until the driver presses STOP
         while(opModeIsActive()){
             // If the a-button is pressed, set the motor to a certain power
-            if(gamepad1.a == true){
+            if(-gamepad1.left_stick_y > 0.5){
                 myMotor.setPower(0.5);
             }
             else{
@@ -34,7 +34,7 @@ public class RunAMotorConstantPower extends LinearOpMode{
                 myMotor.setPower(0.0);
             }
             // Telemetry so that we can see the value of the motor
-            telemetry.addData("Button A", gamepad1.a);
+            telemetry.addData("Gamepad Left Stick Y", -gamepad1.left_stick_y);
             telemetry.update();
         }
     }
