@@ -150,6 +150,14 @@ public class DriveTrain implements Subsystem {
         return orientation.firstAngle;
     }
 
+    public void setTargetVelocity(double vel){
+        velocityPID.setSetpoint(vel);
+    }
+
+    public void setTargetHeading(double vel){
+        headingPID.setSetpoint(vel);
+    }
+
     public void updatePose(){
         double dLeft = diffEncoderTicksToInches(leftMotor.getCurrentPosition());
         double dRight = diffEncoderTicksToInches(rightMotor.getCurrentPosition());
