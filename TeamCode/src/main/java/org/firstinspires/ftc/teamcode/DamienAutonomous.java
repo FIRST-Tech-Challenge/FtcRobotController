@@ -43,9 +43,47 @@ public class DamienAutonomous extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    private BNO055IMU imu;
+    private double previousHeading = 0;
+    private double intergratedHeading = 0;
+    public void CalibrateIMU() {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+    }
+    public double getCurrentZ() {
+        Orientation currentAngle = imu.getAngularOrientation(AxesRefrence.INTRISTIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        double currentZ = currentAngle.firstAngle;
+        return currentZ;
+    }
+    public double getCumulativeZ(){
+        double currentHeading = getCurrentZ();
+        double deltaHeading = currentHeading - previousHeading;
+        if(deltaHeading <= -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -=360;
+        }
+
+        intergratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return intergratedHeading;
+
+    }
     @Override
     public void runOpMode() {
+        
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
