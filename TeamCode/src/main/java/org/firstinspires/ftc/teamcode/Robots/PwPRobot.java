@@ -19,7 +19,8 @@ public class PwPRobot extends BasicRobot{
     public CVMaster cv= null;
     public Field field = null;
     public SampleMecanumDrive roadrun = null;
-    public PwPRobot(LinearOpMode opMode) {
+    public static boolean isTeleop;
+    public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode);
         roadrun = new SampleMecanumDrive(op.hardwareMap);
         field = new Field(roadrun);
@@ -28,6 +29,7 @@ public class PwPRobot extends BasicRobot{
         clawExtension = new ClawExtension();
         lift = new Lift();
         cv = new CVMaster(roadrun, field);
+        isTeleop = p_isTeleop;
     }
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         if (queuer.queue(false, !roadrun.isBusy())) {

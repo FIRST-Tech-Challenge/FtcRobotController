@@ -13,7 +13,7 @@ public class StickObserverTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        PwPRobot robot = new PwPRobot(this);
+        PwPRobot robot = new PwPRobot(this, true);
         sleep(500);
         robot.roadrun.setPoseEstimate(new Pose2d(41, 61, Math.toRadians(270)));
         robot.cv.observeStick();

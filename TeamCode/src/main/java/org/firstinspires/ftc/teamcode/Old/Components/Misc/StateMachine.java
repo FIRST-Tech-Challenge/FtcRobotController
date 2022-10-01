@@ -187,7 +187,7 @@ public class StateMachine {
         }
     }
 
-    public StateMachine( boolean isTeleOp) {
+    public StateMachine(boolean isTeleOp) {
         teleOp = isTeleOp;
         logger.createFile("SequencingStates", "Runtime,State,Value");
         if (teleOp) {
