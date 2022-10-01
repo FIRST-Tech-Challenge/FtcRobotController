@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.test;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+
+@TeleOp(name="Test Teleop", group="Drive")
 
 public class teleopTesting extends OpMode {
     HardwareDrive robot = new HardwareDrive();
