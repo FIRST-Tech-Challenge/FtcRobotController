@@ -31,12 +31,19 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Variables.*;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+@Disabled
 @Autonomous(name="DamienAutonomous", group="Linear Opmode")
 
 public class DamienAutonomous extends DriveMethods {
@@ -61,8 +68,9 @@ public class DamienAutonomous extends DriveMethods {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
+    /*
     public double getCurrentZ() {
-        Orientation currentAngle = imu.getAngularOrientation(AxesRefrence.INTRISTIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, BNO055IMU.AngleUnit.DEGREES);
         double currentZ = currentAngle.firstAngle;
         return currentZ;
     }
@@ -81,6 +89,7 @@ public class DamienAutonomous extends DriveMethods {
         return intergratedHeading;
 
     }
+    */
     @Override
     public void runOpMode() {
         
