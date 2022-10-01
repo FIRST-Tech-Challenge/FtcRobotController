@@ -117,6 +117,7 @@ public class marksAutonomous extends DriveMethods {
 
 
         while(currentClicks < targetClicks) {
+            driveDirection(direction, power);
             currentClicks = (Math.abs(motorBL.getCurrentPosition()) +
             Math.abs(motorFL.getCurrentPosition()) +
             Math.abs(motorBR.getCurrentPosition()) +
