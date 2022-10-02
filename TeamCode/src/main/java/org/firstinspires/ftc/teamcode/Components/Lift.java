@@ -11,17 +11,8 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 import java.util.ArrayList;
 
+
 public class Lift {
-    //TODO: RFMotor
-    private RFMotor liftMotor;
-    public Lift(){ //constructor
-        // hardware map
-        logger.createFile("LiftLog", "Time Junction Ticks");
-        double maxTick = 0.0; //idk values yet - RFMotor params
-        double minTick = 0.0; //idk values yet - RFMotor params
-        ArrayList<Double> coeffs = new ArrayList<>(); // RFMotor params
-        liftMotor = new RFMotor("liftMotor", DcMotor.RunMode.RUN_USING_ENCODER, PwPRobot.isTeleop, coeffs, maxTick, minTick);
-    }
     public enum liftConstants{
         LIFT_HIGH_JUNCTION(0.0),
         LIFT_MED_JUNCTION(0.0),
@@ -34,6 +25,16 @@ public class Lift {
             value = num_of_ticks;
         }
         //make enum for all the tick counts for ground low med high junctions, can set with setGoal(int goal);
+    }
+    //TODO: RFMotor
+    private RFMotor liftMotor;
+    public Lift(){ //constructor
+        // hardware map
+        logger.createFile("LiftLog", "Time Junction Ticks");
+        double maxTick = 0.0; //idk values yet - RFMotor params
+        double minTick = 0.0; //idk values yet - RFMotor params
+        ArrayList<Double> coeffs = new ArrayList<>(); // RFMotor params
+        liftMotor = new RFMotor("liftMotor", DcMotor.RunMode.RUN_USING_ENCODER, PwPRobot.isTeleop, coeffs, maxTick, minTick);
     }
     public void liftToPosition(liftConstants targetHeight){//TODO: make sure this is async
         //use rfmotor setPosition function to lift in accordance with the enum

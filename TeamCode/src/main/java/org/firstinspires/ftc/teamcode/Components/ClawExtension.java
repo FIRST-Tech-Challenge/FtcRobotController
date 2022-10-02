@@ -7,6 +7,10 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+//CLAWEXTENSION STATE MACHINE:
+//CLAW_EXTENDING, CLAW_EXTENDED_FULLY, CLAW_RETRACTING, CLAW_RETRACTED_FULLY, CLAW_EXTENDED_TO_CUSTOM_POSITION
+//wrote out basically what state machines will look like with if statements & numbers to indicate state
+
 //TODO: capitalize c in ClawExtension
 public class ClawExtension {
     public static int ClawExtended = 0; // 0 = retracted, 1 = custom extended, 2 = completely extended
