@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.blackswan;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -27,6 +29,7 @@ public class ParkPosition extends LinearOpMode {
     public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
         pipeline = new DeterminationPipeline(telemetry);
         webcam.setPipeline(pipeline);
 
@@ -42,8 +45,6 @@ public class ParkPosition extends LinearOpMode {
             @Override
             public void onError(int errorCode) {
 
-
-
             }
         });
 
@@ -54,6 +55,13 @@ public class ParkPosition extends LinearOpMode {
             telemetry.addData("Lightness", pipeline.AVG_L);
             telemetry.addData("GM", pipeline.AVG_A);
             telemetry.addData("BY", pipeline.AVG_B);
+
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.put("Lightness", pipeline.AVG_L);
+            packet.put("GM", pipeline.AVG_A);
+            packet.put("BY", pipeline.AVG_B);
+            dashboard.sendTelemetryPacket(packet);
 
             telemetry.update();
 
@@ -80,10 +88,10 @@ public class ParkPosition extends LinearOpMode {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
-        static final Point DETECTION_ANCHOR = new Point(50, 50);
+        static final Point DETECTION_ANCHOR = new Point(140, 70);
 
-        static final int DETECTION_WIDTH = 30;
-        static final int DETECTION_HEIGHT = 30;
+        static final int DETECTION_WIDTH = 20;
+        static final int DETECTION_HEIGHT = 20;
 
         Point region1_pointA = new Point(
                 DETECTION_ANCHOR.x,
@@ -147,7 +155,20 @@ public class ParkPosition extends LinearOpMode {
 
             telemetry.update();
 
-            // insert parking pos code here
+            // A = GM // B = BY
+            // one dot values LIGHTNESS 117-118, GM 177-178, BY 130-139
+            // two dot values LIGHTNESS 197-198, GM 117-118, BY 178-189
+            // three dot values LIGHTNESS 195-196, GM 112-113, BY 97-98
+
+            if((AVG_L > 116) && (AVG_L < 119) && (AVG_A > 176) && (AVG_A < 179) && (AVG_B > 129) && (AVG_B < 140)){
+                //telemetry.addData("ONE DOT", "Current park position");
+            } else if((AVG_L > 196) && (AVG_L < 199) && (AVG_A > 116) && (AVG_A < 119) && (AVG_B > 177) && (AVG_B < 190)){
+                //telemetry.addData("TWO DOT", "Current park position");
+            } else if((AVG_L > 194) && (AVG_L < 197) && (AVG_A > 111) && (AVG_A < 114) && (AVG_B > 96) && (AVG_B < 99)){
+                //telemetry.addData("THREE DOT", "Current park position");
+            } else {
+                //telemetry.addData("NO DOT", "Current park position");
+            };
 
             telemetry.update();
 
@@ -166,7 +187,6 @@ public class ParkPosition extends LinearOpMode {
         public int getAnalysis3() {
             return AVG_B;
         }
-
 
     }
 }
