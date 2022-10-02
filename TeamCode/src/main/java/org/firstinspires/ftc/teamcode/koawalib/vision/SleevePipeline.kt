@@ -76,7 +76,7 @@ class SleevePipeline(// UNITS ARE METERS
             AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr)
             nativeApriltagPtr = 0
         } else {
-            println("AprilTagDetectionPipeline.finalize(): nativeApriltagPtr was NULL")
+            println("SleevePipeline.finalize(): nativeApriltagPtr was NULL")
         }
     }
 
