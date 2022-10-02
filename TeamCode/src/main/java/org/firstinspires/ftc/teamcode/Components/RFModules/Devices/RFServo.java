@@ -53,8 +53,8 @@ public class RFServo implements Servo {
 //                inputlogs.add(rfServoName);
 //                inputlogs.add("setPosition()");
 //                inputlogs.add("Setting Position: " + RFServo.getPosition());
-                logger.log("/RobotLogs/GeneralRobot", rfServoName + ",setPosition(),Setting Position: "
-                        + df.format(RFServo.getPosition()));
+                logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
+                        + df.format(RFServo.getPosition()), true);
 //                inputlogs.clear();
 
 //                logger.logRegulated("/ServoLogs/RFServo", "Setting Position:" + position);

@@ -79,7 +79,7 @@ public class RFMotor extends Motor {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         rfMotor.setMode(runMode);
-        coefs = new ArrayList<Double>();
+        coefs = new ArrayList<>();
         coefs.add(DEFAULTCOEF1);
         coefs.add(DEFAULTCOEF2);
         maxtickcount = maxtick;
@@ -135,7 +135,7 @@ public class RFMotor extends Motor {
                 setVelocity(velocity);
             }
             else {
-                logger.logMessage("/MotorLogs/RFMotor" + rfMotorName, "ERROR: distance should not be equal to 0 in setPosition() in RFMotor");
+                logger.log("/MotorLogs/RFMotor" + rfMotorName, "ERROR: distance should not be equal to 0 in setPosition() in RFMotor");
             }
         }
         else {
@@ -148,8 +148,8 @@ public class RFMotor extends Motor {
 //            inputlogs.add(rfMotorName);
 //            inputlogs.add("setPower()");
 //            inputlogs.add("Setting Power: " + power);
-            logger.logRegulated("/RobotLogs/GeneralRobot", rfMotorName + ",setPower()," +
-                    "Setting Power: " + df.format(power));
+            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setPower()," +
+                    "Setting Power: " + df.format(power), true, true);
 //            inputlogs.clear();
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power);
 //            logger.log("/RobotLogs/GeneralRobotLog", rfMotorName + "\nsetPower():\nSetting Power:" + power);
@@ -161,8 +161,8 @@ public class RFMotor extends Motor {
 //            inputlogs.add(rfMotorName);
 //            inputlogs.add("setVelocity()");
 //            inputlogs.add("Setting Velocity: " + velocity);
-            logger.logRegulated("/RobotLogs/GeneralRobot", rfMotorName + ",setVelocity()," +
-                    "Setting Velocity: " + df.format(velocity));
+            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setVelocity()," +
+                    "Setting Velocity: " + df.format(velocity), true, true);
 //            inputlogs.clear();
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Velocity," + velocity);
 //            logger.log("/RobotLogs/GeneralRobot", rfMotorName + "\nsetVelocity():\nSetting Velocity:" + velocity);
@@ -186,7 +186,8 @@ public class RFMotor extends Motor {
 //            inputlogs.add(rfMotorName);
 //            inputlogs.add("setMode()");
 //            inputlogs.add("Setting RunMode: " + runMode);
-            logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setMode(),Setting RunMode: " + runMode);
+            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setMode(),Setting RunMode: " + runMode,
+                    true, true);
 //            inputlogs.clear();
 
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Mode," + runMode);

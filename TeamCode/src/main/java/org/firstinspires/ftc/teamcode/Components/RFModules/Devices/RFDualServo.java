@@ -99,9 +99,9 @@ public class RFDualServo implements Servo {
     public void setPositions(double position) {
         if (position <= servolimit) {
             if (dualServo1.getPosition() != position) {
-                logger.log("/RobotLogs/GeneralRobot", rfDualServoName + ",setPositions()," +
+                logger.log("/DualServoLogs/RFDualServo", rfDualServoName + ",setPositions()," +
                         "Setting Positions: servo 1: " + df.format(position) + "; servo 2: " +
-                        df.format(servolimit - position));
+                        df.format(servolimit - position), true);
 //                inputlogs.add(rfDualServoName);
 //                inputlogs.add("setPositions()");
 //                inputlogs.add("Setting Positions: servo 1: " + position + ", servo 2: " + (servolimit - position));
@@ -152,11 +152,11 @@ public class RFDualServo implements Servo {
 
     @Override
     public void setPosition(double position) {
-        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
+        logger.log("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 
     public void scaleRange(double min, double max) {
-        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
+        logger.log("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 
     @Override
@@ -181,11 +181,11 @@ public class RFDualServo implements Servo {
 
     @Override
     public void resetDeviceConfigurationForOpMode() {
-        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
+        logger.log("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 
     @Override
     public void close() {
-        logger.logMessage("RFServoLog", "error: function body empty, check rf dual servo code");
+        logger.log("RFServoLog", "error: function body empty, check rf dual servo code");
     }
 }

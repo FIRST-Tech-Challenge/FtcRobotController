@@ -104,44 +104,8 @@ public class Logger {
             e.printStackTrace();
         }
     }
-
     @SuppressLint("DefaultLocale")
-    public void log(String fileName, String input){
-
-        loggingString = "";
-        tempheaderPositions = headerList.get(logList.get(fileName));
-        previnputstringstartindex = 0;
-        inputStrings.clear();
-
-        for (int i = 1; i < input.length(); i++) {
-            prevchar = input.charAt(i - 1);
-            if (prevchar == ',') {
-                inputStrings.add(input.substring(previnputstringstartindex, i - 1));
-                previnputstringstartindex = i;
-            }
-        }
-
-        inputStrings.add(input.substring(previnputstringstartindex));
-
-        for (int i = 0; i < inputStrings.size(); i++) {
-
-            while (tempheaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", op.getRuntime()).length() - 1 >0) {
-                loggingString += " ";
-            }
-            loggingString += inputStrings.get(i);
-        }
-
-            try {
-                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
-                filewriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-    }
-
-    public void logMessage(String fileName, String input){
-//        if (loopcounter % 5 == 0) {
+    public void log(String fileName, String input) {
         try {
             FileWriter filewriter = new FileWriter(logList.get(fileName), true);
             filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
@@ -149,18 +113,16 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        }
     }
 
+
     @SuppressLint("DefaultLocale")
-    public void logRegulated(String fileName, String input){
-
-        loggingString = "";
-        tempheaderPositions = headerList.get(logList.get(fileName));
-        previnputstringstartindex = 0;
-        inputStrings.clear();
-
-        if (loopcounter % 20 == 0) {
+    public void log(String fileName, String input, boolean p_isFormatted){
+        if (p_isFormatted) {
+            loggingString = "";
+            tempheaderPositions = headerList.get(logList.get(fileName));
+            previnputstringstartindex = 0;
+            inputStrings.clear();
 
             for (int i = 1; i < input.length(); i++) {
                 prevchar = input.charAt(i - 1);
@@ -174,7 +136,7 @@ public class Logger {
 
             for (int i = 0; i < inputStrings.size(); i++) {
 
-                while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
+                while (tempheaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", op.getRuntime()).length() - 1 >0) {
                     loggingString += " ";
                 }
                 loggingString += inputStrings.get(i);
@@ -187,21 +149,131 @@ public class Logger {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
 
+        else {
+            log(fileName, input);
         }
     }
 
-    public void logRegulatedMessage(String fileName, String input) {
-        if (loopcounter % 10 == 0) {
-            try {
-                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
-                filewriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+    @SuppressLint("DefaultLocale")
+    public void log(String fileName, String input, boolean p_isFormatted, boolean p_isRegulated){
+        if (p_isFormatted && p_isRegulated) {
+            loggingString = "";
+            tempheaderPositions = headerList.get(logList.get(fileName));
+            previnputstringstartindex = 0;
+            inputStrings.clear();
+
+            if (loopcounter % 20 == 0) {
+
+                for (int i = 1; i < input.length(); i++) {
+                    prevchar = input.charAt(i - 1);
+                    if (prevchar == ',') {
+                        inputStrings.add(input.substring(previnputstringstartindex, i - 1));
+                        previnputstringstartindex = i;
+                    }
+                }
+
+                inputStrings.add(input.substring(previnputstringstartindex));
+
+                for (int i = 0; i < inputStrings.size(); i++) {
+
+                    while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
+                        loggingString += " ";
+                    }
+                    loggingString += inputStrings.get(i);
+                }
+
+                try {
+                    FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+                    filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
+                    filewriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+        }
+
+        else if (p_isFormatted && !p_isRegulated) {
+            log(fileName, input, p_isFormatted);
+        }
+
+        else if (!p_isFormatted && p_isRegulated) {
+            if (loopcounter % 20 == 0) {
+                log(fileName, input);
             }
         }
+
+        else {
+            log(fileName, input);
+        }
     }
+
+//    public void logMessage(String fileName, String input){
+////        if (loopcounter % 5 == 0) {
+//        try {
+//            FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+//            filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+//            filewriter.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+////        }
+//    }
+
+//    @SuppressLint("DefaultLocale")
+//    public void logRegulated(String fileName, String input){
+//
+//        loggingString = "";
+//        tempheaderPositions = headerList.get(logList.get(fileName));
+//        previnputstringstartindex = 0;
+//        inputStrings.clear();
+//
+//        if (loopcounter % 20 == 0) {
+//
+//            for (int i = 1; i < input.length(); i++) {
+//                prevchar = input.charAt(i - 1);
+//                if (prevchar == ',') {
+//                    inputStrings.add(input.substring(previnputstringstartindex, i - 1));
+//                    previnputstringstartindex = i;
+//                }
+//            }
+//
+//            inputStrings.add(input.substring(previnputstringstartindex));
+//
+//            for (int i = 0; i < inputStrings.size(); i++) {
+//
+//                while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
+//                    loggingString += " ";
+//                }
+//                loggingString += inputStrings.get(i);
+//            }
+//
+//            try {
+//                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+//                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
+//                filewriter.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//    }
+//
+//    public void logRegulatedMessage(String fileName, String input) {
+//        if (loopcounter % 10 == 0) {
+//            try {
+//                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
+//                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+//                filewriter.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     public void closeLog(){
         Collection<File> fileCollection = logList.values();

@@ -72,7 +72,7 @@ public class RFModuleTeleOp extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         waitForStart();
 
-        logger.logMessage("/RobotLogs/GeneralRobot", "Running: RFModuleTeleOp\n");
+        logger.log("/RobotLogs/GeneralRobot", "Running: RFModuleTeleOp\n");
 
         //Aiden - during competition day robot disconnected so we are trying this code
         while (opModeIsActive() && !isStopRequested()) {
@@ -134,7 +134,7 @@ public class RFModuleTeleOp extends LinearOpMode {
             }
         }
 
-        logger.logMessage("/RobotLogs/GeneralRobot", "Program stopped normally. ");
+        logger.log("/RobotLogs/GeneralRobot", "Program stopped normally. ");
 
         idle();
     }

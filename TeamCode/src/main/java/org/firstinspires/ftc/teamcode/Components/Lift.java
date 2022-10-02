@@ -30,6 +30,17 @@ public class Lift {
 
         double value;
 
+        boolean status;
+        String name;
+
+        liftConstants(boolean value, String name) {
+            this.status = value;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+
         liftConstants(double num_of_ticks) {
             value = num_of_ticks;
         }

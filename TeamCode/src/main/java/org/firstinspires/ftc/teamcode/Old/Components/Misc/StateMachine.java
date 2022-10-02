@@ -211,9 +211,9 @@ public class StateMachine {
             state.setStatus(value);
 
             if (value) {
-                logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                logger.log("SequencingStates", "STATE: " + state + " changed to true");
             } else {
-                logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                logger.log("SequencingStates", "STATE: " + state + " changed to false");
             }
         }
 
@@ -235,9 +235,9 @@ public class StateMachine {
                 lastIntakeServoState = state;
 
                 if (value) {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -258,9 +258,9 @@ public class StateMachine {
                 lastIntakeMotorState = state;
 
                 if (value) {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -281,9 +281,9 @@ public class StateMachine {
                 lastTurretRotationState = state;
 
                 if (value) {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -304,9 +304,9 @@ public class StateMachine {
                 lastSlidesState = state;
 
                 if (value) {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -327,9 +327,9 @@ public class StateMachine {
                 lastTurretAAState = state;
 
                 if (value) {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -350,9 +350,9 @@ public class StateMachine {
                 lastBasketState = state;
 
                 if (value) {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -373,9 +373,9 @@ public class StateMachine {
                 lastBasketArmState = state;
 
                 if (value) {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to true");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to true");
                 } else {
-                    logger.logMessage("SequencingStates", "STATE: " + state + " changed to false");
+                    logger.log("SequencingStates", "STATE: " + state + " changed to false");
                 }
             }
         }
@@ -385,13 +385,13 @@ public class StateMachine {
     }
 
     public void logCurrentStates() {
-        logger.logRegulatedMessage("SequencingStates", "Last Intake Servo State: " + lastIntakeServoState);
-        logger.logRegulatedMessage("SequencingStates", "Last Intake MotorState: " + lastIntakeMotorState);
-        logger.logRegulatedMessage("SequencingStates", "Last Turret RotationState: " + lastTurretRotationState);
-        logger.logRegulatedMessage("SequencingStates", "Last Slides State: " + lastSlidesState);
-        logger.logRegulatedMessage("SequencingStates", "Last TurretAA State: " + lastTurretAAState);
-        logger.logRegulatedMessage("SequencingStates", "Last Basket State: " + lastBasketState);
-        logger.logRegulatedMessage("SequencingStates", "Last Basket ArmState: " + lastBasketArmState);
+        logger.log("SequencingStates", "Last Intake Servo State: " + lastIntakeServoState, true, true);
+        logger.log("SequencingStates", "Last Intake MotorState: " + lastIntakeMotorState);
+        logger.log("SequencingStates", "Last Turret RotationState: " + lastTurretRotationState);
+        logger.log("SequencingStates", "Last Slides State: " + lastSlidesState);
+        logger.log("SequencingStates", "Last TurretAA State: " + lastTurretAAState);
+        logger.log("SequencingStates", "Last Basket State: " + lastBasketState);
+        logger.log("SequencingStates", "Last Basket ArmState: " + lastBasketArmState);
     }
 
     public boolean getState(RobotStates state) {
