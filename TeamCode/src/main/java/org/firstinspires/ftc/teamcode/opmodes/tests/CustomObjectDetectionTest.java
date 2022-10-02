@@ -78,7 +78,7 @@ public class CustomObjectDetectionTest extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "AfWHNJL/////AAABmRZFR8RnIEh6pQ3TkKsZ3KBQYvSMKxq99fDcG+7fVkN6hzfwX3fM2jmXufnJdqH+iUwgCcrc0VaCoE/SfyW5426O6eMujAsH4ORkatg1TgmQF4f/BAUPQBDLgDsOnjgWcgJnErKW31ZVbKiGC3gw4mS/6m4kHPOZs3xlViqf3dtNF8pNS7DAlQP5WmzBoTqJF5AMRv6ZOS+kinCoeAsXDme2xNCU7sJWN3TRyLVVpCxt6eJJcx4y4CkLecjdgyGAInok6Pa6AIK9ZnWwr0fg5ABebYd6uujxXn20c0cgH29371C54SvXMrPU2FjmCILQCvDvcnWaseTclX5oauFOJb40RyKq2en4bnFDqShZ14Id";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
