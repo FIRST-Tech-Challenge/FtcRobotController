@@ -566,7 +566,6 @@ public class Ri2D_6832 extends OpMode {
         if (!joystickDriveStarted) {
             joystickDriveStarted = true;
             robot.blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
-            robot.lnc.Do(LiftNClaw.Behaviors.DEPLOY);
         }
 
         reverse = -1;
@@ -587,22 +586,6 @@ public class Ri2D_6832 extends OpMode {
         if (notdeadzone(gamepad1.right_stick_x))
             pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
-        if(notdeadzone(gamepad1.right_stick_y)){
-            if(gamepad1.right_stick_y < 0){
-                robot.lnc.increaseLiftHeight();
-            }
-            else{
-                robot.lnc.decreaseLiftHeight();
-            }
-        }
-
-        if(gamepad1.dpad_up){
-            robot.lnc.increasePitchHeight();
-        }
-
-        if(gamepad1.dpad_down){
-            robot.lnc.decreasePitchHeight();
-        }
 
         if (nearZero(pwrFwd) && nearZero(pwrRot) && nearZero(pwrStf)) {
             robot.driveMixerMec(0, 0,0);
@@ -613,18 +596,9 @@ public class Ri2D_6832 extends OpMode {
         if(gamepad1.x) {
             //robot.toggleDuckSpinner();
         }
-       
-        if(gamepad1.a) {
-            if(!a_pressed_last_loop) robot.lnc.toggleGripper();
-        }
-        else{
-            if(a_pressed_last_loop) robot.lnc.toggleGripper();
-        }
+
         telemetry.addLine(""+toggleAllowed(gamepad1.a,a,1));
         telemetry.addLine(""+gamepad1.a);
-        if(gamepad1.y){
-            robot.lnc.toggleLiftHeight();
-        }
     }
 
     private void joystickDrivePregameMode() { //positions set
@@ -776,8 +750,6 @@ public class Ri2D_6832 extends OpMode {
         telemetry.addLine() .addData("Articulation", () -> robot.getArticulation());
         telemetry.addLine()  .addData("chassis heading", () -> robot.getHeading());
         telemetry.addLine()  .addData("chassis avg abs ticks", () -> robot.getAverageAbsTicks());
-        telemetry.addLine()  .addData("liftTicks", () -> robot.lnc.getLiftPos());
-        telemetry.addLine()  .addData("liftTicksTarget", () -> robot.lnc.targetLiftPos);
 
 
         telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);

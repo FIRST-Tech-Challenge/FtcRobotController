@@ -27,6 +27,8 @@ public class DashboardUtil {
     private static final String SHOULDER_TO_ELBOW_COLOR = "Purple";
     private static final String ELBOW_TO_WRIST_COLOR = "Orange";
 
+    private static double TRACK_WIDTH = 0.5;
+
     public static void drawLine(Canvas canvas, Vector2d p1, Vector2d p2) {
         canvas.strokeLine(
                 p1.getX(),
@@ -78,8 +80,8 @@ public class DashboardUtil {
     public static void drawRobot(Canvas canvas, Pose2d pose, double chassisLength, double swivelAngle, List<Double> wheelVelocities, double turretHeading, double shoulderAngle, double elbowAngle, double wristAngle) {
         // calculating wheel positions
         Vector2d position = pose.vec();
-        Vector2d leftWheel = new Vector2d(0, Constants.TRACK_WIDTH / 2);
-        Vector2d rightWheel = new Vector2d(0, -Constants.TRACK_WIDTH / 2);
+        Vector2d leftWheel = new Vector2d(0, TRACK_WIDTH / 2);
+        Vector2d rightWheel = new Vector2d(0, -TRACK_WIDTH / 2);
         Vector2d swerveWheel = new Vector2d(-chassisLength, 0);
 
         // calculating wheel vectors

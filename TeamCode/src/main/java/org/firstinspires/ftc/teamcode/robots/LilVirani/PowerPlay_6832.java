@@ -375,7 +375,6 @@ public class PowerPlay_6832 extends OpMode {
         // gamepads
         stickyGamepad1 = new StickyGamepad(gamepad1);
         stickyGamepad2 = new StickyGamepad(gamepad2);
-
         //auto = new Autonomous(robot, dummyT, gamepad1);
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
@@ -477,12 +476,10 @@ public class PowerPlay_6832 extends OpMode {
     @Override
     public void init_loop() {
 
-        handleStateSwitch();
-        handleVisionProviderSwitch();
         robot.handleTankDrive(gamepad1,gamepad2);
         Pose2d currentPose = robot.driveTrain.currentPose;
-        telemetry.addLine("Current X " + currentPose.getX() );
-        telemetry.addLine("Current Y " + currentPose.getY() );
+        //telemetry.addLine("Current X " + currentPose.getX() );
+        //telemetry.addLine("Current Y " + currentPose.getY() );
         telemetry.addLine("Current Heading " + currentPose.getHeading() );
 
         update();

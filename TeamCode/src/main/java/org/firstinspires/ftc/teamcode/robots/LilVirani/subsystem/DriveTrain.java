@@ -48,7 +48,7 @@ public class DriveTrain implements Subsystem {
     public DcMotorEx leftMotor = null;
     public DcMotorEx rightMotor = null;
 
-    private final BNO055IMU imu;
+    private final BNO055IMU imu = null;
     private VoltageSensor batteryVoltageSensor;
 
     private double compensatedBatteryVoltage;
@@ -70,9 +70,9 @@ public class DriveTrain implements Subsystem {
 
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-            leftMotor = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
-            rightMotor = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
-
+            leftMotor = hardwareMap.get(DcMotorEx.class, "motorLeft");
+            rightMotor = hardwareMap.get(DcMotorEx.class, "motorRight");
+            /*
             List<DcMotorEx> motors = Arrays.asList(leftMotor, rightMotor);
 
             for (DcMotorEx motor : motors) {
@@ -94,7 +94,7 @@ public class DriveTrain implements Subsystem {
 
 
 
-                imu = hardwareMap.get(BNO055IMU.class, "imu");
+                imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
                 BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
                 parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
                 imu.initialize(parameters);
@@ -124,6 +124,8 @@ public class DriveTrain implements Subsystem {
 
         //TODO, starting pose
 
+
+             */
 
     }
     public double updateHeading(double dtheta){

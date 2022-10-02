@@ -79,11 +79,7 @@ public class PoseRi2D {
     private DcMotor motorBackLeft = null;
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
-    private DcMotor duckSpinner = null;
-    private DcMotor lift = null;
-    private Servo gripperActuator = null;
-    private Servo gripperPitchServo = null;
-    public LiftNClaw lnc;
+
     RevBlinkinLedDriver blinkin = null;
 
     // All sensors
@@ -278,19 +274,12 @@ public class PoseRi2D {
         motorBackLeft = hwMap.get(DcMotor.class, "motorBackLeft");
          motorFrontRight = hwMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = hwMap.get(DcMotor.class, "motorBackRight");
-        duckSpinner = hwMap.get(DcMotor.class, "duckSpinner");
-        lift = hwMap.get(DcMotor.class, "lift");
-        gripperActuator = hwMap.get(Servo.class, "gripperActuator");
-        gripperPitchServo = hwMap.get(Servo.class, "gripperPitchServo");
-
-        // elbow.setDirection(DcMotor.Direction.REVERSE);
 
         //reverse chassis motors on one side only - because they are reflected
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         motorBackRight.setDirection(DcMotor.Direction.FORWARD);
-        duckSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
        //set coasting/braking preference
          motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -314,7 +303,6 @@ public class PoseRi2D {
          */
         // setup subsystems
         moveMode = MoveMode.still;
-        lnc = new LiftNClaw(lift, gripperActuator, gripperPitchServo);
 
         // setup both IMU's (Assuming 2 rev hubs
         BNO055IMU.Parameters parametersIMU = new BNO055IMU.Parameters();
@@ -592,20 +580,7 @@ public class PoseRi2D {
         motorBackLeft.setPower(clampMotor(powerBackLeft));
         motorBackRight.setPower(clampMotor(powerBackRight));//watermelon
 
-        lnc.update();
         sendTelemetry();
-    }
-
-    int duckSpinnerState = 0;
-    public void toggleDuckSpinner(){
-        if(duckSpinnerState == 0){
-            duckSpinnerState++;
-            duckSpinner.setPower(Constants.ALLIANCE_INT_MOD * 1);
-        }
-        else if(duckSpinnerState == 1){
-            duckSpinnerState = 0;
-            duckSpinner.setPower(0);
-        }
     }
 
     public void updateSensors(boolean isActive) {

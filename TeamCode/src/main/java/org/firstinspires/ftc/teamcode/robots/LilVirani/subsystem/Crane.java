@@ -68,12 +68,12 @@ public class Crane implements Subsystem {
             shoulderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             bulbServo = new ServoSim();
         } else {
-            shoulderMotor = hardwareMap.get(DcMotorEx.class, "firstLinkMotor");
+            shoulderMotor = hardwareMap.get(DcMotorEx.class, "elbow");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shoulderMotor.setTargetPosition(0);
             shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            bulbServo = hardwareMap.get(Servo.class, "secondLinkServo");
+            bulbServo = hardwareMap.get(Servo.class, "servoGripper");
         }
         shoulderPID = new PIDController(SHOULDER_PID, (theta) -> kF * theta * Math.cos(shoulderAngle));
         shoulderPID.setInputRange(SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);

@@ -68,13 +68,11 @@ public class Robot implements Subsystem {
 
         articulationMap = new HashMap<>();
 
-        craneBitmap = Bitmap.createBitmap(CB_WIDTH, CB_HEIGHT, Bitmap.Config.RGB_565);
-        craneMat = new Mat(CB_HEIGHT, CB_WIDTH, CvType.CV_8UC3);
     }
 
     public void handleTankDrive(Gamepad a, Gamepad b){
         driveTrain.leftMotor.setPower(a.left_stick_y);
-        driveTrain.leftMotor.setPower(a.right_stick_y);
+        driveTrain.rightMotor.setPower(a.right_stick_y);
     }
 
     public void handleGridDrive(Gamepad a, Gamepad b){
