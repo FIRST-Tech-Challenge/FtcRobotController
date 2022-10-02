@@ -73,13 +73,13 @@ public class teleopTesting extends OpMode {
 //    void UpdatePlayer2(){
 //    }
 
-//    void UpdateTelemetry(){
-//        telemetry.addData("X", gamepad1.left_stick_x);
-//        telemetry.addData("Y", -gamepad1.left_stick_y);
-//        telemetry.addData("R", gamepad1.right_stick_x);
-//        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
-//        telemetry.update();
-//    }
+    void UpdateTelemetry(){
+        telemetry.addData("X", gamepad1.left_stick_x);
+        telemetry.addData("Y", -gamepad1.left_stick_y);
+        telemetry.addData("R", gamepad1.right_stick_x);
+        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
+        telemetry.update();
+    }
 //
 //    void UpdateButton(){
 //        x.update(gamepad1.x);
