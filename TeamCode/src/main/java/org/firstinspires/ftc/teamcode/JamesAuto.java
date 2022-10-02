@@ -21,7 +21,11 @@ JamesAuto extends DriveMethods {
 
         waitForStart();
 
-        driveForDistance(2,0.5,Direction.FORWARD);
+        driveForDistance(1.25,0.5,Direction.FORWARD);
+        driveForDistance(0.15,0.4,Direction.RIGHT);
+        driveForDistance(3.5,0.7,Direction.LEFT);
+        driveForDistance(1.7,0.75,Direction.FORWARD);
+        driveForDistance(0.3,0.2,Direction.FORWARD);
 
         while (opModeIsActive()) {
 
@@ -128,6 +132,7 @@ JamesAuto extends DriveMethods {
 
             telemetry.addLine("Current Distance: " + (avg/(clicksPerRotation*rotationsPerMeter)));
             telemetry.update();
+
         }
         motorFL.setPower(0);
         motorBL.setPower(0);
