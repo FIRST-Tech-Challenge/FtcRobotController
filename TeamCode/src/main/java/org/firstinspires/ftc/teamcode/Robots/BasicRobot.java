@@ -8,7 +8,8 @@ public class BasicRobot{
     public static Logger logger;
     public static LinearOpMode op = null;
     protected Queuer queuer = null;
-    public BasicRobot(LinearOpMode opMode){
+    public static boolean isTeleop;
+    public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
         logger = new Logger();
         logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
@@ -16,6 +17,7 @@ public class BasicRobot{
         logger.createFile("gamepad", "Value Name Time");
 
         queuer = new Queuer();
+        isTeleop = p_isTeleop;
 
     }
     public void stop(){

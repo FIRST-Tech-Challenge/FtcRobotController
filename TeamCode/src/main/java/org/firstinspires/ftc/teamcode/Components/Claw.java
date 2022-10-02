@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
@@ -19,23 +19,7 @@ public class Claw {
     //CLAW_OPEN
     //CLAW_OPENING
 
-    public enum ClawStates {
-        CLAW_CLOSED(true, "CLAW_CLOSED"),
-        CLAW_CLOSING(false, "CLAW_CLOSING"),
-        CLAW_OPEN(false, "CLAW_OPEN"),
-        CLAW_OPENING(false, "CLAW_OPENING");
 
-        boolean status;
-        String name;
-
-        ClawStates(boolean value, String name) {
-            this.status = value;
-        }
-
-        public void setStatus(boolean status) {
-            this.status = status;
-        }
-    }
 
     //temporary
     private final double CLAW_CONE_DISTANCE = 1;

@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_INTAKE_INTAKING;
-import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_INTAKE_REVERSING;
-import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_INTAKE_STILL;
-import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_EXTENDED;
-import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_EXTENDING;
-import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_RETRACTED;
-import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_RETRACTING;
-import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.Lift.liftConstants.LIFT_GROUND_JUNCTION;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_INTAKE_INTAKING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_INTAKE_REVERSING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_INTAKE_STILL;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_EXTENDED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_EXTENDING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_RETRACTED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_RETRACTING;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.StateMachine.LiftStates.LIFT_GROUND_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
@@ -49,27 +49,6 @@ public class Aligner{
     //ALIGNER_INTAKE_INTAKING
     //ALIGNER_INTAKE_REVERSING
 
-    public enum AlignerStates {
-        ALIGNER_SLIDES_EXTENDING(false, "ALIGNER_SLIDES_EXTENDING"),
-        ALIGNER_SLIDES_RETRACTING(false, "ALIGNER_SLIDES_RETRACTING"),
-        ALIGNER_SLIDES_EXTENDED(false, "ALIGNER_SLIDES_EXTENDED"),
-        ALIGNER_SLIDES_RETRACTED(false, "ALIGNER_SLIDES_RETRACTED"),
-        ALIGNER_SLIDES_STILL(true, "ALIGNER_SLIDES_STILL"),
-        ALIGNER_INTAKE_STILL(true, "ALIGNER_INTAKE_STILL"),
-        ALIGNER_INTAKE_INTAKING(false, "ALIGNER_INTAKE_INTAKING"),
-        ALIGNER_INTAKE_REVERSING(false, "ALIGNER_INTAKE_REVERSING");
-
-        boolean status;
-        String name;
-
-        AlignerStates(boolean value, String name) {
-            this.status = value;
-        }
-
-        public void setStatus(boolean status) {
-            this.status = status;
-        }
-    }
 
     public Aligner() {
 
@@ -89,7 +68,7 @@ public class Aligner{
         //state has to be not already extending aligner TODO:if claw is closed and not yet raised, no extend, this is an
         //TODO: asynchronous function, it can extend when extending, just not when extended
 
-        if (CLAW_CLOSED.status && LIFT_GROUND_JUNCTION.value == 0 && !ALIGNER_SLIDES_EXTENDED.status) {
+        if (!CLAW_CLOSED.status && !LIFT_GROUND_JUNCTION.status || !ALIGNER_SLIDES_EXTENDED.status) {
 
             //set state extending aligner
             //set state extending aligner to true
@@ -115,7 +94,7 @@ public class Aligner{
 
         //state has to be claw closed, not raised, and not fully extended
 
-        if (CLAW_CLOSED.status && LIFT_GROUND_JUNCTION.value == 0 && !ALIGNER_SLIDES_EXTENDED.status) {
+        if (!CLAW_CLOSED.status && !LIFT_GROUND_JUNCTION.status || !ALIGNER_SLIDES_EXTENDED.status) {
 
             //set rfmotor position
             extensionMotor.setPosition(targetpos);
@@ -155,7 +134,7 @@ public class Aligner{
 
 
         //state has to be not already retracting aligner TODO: same as previous func, this is an async func
-        if (CLAW_CLOSED.status && LIFT_GROUND_JUNCTION.value == 0 && !ALIGNER_SLIDES_RETRACTED.status) {
+        if ((!CLAW_CLOSED.status && !LIFT_GROUND_JUNCTION.status)|| !ALIGNER_SLIDES_RETRACTED.status) {
 
             //set state retracting aligner
             //set state retracting aligner to true
