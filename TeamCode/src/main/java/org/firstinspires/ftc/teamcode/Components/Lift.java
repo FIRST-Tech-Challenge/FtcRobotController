@@ -13,6 +13,32 @@ import java.util.ArrayList;
 
 
 public class Lift {
+    public enum LiftStates {
+        LIFT_GROUND(true, "LIFT_GROUND"),
+        LIFT_GROUND_RAISING(false, "LIFT_GROUND_RAISING"),
+        LIFT_GROUND_JUNCTION(false, "LIFT_GROUND_JUNCTION"),
+        LIFT_GROUND_JUNCTION_RAISING(false, "LIFT_GROUND_JUNCTION_RAISING"),
+        LIFT_GROUND_JUNCTION_LOWERING(false, "LIFT_GROUND_JUNCTION_LOWERING"),
+        LIFT_LOW(false, "LIFT_LOW"),
+        LIFT_LOW_RAISING(false, "LIFT_LOW_RAISING"),
+        LIFT_LOW_LOWERING(false, "LIFT_LOW_LOWERING"),
+        LIFT_MID(false, "LIFT_MID"),
+        LIFT_MID_RAISING(false, "LIFT_MID_RAISING"),
+        LIFT_MID_LOWERING(false, "LIFT_MID_LOWERING"),
+        LIFT_HIGH(false, "LIFT_HIGH"),
+        LIFT_HIGH_LOWERING(false, "LIFT_HIGH_LOWERING");
+
+        boolean status;
+        String name;
+
+        LiftStates(boolean value, String name) {
+            this.status = value;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+    }
     public enum liftConstants{
         LIFT_HIGH_JUNCTION(0.0),
         LIFT_MED_JUNCTION(0.0),

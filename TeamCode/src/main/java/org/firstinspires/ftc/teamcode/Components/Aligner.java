@@ -9,7 +9,7 @@ import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStat
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_RETRACTED;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_RETRACTING;
 import static org.firstinspires.ftc.teamcode.Components.StateMachine.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.LiftStates.LIFT_GROUND_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_GROUND_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import com.qualcomm.robotcore.hardware.DcMotor;
 

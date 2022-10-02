@@ -13,13 +13,30 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 //TODO: capitalize c in ClawExtension
 public class ClawExtension {
+    public enum ClawExtensionStates {
+        CLAW_EXTENDED(false, "CLAW_EXTENDED"),
+        CLAW_EXTENDING(false, "CLAW_EXTENDING"),
+        CLAW_RETRACTING(true,"CLAW_RETRACTING"),
+        CLAW_RETRACTED(true,"CLAW_RETRACTED");
+
+        boolean status;
+        String name;
+
+        ClawExtensionStates(boolean value, String name) {
+            this.status = value;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+    }
     public static int ClawExtended = 0; // 0 = retracted, 1 = custom extended, 2 = completely extended
     RFServo clawExtendServo;
     final double INCHES_PER_POS = 10/1;
     public ClawExtension(){
         clawExtendServo = new RFServo("clawExtendServo", 1);
         ClawExtended = 0;
-        logger.createFile("clawExtensionLog", "Time Desc Value");
+        logger.createFile("ClawExtensionLog", "Time Desc Value");
     }
     public void extendToPosition(double inches){
         //use rfservo setPosition for variable distance
@@ -28,7 +45,7 @@ public class ClawExtension {
         //log when & what range is set to
         clawExtendServo.setPosition(inches/INCHES_PER_POS);
         ClawExtended = 1;
-        logger.log("clawExtensionLog", " Claw Extended to: " + inches + " in.");
+        logger.log("ClawExtensionLog", " Claw Extended to: " + inches + " in.");
     }
     public void extendClaw(){
         //no input TODO: maybe a seperate function for setPosition so you have variable distance
@@ -39,10 +56,10 @@ public class ClawExtension {
         if(ClawExtended == 1 || ClawExtended == 0){
             clawExtendServo.setPosition(1);
             ClawExtended = 2;
-            logger.log("clawExtensionLog", " Claw Extended to: " + INCHES_PER_POS + " in.");
+            logger.log("ClawExtensionLog", " Claw Extended to: " + INCHES_PER_POS + " in.");
         }
         else{
-            logger.log("clawExtensionLog", "Action not done: Tried to fully extend claw when already fully extended");
+            logger.log("ClawExtensionLog", "Action not done: Tried to fully extend claw when already fully extended");
         }
     }
     public void retractClaw(){
