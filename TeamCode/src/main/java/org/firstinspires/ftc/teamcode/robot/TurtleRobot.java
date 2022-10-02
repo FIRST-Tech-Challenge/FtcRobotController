@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,6 +13,7 @@ public class TurtleRobot {
     public DcMotor rightbackmotor = null;
     public DcMotor leftfrontmotor = null;
     public DcMotor leftbackmotor = null;
+    public CRServo ClawMotor = null;
     public ElapsedTime runtime = new ElapsedTime();
     public LinearOpMode myOpMode = null;
 
@@ -33,6 +35,7 @@ public class TurtleRobot {
         leftbackmotor = hwMap.get(DcMotor.class, "leftbackmotor");
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
+        ClawMotor = hwMap.get(CRServo.class, "ClawMotor");
 
         leftfrontmotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftbackmotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -44,6 +47,7 @@ public class TurtleRobot {
         leftbackmotor.setPower(0);
         rightfrontmotor.setPower(0);
         rightbackmotor.setPower(0);
+        ClawMotor.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
