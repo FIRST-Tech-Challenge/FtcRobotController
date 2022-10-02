@@ -64,14 +64,17 @@ public class MalevolentTraumaTeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
             //Checks if the left joystick is moved significantly, otherwise makes sure the motors are stopped
-            if (gamepad1.left_stick_y > Math.abs(.1) || gamepad1.left_stick_x > Math.abs(.1)) {
-                  //Checks if joystick moved more up than side to side, if so, move foward or backward
+            //Aka "If X or Y are moved more than .1"
+            if (Math.abs(gamepad1.left_stick_y) > .1 || Math.abs(gamepad1.left_stick_x) > .1) {
+                //Checks if joystick moved more up than side to side, if so, move foward or backward
+                //"If joystick moved more vertically than horizontally, then move forward/backward"
                 if (Math.abs(gamepad1.left_stick_x) < Math.abs(gamepad1.left_stick_y)) {
-                    frontRightMotor.setPower(gamepad1.left_stick_y * powerLevel);
-                    frontLeftMotor.setPower(gamepad1.left_stick_y * powerLevel);
-                    backLeftMotor.setPower(gamepad1.left_stick_y * powerLevel);
-                    backRightMotor.setPower(gamepad1.left_stick_y * powerLevel);
-                    //Checks if moved more horizontally than up and down, if so, strafe
+                    frontRightMotor.setPower(-gamepad1.left_stick_y * powerLevel);
+                    frontLeftMotor.setPower(-gamepad1.left_stick_y * powerLevel);
+                    backLeftMotor.setPower(-gamepad1.left_stick_y * powerLevel);
+                    backRightMotor.setPower(-gamepad1.left_stick_y * powerLevel);
+                    //Checks if moved more horizontally than up and down, if so, strafes
+                    //"If joystick moved more horizontally than vertically, strafe"
                 } else if (Math.abs(gamepad1.left_stick_y) < Math.abs(gamepad1.left_stick_x)) {
                     frontRightMotor.setPower(-gamepad1.left_stick_x * powerLevel);
                     frontLeftMotor.setPower(gamepad1.left_stick_x * powerLevel);
