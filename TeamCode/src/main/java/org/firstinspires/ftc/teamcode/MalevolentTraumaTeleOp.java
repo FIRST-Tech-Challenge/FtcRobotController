@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name="Malevolent Trauma TeleOp", group="Malevolent Trauma")
 
 
-public class MalevolentTraumaTestCode extends LinearOpMode {
+public class MalevolentTraumaTeleOp extends LinearOpMode {
     DcMotor frontRightMotor;
     DcMotor frontLeftMotor;
     DcMotor backRightMotor;
@@ -63,22 +63,23 @@ public class MalevolentTraumaTestCode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            //Checks if the joystick is moved significantly, otherwise makes sure the motors are stopped
+            //Checks if the left joystick is moved significantly, otherwise makes sure the motors are stopped
             if (gamepad1.left_stick_y > Math.abs(.1) || gamepad1.left_stick_x > Math.abs(.1)) {
                   //Checks if joystick moved more up than side to side, if so, move foward or backward
-                if (gamepad1.left_stick_x < gamepad1.left_stick_y) {
+                if (Math.abs(gamepad1.left_stick_x) < Math.abs(gamepad1.left_stick_y)) {
                     frontRightMotor.setPower(gamepad1.left_stick_y * powerLevel);
                     frontLeftMotor.setPower(gamepad1.left_stick_y * powerLevel);
                     backLeftMotor.setPower(gamepad1.left_stick_y * powerLevel);
                     backRightMotor.setPower(gamepad1.left_stick_y * powerLevel);
                     //Checks if moved more horizontally than up and down, if so, strafe
-                } else if (gamepad1.left_stick_y < gamepad1.left_stick_x) {
+                } else if (Math.abs(gamepad1.left_stick_y) < Math.abs(gamepad1.left_stick_x)) {
                     frontRightMotor.setPower(-gamepad1.left_stick_x * powerLevel);
                     frontLeftMotor.setPower(gamepad1.left_stick_x * powerLevel);
                     backLeftMotor.setPower(-gamepad1.left_stick_x * powerLevel);
                     backRightMotor.setPower(gamepad1.left_stick_x * powerLevel);
                 }
-            }else if(gamepad1.right_stick_x > 0.1){
+                //Check if the right joystick is moved significantly, otherwise motors are stopped
+            }else if(Math.abs(gamepad1.right_stick_x) > 0.1){
                 frontRightMotor.setPower(gamepad1.right_stick_x*powerLevel);
                 frontLeftMotor.setPower(-gamepad1.right_stick_x*powerLevel);
                 backRightMotor.setPower(gamepad1.right_stick_x*powerLevel);
