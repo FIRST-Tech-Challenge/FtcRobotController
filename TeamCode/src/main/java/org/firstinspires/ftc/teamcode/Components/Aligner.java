@@ -175,11 +175,37 @@ public class Aligner{
 
     }
 
+    //spin the motor to inputted power
+    public void spinAligner(double velocity) {
+        //input of power
+
+        //has to be not already spinning at that velocity
+        if (intakeMotor.getVelocity() != velocity) {
+
+            //set motor velocity to preset speed
+            intakeMotor.setVelocity(velocity);
+
+            //set state spinning aligner to intake to true
+            if (velocity < 0) {
+                ALIGNER_INTAKE_REVERSING.setStatus(true);
+            }
+            if (velocity > 0) {
+                ALIGNER_INTAKE_INTAKING.setStatus(true);
+            }
+            else {
+                ALIGNER_INTAKE_STILL.setStatus(true);
+            }
+
+            //log to general robot log that it is now spinning aligner to intake through function spinAlignerIntake()
+            logger.log("/RobotLogs/GeneralRobot", intakeMotor.motor.getDeviceName() +
+                    ",spinAlignerIntake(),Aligner Spinning at Velocity: " + velocity, true);
+        }
+    }
+
 
     //spin the motor to align a cone
     public void spinAlignerIntake() {
         //no input
-
 
         //state has to be not already spinning it to intake a cone TODO: this is an async func
         if (!ALIGNER_INTAKE_INTAKING.status) {
@@ -188,7 +214,7 @@ public class Aligner{
             intakeMotor.setVelocity(PRESET_ALIGNER_INTAKE_SPEED);
 
             //set state spinning aligner to intake to true
-            //set state ALIGNER_INTAKE_INTAKING to true
+            ALIGNER_INTAKE_INTAKING.setStatus(true);
 
             //log to general robot log that it is now spinning aligner to intake through function spinAlignerIntake()
             logger.log("/RobotLogs/GeneralRobot", intakeMotor.motor.getDeviceName() +
@@ -208,7 +234,7 @@ public class Aligner{
             intakeMotor.setVelocity(PRESET_ALIGNER_REVERSE_INTAKE_SPEED);
 
             //set state spinning aligner to reverse intake to true
-            //set state ALIGNER_INTAKE_REVERSING to true
+            ALIGNER_INTAKE_REVERSING.setStatus(true);
 
             //log to general robot log that it is now spinning aligner to reverse intake through function reverseAlignerIntake()
             logger.log("/RobotLogs/GeneralRobot", intakeMotor.motor.getDeviceName() +
@@ -225,7 +251,7 @@ public class Aligner{
         intakeMotor.setVelocity(0);
 
         //set state aligner still to true
-        //set state ALIGNER_INTAKE_STILL to true
+        ALIGNER_INTAKE_STILL.setStatus(true);
 
         //log to general robot log that it is now stopped through function stopAligner()
         logger.log("/RobotLogs/GeneralRobot", intakeMotor.motor.getDeviceName() +
