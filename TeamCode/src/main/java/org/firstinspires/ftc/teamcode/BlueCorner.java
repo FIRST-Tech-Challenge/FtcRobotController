@@ -88,7 +88,8 @@ public class BlueCorner extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        DriveInDirection("FORWARDS", moveSpeed, 1.75);
+        DriveInDirection("RIGHT", moveSpeed, 0.5);
+        DriveInDirection("FORWARDS", moveSpeed, 1);
 
 
         // run until the end of the match (driver presses STOP)
