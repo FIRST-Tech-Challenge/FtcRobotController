@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="SpeedySpeed", group="Z")
+@Disabled
 
 public class SpeedySpeed extends LinearOpMode {
 

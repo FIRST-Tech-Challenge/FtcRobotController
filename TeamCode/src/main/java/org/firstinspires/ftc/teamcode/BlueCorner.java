@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name="Autonomous test", group="autonomous")
+@Autonomous(name="BlueCorner", group="autonomous")
 
 public class BlueCorner extends LinearOpMode {
 
@@ -19,7 +19,7 @@ public class BlueCorner extends LinearOpMode {
     private double rightFrontPower = 0;
     private double leftBackPower = 0;
     private double rightBackPower = 0;
-    private double moveSpeed = 0.5;
+    private double moveSpeed = 0.3;
 
 
     private void DriveInDirection(String direction, double power, double time){
@@ -55,10 +55,10 @@ public class BlueCorner extends LinearOpMode {
             rightBackDrive.setPower(0);
             leftBackDrive.setPower(0);
         }else if(direction.equals("RIGHT")){
-            rightFrontDrive.setPower(power);
-            leftFrontDrive.setPower(-power);
-            rightBackDrive.setPower(-power);
-            leftBackDrive.setPower(power);
+            rightFrontDrive.setPower(-power);
+            leftFrontDrive.setPower(power);
+            rightBackDrive.setPower(power);
+            leftBackDrive.setPower(-power);
             sleep((long)time);
             rightFrontDrive.setPower(0);
             leftFrontDrive.setPower(0);
@@ -88,8 +88,9 @@ public class BlueCorner extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        DriveInDirection("RIGHT", moveSpeed, 0.5);
-        DriveInDirection("FORWARDS", moveSpeed, 1);
+        DriveInDirection("RIGHT", moveSpeed, 2.1);
+        DriveInDirection("BACKWARDS",.2,.8);
+        DriveInDirection("FORWARDS", .25, 1.45);
 
 
         // run until the end of the match (driver presses STOP)
