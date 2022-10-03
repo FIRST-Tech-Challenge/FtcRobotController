@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.LilVirani.subsystem;
 
 
 import static org.firstinspires.ftc.teamcode.robots.LilVirani.util.Utils.servoNormalize;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -37,26 +38,52 @@ public class Crane implements Subsystem {
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.01, 0, 0);
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
-
     public static double SHOULDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
     public static double SHOULDER_DEG_MAX = 90; // of the robot
 
-    public static double BULB_OPEN_POS = -80;
+    public static double kE = 0.0;
+    public static PIDCoefficients EXTENDER_PID = new PIDCoefficients(0.01, 0, 0);
+    public static double EXTENDER_TOLERANCE = 1;
+    public static double EXTENDER_POWER = 1.0;
+    public static double EXTENDER_DEG_MIN = -90; // negative angles are counter clockwise while looking at the left side
+    public static double EXTENDER_DEG_MAX = 90; // of the robot
+
+    public static double BULB_OPEN_POS = 1500;
 
 
-    public static double BULB_CLOSED_POS = 140;
+    public static double BULB_CLOSED_POS = 1250;
 
+    public final double ticksPerMeter = 806/.2921;
+    public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
+    public static final double GRIPPER_HEIGHT = 0.23;
+    public static final double Y_LEEWAY = 0.05;
+    public static final double X_LEEWAY = 0.02;
+    public static final double ELBOW_HEIGHT = 0.24;
+    public static final double CRANE_LENGTH = .3683;
+    double extendABobPwr = 0;
+    double extendCorrection = 0;
+    int extendABobTargetPos = 0;
+    boolean extendABobActivePID = true;
+    boolean shoulderActivePID = true;
+
+    public static double kpExtendABob = 0.006; //proportional constant multiplier goodish
+    public static  double kiExtendABob = 0.0; //integral constant multiplier
+    public static  double kdExtendABob= 0.0;
+
+    public static double kpElbow = 0.006; //proportional constant multiplier goodish
+    public static  double kiElbow = 0.0; //integral constant multiplier
+    public static  double kdElbow= 0.0; //derivative constant multiplier
 
     public Servo bulbServo;
+    public DcMotorEx extendABob;
     public DcMotorEx shoulderMotor;
+    public DcMotorEx turretMotor;
 
 
     private PIDController shoulderPID;
+    private PIDController extendPID;
 
-
-    private double shoulderPosition, shoulderAngle;
-    private double shoulderTargetAngle;
-    private int bulbPos = 0;
+    private int bulbPos = 1;
 
 
     private Articulation articulation;
@@ -64,27 +91,81 @@ public class Crane implements Subsystem {
     boolean USE_MOTOR_SMOOTHING = true;
 
     public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
+        extendABobTargetPos = 0;
+        shoulderTargetPos = 0;
         if (simulated) {
             shoulderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             bulbServo = new ServoSim();
         } else {
             shoulderMotor = hardwareMap.get(DcMotorEx.class, "elbow");
+            extendABob = hardwareMap.get(DcMotorEx.class, "extender");
+            turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extendABob.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shoulderMotor.setTargetPosition(0);
-            shoulderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            extendABob.setTargetPosition(0);
+            shoulderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            extendABob.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
         }
-        shoulderPID = new PIDController(SHOULDER_PID, (theta) -> kF * theta * Math.cos(shoulderAngle));
-        shoulderPID.setInputRange(SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
-        shoulderPID.setOutputRange(-1.0, 1.0);
-        shoulderPID.setTolerance(SHOULDER_TOLERANCE);
+        extendPID = new PIDController(0,0,0);
+        shoulderPID = new PIDController(0,0,0);
+        shoulderPID.setIntegralCutIn(40);
+        shoulderPID.enableIntegralZeroCrossingReset(false);
+    }
+
+    int calibrateStage=0;
+    double calibrateTimer;
+
+    public boolean calibrate(){
+
+
+        return true;
+    }
+
+    double shoulderCorrection = 0;
+    double shoulderPwr = 0;
+    int shoulderTargetPos = 0;
+
+    public void movePIDShoulder(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
+
+        //initialization of the PID calculator's output range, target value and multipliers
+        shoulderPID.setOutputRange(-shoulderPwr, shoulderPwr);
+        shoulderPID.setPID(Kp, Ki, Kd);
+        shoulderPID.setSetpoint(targetTicks);
         shoulderPID.enable();
 
+        //initialization of the PID calculator's input range and current value
+        shoulderPID.setInput(currentTicks);
 
+        //calculates the correction to apply
+        shoulderCorrection = shoulderPID.performPID();
 
-
+        //moves elbow with the correction applied
+        shoulderMotor.setPower(shoulderCorrection);
     }
+
+    public void movePIDExtend(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
+
+        //initialization of the PID calculator's output range, target value and multipliers
+        extendPID.setOutputRange(-extendABobPwr, extendABobPwr);
+        extendPID.setPID(Kp, Ki, Kd);
+        extendPID.setSetpoint(targetTicks);
+        extendPID.enable();
+
+        //initialization of the PID calculator's input range and current value
+        //extendPID.setInputRange(0, 360);
+        //extendPID.setContinuous();
+        extendPID.setInput(currentTicks);
+
+        //calculates the correction to apply
+        extendCorrection = extendPID.performPID();
+
+        //performs the extension with the correction applied
+        extendABob.setPower(extendCorrection);
+    }
+
 
     public enum Articulation {
         TEST_INIT(0, 0),
@@ -118,22 +199,28 @@ public class Crane implements Subsystem {
         bulbPos = 0;
     }
 
+    private int shoulderPosition = 0;
+    private int extendPosition = 0;
+    double shoulderAngle = 0;
 
     @Override
     public void update(Canvas fieldOverlay) {
-
-
-
-
-        if (shoulderTargetAngle > 180)
-            shoulderTargetAngle -= 360;
-
-
         shoulderPosition = shoulderMotor.getCurrentPosition();
-        shoulderAngle = SHOULDER_START_ANGLE + shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
+        extendPosition = extendABob.getCurrentPosition();
 
-        shoulderMotor.setTargetPosition((int) ((shoulderTargetAngle - SHOULDER_START_ANGLE) * SHOULDER_TICKS_PER_DEGREE));
-        shoulderMotor.setPower(SHOULDER_POWER);
+        shoulderAngle = shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
+
+
+        if(shoulderActivePID)
+            movePIDShoulder(kpElbow, kiElbow, kdElbow, shoulderPosition, shoulderTargetPos);
+        else
+            shoulderTargetPos = shoulderPosition;
+
+
+        if(extendABobActivePID)
+            movePIDExtend(kpExtendABob, kiExtendABob, kdExtendABob, extendPosition, -extendABobTargetPos);
+        else
+            extendABobTargetPos = extendPosition;
 
         switch(bulbPos) {
                 case 0:
@@ -161,6 +248,16 @@ public class Crane implements Subsystem {
         return "Crane";
     }
 
+    public void setExtendABobPwr(double pwr){ extendABobPwr = pwr; }
+    public void setExtendABobActivePID(boolean isActive){extendABobActivePID = isActive;}
+    public void setShoulderPID(boolean isActive){shoulderActivePID = isActive;}
+    public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
+    public  void setShoulderTargetPos(int t){ shoulderTargetPos = t; }
+    public  void setExtendTargetPos(int t){ extendABobTargetPos = t; }
+
+    public int getExtendABobPos(){ return  extendPosition; }
+    public int getShoulderPos(){ return  shoulderPosition; }
+
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
@@ -168,7 +265,6 @@ public class Crane implements Subsystem {
         telemetryMap.put("Current Articulation", articulation);
 
         if (debug) {
-            telemetryMap.put("Shoulder Target Angle", shoulderTargetAngle);
             telemetryMap.put("Bulb Pos", bulbPos);
 
             telemetryMap.put("Shoulder Angle", shoulderAngle);
