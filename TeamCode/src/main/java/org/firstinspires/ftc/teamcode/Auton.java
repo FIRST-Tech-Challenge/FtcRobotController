@@ -9,6 +9,7 @@ public class Auton {
     private int parkingZone;
 
     public Auton(int parkingZone) {
+
         this.parkingZone = parkingZone;
     }
 
