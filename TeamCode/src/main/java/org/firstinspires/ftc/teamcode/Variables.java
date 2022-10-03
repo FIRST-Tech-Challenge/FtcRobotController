@@ -13,6 +13,8 @@ public class Variables {
         BACKWARD,
         RIGHT,
         LEFT,
+        ROTATE_LEFT,
+        ROTATE_RIGHT,
     }
 
 

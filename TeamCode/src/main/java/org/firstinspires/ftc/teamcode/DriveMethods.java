@@ -123,6 +123,18 @@ public class DriveMethods extends LinearOpMode{
                 motorFR.setPower(power);
                 motorBR.setPower(-power);
                 break;
+            case ROTATE_LEFT:
+                motorFL.setPower(-power);
+                motorBL.setPower(-power);
+                motorFR.setPower(power);
+                motorBR.setPower(power);
+                break;
+            case ROTATE_RIGHT:
+                motorFL.setPower(power);
+                motorBL.setPower(power);
+                motorFR.setPower(-power);
+                motorBR.setPower(-power);
+                break;
                 
         }
         /*
