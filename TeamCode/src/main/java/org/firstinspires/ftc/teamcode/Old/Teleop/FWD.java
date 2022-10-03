@@ -54,7 +54,7 @@ public class FWD extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FWDRobot robit = new FWDRobot(this); // declaration of FWDRobot constructor, pass in this opmode
+        FWDRobot robit = new FWDRobot(this, true); // declaration of FWDRobot constructor, pass in this opmode
         RFGamepad gp = new RFGamepad(this);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()); // ftc dashboard telemetry functionality

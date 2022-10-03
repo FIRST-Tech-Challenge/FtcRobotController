@@ -14,8 +14,8 @@ public class FWDRobot extends BasicRobot {
     public RFMotor motorRightFront;
     private RFMotor wobbleArmGoal;
     private RFServo wobbleGoalGrabbyer;
-    public FWDRobot(LinearOpMode op){
-        super(op,false);
+    public FWDRobot(LinearOpMode op, boolean isTeleOp){
+        super(op, isTeleOp);
         motorLeftBack = new RFMotor("motorLeftBack", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorRightBack = new RFMotor("motorRightBack", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorLeftFront = new RFMotor("motorLeftFront", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);

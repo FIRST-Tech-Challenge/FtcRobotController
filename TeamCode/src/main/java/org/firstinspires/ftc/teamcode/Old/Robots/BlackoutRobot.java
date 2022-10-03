@@ -25,12 +25,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
 import org.firstinspires.ftc.teamcode.Old.Components.CVPipelines.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
+import org.firstinspires.ftc.teamcode.Components.Queuer;
+import org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine;
+import org.firstinspires.ftc.teamcode.Old.Components.Hardware.CarouselCR;
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.EncoderChassis;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.CarouselCR;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.Intake;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.LedColor;
+import org.firstinspires.ftc.teamcode.roadrunner.util.LimitSwitches;
+import org.firstinspires.ftc.teamcode.Old.Components.CVPipelines.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.Turret;
+import org.firstinspires.ftc.teamcode.roadrunner.util.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.tseDepositor;
 import org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
@@ -94,7 +100,7 @@ public class BlackoutRobot extends BasicRobot {
     public static StateMachine checker = null;
 
     public BlackoutRobot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
-        super(opMode,false);
+        super(opMode, isTeleop);
 
         ArrayList<Double> rotationCoefs = new ArrayList<>();
         rotationCoefs.add(4.0);

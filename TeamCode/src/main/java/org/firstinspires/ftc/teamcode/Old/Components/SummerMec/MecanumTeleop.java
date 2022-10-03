@@ -47,7 +47,7 @@ public class MecanumTeleop extends LinearOpMode {
         DcMotorEx intakeMotor;
         Servo intakeFlip;
 
-        SummerMecRobot summermecrobot = new SummerMecRobot(this);
+        SummerMecRobot summermecrobot = new SummerMecRobot(this, true);
 
         extendIntake = new RFSlides("turret_Rotation", DcMotor.RunMode.RUN_USING_ENCODER,
                 true, extensionCoefs, 545, 0);

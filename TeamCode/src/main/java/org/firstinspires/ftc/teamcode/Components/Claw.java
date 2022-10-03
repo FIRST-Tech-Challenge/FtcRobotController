@@ -1,25 +1,19 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
+import org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine;
 
 public class Claw {
 
     private RFServo claw;
 
     private ColorDistanceRevV3 coneObserver;
-
-    //States:
-    //CLAW_CLOSED
-    //CLAW_CLOSING
-    //CLAW_OPEN
-    //CLAW_OPENING
-
-
 
     //temporary
     private final double CLAW_CONE_DISTANCE = 1;
@@ -28,17 +22,57 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 0;
 
     //temporary
-    private final double CLAW_CLOSED_TICK = 0;
+    private final double CLAW_CLOSED_TICK = 50;
+
+    //temporary
+    private final double CLAW_OPEN_TICK = 0;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
+
+    public double clawServoLastSwitchTime = 0;
+    //temporary
+    public final double CLAW_SERVO_SWITCH_TIME = 0.2;
+
+    //States:
+    //CLAW_CLOSED
+    //CLAW_CLOSING
+    //CLAW_OPEN
+    //CLAW_OPENING
+
+    public enum ClawStates {
+
+        CLAW_CLOSED(false, "CLAW_CLOSED"),
+        CLAW_CLOSING(false, "CLAW_CLOSING"),
+        CLAW_OPEN(true, "CLAW_OPEN"),
+        CLAW_OPENING(false, "CLAW_OPENING");
+
+        boolean status;
+        String name;
+
+        ClawStates(boolean value, String name) {
+            this.status = value;
+            this.name = name;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+            if(status) {
+                for (int i = 0; i < ClawStates.values().length; i++) {
+                    if (ClawStates.values()[i].status != status) {
+                        ClawStates.values()[i].setStatus(false);
+                    }
+                }
+            }
+        }
+    }
 
     //constructor
     public Claw() {
         //init RFServo & Distance sensor
         claw = new RFServo("claw", CLAW_SERVO_MAX_TICK);
 
-        coneObserver = new ColorDistanceRevV3();
+        coneObserver = op.hardwareMap.get(ColorDistanceRevV3.class, "clawSensor");
     }
 
     //close the claw
@@ -49,16 +83,15 @@ public class Claw {
         //the state of claw opened has to be true TODO: Boy better see sumthin with distance
         if (CLAW_OPEN.status && getConeDistance() <= CLAW_CONE_DISTANCE) {
 
-        //set servo position
-        claw.setPosition(CLAW_CLOSED_TICK);
+            //set servo position
+            claw.setPosition(CLAW_CLOSED_TICK);
 
+            //set state of claw closed to true
+            CLAW_CLOSED.setStatus(true);
 
-        //set state of claw closed to true
-        CLAW_CLOSED.setStatus(true);
-
-        //log to general robot log that the claw has been closed through function closeClaw()
-        logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
-                + ",Claw Closed", true);
+            //log to general robot log that the claw has been closed through function closeClaw()
+            logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
+                    + ",Claw Closed", true);
 
         }
     }
@@ -84,6 +117,7 @@ public class Claw {
         }
     }
 
+
     //look at and return distance to the nearest cone
     public double getConeDistance() {
         //no input
@@ -92,7 +126,7 @@ public class Claw {
         //no setting state
         //log to general robot log that the cone has been observed through function closeClaw()
         logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance()"
-                + ",Cone Observed", true);
+                + ",Cone in Claw Observed", true);
 
 
         //just placeholder so that there are no errors
@@ -118,6 +152,10 @@ public class Claw {
         else {
                 return false;
         }
+    }
+
+    public double getPosition() {
+        return claw.getPosition();
     }
 }
 

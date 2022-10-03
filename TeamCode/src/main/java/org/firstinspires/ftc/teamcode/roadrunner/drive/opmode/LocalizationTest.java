@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SummerMecRobot robot = new SummerMecRobot(this);
+        SummerMecRobot robot = new SummerMecRobot(this, false);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Pose2d startPose = new Pose2d(57, -54, 0);

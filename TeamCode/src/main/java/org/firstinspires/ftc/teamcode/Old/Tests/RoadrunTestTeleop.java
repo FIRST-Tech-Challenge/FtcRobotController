@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 public class RoadrunTestTeleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SummerMecRobot robot = new SummerMecRobot(this);
+        SummerMecRobot robot = new SummerMecRobot(this, true);
 
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.setPoseEstimate(new Pose2d(-34,-58,0));

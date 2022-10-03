@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_INTAKE_INTAKING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_INTAKE_REVERSING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_INTAKE_STILL;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_EXTENDED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_EXTENDING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_RETRACTED;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.AlignerStates.ALIGNER_SLIDES_RETRACTING;
-import static org.firstinspires.ftc.teamcode.Components.StateMachine.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_INTAKE_INTAKING;
+import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_INTAKE_REVERSING;
+import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_INTAKE_STILL;
+import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_EXTENDED;
+import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_EXTENDING;
+import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_RETRACTED;
+import static org.firstinspires.ftc.teamcode.Components.Aligner.AlignerStates.ALIGNER_SLIDES_RETRACTING;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_GROUND_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
+import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
 
 import java.util.ArrayList;
 
@@ -24,19 +26,31 @@ public class Aligner{
 
     private final RFMotor intakeMotor;
 
+    private ColorDistanceRevV3 alignerSensor;
+
     //temporary
     private final double MAX_EXTENSION_TICKS = 1000;
 
     //temporary
     private final double MIN_EXTENSION_TICKS = 0;
 
+    //temporary
     private final double PRESET_ALIGNER_INTAKE_SPEED = 0.8;
 
+    //temporary
     private final double PRESET_ALIGNER_REVERSE_INTAKE_SPEED = -0.5;
 
-    private final double DEG_PER_TICK_MOTOR = 18.0/116.0;
-
     private final double TICKS_PER_INCH = 955.0/32.0;
+
+    //temporary
+    public double CONE_IN_ALIGNER_DISTANCE = 10;
+
+    //temporary
+    public double CONE_OUT_OF_ALIGNER_DISTANCE = 30;
+
+    public double alignerMotorLastStopTime = 0;
+    //temporary
+    public final double ALIGNER_MOTOR_STOP_TIME = 0.1;
 
     //temporary
     ArrayList<Double> extensionMotorCoefs = new ArrayList<>();
@@ -49,6 +63,36 @@ public class Aligner{
     //ALIGNER_INTAKE_INTAKING
     //ALIGNER_INTAKE_REVERSING
 
+    public enum AlignerStates {
+        ALIGNER_SLIDES_EXTENDING(false, "ALIGNER_SLIDES_EXTENDING"),
+        ALIGNER_SLIDES_RETRACTING(false, "ALIGNER_SLIDES_RETRACTING"),
+        ALIGNER_SLIDES_EXTENDED(false, "ALIGNER_SLIDES_EXTENDED"),
+        ALIGNER_SLIDES_RETRACTED(false, "ALIGNER_SLIDES_RETRACTED"),
+        ALIGNER_SLIDES_STILL(true, "ALIGNER_SLIDES_STILL"),
+        ALIGNER_INTAKE_STILL(true, "ALIGNER_INTAKE_STILL"),
+        ALIGNER_INTAKE_INTAKING(false, "ALIGNER_INTAKE_INTAKING"),
+        ALIGNER_INTAKE_REVERSING(false, "ALIGNER_INTAKE_REVERSING");
+
+        boolean status;
+        String name;
+
+        AlignerStates(boolean value, String name) {
+            this.status = value;
+            this.name = name;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+            if(status) {
+                for (int i = 0; i < Aligner.AlignerStates.values().length; i++) {
+                    if (!AlignerStates.values()[i].status) {
+                        Aligner.AlignerStates.values()[i].setStatus(false);
+                    }
+                }
+            }
+        }
+    }
+
 
     public Aligner() {
 
@@ -57,6 +101,8 @@ public class Aligner{
 
         intakeMotor = new RFMotor("intakeMotor", DcMotor.RunMode.RUN_USING_ENCODER, true,
                 MAX_EXTENSION_TICKS, MIN_EXTENSION_TICKS);
+
+        alignerSensor = op.hardwareMap.get(ColorDistanceRevV3.class,"alignerSensor");
     }
 
 
@@ -68,7 +114,7 @@ public class Aligner{
         //state has to be not already extending aligner TODO:if claw is closed and not yet raised, no extend, this is an
         //TODO: asynchronous function, it can extend when extending, just not when extended
 
-        if (!CLAW_CLOSED.status && !LIFT_GROUND_JUNCTION.status || !ALIGNER_SLIDES_EXTENDED.status) {
+        if (!(CLAW_CLOSED.status && LIFT_GROUND_JUNCTION.status) && !ALIGNER_SLIDES_EXTENDED.status) {
 
             //set state extending aligner
             //set state extending aligner to true
@@ -94,7 +140,7 @@ public class Aligner{
 
         //state has to be claw closed, not raised, and not fully extended
 
-        if (!CLAW_CLOSED.status && !LIFT_GROUND_JUNCTION.status || !ALIGNER_SLIDES_EXTENDED.status) {
+        if (!(CLAW_CLOSED.status && LIFT_GROUND_JUNCTION.status) && !ALIGNER_SLIDES_EXTENDED.status) {
 
             //set rfmotor position
             extensionMotor.setPosition(targetpos);
@@ -134,7 +180,7 @@ public class Aligner{
 
 
         //state has to be not already retracting aligner TODO: same as previous func, this is an async func
-        if ((!CLAW_CLOSED.status && !LIFT_GROUND_JUNCTION.status)|| !ALIGNER_SLIDES_RETRACTED.status) {
+        if ((CLAW_CLOSED.status && !LIFT_GROUND_JUNCTION.status)|| !ALIGNER_SLIDES_RETRACTED.status) {
 
             //set state retracting aligner
             //set state retracting aligner to true
@@ -222,19 +268,35 @@ public class Aligner{
     }
 
     //stop the motor
-    public void stopAligner() {
+    public void stopAlignerIntake() {
         //state has to be not already stopped TODO: this is an async func
         if (!ALIGNER_INTAKE_STILL.status) {
 
-        //set motor velocity to preset speed
-        intakeMotor.setVelocity(0);
+            //set motor velocity to preset speed
+            intakeMotor.setVelocity(0);
 
-        //set state aligner still to true
-        ALIGNER_INTAKE_STILL.setStatus(true);
+            //set state aligner still to true
+            ALIGNER_INTAKE_STILL.setStatus(true);
 
-        //log to general robot log that it is now stopped through function stopAligner()
-        logger.log("/RobotLogs/GeneralRobot", intakeMotor.motor.getDeviceName() +
-                ",stopAligner(),Aligner Stopped", true);
+            //log to general robot log that it is now stopped through function stopAligner()
+            logger.log("/RobotLogs/GeneralRobot", intakeMotor.motor.getDeviceName() +
+                    ",stopAligner(),Aligner Stopped", true);
         }
+    }
+
+    //see if there is a cone
+    public boolean isConeInAligner() {
+        //no input
+        //no state conditions
+        //no setting state
+
+        //log to general robot log that the cone has been observed through function isConeInAligner()
+        logger.log("/RobotLogs/GeneralRobot", "alignerSensor,isConeInAligner()"
+                + ",Cone in Aligner Observed", true);
+
+        //execute algorithm for observing
+
+        return alignerSensor.getSensorDistance() < CONE_IN_ALIGNER_DISTANCE;
+
     }
 }

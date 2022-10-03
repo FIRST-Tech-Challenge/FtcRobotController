@@ -14,7 +14,7 @@ public class RoadRunMoveTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SummerMecRobot robot = new SummerMecRobot(this);
+        SummerMecRobot robot = new SummerMecRobot(this, false);
 
         Pose2d startPose = new Pose2d(41, 61, Math.toRadians(270));
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

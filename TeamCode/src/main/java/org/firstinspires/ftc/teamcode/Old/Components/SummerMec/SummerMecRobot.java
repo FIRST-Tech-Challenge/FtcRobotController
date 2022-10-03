@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 public class SummerMecRobot extends BasicRobot {
     IntakeSlides intakeSlides = null;
     public SampleMecanumDrive roadrun = null;
-    public SummerMecRobot(LinearOpMode opMode){
-        super(opMode,false);
+    public SummerMecRobot(LinearOpMode opMode, boolean isTeleOp){
+        super(opMode, isTeleOp);
         intakeSlides = new IntakeSlides();
         roadrun = new SampleMecanumDrive(op.hardwareMap);
     }
