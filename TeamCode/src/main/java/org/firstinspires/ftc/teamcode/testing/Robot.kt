@@ -1,9 +1,8 @@
-package asiankoala.testing
+package org.firstinspires.ftc.teamcode.testing
 
-import asiankoala.testing.subsystems.Arm
-import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
+import org.firstinspires.ftc.teamcode.testing.Hardware
 
 class Robot(startPose: Pose) {
     private val hardware = Hardware(startPose)

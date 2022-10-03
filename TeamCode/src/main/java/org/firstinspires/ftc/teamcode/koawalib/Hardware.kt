@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.koawalib
 
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
-import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
-import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
 
 class Hardware() {
     val fl = MotorFactory("fl")
@@ -27,15 +24,14 @@ class Hardware() {
         .brake
         .build()
 
-    val slides = MotorFactory("Slides")
-        .reverse
-        .brake
-        .build()
+//    val slides = MotorFactory("Slides")
+//        .reverse
+//        .brake
+//        .build()
 
-    val webcam = Webcam("Webcam")
 
-    val arm = KServo("Arm")
-    val claw = KServo("Claw").startAt(Claw.openPos)
+//    val arm = KServo("Arm")
+//    val claw = KServo("Claw").startAt(Claw.openPos)
 
 
 

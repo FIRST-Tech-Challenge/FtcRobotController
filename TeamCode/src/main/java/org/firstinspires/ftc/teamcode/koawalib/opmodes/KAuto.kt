@@ -7,14 +7,14 @@ class KAuto : KOpMode() {
     private val robot by lazy { Robot() }
 
     override fun mInit() {
-        robot.webcam.device.startStreaming()
+//        robot.webcam.device.startStreaming()
     }
 
     override fun mInitLoop() {
-        robot.webcam.periodic()
+//        robot.webcam.periodic()
     }
 
     override fun mStart() {
-        robot.webcam.device.stopStreaming()
+//        robot.webcam.device.stopStreaming()
     }
 }

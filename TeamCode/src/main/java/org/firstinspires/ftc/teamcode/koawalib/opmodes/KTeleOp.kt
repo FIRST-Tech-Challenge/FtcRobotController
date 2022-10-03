@@ -33,13 +33,13 @@ class KTeleOp : KOpMode() {
         driver.x.onPress(InstantCmd({ driver.rumbleBlips(3) }))
         driver.y.onPress(InstantCmd({ driver.rumble(2500) }))
 
-        driver.dpadUp.onPress(InstantCmd({robot.slidesMotor.setPower(0.25)}, robot.slidesMotor))
-        driver.dpadDown.onPress(InstantCmd({robot.slidesMotor.setPower(-0.25)}, robot.slidesMotor))
-        driver.dpadUp.onRelease(InstantCmd({robot.slidesMotor.setPower(0.0)}, robot.slidesMotor))
-        driver.dpadDown.onRelease(InstantCmd({robot.slidesMotor.setPower(0.0)}, robot.slidesMotor))
-
-        driver.a.onPress(Claw.ClawOpen(robot.clawServo))
-        driver.b.onPress(Claw.ClawClose(robot.clawServo))
+//        driver.dpadUp.onPress(InstantCmd({robot.slidesMotor.setPower(0.25)}, robot.slidesMotor))
+//        driver.dpadDown.onPress(InstantCmd({robot.slidesMotor.setPower(-0.25)}, robot.slidesMotor))
+//        driver.dpadUp.onRelease(InstantCmd({robot.slidesMotor.setPower(0.0)}, robot.slidesMotor))
+//        driver.dpadDown.onRelease(InstantCmd({robot.slidesMotor.setPower(0.0)}, robot.slidesMotor))
+//
+//        driver.a.onPress(Claw.ClawOpen(robot.clawServo))
+//        driver.b.onPress(Claw.ClawClose(robot.clawServo))
 
 //        driver.leftBumper.onPress(Arm.ArmReset(robot.armServo))
 //        driver.rightBumper.onPress(Arm.ArmOut(robot.armServo))

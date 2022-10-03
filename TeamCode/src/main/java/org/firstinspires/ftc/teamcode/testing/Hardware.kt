@@ -1,11 +1,5 @@
-package asiankoala.testing
+package org.firstinspires.ftc.teamcode.testing
 
-import asiankoala.testing.subsystems.Arm
-import com.asiankoala.koawalib.control.controller.PIDGains
-import com.asiankoala.koawalib.control.motor.DisabledPosition
-import com.asiankoala.koawalib.control.motor.FFGains
-import com.asiankoala.koawalib.control.motor.MotorControlModes
-import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.KEncoder
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.math.Pose

@@ -5,7 +5,7 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import asiankoala.testing.Robot
+import org.firstinspires.ftc.teamcode.testing.Robot
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.path.PathBuilder
