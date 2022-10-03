@@ -88,9 +88,9 @@ public class Field {
         double[] polarCoords = toPolar(dist);
         if (p_i == 3 && p_j == 0) {
             op.telemetry.addData("dist", polarCoords[0]);
-            op.telemetry.addData("theta", (abs(polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180 / PI-180) % 360);
+            op.telemetry.addData("theta", (abs(polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI-180) % 360);
         }
-        if (polarCoords[0] < lookingDistance && (abs(polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180 / PI-180) % 360 < 22.5) {
+        if (polarCoords[0] < lookingDistance && (abs(polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI-180) % 360 < 22.5) {
             poleValues = new double[]{p_i, p_j, polarCoords[0], polarCoords[1]};
             return true;
         } else {

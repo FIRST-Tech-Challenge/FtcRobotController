@@ -18,7 +18,9 @@ import java.util.List;
 
 public class StickObserverPipeline extends OpenCvPipeline {
     int width = 320, height = 240;
-    double centerOfPole = 0, poleSize = 0, degPerPix = 0.047*11.25/6.6, widTimesDist = 930;
+    //-1.3182 , 16.007
+    //155, 397
+    double centerOfPole = 0, poleSize = 0, degPerPix = -1.3182/197, widTimesDist = 16.007*397;
     ArrayList<double[]> frameList;
 
 
@@ -75,9 +77,9 @@ public class StickObserverPipeline extends OpenCvPipeline {
         centerOfPole = rectangle[maxAreaIndex].center.x+sin(rectangle[maxAreaIndex].angle)*rectangle[maxAreaIndex].size.height/2 - 320;
         poleSize = rectangle[maxAreaIndex].size.width;
         frameList.add(new double[]{centerOfPole,poleSize});
-        if(frameList.size()>5) {
-            frameList.remove(0);
-        }
+//        if(frameList.size()>5) {
+//            frameList.remove(0);
+//        }
 //        input.release();
         mat.release();
         edges.release();

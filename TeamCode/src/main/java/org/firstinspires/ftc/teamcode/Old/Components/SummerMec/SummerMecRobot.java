@@ -5,7 +5,6 @@ import static java.lang.Math.abs;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-import org.firstinspires.ftc.teamcode.Components.Queuer;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
@@ -13,7 +12,7 @@ public class SummerMecRobot extends BasicRobot {
     IntakeSlides intakeSlides = null;
     public SampleMecanumDrive roadrun = null;
     public SummerMecRobot(LinearOpMode opMode){
-        super(opMode);
+        super(opMode,false);
         intakeSlides = new IntakeSlides();
         roadrun = new SampleMecanumDrive(op.hardwareMap);
     }

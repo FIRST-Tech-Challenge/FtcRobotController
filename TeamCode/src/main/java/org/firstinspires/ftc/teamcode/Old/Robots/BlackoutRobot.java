@@ -18,27 +18,22 @@ import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.Sl
 import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.TurretAAStates.TURRET_RAISED;
 import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.TurretRotationStates.TURRET_STRAIGHT;
 import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
-import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.Old.Components.CVPipelines.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
-import org.firstinspires.ftc.teamcode.Components.Queuer;
-import org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine;
-import org.firstinspires.ftc.teamcode.Old.Components.Hardware.CarouselCR;
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Old.Components.Chassis.EncoderChassis;
-import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
+import org.firstinspires.ftc.teamcode.Old.Components.Hardware.CarouselCR;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.Intake;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.LedColor;
-import org.firstinspires.ftc.teamcode.roadrunner.util.LimitSwitches;
-import org.firstinspires.ftc.teamcode.Old.Components.CVPipelines.OpenCVMasterclass;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.Turret;
-import org.firstinspires.ftc.teamcode.roadrunner.util.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Old.Components.Hardware.tseDepositor;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 import java.util.ArrayList;
 
@@ -99,7 +94,7 @@ public class BlackoutRobot extends BasicRobot {
     public static StateMachine checker = null;
 
     public BlackoutRobot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean isTeleop, boolean vuforiaNAVIGATIONneeded, double startAng) {
-        super(opMode);
+        super(opMode,false);
 
         ArrayList<Double> rotationCoefs = new ArrayList<>();
         rotationCoefs.add(4.0);

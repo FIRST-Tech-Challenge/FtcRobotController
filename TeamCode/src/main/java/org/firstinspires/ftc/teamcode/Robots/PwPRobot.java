@@ -26,10 +26,10 @@ public class PwPRobot extends BasicRobot{
         states = new StateMachine();
         roadrun = new SampleMecanumDrive(op.hardwareMap);
         field = new Field(roadrun);
-        aligner = new Aligner();
-        claw = new Claw();
-        clawExtension = new ClawExtension();
-        lift = new Lift();
+//        aligner = new Aligner();
+//        claw = new Claw();
+//        clawExtension = new ClawExtension();
+//        lift = new Lift();
         cv = new CVMaster(roadrun, field);
     }
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
