@@ -33,7 +33,7 @@ public abstract class BaseOpMode extends OpMode {
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
-        driveSystem = new DriveSystem(driveMap);
+        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
     }
 
