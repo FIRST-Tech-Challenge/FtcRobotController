@@ -38,22 +38,22 @@ class BlueOp : KOpMode() {
         driver.x.onPress(InstantCmd({ driver.rumbleBlips(3) }))
         driver.y.onPress(InstantCmd({ driver.rumble(2500) }))
 
-        val path = PathBuilder(startPose.toPose2d())
-            .splineTo(Vector2d(-24.0, -36.0), 45.0.radians)
-            .splineTo(Vector2d(-14.0, 0.0), 90.0.radians)
-            .build()
-
-        driver.a.onPress(
-            GVFCmd(
-                robot.drive,
-                path,
-                0.7,
-                1.0 / 25.0,
-                4.0,
-                0.8,
-                2.0
-            )
-        )
+//        val path = PathBuilder(startPose.toPose2d())
+//            .splineTo(Vector2d(-24.0, -36.0), 45.0.radians)
+//            .splineTo(Vector2d(-14.0, 0.0), 90.0.radians)
+//            .build()
+//
+//        driver.a.onPress(
+//            GVFCmd(
+//                robot.drive,
+//                path,
+//                0.7,
+//                1.0 / 25.0,
+//                4.0,
+//                0.8,
+//                2.0
+//            )
+//        )
     }
 
     override fun mLoop() {
