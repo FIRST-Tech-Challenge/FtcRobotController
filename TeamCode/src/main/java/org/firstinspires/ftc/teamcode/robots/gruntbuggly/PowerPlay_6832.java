@@ -46,8 +46,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem.Subsystem;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.ExponentialSmoother;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.vision.SkystoneTargetInfo;
 
 import java.util.Arrays;
@@ -72,6 +75,9 @@ public class PowerPlay_6832 extends OpMode {
     static Robot robot;
     static Autonomous auto;
     private FtcDashboard dashboard;
+    ExponentialSmoother forwardSmoother, rotateSmoother;
+    public static double FORWARD_SMOOTHING_FACTOR = 0.3;
+    public static double ROTATE_SMOOTHING_FACTOR = 0.25;
     DriverControls dc;
     boolean joystickDriveStarted = false;
 
@@ -79,7 +85,8 @@ public class PowerPlay_6832 extends OpMode {
 
     // global state
     static boolean active;
-    private boolean initializing, debugTelemetryEnabled, numericalDashboardEnabled, smoothingEnabled, antiTippingEnabled;
+    static boolean debugTelemetryEnabled;
+    private boolean initializing,  numericalDashboardEnabled, smoothingEnabled;
     static Constants.Alliance alliance;
     static Constants.Position startingPosition;
     static GameState gameState;
@@ -209,9 +216,18 @@ public class PowerPlay_6832 extends OpMode {
         dc = new DriverControls(gamepad1,gamepad2);
 
         auto = new Autonomous(robot);
+
+
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
         telemetry.setMsTransmissionInterval(25);
+
+        forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
+        rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
+
+        auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+        auto.visionProvider.initializeVision(hardwareMap);
+        visionProviderFinalized = true;
 
         debugTelemetry = true;
         if (debugTelemetry)
@@ -230,10 +246,8 @@ public class PowerPlay_6832 extends OpMode {
         //telemetry.addLine("Current Y " + currentPose.getY() );
         telemetry.addLine("Current Heading " + currentPose.getHeading() );
 
-        dc.updateStickyGamepads();
-        dc.handleStateSwitch();
-        dc.handlePregameControls();
-        dc.joystickDrivePregameMode(gamepad1, gamepad2);
+        //run all driver controls needed in init_loop
+        dc.init_loop();
 
         update();
 
@@ -374,8 +388,6 @@ public class PowerPlay_6832 extends OpMode {
         telemetry.addLine(telemetryName);
         packet.addLine(telemetryName);
 
-        //todo use this once we have stuff moved into drivetrain
-        // if(robot.driveTrain.getVoltage() <= LOW_BATTERY_VOLTAGE) {
         if(robot.getVoltage() <= LOW_BATTERY_VOLTAGE) {
             telemetryMap = new LinkedHashMap<>();
             for(int i = 0; i < 20; i++) {
@@ -415,7 +427,6 @@ public class PowerPlay_6832 extends OpMode {
         opModeTelemetryMap.put("Active", active);
         if(initializing) {
             opModeTelemetryMap.put("Starting Position", startingPosition);
-            opModeTelemetryMap.put("Anti-Tipping Enabled", antiTippingEnabled);
             opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
         }
         opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
@@ -436,11 +447,12 @@ public class PowerPlay_6832 extends OpMode {
         }
 
         handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
-        //todo renable once we put stuff into refactored subsystems
+
+
         // handling subsystem telemetry
-        /*
         for(TelemetryProvider telemetryProvider: robot.subsystems)
             handleTelemetry(telemetryProvider.getTelemetry(debugTelemetryEnabled), telemetryProvider.getTelemetryName(), packet);
+
         handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
 
         // handling vision telemetry
@@ -453,7 +465,7 @@ public class PowerPlay_6832 extends OpMode {
                                 System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : "  NOT FINALIZED  "
                 )
         );
-        */
+
 
         //handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
         dashboard.sendTelemetryPacket(packet);

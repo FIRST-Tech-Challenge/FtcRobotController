@@ -231,12 +231,12 @@ public class Crane implements Subsystem {
         else return false;
     }
 
-    public void adjustElbowAngle(double speed){
-        setShoulderTargetPos(getShoulderPos() + (int)(100 * speed));
+    public void adjustShoulderAngle(double speed){
+        setShoulderTargetPos(Math.max(getShoulderPos() + (int)(100 * speed), (int)(SHOULDER_DEG_MAX * SHOULDER_TICKS_PER_DEGREE)));
     }
 
-    public void decreaseElbowAngle(){
-        setShoulderTargetPos(Math.max(getShoulderPos() - 100, 0));
+    public void decreaseShoulderAngle(double speed){
+        setShoulderTargetPos(Math.max(getShoulderPos() - (int)(100*speed), 0));
     }
     public int getExtendABobPos(){ return  extendPosition; }
     public int getShoulderPos(){ return  shoulderPosition; }

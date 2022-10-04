@@ -7,7 +7,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.TelemetryProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;

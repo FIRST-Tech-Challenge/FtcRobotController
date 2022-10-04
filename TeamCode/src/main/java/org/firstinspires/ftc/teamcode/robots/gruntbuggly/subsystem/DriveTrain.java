@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils.wrapAngleRad;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.diffInchesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.swerveInchesToEncoderTicks;
 
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -50,6 +53,7 @@ import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -318,12 +322,66 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
-        return null;
+        Map<String, Object> telemetryMap = new LinkedHashMap<>();
+        telemetryMap.put("turnStuff", turnAngle - poseEstimate.getHeading());
+
+        if (debug) {
+            telemetryMap.put("x", poseEstimate.getX());
+            telemetryMap.put("y", poseEstimate.getY());
+            telemetryMap.put("heading", Math.toDegrees(poseEstimate.getHeading()));
+
+            telemetryMap.put("x vel", poseVelocity.getX());
+            telemetryMap.put("y vel", poseVelocity.getY());
+            telemetryMap.put("heading vel", Math.toDegrees(poseVelocity.getHeading()));
+
+            if (trajectorySequenceRunner.isBusy()) {
+                telemetryMap.put("xError", poseError.getX());
+                telemetryMap.put("yError", poseError.getY());
+                telemetryMap.put("headingError", Math.toDegrees(poseError.getHeading()));
+            }
+
+            telemetryMap.put("roll", Math.toDegrees(roll));
+            telemetryMap.put("pitch", Math.toDegrees(pitch));
+
+            telemetryMap.put("left position", leftPosition);
+            telemetryMap.put("right position", rightPosition);
+            telemetryMap.put("left position tics", diffInchesToEncoderTicks(leftPosition));
+            telemetryMap.put("right position tics", diffInchesToEncoderTicks(rightPosition));
+            telemetryMap.put("swerve position", swerveInchesToEncoderTicks(swervePosition));
+
+            telemetryMap.put("left velocity", leftVelocity);
+            telemetryMap.put("right velocity", rightVelocity);
+
+            telemetryMap.put("target left velocity", targetLeftVelocity);
+            telemetryMap.put("target right velocity", targetRightVelocity);
+
+            telemetryMap.put("maintain heading enabled", maintainHeadingEnabled);
+            telemetryMap.put("maintain heading", Math.toDegrees(maintainHeading));
+            //telemetryMap.put("maintain heading PID on target", maintainHeadingOnTarget);
+            telemetryMap.put("maintain heading PID correction", maintainHeadingCorrection);
+
+            telemetryMap.put("angular velocity", Math.toDegrees(angularVelocity));
+            telemetryMap.put("pitch velocity", Math.toDegrees(pitchVelocity));
+
+            telemetryMap.put("drive velocity", driveVelocity.toString());
+            telemetryMap.put("last drive velocity", lastDriveVelocity.toString());
+
+            telemetryMap.put("loop time", loopTime / 1e9);
+
+            if (!simulated) {
+                PIDFCoefficients velocityCoefficients = leftMotor
+                        .getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+                telemetryMap.put("measured drivetrain PID coeffs", String.format("(p: %f, i: %f, d: %f)",
+                        velocityCoefficients.p, velocityCoefficients.i, velocityCoefficients.d));
+            }
+        }
+
+        return telemetryMap;
     }
 
     @Override
     public String getTelemetryName() {
-        return null;
+        return "Drive Train";
     }
 
     // ----------------------------------------------------------------------------------------------

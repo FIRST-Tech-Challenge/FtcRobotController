@@ -6,13 +6,14 @@ import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.r
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.startingPosition;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.alliance;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.active;
+import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.debugTelemetryEnabled;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.visionProviderIndex;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.StickyGamepad;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.vision.VisionProviders;
 
 
 public class DriverControls {
@@ -27,33 +28,30 @@ public class DriverControls {
         stickyGamepad2 = new StickyGamepad(gamepad2);
     }
 
+    public void init_loop(){
+        updateStickyGamepads();
+        handleStateSwitch();
+        handlePregameControls();
+        handleVisionProviderSwitch();
+        joystickDrivePregameMode();
+    }
+
     public void updateStickyGamepads(){
-        stickyGamepad2.update();
+        stickyGamepad1.update();
         stickyGamepad2.update();
     }
 
-    public void handleVisionProviderSwitch() {
-        if(!active) {
-            if(!visionProviderFinalized) {
-                if (stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) {
-                    visionProviderIndex = (visionProviderIndex + 1) % VisionProviders.VISION_PROVIDERS.length; // switch vision provider
-                    auto.createVisionProvider(visionProviderIndex);
-                }
-                if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
-                    auto.visionProvider.initializeVision(hardwareMap); // this is blocking
-                    visionProviderFinalized = true;
-                }
-            } else if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
-                auto.visionProvider.shutdownVision(); // also blocking, but should be very quick
-                visionProviderFinalized = false;
-            }
-        }
-        else if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right) && visionProviderFinalized)
-        {
-            auto.visionProvider.saveDashboardImage();
-        }
-        if(visionProviderFinalized)
-            auto.visionProvider.update();
+    void joystickDrive() {
+        robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+        robot.crane.adjustShoulderAngle(gamepad1.right_trigger);
+    }
+
+    void joystickDrivePregameMode() {
+        // drive joysticks
+        robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+
+        // turret controls
+
     }
 
     public void handleStateSwitch() {
@@ -87,9 +85,10 @@ public class DriverControls {
             //robot.driveTrain.setPoseEstimate(startingPosition.getPose());
             //auto.build(startingPosition);
         }
-/*
+
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
+        /*
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             if (robot.crane.shoulderInitialized)
                 robot.articulate(Robot.Articulation.START_DOWN); //stow crane to the starting position
@@ -107,16 +106,28 @@ public class DriverControls {
  */
     }
 
-    void joystickDrive() {
-        robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
-    }
-
-    void joystickDrivePregameMode(Gamepad gamepad1, Gamepad gamepad2) {
-        // drive joysticks
-        robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
-
-        // turret controls
-
+    public void handleVisionProviderSwitch() {
+        if(!active) {
+            if(!visionProviderFinalized) {
+                if (stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) {
+                    visionProviderIndex = (visionProviderIndex + 1) % VisionProviders.VISION_PROVIDERS.length; // switch vision provider
+                    auto.createVisionProvider(visionProviderIndex);
+                }
+                if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
+                    auto.visionProvider.initializeVision(hardwareMap); // this is blocking
+                    visionProviderFinalized = true;
+                }
+            } else if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
+                auto.visionProvider.shutdownVision(); // also blocking, but should be very quick
+                visionProviderFinalized = false;
+            }
+        }
+        else if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right) && visionProviderFinalized)
+        {
+            auto.visionProvider.saveDashboardImage();
+        }
+        if(visionProviderFinalized)
+            auto.visionProvider.update();
     }
 }
 

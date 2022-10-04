@@ -65,7 +65,7 @@ public class Robot implements Subsystem {
         turret = new Turret(hardwareMap, simulated);
         crane = new Crane(hardwareMap, turret, simulated);
 
-        subsystems = new Subsystem[] {driveTrain, turret, crane};
+        subsystems = new Subsystem[] {driveTrain, turret, crane}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
