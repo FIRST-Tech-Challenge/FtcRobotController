@@ -26,12 +26,27 @@ abstract public class BaseTeleOp extends BaseOpMode {
             YAVGPos_RS.pop();
         }
         for(int iterator = 0; iterator < XAVGPos_LS.size(); iterator++){
-            AllStickAVGS[0] = XAVGPos_LS
+            AllStickAVGS[0] = (XAVGPos_LS.get(iterator) + AllStickAVGS[0])/iterator;
+            AllStickAVGS[1] = (YAVGPos_LS.get(iterator) + AllStickAVGS[1])/iterator;
+            AllStickAVGS[2] = (XAVGPos_RS.get(iterator) + AllStickAVGS[2])/iterator;
+            AllStickAVGS[3] = (YAVGPos_RS.get(iterator) + AllStickAVGS[3])/iterator;
         }
         return (AllStickAVGS);
     }
 
     public void TeleOpDrive () {
+        Float[] FilteredInput = GamePadInputAVG();
+        if(Math.atan2(FilteredInput[0], FilteredInput[1]) < 20){
+
+        }else{
+
+        }
+        if(Math.atan2(FilteredInput[2], FilteredInput[3]) < 20){
+
+        }else{
+
+        }
+
     }
 
 }
