@@ -330,6 +330,14 @@ public class DriveSystem {
 
     }
 
+    public boolean turnRight(double maxPower){
+        return turn(-90, maxPower);
+    }
+
+    public boolean turnLeft(double maxPower){
+        return turn(90, maxPower);
+    }
+
     /**
      * Perform one cycle of closed loop heading control.
      * @param speed Desired speed of turn

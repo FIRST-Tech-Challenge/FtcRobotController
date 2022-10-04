@@ -28,6 +28,7 @@ public class BaseStateMachine extends BaseAutonomous {
         POSITION_ROBOT_AT_JUNCTION,
         PLACE_CONE,
         PARK,
+        END_STATE,
         LOGGING,
     }
 
@@ -78,16 +79,48 @@ public class BaseStateMachine extends BaseAutonomous {
             case IDENTIFY_TARGET:
                 if(teamAsset == null){
                     //drive forward slowly/10 inches and identify again
-                    if(driveSystem.driveToPosition(254, DriveSystem.Direction.FORWARD, 0.5)){
-                        teamAsset = "David";
+                    //backwards is forwards
+
+                    if(driveSystem.driveToPosition(254, DriveSystem.Direction.BACKWARD, 0.3)){
+                        telemetry.addData("on heading? ", driveSystem.onHeading(0.3, 0));
+                        identifySleeve();
+                        teamAsset = "Brain";
                     }
                     identifySleeve();
+                    Log.d("signal sleeve", vuforia.identifyTeamAsset());
+                    telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
 
                 } else{
-                    newState(State.DRIVE_TO_MEDIUM_JUNCTION);
+                    newState(State.PARK);
                     break;
                 }
                 break;
+            case DRIVE_TO_MEDIUM_JUNCTION:
+                if(driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.3)){
+                    newState(State.POSITION_ROBOT_AT_JUNCTION);
+                }
+            case PARK:
+                if(teamAsset.equals("David")){
+                    if(driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)){
+                        if(driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.5)){
+                            newState(State.END_STATE);
+                        }
+                    }
+                }
+                if(teamAsset.equals("Brain")){
+                    if(driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)){
+                        newState(State.END_STATE);
+                    }
+                }
+                if(teamAsset.equals("7330")){
+                    if(driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)){
+                        if(driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.5)){
+                            newState(State.END_STATE);
+                        }
+                    }
+                }
+                //"david" left two squares, "brain" center two, "7330" right two squares
+
         }
     }
 
