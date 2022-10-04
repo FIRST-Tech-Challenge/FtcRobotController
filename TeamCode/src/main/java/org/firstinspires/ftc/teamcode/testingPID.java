@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 /**
 * this is the file that i'm gonna be making a base implementation of PID in, PRE TESTING.
@@ -52,6 +53,8 @@ public class testingPID extends LinearOpMode {
     private DcMotor         rightFront  = null;
     private DcMotor         rightBack  = null;
     private DcMotor         leftBack  = null;
+    private LinearOpMode newOp;
+    private GyroCode sensors;
 
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -81,6 +84,16 @@ public class testingPID extends LinearOpMode {
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
 
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -93,5 +106,29 @@ public class testingPID extends LinearOpMode {
         sleep(1000);
     }
 
+    public double getAvgEncoder(){
+
+        double div = 4;
+        double avgAdd = leftBack.getCurrentPosition() + rightBack.getCurrentPosition() + leftFront.getCurrentPosition() + rightFront.getCurrentPosition();
+        double avg = 0;
+
+        if (leftBack.getCurrentPosition() == 0 ) {
+            div--;
+        }
+
+        if ( rightBack.getCurrentPosition() == 0){
+            div--;
+        }
+
+        if ( leftFront.getCurrentPosition() == 0){
+            div--;
+        }
+
+        if ( rightFront.getCurrentPosition() == 0){
+            div--;
+        }
+
+        if ( div == 0)
+    }
 
 }
