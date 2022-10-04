@@ -73,7 +73,7 @@ public class HardwareDrive
     public DcMotorEx  botL;
 
 
-    public DcMotorEx[] dtMotors = {topL, botL, topR, botR};
+    public DcMotorEx[] dtMotors;
 
     /*
     Top Left  0                              Top Right 2
@@ -102,12 +102,12 @@ public class HardwareDrive
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        String[] drive_position = {"top_left", "bottom_left", "top_right", "bottom_right"};
+
+        topL = hwMap.get(DcMotorEx.class, "top_left");
+        botL = hwMap.get(DcMotorEx.class, "bottom_left");
 
 
-        for (int i = 0; i < 4; i++){
-            dtMotors[i] = hwMap.get(DcMotorEx.class, drive_position[i]);
-        }
+
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -123,10 +123,10 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        dtMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
-        dtMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
-        dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
-        dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
+        botL.setDirection(DcMotorSimple.Direction.REVERSE);
+        topL.setDirection(DcMotorSimple.Direction.REVERSE);
+       // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
+        //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all motors to zero power
         setMotorPower(0);
@@ -141,26 +141,25 @@ public class HardwareDrive
     public void setMotorPower(double power){
         if (power == 0.0){
             // Grady Conwell Was Here
-            for (DcMotorEx motor : dtMotors) {
-                motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            }
+            botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        } else{
-            for (DcMotorEx motor : dtMotors) {
-                motor.setPower(power);
-            }
+        } else {
+            botL.setPower(0);
+            topL.setPower(0);
         }
     }
 
     public void setRunMode(DcMotor.RunMode runState){
-        for (DcMotorEx motor : dtMotors){
-            motor.setMode(runState);
-        }
+        botL.setMode(runState);
+        topL.setMode(runState);
     }
 
+    /*
     public boolean wheelsAreBusy(){
-        return (dtMotors[0].isBusy() && dtMotors[1].isBusy() && dtMotors[2].isBusy() && dtMotors[3].isBusy());
+        return (dtMotors[0].isBusy() && dtMotors[1].isBusy()/* && dtMotors[2].isBusy() && dtMotors[3].isBusy());
     }
+    */
 
 }
 

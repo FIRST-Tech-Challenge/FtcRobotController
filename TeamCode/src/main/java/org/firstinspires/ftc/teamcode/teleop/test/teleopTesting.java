@@ -94,7 +94,12 @@ public class teleopTesting extends OpMode {
 
     private void DriveTrainMove(){
 //        posSystem.calculatePos();
+<<<<<<< Updated upstream
         testMove(1, 0);
+=======
+
+        testMove(0,1);
+>>>>>>> Stashed changes
         telemetry.update();
     }
 
@@ -110,14 +115,32 @@ public class teleopTesting extends OpMode {
         int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
 
         double[] motorPower = new double[4];
-        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
-        motorPower[1] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
-        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
-        motorPower[3] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
+        motorPower[0] = (spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle) + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
+        motorPower[1] = (-1 * spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle) + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
+    //    motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
+      //  motorPower[3] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
 
-        for (int i = 0; i < 4; i++){
+        /*
+        for (int i = 0; i < 2; i++){
             robot.dtMotors[i].setPower(motorPower[i]);
         }
+
+         */
+
+        /*
+        robot.topL.setPower(motorPower[0]*0.5);
+        robot.botL.setPower(motorPower[1]*0.5);
+
+         */
+
+        robot.topL.setPower(gamepad1.left_stick_y);
+        robot.botL.setPower(-gamepad1.left_stick_y);
+/*
+        robot.topL.setPower(gamepad1.left_stick_x);
+        robot.botL.setPower(gamepad1.left_stick_x);
+
+ */
+
     }
 
     @Override
