@@ -24,7 +24,8 @@ import java.util.Map;
 public class Crane implements Subsystem {
     public static int SHOULDER_START_ANGLE = 110;
     public static int BULB_HOME_PWM = 1500;
-    public static double SHOULDER_TICKS_PER_DEGREE = 7.65;
+
+    public static double SHOULDER_TICKS_PER_DEGREE = 15.7;  //from Proteus todo verify it works
     public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
 
     public static double kF = 0.0;
@@ -207,7 +208,10 @@ public class Crane implements Subsystem {
 
     @Override
     public void stop() {
-
+        setShoulderPwr(0);
+        setExtendABobPwr(0);
+        setShoulderActivePID(false);
+        setExtendABobActivePID(false);
     }
 
     @Override
@@ -217,11 +221,23 @@ public class Crane implements Subsystem {
 
     public void setExtendABobPwr(double pwr){ extendABobPwr = pwr; }
     public void setExtendABobActivePID(boolean isActive){extendABobActivePID = isActive;}
-    public void setShoulderPID(boolean isActive){shoulderActivePID = isActive;}
+    public void setShoulderActivePID(boolean isActive){shoulderActivePID = isActive;}
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
     public  void setShoulderTargetPos(int t){ shoulderTargetPos = t; }
+    public  int getShoulderTargetPos(){ return shoulderTargetPos; }
     public  void setExtendTargetPos(int t){ extendABobTargetPos = t; }
+    public boolean nearTargetShoulder(){
+        if ((Math.abs( getShoulderPos()-getShoulderTargetPos()))<55) return true;
+        else return false;
+    }
 
+    public void adjustElbowAngle(double speed){
+        setShoulderTargetPos(getShoulderPos() + (int)(100 * speed));
+    }
+
+    public void decreaseElbowAngle(){
+        setShoulderTargetPos(Math.max(getShoulderPos() - 100, 0));
+    }
     public int getExtendABobPos(){ return  extendPosition; }
     public int getShoulderPos(){ return  shoulderPosition; }
     public double getShoulderAngle(){ return shoulderAngle;}

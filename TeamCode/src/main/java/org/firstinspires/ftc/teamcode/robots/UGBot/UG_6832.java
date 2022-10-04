@@ -36,6 +36,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -59,7 +60,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.notsmalldeadzone;
  * This file contains the code for Iron Reign's main OpMode, used for both
  * TeleOp and Autonomous.
  */
-
+@Disabled
 @TeleOp(name = "AAAUltimateGoal_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config

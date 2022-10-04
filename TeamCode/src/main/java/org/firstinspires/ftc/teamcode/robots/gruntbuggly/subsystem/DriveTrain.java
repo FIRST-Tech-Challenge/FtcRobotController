@@ -2,19 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem;
 
 
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.*;
-import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils.approxEquals;
-import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.USE_MOTOR_SMOOTHING;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.DISTANCE_SENSOR_TO_FRONT_AXLE;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.SWIVEL_TICKS_PER_REVOLUTION;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.diffEncoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.diffInchesToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.swerveEncoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.swerveInchesToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.wrapAngleRad;
+import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils.wrapAngleRad;
 
 
 import androidx.annotation.NonNull;
@@ -76,14 +64,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     private double leftPosition, rightPosition, leftRelOffset, rightRelOffset, swervePosition, swivelPosition;
 
-    private double leftVelocity, rightVelocity, swerveVelocity;
-    private double targetLeftVelocity, targetRightVelocity, targetSwerveVelocity, swivelPower, duckSpinnerPower;
+    private double leftVelocity, rightVelocity;
+    private double targetLeftVelocity, targetRightVelocity;
     private double leftPower, rightPower;
     private boolean useMotorPowers;
-    private double chassisLength, targetChassisLength, chassisLengthCorrection;
-    private boolean maintainChassisLengthEnabled, maintainHeadingEnabled, duckSpinnerToggled, imuOffsetsInitialized,
-            duckGameEnabled, useAutonChassisLengthPID;
-    private boolean chassisLengthOnTarget, maintainHeadingOnTarget;
+    private boolean maintainHeadingEnabled, imuOffsetsInitialized;
     private double maintainHeading, maintainHeadingCorrection;
     private double heading, roll, pitch, pitchVelocity, angularVelocity;
     private double headingOffset, rollOffset, pitchOffset;
@@ -182,9 +167,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         lastDriveVelocity = new Pose2d(0, 0, 0);
         currentPose = new Pose2d(0,0,0);
 
-        //TODO, starting pose
-
-
+        //default pose - gotta have some initial pose
+        setPoseEstimate(Position.START_RIGHT.getPose());
 
     }
     public double updateHeading(double dtheta){
@@ -476,7 +460,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     @Override
     public void setDriveSignal(@NonNull DriveSignal driveSignal) {
         useMotorPowers = false;
-        List<Double> velocities = DiffyKinematics.robotToWheelVelocities(driveSignal.getVel(), DISTANCE_BETWEEN_WHEELS);
+        List<Double> velocities = DiffyKinematics.robotToWheelVelocities(driveSignal.getVel(), TRACK_WIDTH);
 
         setMotorVelocities(velocities.get(0), velocities.get(1));
 
@@ -486,22 +470,21 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public void setDriveVelocity(@NonNull Pose2d driveVelocity) {
         useMotorPowers = false;
         this.driveVelocity = driveVelocity;
-        List<Double> velocities = DiffyKinematics.robotToWheelVelocities(driveVelocity, DISTANCE_BETWEEN_WHEELS);
+        List<Double> velocities = DiffyKinematics.robotToWheelVelocities(driveVelocity, TRACK_WIDTH);
         setMotorVelocities(velocities.get(0), velocities.get(1));
     }
 
     @Override
     public void setDrivePower(@NonNull Pose2d drivePower) {
         useMotorPowers = true;
-        List<Double> powers = DiffyKinematics.robotToWheelVelocities(drivePower, DISTANCE_BETWEEN_WHEELS);
+        List<Double> powers = DiffyKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH);
         setMotorPowers(powers.get(0), powers.get(1));
     }
-
 
     private static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel) {
         return new MinVelocityConstraint(Arrays.asList(
                 new AngularVelocityConstraint(maxAngularVel),
-                new TankVelocityConstraint(maxVel, DISTANCE_BETWEEN_WHEELS)));
+                new TankVelocityConstraint(maxVel, TRACK_WIDTH)));
     }
 
     private static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.gruntbuggly.util;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.ELBOW_TO_WRIST;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.SHOULDER_TO_ELBOW;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.wrapAngleRad;
+import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils.wrapAngleRad;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -84,11 +82,9 @@ public class DashboardUtil {
         Vector2d leftWheel = new Vector2d(0, TRACK_WIDTH / 2);
         Vector2d rightWheel = new Vector2d(0, -TRACK_WIDTH / 2);
 
-
         // calculating wheel vectors
         Vector2d leftWheelEnd = leftWheel.plus(new Vector2d(VELOCITY_SCALE * wheelVelocities.get(0), 0));
         Vector2d rightWheelEnd = rightWheel.plus(new Vector2d(VELOCITY_SCALE * wheelVelocities.get(1), 0));
-
 
         // rotating points by heading, translating by position
         double heading = pose.getHeading();
@@ -130,9 +126,9 @@ public class DashboardUtil {
         //wristAngle = wrapAngleRad(Math.toRadians(180) - wrapAngleRad(elbowAngle + Math.toRadians(wristAngle)));
 
         canvas.setStroke(EXTEND_COLOR);
-        Vector2d shoulderToElbow = u.times(SHOULDER_TO_ELBOW * Math.cos(shoulderAngle));
+        Vector2d extension = u.times(extendInches * Math.cos(shoulderAngle));
         double ste_x1 = turretPose.getX(), ste_y1 = turretPose.getY();
-        double ste_x2 = turretPose.getX() + shoulderToElbow.getX(), ste_y2 = turretPose.getY() + shoulderToElbow.getY();
+        double ste_x2 = turretPose.getX() + extension.getX(), ste_y2 = turretPose.getY() + extension.getY();
         canvas.strokeLine(ste_x1, ste_y1, ste_x2, ste_y2);
 /*
         canvas.setStroke(ELBOW_TO_WRIST_COLOR);
