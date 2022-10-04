@@ -21,6 +21,7 @@ public class BaseStateMachine extends BaseAutonomous {
     private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField        = 72 * mmPerInch;
     private static final float oneAndHalfTile   = 36 * mmPerInch;
+    private int park = 0;
 
     public enum State {
         IDENTIFY_TARGET,
@@ -77,11 +78,11 @@ public class BaseStateMachine extends BaseAutonomous {
         // Execute state machine
         switch (mCurrentState) {
             case IDENTIFY_TARGET:
-                if(teamAsset == null){
+                if (teamAsset == null) {
                     //drive forward slowly/10 inches and identify again
                     //backwards is forwards
 
-                    if(driveSystem.driveToPosition(254, DriveSystem.Direction.BACKWARD, 0.3)){
+                    if (driveSystem.driveToPosition(254, DriveSystem.Direction.BACKWARD, 0.3)) {
                         telemetry.addData("on heading? ", driveSystem.onHeading(0.3, 0));
                         identifySleeve();
                         teamAsset = "Brain";
@@ -90,38 +91,37 @@ public class BaseStateMachine extends BaseAutonomous {
                     Log.d("signal sleeve", vuforia.identifyTeamAsset());
                     telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
 
-                } else{
+                } else {
                     newState(State.PARK);
                     break;
                 }
                 break;
             case DRIVE_TO_MEDIUM_JUNCTION:
-                if(driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.3)){
+                if (driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.3)) {
                     newState(State.POSITION_ROBOT_AT_JUNCTION);
                 }
             case PARK:
-                if(teamAsset.equals("David")){
-                    if(driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)){
-                        if(driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.5)){
-                            newState(State.END_STATE);
-                        }
-                    }
-                }
-                if(teamAsset.equals("Brain")){
-                    if(driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)){
+                if (teamAsset.equals("David")) {
+                    if(parkState()){
                         newState(State.END_STATE);
                     }
                 }
-                if(teamAsset.equals("7330")){
-                    if(driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)){
-                        if(driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.5)){
-                            newState(State.END_STATE);
-                        }
+                if (teamAsset.equals("Brain")) {
+                    if (driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)) {
+                        newState(State.END_STATE);
                     }
                 }
+                if (teamAsset.equals("7330")) {
+                    if(parkState()){
+                        newState(State.END_STATE);
+                    }
+                }
+            case END_STATE:
+                Log.d("parked", vuforia.identifyTeamAsset());
                 //"david" left two squares, "brain" center two, "7330" right two squares
 
         }
+
     }
 
     /** Changes state to given state
@@ -133,4 +133,24 @@ public class BaseStateMachine extends BaseAutonomous {
         mCurrentState = newState;
     }
 
+    private boolean parkState() {
+        if (park == 0) {
+            if (driveSystem.driveToPosition(600, DriveSystem.Direction.BACKWARD, 0.5)) {
+                park++;
+            }
+        }
+        if (park == 1) {
+            if (teamAsset.equals("David")) {
+                if (driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
+                    return true;
+                }
+            }
+            if (teamAsset.equals("7330")) {
+                if (driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
