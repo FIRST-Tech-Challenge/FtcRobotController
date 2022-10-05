@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.CompassSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.util.SimplePIDControl;
@@ -23,10 +24,10 @@ CompassSensor                compass;
     public PacManTurnToPos(Localizer localizer, MecanumDriveBase mecanumDriveBase) {
         this.localizer = localizer;
         this.mecanumDriveBase = mecanumDriveBase;
-        this.angleControl = new SimplePIDControl(10, 0, 30);
+        this.angleControl = new SimplePIDControl(10, 0, .3);
     }
 
-    public void handlePacMan(Gamepad gamepad) {
+    public void handlePacMan(Gamepad gamepad, Telemetry telemetry) {
         //makes heading easier for me.
         heading =  localizer.heading;
             if(gamepad.dpad_down){
@@ -42,5 +43,6 @@ CompassSensor                compass;
                 angleControl.setTargetValue(90);
             }
         mecanumDriveBase.driveMotors(0,angleControl.update(heading), 0,1);
+            telemetry.addData("targetValue", angleControl.targetValue);
     }
 }
