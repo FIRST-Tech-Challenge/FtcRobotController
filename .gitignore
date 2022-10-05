@@ -3,7 +3,7 @@
 *.aar
 *.ap_
 *.aab
-
+.idea/
 !libs/*.aar
 
 # Files for the ART/Dalvik VM

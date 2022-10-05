@@ -16,7 +16,7 @@ import java.util.List;
 @Autonomous(name = "BaseStateMachine", group = "Autonomous")
 public class BaseStateMachine extends BaseAutonomous {
     // List of all states the robot could be in
-    private String teamAsset;
+    public String teamAsset;
     private static final float mmPerInch        = 25.4f;
     private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField        = 72 * mmPerInch;
@@ -31,12 +31,6 @@ public class BaseStateMachine extends BaseAutonomous {
         PARK,
         END_STATE,
         LOGGING,
-    }
-
-    public enum teamAsset {
-        BRIAN,
-        DAVID,
-        TEAM,
     }
 
     private final static String TAG = "BaseStateMachine";// Logging tag
@@ -94,6 +88,7 @@ public class BaseStateMachine extends BaseAutonomous {
                         teamAsset = "Brain";
                     }
                     identifySleeve();
+
                     Log.d("signal sleeve", vuforia.identifyTeamAsset());
                     telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
 
@@ -107,21 +102,7 @@ public class BaseStateMachine extends BaseAutonomous {
                     newState(State.POSITION_ROBOT_AT_JUNCTION);
                 }
             case PARK:
-                if (teamAsset.equals("David")) {
-                    if(parkState()){
-                        newState(State.END_STATE);
-                    }
-                }
-                if (teamAsset.equals("Brain")) {
-                    if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.5)) {
-                        newState(State.END_STATE);
-                    }
-                }
-                if (teamAsset.equals("7330")) {
-                    if(parkState()){
-                        newState(State.END_STATE);
-                    }
-                }
+                park();
             case END_STATE:
                 Log.d("parked", vuforia.identifyTeamAsset());
                 //"david" left two squares, "brain" center two, "7330" right two squares
@@ -139,22 +120,24 @@ public class BaseStateMachine extends BaseAutonomous {
         mCurrentState = newState;
     }
 
-    private boolean parkState() {
+    private boolean park() {
         if (parkStep == 0) {
-            if (driveSystem.driveToPosition(400, DriveSystem.Direction.BACKWARD, 0.5)) {
+            if (driveSystem.driveToPosition(600, DriveSystem.Direction.BACKWARD, 0.5)) {
                 parkStep++;
             }
         }
         if (parkStep == 1) {
-            if (teamAsset.equals("David")) {
-                if (driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
-                    return true;
-                }
+            if (teamAsset.equals("David") && driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
+                newState(State.END_STATE);
+                return true;
             }
-            if (teamAsset.equals("7330")) {
-                if (driveSystem.driveToPosition(400, DriveSystem.Direction.LEFT, 0.5)) {
-                    return true;
-                }
+            if (teamAsset.equals("Brain") && driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5) && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+                newState(State.END_STATE);
+                return true;
+            }
+            if (teamAsset.equals("7330") && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+                newState(State.END_STATE);
+                return true;
             }
         }
         return false;
