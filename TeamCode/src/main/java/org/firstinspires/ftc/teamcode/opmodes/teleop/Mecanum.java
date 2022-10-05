@@ -32,8 +32,12 @@ public class Mecanum extends LinearOpMode {
             frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backLeftDrive   = (-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
-                if (gamepad1.a == true) {
-                    robot.ClawMotor.setPower(1);
+                // (gamepad1.a == true) {
+                    //robot.ClawMotor.setPower(1);
+                //}
+                 if (gamepad1.b) {
+                    robot.leftslidemotor.setPower(1);
+                    robot.leftslidemotor.setPower(1);
                 }
 
             robot.rightfrontmotor.setPower(frontRightDrive);
@@ -51,6 +55,8 @@ public class Mecanum extends LinearOpMode {
             if (frontLeftDrive>0 && frontRightDrive<0 && backLeftDrive>0 && backRightDrive<0 || frontLeftDrive<0 && frontRightDrive>0 && backLeftDrive<0 && backRightDrive>0) {
                 telemetry.addLine("Strafing");
             }
+
+
             telemetry.addLine("motor name               motor speed");
             telemetry.addLine();
             telemetry.addData("Front right drive power = ", frontRightDrive);
