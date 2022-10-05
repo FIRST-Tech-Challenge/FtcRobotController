@@ -108,20 +108,7 @@ public class BaseStateMachine extends BaseAutonomous {
                     newState(State.POSITION_ROBOT_AT_JUNCTION);
                 }
             case PARK:
-                switch(teamAsset){
-                    case TEAM:
-                        if(parkState()){
-                            newState(State.END_STATE);
-                        }
-                    case BRIAN:
-                        if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.5)) {
-                            newState(State.END_STATE);
-                        }
-                    case DAVID:
-                        if(parkState()){
-                            newState(State.END_STATE);
-                        }
-                }
+                park();
             case END_STATE:
                 Log.d("parked", teamAsset.toString());
                 //"david" left two squares, "brain" center two, "7330" right two squares
@@ -139,22 +126,24 @@ public class BaseStateMachine extends BaseAutonomous {
         mCurrentState = newState;
     }
 
-    private boolean parkState() {
+    private boolean park() {
         if (parkStep == 0) {
-            if (driveSystem.driveToPosition(400, DriveSystem.Direction.BACKWARD, 0.5)) {
+            if (driveSystem.driveToPosition(600, DriveSystem.Direction.BACKWARD, 0.5)) {
                 parkStep++;
             }
         }
         if (parkStep == 1) {
-            if (teamAsset == Sleeve.DAVID) {
-                if (driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.5)) {
-                    return true;
-                }
+            if (teamAsset.equals("David") && driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
+                newState(State.END_STATE);
+                return true;
             }
-            if (teamAsset == Sleeve.TEAM) {
-                if (driveSystem.driveToPosition(400, DriveSystem.Direction.LEFT, 0.5)) {
-                    return true;
-                }
+            if (teamAsset.equals("Brain") && driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5) && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+                newState(State.END_STATE);
+                return true;
+            }
+            if (teamAsset.equals("7330") && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+                newState(State.END_STATE);
+                return true;
             }
         }
         return false;
