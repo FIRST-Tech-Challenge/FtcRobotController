@@ -15,8 +15,12 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
-android {5
+android {
     namespace = 'org.firstinspires.ftc.teamcode'
+}
+repositories{
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url 'https://jitpack.io' }
 }
 
 
@@ -25,4 +29,5 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
-    }
+    implementation 'com.github.technototes:TechnoLib:1.1.2'
+}
