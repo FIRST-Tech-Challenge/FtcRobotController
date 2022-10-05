@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.blackswan;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,15 +19,19 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name = "AutonomousParkingTest")
-public class ParkPosition extends LinearOpMode {
+@TeleOp(name = "AutonomousParkingTestDEV")
+public class ParkPositionDEV extends LinearOpMode {
 
     DeterminationPipeline pipeline;
+    TelemetryPacket packet = new TelemetryPacket();
+
 
     @Override
     public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+        pipeline = new DeterminationPipeline(telemetry, packet);
         webcam.setPipeline(pipeline);
 
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
@@ -45,16 +51,37 @@ public class ParkPosition extends LinearOpMode {
 
         waitForStart();
 
+        while (opModeIsActive()) {
+
+            telemetry.addData("Lightness", pipeline.AVG_L);
+            telemetry.addData("GM", pipeline.AVG_A);
+            telemetry.addData("BY", pipeline.AVG_B);
+
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+            packet.put("Lightness", pipeline.AVG_L);
+            packet.put("GM", pipeline.AVG_A);
+            packet.put("BY", pipeline.AVG_B);
+            dashboard.sendTelemetryPacket(packet);
+
+
+            telemetry.update();
+
+            sleep(50);
+        }
     }
 
     public static class DeterminationPipeline extends OpenCvPipeline {
 
         Telemetry telemetry;
+        TelemetryPacket packet;
 
-        public DeterminationPipeline(Telemetry telemetry) {
+        public DeterminationPipeline(Telemetry telemetry, TelemetryPacket packet) {
             this.telemetry = telemetry;
+            this.packet = packet;
         }
 
+        static final Scalar BLUE = new Scalar(0, 0, 255);
+        static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
         static final Point DETECTION_ANCHOR = new Point(140, 70);
@@ -72,13 +99,10 @@ public class ParkPosition extends LinearOpMode {
         Mat DETECTION_L;
         Mat DETECTION_A;
         Mat DETECTION_B;
-
         Mat LAB = new Mat();
-
         Mat l = new Mat();
         Mat a = new Mat();
         Mat b = new Mat();
-
         int AVG_L;
         int AVG_A;
         int AVG_B;
@@ -115,22 +139,55 @@ public class ParkPosition extends LinearOpMode {
             AVG_B = (int) Core.mean(DETECTION_B).val[0];
 
             Imgproc.rectangle(
-                    input,
-                    region1_pointA,
-                    region1_pointB,
-                    RED,
-                    2);
+                    input, // Buffer to draw on
+                    region1_pointA, // First point which defines the rectangle
+                    region1_pointB, // Second point which defines the rectangle
+                    RED, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
+
+            telemetry.update();
+
+            int ParkDot = 0;
+
+            // A = GM // B = BY
+            // one dot values, GM 174, BY 124
+            // two dot values, GM 116, BY 179
+            // three dot values, GM 127, BY 87
 
             if((AVG_A > 164) && (AVG_A < 184) && (AVG_B > 114) && (AVG_B < 134)){
-                //1
+                telemetry.addData("ONE DOT", "Current park position");
+                ParkDot = 1;
             } else if((AVG_A > 106) && (AVG_A < 126) && (AVG_B > 169) && (AVG_B < 189)){
-                //2
+                telemetry.addData("TWO DOT", "Current park position");
+                ParkDot = 2;
             } else if((AVG_A > 117) && (AVG_A < 137) && (AVG_B > 77) && (AVG_B < 97)){
-                //3
+                telemetry.addData("THREE DOT", "Current park position");
+                ParkDot = 3;
+            } else {
+                telemetry.addData("NO DOT", "Current park position");
             }
+
+            telemetry.update();
+
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+            packet.put("Position", ParkDot);
+            dashboard.sendTelemetryPacket(packet);
 
             return input;
 
         }
+
+        public int getAnalysis1() {
+            return AVG_L;
+        }
+
+        public int getAnalysis2() {
+            return AVG_A;
+        }
+
+        public int getAnalysis3() {
+            return AVG_B;
+        }
+
     }
 }
