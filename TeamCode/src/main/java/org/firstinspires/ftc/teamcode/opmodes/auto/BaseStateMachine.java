@@ -16,7 +16,7 @@ import java.util.List;
 @Autonomous(name = "BaseStateMachine", group = "Autonomous")
 public class BaseStateMachine extends BaseAutonomous {
     // List of all states the robot could be in
-    private String teamAsset;
+    Sleeve teamAsset;
     private static final float mmPerInch        = 25.4f;
     private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField        = 72 * mmPerInch;
@@ -33,7 +33,7 @@ public class BaseStateMachine extends BaseAutonomous {
         LOGGING,
     }
 
-    public enum teamAsset {
+    public enum Sleeve {
         BRIAN,
         DAVID,
         TEAM,
@@ -68,8 +68,9 @@ public class BaseStateMachine extends BaseAutonomous {
     }
 
     private void identifySleeve() {
-        if(vuforia.isTeamAssetVisible()){
-            teamAsset = vuforia.identifyTeamAsset();
+        int i = vuforia.identifyTeamAsset();
+        if(i >= 0){
+            teamAsset = Sleeve.values()[i];
         }
     }
 
@@ -91,10 +92,10 @@ public class BaseStateMachine extends BaseAutonomous {
                     if (driveSystem.driveToPosition(254, DriveSystem.Direction.BACKWARD, 0.3)) {
                         telemetry.addData("on heading? ", driveSystem.onHeading(0.3, 0));
                         identifySleeve();
-                        teamAsset = "Brain";
+                        teamAsset = Sleeve.BRIAN;
                     }
                     identifySleeve();
-                    Log.d("signal sleeve", vuforia.identifyTeamAsset());
+                    Log.d("signal sleeve", teamAsset.toString());
                     telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
 
                 } else {
@@ -107,23 +108,23 @@ public class BaseStateMachine extends BaseAutonomous {
                     newState(State.POSITION_ROBOT_AT_JUNCTION);
                 }
             case PARK:
-                if (teamAsset.equals("David")) {
-                    if(parkState()){
-                        newState(State.END_STATE);
-                    }
-                }
-                if (teamAsset.equals("Brain")) {
-                    if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.5)) {
-                        newState(State.END_STATE);
-                    }
-                }
-                if (teamAsset.equals("7330")) {
-                    if(parkState()){
-                        newState(State.END_STATE);
-                    }
+                switch(teamAsset){
+                    case TEAM:
+                        if(parkState()){
+                            newState(State.END_STATE);
+                        }
+
+                    case BRIAN:
+                        if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.5)) {
+                            newState(State.END_STATE);
+                        }
+                    case DAVID:
+                        if(parkState()){
+                            newState(State.END_STATE);
+                        }
                 }
             case END_STATE:
-                Log.d("parked", vuforia.identifyTeamAsset());
+                Log.d("parked", teamAsset.toString());
                 //"david" left two squares, "brain" center two, "7330" right two squares
 
         }
@@ -146,12 +147,12 @@ public class BaseStateMachine extends BaseAutonomous {
             }
         }
         if (parkStep == 1) {
-            if (teamAsset.equals("David")) {
-                if (driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
+            if (teamAsset == Sleeve.DAVID) {
+                if (driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.5)) {
                     return true;
                 }
             }
-            if (teamAsset.equals("7330")) {
+            if (teamAsset == Sleeve.TEAM) {
                 if (driveSystem.driveToPosition(400, DriveSystem.Direction.LEFT, 0.5)) {
                     return true;
                 }

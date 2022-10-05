@@ -156,9 +156,6 @@ public class Vuforia {
 
         teamAssetTrackables = new ArrayList<VuforiaTrackable>();
         teamAssetTrackables.addAll(targetsAsset);
-        teamAssetTrackables.get(0).setName("David");
-        teamAssetTrackables.get(1).setName("Brain");
-        teamAssetTrackables.get(2).setName("7330");
 
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
@@ -206,13 +203,15 @@ public class Vuforia {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, rx, ry, rz)));
     }
 
-    public String identifyTeamAsset(){
+    public int identifyTeamAsset(){
+        int i = 0;
         for (VuforiaTrackable trackable : teamAssetTrackables) {
             if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                return trackable.getName();
+                return i;
             }
+            i++;
         }
-        return "None.";
+        return -1;
     }
 
     public boolean isTeamAssetVisible(){
