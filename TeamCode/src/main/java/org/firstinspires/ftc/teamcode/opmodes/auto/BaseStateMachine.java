@@ -16,12 +16,12 @@ import java.util.List;
 @Autonomous(name = "BaseStateMachine", group = "Autonomous")
 public class BaseStateMachine extends BaseAutonomous {
     // List of all states the robot could be in
-    public String teamAsset;
+    private String teamAsset;
     private static final float mmPerInch        = 25.4f;
     private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField        = 72 * mmPerInch;
     private static final float oneAndHalfTile   = 36 * mmPerInch;
-    private int park = 0;
+    private int parkStep = 0;
 
     public enum State {
         IDENTIFY_TARGET,
@@ -31,6 +31,12 @@ public class BaseStateMachine extends BaseAutonomous {
         PARK,
         END_STATE,
         LOGGING,
+    }
+
+    public enum teamAsset {
+        BRIAN,
+        DAVID,
+        TEAM,
     }
 
     private final static String TAG = "BaseStateMachine";// Logging tag
@@ -107,7 +113,7 @@ public class BaseStateMachine extends BaseAutonomous {
                     }
                 }
                 if (teamAsset.equals("Brain")) {
-                    if (driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5)) {
+                    if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.5)) {
                         newState(State.END_STATE);
                     }
                 }
@@ -134,19 +140,19 @@ public class BaseStateMachine extends BaseAutonomous {
     }
 
     private boolean parkState() {
-        if (park == 0) {
-            if (driveSystem.driveToPosition(600, DriveSystem.Direction.BACKWARD, 0.5)) {
-                park++;
+        if (parkStep == 0) {
+            if (driveSystem.driveToPosition(400, DriveSystem.Direction.BACKWARD, 0.5)) {
+                parkStep++;
             }
         }
-        if (park == 1) {
+        if (parkStep == 1) {
             if (teamAsset.equals("David")) {
                 if (driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
                     return true;
                 }
             }
             if (teamAsset.equals("7330")) {
-                if (driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+                if (driveSystem.driveToPosition(400, DriveSystem.Direction.LEFT, 0.5)) {
                     return true;
                 }
             }
