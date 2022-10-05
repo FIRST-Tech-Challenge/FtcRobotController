@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -11,15 +12,21 @@ public class Drive {
     DcMotor motorBackLeft;
     DcMotor motorFrontRight;
     DcMotor motorBackRight;
+    BNO055IMU imu;
 
     public Drive(DcMotor getFrontLeft,
                  DcMotor getBackLeft,
                  DcMotor getFrontRight,
-                 DcMotor getBackRight) {
+                 DcMotor getBackRight,
+                 BNO055IMU getImu) {
         motorFrontLeft = getFrontLeft;
         motorBackLeft = getBackLeft;
         motorFrontRight = getFrontRight;
         motorBackRight = getBackRight;
+        imu = getImu;
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
     }
 
     public void mecanum(double power, double strafe, double turn) {
@@ -29,6 +36,22 @@ public class Drive {
         double backLeftPower = (power - strafe + turn) / denominator;
         double frontRightPower = (power - strafe - turn) / denominator;
         double backRightPower = (power + strafe - turn) / denominator;
+
+        motorFrontLeft.setPower(frontLeftPower);
+        motorBackLeft.setPower(backLeftPower);
+        motorFrontRight.setPower(frontRightPower);
+        motorBackRight.setPower(backRightPower);
+    }
+
+    public void fieldCentric(double power, double strafe, double turn) {
+        double botHeading = -imu.getAngularOrientation().firstAngle;
+        double rotationX = strafe * Math.cos(botHeading) - power * Math.sin(botHeading);
+        double rotationY = strafe * Math.sin(botHeading) + power * Math.cos(botHeading);
+        double denominator = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
+        double frontLeftPower = (rotationY + rotationX + turn) / denominator;
+        double backLeftPower = (rotationY - rotationX + turn) / denominator;
+        double frontRightPower = (rotationY - rotationX - turn) / denominator;
+        double backRightPower = (rotationY + rotationX - turn) / denominator;
 
         motorFrontLeft.setPower(frontLeftPower);
         motorBackLeft.setPower(backLeftPower);
