@@ -6,6 +6,7 @@
 
 !libs/*.aar
 
+.idea/
 # Files for the ART/Dalvik VM
 *.dex
 
@@ -34,6 +35,9 @@ proguard/
 
 # Android Studio Navigation editor temp files
 .navigation/
+
+# hprof
+*.hprof
 
 # Android Studio captures folder
 captures/
@@ -88,3 +92,4 @@ lint/tmp/
 java_pid9830.hprof
 java_pid10144.hprof
 java_pid8912.hprof
+java_pid59164.hprof_
