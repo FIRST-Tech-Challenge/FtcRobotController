@@ -113,7 +113,6 @@ public class BaseStateMachine extends BaseAutonomous {
                         if(parkState()){
                             newState(State.END_STATE);
                         }
-
                     case BRIAN:
                         if (driveSystem.driveToPosition(500, DriveSystem.Direction.BACKWARD, 0.5)) {
                             newState(State.END_STATE);
