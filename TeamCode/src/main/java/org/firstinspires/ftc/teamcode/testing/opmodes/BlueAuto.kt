@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.testing.opmodes
 
 import org.firstinspires.ftc.teamcode.testing.Robot
 import com.acmerobotics.roadrunner.geometry.Vector2d
+import com.acmerobotics.roadrunner.path.PathBuilder
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.GVFCmd
@@ -9,12 +10,11 @@ import com.asiankoala.koawalib.command.commands.WaitUntilCmd
 import com.asiankoala.koawalib.command.group.SequentialGroup
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.path.Path
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
 @Autonomous
-class BlueAuto : KOpMode(photonEnabled = true) {
+class BlueAuto : KOpMode() {
 
     private val startPose = Pose(-60.0, -10.0, 0.0.radians)
 //    private val startPose2 = Pose(-16.0, -62.0, 150.0.radians)
@@ -23,12 +23,12 @@ class BlueAuto : KOpMode(photonEnabled = true) {
 
     private lateinit var mainCommand: Cmd
 
-    val path1 = Path(
-        startPose,
-        Pose(-10.0, -35.0, 270.0.radians),
-        Pose(-30.0, -60.0, 180.0.radians),
-        Pose(-60.0, -10.0, 90.0.radians)
-    )
+    val path1 = PathBuilder(startPose.toPose2d())
+        .splineTo(Vector2d(-10.0, -35.0), 270.0.radians)
+        .splineTo(Vector2d(-30.0,-60.0), 180.0.radians)
+        .splineTo(Vector2d(-60.0,-10.0), 90.0.radians)
+        .build()
+
 
 //    val path2 = PathBuilder(startPose2.toPose2d())
 //        .splineTo(Vector2d(-3.0, -35.0), 65.0.radians)

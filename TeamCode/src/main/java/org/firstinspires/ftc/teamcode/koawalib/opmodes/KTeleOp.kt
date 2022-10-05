@@ -13,7 +13,8 @@ import org.firstinspires.ftc.teamcode.koawalib.subsystems.SlideMove
 
 @TeleOp
 class KTeleOp : KOpMode() {
-    private val robot by lazy { Robot() }
+    private val robot by lazy { Robot(startPose) }
+    private val startPose = Pose(-60.0, -10.0, 0.0.radians)
 
     override fun mInit() {
         robot.drive.setDefaultCommand(
