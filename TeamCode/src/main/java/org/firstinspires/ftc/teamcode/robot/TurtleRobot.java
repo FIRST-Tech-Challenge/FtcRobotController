@@ -13,7 +13,9 @@ public class TurtleRobot {
     public DcMotor rightbackmotor = null;
     public DcMotor leftfrontmotor = null;
     public DcMotor leftbackmotor = null;
-    public CRServo ClawMotor = null;
+    //public CRServo ClawMotor = null;
+    public DcMotor leftslidemotor = null;
+    public DcMotor rightslidemotor = null;
     public ElapsedTime runtime = new ElapsedTime();
     public LinearOpMode myOpMode = null;
 
@@ -35,19 +37,25 @@ public class TurtleRobot {
         leftbackmotor = hwMap.get(DcMotor.class, "leftbackmotor");
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
-        ClawMotor = hwMap.get(CRServo.class, "ClawMotor");
+        //ClawMotor = hwMap.get(CRServo.class, "ClawMotor");
+        leftslidemotor = hwMap.get(DcMotor.class, "leftslidemotor");
+        rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
 
         leftfrontmotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         leftbackmotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         rightfrontmotor.setDirection(DcMotorSimple.Direction.FORWARD);
         rightbackmotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightslidemotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all motors to zero power
         leftfrontmotor.setPower(0);
         leftbackmotor.setPower(0);
         rightfrontmotor.setPower(0);
         rightbackmotor.setPower(0);
-        ClawMotor.setPower(0);
+        //ClawMotor.setPower(0);
+        leftslidemotor.setPower(0);
+        rightbackmotor.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -55,6 +63,8 @@ public class TurtleRobot {
         leftbackmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightfrontmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightbackmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
