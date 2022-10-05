@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.logging.Filter;
 
 abstract public class BaseTeleOp extends BaseOpMode {
     public Float[] GamePadInputAVG() {
@@ -25,6 +26,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
             XAVGPos_RS.pop();
             YAVGPos_RS.pop();
         }
+        //Actual averaging, still kinda sus
         for(int iterator = 0; iterator < XAVGPos_LS.size(); iterator++){
             AllStickAVGS[0] = (XAVGPos_LS.get(iterator) + AllStickAVGS[0])/iterator;
             AllStickAVGS[1] = (YAVGPos_LS.get(iterator) + AllStickAVGS[1])/iterator;
@@ -36,15 +38,29 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
     public void TeleOpDrive () {
         Float[] FilteredInput = GamePadInputAVG();
+
+        //Stick deadzones math:
+        //FilteredInput[0] = Left stick X pos
+        //FilteredInput[1] = Left stick Y pos
+        //FilteredInput[2] = Right stick X pos
+        //FilteredInput[3] = Right stick Y pos
+
+        //Driving / pivoting, not sure how we want it to be structured so this can be fixed later
         if(Math.atan2(FilteredInput[0], FilteredInput[1]) < 20){
-
+            motorFL.setPower(FilteredInput[0] - FilteredInput[2]);
+            motorFR.setPower(-FilteredInput[0] + FilteredInput[2]);
+            motorBL.setPower(FilteredInput[0] - FilteredInput[2]);
+            motorBR.setPower(-FilteredInput[0] + FilteredInput[2]);
+        }else if(Math.atan2(FilteredInput[1], FilteredInput[0]) < 20){
+            motorFL.setPower(FilteredInput[1] - FilteredInput[2]);
+            motorFR.setPower(FilteredInput[1] + FilteredInput[2]);
+            motorBL.setPower(FilteredInput[1] - FilteredInput[2]);
+            motorBR.setPower(FilteredInput[1] + FilteredInput[2]);
         }else{
-
-        }
-        if(Math.atan2(FilteredInput[2], FilteredInput[3]) < 20){
-
-        }else{
-
+            motorFL.setPower(FilteredInput[1] + FilteredInput[0] - FilteredInput[2]);
+            motorFR.setPower(FilteredInput[1] - FilteredInput[0] + FilteredInput[2]);
+            motorBL.setPower(FilteredInput[1] - FilteredInput[0] - FilteredInput[2]);
+            motorBR.setPower(FilteredInput[1] + FilteredInput[0] + FilteredInput[2]);
         }
 
     }
