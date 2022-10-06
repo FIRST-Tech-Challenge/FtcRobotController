@@ -133,15 +133,15 @@ public class BaseStateMachine extends BaseAutonomous {
             }
         }
         if (parkStep == 1) {
-            if (teamAsset.equals("David") && driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
+            if (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
                 newState(State.END_STATE);
                 return true;
             }
-            if (teamAsset.equals("Brain") && driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5) && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+            if (teamAsset == Sleeve.BRIAN && driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5) && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
                 newState(State.END_STATE);
                 return true;
             }
-            if (teamAsset.equals("7330") && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+            if (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
                 newState(State.END_STATE);
                 return true;
             }
