@@ -64,6 +64,7 @@ public class MecanumTeleOp extends LinearOpMode {
             odometry.runOdom();
 
             drive.mecanum(power, strafe, turn);
+            // drive.fieldCentric(power, strafe, turn);
 
             if (power > 0.1) {
                 gamepad1.rumble(200);
