@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="Drive")
+@TeleOp(name="DriveOfficial")
 public class MecanumTeleOp extends LinearOpMode {
     private final double inches_per_revolution = 60/25.4*Math.PI; //60 mm * (1 inches)/(25.4 mm) is the diameter of the wheel in inches, *pi for circumference
     private final double ticks_per_revolution = 360*6.0; //4 ticks per cycle & 360 cycle per revolution
@@ -57,9 +57,9 @@ public class MecanumTeleOp extends LinearOpMode {
 
         
         while (opModeIsActive()) {
-            double power = gamepad1.left_stick_y/2; // Remember, this is reversed!
-            double strafe = -gamepad1.left_stick_x * 1.1/2; // Counteract imperfect strafing
-            double turn = gamepad1.right_stick_x/2;
+            double power = gamepad1.left_stick_y * 0.80; // Remember, this is reversed!
+            double strafe = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double turn = gamepad1.right_stick_x;
 
             odometry.runOdom();
 
