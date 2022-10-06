@@ -20,28 +20,22 @@ public class StickObserverTest extends LinearOpMode {
         waitForStart();
         double[] loopStart={0,0};
         while(opModeIsActive()) {
-            while(getRuntime()-loopStart[1]<5&&opModeIsActive()) {
                 if(robot.field.lookingAtPole()){
                     double[] pole = robot.field.lookedAtPole();
                     telemetry.addData("poleTheta", pole[3]);
                     telemetry.addData("poleDistance", pole[2]);
-
                 }
                 telemetry.addData("centerOffset", robot.cv.centerOfPole());
                 telemetry.addData("centerSize", robot.cv.poleSize());
                 telemetry.addData("theta",robot.cv.rotatedPolarCoordDelta()[0]*180/PI);
                 telemetry.addData("distance",robot.cv.rotatedPolarCoordDelta()[1]);
                 telemetry.update();
-                robot.roadrun.update();
                 loopStart[0] = getRuntime();
                 robot.roadrun.update();
-            }
-//            opencv.resetAverages();
-            //77.26,77.5,77.5,77.56
-            loopStart[1]=getRuntime();
+//                robot.autoAim();
+//                robot.setFirstLoop(false);
         }
-        robot.cv.stopCamera();
-        stop();
+        robot.stop();
     }
 }
 

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Components.CV;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Components.Field;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -14,7 +13,7 @@ public class CVMaster {
     private OpenCvWebcam webcam;
     private SampleMecanumDrive roadrun = null;
     private StickObserverPipeline opencv = null;
-    public CVMaster(SampleMecanumDrive p_roadrun, Field p_field){
+    public CVMaster(SampleMecanumDrive p_roadrun){
         int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         roadrun = p_roadrun;

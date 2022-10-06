@@ -20,8 +20,4 @@ public class BasicRobot{
         isTeleop = p_isTeleop;
 
     }
-    public void stop(){
-        logger.closeLog();
-        op.stop();
-    }
 }

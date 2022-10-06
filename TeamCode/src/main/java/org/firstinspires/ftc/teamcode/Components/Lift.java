@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
-import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 import java.util.ArrayList;
@@ -54,6 +52,7 @@ public class Lift {
     }
     //TODO: RFMotor
     private RFMotor liftMotor;
+    private double MAX_LIFT_TICKS = 200, liftTarget =0;
     public Lift(){ //constructor
         // hardware map
         logger.createFile("LiftLog", "Time Junction Ticks");
@@ -74,4 +73,29 @@ public class Lift {
         liftMotor.setPosition(targetTickCount);
         logger.log("LiftLog", "Claw lift to " + targetTickCount + " ticks");
     }
+    public void setPower(double power){
+        liftTarget=liftMotor.getCurrentPosition();
+        if(liftTarget<MAX_LIFT_TICKS&&power>0) {
+            liftMotor.setPower(power);
+        }
+        else if(liftTarget>10&&power<0) {
+            liftMotor.setPower(power);
+        }
+        else{
+            liftMotor.setPower(0);
+        }
+    }
+    public void liftToTarget(){
+        liftMotor.setPosition(liftTarget);
+    }
+    //1 up, -1 down
+    public void toggleLiftPosition(int direction){
+        if(direction ==1 ){
+            //next junction height that is up(use updateLiftState's state to determine)
+        }
+        else if(direction ==-1){
+            //next juntion height that is below
+        }
+    }
+
 }

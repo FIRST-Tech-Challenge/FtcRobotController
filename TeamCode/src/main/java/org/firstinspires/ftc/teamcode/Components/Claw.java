@@ -7,7 +7,6 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
-import org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine;
 
 public class Claw {
 
@@ -95,7 +94,6 @@ public class Claw {
 
         }
     }
-
     //open the claw
     public void openClaw() {
         //no input

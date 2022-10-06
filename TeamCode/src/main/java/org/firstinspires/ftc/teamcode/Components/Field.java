@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.pow;
@@ -88,10 +87,10 @@ public class Field {
         double[] polarCoords = toPolar(dist);
         if (p_i == 3 && p_j == 0) {
             op.telemetry.addData("dist", polarCoords[0]);
-            op.telemetry.addData("theta", (abs(polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI-180) % 360);
+            op.telemetry.addData("theta", ((polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI + 180) % 360);
         }
-        if (polarCoords[0] < lookingDistance && (abs(polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI-180) % 360 < 22.5) {
-            poleValues = new double[]{p_i, p_j, polarCoords[0], polarCoords[1]};
+        if (polarCoords[0] < lookingDistance && ((polarCoords[1] - roadrun.getPoseEstimate().getHeading()) * 180.0 / PI+180) % 360 < 22.5) {
+            poleValues = new double[]{p_i, p_j, polarCoords[0], polarCoords[1]- roadrun.getPoseEstimate().getHeading()+PI};
             return true;
         } else {
             return false;

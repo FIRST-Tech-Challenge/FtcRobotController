@@ -20,7 +20,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
     int width = 320, height = 240;
     //-1.3182 , 16.007
     //155, 397
-    double centerOfPole = 0, poleSize = 0, degPerPix = -1.3182/197, widTimesDist = 16.007*397;
+    double centerOfPole = 0, poleSize = 0, degPerPix = 13.627/197, widTimesDist = 16.007*397;
     ArrayList<double[]> frameList;
 
 
@@ -70,17 +70,17 @@ public class StickObserverPipeline extends OpenCvPipeline {
         }
         int maxAreaIndex = 0;
         for (int i = 0; i < rectangle.length; i++) {
-            if (rectangle[i].size.width > rectangle[maxAreaIndex].size.width) {
+            if (rectangle[i].size.height > rectangle[maxAreaIndex].size.height) {
                 maxAreaIndex = i;
             }
         }
         centerOfPole = rectangle[maxAreaIndex].center.x+sin(rectangle[maxAreaIndex].angle)*rectangle[maxAreaIndex].size.height/2 - 320;
-        poleSize = rectangle[maxAreaIndex].size.width;
+        poleSize = rectangle[maxAreaIndex].size.height;
         frameList.add(new double[]{centerOfPole,poleSize});
-//        if(frameList.size()>5) {
-//            frameList.remove(0);
-//        }
-//        input.release();
+        if(frameList.size()>5) {
+            frameList.remove(0);
+        }
+        input.release();
         mat.release();
         edges.release();
         thresh.copyTo(input);
