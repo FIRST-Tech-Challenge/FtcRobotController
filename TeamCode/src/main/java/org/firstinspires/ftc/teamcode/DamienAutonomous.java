@@ -31,21 +31,68 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Variables.*;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+@Disabled
 @Autonomous(name="DamienAutonomous", group="Linear Opmode")
 
 public class DamienAutonomous extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    private BNO055IMU imu;
+    private double previousHeading = 0;
+    private double intergratedHeading = 0;
+    public void CalibrateIMU() {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+    }
+    /*
+    public double getCurrentZ() {
+        Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, BNO055IMU.AngleUnit.DEGREES);
+        double currentZ = currentAngle.firstAngle;
+        return currentZ;
+    }
+    public double getCumulativeZ(){
+        double currentHeading = getCurrentZ();
+        double deltaHeading = currentHeading - previousHeading;
+        if(deltaHeading <= -180) {
+            deltaHeading += 360;
+        } else if(deltaHeading >= 180) {
+            deltaHeading -=360;
+        }
+
+        intergratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return intergratedHeading;
+
+    }
+    */
     @Override
     public void runOpMode() {
+        
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -55,10 +102,10 @@ public class DamienAutonomous extends DriveMethods {
         waitForStart();
         runtime.reset();
 
-        driveForDistance(1, Direction.FORWARD, 0.5);
-        driveForDistance(1, Direction.RIGHT, 0.5);
-        driveForDistance(1, Direction.BACKWARD, 0.5);
-        driveForDistance(1, Direction.LEFT, 0.5);
+//        driveForDistance(1, Direction.FORWARD, 0.5);
+//        driveForDistance(1, Direction.RIGHT, 0.5);
+//        driveForDistance(1, Direction.BACKWARD, 0.5);
+//        driveForDistance(1, Direction.LEFT, 0.5);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
