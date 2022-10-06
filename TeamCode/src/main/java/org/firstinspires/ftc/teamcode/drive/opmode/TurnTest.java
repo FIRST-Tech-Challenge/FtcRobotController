@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 @Autonomous(group = "drive")
 public class TurnTest extends LinearOpMode {
     public static double ANGLE = 180; // deg
+    Pose2d poseEstimate;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,18 +23,24 @@ public class TurnTest extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
+        drive.turn(Math.toRadians(45));
+        poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.update();
+        //while(opModeIsActive() && !gamepad1.y) ;
 
         while(opModeIsActive()) {
-            drive.turn(Math.toRadians(ANGLE));
-
-            Pose2d poseEstimate = drive.getPoseEstimate();
-            telemetry.addData("x", poseEstimate.getX());
-            telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading Rad.", poseEstimate.getHeading());
+            drive.turn(Math.toRadians(270));
+            poseEstimate = drive.getPoseEstimate();
             telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.update();
-            while (opModeIsActive() && !gamepad1.y) {};
+            //while(opModeIsActive() && !gamepad1.y) ;
 
+            drive.turn(Math.toRadians(-270));
+            poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("heading Deg.", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.update();
+            //while(opModeIsActive() && !gamepad1.y) ;
         }
     }
 }

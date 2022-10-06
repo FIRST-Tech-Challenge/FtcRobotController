@@ -30,6 +30,8 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.LynxNackException;
+import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -51,20 +53,27 @@ import java.util.List;
  */
 @Config
 public class GFORCE_KiwiDrive extends KiwiDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(20, 3, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(20, 2, 0);
 
-//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    // Choose two or three wheel localization
+    public final boolean useTwoWheelLocalizer = false;
 
-    // These WEIGHTS are used if the total requested drive velocities exceed the max limit (1.0)
-    // Give higher weights to the more important axes motions
+    public StandardTrackingWheelLocalizer localizer3W = null;
+    public TwoWheelTrackingLocalizer localizer2W = null;
+
+    //    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(20, 3, 0);
+    //    public static PIDCoefficients HEADING_PID = new PIDCoefficients(20, 2, 0);
+
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 0.5, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 2, 0);
+
+    //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
+    //public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+
     public static double VX_WEIGHT    = 1.0;
     public static double VY_WEIGHT    = 1.0;
     public static double OMEGA_WEIGHT = 1.0;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
-    public StandardTrackingWheelLocalizer localizer;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
@@ -77,7 +86,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
-    public GFORCE_KiwiDrive(HardwareMap hardwareMap) {
+    public GFORCE_KiwiDrive(HardwareMap hardwareMap) throws InterruptedException{
         super(kV, kA, kStatic, TRACK_WIDTH);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
@@ -91,6 +100,19 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        // We want to switch the OctoQuad's I2C port to a faster data rate for less latency, so we need to get access to the Expansion Hub it's tied to
+        // If you are using a Control Hub, the default name is "Control Hub", otherwise look at your Robot Configuration for the Expansion Hub name.
+        LynxModule module = hardwareMap.get(LynxModule.class, "Control Hub");
+
+        // We also need to designate which port we speed up.  Make sure this matches the port that your OctoQuad is connected to.
+        int I2C_BUS = 2;
+
+        LynxI2cConfigureChannelCommand cmd = new LynxI2cConfigureChannelCommand(module, I2C_BUS, LynxI2cConfigureChannelCommand.SpeedCode.FAST_400K);
+        try {
+            cmd.send();
+        } catch (LynxNackException e) {
+            e.printStackTrace();
+        }
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -145,10 +167,24 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        localizer = new StandardTrackingWheelLocalizer(hardwareMap);
-        setLocalizer(localizer);
+        // Choose two or three wheel localization
+        if (useTwoWheelLocalizer) {
+            localizer2W = new TwoWheelTrackingLocalizer(hardwareMap, this);
+            setLocalizer(localizer2W);
+        } else {
+            localizer3W = new StandardTrackingWheelLocalizer(hardwareMap);
+            setLocalizer(localizer3W);
+        }
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public String getRawEncoderText() {
+        if (useTwoWheelLocalizer) {
+            return localizer2W.getRawEncoderText();
+        } else {
+            return localizer3W.getRawEncoderText();
+        }
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

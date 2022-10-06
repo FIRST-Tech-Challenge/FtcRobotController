@@ -24,7 +24,7 @@ public class GFORCE_Auto extends LinearOpMode {
     double  headingSetpoint = 0;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
 
 
         // Initialize GFORCE_KiwiDrive
@@ -65,6 +65,7 @@ public class GFORCE_Auto extends LinearOpMode {
                         .strafeTo(new Vector2d(-12, 0))
                         .build();
             }
+
             if (gamepad1.y) {
                 telemetry.addData("Trajectory", "Other Corner Spline ");
                 telemetry.update();
@@ -93,6 +94,21 @@ public class GFORCE_Auto extends LinearOpMode {
                         .build();
             }
 
+            if (gamepad1.a) {
+                telemetry.addData("Trajectory", "Phils office ");
+                telemetry.update();
+                drive.setPoseEstimate(new Pose2d(new Vector2d(),0));
+                ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                        .forward(14)
+                        .splineTo(new Vector2d(-36, -24), Math.toRadians(90))
+                        .forward(24)
+                        .splineTo(new Vector2d(-24, 12), Math.toRadians(0))
+                        .forward(24)
+                        .forward(24)
+                        .splineTo(new Vector2d(36, 24), Math.toRadians(90))
+                        .forward(12)
+                        .build();
+            }
         }
 
         if (opModeIsActive()) {

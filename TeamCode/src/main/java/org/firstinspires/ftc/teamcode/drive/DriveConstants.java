@@ -31,9 +31,9 @@ public class DriveConstants {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = false;
+    public static final boolean RUN_USING_ENCODER = true;
 
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(10, 2, 0,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
@@ -69,10 +69,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL   = 40;  // in/s
-    public static double MAX_ACCEL = 40; // in/s/s
-    public static double MAX_ANG_VEL = Math.toRadians(180);   // Measured at 340 deg/sec
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+    public static double MAX_VEL   = 40;  // in/s  100% = 58 IPS
+    public static double MAX_ACCEL = 60; // in/s/s
+    public static double MAX_ANG_VEL = Math.toRadians(240);   // Measured at 540 deg/sec
+    public static double MAX_ANG_ACCEL = Math.toRadians(360);
 
 
     public static double encoderTicksToInches(double ticks) {

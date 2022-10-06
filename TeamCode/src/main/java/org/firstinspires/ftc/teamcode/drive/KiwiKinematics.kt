@@ -25,9 +25,9 @@ object KiwiKinematics {
     ): List<Double> {
         val k = trackWidth / 2.0;
         return listOf(
-            (robotVel.heading * k) - (0.866 * robotVel.x) + (0.5 * robotVel.y),
+            (robotVel.heading * k) - (0.866 * robotVel.x) + (0.6 * robotVel.y),
             (robotVel.heading * k) - robotVel.y,
-            (robotVel.heading * k) + (0.866 * robotVel.x) + (0.5 * robotVel.y)
+            (robotVel.heading * k) + (0.866 * robotVel.x) + (0.6 * robotVel.y)
         )
     }
 
