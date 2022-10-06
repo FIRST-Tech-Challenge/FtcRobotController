@@ -22,6 +22,7 @@ public class teleopTesting extends OpMode {
     Constants constants = new Constants();
 //    GlobalPosSystem posSystem;
     private ElapsedTime runtime = new ElapsedTime();
+    private double prevMS = 0;
 
     Button x = new Button();
     Button y = new Button();
@@ -58,6 +59,8 @@ public class teleopTesting extends OpMode {
 //        telemetry.addData("W", posSystem.getPositionArr()[2]);
 //        telemetry.addData("R", posSystem.getPositionArr()[3]);
 //        telemetry.update();
+        runtime.reset();
+        prevMS = runtime.milliseconds();
     }
 
     @Override
@@ -66,6 +69,8 @@ public class teleopTesting extends OpMode {
 //        UpdatePlayer2();
 //        UpdateButton();
 //        UpdateTelemetry();
+        double timeElapsed = (runtime.milliseconds() - prevMS);
+        telemetry.addLine("Time elapsed: " + timeElapsed);
     }
 
     void UpdatePlayer1(){
@@ -141,6 +146,8 @@ public class teleopTesting extends OpMode {
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
     }
 
 
