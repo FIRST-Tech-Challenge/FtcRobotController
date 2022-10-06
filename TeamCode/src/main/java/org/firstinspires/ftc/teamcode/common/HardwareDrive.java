@@ -153,6 +153,7 @@ public class HardwareDrive
     public void setRunMode(DcMotor.RunMode runState){
         botL.setMode(runState);
         topL.setMode(runState);
+        //make sure to not add arm here
     }
 
     /*

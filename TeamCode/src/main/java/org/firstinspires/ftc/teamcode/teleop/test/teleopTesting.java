@@ -5,6 +5,7 @@ import android.view.View;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
+import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 
 @TeleOp(name="Test Teleop", group="Drive")
 
@@ -94,53 +96,93 @@ public class teleopTesting extends OpMode {
 
     private void DriveTrainMove(){
 //        posSystem.calculatePos();
-<<<<<<< Updated upstream
         testMove(1, 0);
-=======
 
         testMove(0,1);
->>>>>>> Stashed changes
         telemetry.update();
     }
 
 
     void testMove(double r, double s){
-        double rotatePower = r;
-        double spinPower = s;
-        double translationPowerPercentage = 0.5;
-        double rotationPowerPercentage = 0.5;
-        double leftThrottle = 1.0;
-        double rightThrottle = 1.0;
-        int rotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
-        int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
+        double lx = gamepad1.left_stick_x;
+        double ly = gamepad1.left_stick_y;
+        double rx = gamepad1.right_stick_x;
+        double ry = gamepad1.right_stick_y;
 
-        double[] motorPower = new double[4];
-        motorPower[0] = (spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle) + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
-        motorPower[1] = (-1 * spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle) + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
-    //    motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
-      //  motorPower[3] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
+//        double rotatePower = r;
+//        double spinPower = s;
+//        double translationPowerPercentage = 0.5;
+//        double rotationPowerPercentage = 0.5;
+//        double leftThrottle = 1.0;
+//        double rightThrottle = 1.0;
+//        int rotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
+//        int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
 
-        /*
-        for (int i = 0; i < 2; i++){
-            robot.dtMotors[i].setPower(motorPower[i]);
+
+        double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
+
+        double[] rotateModule = wheelOptimization(lx, ly, 0);
+        double rotateClicks = rotateModule[0]; //degrees
+        rotateClicks *= constants.CLICKS_PER_DEGREE; //clicks
+        double turnDirection = rotateModule[2];
+
+        double spinClicks = power * constants.MAX_VELOCITY_DT * constants.LOOP_ITERATION_TIME; // clicks
+
+        robot.topL.setTargetPosition((int)spinClicks);
+        robot.botL.setTargetPosition(-(int)spinClicks);
+
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.topL.setPower(power);
+        robot.topL.setPower(-power);
+
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+
+    public double[] wheelOptimization(double x, double y, double currentW){ //returns how much the wheels should rotate in which direction
+        double[] directionArr = new double[3];
+
+        //determine targets
+        double target = (y==0 ? (90 * Math.signum(x)) : Math.toDegrees(Math.atan2(x, y)));
+        directionArr[1] = target;
+
+        //determine how much modules must turn in which direction (optimization)
+        double turnAmount = target - currentW;
+        double turnDirection = Math.signum(turnAmount);
+
+        if(Math.abs(turnAmount) > 180){
+            turnAmount = 360 - Math.abs(turnAmount);
+            turnDirection *= -1;
         }
 
-         */
+        if(Math.abs(turnAmount) > 90){
+            target += 180;
+            target = clamp(target);
+            turnAmount = target - currentW;
+            turnDirection *= -1;
+            if(Math.abs(turnAmount) > 180){
+                turnAmount = 360 - Math.abs(turnAmount);
+            }
+        }
+        directionArr[0] = Math.abs(turnAmount);
+        directionArr[2] = turnDirection;
 
-        /*
-        robot.topL.setPower(motorPower[0]*0.5);
-        robot.botL.setPower(motorPower[1]*0.5);
+        return directionArr;
+    }
 
-         */
+    public double clamp(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
 
-        robot.topL.setPower(gamepad1.left_stick_y);
-        robot.botL.setPower(-gamepad1.left_stick_y);
-/*
-        robot.topL.setPower(gamepad1.left_stick_x);
-        robot.botL.setPower(gamepad1.left_stick_x);
-
- */
-
+        if (degrees < -179 || degrees > 180) {
+            int modulo = (int)Math.signum(degrees) * -180;
+            degrees = Math.floorMod((int)degrees, modulo);
+        }
+        return degrees;
     }
 
     @Override
@@ -150,5 +192,6 @@ public class teleopTesting extends OpMode {
 //        telemetry.addData("W", posSystem.getPositionArr()[2]);
 //        telemetry.addData("R", posSystem.getPositionArr()[3]);
 //        telemetry.update();
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }

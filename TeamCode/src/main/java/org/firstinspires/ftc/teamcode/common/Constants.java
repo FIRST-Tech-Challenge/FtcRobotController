@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common;
 import org.checkerframework.checker.units.qual.C;
 
 public class Constants {
+    public double LOOP_ITERATION_TIME = 0.025; //must test later on
 
     //Drive Train Constants
     public double LOAD_ON = 0.6; //assumption
