@@ -35,10 +35,12 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
+    }
 
-
-
-
-
+    public void DriveRobot(double x, double y, double rot){
+        motorFL.setPower(y + x - rot);
+        motorFR.setPower(y - x + rot);
+        motorBL.setPower(y - x - rot);
+        motorBR.setPower(y + x + rot);
     }
 }

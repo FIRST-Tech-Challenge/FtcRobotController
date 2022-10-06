@@ -47,20 +47,11 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
         //Driving / pivoting, not sure how we want it to be structured so this can be fixed later
         if(Math.atan2(FilteredInput[0], FilteredInput[1]) < 20){
-            motorFL.setPower(FilteredInput[0] - FilteredInput[2]);
-            motorFR.setPower(-FilteredInput[0] + FilteredInput[2]);
-            motorBL.setPower(FilteredInput[0] - FilteredInput[2]);
-            motorBR.setPower(-FilteredInput[0] + FilteredInput[2]);
+            DriveRobot(FilteredInput[0], 0, FilteredInput[2]);
         }else if(Math.atan2(FilteredInput[1], FilteredInput[0]) < 20){
-            motorFL.setPower(FilteredInput[1] - FilteredInput[2]);
-            motorFR.setPower(FilteredInput[1] + FilteredInput[2]);
-            motorBL.setPower(FilteredInput[1] - FilteredInput[2]);
-            motorBR.setPower(FilteredInput[1] + FilteredInput[2]);
+            DriveRobot(0, FilteredInput[1], FilteredInput[2]);
         }else{
-            motorFL.setPower(FilteredInput[1] + FilteredInput[0] - FilteredInput[2]);
-            motorFR.setPower(FilteredInput[1] - FilteredInput[0] + FilteredInput[2]);
-            motorBL.setPower(FilteredInput[1] - FilteredInput[0] - FilteredInput[2]);
-            motorBR.setPower(FilteredInput[1] + FilteredInput[0] + FilteredInput[2]);
+            DriveRobot(FilteredInput[0], FilteredInput[1], FilteredInput[2]);
         }
 
     }
