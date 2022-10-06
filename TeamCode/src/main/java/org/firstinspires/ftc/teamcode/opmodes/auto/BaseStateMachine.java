@@ -100,15 +100,16 @@ public class BaseStateMachine extends BaseAutonomous {
 
                 } else {
                     newState(State.PARK);
-                    break;
                 }
                 break;
             case DRIVE_TO_MEDIUM_JUNCTION:
                 if (driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.3)) {
                     newState(State.POSITION_ROBOT_AT_JUNCTION);
                 }
+                break;
             case PARK:
                 park();
+                break;
             case END_STATE:
                 Log.d("parked", teamAsset.toString());
                 //"david" left two squares, "brain" center two, "7330" right two squares
