@@ -25,6 +25,28 @@ pblic class ProgrammingBoard7 {
         motor.setMode(Dcotor.RunMode.RUN_USING_ENCODER);
         ticksPerRotation = motor.getMotorType().getTicksPerRev();
         servo = hwMap.get(Servo.cass, "servo");
+
+        colorSensor = hwMap.get(ColorSensor.class, "sensor_color_distance");
+        distanceSensor = hwMap.get(DistanceSensor.class, "sensor_color_distance");
+    }
+    public boolean isTouchSensorPressed() {
+        return !touchSensor.getState();
+    }
+    public void setMotorSeed(double speed) {
+        motor.setPower(speed);
+    }
+    public double getMotorRotations() {
+        return motor.getCurrentPosition()/ticksPerRotation;
+    }
+    public void setServoPosition(double position) {
+        servo.setPosition(position);
     }
 
+
+    public int getAmountRed() {
+        return colorSensor.red();
+    }
+    public double getDistance(DistanceUnit du) {
+        return distanceSensor.getDistance(du);
+    }
 }
