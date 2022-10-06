@@ -63,12 +63,8 @@ public class MecanumTeleOp extends LinearOpMode {
 
             odometry.runOdom();
 
-            drive.mecanum(power, strafe, turn);
-            // drive.fieldCentric(power, strafe, turn);
-
-            if (power > 0.1) {
-                gamepad1.rumble(200);
-            }
+            // drive.mecanum(power, strafe, turn);
+            drive.fieldCentric(power, strafe, turn);
 
             telemetry.addData("Left Encoder: ", motorBackRight.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
             telemetry.addData("Right Encoder: ", motorBackLeft.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
