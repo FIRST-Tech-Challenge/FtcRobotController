@@ -21,8 +21,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 public class Robot {
-
-
     private ElapsedTime runtime = new ElapsedTime();
 
     //Init Motors
