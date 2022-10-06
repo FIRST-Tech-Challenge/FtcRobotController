@@ -46,6 +46,12 @@ pblic class ProgrammingBoard7 {
     public int getAmountRed() {
         return colorSensor.red();
     }
+    public int getAmountGreen() {
+        return colorSensor.green();
+    }
+    public int getAmountBlue() {
+        return colorSensor.blue();
+    }
     public double getDistance(DistanceUnit du) {
         return distanceSensor.getDistance(du);
     }
