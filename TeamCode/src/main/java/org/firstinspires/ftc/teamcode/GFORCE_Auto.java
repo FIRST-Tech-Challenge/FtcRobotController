@@ -36,10 +36,9 @@ public class GFORCE_Auto extends LinearOpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(new Pose2d(new Vector2d(-62,-35), Math.toRadians(0)));
+        drive.setPoseEstimate(new Pose2d(new Vector2d(35,-62), Math.toRadians(90)));
 
         TrajectorySequence ourTrajectory = null;
-        TrajectorySequence reverseTrajectory = null;
 
         telemetry.addData("Trajectory", "press X or B button to select.");
         telemetry.update();
@@ -79,35 +78,28 @@ public class GFORCE_Auto extends LinearOpMode {
                         .splineTo(new Vector2d(36,24), Math.toRadians(90))
                         .forward(12)
                         .build();
-
-                reverseTrajectory = drive.trajectorySequenceBuilder(ourTrajectory.end())
-                        .back(12)
-                        .setReversed(true)
-                        .splineTo(new Vector2d(24,12), Math.toRadians(180))
-
-                        /*.forward(24)
-                        .forward(24)
-                        .splineTo(new Vector2d(-24,12), Math.toRadians(0))
-                        .forward(24)
-                        .splineTo(new Vector2d(-36,-24), Math.toRadians(90))
-                        .forward(14)*/
-                        .build();
             }
 
             if (gamepad1.a) {
                 telemetry.addData("Trajectory", "Phils office ");
                 telemetry.update();
-                drive.setPoseEstimate(new Pose2d(new Vector2d(),0));
-                ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .forward(14)
-                        .splineTo(new Vector2d(-36, -24), Math.toRadians(90))
-                        .forward(24)
-                        .splineTo(new Vector2d(-24, 12), Math.toRadians(0))
-                        .forward(24)
-                        .forward(24)
-                        .splineTo(new Vector2d(36, 24), Math.toRadians(90))
-                        .forward(12)
+                drive.setExternalHeading(Math.toRadians(90));
+                drive.setPoseEstimate(new Pose2d(new Vector2d(35,-62), Math.toRadians(90)));
+                ourTrajectory = drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(35,-62), Math.toRadians(90)))
+                        .lineTo(new Vector2d(35,35))
+                        .setReversed(true)
+                        .lineTo(new Vector2d(35,24))
+                        .splineTo(new Vector2d(24,12), Math.toRadians(180))
+                        .lineTo(new Vector2d(12,12))
+                        .setReversed(false)
+                        .lineTo(new Vector2d(24,12))
+                        .splineTo(new Vector2d(35,0), Math.toRadians(-90))
+                        .lineTo(new Vector2d(35,-62))
+                        .setReversed(true)
+                        .lineTo(new Vector2d(35,35))
                         .build();
+                telemetry.addData("Trajectory", "Phils office COMPLETE");
+                telemetry.update();
             }
         }
 
@@ -115,9 +107,6 @@ public class GFORCE_Auto extends LinearOpMode {
             // if we have a trajectory, run it.
             if (ourTrajectory != null) {
                 drive.followTrajectorySequence(ourTrajectory);
-                if (reverseTrajectory != null) {
-                    drive.followTrajectorySequence(reverseTrajectory);
-                }
                 drive.update();
 
                 Pose2d poseEstimate = drive.getPoseEstimate();

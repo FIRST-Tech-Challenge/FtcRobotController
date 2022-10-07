@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.advanced;
 
+import static org.firstinspires.ftc.teamcode.drive.advanced.SampleMecanumDriveCancelable.HEADING_PID;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -43,7 +45,7 @@ public class TeleOpAlignWithPoint extends LinearOpMode {
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
-    private PIDFController headingController = new PIDFController(GFORCE_KiwiDrive.HEADING_PID);
+    private PIDFController headingController = new PIDFController(HEADING_PID);
 
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
@@ -7,15 +8,16 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRANSLATIONAL_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.USE_TWO_WHEEL_LOCALIZER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.motorEncoderTicksToInches;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
@@ -28,6 +30,8 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.acmerobotics.roadrunner.util.Angle;
+import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxNackException;
@@ -54,25 +58,15 @@ import java.util.List;
 @Config
 public class GFORCE_KiwiDrive extends KiwiDrive {
 
-    // Choose two or three wheel localization
-    public final boolean useTwoWheelLocalizer = false;
-
     public StandardTrackingWheelLocalizer localizer3W = null;
     public TwoWheelTrackingLocalizer localizer2W = null;
-
-    //    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(20, 3, 0);
-    //    public static PIDCoefficients HEADING_PID = new PIDCoefficients(20, 2, 0);
-
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 0.5, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 2, 0);
-
-    //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    //public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
     public static double VX_WEIGHT    = 1.0;
     public static double VY_WEIGHT    = 1.0;
     public static double OMEGA_WEIGHT = 1.0;
 
+    private static double GYRO_SYNC_INTERVAL = 0.25 ;
+    private static double GYRO_SYNC_GAIN     = 0.8 ;
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
@@ -85,6 +79,9 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
+
+    private NanoClock gyroClock = NanoClock.system();
+    private double  nextGyroSync = 0;
 
     public GFORCE_KiwiDrive(HardwareMap hardwareMap) throws InterruptedException{
         super(kV, kA, kStatic, TRACK_WIDTH);
@@ -168,7 +165,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
         }
 
         // Choose two or three wheel localization
-        if (useTwoWheelLocalizer) {
+        if (USE_TWO_WHEEL_LOCALIZER) {
             localizer2W = new TwoWheelTrackingLocalizer(hardwareMap, this);
             setLocalizer(localizer2W);
         } else {
@@ -180,7 +177,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     }
 
     public String getRawEncoderText() {
-        if (useTwoWheelLocalizer) {
+        if (USE_TWO_WHEEL_LOCALIZER) {
             return localizer2W.getRawEncoderText();
         } else {
             return localizer3W.getRawEncoderText();
@@ -248,13 +245,25 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
     public void update() {
         updatePoseEstimate();
+
+        if (gyroClock.seconds() > nextGyroSync) {
+            Pose2d adjPose = getPoseEstimate() ;
+            double odoHeading = adjPose.getHeading();
+            double adjustedHeading = Angle.normDelta(odoHeading + (Angle.normDelta(getExternalHeading() - odoHeading) * GYRO_SYNC_GAIN));
+
+            adjPose = new Pose2d( adjPose.vec(), adjustedHeading);
+            setPoseEstimate(adjPose);
+            nextGyroSync = gyroClock.seconds() + GYRO_SYNC_INTERVAL;
+        }
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }
 
+
     public void waitForIdle() {
-        while (!Thread.currentThread().isInterrupted() && isBusy())
+        while (!Thread.currentThread().isInterrupted() && isBusy()) {
             update();
+        }
     }
 
     public boolean isBusy() {
@@ -309,7 +318,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
+            wheelPositions.add(motorEncoderTicksToInches(motor.getCurrentPosition()));
         }
         return wheelPositions;
     }
@@ -318,7 +327,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
+            wheelVelocities.add(motorEncoderTicksToInches(motor.getVelocity()));
         }
         return wheelVelocities;
     }

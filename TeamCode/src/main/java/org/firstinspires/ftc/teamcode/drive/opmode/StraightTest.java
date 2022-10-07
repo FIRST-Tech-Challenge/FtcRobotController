@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 @Config
 @Autonomous(group = "drive")
 public class StraightTest extends LinearOpMode {
-    public static double DISTANCE = 48; // in
+    public static double DISTANCE = 71; // in
 
     @Override
     public void runOpMode() throws InterruptedException {

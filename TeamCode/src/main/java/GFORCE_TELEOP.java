@@ -1,3 +1,5 @@
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
+
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -29,7 +31,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
-    private PIDFController headingController = new PIDFController(GFORCE_KiwiDrive.HEADING_PID);
+    private PIDFController headingController = new PIDFController(HEADING_PID);
 
     @Override
     public void runOpMode() throws InterruptedException {

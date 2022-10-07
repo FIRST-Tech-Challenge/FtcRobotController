@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
-    public static double DISTANCE = 48; // in
+    public static double DISTANCE = 71; // in
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,9 +26,9 @@ public class StrafeTest extends LinearOpMode {
 
         TrajectorySequence trajectory = drive.trajectorySequenceBuilder(new Pose2d())
                 .strafeRight(DISTANCE)
-                .strafeLeft(DISTANCE)
-                .strafeRight(DISTANCE)
-                .strafeLeft(DISTANCE)
+//                .strafeLeft(DISTANCE)
+//                .strafeRight(DISTANCE)
+//                .strafeLeft(DISTANCE)
                 .build();
 
         waitForStart();
