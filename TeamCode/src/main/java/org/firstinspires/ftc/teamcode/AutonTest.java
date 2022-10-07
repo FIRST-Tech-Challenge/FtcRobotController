@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @TeleOp(name="Basic: Roadrunner Drive Testing", group="Linear Opmode")
 //@Disabled
-public class tester_OpMode extends LinearOpMode {
+public class AutonTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);

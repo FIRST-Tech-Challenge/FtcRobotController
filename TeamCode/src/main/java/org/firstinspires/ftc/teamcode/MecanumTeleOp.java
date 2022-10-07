@@ -19,6 +19,7 @@ public class MecanumTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // declare motors
+
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); //motor direction
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Braking behavior
@@ -82,7 +83,8 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Power: ", power);
             telemetry.addData("X: ", odometry.getX());
             telemetry.addData("Y: ", odometry.getY());
-            telemetry.addData("Heading: ", odometry.getHeading());
+            telemetry.addData("Odometry Heading: ", odometry.getHeading());
+            telemetry.addData("IMU Heading: ", -imu.getAngularOrientation().firstAngle);
             telemetry.addData("Track Width: ", odometry.getTrackWidth());
             telemetry.addData("Forward Offset", odometry.getForwardOffset());
             telemetry.update();
