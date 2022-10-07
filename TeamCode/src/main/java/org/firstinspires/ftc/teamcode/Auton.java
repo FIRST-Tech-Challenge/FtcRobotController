@@ -16,7 +16,7 @@ public class Auton {
     public void runAutonRight1() {
 
         new TrajectoryBuilder(new Pose2d())
-            .forward(18)
+            .forward(42)
             .lineToLinearHeading(new Pose2d(0, 48, Math.toRadians(-45)))
             .lineToLinearHeading(new Pose2d(0, 36, Math.toRadians(0)))
             .forward(6)
@@ -37,7 +37,7 @@ public class Auton {
 
     public void runAutonLeft1() {
         new TrajectoryBuilder(new Pose2d())
-            .forward(18)
+            .forward(42)
             .lineToLinearHeading(new Pose2d(0, 48, Math.toRadians(-45)))
             .lineToLinearHeading(new Pose2d(0, 36, Math.toRadians(0)))
             .forward(6)
@@ -59,7 +59,7 @@ public class Auton {
 
     public void runAutonRight2() {
         new TrajectoryBuilder(new Pose2d())
-            .forward(18)
+            .forward(42)
             .lineToLinearHeading(new Pose2d(0, 48, Math.toRadians(45)))
             .build()
 
@@ -91,9 +91,9 @@ public class Auton {
         }
     }
 
-    public void runAutonRight2() {
+    public void runAutonLeft2() {
         new TrajectoryBuilder(new Pose2d())
-                .forward(18)
+                .forward(42)
                 .lineToLinearHeading(new Pose2d(0, 48, Math.toRadians(-45)))
                 .build()
 
