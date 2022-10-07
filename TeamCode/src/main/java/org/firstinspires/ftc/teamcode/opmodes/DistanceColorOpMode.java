@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmoe.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeeOp;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.mechanisms.ProgrammingBoard7;
@@ -11,7 +11,7 @@ public class DistanceColorOpMode extends OpMode {
     ProgrammingBoard7 board = new ProgrammingBoard7();
     @Override
     public void init() {
-        board.init(hardware);
+        board.init(hardwareMap);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DistanceColorOpMode extends OpMode {
         else if (red > blue && red > green) {
             telemetry.addData("Color is", "Red");
         }
-        else if () {
+        else {
             telemetry.addData("Color is", "Blue");
         }
     }
