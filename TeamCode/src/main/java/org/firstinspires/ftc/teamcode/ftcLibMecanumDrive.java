@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+/** package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 public class ftcLibMecanumDrive extends LinearOpMode {
@@ -21,10 +22,10 @@ public class ftcLibMecanumDrive extends LinearOpMode {
         // constructor takes in frontLeft, frontRight, backLeft, backRight motors
         // IN THAT ORDER
         MecanumDrive drive = new MecanumDrive(
-                new Motor(hardwareMap, "FrontLeft", Motor.GoBILDA.RPM_435),
-                new Motor(hardwareMap, "FrontRight", Motor.GoBILDA.RPM_435),
-                new Motor(hardwareMap, "BackLeft", Motor.GoBILDA.RPM_435),
-                new Motor(hardwareMap, "BackRight", Motor.GoBILDA.RPM_435)
+                new DcMotor(hardwareMap, "FrontLeft", DcMotor.GoBILDA.RPM_435),
+                new DcMotor(hardwareMap, "FrontRight",DcMotor.GoBILDA.RPM_435),
+                new DcMotor(hardwareMap, "BackLeft", DcMotor.GoBILDA.RPM_435),
+                new DcMotor(hardwareMap, "BackRight", DcMotor.GoBILDA.RPM_435)
         );
         System.out.println("RunOnMode");
         // This is the built-in IMU in the REV hub.
@@ -47,7 +48,7 @@ public class ftcLibMecanumDrive extends LinearOpMode {
         // (unapologetically stolen from the road-runner-quickstart)
 
         RevIMU imu = new RevIMU(hardwareMap);
-        imu.init();
+        imu.Init();
 
         // the extended gamepad object
         GamepadEx driverOp = new GamepadEx(gamepad1);
@@ -120,3 +121,4 @@ public class ftcLibMecanumDrive extends LinearOpMode {
     }
 
 }
+*/

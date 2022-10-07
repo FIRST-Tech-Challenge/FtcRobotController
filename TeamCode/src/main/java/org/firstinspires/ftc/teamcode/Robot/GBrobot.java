@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Mechanisms.LinearSlide;
 import org.firstinspires.ftc.teamcode.Sensors.distance_sensor;
 
 public class GBrobot {
@@ -12,6 +13,7 @@ public class GBrobot {
     Telemetry telemetry;
 
     public distance_sensor frontDist;
+    public LinearSlide Slide;
 
     public GBrobot( OpMode op ) {
 
@@ -21,5 +23,6 @@ public class GBrobot {
 
         // initialize objects/classes
         frontDist = new distance_sensor( hardwareMap, "front", opMode.telemetry );
+        Slide = new LinearSlide(hardwareMap, "Slide", opMode.telemetry);
     }
 }
