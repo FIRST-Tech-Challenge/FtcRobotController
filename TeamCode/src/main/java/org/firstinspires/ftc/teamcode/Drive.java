@@ -13,6 +13,7 @@ public class Drive {
     DcMotor motorFrontRight;
     DcMotor motorBackRight;
     BNO055IMU imu;
+    public boolean isFieldCentric;
 
     public Drive(DcMotor getFrontLeft,
                  DcMotor getBackLeft,
@@ -27,6 +28,7 @@ public class Drive {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
+        isFieldCentric = false;
     }
 
     public void mecanum(double power, double strafe, double turn) {

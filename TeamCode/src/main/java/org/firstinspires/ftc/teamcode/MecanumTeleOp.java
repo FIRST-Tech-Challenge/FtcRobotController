@@ -14,8 +14,6 @@ public class MecanumTeleOp extends LinearOpMode {
     private final double ticks_per_revolution = 360*6.0; //4 ticks per cycle & 360 cycle per revolution
     private final double mm_to_inches = 0.03937008;
 
-    boolean isFieldCentric = false;
-
     @Override
     public void runOpMode() throws InterruptedException {
         // declare motors
@@ -66,10 +64,10 @@ public class MecanumTeleOp extends LinearOpMode {
             odometry.runOdom();
 
             if(gamepad1.right_bumper) {
-                isFieldCentric = !isFieldCentric;
+                drive.isFieldCentric = !drive.isFieldCentric;
             }
 
-            if (isFieldCentric) {
+            if(drive.isFieldCentric) {
                 drive.fieldCentric(power, strafe, turn);
             }
             else {
