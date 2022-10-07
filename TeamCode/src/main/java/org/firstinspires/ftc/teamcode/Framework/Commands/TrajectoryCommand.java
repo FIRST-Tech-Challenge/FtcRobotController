@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.Framework.Commands;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
+
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.Framework.subsystems.AutoDrive;
 import org.firstinspires.ftc.teamcode.Roadrunner.drive.SampleMecanumDrive;
 
 public class TrajectoryCommand extends CommandBase {
@@ -12,9 +13,10 @@ public class TrajectoryCommand extends CommandBase {
     private Trajectory trajectory;
 
 
-    public TrajectoryCommand(SampleMecanumDrive drive, Trajectory trajectory){
-        this.drive = drive;
+    public TrajectoryCommand(AutoDrive drivetrain, Trajectory trajectory){
+        this.drive = drivetrain.getDrive();
         this.trajectory = trajectory;
+        addRequirements(drivetrain);
     }
 
     @Override

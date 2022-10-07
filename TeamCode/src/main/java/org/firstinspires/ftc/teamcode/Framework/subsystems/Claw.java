@@ -16,9 +16,14 @@ public class Claw extends SubsystemBase {
         clawServo = new SimpleServo(hw,name, 0, 180);
     }
 
-    @Override
-    public void periodic(){
-
+    public void open(){
+        clawServo.setPosition(0);
     }
+
+    public void close(){
+        clawServo.setPosition(1);
+    }
+
+
 
 }
