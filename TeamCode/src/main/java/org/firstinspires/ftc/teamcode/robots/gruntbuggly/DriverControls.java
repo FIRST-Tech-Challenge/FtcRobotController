@@ -9,6 +9,8 @@ import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.a
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.debugTelemetryEnabled;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.PowerPlay_6832.visionProviderIndex;
+import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils.notJoystickDeadZone;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.notdeadzone;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
@@ -42,7 +44,39 @@ public class DriverControls {
     }
 
     void joystickDrive() {
-        robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+
+        //manual override of Shoulder angle
+        if (notJoystickDeadZone(gamepad2.left_stick_y)) {
+            robot.crane.adjustShoulderAngle(-gamepad2.left_stick_y);
+        }
+
+        //manual override of arm Extension
+        if (notJoystickDeadZone(gamepad2.right_stick_y)) {
+            robot.crane.adjustArmLength(-gamepad2.right_stick_y);
+        }
+
+        //manual override of turret
+        if (notJoystickDeadZone(gamepad2.right_stick_x)) {
+            //robot.turret.adjust(gamepad2.right_stick_x);
+        }
+
+        //manual override of drivetrain
+        if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
+            robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+        else robot.driveTrain.ManualDriveOff();
+
+        //if (notJoystickDeadZone(gamepad1.right_stick_x))
+            //pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+
+            /*
+        if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.isNavigating) {
+        } else {
+            robot.isNavigating = false; // take control back from any auton navigation if any joystick input is running
+            robot.autonTurnInitialized = false;
+            robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
+        }
+        */
+
         robot.crane.adjustShoulderAngle(gamepad1.right_trigger);
     }
 

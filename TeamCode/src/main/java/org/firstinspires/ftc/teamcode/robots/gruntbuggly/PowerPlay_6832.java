@@ -412,8 +412,8 @@ public class PowerPlay_6832 extends OpMode {
     private void update() {
 
         // handling dashboard changes
-        //forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
-        //rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
+        forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
+        rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
 
         TelemetryPacket packet = new TelemetryPacket();
 

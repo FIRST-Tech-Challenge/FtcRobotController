@@ -142,7 +142,7 @@ public class Robot implements Subsystem {
 
         Utils.matToBitmap(craneMat, craneBitmap);
         driveTrain.getPoseEstimate(); //seems to be null object so can't draw robot until that's fixed
-        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getTargetHeading(), crane.getShoulderAngle(), crane.getExtendABobPos());
+        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getTargetHeading(), crane.getShoulderAngle(), crane.getExtendInches());
     }
 
     public Bitmap getBitmap() {

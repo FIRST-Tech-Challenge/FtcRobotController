@@ -387,14 +387,23 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     // ----------------------------------------------------------------------------------------------
     // Manual Driving
     // ----------------------------------------------------------------------------------------------
+    private boolean manualDriveEnabled = false;
+    public void ManualDriveOff(){
+        if (manualDriveEnabled){
+            manualDriveEnabled=false;
+            setMotorPowers(0,0); //stop drive motors
+        }
+    }
 
     public void ManualTankDrive(double speedLeft, double speedRight){
         //todo add logic about overriding any behaviors in progress
+        manualDriveEnabled = true;
         setMotorPowers(speedLeft,speedRight);
     }
 
     public void ManualArcadeDrive(double speedForward, double speedTurn){
         //todo add logic about overriding any behaviors in progress
+        manualDriveEnabled = true;
         double drive, turn, left, right, max;
 
         drive = speedForward;
