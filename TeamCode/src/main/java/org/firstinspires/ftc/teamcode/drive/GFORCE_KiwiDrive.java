@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.GYRO_SYNC_GAIN;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.GYRO_SYNC_INTERVAL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
@@ -66,8 +68,6 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     public static double VY_WEIGHT    = 1.0;
     public static double OMEGA_WEIGHT = 1.0;
 
-    private static double GYRO_SYNC_INTERVAL = 0.25 ;
-    private static double GYRO_SYNC_GAIN     = 0.8 ;
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
     final private double TURN_RATE_TC = 0.6;

@@ -40,6 +40,9 @@ public class DriveConstants {
     public static double TRACKER_WHEEL_RADIUS  = 1.181; // in
     public static double TRACKER_INCHES_PER_TICK = (TRACKER_WHEEL_RADIUS * 2 * Math.PI / TRACKER_TICKS_PER_REV);
 
+    public static double GYRO_SYNC_INTERVAL = 0.2 ;
+    public static double GYRO_SYNC_GAIN     = 0.9 ;
+
     // Three Wheel
     public static double TRACKER_LATERAL_DISTANCE = 12.7;    // in; distance between the left and right wheels
     public static double TRACKER_FORWARD_OFFSET   = 3.00;     // in; X  offset of the lateral wheel
@@ -55,13 +58,13 @@ public class DriveConstants {
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
      * the constraints should never exceed ~80% of the robot's actual capabilities.
      */
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 2, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 3, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 2, 0);
 
-    public static double MAX_VEL   = 46;  // in/s  100% = 58 IPS
-    public static double MAX_ACCEL = 80; // in/s/s
-    public static double MAX_ANG_VEL = Math.toRadians(240);   // Measured at 540 deg/sec
-    public static double MAX_ANG_ACCEL = Math.toRadians(360);
+    public static double MAX_VEL   = 40;  // in/s  100% = 58 IPS
+    public static double MAX_ACCEL = 40; // in/s/s
+    public static double MAX_ANG_VEL = Math.toRadians(180);   // Measured at 540 deg/sec
+    public static double MAX_ANG_ACCEL = Math.toRadians(180);
 /*
      * Conversion methods.
      */
