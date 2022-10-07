@@ -2,7 +2,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "gamer pog")
+@TeleOp(name = "HolonomicTest")
 public class TeleOpTest extends BaseTeleOp {
     @Override
     public void runOpMode() throws InterruptedException {
