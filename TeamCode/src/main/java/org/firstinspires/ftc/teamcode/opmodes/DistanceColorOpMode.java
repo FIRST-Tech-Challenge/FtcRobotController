@@ -29,8 +29,6 @@ public class DistanceColorOpMode extends OpMode {
         int red = board.getAmountRed()/(board.getAmountGreen()+board.getAmountBlue()+board.getAmountRed());
         
 
-
-
         if (green > blue && green > red && green >= .60) {
             telemetry.addData("Color is", "Green");
         }
