@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode;
+
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
 
 import com.acmerobotics.roadrunner.control.PIDFController;
@@ -29,6 +31,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
     double LATERAL_RATE = 0.8;
     double YAW_RATE = 0.8;
 
+
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
     private PIDFController headingController = new PIDFController(HEADING_PID);
@@ -54,12 +57,15 @@ public class GFORCE_TELEOP extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+
+            // Update everything.
+            drive.update();
+
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
 
             // reset heading if double button press
             if (gamepad1.back && gamepad1.start) {
-//                drive.setPoseEstimate( new Pose2d(poseEstimate.getX(), poseEstimate.getY(), 0));
                 drive.setPoseEstimate( new Pose2d() );
                 drive.setExternalHeading(0);
                 headingSetpoint = 0;
@@ -71,14 +77,18 @@ public class GFORCE_TELEOP extends LinearOpMode {
             Vector2d input = new Vector2d(
                     -gamepad1.left_stick_y * LATERAL_RATE,
                     -gamepad1.right_stick_x * AXIAL_RATE
-//            ).rotated(-drive.getExternalHeading());
             ).rotated(-poseEstimate.getHeading());
 
-            double rotate = (gamepad1.left_trigger - gamepad1.right_trigger) / 10  ;
+            double rotate = (gamepad1.left_trigger - gamepad1.right_trigger) / 40  ;
+
+            if (gamepad1.left_bumper)
+                rotate = 0.2;
+            else if (gamepad1.right_bumper)
+                rotate = -0.2;
 
             // are we turning or should heading be locked.
             if (Math.abs(rotate) < 0.01) {
-                if (!headingLock) {
+                if (!headingLock && drive.notTurning()) {
                     headingLock = true;
                     headingSetpoint = drive.getExternalHeading();
                     headingController.setTargetPosition(headingSetpoint);
@@ -111,16 +121,6 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 );
             }
 
-            // Update everything. Odometry. Etc.
-            drive.update();
-
-            // Print pose to telemetry
-           // telemetry.addData("Raw Left",  drive.localizer.leftEncoder.getCurrentPosition());
-           // telemetry.addData("Raw Right", drive.localizer.rightEncoder.getCurrentPosition());
-           // telemetry.addData("Sum", drive.localizer.rightEncoder.getCurrentPosition() + drive.localizer.leftEncoder.getCurrentPosition());
-           // telemetry.addData("Dif", drive.localizer.rightEncoder.getCurrentPosition() - drive.localizer.leftEncoder.getCurrentPosition());
-
-
             telemetry.addData("Lock", headingLock);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
@@ -129,4 +129,6 @@ public class GFORCE_TELEOP extends LinearOpMode {
             telemetry.update();
         }
     }
+
+
 }

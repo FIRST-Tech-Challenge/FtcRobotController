@@ -43,6 +43,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -69,6 +70,9 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     private static double GYRO_SYNC_GAIN     = 0.8 ;
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
+    final private double TURN_RATE_TC = 0.6;
+    final private double STOP_TURNRATE = 0.020;
+
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
@@ -79,6 +83,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
+    private double filteredTurnRate = 0;
 
     private NanoClock gyroClock = NanoClock.system();
     private double  nextGyroSync = 0;
@@ -359,4 +364,17 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
+
+    public boolean notTurning() {
+
+        AngularVelocity velocities;
+        velocities = imu.getAngularVelocity();
+        double rate = velocities.xRotationRate;
+
+        filteredTurnRate += ((rate - filteredTurnRate) * TURN_RATE_TC);
+        // myOpMode.telemetry.addData("Turn Rate", "%6.3f", filteredTurnRate);
+
+        return (Math.abs(filteredTurnRate) < STOP_TURNRATE);
+    }
+
 }
