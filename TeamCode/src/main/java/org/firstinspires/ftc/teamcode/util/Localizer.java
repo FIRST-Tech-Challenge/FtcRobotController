@@ -53,6 +53,7 @@ public class Localizer {
     private double lastT          = 0;
     private double headingOffSet  = 0;
     private double compassHeading = 0;
+    private double vuforiaHeading = 0;
 
     public Localizer(HardwareMap hardwareMap) {
         runtime.reset();
@@ -110,6 +111,9 @@ public class Localizer {
         telemetry.addData("x velocity", xVelocity);
         telemetry.addData("y velocity", yVelocity);
         telemetry.addData("Heading", heading);
+        telemetry.addData("Heading offset", headingOffSet);
+        telemetry.addData("heading compass",compassHeading);
+        telemetry.addData("heading Vuforia",vuforiaHeading);
         telemetry.addData("target visible?", targetVisible);
 
     }
@@ -151,8 +155,8 @@ public class Localizer {
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-            heading = rotation.thirdAngle%360;
-            headingOffSet  = heading - compass.getDirection();
+            vuforiaHeading = rotation.thirdAngle%360;
+            headingOffSet  = vuforiaHeading - compass.getDirection();
             lastT = runtime.seconds();
         }
         else {

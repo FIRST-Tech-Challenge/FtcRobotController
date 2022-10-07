@@ -78,7 +78,7 @@ public class SimplePIDControl {
         period.reset();
 
         // Store thisError because we'll use it several times.
-        double thisError = measurementError(measurement);
+        double thisError = measuredError(measurement);
         // Store thisDerivative because it makes the later equations easier to understand
         double thisDerivative = (thisError - lastError) / timeStep;
 
@@ -93,7 +93,7 @@ public class SimplePIDControl {
 
         lastError = thisError;
 
-        double powerCalc = p * measurementError(measurement) + i * integratedError + d * averagedDerivative + feedForward;
+        double powerCalc = p * measuredError(measurement) + i * integratedError + d * averagedDerivative + feedForward;
         return powerCalc;
         /** Calculations for our custom PID control **/
 
@@ -108,7 +108,7 @@ public class SimplePIDControl {
          *
          * @return the angle in degrees
          */
-    public double measurementError(double measurement) {
+    public double measuredError(double measurement) {
         return (targetValue - measurement);
     }
 
