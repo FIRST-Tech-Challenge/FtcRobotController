@@ -44,6 +44,7 @@ public class TestOpMode extends OpMode {
         //tankDrive();
         mechanumDrive();
         elevatorMove();
+        clawMove();
     }
     public void tankDrive()
     {
@@ -90,5 +91,12 @@ public class TestOpMode extends OpMode {
             powerElevator = -gamepad1.left_trigger;
         }
         elevator.setPower(powerElevator);
+    }
+    public void clawMove()
+    {
+        if(gamepad1.left_bumper)
+            claw.setPosition(1);
+        if(gamepad1.right_bumper)
+            claw.setPosition(0);
     }
 }
