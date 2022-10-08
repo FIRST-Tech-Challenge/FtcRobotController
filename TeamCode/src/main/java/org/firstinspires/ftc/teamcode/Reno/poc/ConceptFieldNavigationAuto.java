@@ -290,17 +290,23 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
                 double distanceX = tile.destX - robotStartingX;
                 double distanceY = tile.destY - robotStartingY;
 
-                if(distanceX < 0)
+                if(Math.abs(distanceX) < FieldTile.halfField)
                 {
-                    robot.turn(-0.2); //turn left
+                    robot.turn(0.2);
+                    robot.drive((0.2));
+                    sleep(2000);
                 }
                 else
                 {
-                    robot.turn(0.2); //turn right
+                    if (distanceX < 0) {
+                        robot.turn(-0.2); //turn left
+                    } else {
+                        robot.turn(0.2); //turn right
+                    }
+                    sleep(2000);
+                    robot.drive(0.2); // drive forward
+                    sleep(2000);
                 }
-                sleep(2000);
-                robot.drive(0.2); // drive forward
-                sleep(2000);
 
             }
             else
@@ -327,4 +333,6 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
         aTarget.setLocation(OpenGLMatrix.translation(dx, dy, dz)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, rx, ry, rz)));
     }
+
+
 }
