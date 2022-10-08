@@ -76,13 +76,13 @@ public class DamienAutonomous extends DriveMethods {
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                driveForDistance(1, Direction.FORWARD, 0.5,false,0);
+                driveForDistance(1, Direction.FORWARD, 0.5,0);
             } else if (gamepad1.b) {
-                driveForDistance(1, Direction.BACKWARD, 0.5,false,0);
+                driveForDistance(1, Direction.BACKWARD, 0.5,0);
             } else if (gamepad1.x) {
-                driveForDistance(1, Direction.LEFT, 0.5,false,0);
+                driveForDistance(1, Direction.LEFT, 0.5,0);
             } else if (gamepad1.y) {
-                driveForDistance(1, Direction.RIGHT, 0.5,false,0);
+                driveForDistance(1, Direction.RIGHT, 0.5,0);
             }
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

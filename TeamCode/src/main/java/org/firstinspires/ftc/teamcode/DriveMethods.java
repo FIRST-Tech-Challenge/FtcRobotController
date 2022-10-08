@@ -238,7 +238,7 @@ public class DriveMethods extends LinearOpMode{
             motorBR.setPower(BRPower + (rotateError / 100));
         }
     }
-    public void driveForDistance(double distanceMeters, Direction movementDirection, double power, boolean rotateToTargetRotation, double targetRotation) { // distance: 2, strafe: false, power: 0.5
+    public void driveForDistance(double distanceMeters, Direction movementDirection, double power, double targetRotation) { // distance: 2, strafe: false, power: 0.5
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
