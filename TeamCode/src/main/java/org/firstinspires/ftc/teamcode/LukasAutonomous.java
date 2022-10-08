@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import static org.firstinspires.ftc.teamcode.Variables.*;
 
 import android.graphics.drawable.GradientDrawable;
@@ -28,6 +30,8 @@ public class LukasAutonomous extends DriveMethods {
 
 
         waitForStart();
+
+        driveForDistance(0.5, 1, "FORWARD");
 
 
         while (opModeIsActive()) {
@@ -161,5 +165,113 @@ public class LukasAutonomous extends DriveMethods {
 
         return  integratedHeading;
     }
+
+
+
+
+    public void driveForTime (int seconds, double power, String direction){
+        driveDirection(power, direction);
+        sleep(seconds*1000);
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+    }
+
+
+
+
+
+    public void driveDirection (double power, String direction){
+
+        switch(direction){
+            case "FORWARD":
+                motorFL.setPower(power);
+                motorBL.setPower(power);
+                motorFR.setPower(power);
+                motorBR.setPower(power);
+                break;
+
+            case "BACKWARD":
+                motorFL.setPower(-power);
+                motorBL.setPower(-power);
+                motorFR.setPower(-power);
+                motorBR.setPower(-power);
+                break;
+
+            case "RIGHT":
+                motorFL.setPower(power);
+                motorBL.setPower(-power);
+                motorFR.setPower(-power);
+                motorBR.setPower(power);
+                break;
+
+            case "LEFT":
+                motorFL.setPower(-power);
+                motorBL.setPower(power);
+                motorFR.setPower(power);
+                motorBR.setPower(-power);
+                break;
+        }
+
+
+    }
+
+    public void driveForDistance (double power, double distance, String direction){
+
+        double clicksPerMeter = 2492.788;
+        double targetClicks = (distance)*(clicksPerMeter);
+        double currentClicks = 0;
+
+        double currentFLClicks = 0;
+        double currentBLClicks = 0;
+        double currentFRClicks = 0;
+        double currentBRClicks = 0;
+
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        driveDirection(power, direction);
+
+        while(currentClicks < targetClicks){
+
+            currentFLClicks = Math.abs(motorFL.getCurrentPosition());
+            currentBLClicks = Math.abs(motorBL.getCurrentPosition());
+            currentFRClicks = Math.abs(motorFR.getCurrentPosition());
+            currentBRClicks = Math.abs(motorBR.getCurrentPosition());
+
+            currentClicks = (currentFLClicks + currentBLClicks + currentFRClicks + currentBRClicks)/4;
+
+        }
+
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
