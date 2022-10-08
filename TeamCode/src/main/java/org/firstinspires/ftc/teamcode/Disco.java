@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class Disco extends LinearOpMode {
@@ -15,6 +17,9 @@ public class Disco extends LinearOpMode {
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("leftBack");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("rightFront");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("rightBack");
+        DcMotor armMotor = hardwareMap.dcMotor.get("arm");
+
+        CRServo intake = hardwareMap.crservo.get("intake");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -30,6 +35,22 @@ public class Disco extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
+            double armPower = gamepad2.left_stick_y;
+            if (gamepad2.dpad_up) {
+                intake.setDirection(DcMotorSimple.Direction.FORWARD);
+            }
+            if (gamepad2.dpad_down) {
+                intake.setDirection(DcMotorSimple.Direction.REVERSE);
+            }
+
+            if (gamepad2.x) {
+                intake.setPower(1.0);
+            }
+
+            if (gamepad2.y) {
+                intake.setPower(0.0);
+            }
+
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
@@ -43,6 +64,9 @@ public class Disco extends LinearOpMode {
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
+
+            armMotor.setPower(armPower);
+
         }
     }
 }
