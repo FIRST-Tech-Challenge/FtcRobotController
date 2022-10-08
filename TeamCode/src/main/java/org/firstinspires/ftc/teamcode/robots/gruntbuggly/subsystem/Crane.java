@@ -294,6 +294,13 @@ public class Crane implements Subsystem {
         shoulderAmps= shoulderMotor.getCurrent(CurrentUnit.AMPS);
         extenderAmps= extenderMotor.getCurrent(CurrentUnit.AMPS);
 
+        if(inverseKinematic){
+            double angle = Math.atan(targetHeight/targetDistance);
+            double length = Math.sqrt( Math.pow(targetHeight,2) + Math.pow(targetDistance,2) );
+            setShoulderTargetDeg(angle);
+            setExtendTargetDistance(length);
+        }
+
         if(shoulderActivePID)
             movePIDShoulder(kpShoulder, kiShoulder, kdShoulder, shoulderDirectAnglePos, shoulderTargetPos);
         else
@@ -343,6 +350,9 @@ public class Crane implements Subsystem {
     public void setShoulderActivePID(boolean isActive){shoulderActivePID = isActive;}
     public void setShoulderTargetDeg(double deg){
         shoulderTargetPos = (int)(deg*SHOULDER_DIRECT_TICKS_PER_DEGREE);
+    }
+    public void setExtendTargetDistance(double dis){
+        setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
     }
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
     public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),0)); }

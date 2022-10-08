@@ -71,6 +71,10 @@ public class DriverControls {
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
         */
+
+        robot.crane.setShoulderTargetPos((int)(1849*gamepad1.left_trigger));
+        robot.crane.setExtendTargetPos((int)(3100*gamepad1.right_trigger));
+
     }
 
     void joystickDrivePregameMode() {

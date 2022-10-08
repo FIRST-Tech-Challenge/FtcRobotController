@@ -407,8 +407,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         manualDriveEnabled = true;
         double drive, turn, left, right, max;
 
-        drive = speedForward;
-        turn  =  speedTurn;
+        drive = speedForward/2;
+        turn  =  speedTurn/2;
 
         // Combine drive and turn for blended motion.
         left  = drive + turn;
