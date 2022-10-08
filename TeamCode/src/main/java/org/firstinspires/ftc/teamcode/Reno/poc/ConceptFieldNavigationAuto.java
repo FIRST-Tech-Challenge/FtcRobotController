@@ -34,8 +34,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -46,6 +49,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.Reno.FieldFloor;
+import org.firstinspires.ftc.teamcode.Reno.FieldTile;
+import org.firstinspires.ftc.teamcode.Reno.HardwareRobot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,9 +80,16 @@ import java.util.List;
  * is explained below.
  */
 
-@TeleOp(name="POC - Field Nav", group ="Concept")
+@Autonomous(name="POC - Field Nav Auto", group ="Concept")
 //@Disabled
-public class ConceptFieldNavigation extends LinearOpMode {
+public class ConceptFieldNavigationAuto extends LinearOpMode {
+
+    HardwareRobot robot   = new HardwareRobot();   // Use a Pushbot's hardware
+    private ElapsedTime     runtime = new ElapsedTime();
+
+    double power = 0.2;
+
+    FieldFloor floor = new FieldFloor();
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -211,7 +224,21 @@ public class ConceptFieldNavigation extends LinearOpMode {
          * To restore the normal opmode structure, just un-comment the following line:
          */
 
-        // waitForStart();
+        robot.init(hardwareMap);
+
+
+        telemetry.addData("Status", "Ready to run");    //
+        telemetry.update();
+
+        robot.leftDriveFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.leftDriveBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        targets.activate();
+
+         waitForStart();
+
+        runtime.reset();
+
 
         /* Note: To use the remote camera preview:
          * AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
@@ -220,8 +247,9 @@ public class ConceptFieldNavigation extends LinearOpMode {
          * Either press STOP to exit the OpMode, or use the "options menu" again, and select "Camera Stream" to close the preview window.
          */
 
-        targets.activate();
-        while (!isStopRequested()) {
+
+        while (opModeIsActive() && (runtime.seconds() < 10.0))
+        {
 
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
@@ -250,8 +278,33 @@ public class ConceptFieldNavigation extends LinearOpMode {
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+
+                telemetry.update();
+                sleep(10000);
+                double robotStartingX = translation.get(0) / mmPerInch; // Robot X axis
+                double robotStartingY = translation.get(1) / mmPerInch; // Robot Y axis
+                double robotStartingZ = translation.get(2) / mmPerInch; // Robot Y axis
+
+                FieldTile tile = floor.matrix[0][0];
+
+                double distanceX = tile.destX - robotStartingX;
+                double distanceY = tile.destY - robotStartingY;
+
+                if(distanceX < 0)
+                {
+                    robot.turn(-0.2); //turn left
+                }
+                else
+                {
+                    robot.turn(0.2); //turn right
+                }
+                sleep(4000);
+                robot.drive(0.2); // drive forward
+                sleep(2000);
+
             }
-            else {
+            else
+            {
                 telemetry.addData("Visible Target", "none");
             }
             telemetry.update();

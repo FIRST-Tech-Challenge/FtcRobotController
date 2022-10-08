@@ -119,5 +119,30 @@ public class HardwareRobot
         //leftClaw.setPosition(MID_SERVO);
        // rightClaw.setPosition(MID_SERVO);
     }
+
+    public void turn(double power)
+    {
+        //telemetry.addData("Status", "ready to move backward for 2 seconds");
+        //Moving backward
+        //power = -0.2;
+
+        this.leftDriveFront.setPower(power);
+        this.leftDriveBack.setPower(power);
+        this.rightDriveBack.setPower(power);
+        this.rightDriveFront.setPower(power);
+    }
+    public void drive(double power)
+    {
+        // Moving forward
+        //telemetry.addData("Status", "ready to move forward for 4 seconds");
+        //power = 0.2;
+        this.leftDriveFront.setPower(power);
+        this.leftDriveBack.setPower(power);
+        this.rightDriveBack.setPower(power);
+        this.rightDriveFront.setPower(power);
+
+
+    }
+
  }
 
