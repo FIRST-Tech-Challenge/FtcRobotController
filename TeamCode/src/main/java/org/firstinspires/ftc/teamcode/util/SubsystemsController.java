@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-public class SubsystemsController {
+@TeleOp(name="SubsystemsController", group="Linear Opmode")
 
-    @TeleOp(name="SubsystemsController", group="Linear Opmode")
+public class SubsystemsController {
 
     public ElapsedTime runtime = new ElapsedTime();
     public DcMotor leftDrive = null;
