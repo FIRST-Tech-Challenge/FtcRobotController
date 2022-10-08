@@ -244,8 +244,8 @@ public class PowerPlay_6832 extends OpMode {
     public void init_loop() {
 
         Pose2d currentPose = robot.driveTrain.currentPose;
-        //telemetry.addLine("Current X " + currentPose.getX() );
-        //telemetry.addLine("Current Y " + currentPose.getY() );
+        telemetry.addLine("Current X " + currentPose.getX() );
+        telemetry.addLine("Current Y " + currentPose.getY() );
         telemetry.addLine("Current Heading " + currentPose.getHeading() );
 
         //run all driver controls needed in init_loop

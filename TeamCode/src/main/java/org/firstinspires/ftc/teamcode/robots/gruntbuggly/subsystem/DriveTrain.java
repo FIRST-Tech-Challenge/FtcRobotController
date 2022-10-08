@@ -173,6 +173,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         //default pose - gotta have some initial pose
         setPoseEstimate(Position.START_RIGHT.getPose());
+        currentPose = new Pose2d(0,0,0);
 
     }
     public double updateHeading(double dtheta){
