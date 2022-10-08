@@ -36,7 +36,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -80,9 +80,9 @@ import java.util.List;
  * is explained below.
  */
 
-@Autonomous(name="POC - Field Nav Auto", group ="Concept")
+@Autonomous(name="POC - Field Nav Encoder", group ="Concept")
 //@Disabled
-public class ConceptFieldNavigationAuto extends LinearOpMode {
+public class ConceptFieldNavigationAutoV2 extends LinearOpMode {
 
     HardwareRobot robot   = new HardwareRobot();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
@@ -131,17 +131,16 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
     final float CAMERA_VERTICAL_DISPLACEMENT = 6.0f * mmPerInch;   // eg: Camera is 6 Inches above ground
     final float CAMERA_LEFT_DISPLACEMENT     = 0.0f * mmPerInch;   // eg: Enter the left distance from the center of the robot to the camera lens
 
+    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
+    public void initWebCamera() {
 
-    @Override public void runOpMode() {
-        // Connect to the camera we are to use.  This name must match what is set up in Robot Configuration
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         * We can pass Vuforia the handle to a camera preview resource (on the RC screen);
-         * If no camera-preview is desired, use the parameter-less constructor instead (commented out below).
-         * Note: A preview window is required if you want to view the camera stream on the Driver Station Phone.
-         */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
@@ -160,79 +159,107 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
         targets = this.vuforia.loadTrackablesFromAsset("PowerPlay");
-
-        // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        //List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targets);
 
-        /**
-         * In order for localization to work, we need to tell the system where each target is on the field, and
-         * where the phone resides on the robot.  These specifications are in the form of <em>transformation matrices.</em>
-         * Transformation matrices are a central, important concept in the math here involved in localization.
-         * See <a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a>
-         * for detailed information. Commonly, you'll encounter transformation matrices as instances
-         * of the {@link OpenGLMatrix} class.
-         *
-         * If you are standing in the Red Alliance Station looking towards the center of the field,
-         *     - The X axis runs from your left to the right. (positive from the center to the right)
-         *     - The Y axis runs from the Red Alliance Station towards the other side of the field
-         *       where the Blue Alliance Station is. (Positive is from the center, towards the BlueAlliance station)
-         *     - The Z axis runs from the floor, upwards towards the ceiling.  (Positive is above the floor)
-         *
-         * Before being transformed, each target image is conceptually located at the origin of the field's
-         *  coordinate system (the center of the field), facing up.
-         */
-
-        // Name and locate each trackable object
         identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
         identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
         identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
         identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
 
-        /*
-         * Create a transformation matrix describing where the camera is on the robot.
-         *
-         * Info:  The coordinate frame for the robot looks the same as the field.
-         * The robot's "forward" direction is facing out along X axis, with the LEFT side facing out along the Y axis.
-         * Z is UP on the robot.  This equates to a bearing angle of Zero degrees.
-         *
-         * For a WebCam, the default starting orientation of the camera is looking UP (pointing in the Z direction),
-         * with the wide (horizontal) axis of the camera aligned with the X axis, and
-         * the Narrow (vertical) axis of the camera aligned with the Y axis
-         *
-         * But, this example assumes that the camera is actually facing forward out the front of the robot.
-         * So, the "default" camera position requires two rotations to get it oriented correctly.
-         * 1) First it must be rotated +90 degrees around the X axis to get it horizontal (its now facing out the right side of the robot)
-         * 2) Next it must be be rotated +90 degrees (counter-clockwise) around the Z axis to face forward.
-         *
-         * Finally the camera can be translated to its actual mounting position on the robot.
-         *      In this example, it is centered on the robot (left-to-right and front-to-back), and 6 inches above ground level.
-         */
-
-        //final float CAMERA_FORWARD_DISPLACEMENT  = 0.0f * mmPerInch;   // eg: Enter the forward distance from the center of the robot to the camera lens
-        //final float CAMERA_VERTICAL_DISPLACEMENT = 6.0f * mmPerInch;   // eg: Camera is 6 Inches above ground
-        //final float CAMERA_LEFT_DISPLACEMENT     = 0.0f * mmPerInch;   // eg: Enter the left distance from the center of the robot to the camera lens
-
         OpenGLMatrix cameraLocationOnRobot = OpenGLMatrix
-                    .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
+                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XZY, DEGREES, 90, 90, 0));
 
         /**  Let all the trackable listeners know where the camera is.  */
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocationOnRobot);
         }
 
-        /*
-         * WARNING:
-         * In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
-         * This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
-         * CONSEQUENTLY do not put any driving commands in this loop.
-         * To restore the normal opmode structure, just un-comment the following line:
-         */
-
         targets.activate();
 
+    }
+    public void findLocation()
+    {
+        if (opModeIsActive())
+        {
 
+            // check all the trackable targets to see which one (if any) is visible.
+            targetVisible = false;
+            for (VuforiaTrackable trackable : allTrackables)
+            {
+                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible())
+                {
+                    telemetry.addData("Visible Target", trackable.getName());
+                    targetVisible = true;
+
+                    // getUpdatedRobotLocation() will return null if no new information is available since
+                    // the last time that call was made, or if the trackable is not currently visible.
+                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
+                    if (robotLocationTransform != null) {
+                        lastLocation = robotLocationTransform;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public void encoderDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = robot.leftDriveFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = robot.rightDriveFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            robot.leftDriveFront.setTargetPosition(newLeftTarget);
+            robot.rightDriveFront.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            robot.leftDriveFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightDriveFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.leftDriveFront.setPower(Math.abs(speed));
+            robot.rightDriveFront.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.leftDriveFront.isBusy() && robot.rightDriveFront.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        robot.leftDriveFront.getCurrentPosition(), robot.rightDriveFront.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.leftDriveFront.setPower(0);
+            robot.rightDriveFront.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            sleep(250);   // optional pause after each move.
+        }
+    }
+    @Override public void runOpMode() {
+
+        this.initWebCamera();
+        
         robot.init(hardwareMap);
 
 
@@ -242,7 +269,11 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
         robot.leftDriveFront.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.leftDriveBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        robot.leftDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        robot.leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
          waitForStart();
 
@@ -262,20 +293,8 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
 
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
 
-                    // getUpdatedRobotLocation() will return null if no new information is available since
-                    // the last time that call was made, or if the trackable is not currently visible.
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                    if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
-                    }
-                    break;
-                }
-            }
+            this.findLocation();
 
             // Provide feedback as to where the robot is located (if we know).
             if (targetVisible) {
@@ -289,38 +308,37 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
 
                 telemetry.update();
-                sleep(4000);
-                double robotStartingX = translation.get(0) / mmPerInch; // Robot X axis
-                double robotStartingY = translation.get(1) / mmPerInch; // Robot Y axis
-                double robotStartingZ = translation.get(2) / mmPerInch; // Robot Y axis
+                sleep(2000);
+                double robotStartingX = translation.get(0);// / mmPerInch; // Robot X axis
+                double robotStartingY = translation.get(1);// / mmPerInch; // Robot Y axis
+                double robotStartingZ = translation.get(2);// / mmPerInch; // Robot Y axis
 
-                FieldTile tile = floor.matrix[0][0];
-
-                double distanceX = tile.destX - robotStartingX;
-                double distanceY = tile.destY - robotStartingY;
-
-                if(Math.abs(distanceX) < FieldTile.halfField)
+                for (int x = 0; x < floor.matrix.length; x++)
                 {
-                    robot.turn(0.2);
-                    robot.drive((0.2));
-                    sleep(2000);
-                }
-                else
-                {
-                    if (distanceX < 0) {
-                        robot.turn(-0.2); //turn left
-                    } else {
-                        robot.turn(0.2); //turn right
+                    for (int y = 0; y < floor.matrix[x].length; y++)
+                    {
+                        FieldTile tile = floor.matrix[x][y];
+
+                        double distanceX = tile.destX - robotStartingX;
+                        double distanceY = tile.destY - robotStartingY;
+
+                        encoderDrive(DRIVE_SPEED,  distanceX,  distanceX, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+                        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+                        encoderDrive(DRIVE_SPEED, distanceY, distanceY, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+                        robotStartingX = tile.destX;
+                        robotStartingY = tile.destY;
                     }
-                    sleep(2000);
-                    robot.drive(0.2); // drive forward
-                    sleep(2000);
                 }
+
+
 
             }
             else
             {
                 telemetry.addData("Visible Target", "none");
+                robot.turn(-0.2);
+                sleep(1000);
             }
             telemetry.update();
         }
