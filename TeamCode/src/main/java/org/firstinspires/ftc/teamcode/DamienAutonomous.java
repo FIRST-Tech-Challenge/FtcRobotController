@@ -96,6 +96,8 @@ public class DamienAutonomous extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        // initMotorsRed();
+
         initMotorsBlue();
 
         // Wait for the game to start (driver presses PLAY)
