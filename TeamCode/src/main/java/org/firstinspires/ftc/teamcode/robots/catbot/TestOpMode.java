@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.robots.idk;
+package org.firstinspires.ftc.teamcode.robots.catbot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="Iron Core OpMode", group="Challenge")
