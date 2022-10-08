@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.AnglePIDControl;
 import org.firstinspires.ftc.teamcode.util.Localizer;
+import org.firstinspires.ftc.teamcode.util.LocalizerCompass;
 import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 
 public class PacManTurnToPos {

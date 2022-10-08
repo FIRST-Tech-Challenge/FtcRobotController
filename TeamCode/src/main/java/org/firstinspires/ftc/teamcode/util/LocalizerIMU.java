@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IMU_EnhancedLocalizer {
+public class LocalizerIMU implements Localizer{
     private static final float mmPerInch = 25.4f;
     private static final float mmTargetHeight = 6 * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField = 72 * mmPerInch;
@@ -55,7 +55,7 @@ public class IMU_EnhancedLocalizer {
     private double gyroHeading = 0;
     private double vuforiaHeading = 0;
 
-    public IMU_EnhancedLocalizer(HardwareMap hardwareMap) {
+    public LocalizerIMU(HardwareMap hardwareMap) {
         runtime.reset();
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         gyro = hardwareMap.get(GyroSensor.class, "gyro");
@@ -115,7 +115,7 @@ public class IMU_EnhancedLocalizer {
      * @param rx, ry, rz  Target rotations in x,y,z axes
      */
 
-    void identifyTarget(int targetIndex, String targetName, float dx, float dy, float dz, float rx, float ry, float rz) {
+    public void identifyTarget(int targetIndex, String targetName, float dx, float dy, float dz, float rx, float ry, float rz) {
         VuforiaTrackable aTarget = targets.get(targetIndex);
         aTarget.setName(targetName);
         aTarget.setLocation(OpenGLMatrix.translation(dx, dy, dz)

@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.util.IMU_EnhancedLocalizer;
 import org.firstinspires.ftc.teamcode.util.Localizer;
+import org.firstinspires.ftc.teamcode.util.LocalizerIMU;
 import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 
 
@@ -11,22 +10,22 @@ import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 public class TeleOp extends OpMode
 
 {
-    private IMU_EnhancedLocalizer IMUlocalizer = null;
+    private Localizer localizer = null;
     private MecanumDriveBase mecanumDriveBase = null;
     private PacManTurnToPos pacMan;
 
     public void init() {
         telemetry.addData("Status", "Initialized");
-        IMUlocalizer = new IMU_EnhancedLocalizer(hardwareMap);
+        localizer = new LocalizerIMU(hardwareMap);
         mecanumDriveBase = new MecanumDriveBase(hardwareMap);
-//        pacMan = new PacManTurnToPos(IMUlocalizer, mecanumDriveBase);
+        pacMan = new PacManTurnToPos(localizer, mecanumDriveBase);
 //        IMUlocalizer.gyroCalibrate();
         double max;
     }
     @Override
     public void loop() {
-        IMUlocalizer.displayTelemetry(telemetry);
-        IMUlocalizer.handleTracking();
+        localizer.displayTelemetry(telemetry);
+        localizer.handleTracking();
         mecanumDriveBase.gamepadController(gamepad1);
         mecanumDriveBase.driveBaseTelemetry(telemetry);
 //        pacMan.handlePacMan(gamepad1, telemetry);
