@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,15 +10,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.DriveMethods;
 import static org.firstinspires.ftc.teamcode.Variables.*;
 
 @Autonomous(name="JamesAuto", group="B")
 public class
 JamesAuto extends DriveMethods {
+    boolean calibrated = false;
+    double previousHeading = 0;
+    BNO055IMU imu;
     @Override
-
     public void runOpMode() {
+
         initMotorsBlue();
 
         waitForStart();
@@ -40,6 +49,36 @@ JamesAuto extends DriveMethods {
         RIGHT,
         LEFT,
 
+    }
+
+    public double currentZ(){
+        if (!calibrated) {
+            CalibrateIMU();
+        }
+        Orientation CurrentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double currentz = CurrentAngle.firstAngle;
+        return currentz;
+    }
+
+    public double CumulativeZ(){
+        double target = currentZ();
+        double deltaHeading = target - previousHeading;
+    }
+
+    public void CalibrateIMU (){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.loggingEnabled = true;
+        parameters.loggingTag     = "IMU";
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        calibrated = true;
     }
 
     public void driveDirection(Direction direction, double power){
