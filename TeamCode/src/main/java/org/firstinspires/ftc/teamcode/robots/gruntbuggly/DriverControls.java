@@ -50,6 +50,11 @@ public class DriverControls {
             //robot.turret.adjust(gamepad2.right_stick_x);
         }
 
+
+        if(stickyGamepad1.x){
+            robot.crane.toggleGripper();
+        }
+
         //manual override of drivetrain
         if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
             robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
@@ -66,9 +71,10 @@ public class DriverControls {
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
         */
-        robot.crane.setShoulderTargetPos((int)(700*gamepad1.left_trigger));
 
-        robot.crane.setExtendTargetPos((int)(3075*gamepad1.right_trigger));
+        robot.crane.setShoulderTargetPos((int)(1849*gamepad1.left_trigger));
+        robot.crane.setExtendTargetPos((int)(3100*gamepad1.right_trigger));
+
     }
 
     void joystickDrivePregameMode() {

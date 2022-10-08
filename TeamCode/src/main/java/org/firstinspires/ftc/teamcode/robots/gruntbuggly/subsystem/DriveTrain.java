@@ -173,6 +173,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         //default pose - gotta have some initial pose
         setPoseEstimate(Position.START_RIGHT.getPose());
+        currentPose = new Pose2d(0,0,0);
 
     }
     public double updateHeading(double dtheta){
@@ -406,8 +407,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         manualDriveEnabled = true;
         double drive, turn, left, right, max;
 
-        drive = speedForward;
-        turn  =  speedTurn;
+        drive = speedForward/2;
+        turn  =  speedTurn/2;
 
         // Combine drive and turn for blended motion.
         left  = drive + turn;
