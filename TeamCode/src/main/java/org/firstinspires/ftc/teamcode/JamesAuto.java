@@ -21,7 +21,8 @@ import static org.firstinspires.ftc.teamcode.Variables.*;
 public class
 JamesAuto extends DriveMethods {
     boolean calibrated = false;
-    double previousHeading = 0;
+    double previousZ = 0;
+    double integratedZ = 0;
     BNO055IMU imu;
     @Override
     public void runOpMode() {
@@ -61,8 +62,16 @@ JamesAuto extends DriveMethods {
     }
 
     public double CumulativeZ(){
-        double target = currentZ();
-        double deltaHeading = target - previousHeading;
+        double currentZ = currentZ();
+        double deltaZ = currentZ-previousZ;
+        if (deltaZ<-180){
+            deltaZ += 360;
+        } else if (deltaZ>=180) {
+            deltaZ -= 360;
+        }
+        integratedZ+=deltaZ;
+        previousZ = currentZ();
+        return integratedZ;
     }
 
     public void CalibrateIMU (){
