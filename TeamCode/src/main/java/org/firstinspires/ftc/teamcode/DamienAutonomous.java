@@ -54,7 +54,9 @@ public class DamienAutonomous extends DriveMethods {
 
     @Override
     public void runOpMode() {
-        
+        if(!isImuCallibrated) {
+            CalibrateIMU();
+        }
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
