@@ -67,7 +67,7 @@ public class DamienAutonomous extends DriveMethods {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        //runtime.reset();
+        runtime.reset();
 
 //        driveForDistance(1, Direction.FORWARD, 0.5);
 //        driveForDistance(1, Direction.RIGHT, 0.5);
@@ -91,7 +91,7 @@ public class DamienAutonomous extends DriveMethods {
                 driveForDistance(1, Direction.RIGHT, 0.5);
             }
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: undefined" /*runtime.toString()*/);
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)");
             telemetry.addData("Cumulative Z", "" + getCumulativeZ());
             telemetry.addData("Current Z", "" + getCurrentZ());
