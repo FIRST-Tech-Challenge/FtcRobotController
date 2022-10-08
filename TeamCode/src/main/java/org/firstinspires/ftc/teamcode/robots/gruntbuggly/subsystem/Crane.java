@@ -35,6 +35,7 @@ public class Crane implements Subsystem {
     public static double SHOULDER_DEG_MIN = -10; // degrees down from horizontal - negative angles are counter clockwise while looking at the left side of the bot
     public static double SHOULDER_DEG_MAX = 90-7.25; //max elevation of shoulder when stalled up - measured by inclinometer
     public static double SHOULDER_DIRECT_TICKS_PER_DEGREE = (1937-88)/(SHOULDER_DEG_MAX); //todo verify/update when sensor secured and robot is more burned in - before tuning precision articulation
+    public static double SHOULDER_TICK_MAX = 1849;
 
     public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
 
@@ -49,8 +50,8 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TOLERANCE = 1;
     public static double EXTENDER_POWER = 1.0;
     public static double EXTENDER_TICS_MIN = 0;
-    public static double EXTENDER_TICS_MAX = 90; // of the robot
-    boolean EXTENDER_CALIBRATE_MAX = true; //keep false except if calibrating EXTENDER_TICS_MAX
+    public static double EXTENDER_TICS_MAX = 3100; // of the robot
+    boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1500;
     public static double BULB_CLOSED_POS = 1250;
@@ -84,7 +85,7 @@ public class Crane implements Subsystem {
     private PIDController shoulderPID;
     private PIDController extendPID;
 
-    private int bulbPos = 1;
+    private boolean bulbGripped;
 
 
     private Articulation articulation;
@@ -184,7 +185,7 @@ public class Crane implements Subsystem {
 
             case 4:
                 if (EXTENDER_CALIBRATE_MAX){
-                    if (extenderMotor.getCurrent(CurrentUnit.AMPS) > 5){ //should be stalled at full extension
+                    if (extenderMotor.getCurrent(CurrentUnit.AMPS) > 6 ){ //should be stalled at full extension
                         extendMaxTics = extenderMotor.getCurrentPosition();
                         calibrateStage++;
                     }
@@ -197,7 +198,7 @@ public class Crane implements Subsystem {
                 extenderMotor.setPower(0.0);
                 extenderTargetPos = 0;
                 extenderActivePID = true;
-                futureTime = futureTime(2);
+                futureTime = futureTime(0.5);
                 calibrateStage++;
                 break;
 
@@ -257,14 +258,15 @@ public class Crane implements Subsystem {
     }
 
     public enum Articulation {
-        TEST_INIT(0, 0),
-        CAP(30, 140);
+        TEST_INIT(0, false),
+        CAP(30, true);
 
-        public double shoulderPos, bulbPos;
+        public double shoulderPos;
+        public boolean bulbGripped;
 
-        Articulation(double shoulderPos, double elbowPos) {
+        Articulation(double shoulderPos, boolean elbowPos) {
             this.shoulderPos = shoulderPos;
-            this.bulbPos = elbowPos;
+            this.bulbGripped = elbowPos;
         }
     }
 
@@ -274,6 +276,10 @@ public class Crane implements Subsystem {
     double shoulderAngle = 0;
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
+
+    boolean inverseKinematic = true;
+    double targetHeight = 0;
+    double targetDistance = 0.43;
 
     @Override
     public void update(Canvas fieldOverlay) {
@@ -298,15 +304,11 @@ public class Crane implements Subsystem {
         else
             extenderTargetPos = extendPosition;
 
-        switch(bulbPos) {
-                case 0:
-                    bulbServo.setPosition(servoNormalize(BULB_CLOSED_POS));
-                    break;
-                case 1:
-                    bulbServo.setPosition(servoNormalize(BULB_OPEN_POS));
-                    break;
-
-         }
+        if(bulbGripped) {
+            bulbServo.setPosition(servoNormalize(BULB_CLOSED_POS));
+        }else {
+            bulbServo.setPosition(servoNormalize(BULB_OPEN_POS));
+        }
     }
 
     @Override
@@ -317,6 +319,20 @@ public class Crane implements Subsystem {
         setextenderActivePID(false);
     }
 
+    public void toggleGripper(){
+        bulbGripped = !bulbGripped;
+    }
+
+    public void closeGripper(){
+        bulbGripped = true;
+    }
+    public void openGripper(){
+        bulbGripped = false;
+    }
+    public void setGripper(boolean g){
+        bulbGripped = g;
+    }
+
     @Override
     public String getTelemetryName() {
         return "Crane";
@@ -325,8 +341,11 @@ public class Crane implements Subsystem {
     public void setextenderPwr(double pwr){ extenderPwr = pwr; }
     public void setextenderActivePID(boolean isActive){extenderActivePID = isActive;}
     public void setShoulderActivePID(boolean isActive){shoulderActivePID = isActive;}
+    public void setShoulderTargetDeg(double deg){
+        shoulderTargetPos = (int)(deg*SHOULDER_DIRECT_TICKS_PER_DEGREE);
+    }
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
-    public  void setShoulderTargetPos(int t){ shoulderTargetPos = t; }
+    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),0)); }
     public  int getShoulderTargetPos(){ return shoulderTargetPos; }
     public  void setExtendTargetPos(int t){ extenderTargetPos = t; }
     public boolean nearTargetShoulder(){
@@ -342,7 +361,11 @@ public class Crane implements Subsystem {
     }
 
     public void decreaseShoulderAngle(double speed){
-        setShoulderTargetPos(Math.max(getShoulderPos() - (int)(100*speed), 0));
+        setShoulderTargetPos(getShoulderPos() - (int)(100.0*speed));
+    }
+
+    public void increaseShoulderAngle(double speed){
+        setShoulderTargetPos(getShoulderPos() + (int)(100.0*speed));
     }
     public int getextenderPos(){ return  extendPosition; }
     public int getShoulderPos(){ return  shoulderDirectAnglePos; }
@@ -359,7 +382,7 @@ public class Crane implements Subsystem {
 
         if (debug) {
             telemetryMap.put("Calibrate Stage", calibrateStage);
-            telemetryMap.put("Bulb Pos", bulbPos);
+            telemetryMap.put("Bulb Pos", bulbGripped);
             telemetryMap.put("Extend Meters", extendMeters);
             telemetryMap.put("Extend Tics", extendPosition);
             telemetryMap.put("Extend Amps", extenderAmps);
