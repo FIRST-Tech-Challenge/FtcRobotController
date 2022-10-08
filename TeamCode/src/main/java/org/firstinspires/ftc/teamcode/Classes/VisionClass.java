@@ -13,9 +13,10 @@ class VisionClass {
 
         String camera = null;
 
+        // constructor
         public VisionClass(String cameraName) {
 
-            cameraName = camera;
+             camera = cameraName;
 
         }
 
@@ -67,6 +68,8 @@ class VisionClass {
             tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
             // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
         }
+
+        // still have to add algorithms
 
 
 
