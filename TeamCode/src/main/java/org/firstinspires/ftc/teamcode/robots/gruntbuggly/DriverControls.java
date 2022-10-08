@@ -45,16 +45,6 @@ public class DriverControls {
 
     void joystickDrive() {
 
-        //manual override of Shoulder angle
-        if (notJoystickDeadZone(gamepad2.left_stick_y)) {
-            robot.crane.adjustShoulderAngle(-gamepad2.left_stick_y);
-        }
-
-        //manual override of arm Extension
-        if (notJoystickDeadZone(gamepad2.right_stick_y)) {
-            robot.crane.adjustArmLength(-gamepad2.right_stick_y);
-        }
-
         //manual override of turret
         if (notJoystickDeadZone(gamepad2.right_stick_x)) {
             //robot.turret.adjust(gamepad2.right_stick_x);
@@ -76,8 +66,9 @@ public class DriverControls {
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
         */
+        robot.crane.setShoulderTargetPos((int)(700*gamepad1.left_trigger));
 
-        robot.crane.adjustShoulderAngle(gamepad1.right_trigger);
+        robot.crane.setExtendTargetPos((int)(3075*gamepad1.right_trigger));
     }
 
     void joystickDrivePregameMode() {

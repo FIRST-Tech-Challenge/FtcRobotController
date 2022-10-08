@@ -59,10 +59,33 @@ public class Field {
     //todo: gets closest pole of a certain height
     public Vector2 getClosestOfHeight(Vector2 pos, int h){
         int minIndex = 0;
-        if(h == 1){
-            for(int i = 10; i < 19; i++){
+        switch(h){
+            case 1:
+                for(int i = 10; i < 19; i++){
 
-            }
+                }
+                break;
+
+            case 2:
+                for(int i = 19; i <27; i++){
+
+                }
+                break;
+
+            case 3:
+                for(int i = 27; i < 31; i++){
+
+                }
+                break;
+
+            case 4:
+                for(int i = 31; i < 35; i++){
+
+                }
+
+            default:
+                break;
+
         }
         return null;
     }

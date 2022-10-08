@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils.servoNormalize;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.INCHES_PER_METER;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
+
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
@@ -59,8 +61,8 @@ public class Crane implements Subsystem {
     double extenderPwr = 0;
     double extendCorrection = 0;
     int extenderTargetPos = 0;
-    boolean extenderActivePID = true;
-    boolean shoulderActivePID = true;
+    private boolean extenderActivePID = true;
+    private boolean shoulderActivePID = true;
 
     public static double kpExtender = 0.006; //proportional constant multiplier goodish
     public static  double kiExtender = 0.0; //integral constant multiplier
@@ -102,10 +104,9 @@ public class Crane implements Subsystem {
             turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            shoulderMotor.setTargetPosition(0);
             extenderMotor.setTargetPosition(0);
-            shoulderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            extenderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
         }
@@ -116,23 +117,46 @@ public class Crane implements Subsystem {
     }
 
     int calibrateStage=0;
-    double calibrateTimer;
+    double futureTime;
+    double runAmp;
+    double runExtendAmp;
 
     public boolean calibrate(){
-        //to calibrate we what the arm to be fully retracted and the shoulder
+        //to calibrate we want the arm to be fully retracted and the shoulder
         // to be fully up at the physical stop as a repeatable starting position
-
         switch (calibrateStage) {
-
-            case (0):
+            case 0:
                 //shoulder all the way up until it safely stalls
                 shoulderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 shoulderMotor.setPower(.2); //move up at low power
+                extenderMotor.setPower(0.3);
+                futureTime = futureTime(.5);
+                calibrateStage++;
                 break;
 
-            case (1):
+            case 1:
+                if(System.nanoTime() > futureTime){
+                    runAmp = shoulderMotor.getCurrent(CurrentUnit.AMPS);
+                    runExtendAmp = extenderMotor.getCurrent(CurrentUnit.AMPS);
+                    calibrateStage++;
+                }
+                break;
 
-                //retract the extender at low power until it stalls
+            case 2:
+                if(shoulderMotor.getCurrent(CurrentUnit.AMPS) > 2 && extenderMotor.getCurrent(CurrentUnit.AMPS) > 2){
+                    calibrateStage++;
+                }
+                break;
+
+            case 3:
+                shoulderMotor.setPower(0.0);
+                shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                shoulderAngleEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                shoulderActivePID = true;
+                extenderActivePID = true;
+                shoulderTargetPos = 500;
+                return true;
 
         }
         return false;
@@ -214,7 +238,7 @@ public class Crane implements Subsystem {
         extenderAmps= extenderMotor.getCurrent(CurrentUnit.AMPS);
 
         if(shoulderActivePID)
-            movePIDShoulder(kpElbow, kiElbow, kdElbow, shoulderPosition, shoulderTargetPos);
+            movePIDShoulder(kpElbow, kiElbow, kdElbow, shoulderDirectAnglePos, shoulderTargetPos);
         else
             shoulderTargetPos = shoulderPosition;
 
@@ -270,7 +294,7 @@ public class Crane implements Subsystem {
         setShoulderTargetPos(Math.max(getShoulderPos() - (int)(100*speed), 0));
     }
     public int getextenderPos(){ return  extendPosition; }
-    public int getShoulderPos(){ return  shoulderPosition; }
+    public int getShoulderPos(){ return  shoulderDirectAnglePos; }
     public double getShoulderAngle(){ return shoulderAngle;}
 
     public double getExtendMeters(){return extendMeters;}
@@ -287,10 +311,22 @@ public class Crane implements Subsystem {
             telemetryMap.put("Extend Meters", extendMeters);
             telemetryMap.put("Extend Tics", extendPosition);
             telemetryMap.put("Extend Amps", extenderAmps);
+            telemetryMap.put("Extend Active PID", extenderActivePID);
+            telemetryMap.put("Extend Target", extenderTargetPos);
+            telemetryMap.put("Extend PID", extendCorrection);
+            telemetryMap.put("Extend Run Amp", runExtendAmp);
+
             telemetryMap.put("Shoulder Angle", shoulderAngle);
             telemetryMap.put("Shoulder Tics", shoulderPosition);
+            telemetryMap.put("Shoulder Power", shoulderMotor.getPower());
             telemetryMap.put("Shoulder Amps", shoulderAmps);
             telemetryMap.put("Shoulder Direct Angle Tics", shoulderDirectAnglePos);
+            telemetryMap.put("Shoulder Target", shoulderTargetPos);
+            telemetryMap.put("Shoulder Active", shoulderActivePID);
+            telemetryMap.put("Shoulder PID Output", shoulderCorrection);
+            telemetryMap.put("Running Amp", runAmp);
+
+        }else{
 
         }
         return telemetryMap;

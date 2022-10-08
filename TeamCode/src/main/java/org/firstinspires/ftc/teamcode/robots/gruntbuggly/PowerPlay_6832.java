@@ -212,6 +212,8 @@ public class PowerPlay_6832 extends OpMode {
 
         robot = new Robot(hardwareMap,false);
 
+
+
         // gamepads
         dc = new DriverControls(gamepad1,gamepad2);
 
@@ -235,12 +237,12 @@ public class PowerPlay_6832 extends OpMode {
         else
             configureDashboardMatch();
         telemetry.update();
-
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
     @Override
     public void init_loop() {
+
         Pose2d currentPose = robot.driveTrain.currentPose;
         //telemetry.addLine("Current X " + currentPose.getX() );
         //telemetry.addLine("Current Y " + currentPose.getY() );
@@ -261,7 +263,7 @@ public class PowerPlay_6832 extends OpMode {
          */
 
 
-
+        while (!robot.crane.calibrate()){}
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
