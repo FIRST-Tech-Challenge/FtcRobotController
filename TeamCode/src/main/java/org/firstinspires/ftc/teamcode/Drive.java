@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Drive {
     DcMotor motorFrontLeft;
@@ -19,6 +20,7 @@ public class Drive {
                  DcMotor getBackLeft,
                  DcMotor getFrontRight,
                  DcMotor getBackRight,
+                 Servo getServoLift,
                  BNO055IMU getImu) {
         motorFrontLeft = getFrontLeft;
         motorBackLeft = getBackLeft;
@@ -59,5 +61,9 @@ public class Drive {
         motorBackLeft.setPower(backLeftPower);
         motorFrontRight.setPower(frontRightPower);
         motorBackRight.setPower(backRightPower);
+    }
+
+    public void setServo(Servo servo, double position) {
+        servo.setPosition(position);
     }
 }
