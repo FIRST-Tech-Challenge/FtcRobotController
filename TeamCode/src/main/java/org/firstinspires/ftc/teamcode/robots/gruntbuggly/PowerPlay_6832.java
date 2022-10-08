@@ -111,7 +111,6 @@ public class PowerPlay_6832 extends OpMode {
     private double pwrDamper = 1;
     private int direction = 1; // -1 to reverse direction
 
-
     // sensors/sensing-related variables
     private Orientation angles;
 
@@ -125,6 +124,7 @@ public class PowerPlay_6832 extends OpMode {
     private boolean[] buttonSavedStates2 = new boolean[16];
 
     public static double RUMBLE_DURATION = 0.5;
+    boolean armCalibrated = false;
 
     boolean debugTelemetry = false;
 
@@ -263,7 +263,8 @@ public class PowerPlay_6832 extends OpMode {
          */
 
 
-        while (!robot.crane.calibrate()){}
+        //while (!robot.crane.calibrate()){} //omg no loops!
+        if (!armCalibrated) armCalibrated=robot.crane.calibrate();
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));
