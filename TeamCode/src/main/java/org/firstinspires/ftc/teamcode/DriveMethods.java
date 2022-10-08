@@ -196,6 +196,7 @@ public class DriveMethods extends LinearOpMode{
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        isImuCallibrated = true;
     }
 
     public double getCurrentZ() {

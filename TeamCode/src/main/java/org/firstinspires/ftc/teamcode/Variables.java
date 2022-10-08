@@ -23,6 +23,7 @@ public class Variables {
     public static double previousHeading = 0;
     public static double intergratedHeading = 0;
     public static double targetZ;
+    public static boolean isImuCallibrated = false;
 
 
     //other variables
