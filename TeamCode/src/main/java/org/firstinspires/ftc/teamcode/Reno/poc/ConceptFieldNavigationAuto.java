@@ -248,7 +248,7 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
          */
 
 
-        while (opModeIsActive() && (runtime.seconds() < 10.0))
+        while (opModeIsActive() && (runtime.seconds() < 30.0))
         {
 
             // check all the trackable targets to see which one (if any) is visible.
@@ -280,7 +280,7 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
 
                 telemetry.update();
-                sleep(10000);
+                sleep(4000);
                 double robotStartingX = translation.get(0) / mmPerInch; // Robot X axis
                 double robotStartingY = translation.get(1) / mmPerInch; // Robot Y axis
                 double robotStartingZ = translation.get(2) / mmPerInch; // Robot Y axis
@@ -298,7 +298,7 @@ public class ConceptFieldNavigationAuto extends LinearOpMode {
                 {
                     robot.turn(0.2); //turn right
                 }
-                sleep(4000);
+                sleep(2000);
                 robot.drive(0.2); // drive forward
                 sleep(2000);
 
