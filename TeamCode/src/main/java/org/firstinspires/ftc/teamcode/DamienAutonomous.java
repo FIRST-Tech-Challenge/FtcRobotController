@@ -54,9 +54,6 @@ public class DamienAutonomous extends DriveMethods {
 
     @Override
     public void runOpMode() {
-        if(!isImuCallibrated) {
-            CalibrateIMU();
-        }
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -67,7 +64,7 @@ public class DamienAutonomous extends DriveMethods {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        //runtime.reset();
+        runtime.reset();
 
 //        driveForDistance(1, Direction.FORWARD, 0.5);
 //        driveForDistance(1, Direction.RIGHT, 0.5);
@@ -80,18 +77,15 @@ public class DamienAutonomous extends DriveMethods {
 
             if (gamepad1.a) {
                 driveForDistance(1, Direction.FORWARD, 0.5);
-            }
-            if (gamepad1.b) {
+            } else if (gamepad1.b) {
                 driveForDistance(1, Direction.BACKWARD, 0.5);
-            }
-            if (gamepad1.x) {
+            } else if (gamepad1.x) {
                 driveForDistance(1, Direction.LEFT, 0.5);
-            }
-            if (gamepad1.y) {
+            } else if (gamepad1.y) {
                 driveForDistance(1, Direction.RIGHT, 0.5);
             }
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: undefined" /*runtime.toString()*/);
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)");
             telemetry.addData("Cumulative Z", "" + getCumulativeZ());
             telemetry.addData("Current Z", "" + getCurrentZ());
