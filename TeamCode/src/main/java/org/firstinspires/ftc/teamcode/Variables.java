@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Variables {
     //declare motors
@@ -16,6 +18,11 @@ public class Variables {
         ROTATE_LEFT,
         ROTATE_RIGHT,
     }
+    public static ElapsedTime runtime = new ElapsedTime();
+    public static BNO055IMU imu;
+    public static double previousHeading = 0;
+    public static double intergratedHeading = 0;
+    public static double targetZ;
 
 
     //other variables

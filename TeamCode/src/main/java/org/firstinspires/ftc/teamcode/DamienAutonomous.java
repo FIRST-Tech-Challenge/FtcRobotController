@@ -44,52 +44,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-@Disabled
 @Autonomous(name="DamienAutonomous", group="Linear Opmode")
 
 public class DamienAutonomous extends DriveMethods {
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private BNO055IMU imu;
-    private double previousHeading = 0;
-    private double intergratedHeading = 0;
-    public void CalibrateIMU() {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-    }
 
-    public double getCurrentZ() {
-        Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
-        double currentZ = currentAngle.firstAngle;
-        return currentZ;
-    }
-    public double getCumulativeZ(){
-        double currentHeading = getCurrentZ();
-        double deltaHeading = currentHeading - previousHeading;
-        if(deltaHeading <= -180) {
-            deltaHeading += 360;
-        } else if(deltaHeading >= 180) {
-            deltaHeading -=360;
-        }
 
-        intergratedHeading += deltaHeading;
-        previousHeading = currentHeading;
-
-        return intergratedHeading;
-
-    }
     @Override
     public void runOpMode() {
         
@@ -99,10 +61,11 @@ public class DamienAutonomous extends DriveMethods {
         // initMotorsRed();
 
         initMotorsBlue();
+        CalibrateIMU();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
+        //runtime.reset();
 
 //        driveForDistance(1, Direction.FORWARD, 0.5);
 //        driveForDistance(1, Direction.RIGHT, 0.5);
@@ -110,12 +73,27 @@ public class DamienAutonomous extends DriveMethods {
 //        driveForDistance(1, Direction.LEFT, 0.5);
 
         // run until the end of the match (driver presses STOP)
+
         while (opModeIsActive()) {
 
-
+            if (gamepad1.a) {
+                driveForDistance(1, Direction.FORWARD, 0.5);
+            }
+            if (gamepad1.b) {
+                driveForDistance(1, Direction.BACKWARD, 0.5);
+            }
+            if (gamepad1.x) {
+                driveForDistance(1, Direction.LEFT, 0.5);
+            }
+            if (gamepad1.y) {
+                driveForDistance(1, Direction.RIGHT, 0.5);
+            }
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: undefined" /*runtime.toString()*/);
             telemetry.addData("Motors", "left (%.2f), right (%.2f)");
+            telemetry.addData("Cumulative Z", "" + getCumulativeZ());
+            telemetry.addData("Current Z", "" + getCurrentZ());
+            telemetry.addData("Error","" + (0 - getCurrentZ()));
             telemetry.update();
         }
     }
