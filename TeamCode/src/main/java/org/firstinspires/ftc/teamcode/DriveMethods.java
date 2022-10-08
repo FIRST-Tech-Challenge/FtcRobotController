@@ -238,7 +238,7 @@ public class DriveMethods extends LinearOpMode{
             motorBR.setPower(BRPower + (rotateError / 100));
         }
     }
-    public void driveForDistance(double distanceMeters, Direction movementDirection, double power) { // distance: 2, strafe: false, power: 0.5
+    public void driveForDistance(double distanceMeters, Direction movementDirection, double power, boolean rotateToTargetRotation, double targetRotation) { // distance: 2, strafe: false, power: 0.5
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -262,39 +262,59 @@ public class DriveMethods extends LinearOpMode{
                 motorBL.setPower(power);
                 motorFR.setPower(power);
                 motorBR.setPower(power);
+                targetZ = 0;
                 break;
             case BACKWARD:
                 motorFL.setPower(-power);
                 motorBL.setPower(-power);
                 motorFR.setPower(-power);
                 motorBR.setPower(-power);
+                targetZ = 0;
                 break;
             case RIGHT:
                 motorFL.setPower(power);
                 motorBL.setPower(-power);
                 motorFR.setPower(-power);
                 motorBR.setPower(power);
+                targetZ = getCurrentZ();
                 break;
             case LEFT:
                 motorFL.setPower(-power);
                 motorBL.setPower(power);
                 motorFR.setPower(power);
                 motorBR.setPower(-power);
+                targetZ = getCurrentZ();
                 break;
-            case ROTATE_LEFT:
-                motorFL.setPower(-power);
-                motorBL.setPower(-power);
+            case ROTATE:
+                // motorFL.setPower(-power);
+                // motorBL.setPower(-power);
+                // motorFR.setPower(power);
+                // motorBR.setPower(power);
+                // targetZ = getCurrentZ();
+                targetZ = targetRotation;
+                break;
+                /*
+            case ROTATE_RIGHT:
+                // motorFL.setPower(power);
+                // motorBL.setPower(power);
+                // motorFR.setPower(-power);
+                // motorBR.setPower(-power);
+                // targetZ = getCurrentZ();
+                targetZ = targetRotation;
+                break;
+                 */
+            default:
+                motorFL.setPower(power);
+                motorBL.setPower(power);
                 motorFR.setPower(power);
                 motorBR.setPower(power);
                 break;
-            case ROTATE_RIGHT:
-                motorFL.setPower(power);
-                motorBL.setPower(power);
-                motorFR.setPower(-power);
-                motorBR.setPower(-power);
-                break;
-
         }
+        /*
+        if(rotateToTargetRotation) {
+            targetZ = targetRotation;
+        }
+        */
         int currentPos = motorFL.getCurrentPosition();
         int FLPosition;
         int BLPosition;
@@ -305,7 +325,6 @@ public class DriveMethods extends LinearOpMode{
         double BLPower = motorBL.getPower();
         double FRPower = motorFR.getPower();
         double BRPower = motorBR.getPower();
-        targetZ = getCurrentZ();
         while (targetPos >= avgPosition) {
             FLPosition = Math.abs(motorFL.getCurrentPosition());
             BLPosition = Math.abs(motorBL.getCurrentPosition());

@@ -15,8 +15,7 @@ public class Variables {
         BACKWARD,
         RIGHT,
         LEFT,
-        ROTATE_LEFT,
-        ROTATE_RIGHT,
+        ROTATE,
     }
     public static ElapsedTime runtime = new ElapsedTime();
     public static BNO055IMU imu;

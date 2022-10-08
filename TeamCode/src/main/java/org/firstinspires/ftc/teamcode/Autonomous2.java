@@ -57,7 +57,7 @@ public class Autonomous2 extends DriveMethods {
         waitForStart();
         runtime.reset();
 
-        driveForDistance(1, Direction.FORWARD, 0.5);
+        driveForDistance(1, Direction.FORWARD, 0.5,false,0);
         //driveForDistance(1, Direction.RIGHT, 0.25);
         //driveForDistance(1, Direction.BACKWARD, 0.25);
         //driveForDistance(1, Direction.LEFT, 0.25);
