@@ -54,9 +54,5 @@ class SensorClass {
         telemetry.update();
 
     }
-
-
-
-
-
+    
 }
