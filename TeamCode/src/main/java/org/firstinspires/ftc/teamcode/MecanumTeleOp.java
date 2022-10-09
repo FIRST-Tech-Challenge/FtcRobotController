@@ -43,11 +43,21 @@ public class MecanumTeleOp extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Servo servoLift = hardwareMap.servo.get("servoLift");
+        DcMotor motorLiftRight = hardwareMap.dcMotor.get("liftRight");
+        motorLiftRight.setDirection(DcMotor.Direction.FORWARD);
+        motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        DcMotor motorLiftLeft = hardwareMap.dcMotor.get("liftLeft");
+        motorLiftLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Servo servoLift = hardwareMap.servo.get("servoLift");
 
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, servoLift, imu);
+        Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, imu);
         Odometry odometry = new Odometry(motorBackRight, motorBackLeft, motorFrontLeft);
         odometry.reset();
 
@@ -64,7 +74,7 @@ public class MecanumTeleOp extends LinearOpMode {
             double power = gamepad1.left_stick_y * 0.80; // Remember, this is reversed!
             double strafe = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double turn = gamepad1.right_stick_x;
-            double servoLiftPosition = gamepad2.right_stick_y;
+            double liftPower = gamepad2.right_stick_y;
 
             odometry.runOdom();
 
@@ -79,7 +89,8 @@ public class MecanumTeleOp extends LinearOpMode {
                 drive.mecanum(power, strafe, turn);
             }
 
-            drive.setServo(servoLift, servoLiftPosition);
+            motorLiftRight.setPower(liftPower);
+            motorLiftLeft.setPower(liftPower);
 
             telemetry.addData("Left Encoder: ", motorBackRight.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
             telemetry.addData("Right Encoder: ", motorBackLeft.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches

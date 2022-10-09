@@ -20,7 +20,6 @@ public class Drive {
                  DcMotor getBackLeft,
                  DcMotor getFrontRight,
                  DcMotor getBackRight,
-                 Servo getServoLift,
                  BNO055IMU getImu) {
         motorFrontLeft = getFrontLeft;
         motorBackLeft = getBackLeft;
