@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Malevolent Trauma TeleOp", group="Malevolent Trauma")
+@TeleOp(name="Malevolent Trauma TeleOp", group="Trauma")
 
 
 public class MalevolentTraumaTeleOp extends LinearOpMode {
@@ -65,7 +65,7 @@ public class MalevolentTraumaTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             //slow down power if bumper is pressed
             if(gamepad1.left_bumper){
-                powerLevel = 0.5;
+                powerLevel = 0.3;
             }else{
                 powerLevel = 0.8;
             }
@@ -73,7 +73,7 @@ public class MalevolentTraumaTeleOp extends LinearOpMode {
             //Checks if the left joystick is moved significantly, otherwise makes sure the motors are stopped
             //Aka "If X or Y are moved more than .1"
             if (Math.abs(gamepad1.left_stick_y) > .1 || Math.abs(gamepad1.left_stick_x) > .1) {
-                //Checks if joystick moved more up than side to side, if so, move foward or backward
+                //Checks if joystick moved more up than side to side, if so, move forward or backward
                 //"If joystick moved more vertically than horizontally, then move forward/backward"
                 if (Math.abs(gamepad1.left_stick_x) < Math.abs(gamepad1.left_stick_y)) {
                     frontRightMotor.setPower(-gamepad1.left_stick_y * powerLevel);
