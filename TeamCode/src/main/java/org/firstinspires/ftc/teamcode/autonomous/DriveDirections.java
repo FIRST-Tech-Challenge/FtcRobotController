@@ -15,7 +15,23 @@ abstract class DriveDirections extends LinearOpMode {
     private double moveSpeed = 0.3;
 
 
-    public void DriveInDirection(double power, String direction){
+    public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "frontLeft");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "backLeft");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+        public void DriveInDirection(double power, String direction){
         switch(direction){
             case "FORWARD":
                 rightFrontDrive.setPower(power);

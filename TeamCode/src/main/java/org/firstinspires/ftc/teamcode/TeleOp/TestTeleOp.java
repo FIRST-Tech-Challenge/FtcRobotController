@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@Disabled
+//@Disabled
 @TeleOp(name="Test", group="Linear Opmode")
 
 public class TestTeleOp extends LinearOpMode {
@@ -74,7 +74,7 @@ public class TestTeleOp extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double angle = Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x);
+            double angle = Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x)+90;
             double magnitude = Math.sqrt(Math.pow(gamepad1.left_stick_x,2)+Math.pow(gamepad1.left_stick_y,2));
 
             leftFrontDrive.setPower(magnitude*(-Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
