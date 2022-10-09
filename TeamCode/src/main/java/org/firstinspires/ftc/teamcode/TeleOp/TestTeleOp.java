@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@Disabled
+//@Disabled
 @TeleOp(name="Test", group="Linear Opmode")
 
 public class TestTeleOp extends LinearOpMode {

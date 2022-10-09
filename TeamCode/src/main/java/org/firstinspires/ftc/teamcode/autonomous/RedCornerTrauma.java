@@ -18,9 +18,7 @@ public class RedCornerTrauma extends DriveDirections {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
+        super.runOpMode();
 
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
