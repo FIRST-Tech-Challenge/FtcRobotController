@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.koawalib.vision
 
 import com.asiankoala.koawalib.hardware.KDevice
-import com.asiankoala.koawalib.logger.Logger
-import com.asiankoala.koawalib.util.Periodic
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
-import org.openftc.apriltag.AprilTagDetection
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCamera.AsyncCameraOpenListener
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
+import org.openftc.easyopencv.OpenCvPipeline
 
-@TeleOp
-class Webcam(deviceName: String) : KDevice<WebcamName>(deviceName) {
+class Webcam(deviceName: String, pipeline: OpenCvPipeline) : KDevice<WebcamName>(deviceName) {
 
     private val camera: OpenCvCamera
 
@@ -37,6 +33,6 @@ class Webcam(deviceName: String) : KDevice<WebcamName>(deviceName) {
             hardwareMap.appContext.packageName
         )
         camera = OpenCvCameraFactory.getInstance().createWebcam(device, cameraMonitorViewId)
-        camera.setPipeline(SleevePipeline(0.166, 578.272, 578.272, 402.145, 221.506))
+        camera.setPipeline(pipeline)
     }
 }

@@ -24,9 +24,9 @@ class BlueOp : KOpMode() {
                 robot.drive,
                 driver.leftStick,
                 driver.rightStick,
-                0.5,
-                0.5,
-                0.5,
+                0.9,
+                0.9,
+                0.9,
                 1.0,
                 1.0,
                 1.0

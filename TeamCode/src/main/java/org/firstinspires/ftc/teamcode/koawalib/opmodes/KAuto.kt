@@ -19,29 +19,29 @@ class KAuto : KOpMode() {
         .build()
 
     override fun mInit() {
-        robot.webcam.device.startStreaming()
+//        robot.webcam.device.startStreaming()
     }
 
     override fun mInitLoop() {
-        robot.webcam.periodic()
+//        robot.webcam.periodic()
     }
 
     override fun mStart() {
-        robot.webcam.device.stopStreaming()
+//        robot.webcam.device.stopStreaming()
     }
 
     override fun mLoop() {
-        if(robot.webcam.tagOfInterest == null ||  robot.webcam.tagOfInterest!!.id == robot.webcam.LEFT){
-            GVFCmd(
-                robot.drive,
-                path,
-                0.7,
-                1.0 / 25.0,
-                4.0,
-                0.8,
-                2.0
-            )
-        }
+//        if(robot.webcam.tagOfInterest == null ||  robot.webcam.tagOfInterest!!.id == robot.webcam.LEFT){
+//            GVFCmd(
+//                robot.drive,
+//                path,
+//                0.7,
+//                1.0 / 25.0,
+//                4.0,
+//                0.8,
+//                2.0
+//            )
+//        }
 //        else if (robot.webcam.tagOfInterest!!.id == robot.webcam.MIDDLE){
 //
 //        }
