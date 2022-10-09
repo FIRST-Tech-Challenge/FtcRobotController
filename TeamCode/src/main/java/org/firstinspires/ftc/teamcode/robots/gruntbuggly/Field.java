@@ -5,8 +5,10 @@ import org.firstinspires.ftc.teamcode.util.Vector2;
 public class Field {
 
     public FieldObject[] objects = new FieldObject[35];
+    public boolean isBlue;
 
     public Field(boolean isBlue){
+        this.isBlue = isBlue;
         if(isBlue){
             objects[0] = new FieldObject("AllianceTerminalClose",2.5,0.5,0);
             objects[1] = new FieldObject("AllianceTerminalFar",-2.5,5.5,0);
@@ -53,41 +55,63 @@ public class Field {
         objects[33] = new FieldObject("HighPole3",1,3,4);
         objects[34] = new FieldObject("HighPole4",0,2,4);
 
+        objects[35] = new FieldObject("AllianceSignal1",-1.5,1.5,-1);
+        objects[36] = new FieldObject("AllianceSignal2",1.5,1.5,-1);
 
     }
 
+    public void changeOwnership(int ID, boolean isBlue, boolean isRed){
+        objects[ID].setOwnership(isBlue,isRed);
+    }
+
     //todo: gets closest pole of a certain height
-    public Vector2 getClosestOfHeight(Vector2 pos, int h){
+    public int GetNearest(int h,Vector2 pos){
         int minIndex = 0;
+        double min = 999;
         switch(h){
             case 1:
                 for(int i = 10; i < 19; i++){
-
+                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                        minIndex = i;
+                    }
                 }
                 break;
 
             case 2:
                 for(int i = 19; i <27; i++){
-
+                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                        minIndex = i;
+                    }
                 }
                 break;
 
             case 3:
                 for(int i = 27; i < 31; i++){
-
+                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                        minIndex = i;
+                    }
                 }
                 break;
 
             case 4:
                 for(int i = 31; i < 35; i++){
+                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                        minIndex = i;
+                    }
+                }
 
+            case -1:
+                for(int i = 35; i < 37; i++){
+                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                        minIndex = i;
+                    }
                 }
 
             default:
                 break;
 
         }
-        return null;
+        return minIndex;
     }
 
 }
