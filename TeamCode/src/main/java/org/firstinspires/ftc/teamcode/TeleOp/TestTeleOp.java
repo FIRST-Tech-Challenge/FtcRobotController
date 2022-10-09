@@ -79,6 +79,9 @@ public class TestTeleOp extends LinearOpMode {
             double sin2 = Math.pow(Math.sin(angle),2);
             double cos2 = Math.pow(Math.cos(angle),2);
 
+            telemetry.addData("angle", angle);
+            telemetry.update();
+
             leftFrontDrive.setPower(magnitude*(cos2-sin2));
             rightFrontDrive.setPower(magnitude*(cos2+sin2));
             leftBackDrive.setPower(magnitude*(cos2+sin2));
