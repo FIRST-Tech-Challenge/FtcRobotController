@@ -75,6 +75,7 @@ public class teleopTesting extends OpMode {
 
     void UpdatePlayer1(){
         DriveTrainBase();
+        testMove(1,1);
     }
 
 //    void UpdatePlayer2(){
@@ -96,16 +97,18 @@ public class teleopTesting extends OpMode {
 //    }
 
     void DriveTrainBase(){
-        DriveTrainMove();
+       // DriveTrainMove();
     }
 
-    private void DriveTrainMove(){
+   /* private void DriveTrainMove(){
 //        posSystem.calculatePos();
         testMove(1, 0);
 
         testMove(0,1);
         telemetry.update();
     }
+
+    */
 
 
     void testMove(double r, double s){
@@ -122,6 +125,29 @@ public class teleopTesting extends OpMode {
 //        double rightThrottle = 1.0;
 //        int rotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
 //        int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
+
+
+        /*
+
+        LEFT STICK: determines translational power
+        RIGHT STICK: determines rotating power
+
+         */
+
+        int topLPosition = robot.topL.getCurrentPosition();
+        int botLPosition = robot.botL.getCurrentPosition();
+
+        if (gamepad1.dpad_up){
+            robot.topL.setPower(1);
+            robot.botL.setPower(1);
+        }
+        else{
+            robot.botL.setPower(0);
+            robot.topL.setPower(0);
+
+        }
+
+
 
 
         double power = Math.sqrt(Math.pow(lx, 2) + Math.pow(ly, 2));
@@ -141,8 +167,8 @@ public class teleopTesting extends OpMode {
 
         //robot.setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.topL.setPower(power);
-        robot.topL.setPower(-power);
+       // robot.topL.setPower(power);
+       // robot.topL.setPower(-power);
 
         robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
