@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-@TeleOp(name="Basic: Roadrunner Drive Testing", group="Linear Opmode")
+@TeleOp(name="AutonTest", group="Linear Opmode")
 //@Disabled
 public class AutonTest extends LinearOpMode {
     @Override
@@ -50,9 +50,13 @@ public class AutonTest extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         TrajectorySequence myTrajectory = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(24)
-                .turn(Math.toRadians(90))
+                .forward(48)
+                .turn(Math.toRadians(45))
+                .turn(Math.toRadians(-45))
+                .waitSeconds(0.5)
                 .back(24)
+                .waitSeconds(0.5)
+                .strafeRight(48)
                 .build();
 
         waitForStart();
