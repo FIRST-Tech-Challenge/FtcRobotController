@@ -18,9 +18,9 @@ public class RFBasketArm extends RFServo {
 
     private RFServo basketArmServo;
     public RFBasketArm(Servo.Direction direction, String deviceName, double limit) {
-        super(direction, deviceName, limit);
+        super(deviceName, direction , limit);
 
-        basketArmServo = new RFServo(direction, deviceName, limit);
+        basketArmServo = new RFServo(deviceName, direction , limit);
     }
 
     public void FlipBasketArmToPosition (double torget) {

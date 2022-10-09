@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 @TeleOp
-public class PwPTeleOp extends LinearOpMode {
+public class ClawTeleop extends LinearOpMode {
     PwPRobot robot;
 
     @Override
@@ -14,7 +16,13 @@ public class PwPTeleOp extends LinearOpMode {
         robot = new PwPRobot(this,true);
         waitForStart();
         while(opModeIsActive()){
-            robot.teleOp();
+            logger.loopcounter++;
+            if (gamepad1.a) {
+                robot.openClaw();
+            }
+            if (gamepad1.b) {
+                robot.closeClaw();
+            }
         }
         robot.stop();
     }

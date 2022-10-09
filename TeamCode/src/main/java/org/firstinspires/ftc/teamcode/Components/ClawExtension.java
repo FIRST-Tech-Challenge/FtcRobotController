@@ -34,7 +34,7 @@ public class ClawExtension {
     RFServo clawExtendServo;
     final double INCHES_PER_POS = 10/1;
     public ClawExtension(){
-        clawExtendServo = new RFServo("clawExtendServo", 1);
+//        clawExtendServo = new RFServo("clawExtendServo", 1);
         ClawExtended = 0;
         logger.createFile("ClawExtensionLog", "Time Desc Value");
     }

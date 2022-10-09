@@ -13,8 +13,10 @@ public class Field {
     private SampleMecanumDrive roadrun;
     double lookingDistance = 20.0;
     double[] poleValues = {10, 10, 0, 0}, cameraPos = {4, 8};
-                              //row 1
-    double[][][] poleCoords = {{{-47, 47}, {-47, 23.5}, {-47, 0}, {-47, -23.5}, {-47, -47}},
+
+    double[][][] poleCoords = {
+            //row 1
+            {{-47, 47}, {-47, 23.5}, {-47, 0}, {-47, -23.5}, {-47, -47}},
             //row 2
             {{-23.5, 47}, {-23.5, 23.5}, {-23.5, 0}, {-23.5, -23.5}, {-23.5, -47}},
             //row 3

@@ -16,9 +16,9 @@ public class RFBasket extends RFServo{
     private RFServo basketServo;
 
     public RFBasket(Servo.Direction direction, String deviceName, double limit) {
-        super(direction, deviceName, limit);
+        super(deviceName, direction , limit);
 
-        basketServo = new RFServo(direction, deviceName, 1);
+        basketServo = new RFServo(deviceName, direction , limit);
     }
 
     public RFBasket(String deviceName, double limit) {

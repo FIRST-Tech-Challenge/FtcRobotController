@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
@@ -14,9 +15,9 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import java.util.ArrayList;
 
 @Config
-@TeleOp(name = "ClawTest")
+@Autonomous(name = "ClawLiftArmTest")
 //@Disabled
-public class ClawTest extends LinearOpMode{
+public class ClawLiftArmTest extends LinearOpMode{
 
     public void runOpMode() {
 
@@ -33,41 +34,31 @@ public class ClawTest extends LinearOpMode{
 
         logger.log("/RobotLogs/GeneralRobot", "Running: ClawTest\n");
 
+
+
+        TelemetryPacket packet = new TelemetryPacket();
+        double x = xpos - 8.75;
+        double y = ypos - 6.25;
+
+
+
+        packet.fieldOverlay().setFill("blue").fillRect(x, y, 15, 15);
+        telemetry.addData("status", "waiting for start command...");
+        telemetry.addData("xpos",x);
+        telemetry.addData("ypos",y);
+        dashboard.sendTelemetryPacket(packet);
+        telemetry.update();
+
         while (opModeIsActive() && !isStopRequested()) {
-
-            TelemetryPacket packet = new TelemetryPacket();
-            double x = xpos - 8.75;
-            double y = ypos - 6.25;
-
             logger.loopcounter++;
-
-            packet.fieldOverlay().setFill("blue").fillRect(x, y, 15, 15);
-            telemetry.addData("status", "waiting for start command...");
-            telemetry.addData("xpos",x);
-            telemetry.addData("ypos",y);
-            dashboard.sendTelemetryPacket(packet);
-            telemetry.update();
-
-
-            if (gamepad1.a) {
-                robot.openClaw();
-            }
-
-            if (gamepad1.b) {
-                robot.closeClaw();
-            }
-
-            if (gamepad1.right_bumper) {
-                robot.spinAlignerIntake();
-            }
-
-            if (gamepad1.left_bumper) {
-                robot.reverseAlignerIntake();
-            }
-
-            if (gamepad1.x) {
-                robot.stopAlignerIntake();
-            }
+//            robot.closeClaw();
+//            sleep(2000);
+            robot.raiseLiftArmToOuttake();
+            sleep(3000);
+//            robot.openClaw();
+//            sleep(2000);
+            robot.lowerLiftArmToIntake();
+            sleep(3000);
         }
 
         logger.log("/RobotLogs/GeneralRobot", "Program stopped normally. ");

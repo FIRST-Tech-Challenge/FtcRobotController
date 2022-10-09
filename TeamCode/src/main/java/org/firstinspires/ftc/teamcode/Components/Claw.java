@@ -18,13 +18,13 @@ public class Claw {
     private final double CLAW_CONE_DISTANCE = 1;
 
     //temporary
-    private final double CLAW_SERVO_MAX_TICK = 0;
+    private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_TICK = 50;
+    private final double CLAW_CLOSED_POS = 0.4;
 
     //temporary
-    private final double CLAW_OPEN_TICK = 0;
+    private final double CLAW_OPEN_POS = 0;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -69,9 +69,15 @@ public class Claw {
     //constructor
     public Claw() {
         //init RFServo & Distance sensor
-        claw = new RFServo("claw", CLAW_SERVO_MAX_TICK);
+        claw = new RFServo("clawServo", CLAW_SERVO_MAX_TICK);
 
-        coneObserver = op.hardwareMap.get(ColorDistanceRevV3.class, "clawSensor");
+//        coneObserver = op.hardwareMap.get(ColorDistanceRevV3.class, "clawSensor");
+    }
+
+    public void toggleClawPosition() {
+        claw.flipServoInterval(CLAW_OPEN_POS, CLAW_CLOSED_POS);
+        logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",toggleClawPosition()"
+                + ",Claw Toggled", true);
     }
 
     //close the claw
@@ -80,10 +86,10 @@ public class Claw {
 
 
         //the state of claw opened has to be true TODO: Boy better see sumthin with distance
-        if (CLAW_OPEN.status && getConeDistance() <= CLAW_CONE_DISTANCE) {
+//        if (CLAW_OPEN.status && getConeDistance() <= CLAW_CONE_DISTANCE) {
 
             //set servo position
-            claw.setPosition(CLAW_CLOSED_TICK);
+            claw.setPosition(CLAW_CLOSED_POS);
 
             //set state of claw closed to true
             CLAW_CLOSED.setStatus(true);
@@ -92,7 +98,7 @@ public class Claw {
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
                     + ",Claw Closed", true);
 
-        }
+//        }
     }
     //open the claw
     public void openClaw() {
@@ -100,11 +106,11 @@ public class Claw {
 
 
         //the state of claw closed has to be true TODO: refer to line 16
-        if (CLAW_CLOSED.status && getConeDistance() <= CLAW_CONE_DISTANCE) {
+//        if (CLAW_CLOSED.status && getConeDistance() <= CLAW_CONE_DISTANCE) {
 
             //set servo position
-            claw.setPosition(0);
-            //TODO: need separate CLAW_OPEN_TICK constant?
+            claw.setPosition(CLAW_OPEN_POS);
+            //TODO: need separate CLAW_OPEN_POS constant?
 
             //set state of claw open to true
             CLAW_OPEN.setStatus(true);
@@ -112,7 +118,7 @@ public class Claw {
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + ",Claw Opened", true);
-        }
+//        }
     }
 
 

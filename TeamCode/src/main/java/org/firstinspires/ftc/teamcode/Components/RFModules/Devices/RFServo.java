@@ -27,12 +27,13 @@ public class RFServo implements Servo {
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
-    public RFServo (Servo.Direction direction, String deviceName, double limit) {
+    public RFServo (String deviceName, Servo.Direction direction, double limit) {
         RFServo = op.hardwareMap.get(Servo.class, deviceName);
         rfServoName = deviceName;
         RFServo.setDirection(direction);
 
-        logger.createFile("/ServoLogs/RFServo", "sigh");
+        logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
+                "Function               Action");
 
         servolimit = limit;
     }
@@ -41,20 +42,21 @@ public class RFServo implements Servo {
         RFServo = op.hardwareMap.get(Servo.class, deviceName);
         rfServoName = deviceName;
 
-        logger.createFile("/ServoLogs/RFServo", "sigh");
+        logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
+                "Function               Action");
 
         servolimit = limit;
     }
 
     public void setPosition(double position) {
         if (op.getRuntime() - lasttime > 0.2) {
-            if (RFServo.getPosition() != position) {
+//            if (RFServo.getPosition() != position) {
 //                inputlogs.clear();
 //                inputlogs.add(rfServoName);
 //                inputlogs.add("setPosition()");
 //                inputlogs.add("Setting Position: " + RFServo.getPosition());
                 logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
-                        + df.format(RFServo.getPosition()), true);
+                        + df.format(position), true);
 //                inputlogs.clear();
 
 //                logger.logRegulated("/ServoLogs/RFServo", "Setting Position:" + position);
@@ -62,17 +64,17 @@ public class RFServo implements Servo {
             }
             RFServo.setPosition(position);
             lasttime = op.getRuntime();
-        }
+//        }
     }
 
     public void flipServoInterval(double lowerpos, double upperpos) {
         if (op.getRuntime() - lasttime > 0.2) {
             if (flipped) {
-                setPosition(lowerpos);
+                RFServo.setPosition(lowerpos);
                 flipped = false;
             }
             else {
-                setPosition(upperpos);
+                RFServo.setPosition(upperpos);
                 flipped = true;
             }
             lasttime = op.getRuntime();
@@ -82,10 +84,10 @@ public class RFServo implements Servo {
     public void flipServoMax() {
         if (op.getRuntime() - lasttime > 0.2) {
             if (flipped) {
-                setPosition(0);
+                RFServo.setPosition(0);
                 flipped = false;
             } else {
-                setPosition(servolimit);
+                RFServo.setPosition(servolimit);
                 flipped = true;
             }
             lasttime = op.getRuntime();

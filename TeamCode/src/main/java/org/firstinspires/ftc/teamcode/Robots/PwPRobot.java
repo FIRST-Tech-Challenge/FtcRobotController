@@ -13,12 +13,16 @@ import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Components.Field;
 import org.firstinspires.ftc.teamcode.Components.Lift;
+import org.firstinspires.ftc.teamcode.Components.StateMachine;
+import org.firstinspires.ftc.teamcode.Components.LiftArm;
+import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 public class PwPRobot extends BasicRobot{
     private Aligner aligner =null;
     private Claw claw = null;
+    private LiftArm liftArm = null;
     private ClawExtension clawExtension = null;
     private Lift lift = null;
     public Field field = null;
@@ -32,9 +36,10 @@ public class PwPRobot extends BasicRobot{
         roadrun = new SampleMecanumDrive(op.hardwareMap);
         field = new Field(roadrun);
 //        aligner = new Aligner();
-//        claw = new Claw();
+        claw = new Claw();
+        liftArm = new LiftArm();
 //        clawExtension = new ClawExtension();
-//        lift = new Lift();
+        lift = new Lift();
         cv = new CVMaster(roadrun);
 
     }
@@ -84,27 +89,53 @@ public class PwPRobot extends BasicRobot{
         }
     }
 
-    public void spinAlignerIntake() {
-        if (queuer.queue(true, aligner.isConeInAligner())) {
+    public void lowerLiftArmToIntake() {
+        if (queuer.queue(true, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
+                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
 
-            aligner.spinAlignerIntake();
+            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.lowerLiftArmToIntake();
         }
     }
 
-    public void stopAlignerIntake() {
-        if (queuer.queue(true, op.getRuntime() > aligner.alignerMotorLastStopTime +
-                aligner.ALIGNER_MOTOR_STOP_TIME)) {
+    public void raiseLiftArmToOuttake() {
+        if (queuer.queue(true, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
+                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
 
-            aligner.stopAlignerIntake();
+            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.raiseLiftArmToOuttake();
         }
     }
 
-    public void reverseAlignerIntake() {
-        if (queuer.queue(true, !aligner.isConeInAligner())){
-
-            aligner.reverseAlignerIntake();
-        }
-    }
+//    public void spinAlignerIntake() {
+//        if (queuer.queue(true, alignerSensor.getSensorDistance() <
+//                aligner.CONE_IN_ALIGNER_DISTANCE)) {
+//
+//            aligner.spinAlignerIntake();
+//        }
+//    }
+//
+//    public void stopAlignerIntake() {
+//        if (queuer.queue(true, op.getRuntime() > aligner.alignerMotorLastStopTime +
+//                aligner.ALIGNER_MOTOR_STOP_TIME)) {
+//
+//            aligner.stopAlignerIntake();
+//        }
+//    }
+//
+//    public void reverseAlignerIntake() {
+//        if (queuer.queue(true, alignerSensor.getSensorDistance() >
+//                aligner.CONE_OUT_OF_ALIGNER_DISTANCE)) {
+//
+//            aligner.reverseAlignerIntake();
+//        }
+//    }
+//    public void reverseAlignerIntake() {
+//        if (queuer.queue(true, !aligner.isConeInAligner())){
+//
+//            aligner.reverseAlignerIntake();
+//        }
+//    }
 
     public void teleOp(){
         //omnidirectional movement + turning
@@ -135,11 +166,11 @@ public class PwPRobot extends BasicRobot{
         }
         //toggle liftArm position
         if(op.gamepad2.a){
-            //liftArm.toggleArmPosition
+            liftArm.toggleArmPosition();
         }
         //manual open/close claw (will jsut be open claw in the future)
         if(op.gamepad1.a){
-            //claw.toggleClawPosition
+            claw.toggleClawPosition();
         }
         //will only close when detect cone
         //claw.closeClaw
