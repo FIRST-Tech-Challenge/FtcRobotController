@@ -15,6 +15,10 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+android {
+    namespace = 'org.firstinspires.ftc.teamcode'
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
@@ -23,13 +27,17 @@ dependencies {
 //t265 tracking
 repositories {
     // This line will already be here; you do not need to add it
-    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+//    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
     // Add this line
     maven { url = "https://maven.0x778.tk" }
 }
 
 dependencies {
-    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
+//    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
+    implementation 'org.openftc:easyopencv:1.5.2'
+    implementation 'org.tensorflow:tensorflow-lite:2.3.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+//    implementation 'com.arcrobotics:ftclib:1.1.6'
 }
 
 
