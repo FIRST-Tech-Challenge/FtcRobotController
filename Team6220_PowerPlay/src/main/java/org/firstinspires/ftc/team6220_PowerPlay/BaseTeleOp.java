@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
+<<<<<<< HEAD
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -62,3 +63,8 @@ abstract public class BaseTeleOp extends BaseOpMode {
     }
 
 }
+=======
+abstract public class BaseTeleOp extends BaseOpMode{
+
+};
+>>>>>>> master
