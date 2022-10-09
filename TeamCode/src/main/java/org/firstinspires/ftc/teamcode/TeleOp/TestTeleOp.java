@@ -74,13 +74,16 @@ public class TestTeleOp extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double angle = Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x);
+            double angle = Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x)+90;
             double magnitude = Math.sqrt(Math.pow(gamepad1.left_stick_x,2)+Math.pow(gamepad1.left_stick_y,2));
 
-            leftFrontDrive.setPower(magnitude*(-Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
-            rightFrontDrive.setPower(magnitude*(Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
-            leftBackDrive.setPower(magnitude*(Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
-            rightBackDrive.setPower(magnitude*(-Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
+            double sin2 = Math.pow(Math.sin(angle),2);
+            double cos2 = Math.pow(Math.cos(angle),2);
+
+            leftFrontDrive.setPower(magnitude*(cos2-sin2));
+            rightFrontDrive.setPower(magnitude*(cos2+sin2));
+            leftBackDrive.setPower(magnitude*(cos2+sin2));
+            rightBackDrive.setPower(magnitude*(cos2-sin2));
 
         }
     }
