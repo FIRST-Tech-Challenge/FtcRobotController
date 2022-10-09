@@ -12,7 +12,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         Stack<Float> YAVGPos_LS = new Stack<Float>();
         Stack<Float> XAVGPos_RS = new Stack<Float>();
         Stack<Float> YAVGPos_RS = new Stack<Float>();
-        Float[] AllStickAVGS = {null, null, null, null};
+        Float[] AllStickAVGS = {0f, 0f, 0f, 0f};
 
         //This pushes the last recorded stick position if the stack size is below 5.
         //It removes the last element and pushes the last recorded stick position is the stack size is above 5

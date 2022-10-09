@@ -11,7 +11,8 @@ public class TeleOpTest extends BaseTeleOp {
         telemetry.update();
         waitForStart();
         while(opModeIsActive()){
-
+            TeleOpDrive();
+            telemetry.addData("averaged y pos ls",GamePadInputAVG()[0]);
         }
     }
 }
