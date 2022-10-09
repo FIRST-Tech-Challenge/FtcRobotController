@@ -17,13 +17,11 @@ public class MecanumTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // declare motors
-
+        // --- DECLARE DC MOTORS FOR DRIVE --- //
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); //motor direction
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Braking behavior
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //We don't want to use PID for the motors using the encoders
-
 
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -31,18 +29,17 @@ public class MecanumTeleOp extends LinearOpMode {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
 
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        // --- DC MOTORS FOR LIFT --- //
         DcMotor motorLiftRight = hardwareMap.dcMotor.get("liftRight");
         motorLiftRight.setDirection(DcMotor.Direction.FORWARD);
         motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -53,7 +50,15 @@ public class MecanumTeleOp extends LinearOpMode {
         motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // Servo servoLift = hardwareMap.servo.get("servoLift");
+        // --- RESET ALL MOTOR POWERS TO 0 --- //
+        motorBackLeft.setPower(0);
+        motorBackRight.setPower(0);
+        motorFrontLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorLiftLeft.setPower(0);
+        motorLiftRight.setPower(0);
+
+        Servo servoLift = hardwareMap.servo.get("servoLift");
 
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
