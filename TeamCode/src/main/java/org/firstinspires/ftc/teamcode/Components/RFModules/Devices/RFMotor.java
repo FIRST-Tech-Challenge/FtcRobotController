@@ -148,8 +148,8 @@ public class RFMotor extends Motor {
 //            inputlogs.add(rfMotorName);
 //            inputlogs.add("setPower()");
 //            inputlogs.add("Setting Power: " + power);
-            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setPower()," +
-                    "Setting Power: " + df.format(power), true, true);
+//            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setPower()," +
+//                    "Setting Power: " + df.format(power), true, true);
 //            inputlogs.clear();
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + power);
 //            logger.log("/RobotLogs/GeneralRobotLog", rfMotorName + "\nsetPower():\nSetting Power:" + power);
@@ -193,6 +193,9 @@ public class RFMotor extends Motor {
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Mode," + runMode);
 //            logger.log("/RobotLogs/GeneralRobot", rfMotorName + "setMode():\nSetting Mode," + runMode);
         }
+    }
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
+        rfMotor.setZeroPowerBehavior(behavior);
     }
 
     public double getVelocity() {

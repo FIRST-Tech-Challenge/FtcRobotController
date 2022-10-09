@@ -20,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine.Tu
 import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Attachments.RFTurret;
