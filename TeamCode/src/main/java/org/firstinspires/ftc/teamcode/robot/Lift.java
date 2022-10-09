@@ -11,8 +11,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Lift {
+    private Telemetry telemetry;
     public DcMotorEx liftMotor;
-    public lift(HardwareMap hwMap, Telemetry telemetry) {
+
+    public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         liftMotor = (DcMotorEx) hwMap.dcMotor.get("motorLift");
     }
