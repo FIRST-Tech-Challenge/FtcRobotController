@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
-<<<<<<< HEAD
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -53,18 +52,14 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
         //Driving / pivoting, not sure how we want it to be structured so this can be fixed later
         if(Math.atan2(FilteredInput[0], FilteredInput[1]) < 20){
-            DriveRobot(FilteredInput[0], 0, FilteredInput[2]);
+            driveRobot(FilteredInput[0], 0, FilteredInput[2]);
         }else if(Math.atan2(FilteredInput[1], FilteredInput[0]) < 20){
-            DriveRobot(0, FilteredInput[1], FilteredInput[2]);
+            driveRobot(0, FilteredInput[1], FilteredInput[2]);
         }else{
-            DriveRobot(FilteredInput[0], FilteredInput[1], FilteredInput[2]);
+            driveRobot(FilteredInput[0], FilteredInput[1], FilteredInput[2]);
         }
 
     }
 
 }
-=======
-abstract public class BaseTeleOp extends BaseOpMode{
 
-};
->>>>>>> master
