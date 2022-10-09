@@ -61,8 +61,4 @@ public class Drive {
         motorFrontRight.setPower(frontRightPower);
         motorBackRight.setPower(backRightPower);
     }
-
-    public void setServo(Servo servo, double position) {
-        servo.setPosition(position);
-    }
 }

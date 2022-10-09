@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gam
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -58,7 +59,14 @@ public class MecanumTeleOp extends LinearOpMode {
         motorLiftLeft.setPower(0);
         motorLiftRight.setPower(0);
 
-        Servo servoLift = hardwareMap.servo.get("servoLift");
+//        Servo servoLift = hardwareMap.servo.get("servoLift");
+        CRServo servoIntake = hardwareMap.crservo.get("servoIntake"); // continous - CRServo
+        Servo servoOdomLeft = hardwareMap.servo.get("servoOdomLeft"); // angular
+        Servo servoOdomRight = hardwareMap.servo.get("servoOdomRight"); // angular
+        Servo servoOdomPerp = hardwareMap.servo.get("servoOdomPerp"); // angular
+
+        servoIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+        servoIntake.setPower(0.5);
 
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
