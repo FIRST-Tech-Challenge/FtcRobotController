@@ -5,5 +5,5 @@ public class Constants {
     public double WheelCirc = WheelDiam * Math.PI;
     public double TicksPerRev = 14.147 * 2 * 19;
     public double inchesPerTick = WheelCirc / TicksPerRev;
-    public double HoloAngleRotationsToInches = WheelCirc / Math.sqrt(2);
+    public double HoloAngleIncherPerRot = WheelCirc / Math.sqrt(2);
 }
