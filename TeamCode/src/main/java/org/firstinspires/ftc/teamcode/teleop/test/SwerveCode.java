@@ -103,33 +103,24 @@ public class SwerveCode extends OpMode{
         int posBotL = robot.botL.getCurrentPosition();
         int posTopL = robot.topL.getCurrentPosition();
 
-        if (gamepad1.dpad_up) {
+        double alpha = 0.5;
+        double beta = 1 - alpha;
 
-            robot.botL.setTargetPosition(posBotL + 100);
-            robot.topL.setTargetPosition(posTopL + 100);
+        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
+        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
 
-            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
+        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
 
-            robot.botL.setPower(0.5);
-            robot.topL.setPower(0.5);
-        }
+        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
+        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
 
-        else if (gamepad1.dpad_down){
-            robot.botL.setTargetPosition(posBotL + 100);
-            robot.topL.setTargetPosition(posTopL - 100);
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
 
-            robot.botL.setPower(0.5);
-            robot.topL.setPower(-0.5);
-        }
-
-        else{
-            robot.botL.setPower(0);
-            robot.topL.setPower(0);
-        }
     }
 
     private void reset(){
