@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="RedCorner", group="Trauma")
-/***************************************************************************************************/
-/* DO NOT Run RedCorner - It's a copy of Blue Corner exactly, change directions before running it!!*/
-/***************************************************************************************************/
 public class RedCornerTrauma extends DriveDirections {
 
     private ElapsedTime runtime = new ElapsedTime();

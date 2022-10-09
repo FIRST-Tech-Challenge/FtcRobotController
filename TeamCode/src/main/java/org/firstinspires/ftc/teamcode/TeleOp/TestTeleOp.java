@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -38,9 +38,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @Disabled
-@TeleOp(name="TestCode", group="Linear Opmode")
+@TeleOp(name="Test", group="Linear Opmode")
 
-public class TestCode extends LinearOpMode {
+public class TestTeleOp extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -74,13 +74,13 @@ public class TestCode extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            double angle = Math.atan(gamepad1.left_stick_y/gamepad1.left_stick_x);
+            double magnitude = Math.sqrt(Math.pow(gamepad1.left_stick_x,2)+Math.pow(gamepad1.left_stick_y,2));
 
-
-
-            leftFrontDrive.setPower(-gamepad1.left_stick_y);
-            rightFrontDrive.setPower(-gamepad1.left_stick_y);
-            leftBackDrive.setPower(-gamepad1.left_stick_y);
-            rightBackDrive.setPower(-gamepad1.left_stick_y);
+            leftFrontDrive.setPower(magnitude*(-Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
+            rightFrontDrive.setPower(magnitude*(Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
+            leftBackDrive.setPower(magnitude*(Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
+            rightBackDrive.setPower(magnitude*(-Math.pow(Math.sin(angle),2)+Math.pow(Math.cos(angle),2)));
 
         }
     }
