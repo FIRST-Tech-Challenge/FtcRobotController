@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvPipeline
 
 class Webcam(deviceName: String, pipeline: OpenCvPipeline) : KDevice<WebcamName>(deviceName) {
 
-    private val camera: OpenCvCamera
+    val camera: OpenCvCamera
 
     fun startStreaming() {
         camera.openCameraDeviceAsync(object : AsyncCameraOpenListener {

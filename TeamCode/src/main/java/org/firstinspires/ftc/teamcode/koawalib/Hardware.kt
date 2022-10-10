@@ -5,6 +5,7 @@ import com.asiankoala.koawalib.hardware.motor.MotorFactory
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
+import org.firstinspires.ftc.teamcode.koawalib.vision.AprilTagDetectionPipeline
 import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
 
@@ -38,7 +39,7 @@ class Hardware(startPose: Pose) {
 //    val arm = KServo("Arm")
 //    val claw = KServo("Claw").startAt(Claw.openPos)
 
-//    val webcam = Webcam("Webcam", SleevePipeline(0.166, 578.272, 578.272, 402.145, 221.506))
+    val webcam = Webcam("Webcam", AprilTagDetectionPipeline(0.166, 578.272, 578.272, 402.145, 221.506))
 
     private val leftEncoder = KEncoder(fr, ticksPerUnit, true).reverse.zero()
     private val rightEncoder = KEncoder(fl, ticksPerUnit, true).zero()

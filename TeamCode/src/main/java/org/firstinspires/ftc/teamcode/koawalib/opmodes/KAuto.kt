@@ -13,24 +13,25 @@ import org.firstinspires.ftc.teamcode.koawalib.Robot
 class KAuto : KOpMode() {
     private val robot by lazy { Robot(startPose) }
     private val startPose = Pose(-60.0, -10.0, 0.0.radians)
-
-    val path = PathBuilder(startPose.toPose2d())
-        .splineTo(Vector2d(-55.0, -10.0), 0.0.radians)
-        .build()
+//
+//    val path = PathBuilder(startPose.toPose2d())
+//        .splineTo(Vector2d(-55.0, -10.0), 0.0.radians)
+//        .build()
 
     override fun mInit() {
-//        robot.webcam.device.startStreaming()
+        robot.webcam.device.startStreaming()
     }
 
     override fun mInitLoop() {
-//        robot.webcam.periodic()
+        robot.webcam.start()
     }
 
     override fun mStart() {
-//        robot.webcam.device.stopStreaming()
+        robot.webcam.device.stopStreaming()
     }
 
     override fun mLoop() {
+        robot.webcam.update()
 //        if(robot.webcam.tagOfInterest == null ||  robot.webcam.tagOfInterest!!.id == robot.webcam.LEFT){
 //            GVFCmd(
 //                robot.drive,
