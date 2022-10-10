@@ -107,6 +107,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public DriveTrain (HardwareMap hardwareMap, boolean simulated){
         super(simulated);
+        useMotorPowers = false;
+
         this.simulated = simulated;
         TrajectoryFollower follower = new CloneFollower(AXIAL_PID, CROSS_AXIAL_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5)), 1.5);
@@ -268,7 +270,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     @Override
     public void update(Canvas fieldOverlay) {
-        updatePose(); //David's update
+        //updatePose(); //David's update
         // sensor readings
         leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
         rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
@@ -599,6 +601,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         for (DcMotorEx motor : motors) {
             motor.setMode(runMode);
         }
+    }
+
+    public void driveIMU(double heading, double velocity){
+
     }
 
     @Override

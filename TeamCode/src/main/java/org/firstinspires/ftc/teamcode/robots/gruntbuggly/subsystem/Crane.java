@@ -178,7 +178,7 @@ public class Crane implements Subsystem {
                     shoulderActivePID = true;
                     // WATCH OUT - begin extending arm - we want to find max extension (once established we will normally not do this)
                     if (EXTENDER_CALIBRATE_MAX) extenderMotor.setPower(.6);
-                    shoulderTargetPos = 750;
+                    shoulderTargetPos = 700;
                     calibrateStage++;
                 }
                 break;
@@ -277,7 +277,7 @@ public class Crane implements Subsystem {
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
 
-    boolean inverseKinematic = true;
+    boolean inverseKinematic = false;
     double targetHeight = 0;
     double targetDistance = 0.43;
 

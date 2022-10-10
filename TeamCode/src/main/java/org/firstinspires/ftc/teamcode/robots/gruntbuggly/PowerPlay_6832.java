@@ -243,10 +243,7 @@ public class PowerPlay_6832 extends OpMode {
     @Override
     public void init_loop() {
 
-        Pose2d currentPose = robot.driveTrain.currentPose;
-        telemetry.addLine("Current X " + currentPose.getX() );
-        telemetry.addLine("Current Y " + currentPose.getY() );
-        telemetry.addLine("Current Heading " + currentPose.getHeading() );
+
 
         //run all driver controls needed in init_loop
         dc.init_loop();
@@ -417,6 +414,15 @@ public class PowerPlay_6832 extends OpMode {
         // handling dashboard changes
         forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
+
+        Pose2d currentPose = robot.driveTrain.currentPose;
+        Pose2d currentPose2 = robot.driveTrain.getPoseEstimate();
+        telemetry.addLine("Current X " + currentPose.getX() );
+        telemetry.addLine("Current Y " + currentPose.getY() );
+        telemetry.addLine("Current Heading " + currentPose.getHeading() );
+        telemetry.addLine("Current X " + currentPose2.getX() );
+        telemetry.addLine("Current Y " + currentPose2.getY() );
+        telemetry.addLine("Current Heading " + currentPose2.getHeading() );
 
         TelemetryPacket packet = new TelemetryPacket();
 
