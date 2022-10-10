@@ -67,7 +67,7 @@ public class OpenCVTest extends OpenCvPipeline {
 
         Mat target = mat.submat(TARGET_LOCATION);
 
-        // turn target into three channels
+        // turn t arget into three channels
         ArrayList<Mat> a = new ArrayList<Mat>();
         Core.split(target, a);
 

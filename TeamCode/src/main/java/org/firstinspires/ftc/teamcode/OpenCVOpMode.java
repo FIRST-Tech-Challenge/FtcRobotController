@@ -9,23 +9,16 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@Autonomous(name="Skystone Detecotor", group="Auto")
+@Autonomous(name="Skystone Detector", group="Auto")
 public class OpenCVOpMode extends LinearOpMode {
     OpenCvCamera cam;
 //    OpenCVTest pipeline;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        int cameraMonitorViewId = hardwareMap.appContext
-                .getResources().getIdentifier("cameraMonitorViewId",
-                        "id", hardwareMap.appContext.getPackageName());
-//        cam = OpenCvCameraFactory.getInstance()
-//                .createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        // or webcam?
-        cam = OpenCvCameraFactory.getInstance()
-                .createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         OpenCVTest detector = new OpenCVTest(telemetry);
-        cam.setPipeline(detector);
         cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -40,6 +33,7 @@ public class OpenCVOpMode extends LinearOpMode {
 
             }
         });
+        cam.setPipeline(detector);
         waitForStart();
 
         switch (detector.getLocation()) {
