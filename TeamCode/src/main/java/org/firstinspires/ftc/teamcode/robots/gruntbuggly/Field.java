@@ -1,11 +1,20 @@
 package org.firstinspires.ftc.teamcode.robots.gruntbuggly;
 
+import android.net.wifi.p2p.WifiP2pManager;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 import org.firstinspires.ftc.teamcode.util.Vector2;
 
 public class Field {
 
     public FieldObject[] objects = new FieldObject[35];
     public boolean isBlue;
+
+    //todo decide on start position
+    public Pose2d startPose = new Pose2d(-1, 2, 0);
+
+    public Pose2d targetCoordinate =  new Pose2d(startPose.getX(), startPose.getY(), startPose.getHeading());
 
     public Field(boolean isBlue){
         this.isBlue = isBlue;
