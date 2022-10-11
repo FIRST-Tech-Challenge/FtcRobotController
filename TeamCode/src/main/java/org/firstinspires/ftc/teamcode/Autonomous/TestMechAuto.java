@@ -31,6 +31,7 @@ public class TestMechAuto extends CommandOpMode {
         CloseClaw closeClaw = new CloseClaw(claw);
 
         scheduler = CommandScheduler.getInstance();
+
         scheduler.schedule(new SequentialCommandGroup(closeClaw, tc1, openClaw));
 
     }
