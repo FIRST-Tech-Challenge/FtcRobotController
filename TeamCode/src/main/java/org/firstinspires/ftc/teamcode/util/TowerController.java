@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.TeleOp;
 public class TowerController{
 
     public ElapsedTime runtime = new ElapsedTime();
-    public DcMotor screw = null;
+    public DcMotor screw;
     public DigitalChannel highSensor;
     public DigitalChannel lowSensor;
     public boolean raiseTower;
@@ -46,4 +46,4 @@ public class TowerController{
         }
     }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   //hi. you found me. -SECRET COMMENT
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       //hi. you found me. -SECRET COMMENT
