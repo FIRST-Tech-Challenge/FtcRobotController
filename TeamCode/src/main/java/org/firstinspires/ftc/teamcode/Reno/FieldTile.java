@@ -10,7 +10,8 @@ public class FieldTile {
     public static final float halfField        = 72 * mmPerInch;
     public static final float halfTile         = 12 * mmPerInch;
     public static final float oneAndHalfTile   = 36 * mmPerInch;
-    public static final float oneTile   = 24 * mmPerInch;
+    public static final float oneTile          = 24 * mmPerInch;
+    public static final float twoTile          = 48 * mmPerInch;
     public static final float twoAndHalfTile   = 60 * mmPerInch;
 
     public FieldTile(double x, double y, double z)
