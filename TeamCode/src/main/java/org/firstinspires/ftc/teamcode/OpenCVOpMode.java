@@ -2,9 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -41,7 +45,7 @@ public class OpenCVOpMode extends LinearOpMode {
          * of a frame from the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
-        webcam.setPipeline(new SamplePipeline());
+        webcam.setPipeline(new SamplePipeline(telemetry));
 
         /*
          * Open the connection to the camera device. New in v1.4.0 is the ability
@@ -96,6 +100,7 @@ public class OpenCVOpMode extends LinearOpMode {
 
         while (opModeIsActive())
         {
+            String color = "";
             /*
              * Send some stats to the telemetry
              */
@@ -105,6 +110,7 @@ public class OpenCVOpMode extends LinearOpMode {
             telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
             telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
             telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
+            telemetry.addData("Color", color);
             telemetry.update();
 
             /*
@@ -165,6 +171,15 @@ public class OpenCVOpMode extends LinearOpMode {
     class SamplePipeline extends OpenCvPipeline
     {
         boolean viewportPaused;
+        Telemetry telemetry;
+        Mat mat = new Mat();
+        // not exact nums yet
+        static final Rect ROI = new Rect(new Point(100, 200), new Point(300, 400));
+
+        public SamplePipeline (Telemetry t) {
+            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+            telemetry = t;
+        }
 
         /*
          * NOTE: if you wish to use additional Mat objects in your processing pipeline, it is
@@ -199,21 +214,29 @@ public class OpenCVOpMode extends LinearOpMode {
                             input.rows()*(3f/4f)),
                     new Scalar(0, 255, 0), 4);
 
-            /**
-             * NOTE: to see how to get data from your pipeline to your OpMode as well as how
-             * to change which stage of the pipeline is rendered to the viewport when it is
-             * tapped, please see {@link PipelineStageSwitchingExample}
-             */
-
             getColor(input);
             return input;
         }
 
-        Mat mat = new Mat();
 
-        public String getColor(Mat input) {
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-            Imgproc.cvtColor(input, mat, Imgproc.COLOR_HSV2RGB);
+        public int[] getColor(Mat input) {
+
+            int[] color = new int[3];
+
+            Mat coneRegion = mat.submat(ROI);
+            double rVal = Core.sumElems(coneRegion).val[0];
+            double gVal = Core.sumElems(coneRegion).val[1];
+            double bVal = Core.sumElems(coneRegion).val[2];
+            rVal /= ROI.area();
+            gVal /= ROI.area();
+            bVal /= ROI.area();
+            color[0] = rVal;
+            color[1] = gVal;
+            color[2] = bVal;
+
+            telemetry.addData("Color: ", color);
+
+            return color;
         }
 
         @Override
