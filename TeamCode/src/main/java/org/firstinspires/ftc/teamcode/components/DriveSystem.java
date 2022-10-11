@@ -76,6 +76,7 @@ public class DriveSystem {
             // Reset encoders
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             // Set motor directions to drive forwards
             switch(name) {
                 case FRONTLEFT:
@@ -212,11 +213,11 @@ public class DriveSystem {
                 switch(name) {
                     case FRONTLEFT:
                     case BACKLEFT:
-                        motor.setPower(correction > 0 ? 1 - sign * correction: 1);
+                        motor.setPower(correction > 0 ? maxPower - sign * correction: maxPower);
                         break;
                     case FRONTRIGHT:
                     case BACKRIGHT:
-                        motor.setPower(correction < 0 ? 1 + sign * correction : 1);
+                        motor.setPower(correction < 0 ? maxPower + sign * correction : maxPower);
                         break;
                 }
             });
@@ -269,7 +270,9 @@ public class DriveSystem {
      * @param maxPower sets the power to run at
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public boolean driveToPosition(int millimeters, Direction direction, double maxPower) {
+    public boolean driveToPosition(int millimeters, Direction direction, double maxPower)
+    {
+        Log.d("going to ", millimeters + " " + direction);
         return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower);
     }
 

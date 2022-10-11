@@ -22,6 +22,7 @@ public class BaseStateMachine extends BaseAutonomous {
     private static final float halfField        = 72 * mmPerInch;
     private static final float oneAndHalfTile   = 36 * mmPerInch;
     private int parkStep = 0;
+    private int currentPos = 0;
 
     public enum State {
         IDENTIFY_TARGET,
@@ -34,8 +35,8 @@ public class BaseStateMachine extends BaseAutonomous {
     }
 
     public enum Sleeve {
-        BRIAN,
         DAVID,
+        BRIAN,
         TEAM,
     }
 
@@ -89,13 +90,12 @@ public class BaseStateMachine extends BaseAutonomous {
                     //drive forward slowly/10 inches and identify again
                     //backwards is forwards
 
-                    if (driveSystem.driveToPosition(254, DriveSystem.Direction.BACKWARD, 0.3)) {
-                        telemetry.addData("on heading? ", driveSystem.onHeading(0.3, 0));
+                    if (driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.2)) {
+                        currentPos += 100;
                         identifySleeve();
                         teamAsset = Sleeve.BRIAN;
                     }
                     identifySleeve();
-                    Log.d("signal sleeve", teamAsset.toString());
                     telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
 
                 } else {
@@ -103,7 +103,7 @@ public class BaseStateMachine extends BaseAutonomous {
                 }
                 break;
             case DRIVE_TO_MEDIUM_JUNCTION:
-                if (driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.3)) {
+                if (driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.2)) {
                     newState(State.POSITION_ROBOT_AT_JUNCTION);
                 }
                 break;
@@ -129,18 +129,18 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void park() {
         if (parkStep == 0) {
-            if (driveSystem.driveToPosition(600, DriveSystem.Direction.BACKWARD, 0.5)) {
+            if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.3)) {
                 parkStep++;
             }
         }
         if (parkStep == 1) {
-            if (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(600, DriveSystem.Direction.RIGHT, 0.5)) {
+            if (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3)) {
                 newState(State.END_STATE);
             }
-            if (teamAsset == Sleeve.BRIAN && driveSystem.driveToPosition(610, DriveSystem.Direction.BACKWARD, 0.5) && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+            if (teamAsset == Sleeve.BRIAN) {
                 newState(State.END_STATE);
             }
-            if (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(600, DriveSystem.Direction.LEFT, 0.5)) {
+            if (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) {
                 newState(State.END_STATE);
             }
         }
