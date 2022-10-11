@@ -19,10 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
-@Autonomous(name="AutoTowerRed3", group="Autonomous")
+@Autonomous(name="AutoShippingElementRed3", group="Autonomous")
 //@Disabled
 
-public class AutoTowerRed3 extends LinearOpMode {
+public class AutoShippingElementRed3 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor lf = null;  //left front wheel
     private DcMotor rf = null;  //right front wheel
@@ -149,7 +149,7 @@ public class AutoTowerRed3 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(875); //turn left
+            sleep(800); //turn left
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -164,14 +164,14 @@ public class AutoTowerRed3 extends LinearOpMode {
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(0.35);
-            rf.setPower(0.35);
-            lb.setPower(0.35);
-            rb.setPower(0.35);
+            lf.setPower(0.30);
+            rf.setPower(0.30);
+            lb.setPower(0.30);
+            rb.setPower(0.30);
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1150); //Go forward
+            sleep(1500); //Go forward
 
             tower1.setPower(0);
             tower2.setPower(0);

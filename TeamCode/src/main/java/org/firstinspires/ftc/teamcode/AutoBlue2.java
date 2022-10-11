@@ -71,7 +71,7 @@ public class AutoBlue2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(450); //Go forwards to side of goal
+            sleep(500); //Go forwards to side of goal
 
             tower1.setPower(0.5);
             tower2.setPower(0.5);
@@ -152,14 +152,14 @@ public class AutoBlue2 extends LinearOpMode {
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(-0.75);
-            rf.setPower(0.75);
+            lf.setPower(-1.0);
+            rf.setPower(1.0);
             lb.setPower(-1.0);
             rb.setPower(1.0);
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(600); //turn left
+            sleep(750); //turn left
 
             tower1.setPower(0);
             tower2.setPower(0);

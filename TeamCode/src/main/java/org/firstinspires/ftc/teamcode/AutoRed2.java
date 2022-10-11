@@ -81,7 +81,7 @@ public class AutoRed2 extends LinearOpMode {
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(800); //Lower arm
+            sleep(900); //Lower arm
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -151,14 +151,14 @@ public class AutoRed2 extends LinearOpMode {
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(-0.75);
-            rf.setPower(0.75);
+            lf.setPower(-1.0);
+            rf.setPower(1.0);
             lb.setPower(-1.0);
             rb.setPower(1.0);
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(600); //turn left
+            sleep(675); //turn left
 
             tower1.setPower(0);
             tower2.setPower(0);
@@ -173,14 +173,14 @@ public class AutoRed2 extends LinearOpMode {
 
             tower1.setPower(0);
             tower2.setPower(0);
-            lf.setPower(0.8);
-            rf.setPower(0.8);
-            lb.setPower(0.8);
-            rb.setPower(0.8);
+            lf.setPower(-0.8);
+            rf.setPower(-0.8);
+            lb.setPower(-0.8);
+            rb.setPower(-0.8);
             clawservo.setPosition(0);
             duckspinnerL.setPower(0);
             duckspinnerR.setPower(0);
-            sleep(1150); //Go forward
+            sleep(1150); //Go backwards
 
             tower1.setPower(0);
             tower2.setPower(0);
