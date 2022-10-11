@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -65,12 +67,15 @@ public class EOCVTele extends LinearOpMode {
         }
 
 
-        }
-
-
-
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        FtcDashboard.getInstance().startCameraStream(EOCV, 10);
 
     }
+
+
+
+}
 
 
 

@@ -2,22 +2,18 @@ package com.example.meepmeeppathvisualizer;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueDark;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
-import org.jetbrains.annotations.NotNull;
-
 public class MeepMeepQuadThree {
     public static void main(String[] args){
         int aprilTagsId = 3;
-        MeepMeep mm = new MeepMeep(400,90);
-        new MeepMeepPersistence(mm);
 
+        MeepMeep mm = new MeepMeep(800,90);
+        new MeepMeepPersistence(mm);
 
         MeepMeepPersistence persist = new MeepMeepPersistence(mm);
         persist.restore();
@@ -38,9 +34,7 @@ public class MeepMeepQuadThree {
 
                 .setColorScheme(new ColorSchemeBlueDark())
 
-
                 .setDimensions(13, 16)
-
 
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
@@ -63,7 +57,8 @@ public class MeepMeepQuadThree {
                     TrajectoryVelocityConstraint SpTVC = (a, b, c, d) -> 1000;
                     TrajectoryAccelerationConstraint SpTAC = (a, b, c, d) -> 1000;
                 */
-                //Unsureof what the commented code does so I commented it out
+                //Unsure of what the commented code does so I commented it out
+
                     builder.lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75)));
                     for(int i=1; i <= 3;i++ )
                         cycle(builder);
@@ -85,8 +80,6 @@ public class MeepMeepQuadThree {
                 .setBackgroundAlpha(1f)
                 .addEntity(bot)
                 .start();
-
-
     }
 
     public static void cycle(TrajectorySequenceBuilder builder){
