@@ -77,14 +77,14 @@ public class MecanumTeleOp extends LinearOpMode {
         //motorLiftRight.setPower(0);
 
 
-        Servo servoLift = hardwareMap.servo.get("servoLift");
-        CRServo servoIntake = hardwareMap.crservo.get("servoIntake"); // continous - CRServo
-        Servo servoOdomLeft = hardwareMap.servo.get("servoOdomLeft"); // angular
-        Servo servoOdomRight = hardwareMap.servo.get("servoOdomRight"); // angular
-        Servo servoOdomPerp = hardwareMap.servo.get("servoOdomPerp"); // angular
+//        Servo servoLift = hardwareMap.servo.get("servoLift");
+//        CRServo servoIntake = hardwareMap.crservo.get("servoIntake"); // continous - CRServo
+//        Servo servoOdomLeft = hardwareMap.servo.get("servoOdomLeft"); // angular
+//        Servo servoOdomRight = hardwareMap.servo.get("servoOdomRight"); // angular
+//        Servo servoOdomPerp = hardwareMap.servo.get("servoOdomPerp"); // angular
 
-        servoIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-        servoIntake.setPower(0.5);
+//        servoIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+//        servoIntake.setPower(0.5);
 
         //Servo servoLift = hardwareMap.servo.get("servoLift");
 
