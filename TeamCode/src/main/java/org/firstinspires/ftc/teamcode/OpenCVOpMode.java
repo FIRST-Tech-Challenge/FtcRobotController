@@ -31,9 +31,6 @@ public class OpenCVOpMode extends LinearOpMode {
 
 //        webcam.setPipeline(new SamplePipeline(telemetry));
         webcam.setPipeline(new SamplePipeline());
-
-
-        webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -90,7 +87,7 @@ public class OpenCVOpMode extends LinearOpMode {
 //        Telemetry telemetry;
         Mat mat = new Mat();
         // not exact numbers yet
-        final Rect ROI = new Rect(new Point(100, 200), new Point(300, 400));
+        final Rect ROI = new Rect(new Point(0, 0), new Point(100, 100));
 
 //        public SamplePipeline (Telemetry t) {
 //        public SamplePipeline() {
@@ -115,31 +112,37 @@ public class OpenCVOpMode extends LinearOpMode {
                             input.rows()*(3f/4f)),
                     new Scalar(0, 255, 0), 4);
 
-            // getColor(input);
+            getColor(input);
+
             return input;
         }
 
 
-        /* public double[] getColor(Mat input) {
+        public int[] getColor(Mat input) {
 
-            double[] color = new double[3];
+            int[] color = {1, 1, 1};
 
-            Mat coneRegion = mat.submat(ROI);
-            double rVal = (double) Core.sumElems(coneRegion).val[0];
-            double gVal = (double) Core.sumElems(coneRegion).val[1];
-            double bVal = (double) Core.sumElems(coneRegion).val[2];
-            rVal /= ROI.area();
-            gVal /= ROI.area();
-            bVal /= ROI.area();
+            Mat coneRegion = mat;
+            int rVal = (int)Core.sumElems(coneRegion).val[0];
+            int gVal = (int)Core.sumElems(coneRegion).val[1];
+            int bVal = (int)Core.sumElems(coneRegion).val[2];
+            telemetry.addData("rVal", rVal);
+            telemetry.addData("gVal", gVal);
+            telemetry.addData("bVal", bVal);
+            rVal /= 76800;
+            gVal /= 76800;
+            bVal /= 76800;
             color[0] = rVal;
             color[1] = gVal;
             color[2] = bVal;
 
-            telemetry.addData("Color: ", color);
+            String colorString = rVal + ", " + gVal + ", " + bVal;
+
+            telemetry.addData("Color: ", colorString);
             mat.release();
 
             return color;
-        } */
+        }
 
         @Override
         public void onViewportTapped()
