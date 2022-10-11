@@ -143,6 +143,7 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("IMU Heading: ", -imu.getAngularOrientation().firstAngle);
             telemetry.addData("Track Width: ", odometry.getTrackWidth());
             telemetry.addData("Forward Offset", odometry.getForwardOffset());
+            telemetry.addData("Field Centric: ", drive.isFieldCentric);
             telemetry.update();
         }
     }
