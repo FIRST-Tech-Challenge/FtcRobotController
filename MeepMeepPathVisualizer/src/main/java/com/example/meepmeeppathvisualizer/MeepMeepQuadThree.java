@@ -10,7 +10,7 @@ import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBui
 
 public class MeepMeepQuadThree {
     public static void main(String[] args){
-        int aprilTagsId = 3;
+        int aprilTagsId = 1;
 
         MeepMeep mm = new MeepMeep(800,90);
         new MeepMeepPersistence(mm);
@@ -39,34 +39,15 @@ public class MeepMeepQuadThree {
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
 
-                    /*TrajectoryVelocityConstraint STVC = new TrajectoryVelocityConstraint() {
-                        @Override
-                        public double get(double v, @NotNull Pose2d pose2d, @NotNull Pose2d pose2d1, @NotNull Pose2d pose2d2) {
-                            return 5;
-                        }
-                    };
-
-                    TrajectoryAccelerationConstraint STAC = new TrajectoryAccelerationConstraint() {
-                        @Override
-                        public double get(double v, @NotNull Pose2d pose2d, @NotNull Pose2d pose2d1, @NotNull Pose2d pose2d2) {
-                            return 0;
-                        }
-                    };
-
-                    TrajectoryVelocityConstraint STVE = (a, b, c, d) -> 5;
-                    TrajectoryVelocityConstraint SpTVC = (a, b, c, d) -> 1000;
-                    TrajectoryAccelerationConstraint SpTAC = (a, b, c, d) -> 1000;
-                */
-                //Unsure of what the commented code does so I commented it out
-
                     builder.lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75)));
-                    for(int i=1; i <= 3;i++ )
+                    builder.waitSeconds(1);//cone deposit
+                    for(int i=1; i <= 4;i++ )
                         cycle(builder);
 
                     if(aprilTagsId == 1)
-                        builder.lineTo(new Vector2d(-11.6,24.3));
+                        builder.lineTo(new Vector2d(-12.2,12.5));
                     else if(aprilTagsId ==2)
-                        builder.waitSeconds(2.74);
+                        builder.waitSeconds(1.74);
                     else
                         builder.lineTo(new Vector2d(-58.2,24.6));
 
@@ -83,7 +64,7 @@ public class MeepMeepQuadThree {
     }
 
     public static void cycle(TrajectorySequenceBuilder builder){
-        builder.lineToLinearHeading(new Pose2d(-57,12.3,Math.toRadians(180)));
+        builder.lineToLinearHeading(new Pose2d(-57,12.3,Math.toRadians(0)));
         builder.waitSeconds(2.5); //This would be replaced with an actual intake function
         builder.lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75)));
         builder.waitSeconds(1);//Under the impression that using the async PID, the slides will be already be moved up
