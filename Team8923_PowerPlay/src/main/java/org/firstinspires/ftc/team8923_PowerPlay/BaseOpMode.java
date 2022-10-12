@@ -35,10 +35,10 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
-        motorBL.setDirection(DcMotor.Direction.REVERSE);
-        motorBR.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.FORWARD);
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.REVERSE);
     }
     public void driveMecanum(double driveAngle, double drivePower, double turnPower){
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
