@@ -4,10 +4,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.TeleOp;
 
-public class TowerController{
+public class TowerController {
 
     public ElapsedTime runtime = new ElapsedTime();
     public DcMotor screw;
@@ -68,6 +69,10 @@ public class TowerController{
     private void drive(double uBarTarget, double speed) {
         uBarLevel += uBarTarget;
         uBar.setTargetPosition(uBarLevel);
+        while (uBar.isBusy())
+        {
+
+        }
     }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        //hi. you found me. -SECRET COMMENT
