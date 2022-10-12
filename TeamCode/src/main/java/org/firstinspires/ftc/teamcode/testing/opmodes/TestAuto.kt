@@ -6,9 +6,11 @@ import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.GVFCmd
 import com.asiankoala.koawalib.command.commands.WaitUntilCmd
 import com.asiankoala.koawalib.command.group.SequentialGroup
+import com.asiankoala.koawalib.logger.Logger
+import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.path.QuinticSplinePath
+import com.asiankoala.koawalib.path.QuinticPath
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
@@ -22,7 +24,7 @@ class TestAuto : KOpMode() {
 
     private lateinit var mainCommand: Cmd
 
-    val path1 = QuinticSplinePath(
+    val path1 = QuinticPath(
         startPose,
         Pose(-10.0,-35.0, 270.0.radians),
         Pose(-30.0,-60.0, 180.0.radians),
@@ -39,6 +41,13 @@ class TestAuto : KOpMode() {
 //        .build()
 
     override fun mInit() {
+        Logger.config = LoggerConfig(
+            isLogging = true,
+            true,
+            isDashboardEnabled = true,
+            isTelemetryEnabled = true
+        )
+
 
         mainCommand = SequentialGroup(
             WaitUntilCmd { opmodeState == OpModeState.LOOP },

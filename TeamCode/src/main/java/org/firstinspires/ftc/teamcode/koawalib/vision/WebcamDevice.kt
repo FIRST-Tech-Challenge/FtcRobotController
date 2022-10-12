@@ -4,7 +4,7 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.subsystem.Subsystem
 import org.openftc.apriltag.AprilTagDetection
 
-class WebcamDevice(val device: Webcam, pipeline: AprilTagDetectionPipeline) : Subsystem() {
+class WebcamDevice(val device: Webcam, private val pipeline: AprilTagDetectionPipeline) : Subsystem() {
 
     var LEFT = 1
     var MIDDLE = 2
@@ -12,9 +12,8 @@ class WebcamDevice(val device: Webcam, pipeline: AprilTagDetectionPipeline) : Su
 
     var tagOfInterest: AprilTagDetection? = null
 
-    private val currentDetections: ArrayList<AprilTagDetection> = pipeline.latestDetections
-
     fun start() {
+        val currentDetections: ArrayList<AprilTagDetection> = pipeline.latestDetections
         if (currentDetections.size != 0) {
             var tagFound = false
             for (tag in currentDetections) {
