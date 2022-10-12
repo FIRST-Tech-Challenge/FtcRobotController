@@ -2,10 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 
@@ -19,6 +15,7 @@ public class Mecanum extends LinearOpMode {
 
     double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive;
     double driveSpeed = 1;
+
     @Override
     public void runOpMode() {
         TurtleRobot robot = new TurtleRobot(this);
@@ -26,8 +23,17 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-
-            //                   FORWARD                     TURN                       STRAFE
+                if (gamepad1.a) {
+                    robot.leftslidemotor.setPower(-0.5);
+                    robot.rightslidemotor.setPower(-0.5);
+                    sleep(1000);
+                }
+                if (gamepad1.b) {
+                    robot.leftslidemotor.setPower(-0.5);
+                    robot.rightslidemotor.setPower(-0.5);
+                    sleep(1000);
+                }
+            //                     FORWARD                     TURN                       STRAFE
             frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
             frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
@@ -35,10 +41,17 @@ public class Mecanum extends LinearOpMode {
                 // (gamepad1.a == true) {
                     //robot.ClawMotor.setPower(1);
                 //}
-                 if (gamepad1.b) {
-                    robot.leftslidemotor.setPower(1);
-                    robot.leftslidemotor.setPower(1);
-                }
+
+                // up
+//                 while (gamepad1.a) {
+//                    robot.leftslidemotor.setPower(-0.5);
+//                    robot.rightslidemotor.setPower(-0.5);
+//                }
+//                 // down
+//                 while (gamepad1.b) {
+//                     robot.leftslidemotor.setPower(1);
+//                     robot.rightslidemotor.setPower(1);
+//                 }
 
             robot.rightfrontmotor.setPower(frontRightDrive);
             robot.rightbackmotor.setPower(backRightDrive);
