@@ -19,6 +19,13 @@ public class GyroCode {
     BNO055IMU.Parameters parameters;
 
     public GyroCode(LinearOpMode opMode) throws InterruptedException{
-        
+
+       // public double getCurrentGyro(){
+
+      //  }
+
+        public double getTrueDiff(double goalTurn){
+
+        }
     }
 }
