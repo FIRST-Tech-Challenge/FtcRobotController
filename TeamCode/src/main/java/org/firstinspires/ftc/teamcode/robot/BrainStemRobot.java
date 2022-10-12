@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import static java.lang.Thread.sleep;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class BrainStemRobot {
@@ -55,20 +56,10 @@ public class BrainStemRobot {
         this.telemetry = telemetry;
         this.opMode = opMode;
 
-        frontLeft = (DcMotorEx) hwMap.dcMotor.get("FL"); //
-        frontRight = (DcMotorEx) hwMap.dcMotor.get("FR"); //
-        backLeft = (DcMotorEx) hwMap.dcMotor.get("BL"); //
-        backRight = (DcMotorEx) hwMap.dcMotor.get("BR"); //
-        /*
-        expanLimit = hwMap.digitalChannel.get("E-Limit"); //
-        cLimit = hwMap.digitalChannel.get("C-Limit"); //
-//      frontLimit = hwMap.digitalChannel.get("F-Limit");
-        swod = hwMap.crservo.get("SWOD"); //
-        pixyCam = hwMap.i2cDeviceSynch.get("Pixy-Cam"); //
-        linearActuator = hwMap.servo.get("TLA"); //
-        cap = hwMap.servo.get("YesCap");
-
-         */
+        frontLeft = (DcMotorEx) hwMap.dcMotor.get("FL");
+        frontRight = (DcMotorEx) hwMap.dcMotor.get("FR");
+        backLeft = (DcMotorEx) hwMap.dcMotor.get("BL");
+        backRight = (DcMotorEx) hwMap.dcMotor.get("BR");
 
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
