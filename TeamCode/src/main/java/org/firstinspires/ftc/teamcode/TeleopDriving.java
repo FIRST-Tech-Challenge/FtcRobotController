@@ -84,6 +84,11 @@ public class TeleopDriving extends LinearOpMode {
     private DcMotor BackLeftDrive = null;
     private DcMotor BackRightDrive = null;
 
+
+    // Driving motor variables
+    static final double RAMP_ON = 1.0; // ramp on: 1.0; off: 0.0
+    static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
+
     // slider motor variables
     private DcMotor SliderMotor = null;
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200 - 100;  // Leave 100 counts for buffer.
@@ -96,6 +101,7 @@ public class TeleopDriving extends LinearOpMode {
     int sliderMotorTargetPosition = 0;
     int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION/4; // will update this value based on testing
 
+
     // claw servo motor variables
     private Servo clawServo = null;
     static final double CLAW_INCREMENT = 0.002;     // amount to slew servo each CYCLE_MS cycle
@@ -105,10 +111,10 @@ public class TeleopDriving extends LinearOpMode {
 
 
     // arm servo variables
-    static final double ARM_INCREMENT = 0.002;     // amount to slew servo each CYCLE_MS cycle
-    static final double ARM_MAX_POS = 0.3;     // Maximum rotational position
-    static final double ARM_MIN_POS = 0.08;     // Minimum rotational position
     private Servo armServo = null;
+    static final double ARM_INCREMENT = 0.002;     // amount to slew servo each CYCLE_MS cycle
+    static final double ARM_MAX_POS = 0.5;     // Maximum rotational position
+    static final double ARM_MIN_POS = 0.0;     // Minimum rotational position
     double armServoPosition = ARM_MAX_POS;
 
 
@@ -131,7 +137,6 @@ public class TeleopDriving extends LinearOpMode {
         // claw servo motor initial
         clawServoPosition = CLAW_INCREMENT;
         clawServo.setPosition(clawServoPosition);
-        telemetry.addData("Status", "claw Servo init position %.2f", clawServoPosition);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -140,8 +145,9 @@ public class TeleopDriving extends LinearOpMode {
         BackLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         BackRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
-        // slider motor control
-        SliderMotor.setDirection(DcMotorSimple.Direction.REVERSE); // it based on how Motor installed on robot.
+        /* slider motor control */
+        // based on how Motor installed on robot.
+        SliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         SliderMotor.setTargetPosition(sliderMotorTargetPosition);
         // Reset slider motor encoder counts kept by the motor
         SliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -164,9 +170,9 @@ public class TeleopDriving extends LinearOpMode {
             double BackRightPower;
             double SliderMotorPower = 0.7; // apply 70% of maximum speed to move the slider
 
-            double drive = 0.7*(gamepad1.left_stick_y);
-            double turn  =  0.6 * (-gamepad1.right_stick_x);
-            double strafe = 0.7*(-gamepad1.left_stick_x);
+            double drive = POWER_FACTOR * Math.pow(gamepad1.left_stick_y, 1 + (2 * RAMP_ON));
+            double turn  =  POWER_FACTOR * Math.pow(-gamepad1.right_stick_x, 1 + (2 * RAMP_ON));
+            double strafe = POWER_FACTOR * Math.pow(-gamepad1.left_stick_x, 1 + (2 * RAMP_ON));
 
             FrontLeftPower    = Range.clip(-drive - turn - strafe, -1, 1) ;
             FrontRightPower   = Range.clip(-drive + turn + strafe, -1, 1) ;
@@ -183,105 +189,64 @@ public class TeleopDriving extends LinearOpMode {
             BackLeftDrive.setPower(BackLeftPower);
             BackRightDrive.setPower(BackRightPower);
 
-
-            telemetry.addData("Status", "slider motor current position %d", SliderMotor.getCurrentPosition());
-            telemetry.update();
-
             // use Y button to lift up the slider reaching high junction
-            if (gamepad1.y)
-            {
+            if (gamepad1.y) {
                 sliderMotorTargetPosition = HIGH_JUNCTION_POS;
             }
 
             // use B button to lift up the slider reaching medium junction
-            if (gamepad1.b)
-            {
+            if (gamepad1.b) {
                 sliderMotorTargetPosition = MEDIUM_JUNCTION_POS;
             }
 
             // use A button to lift up the slider reaching low junction
-            if (gamepad1.a)
-            {
+            if (gamepad1.a) {
                 sliderMotorTargetPosition = LOW_JUNCTION_POS;
             }
 
             // use X button to move the slider back to lowest position (ground junction)
-            if (gamepad1.x)
-            {
+            if (gamepad1.x) {
                 sliderMotorTargetPosition = 0;
             }
 
             // use right stick_Y to lift or down slider continuously
             sliderMotorTargetPosition -= (gamepad1.right_stick_y) * motorPositionInc;
-            if (sliderMotorTargetPosition > FOUR_STAGE_SLIDER_MAX_POS)
-            {
-                sliderMotorTargetPosition = FOUR_STAGE_SLIDER_MAX_POS;
-            }
-            if (sliderMotorTargetPosition < SLIDER_MIN_POS)
-            {
-                sliderMotorTargetPosition = SLIDER_MIN_POS;
-            }
-
+            sliderMotorTargetPosition = Range.clip(sliderMotorTargetPosition, SLIDER_MIN_POS, FOUR_STAGE_SLIDER_MAX_POS);
             telemetry.addData("Status", "slider motor Target position %d", sliderMotorTargetPosition);
 
             SliderMotor.setTargetPosition(sliderMotorTargetPosition);
             SliderMotor.setPower(SliderMotorPower); // slider motor start movement
-
-            /* for debugging
-            resetRuntime();
-            while (SliderMotor.isBusy() && (getRuntime()< 3))  // wait while slider motor is busy running to position
-            {
-                telemetry.addData("Status", "slider motor current position %d", SliderMotor.getCurrentPosition());
-                telemetry.update();
-                //idle();
-            }
-            */
-
             telemetry.addData("Status", "slider motor current position %d", SliderMotor.getCurrentPosition());
-            telemetry.update();
 
-            //SliderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            // turn off motor by set power to zero.
-            // The motor stop on their own but power is still applied.
-            //SliderMotor.setPower(0.0);
-
+            // Keep stepping up until we hit the max value.
             if (gamepad1.dpad_up) {
-                // Keep stepping up until we hit the max value.
                 clawServoPosition += CLAW_INCREMENT;
-                if (clawServoPosition >= CLAW_MAX_POS) {
-                    clawServoPosition = CLAW_MAX_POS;
-                }
             }
             else if (gamepad1.dpad_down) {
                 clawServoPosition -= CLAW_INCREMENT;
-                if (clawServoPosition <= CLAW_MIN_POS) {
-                    clawServoPosition = CLAW_MIN_POS;
-                }
             }
+            clawServoPosition = Range.clip(clawServoPosition, CLAW_MIN_POS, CLAW_MAX_POS);
             clawServo.setPosition(clawServoPosition);
-            telemetry.addData("Status", "Servo position %.2f", clawServoPosition);
+            telemetry.addData("Status", "Claw Servo position %.2f", clawServoPosition);
 
-            // arm servo motor control
+            // arm servo motor control. Keep stepping up until we hit the max value.
             if (gamepad1.dpad_left) {
-                // Keep stepping up until we hit the max value.
                 armServoPosition += ARM_INCREMENT;
-                if (armServoPosition >= ARM_MAX_POS) {
-                    armServoPosition = ARM_MAX_POS;
-                }
             }
             else if (gamepad1.dpad_right) {
                 armServoPosition -= ARM_INCREMENT;
-                if (armServoPosition <= ARM_MIN_POS) {
-                    armServoPosition = ARM_MIN_POS;
-                }
             }
+            armServoPosition = Range.clip(armServoPosition, ARM_MIN_POS, ARM_MAX_POS);
             armServo.setPosition(armServoPosition);
+            telemetry.addData("Status", "Arm Servo position %.2f", armServoPosition);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f), Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower, BackLeftPower,BackRightPower);
             telemetry.update();
         }
+
+        // The motor stop on their own but power is still applied. Turn off motor.
+        SliderMotor.setPower(0.0);
     }
 }
