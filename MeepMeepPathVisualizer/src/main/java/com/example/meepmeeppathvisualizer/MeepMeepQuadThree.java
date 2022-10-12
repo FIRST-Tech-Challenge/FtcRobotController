@@ -45,7 +45,8 @@ public class MeepMeepQuadThree {
                         cycle(builder);
 
                     if(aprilTagsId == 1)
-                        builder.lineTo(new Vector2d(-12.2,12.5));
+
+                        builder.lineToLinearHeading(new Pose2d(-12.2,15.5,Math.toRadians(-109)));
                     else if(aprilTagsId ==2)
                         builder.waitSeconds(1.74);
                     else
