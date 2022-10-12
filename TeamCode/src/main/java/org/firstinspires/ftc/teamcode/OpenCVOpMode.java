@@ -89,7 +89,6 @@ public class OpenCVOpMode extends LinearOpMode {
     {
         boolean viewportPaused;
         Mat mat = new Mat();
-        final int[][] colorVals = {{135, 206, 235}, {255, 165, 0}, {255, 0, 255}}; // orange, blue, pink
         final Rect ROI = new Rect(new Point(0, 0), new Point(320, 240));
 
         @Override
