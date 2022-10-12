@@ -17,5 +17,12 @@ public class Lift {
     public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         liftMotor = (DcMotorEx) hwMap.dcMotor.get("motorLift");
+
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public int getPosition (){
+        int position = liftMotor.getCurrentPosition();
+        return position;
     }
 }
