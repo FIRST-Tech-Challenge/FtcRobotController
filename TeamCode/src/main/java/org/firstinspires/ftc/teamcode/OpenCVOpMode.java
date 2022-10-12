@@ -21,7 +21,7 @@ import org.openftc.easyopencv.*;
 
 import java.util.HashMap;
 
-@Autonomous(name="Skystone Detector", group="Auto")
+@Autonomous(name="Camera Color Sensor", group="Auto")
 public class OpenCVOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
     SamplePipeline pipeline;
@@ -88,15 +88,9 @@ public class OpenCVOpMode extends LinearOpMode {
     class SamplePipeline extends OpenCvPipeline
     {
         boolean viewportPaused;
-//        Telemetry telemetry;
         Mat mat = new Mat();
-        // not exact numbers yet
-        final int[][] colorVals = {{255, 165, 0}, {135, 206, 235}, {255, 0, 255}}; // orange, blue, pink
-        final Rect ROI = new Rect(new Point(0, 0), new Point(100, 100));
-
-//        public SamplePipeline() {
-//            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//        }
+        final int[][] colorVals = {{135, 206, 235}, {255, 165, 0}, {255, 0, 255}}; // orange, blue, pink
+        final Rect ROI = new Rect(new Point(0, 0), new Point(320, 240));
 
         @Override
         public Mat processFrame(Mat input)
@@ -114,64 +108,47 @@ public class OpenCVOpMode extends LinearOpMode {
                             input.rows()*(3f/4f)),
                     new Scalar(0, 255, 0), 4);
 
-            int[] cameraColors = getColor(input);
-            colorDet(colorVals, cameraColors);
+            getColor(input);
             return input;
         }
 
 
-        public int[] getColor(Mat input) {
+        public void getColor(Mat input) {
             int[] res = new int[3];
+            int[] camValues = new int[3];
 
             Mat coneRegion = input.submat(ROI);
-            int rVal = (int)Core.sumElems(coneRegion).val[0];
-            int gVal = (int)Core.sumElems(coneRegion).val[1];
-            int bVal = (int)Core.sumElems(coneRegion).val[2];
-            rVal /= ROI.area();
-            gVal /= ROI.area();
-            bVal /= ROI.area();
-
-            String colorString = rVal + ", " + gVal + ", " + bVal;
-
+            camValues[0] = (int)Core.sumElems(coneRegion).val[0] / (int)ROI.area();
+            camValues[1] = (int)Core.sumElems(coneRegion).val[1] / (int)ROI.area();
+            camValues[2] = (int)Core.sumElems(coneRegion).val[2] / (int)ROI.area();
+            String colorString = camValues[0] + ", " + camValues[1] + ", " + camValues[2];
             telemetry.addData("Color: ", colorString);
+
+            String colorName = MSE(camValues);
+            telemetry.addData("Color: ", colorName);
+
             coneRegion.release();
-            res[0] = rVal;
-            res[1] = gVal;
-            res[2] = bVal;
-            return res;
         }
 
-        public int MSE(int index, int[][] colorVals, int[] cameraColors) {
-            int diff_r = (cameraColors[0] - colorVals[index][0])^2;
-            int diff_g = (cameraColors[1] - colorVals[index][1])^2;
-            int diff_b = (cameraColors[2] - colorVals[index][2])^2;
+        public String MSE(int[] colors) {
+            int[][] coneColorValues = {{255, 165, 0}, {135, 206, 235}, {255, 0, 255}};
+            // in order orange, teal, pink ^^^^^^^
 
-            return diff_r + diff_g + diff_b;
-        }
+            int[] diffs = new int[3];
 
+            for(int i = 0; i < 3; i++) {
+                int rDif = (coneColorValues[i][0] - colors[0]) * (coneColorValues[i][0] - colors[0]);
+                int gDif = (coneColorValues[i][1] - colors[1]) * (coneColorValues[i][1] - colors[1]);
+                int bDif = (coneColorValues[i][2] - colors[2]) * (coneColorValues[i][2] - colors[2]);
+                diffs[i] = rDif + gDif + bDif;
+            }
 
-        public String colorDet(int[][] colorVals, int[] cameraColors) {
-            String[] dets = {"orange", "blue", "pink"};
-            String res = "";
-            // MSE: (1/n) * Σ(colorVals - cameraColors)^2
+            String diffsString = diffs[0] + ", " + diffs[1] + ", " + diffs[2];
+            telemetry.addData("diffs: ", diffsString);
 
-            double orange_MSE = MSE(0, colorVals, cameraColors);
-            double blue_MSE = MSE(1, colorVals, cameraColors);
-            double pink_MSE = MSE(2, colorVals, cameraColors);
-
-            double min = Math.min(Math.min(orange_MSE, blue_MSE), pink_MSE);
-
-            if ((int) min == (int) orange_MSE) res = "orange";
-            if ((int) min == (int) blue_MSE) res = "blue";
-            if ((int) min == (int) pink_MSE) res = "pink";
-
-
-
-            telemetry.addData("orange_MSE: ", orange_MSE);
-            telemetry.addData("blue_MSE: ", blue_MSE);
-            telemetry.addData("pink_MSE: ", pink_MSE);
-            telemetry.addData("closest color: ", res);
-            return res;
+            if(diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
+            else if(diffs[2] < diffs[0]) { return "pink"; }
+            else { return "orange"; }
         }
 
         @Override
