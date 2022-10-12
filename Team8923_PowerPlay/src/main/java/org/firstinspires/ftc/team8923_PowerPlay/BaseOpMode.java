@@ -35,9 +35,41 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
-        motorBL.setDirection(DcMotor.Direction.REVERSE);
-        motorBR.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.FORWARD);
+        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    public void driveMecanum(double driveAngle, double drivePower, double turnPower){
+        // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
+        double x = drivePower * Math.cos(Math.toRadians(driveAngle));
+        double y = drivePower * Math.sin(Math.toRadians(driveAngle));
+
+        double powerFL = x + y + turnPower;
+        double powerFR = y - x - turnPower;
+        double powerBL = y - x + turnPower;
+        double powerBR = y + x - turnPower;
+
+        // gets the largest power
+        double scaleFactor = Math.max(Math.max(powerFL, powerFR), Math.max(powerBL, powerBR));
+        // scale the power between the range of -1 and 1
+        if (scaleFactor > 1) {
+            powerFL /= scaleFactor;
+            powerFR /= scaleFactor;
+            powerBL /= scaleFactor;
+            powerBR /= scaleFactor;
+        }
+
+        motorFL.setPower(powerFL);
+        motorFR.setPower(powerFR);
+        motorBL.setPower(powerBL);
+        motorBR.setPower(powerBR);
+    }
+
+    // Used for calculating distances between 2 points
+    double calculateDistance(double deltaX, double deltaY)
+    {
+        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
     }
 }
