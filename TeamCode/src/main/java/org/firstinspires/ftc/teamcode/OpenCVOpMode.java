@@ -119,6 +119,9 @@ public class OpenCVOpMode extends LinearOpMode {
         public void getColor(Mat input) {
 
 
+            String[] colorStrings = {"orange", "blue", "pink"};
+            int[][] colorVals = {{255, 165, 0}, {135, 206, 235}, {255, 0, 255}};
+
             Mat coneRegion = input.submat(ROI);
             int rVal = (int)Core.sumElems(coneRegion).val[0];
             int gVal = (int)Core.sumElems(coneRegion).val[1];
