@@ -22,6 +22,8 @@ import org.openftc.easyopencv.*;
 @Autonomous(name="Skystone Detector", group="Auto")
 public class OpenCVOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
+    SamplePipeline pipeline;
+
 
     @Override
     public void runOpMode()
@@ -29,7 +31,8 @@ public class OpenCVOpMode extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        webcam.setPipeline(new SamplePipeline());
+        pipeline = new SamplePipeline();
+        webcam.setPipeline(pipeline);
         webcam.setMillisecondsPermissionTimeout(2500);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -60,7 +63,6 @@ public class OpenCVOpMode extends LinearOpMode {
 
         while (opModeIsActive())
         {
-            String color = "";
             /*
              * Send some stats to the telemetry
              */
@@ -89,12 +91,9 @@ public class OpenCVOpMode extends LinearOpMode {
         // not exact numbers yet
         final Rect ROI = new Rect(new Point(0, 0), new Point(100, 100));
 
-//        public SamplePipeline (Telemetry t) {
 //        public SamplePipeline() {
 //            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//            telemetry = t;
 //        }
-
 
         @Override
         public Mat processFrame(Mat input)
@@ -105,43 +104,43 @@ public class OpenCVOpMode extends LinearOpMode {
             Imgproc.rectangle(
                     input,
                     new Point(
-                            input.cols()/4,
-                            input.rows()/4),
+                            input.cols()/4.0,
+                            input.rows()/4.0),
                     new Point(
                             input.cols()*(3f/4f),
                             input.rows()*(3f/4f)),
                     new Scalar(0, 255, 0), 4);
 
             getColor(input);
-
             return input;
         }
 
 
-        public int[] getColor(Mat input) {
+        public void getColor(Mat input) {
 
-            int[] color = {1, 1, 1};
+//            int[] color = {1, 1, 1};
 
-            Mat coneRegion = mat;
+            Mat coneRegion = input;
             int rVal = (int)Core.sumElems(coneRegion).val[0];
             int gVal = (int)Core.sumElems(coneRegion).val[1];
             int bVal = (int)Core.sumElems(coneRegion).val[2];
             telemetry.addData("rVal", rVal);
             telemetry.addData("gVal", gVal);
             telemetry.addData("bVal", bVal);
+            telemetry.addData("coretest", Core.sumElems(coneRegion));
             rVal /= 76800;
             gVal /= 76800;
             bVal /= 76800;
-            color[0] = rVal;
-            color[1] = gVal;
-            color[2] = bVal;
+
+//            color[0] = rVal;
+//            color[1] = gVal;
+//            color[2] = bVal;
 
             String colorString = rVal + ", " + gVal + ", " + bVal;
 
             telemetry.addData("Color: ", colorString);
-            mat.release();
-
-            return color;
+            coneRegion.release();
+//            return color;
         }
 
         @Override
