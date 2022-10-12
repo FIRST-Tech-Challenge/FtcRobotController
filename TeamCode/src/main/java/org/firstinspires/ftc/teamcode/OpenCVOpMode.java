@@ -118,9 +118,7 @@ public class OpenCVOpMode extends LinearOpMode {
 
         public void getColor(Mat input) {
 
-//            int[] color = {1, 1, 1};
-
-            Mat coneRegion = input;
+            Mat coneRegion = input.submat(ROI);
             int rVal = (int)Core.sumElems(coneRegion).val[0];
             int gVal = (int)Core.sumElems(coneRegion).val[1];
             int bVal = (int)Core.sumElems(coneRegion).val[2];
@@ -128,19 +126,14 @@ public class OpenCVOpMode extends LinearOpMode {
             telemetry.addData("gVal", gVal);
             telemetry.addData("bVal", bVal);
             telemetry.addData("coretest", Core.sumElems(coneRegion));
-            rVal /= 76800;
-            gVal /= 76800;
-            bVal /= 76800;
-
-//            color[0] = rVal;
-//            color[1] = gVal;
-//            color[2] = bVal;
+            rVal /= ROI.area();
+            gVal /= ROI.area();
+            bVal /= ROI.area();
 
             String colorString = rVal + ", " + gVal + ", " + bVal;
 
             telemetry.addData("Color: ", colorString);
             coneRegion.release();
-//            return color;
         }
 
         @Override
