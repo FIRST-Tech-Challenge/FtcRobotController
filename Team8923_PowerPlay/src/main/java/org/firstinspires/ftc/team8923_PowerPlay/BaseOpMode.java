@@ -40,6 +40,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
     }
+
     public void driveMecanum(double driveAngle, double drivePower, double turnPower){
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
         double x = drivePower * Math.cos(Math.toRadians(driveAngle));
