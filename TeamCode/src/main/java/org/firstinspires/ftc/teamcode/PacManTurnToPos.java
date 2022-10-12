@@ -7,20 +7,20 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.AnglePIDControl;
 import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.LocalizerCompass;
+import org.firstinspires.ftc.teamcode.util.LocalizerIMU;
 import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 
 public class PacManTurnToPos {
-private double heading     = 0;
 private double goalHeading = 0;
 private double turnSpeed   = 0;
-private Localizer localizer;
+private LocalizerIMU localizer;
 private  MecanumDriveBase mecanumDriveBase;
 private AnglePIDControl angleControl;
 CompassSensor                compass;
 
 
 
-    public PacManTurnToPos(Localizer localizer, MecanumDriveBase mecanumDriveBase) {
+    public PacManTurnToPos(LocalizerIMU localizer, MecanumDriveBase mecanumDriveBase) {
         this.localizer = localizer;
         this.mecanumDriveBase = mecanumDriveBase;
         this.angleControl = new AnglePIDControl(.05, 0, .003,360);
@@ -28,34 +28,40 @@ CompassSensor                compass;
 
     public void handlePacMan(Gamepad gamepad, Telemetry telemetry) {
         //makes heading easier for me.
-        heading =  localizer.heading;
+        double heading =  localizer.heading;
 
-        if(Math.abs(gamepad.right_stick_y) < 10 || Math.abs(gamepad.right_stick_x) < 10 || Math.abs(gamepad.left_stick_y) < 10 || Math.abs(gamepad.left_stick_x) < 10) {
-            if (Math.abs(angleControl.getTargetValue() - heading) < 10){
+        if(Math.abs(gamepad.right_stick_y) < .1 && Math.abs(gamepad.right_stick_x) < .1 &&
+                Math.abs(gamepad.left_stick_y) < .1 && Math.abs(gamepad.left_stick_x) < .1) {
+
+            boolean dpad_used = false;
+            if (gamepad.dpad_down) {
+                angleControl.setTargetValue(180);
+                mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
+                dpad_used = true;
+            }
+            if (gamepad.dpad_up) {
+                angleControl.setTargetValue(0);
+                mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
+                dpad_used = true;
+            }
+            if (gamepad.dpad_left) {
+                angleControl.setTargetValue(270);
+                mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
+                dpad_used = true;
+            }
+            if (gamepad.dpad_right) {
+                angleControl.setTargetValue(90);
+                mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
+                dpad_used = true;
+            }
+            if (dpad_used && (Math.abs(angleControl.measuredError(heading)) < 5)){
                 mecanumDriveBase.driveMotors(1,0,0,1);
                 telemetry.addData("forward", 0);
             }
-            else {
-                if (gamepad.dpad_down) {
-                    angleControl.setTargetValue(180);
-                    mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
-                }
-                if (gamepad.dpad_up) {
-                    angleControl.setTargetValue(0);
-                    mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
-                }
-                if (gamepad.dpad_left) {
-                    angleControl.setTargetValue(270);
-                    mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
-                }
-                if (gamepad.dpad_right) {
-                    angleControl.setTargetValue(90);
-                    mecanumDriveBase.driveMotors(0, angleControl.update(heading), 0, 1);
 
-                }
-            }
+
             telemetry.addData("targetValue", angleControl.targetValue);
-            telemetry.addData("target - measurement", angleControl.targetValue);
+            telemetry.addData("heading", heading);
             telemetry.addData("measurement Error", angleControl.measuredError(heading));
         }
     }

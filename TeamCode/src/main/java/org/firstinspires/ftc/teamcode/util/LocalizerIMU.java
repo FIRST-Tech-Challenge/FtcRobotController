@@ -141,7 +141,7 @@ public class LocalizerIMU implements Localizer{
 
     public void handleTracking() {
         gyroHeading = gyro.getHeading();
-        heading = gyroHeading + headingOffSet;
+        this.heading = gyroHeading + headingOffSet;
         if ((runtime.seconds() - lastT) < loopSpeedHT) {
             return;
         }
@@ -177,7 +177,8 @@ public class LocalizerIMU implements Localizer{
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
             vuforiaHeading = rotation.thirdAngle%360;
-            headingOffSet  = Math.abs(vuforiaHeading - gyro.getHeading());
+            this.heading = vuforiaHeading;
+            headingOffSet  = vuforiaHeading - gyro.getHeading();
             lastT = runtime.seconds();
         }
         else {

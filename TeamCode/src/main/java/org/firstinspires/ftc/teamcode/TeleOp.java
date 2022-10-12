@@ -10,25 +10,26 @@ import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 public class TeleOp extends OpMode
 
 {
-    private Localizer localizer = null;
+    private LocalizerIMU localizer = null;
     private MecanumDriveBase mecanumDriveBase = null;
     private PacManTurnToPos pacMan;
 
     public void init() {
         telemetry.addData("Status", "Initialized");
-        localizer = new LocalizerIMU(hardwareMap);
         mecanumDriveBase = new MecanumDriveBase(hardwareMap);
+        localizer = new LocalizerIMU(hardwareMap);
         pacMan = new PacManTurnToPos(localizer, mecanumDriveBase);
-//        IMUlocalizer.gyroCalibrate();
         double max;
     }
+
     @Override
     public void loop() {
         localizer.displayTelemetry(telemetry);
         localizer.handleTracking();
         mecanumDriveBase.gamepadController(gamepad1);
         mecanumDriveBase.driveBaseTelemetry(telemetry);
-//        pacMan.handlePacMan(gamepad1, telemetry);
+        telemetry.addData("TeleOp heading", localizer.heading);
+        pacMan.handlePacMan(gamepad1, telemetry);
         telemetry.update();
 
     }
