@@ -3,6 +3,13 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
+import java.util.Locale;
+
 abstract public class BaseOpMode extends LinearOpMode {
 
     //Declared drive motors
@@ -42,6 +49,29 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     public void driveRobot(double x, double y, double t)  {
 
+
+
+
+        telemetry.addLine()
+                .addData("heading", new Func<String>() {
+                    @Override public String value() {
+                        return formatAngle(angles.angleUnit, angles.firstAngle);
+                    }
+                })
+                .addData("roll", new Func<String>() {
+                    @Override public String value() {
+                        return formatAngle(angles.angleUnit, angles.secondAngle);
+                    }
+                })
+                .addData("pitch", new Func<String>() {
+                    @Override public String value() {
+                        return formatAngle(angles.angleUnit, angles.thirdAngle);
+                    }
+                });
+        //declare Constants
+        double turnCorrection = 0.3;
+        double offsetComp = startDirection - heading
+
         double speedFL = (-y+x+t);
         double speedFR = (-y-x-t);
         double speedBL = (-y-x+t);
@@ -54,4 +84,5 @@ abstract public class BaseOpMode extends LinearOpMode {
 
 
     }
+
 }
