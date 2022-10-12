@@ -21,7 +21,7 @@ public class BasicAutonomous extends LinearOpMode
     private DcMotor leftBack;
     private DcMotor rightBack;
 
-    static final double     COUNTS_PER_MOTOR_GOBUILDA202    = 384.5 ;    // eg: TETRIX Motor Encoder REV    = 1440
+    static final double     COUNTS_PER_MOTOR_GOBUILDA202    = 384.5 ;
     static final double     DRIVE_GEAR_REDUCTION    = 3.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_GOBUILDA202 * DRIVE_GEAR_REDUCTION) /
@@ -66,6 +66,8 @@ public class BasicAutonomous extends LinearOpMode
         drive(-COUNTS_PER_INCH * 8, -COUNTS_PER_INCH * 8, -COUNTS_PER_INCH * 8, -COUNTS_PER_INCH * 8, 0.50);
         Thread.sleep(1000);
         drive(-1000, 1000, 1000, -1000, 100);
+
+
 
         // forward drive(1000, 1000, 1000, 1000, 0.25);
         // Turn drive(1000, -1000, 1000, -1000, 0.25);
