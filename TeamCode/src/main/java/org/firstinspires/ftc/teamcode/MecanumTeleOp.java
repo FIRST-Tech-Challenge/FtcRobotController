@@ -106,7 +106,7 @@ public class MecanumTeleOp extends LinearOpMode {
         
         while (opModeIsActive()) {
 
-            double power = -gamepad1.left_stick_y * 0.80; // Remember, this is reversed!
+            double power = -gamepad1.left_stick_y; // Remember, this is reversed!
             double strafe = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             if(rounded)
             {
