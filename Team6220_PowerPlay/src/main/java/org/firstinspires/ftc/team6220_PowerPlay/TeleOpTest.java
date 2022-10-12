@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TeleOpTest extends BaseTeleOp {
     @Override
     public void runOpMode() throws InterruptedException {
-        composeTelemetry();
         initHardware();
         telemetry.addLine("Waiting for start :)");
         telemetry.update();
