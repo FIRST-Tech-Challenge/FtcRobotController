@@ -50,12 +50,12 @@ public class BrainStemRobot {
     //public states state = states.STOPPED_L;
     private Telemetry telemetry;
     private OpMode opMode;
-
+    public Turret turret;
 
     public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
         this.telemetry = telemetry;
         this.opMode = opMode;
-
+        turret = new Turret(hwMap, telemetry);
         frontLeft = (DcMotorEx) hwMap.dcMotor.get("FL");
         frontRight = (DcMotorEx) hwMap.dcMotor.get("FR");
         backLeft = (DcMotorEx) hwMap.dcMotor.get("BL");
@@ -98,6 +98,11 @@ public class BrainStemRobot {
         setMotorPowers(0, 0, 0, 0);
     }
 
+
+    public void moveTurret(){
+        turret.getPosition();
+
+    }
 
 
 }
