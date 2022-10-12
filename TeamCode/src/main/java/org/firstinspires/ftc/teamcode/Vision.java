@@ -104,8 +104,8 @@ public class Vision {
     }
 
     public boolean isOrange(int pixel){
-        return (RED_LOW <= red(pixel) && red(pixel) <= RED_HIGH && GREEN_LOW <= green(pixel) &&
-                green(pixel) <= GREEN_HIGH && BLUE_LOW <= blue(pixel) && blue(pixel) <= BLUE_HIGH);
+        return ((RED_LOW <= red(pixel)) && (red(pixel) <= RED_HIGH) && (GREEN_LOW <= green(pixel)) &&
+                (green(pixel) <= GREEN_HIGH) && (BLUE_LOW <= blue(pixel)) && (blue(pixel) <= BLUE_HIGH));
     }
 
     public Bitmap getBitmap() throws InterruptedException {
