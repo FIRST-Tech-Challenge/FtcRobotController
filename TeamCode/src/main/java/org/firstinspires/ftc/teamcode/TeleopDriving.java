@@ -91,31 +91,36 @@ public class TeleopDriving extends LinearOpMode {
 
     // slider motor variables
     private DcMotor SliderMotor = null;
+    static final double SLIDER_MOTOR_POWER = 0.8;
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200 - 100;  // Leave 100 counts for buffer.
     static final int SLIDER_MIN_POS = 0;
     static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 512; // Approximate value from testing
     static final int LOW_JUNCTION_POS = 1300; // need double check by testing
     static final int MEDIUM_JUNCTION_POS = 2600;
     static final int HIGH_JUNCTION_POS = 3900;
+    static final int READY_FOR_GRIP_POSITION = 400;
 
     int sliderMotorTargetPosition = 0;
-    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION/4; // will update this value based on testing
+    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION/40; // set value based on testing
 
 
     // claw servo motor variables
     private Servo clawServo = null;
     static final double CLAW_INCREMENT = 0.002;     // amount to slew servo each CYCLE_MS cycle
-    static final double CLAW_MAX_POS = 0.3;     // Maximum rotational position
-    static final double CLAW_MIN_POS = 0.08;     // Minimum rotational position
-    double clawServoPosition = CLAW_MAX_POS;
+    static final double CLAW_OPEN_POS = 0.08;     // Maximum rotational position
+    static final double CLAW_GRIP_POS = 0.3;
+    static final double CLAW_MAX_POS = CLAW_GRIP_POS;
+    static final double CLAW_MIN_POS = CLAW_OPEN_POS;     // Minimum rotational position
+    double clawServoPosition = CLAW_OPEN_POS;
 
 
     // arm servo variables
     private Servo armServo = null;
     static final double ARM_INCREMENT = 0.002;     // amount to slew servo each CYCLE_MS cycle
-    static final double ARM_MAX_POS = 0.5;     // Maximum rotational position
-    static final double ARM_MIN_POS = 0.0;     // Minimum rotational position
-    double armServoPosition = ARM_MAX_POS;
+    static final double ARM_MAX_POS = 0.7;     // Maximum rotational position
+    static final double ARM_MIN_POS = 0.3;     // Minimum rotational position
+    static final double ARM_GRIP_POSITION = 0.3;
+    double armServoPosition = ARM_GRIP_POSITION;
 
 
     @Override
@@ -168,7 +173,6 @@ public class TeleopDriving extends LinearOpMode {
             double FrontRightPower;
             double BackLeftPower;
             double BackRightPower;
-            double SliderMotorPower = 0.7; // apply 70% of maximum speed to move the slider
 
             double drive = POWER_FACTOR * Math.pow(gamepad1.left_stick_y, 1 + (2 * RAMP_ON));
             double turn  =  POWER_FACTOR * Math.pow(-gamepad1.right_stick_x, 1 + (2 * RAMP_ON));
@@ -178,10 +182,6 @@ public class TeleopDriving extends LinearOpMode {
             FrontRightPower   = Range.clip(-drive + turn + strafe, -1, 1) ;
             BackLeftPower    = Range.clip(-drive - turn + strafe, -1, 1) ;
             BackRightPower   = Range.clip(-drive + turn - strafe, -1, 1) ;
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
             FrontLeftDrive.setPower(FrontLeftPower);
@@ -210,13 +210,16 @@ public class TeleopDriving extends LinearOpMode {
             }
 
             // use right stick_Y to lift or down slider continuously
-            sliderMotorTargetPosition -= (gamepad1.right_stick_y) * motorPositionInc;
-            sliderMotorTargetPosition = Range.clip(sliderMotorTargetPosition, SLIDER_MIN_POS, FOUR_STAGE_SLIDER_MAX_POS);
-            telemetry.addData("Status", "slider motor Target position %d", sliderMotorTargetPosition);
+            sliderMotorTargetPosition -= (int)((gamepad1.right_stick_y) * motorPositionInc);
+            sliderMotorTargetPosition = Range.clip(sliderMotorTargetPosition, SLIDER_MIN_POS,
+                    FOUR_STAGE_SLIDER_MAX_POS);
+            telemetry.addData("Status", "slider motor Target position %d",
+                    sliderMotorTargetPosition);
 
             SliderMotor.setTargetPosition(sliderMotorTargetPosition);
-            SliderMotor.setPower(SliderMotorPower); // slider motor start movement
-            telemetry.addData("Status", "slider motor current position %d", SliderMotor.getCurrentPosition());
+            SliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
+            telemetry.addData("Status", "slider motor current position %d",
+                    SliderMotor.getCurrentPosition());
 
             // Keep stepping up until we hit the max value.
             if (gamepad1.dpad_up) {
@@ -242,11 +245,90 @@ public class TeleopDriving extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f), Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower, BackLeftPower,BackRightPower);
+            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
+                    " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
+                    BackLeftPower,BackRightPower);
             telemetry.update();
+
+            //  auto driving, grip cone, and lift slider
+            if(gamepad1.left_bumper) {
+                autoGripCone();
+                // set arm, claw, slider position after grep.
+                armServoPosition = armServo.getPosition();
+                clawServoPosition = clawServo.getPosition();
+                sliderMotorTargetPosition = LOW_JUNCTION_POS; // lift cone for low junction unload
+            }
         }
 
         // The motor stop on their own but power is still applied. Turn off motor.
         SliderMotor.setPower(0.0);
+    }
+
+    private void autoGripCone() {
+        SliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+        clawServo.setPosition(CLAW_OPEN_POS);
+        armServo.setPosition(ARM_GRIP_POSITION);
+        SliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
+        robotMoveForward(-0.2); // moving back 20 cm
+        SliderMotor.setTargetPosition(SLIDER_MIN_POS);
+        while(SliderMotor.isBusy()) {
+            idle();
+        }
+        clawServo.setPosition(CLAW_GRIP_POS);
+        sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
+    }
+
+    private void robotMoveForward(double targetDistance) {
+        // According to test result, 1600 counts per meter.
+        int targetPosition = (int)(targetDistance * 1600);
+        telemetry.addData("Status", "driving target position %d", targetPosition);
+        setTargetPositionsToMoveForward(targetPosition);
+        robotWithEncoderModeOn(true); // turn on encoder mode
+        setPowerToWheels(0.25); // low speed for more acurate, start moving
+        while(FrontLeftDrive.isBusy()) {
+            idle();
+        }
+        setPowerToWheels(0.0); //stop moving
+        robotWithEncoderModeOn(false); // turn off encoder mode
+    }
+
+    private void robotWithEncoderModeOn(boolean withEncoder) {
+        if (withEncoder) {
+            FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        else {
+            // set back to WITHOUT ENCODER mode
+            FrontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            FrontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            BackLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            BackRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+    }
+
+    private void setTargetPositionsToMoveForward(int tPos) {
+        FrontLeftDrive.setTargetPosition( tPos );
+        FrontRightDrive.setTargetPosition( tPos );
+        BackLeftDrive.setTargetPosition( tPos );
+        BackRightDrive.setTargetPosition( tPos );
+    }
+    private void setPowerToWheels(double power) {
+        FrontLeftDrive.setPower(power);
+        FrontRightDrive.setPower(power);
+        BackLeftDrive.setPower(power);
+        BackRightDrive.setPower(power);
     }
 }
