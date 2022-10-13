@@ -23,12 +23,12 @@ public class Auton {
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
                 .forward(18)
-                .lineToLinearHeading(new Pose2d(0, 48, Math.toRadians(45)))
+                .lineToLinearHeading(new Pose2d(24, 0, Math.toRadians(-45)))
                 .addDisplacementMarker(() -> {
                     //first cone placement
                 })
-                .lineToLinearHeading(new Pose2d(0, 36, Math.toRadians(0)))
-                .forward(6)
+                .lineToLinearHeading(new Pose2d(18, 0, Math.toRadians(0)))
+                .back(6)
                 .build();
 
         drive.followTrajectorySequence(trajSeq);
