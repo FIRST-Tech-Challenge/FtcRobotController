@@ -59,24 +59,27 @@ public class GFORCE_Auto extends LinearOpMode {
             if (gamepad1.b) {
                 telemetry.addData("Trajectory", "Cross Near Mid");
                 telemetry.update();
+                drive.setExternalHeading(Math.toRadians(90));
+                drive.setPoseEstimate(new Pose2d(new Vector2d(35,-62), Math.toRadians(90)));
                 ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .forward(25)
-                        .strafeTo(new Vector2d(-12, 0))
+                        .lineTo(new Vector2d(35, -36))
+                        .strafeTo(new Vector2d(48, -36))
                         .build();
             }
 
             if (gamepad1.y) {
                 telemetry.addData("Trajectory", "Other Corner Spline ");
                 telemetry.update();
+                drive.setExternalHeading(Math.toRadians(90));
+                drive.setPoseEstimate(new Pose2d(new Vector2d(35,-62), Math.toRadians(90)));
                 ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .forward(14)
-                        .splineTo(new Vector2d(-36,-24), Math.toRadians(90))
-                        .forward(24)
-                        .splineTo(new Vector2d(-24,12), Math.toRadians(0))
-                        .forward(24)
-                        .forward(24)
-                        .splineTo(new Vector2d(36,24), Math.toRadians(90))
-                        .forward(12)
+                        .lineTo(new Vector2d(35, -48))
+                        .splineTo(new Vector2d(24,-36), Math.toRadians(180))
+                        .lineTo(new Vector2d(0,-36))
+                        .splineTo(new Vector2d(-12,-24), Math.toRadians(90))
+                        .lineTo(new Vector2d(-12, 24))
+                        .splineTo(new Vector2d(-24,36), Math.toRadians(180))
+                        .lineTo(new Vector2d(-36, 36))
                         .build();
             }
 
