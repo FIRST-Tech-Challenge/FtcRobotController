@@ -89,6 +89,7 @@ public class OpenCVOpMode extends LinearOpMode {
     {
         boolean viewportPaused;
         Mat mat = new Mat();
+        int frameCount = 0;
         final Rect ROI = new Rect(new Point(0, 0), new Point(320, 240));
 
         @Override
@@ -105,6 +106,7 @@ public class OpenCVOpMode extends LinearOpMode {
                     new Scalar(0, 255, 0), 4);
 
             getColor(input);
+            frameCount++;
             return input;
         }
 
@@ -117,10 +119,22 @@ public class OpenCVOpMode extends LinearOpMode {
             camValues[1] = (int) Core.sumElems(coneRegion).val[1] / (int) ROI.area();
             camValues[2] = (int) Core.sumElems(coneRegion).val[2] / (int) ROI.area();
             String colorString = camValues[0] + ", " + camValues[1] + ", " + camValues[2];
-            telemetry.addData("Color: ", colorString);
+            telemetry.addData("Color  in RGB: ", colorString);
 
             String colorName = MSE(camValues);
-            telemetry.addData("Color_Name: ", colorName);
+            telemetry.addData("Closest Color: ", colorName);
+
+            /**
+            if (frameCount == 20) {
+                if (colorName.equals("orange")) {
+                    Auton auton = new Auton(1);
+                } else if (colorName.equals("teal")) {
+                    Auton auton = new Auton(2);
+                } else {
+                    Auton auton = new Auton(3);
+                }
+            }
+            **/
 
             coneRegion.release();
         }
@@ -132,11 +146,8 @@ public class OpenCVOpMode extends LinearOpMode {
             int[] diffs = new int[3];
 
             for (int i = 0; i < 3; i++) {
-//                int rDiff = (coneColorValues[i][0] - camValues[0]) * (coneColorValues[i][0] - camValues[0]);
                 int rDiff = (int) Math.pow(coneColorValues[i][0] - camValues[0], 2);
-//                int gDiff = (coneColorValues[i][1] - camValues[1]) * (coneColorValues[i][1] - camValues[1]);
                 int gDiff = (int) Math.pow(coneColorValues[i][1] - camValues[0], 2);
-//                int bDiff = (coneColorValues[i][2] - camValues[2]) * (coneColorValues[i][2] - camValues[2]);
                 int bDiff = (int) Math.pow(coneColorValues[i][2] - camValues[0], 2);
                 diffs[i] = rDiff + gDiff + bDiff;
             }
