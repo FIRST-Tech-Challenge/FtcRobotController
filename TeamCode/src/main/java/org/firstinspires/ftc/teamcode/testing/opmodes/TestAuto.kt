@@ -10,6 +10,7 @@ import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.logger.LoggerConfig
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
+import com.asiankoala.koawalib.path.CubicPath
 import com.asiankoala.koawalib.path.QuinticPath
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -24,7 +25,7 @@ class TestAuto : KOpMode() {
 
     private lateinit var mainCommand: Cmd
 
-    val path1 = QuinticPath(
+    val path1 = CubicPath(
         startPose,
         Pose(-10.0,-35.0, 270.0.radians),
         Pose(-30.0,-60.0, 180.0.radians),
@@ -54,10 +55,10 @@ class TestAuto : KOpMode() {
             GVFCmd(
                 robot.drive,
                 path1,
-                0.7,
-                1.0 / 25.0,
+                0.6,
+                1.0 / 22.5,
                 4.0,
-                0.8,
+                0.95,
                 2.0
             ),
 //            GVFCmd(
