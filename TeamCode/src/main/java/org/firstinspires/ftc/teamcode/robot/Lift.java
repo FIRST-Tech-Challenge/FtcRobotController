@@ -14,6 +14,9 @@ public class Lift {
     private Telemetry telemetry;
     public DcMotorEx liftMotor;
 
+    public final double MINIMUM_CLEARANCE_HEIGHT= 8;
+    public static double CURRENT_LIFT_POSITION;
+
     public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         liftMotor = (DcMotorEx) hwMap.dcMotor.get("motorLift");
@@ -25,4 +28,5 @@ public class Lift {
         int position = liftMotor.getCurrentPosition();
         return position;
     }
+
 }
