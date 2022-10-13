@@ -51,8 +51,6 @@ public class MeepMeepQuadThree {
                         builder.waitSeconds(1.74);
                     else
                         builder.lineTo(new Vector2d(-58.2,24.6));
-
-
                     return builder.build();
                 });
 
