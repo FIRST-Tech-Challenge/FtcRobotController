@@ -90,7 +90,7 @@ public class OpenCVOpMode extends LinearOpMode {
         boolean viewportPaused;
         Mat mat = new Mat();
         int frameCount = 0;
-        final Rect ROI = new Rect(new Point(0, 0), new Point(320, 240));
+        final Rect ROI = new Rect(new Point(155, 115), new Point(165, 125));
 
         @Override
         public Mat processFrame(Mat input)
@@ -147,8 +147,8 @@ public class OpenCVOpMode extends LinearOpMode {
 
             for (int i = 0; i < 3; i++) {
                 int rDiff = (int) Math.pow(coneColorValues[i][0] - camValues[0], 2);
-                int gDiff = (int) Math.pow(coneColorValues[i][1] - camValues[0], 2);
-                int bDiff = (int) Math.pow(coneColorValues[i][2] - camValues[0], 2);
+                int gDiff = (int) Math.pow(coneColorValues[i][1] - camValues[1], 2);
+                int bDiff = (int) Math.pow(coneColorValues[i][2] - camValues[2], 2);
                 diffs[i] = rDiff + gDiff + bDiff;
             }
 
@@ -156,7 +156,7 @@ public class OpenCVOpMode extends LinearOpMode {
             telemetry.addData("diffs: ", diffsString);
 
             if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
-            else if (diffs[2] < diffs[0]) { return "pink"; }
+            else if (diffs[2] < diffs[0] && diffs[2]< diffs[1]) { return "pink"; }
             else { return "orange"; }
         }
 
