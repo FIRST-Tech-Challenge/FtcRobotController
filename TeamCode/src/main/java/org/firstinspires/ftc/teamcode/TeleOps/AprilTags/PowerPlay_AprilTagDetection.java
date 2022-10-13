@@ -13,8 +13,9 @@ import java.util.ArrayList;
 @TeleOp // normally is in @Auto but is being used as a teleOp so we can play with it
 public class PowerPlay_AprilTagDetection extends LinearOpMode
 {
-    OpenCvCamera camera; // Calls the camera
-    PowerPlay_AprilTagDetectionPipeline aprilTagDetectionPipeline; // Calls the pipeline
+   protected int tagUse;
+   protected OpenCvCamera camera; // Calls the camera
+   protected PowerPlay_AprilTagDetectionPipeline aprilTagDetectionPipeline; // Calls the pipeline
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -79,6 +80,7 @@ public class PowerPlay_AprilTagDetection extends LinearOpMode
                 {
                     if(tag.id == LEFT || tag.id == RIGHT || tag.id == MIDDLE)
                     {
+                        tagUse=tag.id;
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
@@ -143,20 +145,6 @@ public class PowerPlay_AprilTagDetection extends LinearOpMode
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
-
-        // Actually do things now
-        if(tagOfInterest == null || tagOfInterest.id == LEFT){
-           // put trajectory here
-        }
-        else if(tagOfInterest.id == MIDDLE){
-           // put trajectory here
-        }
-        else{
-           // put trajectory here
-        }
-
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
     }
 
     void tagToTelemetry(AprilTagDetection detection)
