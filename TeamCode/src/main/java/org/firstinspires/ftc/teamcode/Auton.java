@@ -57,7 +57,7 @@ public class Auton {
                     //first cone placement
                 })
                 .lineToLinearHeading(new Pose2d(18, 0, Math.toRadians(0)))
-                .forward(6)
+                .back(6)
                 .build();
 
         drive.followTrajectorySequence(trajSeq);
