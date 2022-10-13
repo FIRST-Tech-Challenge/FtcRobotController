@@ -1,0 +1,13 @@
+on: pull_request
+
+jobs:
+  build_code:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Build  
+        run: ./gradlew :TeamCode:build
