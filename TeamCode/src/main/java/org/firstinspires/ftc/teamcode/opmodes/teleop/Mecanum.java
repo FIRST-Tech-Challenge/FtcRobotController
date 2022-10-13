@@ -23,16 +23,16 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (gamepad1.a) {
+                while (gamepad1.a) {
                     robot.leftslidemotor.setPower(-0.5);
                     robot.rightslidemotor.setPower(-0.5);
-                    sleep(1000);
                 }
-                if (gamepad1.b) {
+                while (gamepad1.b) {
                     robot.leftslidemotor.setPower(-0.5);
                     robot.rightslidemotor.setPower(-0.5);
-                    sleep(1000);
                 }
+                robot.leftslidemotor.setPower(0);
+                robot.rightslidemotor.setPower(0);
             //                     FORWARD                     TURN                       STRAFE
             frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
             frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
