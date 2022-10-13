@@ -21,7 +21,10 @@ public class DistanceColorOpMode extends OpMode {
 
         telemetry.addData("Amount green", board.getAmountGreen());
 
+
         telemetry.addData("Amount blue", board.getAmountBlue());
+
+
         telemetry.addData("Distance (cm)", board.getDistance(DistanceUnit.CM));
         telemetry.addData("Distance (in)", board.getDistance(DistanceUnit.INCH));
 
@@ -30,7 +33,7 @@ public class DistanceColorOpMode extends OpMode {
         double red = board.getAmountRed()/(board.getAmountGreen()+board.getAmountBlue()+board.getAmountRed());
         
 
-        if (green > (blue+0.2) && green > red) {
+        if (green > (blue+0.1) && green > red) {
             telemetry.addData("Color is", "Green");
         }
         else if (red > blue && red > green) {
