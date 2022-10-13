@@ -94,9 +94,6 @@ public class OpenCVOpMode extends LinearOpMode {
         @Override
         public Mat processFrame(Mat input)
         {
-            /*
-             * Draw a simple box around the middle 1/2 of the entire frame
-             */
             Imgproc.rectangle(
                     input,
                     new Point(
@@ -113,40 +110,42 @@ public class OpenCVOpMode extends LinearOpMode {
 
 
         public void getColor(Mat input) {
-            int[] res = new int[3];
             int[] camValues = new int[3];
 
             Mat coneRegion = input.submat(ROI);
-            camValues[0] = (int)Core.sumElems(coneRegion).val[0] / (int)ROI.area();
-            camValues[1] = (int)Core.sumElems(coneRegion).val[1] / (int)ROI.area();
-            camValues[2] = (int)Core.sumElems(coneRegion).val[2] / (int)ROI.area();
+            camValues[0] = (int) Core.sumElems(coneRegion).val[0] / (int) ROI.area();
+            camValues[1] = (int) Core.sumElems(coneRegion).val[1] / (int) ROI.area();
+            camValues[2] = (int) Core.sumElems(coneRegion).val[2] / (int) ROI.area();
             String colorString = camValues[0] + ", " + camValues[1] + ", " + camValues[2];
             telemetry.addData("Color: ", colorString);
 
             String colorName = MSE(camValues);
-            telemetry.addData("Color: ", colorName);
+            telemetry.addData("Color_Name: ", colorName);
 
             coneRegion.release();
         }
 
-        public String MSE(int[] colors) {
+        public String MSE(int[] camValues) {
             int[][] coneColorValues = {{255, 165, 0}, {135, 206, 235}, {255, 0, 255}};
             // in order orange, teal, pink ^^^^^^^
 
             int[] diffs = new int[3];
 
-            for(int i = 0; i < 3; i++) {
-                int rDif = (coneColorValues[i][0] - colors[0]) * (coneColorValues[i][0] - colors[0]);
-                int gDif = (coneColorValues[i][1] - colors[1]) * (coneColorValues[i][1] - colors[1]);
-                int bDif = (coneColorValues[i][2] - colors[2]) * (coneColorValues[i][2] - colors[2]);
-                diffs[i] = rDif + gDif + bDif;
+            for (int i = 0; i < 3; i++) {
+//                int rDiff = (coneColorValues[i][0] - camValues[0]) * (coneColorValues[i][0] - camValues[0]);
+                int rDiff = (int) Math.pow(coneColorValues[i][0] - camValues[0], 2);
+//                int gDiff = (coneColorValues[i][1] - camValues[1]) * (coneColorValues[i][1] - camValues[1]);
+                int gDiff = (int) Math.pow(coneColorValues[i][1] - camValues[0], 2);
+//                int bDiff = (coneColorValues[i][2] - camValues[2]) * (coneColorValues[i][2] - camValues[2]);
+                int bDiff = (int) Math.pow(coneColorValues[i][2] - camValues[0], 2);
+                diffs[i] = rDiff + gDiff + bDiff;
             }
 
             String diffsString = diffs[0] + ", " + diffs[1] + ", " + diffs[2];
             telemetry.addData("diffs: ", diffsString);
 
-            if(diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
-            else if(diffs[2] < diffs[0]) { return "pink"; }
+            if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
+            else if (diffs[2] < diffs[0]) { return "pink"; }
             else { return "orange"; }
         }
 
