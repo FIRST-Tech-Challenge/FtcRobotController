@@ -4,6 +4,10 @@ import android.net.wifi.p2p.WifiP2pManager;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem.DriveTrain;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.State;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.Vector2;
 
 public class Field {
@@ -14,7 +18,7 @@ public class Field {
     //todo decide on start position
     public Pose2d startPose = new Pose2d(-1, 2, 0);
 
-    public Pose2d targetCoordinate =  new Pose2d(startPose.getX(), startPose.getY(), startPose.getHeading());
+    public Pose2d targetCoordinate =  new Pose2d(0, 0, 0);
 
     public Field(boolean isBlue){
         this.isBlue = isBlue;
@@ -122,6 +126,72 @@ public class Field {
         }
         return minIndex;
     }
+
+    /**
+     * returns a state machine that will drive the robot to target grid position
+     * each path is composed of atmost a vertical component and a horizontal component.
+     */
+    public Pose2d poseToCoordinates(Pose2d currentPose){
+        //todo
+        return new Pose2d(0,0,0);
+    }
+    public boolean orthogonalPoses(Pose2d pose1, Pose2d pose2){
+        return (pose1.getX() == pose2.getX()) || (pose1.getY() == pose2.getY());
+    }
+    public double angleToPose(Pose2d startPose, Pose2d endPose){
+        //todo
+        return 0;
+    }
+    public double angleDistance( double a1, double a2){
+        return Math.min(
+                Math.abs(a2 - a1),
+                Math.abs( (a2+Math.PI) % (2*Math.PI) - (a1+Math.PI) % (2*Math.PI) )
+        );
+    }
+    public boolean facingTargetDirection(double angle1, Pose2d currentCoordinate){
+        double dy = targetCoordinate.getY() - currentCoordinate.getY();
+        double dx = targetCoordinate.getX() - currentCoordinate.getX();
+        double a2 = Math.atan2(dy, dx);
+        return angleDistance(angle1, a2) < Math.PI/4;
+
+    }
+
+    public StateMachine getPathToTarget(DriveTrain driveTrain){
+        StateMachine state;
+        //is new target directly above, below, left right
+        Pose2d currentCoordinate = poseToCoordinates(driveTrain.getPoseEstimate());
+        double currentHeading = driveTrain.getRawExternalHeading();
+        if (orthogonalPoses(currentCoordinate, targetCoordinate)){
+            //if robot is heading in the right direction already, then you only need one path
+            if(facingTargetDirection(currentHeading, currentCoordinate)){
+                state = StateMachine.builder()
+                        .stateSwitchAction(() -> {})
+                        .stateEndAction(() -> {})
+                        .stage(new Stage())
+                        //todo add drivetrain
+                        .build();
+                return state;
+            }
+            //otherwise, you need to stop first
+            state = StateMachine.builder()
+                    .stateSwitchAction(() -> {})
+                    .stateEndAction(() -> {})
+                    .stage(new Stage())
+                    //todo add drivetrain stop with path.
+                    //todo add drivetrain
+                    .build();
+            return state;
+        }
+        //it will require two components
+        else {
+
+        }
+
+        return state;
+
+    }
+
+
 
 }
 

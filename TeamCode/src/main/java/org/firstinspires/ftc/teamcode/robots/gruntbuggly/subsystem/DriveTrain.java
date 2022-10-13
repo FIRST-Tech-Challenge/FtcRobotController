@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.DiffyKinematics;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.PathLine;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.simulation.CRServoSim;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.simulation.DcMotorExSim;
@@ -81,6 +82,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private long lastLoopTime, loopTime;
 
 
+
     //devices ---------------------------------------------------------
     List<DcMotorEx> motors;
     public DcMotorEx leftMotor = null;
@@ -104,6 +106,15 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static PIDController velocityPID;
 
     private final boolean simulated;
+
+
+    //grid drive ---------------------------------------------------------------------
+
+    private Stage gridDrive = new Stage();
+    private StateMachine driveToNextTarget = Utils.getStateMachine(gridDrive)
+            .addState(() -> {return true;})
+            .build();
+    private PathLine gridPathLine;
 
     public DriveTrain (HardwareMap hardwareMap, boolean simulated){
         super(simulated);
@@ -308,6 +319,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         poseEstimate = getPoseEstimate();
         poseVelocity = getPoseVelocity();
 
+
+
+
+
+        //-------------------------------- actual driving ---------------------------------------
+
+        if(!manualDriveEnabled) {
+            driveToNextTarget.execute();
+        }
+
         if (useMotorPowers) {
             leftMotor.setPower(leftPower);
             rightMotor.setPower(rightPower);
@@ -386,6 +407,50 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public String getTelemetryName() {
         return "Drive Train";
     }
+
+    //----------------------------------------------------------------------------
+    // Grid Drive
+    //---------------------------------------------------------------------------------------------
+
+    public void setGridDriveStateMachine(StateMachine s){
+        driveToNextTarget = s;
+    }
+    public void setPath(PathLine path){
+        gridPathLine = path;
+        followPathInitialized = false;
+    }
+    boolean followPathInitialized = false;
+    double startTime = 0;
+
+    double timeStep = 0.1;
+    public void followPath(){
+        if(!followPathInitialized){
+            followPathInitialized = true;
+            startTime = System.nanoTime()/1e9;
+            return;
+        }
+        Pose2d newPoint = gridPathLine.getPointAtTime(System.nanoTime() / 1e9 + timeStep - startTime);
+        Pose2d currentPoseEstimate = getPoseEstimate();
+        double dx = newPoint.getX() - currentPoseEstimate.getX();
+        double dy = newPoint.getY() - currentPoseEstimate.getY();
+        double velocity = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))/timeStep;
+        //direction
+        double heading = getRawExternalHeading();
+        double sign = Math.signum(dx * ( -Math.sin(heading)) + dy * (Math.cos(heading)));
+        double newHeading = Math.atan2(dy,dx) + sign>0 ? 0:2*Math.PI;
+
+        headingPID.setSetpoint(turnAngle);
+        headingPID.setInput(poseEstimate.getHeading());
+        double correction = headingPID.performPID();
+    }
+
+
+
+
+
+
+
+
 
     // ----------------------------------------------------------------------------------------------
     // Manual Driving
