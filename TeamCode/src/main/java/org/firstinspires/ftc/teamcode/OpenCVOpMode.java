@@ -24,7 +24,7 @@ import java.util.HashMap;
 @Autonomous(name="Camera Color Sensor", group="Auto")
 public class OpenCVOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
-    SamplePipeline pipeline;
+    CameraColorPipeline pipeline;
 
 
     @Override
@@ -33,7 +33,7 @@ public class OpenCVOpMode extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        pipeline = new SamplePipeline();
+        pipeline = new CameraColorPipeline();
         webcam.setPipeline(pipeline);
         webcam.setMillisecondsPermissionTimeout(2500);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -85,7 +85,7 @@ public class OpenCVOpMode extends LinearOpMode {
         }
     }
 
-    class SamplePipeline extends OpenCvPipeline
+    class CameraColorPipeline extends OpenCvPipeline
     {
         boolean viewportPaused;
         Mat mat = new Mat();
