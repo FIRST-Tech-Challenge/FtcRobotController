@@ -27,6 +27,7 @@ public class Lift {
     public int getPosition (){
         int position = liftMotor.getCurrentPosition();
         return position;
+
     }
 
 }

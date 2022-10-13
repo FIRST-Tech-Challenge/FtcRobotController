@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Turret {
+    //8192 * 5.23 * 1.8 * 4
+    public final double NUMBEROFTICKSREVOLUTION =308477.952;
+    public final double NUMBEROFTICKSPERDEGREE  = NUMBEROFTICKSREVOLUTION/360;
     public Telemetry telemetry;
     public DcMotorEx turretMotor;
     @SuppressLint("NotConstructor")
@@ -26,9 +29,16 @@ public class Turret {
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
-    public int getPosition (){
-        int position = turretMotor.getCurrentPosition();
-        return position;
+    public void initializePosition (){
+        //set zero position at the stopper to ensure no error with initialization
+        turretMotor.setTargetPosition(300);
+        turretMotor.setPower(1);
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    public void moveTurret(int targetDegrees){
+        int numberOfTicks = (int) (targetDegrees * NUMBEROFTICKSPERDEGREE);
+        turretMotor.setTargetPosition(numberOfTicks);
+        turretMotor.setPower(0.5);
     }
 
 }
