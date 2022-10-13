@@ -55,7 +55,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
             driveRobot(FilteredInput[0], 0, FilteredInput[2]);
         }else if(Math.atan2(FilteredInput[1], FilteredInput[0]) < 20){
             driveRobot(0, FilteredInput[1], FilteredInput[2]);
-        }else{
+        } else {
             driveRobot(FilteredInput[0], FilteredInput[1], FilteredInput[2]);
         }
 
