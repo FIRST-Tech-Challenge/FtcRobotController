@@ -20,16 +20,6 @@ public class RedCornerTrauma extends DriveDirections {
     public void runOpMode() {
         super.runOpMode();
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontLeft");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "backLeft");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
