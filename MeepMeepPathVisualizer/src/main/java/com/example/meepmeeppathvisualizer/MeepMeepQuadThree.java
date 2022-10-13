@@ -12,6 +12,8 @@ public class MeepMeepQuadThree {
     public static void main(String[] args){
         int aprilTagsId = 1;
 
+        //ヾ(⌐■_■)ノ♪
+
         MeepMeep mm = new MeepMeep(800,90);
         new MeepMeepPersistence(mm);
 
