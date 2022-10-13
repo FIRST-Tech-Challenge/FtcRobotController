@@ -119,7 +119,7 @@ public class OpenCVOpMode extends LinearOpMode {
             camValues[1] = (int) Core.sumElems(coneRegion).val[1] / (int) ROI.area();
             camValues[2] = (int) Core.sumElems(coneRegion).val[2] / (int) ROI.area();
             String colorString = camValues[0] + ", " + camValues[1] + ", " + camValues[2];
-            telemetry.addData("Color  in RGB: ", colorString);
+            telemetry.addData("Color in RGB: ", colorString);
 
             String colorName = MSE(camValues);
             telemetry.addData("Closest Color: ", colorName);
@@ -154,6 +154,21 @@ public class OpenCVOpMode extends LinearOpMode {
 
             String diffsString = diffs[0] + ", " + diffs[1] + ", " + diffs[2];
             telemetry.addData("diffs: ", diffsString);
+
+            if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
+            else if (diffs[2] < diffs[0]) { return "pink"; }
+            else { return "orange"; }
+        }
+
+        public String euclideanDistance(int[] camValues) {
+            int[][] coneColorValues = {{255, 165, 0}, {135, 206, 235}, {255, 0, 255}};
+            // in order orange, teal, pink ^^^^^^^
+
+            double[] diffs = new double[3];
+
+            for (int i = 0; i < 3; i++) {
+                diffs[i] = Math.sqrt(Math.pow(coneColorValues[i][0] - camValues[0], 2) + Math.pow(coneColorValues[i][1] - camValues[1], 2) + Math.pow(coneColorValues[i][2] - camValues[2], 2));
+            }
 
             if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
             else if (diffs[2] < diffs[0]) { return "pink"; }
