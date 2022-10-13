@@ -3,13 +3,13 @@ package org.firstinspires.ftc.teamcode.odometry;
 import android.graphics.Point;
 import android.util.Log;
 
-//import com.arcrobotics.ftclib.geometry.Pose2d;
-//import com.arcrobotics.ftclib.geometry.Rotation2d;
-//import com.arcrobotics.ftclib.geometry.Transform2d;
-//import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Transform2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ReadWriteFile;
-//import com.spartronics4915.lib.T265Camera;
+import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -42,7 +42,7 @@ public class VSlamOdometry implements IBaseOdometry {
     private double encoderMeasurementCovariance;
     private int sleepTime;
 
-//    private T265Camera slamra;
+    private T265Camera slamra;
     private boolean isRunning = true;
 
     private double currentX;    // in Inches
@@ -107,12 +107,12 @@ public class VSlamOdometry implements IBaseOdometry {
         double offsetHDegrees = 0;
         // to change offsets, place robot at 0 degrees. Measure from the center of the camera from the center of the robot. That is the value.
         // place the robot and spin in place. The values should vary by a maximum on 2
-//
-//        Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
-//        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
-//        final Transform2d cameraToRobot = new Transform2d(offsetTranslation, offsetRotation);
-//        this.slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
-//        slamra.start();
+
+        Translation2d offsetTranslation = new Translation2d(offsetXInches * INCH_2_METER, offsetYInches * INCH_2_METER);
+        Rotation2d offsetRotation = Rotation2d.fromDegrees(offsetHDegrees);
+        final Transform2d cameraToRobot = new Transform2d(offsetTranslation, offsetRotation);
+        this.slamra = new T265Camera(cameraToRobot, encoderMeasurementCovariance, this.hwMap.appContext);
+        slamra.start();
     }
 
     @Override
@@ -127,10 +127,10 @@ public class VSlamOdometry implements IBaseOdometry {
 
         double startX = startXInches * INCH_2_METER;
         double startY = startYInches * INCH_2_METER;
-//        Rotation2d startHeading = Rotation2d.fromDegrees(startHeadingDegrees);
-//        Pose2d startingPose = new Pose2d(startX, startY, startHeading);
-//
-//        slamra.setPose(startingPose);
+        Rotation2d startHeading = Rotation2d.fromDegrees(startHeadingDegrees);
+        Pose2d startingPose = new Pose2d(startX, startY, startHeading);
+
+        slamra.setPose(startingPose);
     }
 
     @Override
@@ -280,24 +280,24 @@ public class VSlamOdometry implements IBaseOdometry {
 
     private void updatePosition(){
         try {
-//            T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
-//
-//            if (up != null) {
-//                // ensure a value between 0 and 360
-//                this.currentOrientation = up.pose.getRotation().getDegrees();
-//
-//                // get current position in inches
-//                this.currentX = up.pose.getX() / INCH_2_METER;
-//                this.currentY = up.pose.getY() / INCH_2_METER;
-//
-//                if (!trackingInitialized && Math.abs((int)this.currentX) > 0 && Math.abs((int)this.currentY) > 0) {
-//                    trackingInitialized = true;
-//                }
-//
-//                if (persistPosition) {
-//                    saveLastPosition();
-//                }
-//            }
+            T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
+
+            if (up != null) {
+                // ensure a value between 0 and 360
+                this.currentOrientation = up.pose.getRotation().getDegrees();
+
+                // get current position in inches
+                this.currentX = up.pose.getX() / INCH_2_METER;
+                this.currentY = up.pose.getY() / INCH_2_METER;
+
+                if (!trackingInitialized && Math.abs((int)this.currentX) > 0 && Math.abs((int)this.currentY) > 0) {
+                    trackingInitialized = true;
+                }
+
+                if (persistPosition) {
+                    saveLastPosition();
+                }
+            }
         }
         catch (Exception ex){
             Log.e(TAG, "Error in update position", ex);
