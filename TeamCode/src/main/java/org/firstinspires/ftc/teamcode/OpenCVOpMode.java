@@ -21,7 +21,7 @@ import org.openftc.easyopencv.*;
 
 import java.util.HashMap;
 
-@Autonomous(name="Camera Color Sensor", group="Auto")
+@Autonomous(name="AutonomousOfficial", group="Auto")
 public class OpenCVOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
     CameraColorPipeline pipeline;

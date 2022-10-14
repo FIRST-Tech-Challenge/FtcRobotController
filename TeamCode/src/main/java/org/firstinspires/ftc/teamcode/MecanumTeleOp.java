@@ -7,8 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.*;
 
 @TeleOp(name="DriveOfficial")
 public class MecanumTeleOp extends LinearOpMode {
@@ -25,76 +29,64 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
         // --- DECLARE DC MOTORS FOR DRIVE --- //
-        DcMotor leftEncoder = hardwareMap.dcMotor.get("lEncoder");
-        DcMotor rightEncoder = hardwareMap.dcMotor.get("rEncoder");
-        DcMotor perpendicularEncoder = hardwareMap.dcMotor.get("pEncoder");
-        leftEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
-        perpendicularEncoder.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftEncoder.setPower(0);
-        rightEncoder.setPower(0);
-        perpendicularEncoder.setPower(0);
-        leftEncoder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightEncoder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        perpendicularEncoder.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
+        DcMotorEx leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
+        DcMotorEx rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
+        DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
+        DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
+        DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        //Motor Configuration Settings
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); //motor direction
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Braking behavior
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //We don't want to use PID for the motors using the encoders
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //We don't want to use PID for the motors using the encoders
 
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset encoder values
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // --- DC MOTORS FOR LIFT --- //
-        /**
-        DcMotor motorLiftRight = hardwareMap.dcMotor.get("liftRight");
-        motorLiftRight.setDirection(DcMotor.Direction.FORWARD);
-        motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftLift.setDirection(DcMotor.Direction.FORWARD);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        DcMotor motorLiftLeft = hardwareMap.dcMotor.get("liftLeft");
-        motorLiftLeft.setDirection(DcMotor.Direction.FORWARD);
-        motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        **/
+        rightLift.setDirection(DcMotor.Direction.FORWARD);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         // --- RESET ALL MOTOR POWERS TO 0 --- //
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
+<<<<<<< Updated upstream
+=======
+        leftLift.setPower(0);
+        rightLift.setPower(0);
+>>>>>>> Stashed changes
 
 
 
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, imu);
-        Odometry odometry = new Odometry(leftEncoder, rightEncoder, perpendicularEncoder);
-        odometry.reset();
+
 
         waitForStart();
 
-        odometry.setX(0.0);
-        odometry.setY(0.0);
-        odometry.setHeading(0.0);
-
         if (isStopRequested()) return;
 
-        
+        //temporary variables
+        int fieldCentricTrigger = 0;
+        int targetLiftPosition = 0;
+        boolean liftAuton = false;
         while (opModeIsActive()) {
 
             double power = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -105,13 +97,14 @@ public class MecanumTeleOp extends LinearOpMode {
                 strafe = (int)temp_strafe/round_coefficient;
             }
             double turn = gamepad1.right_stick_x;
-            //double liftPower = gamepad2.right_stick_y;
-
-            odometry.runOdom();
-
             if(gamepad1.right_bumper) {
-                drive.isFieldCentric = !drive.isFieldCentric;
+                if(fieldCentricTrigger >= 20){
+                    drive.isFieldCentric = !drive.isFieldCentric;
+                }
+                fieldCentricTrigger++;
             }
+            else{fieldCentricTrigger = 0;}
+
 
             if(drive.isFieldCentric) {
                 drive.fieldCentric(power, strafe, turn);
@@ -119,22 +112,51 @@ public class MecanumTeleOp extends LinearOpMode {
             else {
                 drive.mecanum(power, strafe, turn);
             }
+            //Lift Stuff
+            if(gamepad2.back)//turn off liftAuton
+            {
+                liftAuton = false;
+            }
+            if(gamepad2.x)//mid
+            {
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                targetLiftPosition = 1;
+                liftAuton = true;
+                leftLift.setTargetPosition(targetLiftPosition);
+                rightLift.setTargetPosition(targetLiftPosition);
+            }
+            if(gamepad2.y)//low
+            {
+                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                targetLiftPosition = 2;
+                liftAuton = true;
+                leftLift.setTargetPosition(targetLiftPosition);
+                rightLift.setTargetPosition(targetLiftPosition);
+            }
+            if(gamepad2.right_stick_y != 0)
+            {
+                liftAuton = false;
+                leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftLift.setPower(gamepad2.right_stick_y);
+                rightLift.setPower(gamepad2.right_stick_y);
+            }
+            else if(liftAuton)
+            {
+                leftLift.setPower(0.75);
+                rightLift.setPower(0.75);
 
-            //motorLiftRight.setPower(liftPower);
-            //motorLiftLeft.setPower(liftPower);
+            }
 
-            telemetry.addData("Left Encoder: ", leftEncoder.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
-            telemetry.addData("Right Encoder: ", rightEncoder.getCurrentPosition()/ticks_per_revolution * inches_per_revolution); //Converting encoder units to inches
-            telemetry.addData("Perpendicular Encoder: ", perpendicularEncoder.getCurrentPosition()); //Converting encoder units to inches
+
             telemetry.addData("Power: ", power);
-            telemetry.addData("X: ", odometry.getX());
-            telemetry.addData("Y: ", odometry.getY());
             telemetry.addData("Strafe: ", strafe);//0 is straight forward, 1 is straight to the side
-            telemetry.addData("Odometry Heading: ", odometry.getHeading());
             telemetry.addData("IMU Heading: ", -imu.getAngularOrientation().firstAngle);
-            telemetry.addData("Track Width: ", odometry.getTrackWidth());
-            telemetry.addData("Forward Offset", odometry.getForwardOffset());
             telemetry.addData("Field Centric: ", drive.isFieldCentric);
+            telemetry.addData("LiftAuton On?: ", liftAuton);
+            telemetry.addData("LiftAuton: ", targetLiftPosition);
             telemetry.update();
         }
     }
