@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
-public class PP_TrajectorySequence_AprilTags_PID_Auto extends PowerPlay_AprilTagDetection
+public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 {
 
     private DcMotorEx intakeMotor, liftMotorLeft, liftMotorRight;
@@ -30,13 +30,10 @@ public class PP_TrajectorySequence_AprilTags_PID_Auto extends PowerPlay_AprilTag
     // Declaring our motor PID for the lift; passing through our PID values
     PIDController motorPID = new PIDController(0,0,0, timer); // This is where we tune PID values
 
-
-    @Override
-    public void runOpMode()
-    {
+    public PP_Auto_Quad3(){
         super.runOpMode();
 
-         waitForStart();
+        waitForStart();
 
         // Motors \\
         liftMotorLeft = (DcMotorEx)hardwareMap.dcMotor.get("liftMotorLeft");
@@ -52,6 +49,17 @@ public class PP_TrajectorySequence_AprilTags_PID_Auto extends PowerPlay_AprilTag
         armJoint = hardwareMap.get(Servo.class, "armJoint");
         clawJoint = hardwareMap.get(Servo.class, "clawJoint");
         wristJoint = hardwareMap.get(Servo.class, "wristJoint");
+
+    }
+
+    @Override
+    public void runOpMode()
+    {
+
+
+
+
+
 
         // bot object created
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
@@ -76,7 +84,6 @@ public class PP_TrajectorySequence_AprilTags_PID_Auto extends PowerPlay_AprilTag
         // TRAJECTORY SEQUENCES \\
         Pose2d endPose = cycle(bot, startPose);
 
-
         if(tagUse == 1) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(endPose)
                     .lineToLinearHeading(new Pose2d(-12.2, 15.5, Math.toRadians(-109)))
@@ -84,14 +91,14 @@ public class PP_TrajectorySequence_AprilTags_PID_Auto extends PowerPlay_AprilTag
             bot.followTrajectorySequenceAsync(sussyBaka);
             telemetry.addData("Chris Pratt","Is Currently In The Mushroom Kingdom");
         }else if(tagUse ==2) {
-            telemetry.addData("Walter White","Is Currently Bing Chilling");
+            telemetry.addData("Walter White","Currently Has No Pants");
         }else{
             TrajectorySequence jacobIsCute = bot.trajectorySequenceBuilder(endPose)
                     .lineTo(new Vector2d(-58.2,24.6))
                     .build();
 
             bot.followTrajectorySequenceAsync(jacobIsCute);
-            telemetry.addData("Bohan and Abhilash","Very Cute");
+            telemetry.addData("Bohan and Abhilash"," = Very Cute");
         }
 
         return bot;
