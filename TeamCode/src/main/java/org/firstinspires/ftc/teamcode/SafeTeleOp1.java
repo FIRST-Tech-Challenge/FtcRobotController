@@ -45,8 +45,8 @@ public class SafeTeleOp1 extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    
-    public void initMotorsBlue() {
+
+    private void initMotorsBlue() {
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
