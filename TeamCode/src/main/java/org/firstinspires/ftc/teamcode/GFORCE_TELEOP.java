@@ -39,6 +39,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        double joysticRotate;
+
         headingController.setInputBounds(0.0, 2.0 * Math.PI);
 
         // Initialize GFORCE_KiwiDrive
@@ -61,9 +63,6 @@ public class GFORCE_TELEOP extends LinearOpMode {
             // Update everything.
             drive.update();
 
-            // Read pose
-            Pose2d poseEstimate = drive.getPoseEstimate();
-
             // reset heading if double button press
             if (gamepad1.back && gamepad1.start) {
                 drive.setPoseEstimate( new Pose2d() );
@@ -72,22 +71,27 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 headingController.setTargetPosition(headingSetpoint);
             }
 
+            // Read pose
+            Pose2d poseEstimate = drive.getPoseEstimate();
+
             // Create a vector from the gamepad x/y inputs
-            // Then, rotate that vector by the inverse of that heading
-            Vector2d input = new Vector2d(
+            // Then, rotate that vector by the inverse of the heading
+            Vector2d joysticInput = new Vector2d(
                     -gamepad1.left_stick_y * LATERAL_RATE,
                     -gamepad1.right_stick_x * AXIAL_RATE
             ).rotated(-poseEstimate.getHeading());
 
-            double rotate = (gamepad1.left_trigger - gamepad1.right_trigger) / 40  ;
-
+            // Determine the required rotate rate
             if (gamepad1.left_bumper)
-                rotate = 0.2;
+                joysticRotate = 0.2;
             else if (gamepad1.right_bumper)
-                rotate = -0.2;
+                joysticRotate = -0.2;
+            else
+                joysticRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE * DriveConstants.kV  ;
+
 
             // are we turning or should heading be locked.
-            if (Math.abs(rotate) < 0.01) {
+            if (Math.abs(joysticRotate) < 0.01) {
                 if (!headingLock && drive.notTurning()) {
                     headingLock = true;
                     headingSetpoint = drive.getExternalHeading();
@@ -105,8 +109,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
                 drive.setWeightedDrivePower(
                         new Pose2d(
-                                input.getX(),
-                                input.getY(),
+                                joysticInput.getX(),
+                                joysticInput.getY(),
                                 headingInput
                         )
                 );
@@ -114,9 +118,9 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 // Pass in the rotated input + right stick value for rotation
                 drive.setWeightedDrivePower(
                         new Pose2d(
-                                input.getX(),
-                                input.getY(),
-                                rotate
+                                joysticInput.getX(),
+                                joysticInput.getY(),
+                                joysticRotate
                         )
                 );
             }

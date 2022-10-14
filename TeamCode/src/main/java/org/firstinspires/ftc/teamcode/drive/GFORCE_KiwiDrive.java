@@ -78,7 +78,9 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx left, rear, right;
+    private DcMotorEx left;
+    private DcMotorEx rear;
+    private DcMotorEx right;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -102,12 +104,10 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // We want to switch the OctoQuad's I2C port to a faster data rate for less latency, so we need to get access to the Expansion Hub it's tied to
+        // We want to switch the IMU I2C port to a faster data rate for less latency, so we need to get access to the Expansion Hub it's tied to
         // If you are using a Control Hub, the default name is "Control Hub", otherwise look at your Robot Configuration for the Expansion Hub name.
         LynxModule module = hardwareMap.get(LynxModule.class, "Control Hub");
-
-        // We also need to designate which port we speed up.  Make sure this matches the port that your OctoQuad is connected to.
-        int I2C_BUS = 2;
+        int I2C_BUS = 0;
 
         LynxI2cConfigureChannelCommand cmd = new LynxI2cConfigureChannelCommand(module, I2C_BUS, LynxI2cConfigureChannelCommand.SpeedCode.FAST_400K);
         try {
@@ -115,7 +115,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
         } catch (LynxNackException e) {
             e.printStackTrace();
         }
-        // TODO: adjust the names of the following hardware devices to match your configuration
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;

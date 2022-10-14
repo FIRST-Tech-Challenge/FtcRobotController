@@ -26,6 +26,7 @@ public class DriveConstants {
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO   = 1.0;  // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH  = 14.4; // For 3 Wheel Kiwi drive, enter drive wheel circle diameter
+
     public static double kV           = 0.019;
     public static double kA           = 0.003;
     public static double kStatic      = 0;
