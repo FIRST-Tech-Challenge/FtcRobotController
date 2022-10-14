@@ -17,6 +17,7 @@ public class TowerController {
     public DigitalChannel lowSensor;
     public DigitalChannel uBarSensor;
     public boolean raiseTower;
+    public double uBarNum = 1;
 
     public int uBarLevel;
     static final double     COUNTS_PER_MOTOR    = 384.5;
@@ -62,17 +63,24 @@ public class TowerController {
     }
 
     public void handleUBar() {
-        drive(COUNTS_PER_INCH * 8, 1);
-
+        //set U bar to position depending on the uBarNum variable
+        if (uBarNum == 1) {
+            drive(COUNTS_PER_INCH * 20, 1);
+        }
+        if (uBarNum == 2) {
+            drive(COUNTS_PER_INCH *40, 1);
+        }
+        if (uBarNum == 3) {
+            drive(COUNTS_PER_INCH *60, 1);
+        }
+        if (uBarNum == 4) {
+            drive(COUNTS_PER_INCH *80, 1);
+        }
     }
 
     private void drive(double uBarTarget, double speed) {
         uBarLevel += uBarTarget;
         uBar.setTargetPosition(uBarLevel);
-        while (uBar.isBusy())
-        {
-
-        }
     }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        //hi. you found me. -SECRET COMMENT
