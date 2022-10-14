@@ -25,10 +25,32 @@ import java.util.HashMap;
 public class OpenCVOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
     CameraColorPipeline pipeline;
+    int currentColor = 0;
 
     @Override
     public void runOpMode()
     {
+        boolean directionDetected = false;
+        boolean left = false;
+        while(!directionDetected)
+        {
+            if(gamepad1.square)
+            {
+                directionDetected = true;
+                left= true;
+                break;
+            }
+            else if(gamepad1.circle)
+            {
+                directionDetected = true;
+                break;
+            }
+            else
+            {
+                telemetry.addData("Waiting for Direction Detection",0);
+                telemetry.update();
+            }
+        }
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
@@ -57,6 +79,16 @@ public class OpenCVOpMode extends LinearOpMode {
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
+        int color = 0;
+        boolean colorSnapped = false;
+        while(!colorSnapped) {
+            if (gamepad1.triangle) {
+                color = currentColor;
+                webcam.closeCameraDevice();
+                break;
+            }
+        }
+        telemetry.addData("Current Color: ", color);
         /*
          * Wait for the user to press start on the Driver Station
          */
@@ -64,24 +96,10 @@ public class OpenCVOpMode extends LinearOpMode {
 
         while (opModeIsActive())
         {
-            /*
-             * Send some stats to the telemetry
-             */
-            telemetry.addData("Frame Count", webcam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
-            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
-            telemetry.update();
-
-            if(gamepad1.a)
-            {
-                webcam.stopStreaming();
-            }
-
-            sleep(100);
+            Auton auto = new Auton(color, directionDetected);
+            auto.runAuton();
         }
+         
     }
 
     class CameraColorPipeline extends OpenCvPipeline
@@ -108,11 +126,11 @@ public class OpenCVOpMode extends LinearOpMode {
 
             if (frameCount == 20) {
                 if (colorName.equals("red")) {
-                    Auton auton = new Auton(1);
+                    currentColor=1;
                 } else if (colorName.equals("green")) {
-                    Auton auton = new Auton(2);
+                    currentColor=2;
                 } else { // blue
-                    Auton auton = new Auton(3);
+                    currentColor=3;
                 }
             }
 

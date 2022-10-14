@@ -20,6 +20,10 @@ public class MecanumTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //Figure out if we're left or right
+
+
+
         // --- DECLARE DC MOTORS FOR DRIVE --- //
         DcMotor leftEncoder = hardwareMap.dcMotor.get("lEncoder");
         DcMotor rightEncoder = hardwareMap.dcMotor.get("rEncoder");
@@ -73,20 +77,7 @@ public class MecanumTeleOp extends LinearOpMode {
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
-        //motorLiftLeft.setPower(0);
-        //motorLiftRight.setPower(0);
 
-
-//        Servo servoLift = hardwareMap.servo.get("servoLift");
-//        CRServo servoIntake = hardwareMap.crservo.get("servoIntake"); // continous - CRServo
-//        Servo servoOdomLeft = hardwareMap.servo.get("servoOdomLeft"); // angular
-//        Servo servoOdomRight = hardwareMap.servo.get("servoOdomRight"); // angular
-//        Servo servoOdomPerp = hardwareMap.servo.get("servoOdomPerp"); // angular
-
-//        servoIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-//        servoIntake.setPower(0.5);
-
-        //Servo servoLift = hardwareMap.servo.get("servoLift");
 
 
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
