@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.team6220_PowerPlay.ResourceClasses;
 
 public class Constants {
-    public double WheelDiam = 3.78; //96mm = 3.78in
-    public double WheelCirc = WheelDiam * Math.PI;
-    public double TicksPerRev = 28 * 19.2;
-    public double inchesPerTick = WheelCirc / TicksPerRev;
-    public double HoloAngleIncherPerRot = WheelCirc / Math.sqrt(2);
+    public static final double WheelDiam = 3.78; //96mm = 3.78in
+    public static final double WheelCirc = WheelDiam * Math.PI;
+    public static final double TicksPerRev = 28 * 19.2;
+    public static final double inchesPerTick = WheelCirc / TicksPerRev;
+    public static final double HoloAngleIncherPerRot = WheelCirc / Math.sqrt(2);
+    public static final double deadzoneRange = 20;
 }
