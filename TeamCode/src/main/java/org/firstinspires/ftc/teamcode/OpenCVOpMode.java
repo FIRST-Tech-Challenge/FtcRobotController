@@ -26,7 +26,6 @@ public class OpenCVOpMode extends LinearOpMode {
     OpenCvWebcam webcam;
     CameraColorPipeline pipeline;
 
-
     @Override
     public void runOpMode()
     {
@@ -50,7 +49,7 @@ public class OpenCVOpMode extends LinearOpMode {
                 /*
                  * This will be called if the camera could not be opened
                  */
-                telemetry.addLine("Error lmao");
+                telemetry.addLine("Error, onError() function activated");
                 telemetry.update();
             }
         });
@@ -88,7 +87,6 @@ public class OpenCVOpMode extends LinearOpMode {
     class CameraColorPipeline extends OpenCvPipeline
     {
         boolean viewportPaused;
-        Mat mat = new Mat();
         int frameCount = 0;
         final Rect ROI = new Rect(new Point(155, 115), new Point(165, 125));
 
@@ -105,13 +103,23 @@ public class OpenCVOpMode extends LinearOpMode {
                             input.rows()*(3f/4f)),
                     new Scalar(0, 255, 0), 4);
 
-            getColor(input);
+            String colorName = getColor(input);
             frameCount++;
+
+            if (frameCount == 20) {
+                if (colorName.equals("orange")) {
+                    Auton auton = new Auton(1);
+                } else if (colorName.equals("teal")) {
+                    Auton auton = new Auton(2);
+                } else {
+                    Auton auton = new Auton(3);
+                }
+            }
+
             return input;
         }
 
-
-        public void getColor(Mat input) {
+        public String getColor(Mat input) {
             int[] camValues = new int[3];
 
             Mat coneRegion = input.submat(ROI);
@@ -123,20 +131,9 @@ public class OpenCVOpMode extends LinearOpMode {
 
             String colorName = MSE(camValues);
             telemetry.addData("Closest Color: ", colorName);
-
-            /**
-            if (frameCount == 20) {
-                if (colorName.equals("orange")) {
-                    Auton auton = new Auton(1);
-                } else if (colorName.equals("teal")) {
-                    Auton auton = new Auton(2);
-                } else {
-                    Auton auton = new Auton(3);
-                }
-            }
-            **/
-
             coneRegion.release();
+
+            return colorName;
         }
 
         public String MSE(int[] camValues) {
@@ -157,21 +154,6 @@ public class OpenCVOpMode extends LinearOpMode {
 
             if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
             else if (diffs[2] < diffs[0] && diffs[2]< diffs[1]) { return "pink"; }
-            else { return "orange"; }
-        }
-
-        public String euclideanDistance(int[] camValues) {
-            int[][] coneColorValues = {{255, 165, 0}, {135, 206, 235}, {255, 0, 255}};
-            // in order orange, teal, pink ^^^^^^^
-
-            double[] diffs = new double[3];
-
-            for (int i = 0; i < 3; i++) {
-                diffs[i] = Math.sqrt(Math.pow(coneColorValues[i][0] - camValues[0], 2) + Math.pow(coneColorValues[i][1] - camValues[1], 2) + Math.pow(coneColorValues[i][2] - camValues[2], 2));
-            }
-
-            if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
-            else if (diffs[2] < diffs[0]) { return "pink"; }
             else { return "orange"; }
         }
 
