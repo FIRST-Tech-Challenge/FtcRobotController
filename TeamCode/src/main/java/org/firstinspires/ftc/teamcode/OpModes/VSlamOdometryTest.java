@@ -4,14 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.odometry.IBaseOdometry;
 import org.firstinspires.ftc.teamcode.odometry.VSlamOdometry;
 
 @TeleOp(name = "VSLAM Odometry Test", group = "Robot15173")
 //@Disabled
 public class VSlamOdometryTest extends LinearOpMode {
 
-    IBaseOdometry odometry = null;
+    VSlamOdometry odometry = null;
 
     @Override
     public void runOpMode() {
