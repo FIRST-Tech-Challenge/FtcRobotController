@@ -17,10 +17,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
         Queue<String> e = new LinkedList<String>();
         
         //Initialization for all variables, the stack type is used here for easy adding and removing from the front and back of the list.
-        Queue<Float> XAVGPos_LS = new LinkedList<>();
-        Queue<Float> YAVGPos_LS = new LinkedList<>();
-        Queue<Float> XAVGPos_RS = new LinkedList<>();
-        Queue<Float> YAVGPos_RS = new LinkedList<>();
+        ArrayList<Float> XAVGPos_LS = new ArrayList<>();
+        ArrayList<Float> YAVGPos_LS = new ArrayList<>();
+        ArrayList<Float> XAVGPos_RS = new ArrayList<>();
+        ArrayList<Float> YAVGPos_RS = new ArrayList<>();
         Float[] AllStickAVGS = {0f, 0f, 0f, 0f};
 
         //This pushes the last recorded stick position if the stack size is below 5.
@@ -31,10 +31,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
             XAVGPos_RS.add(gamepad1.right_stick_x);
             YAVGPos_RS.add(gamepad1.right_stick_y);
         } else {
-            XAVGPos_LS.remove();
-            YAVGPos_LS.remove();
-            XAVGPos_RS.remove();
-            YAVGPos_RS.remove();
+            XAVGPos_LS.remove(0);
+            YAVGPos_LS.remove(0);
+            XAVGPos_RS.remove(0);
+            YAVGPos_RS.remove(0);
             XAVGPos_LS.add(gamepad1.left_stick_x);
             YAVGPos_LS.add(gamepad1.left_stick_y);
             XAVGPos_RS.add(gamepad1.right_stick_x);
@@ -42,17 +42,18 @@ abstract public class BaseTeleOp extends BaseOpMode {
         }
         //Loops through the stack and outputs a list of averaged x and y stick positions
         for(int iterator = 0; iterator < XAVGPos_LS.size(); iterator++){
-            AllStickAVGS[0] = (XAVGPos_LS.get(iterator) + AllStickAVGS[0])/iterator;
-            AllStickAVGS[1] = (YAVGPos_LS.get(iterator) + AllStickAVGS[1])/iterator;
-            AllStickAVGS[2] = (XAVGPos_RS.get(iterator) + AllStickAVGS[2])/iterator;
-            AllStickAVGS[3] = (YAVGPos_RS.get(iterator) + AllStickAVGS[3])/iterator;
+            AllStickAVGS[0] += (XAVGPos_LS.get(iterator)/XAVGPos_LS.size());
+            AllStickAVGS[1] += (YAVGPos_LS.get(iterator)/XAVGPos_LS.size());
+            AllStickAVGS[2] += (XAVGPos_RS.get(iterator)/XAVGPos_LS.size());
+            AllStickAVGS[3] += (YAVGPos_RS.get(iterator)/XAVGPos_LS.size());
         }
         return (AllStickAVGS);
     }
 
-    public void TeleOpDrive () {
-        Float[] FilteredInput = GamePadInputAVG();
 
+    public void TeleOpDrive(){
+
+        Float[] allStickAVGS = GamePadInputAVG();
         //Stick deadzones:
         //FilteredInput[0] = Left stick X pos
         //FilteredInput[1] = Left stick Y pos
@@ -60,14 +61,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         //FilteredInput[3] = Right stick Y pos
 
         //Driving / pivoting, not sure how we want it to be structured so this can be fixed later
-        if(Math.atan2(FilteredInput[0], FilteredInput[1]) < Constants.deadzoneRange){
-            driveRobot(FilteredInput[0], 0, FilteredInput[2]);
-        }else if(Math.atan2(FilteredInput[1], FilteredInput[0]) < Constants.deadzoneRange){
-
-            driveRobot(0, FilteredInput[1], FilteredInput[2]);
-        } else {
-            driveRobot(FilteredInput[0], FilteredInput[1], FilteredInput[2]);
-        }
+        driveRobot(gamepad1.left_stick_x, gamepad2.left_stick_y, gamepad1.left_stick_x);
 
     }
 
