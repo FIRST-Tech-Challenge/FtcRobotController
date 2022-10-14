@@ -51,11 +51,11 @@ abstract public class BaseTeleOp extends BaseOpMode {
         //FilteredInput[3] = Right stick Y pos
 
         //Driving / pivoting, not sure how we want it to be structured so this can be fixed later
-        if(Math.atan2(FilteredInput[0], FilteredInput[1]) < 20){
+        if (Math.atan2(FilteredInput[0], FilteredInput[1]) < 20) {
             driveRobot(FilteredInput[0], 0, FilteredInput[2]);
-        }else if(Math.atan2(FilteredInput[1], FilteredInput[0]) < 20){
+        } else if(Math.atan2(FilteredInput[1], FilteredInput[0]) < 20) {
             driveRobot(0, FilteredInput[1], FilteredInput[2]);
-        }else{
+        } else {
             driveRobot(FilteredInput[0], FilteredInput[1], FilteredInput[2]);
         }
 
