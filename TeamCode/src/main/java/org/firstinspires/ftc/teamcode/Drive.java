@@ -20,6 +20,5 @@ public class Drive extends OpMode {
         warbotron.backRight.setPower(-gamepad1.right_stick_y);
         warbotron.hammer1.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
         warbotron.hammer2.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
-
     }
 }
