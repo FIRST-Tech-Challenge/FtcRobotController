@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 // left stick forward and backward
 // right stick left and right to strafe
 // left stick left and right to turn
+// a to move linear slide up
+// b to move linear slide down
 
 @TeleOp(name = "Mecanum")
 public class Mecanum extends LinearOpMode {
@@ -28,8 +30,8 @@ public class Mecanum extends LinearOpMode {
                     robot.rightslidemotor.setPower(-0.5);
                 }
                 while (gamepad1.b) {
-                    robot.leftslidemotor.setPower(-0.5);
-                    robot.rightslidemotor.setPower(-0.5);
+                    robot.leftslidemotor.setPower(1);
+                    robot.rightslidemotor.setPower(1);
                 }
                 robot.leftslidemotor.setPower(0);
                 robot.rightslidemotor.setPower(0);
