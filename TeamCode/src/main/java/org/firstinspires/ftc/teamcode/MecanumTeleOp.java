@@ -67,11 +67,8 @@ public class MecanumTeleOp extends LinearOpMode {
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
-<<<<<<< Updated upstream
-=======
         leftLift.setPower(0);
         rightLift.setPower(0);
->>>>>>> Stashed changes
 
 
 

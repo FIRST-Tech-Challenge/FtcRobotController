@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,17 +10,10 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.*;
 
-import java.util.HashMap;
-
-@Autonomous(name="AutonomousOfficial", group="Auto")
-public class OpenCVOpMode extends LinearOpMode {
+@Autonomous(name = "Right Auton")
+public class rightAuton extends LinearOpMode {
     OpenCvWebcam webcam;
     CameraColorPipeline pipeline;
     int currentColor = 0;
@@ -31,27 +22,6 @@ public class OpenCVOpMode extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-        boolean directionDetected = false;
-        boolean left = false;
-        while(!directionDetected)
-        {
-            if(gamepad1.square)
-            {
-                directionDetected = true;
-                left= true;
-                break;
-            }
-            else if(gamepad1.circle)
-            {
-                directionDetected = false;
-                break;
-            }
-            else
-            {
-                telemetry.addData("Waiting for Direction Detection",0);
-                telemetry.update();
-            }
-        }
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
@@ -82,40 +52,20 @@ public class OpenCVOpMode extends LinearOpMode {
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
-        int color = 0;
-        boolean colorSnapped = false;
-        while(colorSnapped == false) {
-            if (gamepad1.triangle) {
-                color = currentColor;
-                colorSnapped= true;
-            } else
-            {
-                telemetry.addLine("Waiting for Color");
-                telemetry.update();
-            }
 
-        }
 
-        /*
-         * Wait for the user to press start on the Driver Station
-         */
 
-        /**
-
-         **/
-        telemetry.clearAll();
-        telemetry.addData("Color", color);
-        telemetry.addData("Direction: ", directionDetected);
-        telemetry.update();
         waitForStart();
 
         while (opModeIsActive())
         {
-            //Auton auto = new Auton(color, directionDetected);
+            telemetry.addData("Color", currentColor);
+            telemetry.update();
+            //Auton auto = new Auton(color, false);
             //auto.runAuton();
         }
 
-         
+
     }
 
     class CameraColorPipeline extends OpenCvPipeline

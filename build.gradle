@@ -10,13 +10,7 @@ buildscript {
         google()
     }
     dependencies {
-<<<<<<< Updated upstream
         classpath 'com.android.tools.build:gradle:7.2.2'
-=======
-
-        classpath 'com.android.tools.build:gradle:7.2.2'
-
->>>>>>> Stashed changes
     }
 }
 
