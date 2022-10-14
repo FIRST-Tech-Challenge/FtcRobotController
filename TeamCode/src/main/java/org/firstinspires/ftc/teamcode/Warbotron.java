@@ -14,7 +14,6 @@ public class Warbotron {
 
 
     public Warbotron(HardwareMap hwmap){
-
         frontLeft = hwmap.get(DcMotor.class, "FrontLeft");
         frontRight = hwmap.get(DcMotor.class, "FrontRight");
         backLeft = hwmap.get(DcMotor.class, "BackLeft");
@@ -36,5 +35,7 @@ public class Warbotron {
         hammer1.setDirection(DcMotorSimple.Direction.FORWARD);
         hammer2.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        hammer1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hammer2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
