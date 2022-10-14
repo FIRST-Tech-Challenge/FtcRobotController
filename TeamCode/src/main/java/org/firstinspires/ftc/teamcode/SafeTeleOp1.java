@@ -46,7 +46,7 @@ public class SafeTeleOp1 extends DriveMethods {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    private void initMotorsBlue() {
+    private void initMotorsBlueSafe() {
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
@@ -64,7 +64,7 @@ public class SafeTeleOp1 extends DriveMethods {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        initMotorsBlue();
+        initMotorsBlueSafe();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
