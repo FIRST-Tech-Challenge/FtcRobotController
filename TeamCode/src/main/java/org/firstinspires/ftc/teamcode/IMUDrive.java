@@ -141,6 +141,7 @@ public class IMUDrive extends OpMode {
         telemetry.addData("heading, me mateys", driveAngleOffSet);
         telemetry.addData("compass", compass.getDirection());
         telemetry.addData("comparison C vs I", compassDegrees- driveAngleOffSet);
+        telemetry.addData("gyro heading", gyro.getHeading());
     }
 }
 
