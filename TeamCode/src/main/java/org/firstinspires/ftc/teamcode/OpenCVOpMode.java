@@ -107,11 +107,11 @@ public class OpenCVOpMode extends LinearOpMode {
             frameCount++;
 
             if (frameCount == 20) {
-                if (colorName.equals("orange")) {
+                if (colorName.equals("red")) {
                     Auton auton = new Auton(1);
-                } else if (colorName.equals("teal")) {
+                } else if (colorName.equals("green")) {
                     Auton auton = new Auton(2);
-                } else {
+                } else { // blue
                     Auton auton = new Auton(3);
                 }
             }
@@ -137,8 +137,8 @@ public class OpenCVOpMode extends LinearOpMode {
         }
 
         public String MSE(int[] camValues) {
-            int[][] coneColorValues = {{255, 165, 0}, {135, 206, 235}, {255, 0, 255}};
-            // in order orange, teal, pink ^^^^^^^
+            int[][] coneColorValues = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}};
+            // red, green, blue
 
             int[] diffs = new int[3];
 
@@ -152,9 +152,9 @@ public class OpenCVOpMode extends LinearOpMode {
             String diffsString = diffs[0] + ", " + diffs[1] + ", " + diffs[2];
             telemetry.addData("diffs: ", diffsString);
 
-            if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "teal"; }
-            else if (diffs[2] < diffs[0] && diffs[2]< diffs[1]) { return "pink"; }
-            else { return "orange"; }
+            if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "green"; }
+            else if (diffs[2] < diffs[0] && diffs[2]< diffs[1]) { return "blue"; }
+            else { return "red"; }
         }
 
         @Override

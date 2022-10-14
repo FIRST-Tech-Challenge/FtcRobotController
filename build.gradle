@@ -10,11 +10,7 @@ buildscript {
         google()
     }
     dependencies {
-<<<<<<< HEAD
         classpath 'com.android.tools.build:gradle:7.2.2'
-=======
-        classpath 'com.android.tools.build:gradle:7.2.1'
->>>>>>> opencvtesting
     }
 }
 
