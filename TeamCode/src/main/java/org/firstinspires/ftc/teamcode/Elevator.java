@@ -8,25 +8,30 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.Arrays;
 import java.util.List;
 
-public class Manipulator {
+public class Elevator {
 
     private LinearOpMode myOpMode = null;
     final double HOME_POWER = -0.1;
+    double SLOW_LIFT = 0.2;
+    double SLOW_LOWER = -0.1;
+    double FAST_LIFT = 0.5;
+    double FAST_LOWER = -0.2;
+    int DEAD_BAND = 4;
 
     private DcMotorEx liftMaster;
     private DcMotorEx liftSlave;
     private List<DcMotorEx> motors;
 
-    private int     setpoint = 0;
+    private int target = 0;
     private int     lastPosition = 0;
     private double  power    = 0;
     private boolean liftActive = false;
 
-    public Manipulator(LinearOpMode opMode) {
+    public Elevator(LinearOpMode opMode) {
 
         myOpMode = opMode;
         liftMaster = myOpMode.hardwareMap.get(DcMotorEx.class, "lift_master");
-        liftSlave = myOpMode.hardwareMap.get(DcMotorEx.class, "lift_slave");
+        liftSlave = myOpMode.hardwareMap.get(DcMotorEx.class, "lefte");
         motors = Arrays.asList(liftMaster, liftSlave);
 
         setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -37,12 +42,29 @@ public class Manipulator {
     }
 
     public boolean runControlLoop() {
+        double error = target - getPosition();
+        if (error > DEAD_BAND*4) {
+            setPower(FAST_LIFT);
+        }
+        else if (error > DEAD_BAND) {
+            setPower(SLOW_LIFT);
+        }
+        else if (error < -DEAD_BAND*4) {
+            setPower(FAST_LOWER);
+        }
+        else if (error < -DEAD_BAND) {
+            setPower(SLOW_LOWER);
+        }
+        else {
+            setPower(0);
+        }
 
         return true;
     }
 
     public void setHome() {
         disableLift();  // Stop any closed loop control
+        lastPosition = liftMaster.getCurrentPosition();
         setPower(HOME_POWER);
         myOpMode.sleep(250);
 
@@ -78,11 +100,11 @@ public class Manipulator {
     }
 
     public void setTarget(int   target){
-        setpoint = target;
+        this.target = target;
     }
 
     public int getTarget(){
-        return setpoint;
+        return target;
     }
 
     public void enableLift() {
@@ -91,6 +113,22 @@ public class Manipulator {
 
     public void disableLift() {
         liftActive = false;
+    }
+
+    public int getPosition() {
+        return liftMaster.getCurrentPosition();
+    }
+
+    public void manualControl() {
+        if (myOpMode.gamepad1.dpad_up && getPosition() <= 1000) {
+            setPower(SLOW_LIFT);
+        }
+        else if (myOpMode.gamepad1.dpad_down && getPosition() > 0) {
+            setPower(SLOW_LOWER);
+        }
+        else {
+            setPower(0);
+        }
     }
 }
 

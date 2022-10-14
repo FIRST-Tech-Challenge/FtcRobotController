@@ -32,6 +32,9 @@ public class GFORCE_TELEOP extends LinearOpMode {
     double YAW_RATE = 0.8;
 
 
+    private Elevator elevator;
+
+
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
     private PIDFController headingController = new PIDFController(HEADING_PID);
@@ -45,6 +48,10 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         // Initialize GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
+
+        elevator = new Elevator(this);
+
+        elevator.setHome();
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -70,6 +77,26 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 headingSetpoint = 0;
                 headingController.setTargetPosition(headingSetpoint);
             }
+
+            //Homes elevator
+            if (gamepad1.a) {
+                telemetry.addData("Homing...", "now");
+                telemetry.update();
+                elevator.setHome();
+            }
+
+            //elevator.manualControl();
+
+            if (gamepad1.x) {
+                elevator.setTarget(800);
+            }
+
+            if (gamepad1.b) {
+                elevator.setTarget(200);
+            }
+
+            elevator.runControlLoop();
+
 
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
@@ -130,6 +157,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("ODO  heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
+            telemetry.addData ("Elevator position", elevator.getPosition());
             telemetry.update();
         }
     }
