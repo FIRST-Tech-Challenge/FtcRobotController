@@ -14,6 +14,8 @@ public class TeleOpCompetition extends BaseTeleOp{
         while (opModeIsActive()){
             driveRobot();
             driveRobotSpeed();
+            driveMechanism();
+            driveClaw();
             idle();
         }
     }
