@@ -29,36 +29,37 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 
-@TeleOp(name="Basic: Roadrunner Drive Testing", group="Linear Opmode")
+@Autonomous(name="AutonMode")
 //@Disabled
-public class tester_OpMode extends LinearOpMode {
+public class AutonMode extends LinearOpMode {
     @Override
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+//
+//        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+//                .forward(18)
+//                .lineToLinearHeading(new Pose2d(0, 48, Math.toRadians(-45)))
+//                .addDisplacementMarker(() -> {
+//                    //first cone placement
+//                })
+//                .lineToLinearHeading(new Pose2d(0, 36, Math.toRadians(0)))
+//                .forward(6)
+//                .build();
+//
+//        drive.followTrajectorySequence(trajSeq);
 
-        TrajectorySequence myTrajectory = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(24)
-                .turn(Math.toRadians(90))
-                .back(24)
-                .build();
-
-        waitForStart();
-
-        if(isStopRequested()) return;
-
-        drive.followTrajectorySequence(myTrajectory);
+        Auton auton = new Auton(1);
+        auton.runAutonLeft(drive);
     }
 }

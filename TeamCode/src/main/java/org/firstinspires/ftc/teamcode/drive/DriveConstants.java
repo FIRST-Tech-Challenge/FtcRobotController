@@ -22,7 +22,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.6;
+    public static final double TICKS_PER_REV = 1080;
     public static final double MAX_RPM = 340;
 
     /*
@@ -35,7 +35,7 @@ public class DriveConstants {
      */
     public static final boolean RUN_USING_ENCODER = false;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+            11.7592);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -45,9 +45,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 1.9685; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 16; // in
+    public static double WHEEL_RADIUS = 30/25.4; // in
+    public static double GEAR_RATIO = 0.5; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 15.75; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,7 +55,7 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
+    public static double kV = 1/rpmToVelocity(MAX_RPM);
     public static double kA = 0;
     public static double kStatic = 0;
 
@@ -87,7 +87,7 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 59.57470216843153;
+    public static double MAX_VEL = 70.0*0.95;
     public static double MAX_ACCEL = 59.57470216843153;
     public static double MAX_ANG_VEL = Math.toRadians(213.33618750000002);
     public static double MAX_ANG_ACCEL = Math.toRadians(213.33618750000002);

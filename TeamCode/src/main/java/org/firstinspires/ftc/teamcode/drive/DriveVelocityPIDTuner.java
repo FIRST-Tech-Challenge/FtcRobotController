@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -48,9 +48,9 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Pressing B/O (Xbox/PS4) will cede control back to the tuning process.
  */
 @Config
-@Autonomous(group = "drive")
+@Autonomous(name="drivePID", group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 72; // in
+    public static double DISTANCE = 24; // in
 
     enum Mode {
         DRIVER_MODE,
