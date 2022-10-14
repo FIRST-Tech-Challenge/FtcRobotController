@@ -26,24 +26,37 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*
+
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Variables.*;
+import static org.firstinspires.ftc.teamcode.Variables.motorBL;
+import static org.firstinspires.ftc.teamcode.Variables.motorBR;
+import static org.firstinspires.ftc.teamcode.Variables.motorFL;
+import static org.firstinspires.ftc.teamcode.Variables.motorFR;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Autonomous2", group="Linear Opmode")
+@TeleOp(name="SafeTeleOp1", group="Linear Opmode")
 
-public class Autonomous2 extends DriveMethods {
+public class SafeTeleOp1 extends DriveMethods {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    
+    public void initMotorsBlue() {
+        motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
+        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
+        motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
+        motorBR = hardwareMap.get(DcMotor.class, "motorBR");
 
+        motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
 
 
     @Override
@@ -56,14 +69,36 @@ public class Autonomous2 extends DriveMethods {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
-        //driveForDistance(1, Direction.FORWARD, 0.5,0);
-        //driveForDistance(1, Direction.RIGHT, 0.25);
-        //driveForDistance(1, Direction.BACKWARD, 0.25);
-        //driveForDistance(1, Direction.LEFT, 0.25);
-
+        double leftY;
+        double leftX;
+        double rightX;
+        double speedDiv = 1;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            //update doubles
+            leftY = -gamepad1.left_stick_y;
+            leftX = gamepad1.left_stick_x;
+            rightX = gamepad1.right_stick_x;
+
+            if (!gamepad1.right_bumper) {
+                motorFL.setPower((leftY + leftX + rightX) / speedDiv);
+                motorBL.setPower((leftY - leftX + rightX) / speedDiv);
+                motorFR.setPower((leftY - leftX - rightX) / speedDiv);
+                motorBR.setPower((leftY + leftX - rightX) / speedDiv);
+            } else {
+                motorFL.setPower(0);
+                motorBL.setPower(0);
+                motorFR.setPower(0);
+                motorBR.setPower(0);
+            }
+            if (gamepad1.a) {
+                if (speedDiv != 4) {
+                    speedDiv++;
+                } else {
+                    speedDiv = 1;
+                }
+            }
 
 
             // Show the elapsed game time and wheel power.
@@ -73,4 +108,3 @@ public class Autonomous2 extends DriveMethods {
         }
     }
 }
-*/
