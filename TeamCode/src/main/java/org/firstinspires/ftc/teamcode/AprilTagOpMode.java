@@ -24,7 +24,8 @@ public class AprilTagOpMode extends LinearOpMode
     // NOTE: this calibration is for the C920 webcam at 800x448. WE MUST CHANGE THESE TO MATCH OUR CONFIGURATIONS
 
     /*
-    Check apriltagdetectionpipeline file for more information
+    Check constructMatrix in apriltagdetectionpipeline file for more information
+
     */
     double fx = 578.272;
     double fy = 578.272;
