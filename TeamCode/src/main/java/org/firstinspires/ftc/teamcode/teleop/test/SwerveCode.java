@@ -20,7 +20,8 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 public class SwerveCode extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
-
+    GlobalPosSystem posSystem;
+    private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -39,6 +40,7 @@ public class SwerveCode extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
+        posSystem = new GlobalPosSystem(robot);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -75,6 +77,14 @@ public class SwerveCode extends OpMode{
         telemetry.addData("Y", -gamepad1.left_stick_y);
         telemetry.addData("R", gamepad1.right_stick_x);
         //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
+
+        for(int i = 0; i < 4; i++){
+            posData[i] = posSystem.getPositionArr()[i];
+        }
+        telemetry.addData("Xpos", posData[0]);
+        telemetry.addData("Ypos", posData[1]);
+        telemetry.addData("W", posData[2]);
+        telemetry.addData("R", posData[3]);
         telemetry.update();
     }
 
@@ -100,6 +110,8 @@ public class SwerveCode extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
+        posSystem.calculatePos();
+
         int posBotL = robot.botL.getCurrentPosition();
         int posTopL = robot.topL.getCurrentPosition();
 

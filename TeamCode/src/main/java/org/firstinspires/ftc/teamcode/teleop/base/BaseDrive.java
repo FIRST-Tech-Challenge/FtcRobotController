@@ -136,9 +136,10 @@ public class BaseDrive extends OpMode{
             return;
         }
 
-        for (int i = 0; i <= 3; i++){
-            robot.dtMotors[i].setPower(motorPower[i]);
-        }
+        robot.topL.setPower(motorPower[0]);
+        robot.botL.setPower(motorPower[1]);
+        robot.topR.setPower(motorPower[2]);
+        robot.botR.setPower(motorPower[3]);
     }
 
     private void reset(){

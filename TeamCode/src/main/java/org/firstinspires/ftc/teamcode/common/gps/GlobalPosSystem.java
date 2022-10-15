@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
@@ -27,10 +28,16 @@ public class GlobalPosSystem {
         for (int i = 0; i < 4; i++){
             positionArr[i] = 0;
         }
-        for (DcMotorEx motors : robot.dtMotors){
-            motorClicksPose.put(motors, motors.getCurrentPosition()); //(key, value)
-            prevMotorClicks.put(motors, motorClicksPose.get(motors)); //(key, value)
-        }
+
+        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
+        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
+        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
+        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
+
+        prevMotorClicks.put(robot.topL, robot.topL.getCurrentPosition());
+        prevMotorClicks.put(robot.botL, robot.botL.getCurrentPosition());
+        prevMotorClicks.put(robot.topR, robot.topR.getCurrentPosition());
+        prevMotorClicks.put(robot.botR, robot.botR.getCurrentPosition());
     }
 
     public void grabKinematics(Kinematics k){
@@ -38,25 +45,27 @@ public class GlobalPosSystem {
     }
 
     public void calculatePos(){
-        for (DcMotorEx motors : robot.dtMotors){
-            motorClicksPose.put(motors, motors.getCurrentPosition()); //(key, value)
-        }
-        if (!goodGap()) return; //this may or may not be useful
-        for (DcMotorEx motors : robot.dtMotors){
-            prevMotorClicks.put(motors, motorClicksPose.get(motors)); //(key, value)
-        }
+        prevMotorClicks.put(robot.topL, motorClicksPose.get(robot.topL));
+        prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
+        prevMotorClicks.put(robot.topR, motorClicksPose.get(robot.topR));
+        prevMotorClicks.put(robot.botR, motorClicksPose.get(robot.botR));
+
+        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
+        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
+        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
+        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
 
         //left
-        int topL = motorClicksPose.get(robot.dtMotors[0]) - prevMotorClicks.get(robot.dtMotors[0]); //change in top left
-        int botL = motorClicksPose.get(robot.dtMotors[1]) - prevMotorClicks.get(robot.dtMotors[1]); //change in bottom left
+        int topL = motorClicksPose.get(robot.topL) - prevMotorClicks.get(robot.topL); //change in top left
+        int botL = motorClicksPose.get(robot.botL) - prevMotorClicks.get(robot.botL); //change in bottom left
         double translateL = (topL - botL) / 2.0;
         double rotateL = topL - translateL;
         translateL *= constants.INCHES_PER_CLICK;
         rotateL *= constants.DEGREES_PER_CLICK;
 
         //right
-        int topR = motorClicksPose.get(robot.dtMotors[2]) - prevMotorClicks.get(robot.dtMotors[2]); //change in top right
-        int botR = motorClicksPose.get(robot.dtMotors[3]) - prevMotorClicks.get(robot.dtMotors[3]); //change in bottom right
+        int topR = motorClicksPose.get(robot.topR) - prevMotorClicks.get(robot.topR); //change in top right
+        int botR = motorClicksPose.get(robot.botR) - prevMotorClicks.get(robot.botR); //change in bottom right
         double translateR = (topR - botR) / 2.0;
         double rotateR = topR - translateR;
         translateR *= constants.INCHES_PER_CLICK;
@@ -122,22 +131,27 @@ public class GlobalPosSystem {
         }
 
         //Reset Motor Clicks
-        for (DcMotorEx motors : robot.dtMotors){
-            motorClicksPose.put(motors, 0);
-            prevMotorClicks.put(motors, 0); //(key, value)
-        }
+        prevMotorClicks.put(robot.topL, 0);
+        prevMotorClicks.put(robot.botL, 0);
+        prevMotorClicks.put(robot.topR, 0);
+        prevMotorClicks.put(robot.botR, 0);
+
+        motorClicksPose.put(robot.topL, 0);
+        motorClicksPose.put(robot.botL, 0);
+        motorClicksPose.put(robot.topR, 0);
+        motorClicksPose.put(robot.botR, 0);
     }
 
-    private boolean goodGap(){
-        for (int i = 0; i < 3; i++) {
-            try{
-                if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.clickTOLERANCE) return false;
-            } catch (NullPointerException e){
-                return false;
-            }
-        }
-        return true;
-    }
+//    private boolean goodGap(){
+//        for (int i = 0; i < 3; i++) {
+//            try{
+//                if (Math.abs(motorClicksPose.get(robot.dtMotors[i]) - prevMotorClicks.get(robot.dtMotors[i])) <= constants.clickTOLERANCE) return false;
+//            } catch (NullPointerException e){
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     public double[] getPositionArr() {
         return positionArr;
@@ -145,9 +159,11 @@ public class GlobalPosSystem {
 
     public int[] getMotorClicks(){
         int[] clicks = new int[4];
-        for (int i = 0; i < 3; i++){
-            clicks[i] = robot.dtMotors[i].getCurrentPosition();
-        }
+        clicks[0] = robot.topL.getCurrentPosition();
+        clicks[1] = robot.botL.getCurrentPosition();
+        clicks[2] = robot.topR.getCurrentPosition();
+        clicks[3] = robot.botR.getCurrentPosition();
+
         return clicks;
     }
 

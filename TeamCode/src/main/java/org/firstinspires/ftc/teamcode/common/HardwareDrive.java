@@ -73,7 +73,7 @@ public class HardwareDrive
     public DcMotorEx  botL;
 
 
-    public DcMotorEx[] dtMotors;
+//    public DcMotorEx[] dtMotors;
 
     /*
     Top Left  0                              Top Right 2
