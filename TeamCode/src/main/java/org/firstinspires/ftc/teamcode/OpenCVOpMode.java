@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,9 +15,6 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-import org.openftc.easyopencv.*;
-
-import java.util.HashMap;
 
 @Autonomous(name="AutonomousOfficial", group="Auto")
 public class OpenCVOpMode extends LinearOpMode {
@@ -100,9 +95,6 @@ public class OpenCVOpMode extends LinearOpMode {
          * Wait for the user to press start on the Driver Station
          */
 
-        /**
-
-         **/
         telemetry.clearAll();
         telemetry.addData("Color", color);
         telemetry.addData("Direction: ", directionDetected);
