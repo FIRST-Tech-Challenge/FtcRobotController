@@ -22,6 +22,7 @@ public class WARHOGTeleOp extends LinearOpMode {
 
         Drivetrain drivetrain = new Drivetrain(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
+        Outtake outtake = new Outtake(hardwareMap, telemetry);
 
         double joyx, joyy, joyz, gas, basespeed;
         Drivetrain.Centricity centricity = Drivetrain.Centricity.BOT;
@@ -77,6 +78,7 @@ public class WARHOGTeleOp extends LinearOpMode {
             }
 
             intake.run(currentGamepad2.left_stick_y);
+            outtake.run(currentGamepad2.right_stick_y);
 
 
 
