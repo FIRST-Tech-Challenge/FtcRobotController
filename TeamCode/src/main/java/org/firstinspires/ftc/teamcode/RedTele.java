@@ -8,11 +8,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.hardware.Hardware9010;
 import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
+import java.util.Locale;
+
 /**
  * This is the main class that operates the robot
  *
  */
-@TeleOp (name="NoTurret", group="TeleOps")
+@TeleOp (name="RedTeleOptimized", group="TeleOps")
 public class RedTele extends LinearOpMode {
 
     Hardware9010 hdw;
@@ -38,51 +40,24 @@ public class RedTele extends LinearOpMode {
 
         hdw.Vertical.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        boolean shooterEnable = false;
-        boolean TurretLeft = false;
-        boolean TurretRight = false;
-        boolean TurretUp = false;
-        boolean TurretDown = false;
         boolean SpinnerLeft = false;
-        boolean SpinnerRight = false;
-        boolean EncoderUp = false;
-        boolean EncoderDown = false;
         boolean fakeauto = true;
         boolean Turret = false;
-        boolean Vertical = true;
-        boolean autolevel = false;
-        boolean autorotate = false;
         boolean intakeopen = false;
-        boolean ManTurretRight = false;
-        boolean ManTurretLeft = false;
-        boolean ManTurretUp = false;
-        boolean ManTurretDown = false;
-        boolean TargetingOn = false;
-        boolean TargetingOff = false;
+        boolean ManTurretRight;
+        boolean ManTurretLeft;
         boolean TargetingRight = false;
         boolean TargetingLeft = false;
-        boolean LevelUp = false;
-        boolean LevelMid = false;
         boolean LevelDown = false;
         boolean LevelOff = false;
-        boolean IntakeIn = false;
-        boolean IntakeOut = false;
+        boolean IntakeOut;
         boolean highmode = true;
         boolean sharemode = false;
         boolean slowDriveMode = false;
-        boolean slowShootMode = false;
-        boolean CarouselSpinner = false;
         int steps = 0;
-        int currentSlide = 0;
+        int currentSlide;
         int currentTurret = 0;
-        double powerDrivePercentage = 1.0;
-        double powerShootPercentage = 100;
-
-        float hsvValues[] = {0F, 0F, 0F};
-
-        final float values[] = hsvValues;
-
-        final double SCALE_FACTOR = 255;
+        double powerDrivePercentage = 0.5;
 
         telemetry.addData("[>]", "All set?");
         telemetry.update();
@@ -116,7 +91,6 @@ public class RedTele extends LinearOpMode {
 
             if (gamepad2.x) {
                 SpinnerLeft = !SpinnerLeft;
-                SpinnerRight = false;
                 sleep(200);
             }
             if (SpinnerLeft) {
@@ -130,14 +104,19 @@ public class RedTele extends LinearOpMode {
             float powerTwoRight = gamepad1.right_trigger;
             float powerTwoLeft = gamepad1.left_trigger;
 
-
+            /* This is important for the driving to work ⬇⬇ */
             hdw.wheelFrontRight.setPower(robotWheel.wheelFrontRightPower * powerDrivePercentage);
             hdw.wheelFrontLeft.setPower(robotWheel.wheelFrontLeftPower * powerDrivePercentage);
             hdw.wheelBackRight.setPower(robotWheel.wheelBackRightPower * powerDrivePercentage);
             hdw.wheelBackLeft.setPower(robotWheel.wheelBackLeftPower * powerDrivePercentage);
 
+        }
 
-/*
+    }
+
+}
+
+            /* Turret code has been commented out for driver practice
             if (fakeauto) {  //This controlling code using state machine.
                 if (gamepad1.right_bumper) {
                     if (steps == 3) {
@@ -155,7 +134,7 @@ public class RedTele extends LinearOpMode {
                     if (steps == 5) {
                         steps = steps - 2;
                         sleep(100);
-                    } else if (steps == 20 || steps == 21 || steps == 22 || steps == 23) {
+                    } else if (steps == 20 || steps == 21) {
                         steps = 0;
                         sleep(100);
                     } else {
@@ -214,7 +193,7 @@ public class RedTele extends LinearOpMode {
                     if (gamepad1.b) {
                         steps = 20;
                     }
-                } else if (steps == 3 && hdw.Turret.getCurrentPosition() > -150 && highmode == true) {
+                } else if (steps == 3 && hdw.Turret.getCurrentPosition() > -150 && highmode) {
                     hdw.grabberclaw.setPosition(1.0);
                     hdw.Turret.setTargetPosition(-500);
                     hdw.Vertical.setTargetPosition(1150);
@@ -231,7 +210,7 @@ public class RedTele extends LinearOpMode {
                     if (gamepad1.right_trigger > 0.2) {
                         steps = 4;
                     }
-                } else if (steps == 3 && hdw.Turret.getCurrentPosition() < -150 && highmode == true) {
+                } else if (steps == 3 && hdw.Turret.getCurrentPosition() < -150 && highmode) {
                     hdw.grabberclaw.setPosition(1.0);
                     hdw.Turret.setTargetPosition(-500);
                     hdw.Vertical.setTargetPosition(1150);
@@ -248,7 +227,7 @@ public class RedTele extends LinearOpMode {
                     if (gamepad1.right_trigger > 0.2) {
                         steps = 4;
                     }
-                } else if (steps == 3 && hdw.Turret.getCurrentPosition() < 150 && sharemode == true) {
+                } else if (steps == 3 && hdw.Turret.getCurrentPosition() < 150 && sharemode) {
                     hdw.grabberclaw.setPosition(1.0);
                     hdw.Turret.setTargetPosition(200);
                     hdw.Vertical.setTargetPosition(750);
@@ -265,7 +244,7 @@ public class RedTele extends LinearOpMode {
                     if (gamepad1.right_trigger > 0.2) {
                         steps = 4;
                     }
-                } else if (steps == 3 && hdw.Turret.getCurrentPosition() > 150 && sharemode ) {
+                } else if (steps == 3 && hdw.Turret.getCurrentPosition() > 150 && sharemode) {
                     hdw.grabberclaw.setPosition(1.0);
                     hdw.Turret.setTargetPosition(200);
                     hdw.Vertical.setTargetPosition(750);
@@ -288,7 +267,7 @@ public class RedTele extends LinearOpMode {
                     if (gamepad1.dpad_left) {
                         steps = 4;
                     }
-                } else if (steps == 4 && highmode ) {
+                } else if (steps == 4 && highmode) {
                     hdw.grabberclaw.setPosition(1.0);
                     hdw.Vertical.setTargetPosition(1150);
                     hdw.Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -317,7 +296,7 @@ public class RedTele extends LinearOpMode {
                     } else {
                         hdw.Turret.setPower(0.0);
                     }
-                } else if (steps == 4 && sharemode ) {
+                } else if (steps == 4 && sharemode) {
                     hdw.grabberclaw.setPosition(1.0);
                     hdw.Vertical.setTargetPosition(750);
                     hdw.Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -346,7 +325,7 @@ public class RedTele extends LinearOpMode {
                     } else {
                         hdw.Turret.setPower(0.0);
                     }
-                } else if (steps == 5 && highmode ) {
+                } else if (steps == 5 && highmode) {
                     hdw.grabberclaw.setPosition(0.7);
                     currentTurret = hdw.Turret.getCurrentPosition();
                     hdw.Turret.setTargetPosition(currentTurret);
@@ -359,7 +338,7 @@ public class RedTele extends LinearOpMode {
                     hdw.Vertical.setPower(1);
                     hdw.Turret.setPower(1);
                     hdw.Slide.setPower(1);
-                } else if (steps == 5 && sharemode ) {
+                } else if (steps == 5 && sharemode) {
                     hdw.grabberclaw.setPosition(0.7);
                     currentTurret = hdw.Turret.getCurrentPosition();
                     hdw.Turret.setTargetPosition(currentTurret);
@@ -446,38 +425,29 @@ public class RedTele extends LinearOpMode {
                     steps = 0;
                 }
 
-                if (hdw.sensorDistance.getDistance(DistanceUnit.CM) < 2.5 && intakeopen ) {
+                if (hdw.sensorDistance.getDistance(DistanceUnit.CM) < 2.5 && intakeopen) {
                     hdw.grabberclaw.setPosition(1.0);
                     sleep(100);
                     steps = 1;
                 }
 
-            } else {  // THis is controlling without using state machine.
+            } else {  // This is controlling without using state machine.
                 if (gamepad1.right_bumper) {
                     Turret = true;
                     TargetingRight = !TargetingRight;
-                    TargetingOn = false;
-                    TargetingOff = false;
                     TargetingLeft = false;
-                    ManTurretRight = false;
-                    ManTurretLeft = false;
                     sleep(200);
                 }
                 if (gamepad1.left_bumper) {
                     Turret = true;
                     TargetingLeft = !TargetingLeft;
-                    TargetingOn = false;
-                    TargetingOff = false;
                     TargetingRight = false;
-                    ManTurretRight = false;
-                    ManTurretLeft = false;
                     sleep(200);
                 }
                 if (gamepad1.dpad_left) {
                     Turret = false;
                     TargetingRight = false;
                     TargetingLeft = false;
-                    TargetingOn = false;
                     ManTurretLeft = true;
                 } else {
                     ManTurretLeft = false;
@@ -486,7 +456,6 @@ public class RedTele extends LinearOpMode {
                     Turret = false;
                     TargetingRight = false;
                     TargetingLeft = false;
-                    TargetingOn = false;
                     ManTurretRight = true;
                 } else {
                     ManTurretRight = false;
@@ -518,28 +487,9 @@ public class RedTele extends LinearOpMode {
                     }
                 }
 
-                /*
-                if (TargetingOff)
-                {
-                    hdw.Turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    if (gamepad2.dpad_right)
-                    {
-                        hdw.Turret.setPower(0.3);
-                    }
-                    if (gamepad2.dpad_left)
-                    {
-                        hdw.Turret.setPower(-0.3);
-                    }
-                }
-
 
                 if (gamepad1.left_trigger > 0.2) {
-                    if (hdw.Slide.getCurrentPosition() > 200) {
-                        hdw.Slide.setPower(-powerTwoLeft);
-                    } else {
-                        //hdw.Slide.setPower(0.0);
-                        hdw.Slide.setPower(-powerTwoLeft);
-                    }
+                    hdw.Slide.setPower(-powerTwoLeft);
                 } else {
                     if (gamepad1.right_trigger > 0.2) {
                         if (hdw.Slide.getCurrentPosition() < 3500) {
@@ -567,99 +517,41 @@ public class RedTele extends LinearOpMode {
                 }
 
                 if (gamepad1.x) {
-                    Vertical = true;
-                    LevelUp = false;
-                    LevelMid = false;
-                    TurretUp = false;
-                    TurretDown = false;
-                    ManTurretDown = false;
-                    ManTurretUp = false;
                     LevelDown = !LevelDown;
                     sleep(200);
                 }
                 if (gamepad1.y) {
-                    Vertical = true;
-                    LevelUp = false;
-                    LevelMid = false;
-                    TurretUp = false;
-                    TurretDown = false;
-                    autolevel = false;
-                    ManTurretDown = false;
-                    ManTurretUp = false;
-                    LevelUp = !LevelUp;
                     sleep(200);
                 }
                 if (gamepad1.dpad_up) {
-                    Vertical = true;
-                    LevelUp = false;
-                    LevelMid = false;
-                    TurretUp = false;
-                    TurretDown = false;
-                    ManTurretDown = false;
-                    ManTurretUp = true;
-                    LevelUp = false;
                     sleep(200);
-                } else {
-                    ManTurretUp = false;
                 }
                 if (gamepad1.dpad_down) {
-                    Vertical = true;
-                    LevelUp = false;
-                    LevelMid = false;
-                    TurretUp = false;
-                    TurretDown = false;
-                    ManTurretDown = true;
-                    ManTurretUp = false;
-                    LevelUp = false;
                     sleep(200);
-                } else {
-                    ManTurretDown = false;
                 }
 
-                if (Vertical) {
-                    if (LevelUp) {
-
-                        hdw.Vertical.setTargetPosition(1100);
-                        hdw.Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        hdw.Vertical.setPower(1.0);
-                    } else if (LevelDown) {
-                        hdw.Vertical.setTargetPosition(650);
-                        hdw.Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        //hdw.Vertcial.setMaxPower(5000);
-                        hdw.Vertical.setPower(-1.0);
-                    }
-                    //else if (hdw.liftsensor.isPressed())
-                    //{
-                    //    hdw.Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    //hdw.Vertical.setTargetPosition(-100);
-                    //hdw.Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    //hdw.Vertical.setPower(-0.2);
-
-
-                    //}
-                    else {
-                        // Alex - bug was here
-                        //hdw.Vertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        //hdw.Vertical.setPower(-0.6);
-                    }
-                } else {
-                    if (ManTurretUp) {
-                        hdw.Vertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        hdw.Vertical.setPower(1.0);
-                    } else if (ManTurretDown) {
-                        hdw.Vertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        hdw.Vertical.setPower(-1.0);
-                    } else {
-                        hdw.Vertical.setPower(0.0);
-                    }
+                if (LevelDown) {
+                    hdw.Vertical.setTargetPosition(650);
+                    hdw.Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    //hdw.Vertcial.setMaxPower(5000);
+                    hdw.Vertical.setPower(-1.0);
                 }
-                /*if (gamepad1.dpad_left)
+                //else if (hdw.liftsensor.isPressed())
+                //{
+                //    hdw.Vertical.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                //hdw.Vertical.setTargetPosition(-100);
+                //hdw.Vertical.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //hdw.Vertical.setPower(-0.2);
+
+
+                //}
+                // Alex - bug was here
+                //hdw.Vertical.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                //hdw.Vertical.setPower(-0.6);
+
+                if (gamepad1.dpad_left)
                 {
-                    LevelUp = false;
                     LevelDown = false;
-                    LevelMid = false;
-                    TurretDown = false;
-                    TurretUp = false;
                     LevelOff = !LevelOff;
                     sleep(200);
                 }
@@ -677,17 +569,13 @@ public class RedTele extends LinearOpMode {
                 }
 
                 if (gamepad1.a) {
-                    IntakeIn = true;
-                    IntakeOut = false;
                     sleep(200);
                 } else {
-                    IntakeIn = false;
                     sleep(100);
                 }
 
                 if (gamepad1.b) {
                     IntakeOut = true;
-                    IntakeIn = false;
                     sleep(200);
                 } else {
                     IntakeOut = false;
@@ -699,46 +587,47 @@ public class RedTele extends LinearOpMode {
                 } else {
                     if (hdw.sensorDistance.getDistance(DistanceUnit.CM) < 2) {
                         hdw.grabberclaw.setPosition(1.0);
-                    } else if (IntakeOut) {
-                        hdw.grabberclaw.setPosition(1.0);
                     }
                 }
             }
-*/
-            telemetry.addData("count", steps);
-            if (highmode ) {
-                telemetry.addData("HIGH_mode", highmode);
+
+                telemetry.addData("count", steps);
+                if (highmode) {
+                    telemetry.addData("HIGH_mode", highmode);
+                }
+                if (sharemode) {
+                    telemetry.addData("SHARE_mode", sharemode);
+                }
+
+                telemetry.addData("SlidePower", hdw.Slide.getPower());
+                telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", hdw.sensorDistance.getDistance(DistanceUnit.CM)));
+                //telemetry.addData("SlideTemp", currentSlide);
+                telemetry.addData("Alpha", hdw.sensorColor.alpha());
+                telemetry.addData("Red", hdw.sensorColor.red());
+                //telemetry.addData("liftsensor", hdw.liftsensor.isPressed());
+                telemetry.addData("Green", hdw.sensorColor.green());
+                telemetry.addData("Blue", hdw.sensorColor.blue());
+                //telemetry.addData("Hue", hsvValues[0]);
+                telemetry.addData("lfWheel", hdw.wheelFrontLeft.getCurrentPosition());
+                telemetry.addData("rfWheel", hdw.wheelFrontRight.getCurrentPosition());
+                telemetry.addData("strafeWheel", hdw.wheelStrafe.getCurrentPosition());
+                telemetry.addData("TurretDistance", hdw.Turret.getCurrentPosition());
+                telemetry.addData("VerticalDistance", hdw.Vertical.getCurrentPosition());
+                telemetry.addData("VerticalSpeed", hdw.Vertical.getPower());
+                telemetry.addData("SlideDistance", hdw.Slide.getCurrentPosition());
+                telemetry.addData("LeftTrigger", gamepad1.left_trigger);
+                telemetry.addData("RightTrigger", gamepad1.right_trigger);
+                telemetry.addData("LeftPower", powerTwoLeft);
+                telemetry.addData("RightPower", powerTwoRight);
+
+                telemetry.addData("turbo", robotWheel.turbo);
+                //telemetry.addData("Max", hdw.Vertical.getSpeed());
+
+                telemetry.update();
+
             }
-            if (sharemode ) {
-                telemetry.addData("SHARE_mode", sharemode);
-            }
-
-            //telemetry.addData("SlidePower", hdw.Slide.getPower());
-            //telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", hdw.sensorDistance.getDistance(DistanceUnit.CM)));
-            //telemetry.addData("SlideTemp", currentSlide);
-            //telemetry.addData("Alpha", hdw.sensorColor.alpha());
-            //telemetry.addData("Red", hdw.sensorColor.red());
-            //telemetry.addData("liftsensor", hdw.liftsensor.isPressed());
-            //telemetry.addData("Green", hdw.sensorColor.green());
-            //telemetry.addData("Blue", hdw.sensorColor.blue());
-            //telemetry.addData("Hue", hsvValues[0]);
-            //telemetry.addData("lfWheel", hdw.wheelFrontLeft.getCurrentPosition());
-            //telemetry.addData("rfWheel", hdw.wheelFrontRight.getCurrentPosition());
-            //telemetry.addData("strafeWheel", hdw.wheelStrafe.getCurrentPosition());
-            //telemetry.addData("TurretDistance", hdw.Turret.getCurrentPosition());
-            //telemetry.addData("VerticalDistance", hdw.Vertical.getCurrentPosition());
-            //telemetry.addData("VerticalSpeed", hdw.Vertical.getPower());
-            //telemetry.addData("SlideDistance", hdw.Slide.getCurrentPosition());
-            //telemetry.addData("LeftTrigger", gamepad1.left_trigger);
-            //telemetry.addData("RightTrigger", gamepad1.right_trigger);
-            //telemetry.addData("LeftPower", powerTwoLeft);
-            //telemetry.addData("RightPower", powerTwoRight);
-
-            //telemetry.addData("turbo", robot.turbo);
-            //telemetry.addData("Max", hdw.Vertical.getSpeed());
-
-            telemetry.update();
-
         }
     }
+
 }
+             */
