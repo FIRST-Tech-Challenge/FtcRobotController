@@ -26,7 +26,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+/*
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.Variables.*;
@@ -57,7 +57,7 @@ public class Autonomous2 extends DriveMethods {
         waitForStart();
         runtime.reset();
 
-        driveForDistance(1, Direction.FORWARD, 0.5,0);
+        //driveForDistance(1, Direction.FORWARD, 0.5,0);
         //driveForDistance(1, Direction.RIGHT, 0.25);
         //driveForDistance(1, Direction.BACKWARD, 0.25);
         //driveForDistance(1, Direction.LEFT, 0.25);
@@ -73,3 +73,4 @@ public class Autonomous2 extends DriveMethods {
         }
     }
 }
+*/

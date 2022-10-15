@@ -29,30 +29,25 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import static org.firstinspires.ftc.teamcode.Variables.motorBL;
+import static org.firstinspires.ftc.teamcode.Variables.motorBR;
+import static org.firstinspires.ftc.teamcode.Variables.motorFL;
+import static org.firstinspires.ftc.teamcode.Variables.motorFR;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import static org.firstinspires.ftc.teamcode.Variables.*;
-import static org.firstinspires.ftc.teamcode.DriveMethods.*;
 
-@TeleOp(name="TeleOp1", group="Linear Opmode")
+@TeleOp(name="SafeTeleOp1", group="Linear Opmode")
 
-public class TeleOp1 extends DriveMethods {
+public class SafeTeleOp1 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-
-
-    @Override
-    public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
+    private void initMotorsBlueSafe() {
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
@@ -62,6 +57,15 @@ public class TeleOp1 extends DriveMethods {
         motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+
+    @Override
+    public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        initMotorsBlueSafe();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();

@@ -202,6 +202,17 @@ public class DriveMethods extends LinearOpMode{
     }
 
     public double getCurrentZ() {
+        CalibrateIMU();
+        /*
+        try {
+            Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        } catch(Error e) {
+            String errorCause = e.getMessage();
+            telemetry.addLine(errorCause);
+            telemetry.update();
+            return 0;
+        }
+        */
         Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
         double currentZ = currentAngle.firstAngle;
         return currentZ;
@@ -221,7 +232,7 @@ public class DriveMethods extends LinearOpMode{
         return intergratedHeading;
 
     }
-    double targetZ = getCurrentZ();
+    //double targetZ = getCurrentZ();
     public void recenterRobotZRotation(double targetRotationZ) {
         double FLPower = motorFL.getPower();
         double BLPower = motorBL.getPower();
@@ -375,7 +386,7 @@ public class DriveMethods extends LinearOpMode{
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
-        
+
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
