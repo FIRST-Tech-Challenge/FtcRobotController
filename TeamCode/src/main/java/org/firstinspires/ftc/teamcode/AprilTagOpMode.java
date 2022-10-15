@@ -24,8 +24,7 @@ public class AprilTagOpMode extends LinearOpMode
     // NOTE: this calibration is for the C920 webcam at 800x448. WE MUST CHANGE THESE TO MATCH OUR CONFIGURATIONS
 
     /*
-    Converts points from the camera coordinate system to the pixel coordinate system.
-    Depends on camera properties (such as focal length, pixel dimensions, resolution, etc.)
+    Check apriltagdetectionpipeline file for more information
     */
     double fx = 578.272;
     double fy = 578.272;
