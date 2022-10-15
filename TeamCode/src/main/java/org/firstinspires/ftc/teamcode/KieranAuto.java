@@ -31,11 +31,11 @@ KieranAuto extends DriveMethods {
 
         waitForStart();
 
-        driveForDistance(1.25,0.5,Direction.FORWARD);
-        driveForDistance(0.15,0.4,Direction.RIGHT);
-        driveForDistance(3.5,0.7,Direction.LEFT);
-        driveForDistance(1.7,0.75,Direction.FORWARD);
-        driveForDistance(0.3,0.2,Direction.FORWARD);
+        driveForDistance(1,0.5,Direction.FORWARD);
+        driveForDistance(1,0.5,Direction.RIGHT);
+        driveForDistance(1,0.5,Direction.LEFT);
+        driveForDistance(1,0.5,Direction.FORWARD);
+        driveForDistance(1,0.5,Direction.FORWARD);
 
         while (opModeIsActive()) {
             telemetry.addLine("Current Distance: " + CumulativeZ());
