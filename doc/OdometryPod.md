@@ -45,4 +45,4 @@ distance traveled and the rotation of the robot are coupled. The distance travel
 in the y (forward) direction is the measured forward motion on a pod (left or right) 
 minus the distance it would be expected to travel based on the robot's rotation:
 
-$$ \frac{dy}{dt} = \frac{lp} - r_l \frac{d\theta}{dt} $$
+$$ \frac{dy}{dt} = lp - r_l \frac{d\theta}{dt} $$
