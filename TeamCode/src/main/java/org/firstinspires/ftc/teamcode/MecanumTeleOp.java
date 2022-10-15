@@ -35,6 +35,7 @@ public class MecanumTeleOp extends LinearOpMode {
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
+        CRServo servoIntake = hardwareMap.crservo.get("intake");
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         //Motor Configuration Settings
@@ -62,6 +63,8 @@ public class MecanumTeleOp extends LinearOpMode {
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        servoIntake.setDirection(DcMotor.Direction.FORWARD);
+
         // --- RESET ALL MOTOR POWERS TO 0 --- //
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
@@ -70,11 +73,7 @@ public class MecanumTeleOp extends LinearOpMode {
         leftLift.setPower(0);
         rightLift.setPower(0);
 
-
-
-
         Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, imu);
-
 
         waitForStart();
 
@@ -147,6 +146,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
             }
 
+            servoIntake.setPower(gamepad2.right_trigger);
 
             telemetry.addData("Power: ", power);
             telemetry.addData("Strafe: ", strafe);//0 is straight forward, 1 is straight to the side
