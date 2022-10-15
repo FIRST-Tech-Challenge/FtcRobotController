@@ -34,6 +34,7 @@ import static org.firstinspires.ftc.teamcode.Variables.motorBR;
 import static org.firstinspires.ftc.teamcode.Variables.motorFL;
 import static org.firstinspires.ftc.teamcode.Variables.motorFR;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -41,7 +42,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="SafeTeleOp1", group="Linear Opmode")
 
-public class SafeTeleOp1 extends DriveMethods {
+public class SafeTeleOp1 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
