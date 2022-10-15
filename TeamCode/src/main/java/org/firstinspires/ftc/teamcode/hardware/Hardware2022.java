@@ -1,16 +1,26 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class Hardware9010 {
+public class Hardware2022 {
 
-    //Constructor
-    public Hardware9010(HardwareMap m) {
+    enum RobotState {
+        HasCone,
+        NoCone
+    }
+
+    //Start with no cone.
+    RobotState currentState = RobotState.NoCone;
+
+    /**
+     * Constructor
+     * @param m This is the HarewareMap, which is configured on the dirver stataion.
+     */
+    public Hardware2022(HardwareMap m) {
         hwMap = m;
     }
 
@@ -24,25 +34,13 @@ public class Hardware9010 {
     public DcMotor wheelStrafe = null;
 
     public DcMotor Slide = null;
-    public DcMotor Turret = null;
     public DcMotor Vertical = null;
-    //public DcMotor wobbleLift = null;
 
-    //public Servo trigger = null;
-    public Servo hopperdoor = null;
     public Servo Encoders = null;
     public Servo grabberclaw = null;
-    // public Servo IntakeServo = null;
-    public CRServo Spinner = null;
-    public Servo WeedWhackerRight = null;
-    //public Servo wobbleGrabber = null;
-    //public Servo servoRingCounter = null;
     public ColorSensor sensorColor = null;
     public DistanceSensor sensorDistance = null;
 
-    /**
-     * This method initialize the hardware
-     */
     public void createHardware() {
 
         wheelFrontRight = hwMap.get(DcMotor.class, "rfWheel");
@@ -69,48 +67,51 @@ public class Hardware9010 {
 
 
         Slide = hwMap.get(DcMotor.class, "Slide");
-        Turret = hwMap.get(DcMotor.class, "Turret");
-        //intake = hwMap.get(DcMotor.class, "intake");
         Vertical = hwMap.get(DcMotor.class, "Vertical");
-        //wobbleLift = hwMap.get(DcMotor.class, "WobbleLift");
-        //wobbleLift.setPower(0);
-        //wobbleLift.setTargetPosition(0);
 
 
-        //shooter.setDirection(DcMotor.Direction.FORWARD);
         Slide.setDirection(DcMotor.Direction.FORWARD);
-        Turret.setDirection(DcMotor.Direction.FORWARD);
         Vertical.setDirection(DcMotor.Direction.FORWARD);
-        //shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //intake.setDirection(DcMotor.Direction.REVERSE);
-        //wobbleLift.setDirection(DcMotor.Direction.FORWARD);
-        //wobbleLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //spinner.setPower(0);
-
-        //shooter.setPower(0);
         Slide.setPower(0);
-        Turret.setPower(0);
         Vertical.setPower(0);
-        //intake.setPower(0);
 
         sensorColor = hwMap.get(ColorSensor.class, "clawdistance");
         sensorDistance = hwMap.get(DistanceSensor.class, "clawdistance");
-        //wobbleLift.setPower(0);
 
         Encoders = hwMap.get(Servo.class, "Encoders");
-        Spinner = hwMap.get(CRServo.class, "Spinner");
-        //wobbleGrabber = hwMap.get(Servo.class,"WobbleGrab");
-        //WobbleLiftServo = hwMap.get(Servo.class,"WobbleLiftServo");
         grabberclaw = hwMap.get(Servo.class, "grabberclaw");
-        //IntakeServo = hwMap.get(CRServo.class,"IntakeServo");
-        Spinner.setPower(0);
-        //WeedWhackerRight = hwMap.get(Servo.class,"WeedWhackerRight");
-        //WeedWhackerLeft = hdwMap.get(CRServo.class,"WeedWhackerLeft");
 
         Encoders.setPosition(0.4);
-        //trigger.setPosition(0.5);
-        //servoRingCounter.setPosition(0.0);
 
     }
+
+
+    /**
+     * This method checks current state of robot.
+     *
+     * @return  Enumeration of robot state.
+     */
+    RobotState checkState(){
+        //TODO Implment the logic to check here.
+        return currentState;
+    }
+
+
+    /**
+     * This method to check if there is a cone close to the claw,
+     * If so, close the claw, and change current stats to has Cone.
+     *
+     */
+    void checkAndGrabCone ( ) {
+
+        //Only try to gram cone if in No Cone state.
+        if ( currentState.equals(RobotState.NoCone)){
+            //TODO:  Logic here
+
+
+            currentState = RobotState.HasCone;
+        }
+    }
+
 }
