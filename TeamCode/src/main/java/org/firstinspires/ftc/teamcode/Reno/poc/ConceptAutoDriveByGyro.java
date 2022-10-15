@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.Reno.poc;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -41,6 +41,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Reno.HardwareRobot;
 
 /**
  *  This file illustrates the concept of driving an autonomous path based on Gyro heading and encoder counts.
@@ -89,14 +90,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
-@Disabled
-public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
+@Autonomous(name="POC: Auto Drive By Gyro", group="Concept")
+//@Disabled
+public class ConceptAutoDriveByGyro extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor         leftDrive   = null;
     private DcMotor         rightDrive  = null;
     private BNO055IMU       imu         = null;      // Control/Expansion Hub IMU
+    private HardwareRobot robot   = new HardwareRobot();
 
     private double          robotHeading  = 0;
     private double          headingOffset = 0;
@@ -141,9 +143,10 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        robot.init(hardwareMap);
         // Initialize the drive system variables.
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftDrive  = robot.leftDriveFront;//hardwareMap.get(DcMotor.class, "left_drive");
+        rightDrive = robot.rightDriveFront;//hardwareMap.get(DcMotor.class, "right_drive");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
