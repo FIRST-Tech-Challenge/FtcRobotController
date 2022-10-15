@@ -233,4 +233,16 @@ public class Drivetrain{
 
         return motorPowers;
     }
+
+    // this function is designed for the auto part
+    public void MoveForDis(Centricity centric, double spd) {
+
+        //set up the list of motor powers, related to the movement vectors, z being rotation
+//        double[] motorPowers = new double[]{
+//                (x + y + joyz)*spd,
+//                (-x + y + joyz)*spd,
+//                (-x + y - joyz)*spd,
+//                (x + y - joyz)*spd
+//        };
+    }
 }

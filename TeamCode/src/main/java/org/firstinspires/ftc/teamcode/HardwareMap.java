@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 /*
-Wheaton Academy Robotics Team: WARHOG
+Wheaton Academy Robotics Team 12606: WARHOG
 This file is the hardware map of robot for FTC 2022-2023
  */
 
