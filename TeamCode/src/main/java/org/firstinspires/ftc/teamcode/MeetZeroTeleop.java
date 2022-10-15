@@ -14,25 +14,21 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="Meet0Teleop", group = "A")
-public class MeetZeroTeleop extends LinearOpMode {
+public class MeetZeroTeleop extends DriveMethods {
+
+    DcMotor motorLinearSlide;
+    Servo servoGrabberThing;
+
     @Override
     public void runOpMode() {
-        DcMotor motorLinearSlide;
-        Servo servoGrabberThing;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
-        motorBL = hardwareMap.get(DcMotor.class, "motorBL");
-        motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
-        motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+        initMotorsBlue();
         motorLinearSlide = hardwareMap.get(DcMotor.class,"motorLS");
         servoGrabberThing = hardwareMap.get(Servo.class, "grabber");
 
-        motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -51,6 +47,8 @@ public class MeetZeroTeleop extends LinearOpMode {
             rightX = gamepad1.right_stick_x;
 
             motorLinearSlide.setPower(gamepad2.left_stick_y/6);
+
+
             if(gamepad2.dpad_up){
                 clampPosition = clampPosition + 0.03;
                 sleep(200);
@@ -70,7 +68,6 @@ public class MeetZeroTeleop extends LinearOpMode {
 
             if (gamepad2.x) {
                 servoGrabberThing.setPosition(clampPosition);
-                
             }
             if (gamepad2.a) {
                 servoGrabberThing.setPosition(releasePosition);
