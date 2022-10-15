@@ -30,15 +30,21 @@ measured directly from the odometry pods, but their relative changes can be
 estimated. To make progress on this, we consider angles and distance traveled 
 separately. 
 
-## Robot Rotation
+### Robot Rotation
 
-$$ d\theta/{dt} = \frac{d(lp - rp) / r_{lr} }{dt} $$
+$$ d\theta/{dt} = \frac{d(d_{lp} - d_{rp}) / r_{lr} }{dt} $$
 
-where $$ lp $$ and $$ rp $$ are the left pod distance traveled and the right pod 
-distance traveled, respectively and $$ r_{lr} $$ is the distance between the left 
+where $d_{lp}$ and $d_{rp}$ are the left pod distance traveled and the right pod 
+distance traveled, respectively and $r_{lr}$ is the distance between the left 
 and right pod, respectively. 
 
-## Estimating Distance Traveled 
+### Estimating Distance Traveled in Each Direction 
+
+For a given pod at distance $\vec{r}$ from the center of the robot, and measuring 
+distance traveled perpendicular to the radius, we can write the distance measured, $d_m$ 
+according to:
+
+$$ d_m = \left| r \right|  \Delta \theta + d_{traveled} $$
 
 Since the pods are all at a distance r from the center, the relation between
 distance traveled and the rotation of the robot are coupled. The distance traveled
@@ -46,3 +52,16 @@ in the y (forward) direction is the measured forward motion on a pod (left or ri
 minus the distance it would be expected to travel based on the robot's rotation:
 
 $$ \frac{dy}{dt} = lp - r_l \frac{d\theta}{dt} $$
+
+## A Generalized Solution
+
+The measured distance on an arbitrary odometry pod, $d_m$, is equal to the sum of:
+
+  * (a) distance traveled by the center of the robot $\vec d$ dotted with the measrement 
+unit vector $\hat m$ and 
+  * (b) the rotation of the robot $\theta$ times the cross product of the pod's measurement 
+vector, $\hat m$ and the radius to the odometry pod from the center of the robot, $\vec r$.
+
+$$ d_m = \underbrace{\vec d \cdot \hat m}_a + \underbrace{\theta \left(\hat m \times \vec r \right)}_b $$
+
+
