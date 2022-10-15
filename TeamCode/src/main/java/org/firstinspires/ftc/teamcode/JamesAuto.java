@@ -24,6 +24,7 @@ JamesAuto extends DriveMethods {
     double previousZ = 0;
     double integratedZ = 0;
     BNO055IMU imu;
+
     @Override
     public void runOpMode() {
 
@@ -31,14 +32,14 @@ JamesAuto extends DriveMethods {
 
         waitForStart();
 
-        driveForDistance(1.25,0.5,Direction.FORWARD);
-        driveForDistance(0.15,0.4,Direction.RIGHT);
-        driveForDistance(3.5,0.7,Direction.LEFT);
-        driveForDistance(1.7,0.75,Direction.FORWARD);
-        driveForDistance(0.3,0.2,Direction.FORWARD);
-
+//        driveForDistance(1.25,0.5,Direction.FORWARD);
+//        driveForDistance(0.15,0.4,Direction.RIGHT);
+//        driveForDistance(3.5,0.7,Direction.LEFT);
+//        driveForDistance(1.7,0.75,Direction.FORWARD);
+//        driveForDistance(0.3,0.2,Direction.FORWARD);
         while (opModeIsActive()) {
-
+            telemetry.addLine("Current Angle Off: " + CumulativeZ());
+            telemetry.update();
         }
 
     }
@@ -82,8 +83,6 @@ JamesAuto extends DriveMethods {
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        parameters.loggingEnabled = true;
-        parameters.loggingTag     = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         calibrated = true;
@@ -176,9 +175,6 @@ JamesAuto extends DriveMethods {
             driveDirection(direction,power);
 
             avg = (Math.abs((motorFL.getCurrentPosition()))+ Math.abs(motorBL.getCurrentPosition())+ Math.abs(motorFR.getCurrentPosition())+ Math.abs(motorBR.getCurrentPosition()))/4;
-
-            telemetry.addLine("Current Distance: " + (avg/(clicksPerRotation*rotationsPerMeter)));
-            telemetry.update();
 
         }
         motorFL.setPower(0);
