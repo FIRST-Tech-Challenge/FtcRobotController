@@ -64,7 +64,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear Opmode")
-@Disabled
+//@Disabled
 public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -79,10 +79,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "motor1");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "motor2");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "motor3");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "motor4");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -153,10 +153,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftFrontDrive.setPower(leftFrontPower*.4);
+            rightFrontDrive.setPower(rightFrontPower*.4);
+            leftBackDrive.setPower(leftBackPower*.4);
+            rightBackDrive.setPower(rightBackPower*.4);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
