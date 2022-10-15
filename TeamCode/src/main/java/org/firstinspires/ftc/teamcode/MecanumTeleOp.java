@@ -29,13 +29,13 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
         // --- DECLARE DC MOTORS FOR DRIVE --- //
-        DcMotorEx leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
-        DcMotorEx rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
+        //DcMotorEx leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
+        //DcMotorEx rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
-        CRServo servoIntake = hardwareMap.crservo.get("intake");
+        //CRServo servoIntake = hardwareMap.crservo.get("intake");
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         //Motor Configuration Settings
@@ -54,7 +54,7 @@ public class MecanumTeleOp extends LinearOpMode {
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        /**
         leftLift.setDirection(DcMotor.Direction.FORWARD);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -64,14 +64,14 @@ public class MecanumTeleOp extends LinearOpMode {
         rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         servoIntake.setDirection(DcMotor.Direction.FORWARD);
-
+        **/
         // --- RESET ALL MOTOR POWERS TO 0 --- //
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
-        leftLift.setPower(0);
-        rightLift.setPower(0);
+        //leftLift.setPower(0);
+        //rightLift.setPower(0);
 
         Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, imu);
 
@@ -87,6 +87,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
             double power = -gamepad1.left_stick_y; // Remember, this is reversed!
             double strafe = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+
             if(rounded)
             {
                 double temp_strafe = (strafe+0.05)*round_coefficient;//rounds strafing to the nearest []th, which means the driver doesn't have to be as exact when moving straight
@@ -108,6 +109,7 @@ public class MecanumTeleOp extends LinearOpMode {
             else {
                 drive.mecanum(power, strafe, turn);
             }
+            /**
             //Lift Stuff
             if(gamepad2.back)//turn off liftAuton
             {
@@ -147,13 +149,27 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             servoIntake.setPower(gamepad2.right_trigger);
+             **/
+
+//            if(gamepad1.b) {
+//                motorFrontLeft.setPower(200);
+//            }
+//            if(gamepad1.a) {
+//                motorBackLeft.setPower(200);
+//            }
+//            if(gamepad1.x) {
+//                motorFrontRight.setPower(200);
+//            }
+//            if(gamepad1.y) {
+//                motorBackRight.setPower(200);
+//            }
 
             telemetry.addData("Power: ", power);
             telemetry.addData("Strafe: ", strafe);//0 is straight forward, 1 is straight to the side
             telemetry.addData("IMU Heading: ", -imu.getAngularOrientation().firstAngle);
-            telemetry.addData("Field Centric: ", drive.isFieldCentric);
-            telemetry.addData("LiftAuton On?: ", liftAuton);
-            telemetry.addData("LiftAuton: ", targetLiftPosition);
+            //telemetry.addData("Field Centric: ", drive.isFieldCentric);
+            //telemetry.addData("LiftAuton On?: ", liftAuton);
+            //telemetry.addData("LiftAuton: ", targetLiftPosition);
             telemetry.update();
         }
     }
