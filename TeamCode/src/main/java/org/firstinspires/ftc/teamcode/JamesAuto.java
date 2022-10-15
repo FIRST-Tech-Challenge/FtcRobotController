@@ -24,12 +24,15 @@ JamesAuto extends DriveMethods {
     double previousZ = 0;
     double integratedZ = 0;
     BNO055IMU imu;
-
+    DcMotor motorLinearSlide;
     @Override
     public void runOpMode() {
 
         initMotorsBlue();
 
+
+        motorLinearSlide = hardwareMap.get(DcMotor.class,"motorLS");
+        motorLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
 
 //        driveForDistance(1.25,0.5,Direction.FORWARD);
@@ -38,6 +41,7 @@ JamesAuto extends DriveMethods {
 //        driveForDistance(1.7,0.75,Direction.FORWARD);
 //        driveForDistance(0.3,0.2,Direction.FORWARD);
         while (opModeIsActive()) {
+            linearMotor(0.1234);
             telemetry.addLine("Current Angle Off: " + CumulativeZ());
             telemetry.update();
         }
@@ -86,6 +90,18 @@ JamesAuto extends DriveMethods {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         calibrated = true;
+    }
+
+    public void linearMotor(double meters) {
+        if (meters<0.5) {
+            motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            double target_encoder = meters * 537.7 / 0.112;
+            double dif = target_encoder - motorLinearSlide.getCurrentPosition();
+            while (dif>12){
+                dif = target_encoder - motorLinearSlide.getCurrentPosition();
+                    motorLinearSlide.setPower(dif / 3000);
+            }
+        }
     }
 
     public void driveDirection(Direction direction, double power){
