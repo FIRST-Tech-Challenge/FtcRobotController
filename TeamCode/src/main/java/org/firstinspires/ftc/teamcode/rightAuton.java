@@ -53,20 +53,15 @@ public class rightAuton extends LinearOpMode {
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
-
-
-
         waitForStart();
 
-        while (opModeIsActive())
-        {
-            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-            telemetry.addData("Color", currentColor);
-            telemetry.update();
-            Auton auto = new Auton(false);
-            auto.runAuton(currentColor, drive);
-        }
+        telemetry.addData("Color", currentColor);
+        telemetry.update();
+        Auton auto = new Auton(false);
+        auto.runAuton(currentColor, drive);
+
 
 
     }

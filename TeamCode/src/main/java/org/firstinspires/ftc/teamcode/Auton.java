@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -13,9 +14,13 @@ public class Auton {
 
     private static int parkingZone;//1, 2, 3
     private boolean direction;//true = left, false = right
+    private DcMotor lift;
 
     public Auton(boolean left) {
         this.direction = left;
+        //lift = hardwareMap.dcMotor.get("motorLift");
+        //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void runAuton(int pz, SampleMecanumDrive getDrive)
@@ -28,25 +33,19 @@ public class Auton {
             angle = 45;
         }
         SampleMecanumDrive drive = getDrive;
-
+        drive.setMotorPowers(0.5,0.5,0.5,0.5);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(18)
-                .lineToLinearHeading(new Pose2d(24, 0, Math.toRadians(angle)))
-                .addDisplacementMarker(() -> {
-                    //first cone placement
-                })
-                .lineToLinearHeading(new Pose2d(18, 0, Math.toRadians(0)))
-                .back(6)
+                .forward(30)
                 .build();
 
         drive.followTrajectorySequence(trajSeq);
 
-        if (parkingZone == 1) {
+        if (parkingZone == 1) { // red
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
                     .strafeLeft(24)
                     .build();
             drive.followTrajectory(park);
-        } else if (parkingZone == 3) {
+        } else if (parkingZone == 3) { // blue
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
                     .strafeRight(24)
                     .build();

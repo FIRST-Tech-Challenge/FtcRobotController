@@ -38,22 +38,23 @@ public class MecanumTeleOp extends LinearOpMode {
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         //Motor Configuration Settings
-        motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); //motor direction
+        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); //motor direction
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Braking behavior
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //We don't want to use PID for the motors using the encoders
 
-        motorBackLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.FORWARD);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        motorLift.setTargetPosition(0);
         motorLift.setDirection(DcMotor.Direction.FORWARD);
         motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -77,6 +78,7 @@ public class MecanumTeleOp extends LinearOpMode {
         int fieldCentricTrigger = 0;
         int targetLiftPosition = 0;
         boolean liftAuton = false;
+        boolean liftToggled = true;
         while (opModeIsActive()) {
 
             double power = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -93,6 +95,11 @@ public class MecanumTeleOp extends LinearOpMode {
                     drive.isFieldCentric = !drive.isFieldCentric;
                 }
                 fieldCentricTrigger++;
+            }
+
+            if(gamepad2.left_bumper)
+            {
+                liftToggled = !liftToggled;
             }
             else{fieldCentricTrigger = 0;}
 
@@ -123,18 +130,32 @@ public class MecanumTeleOp extends LinearOpMode {
                 liftAuton = true;
                 motorLift.setTargetPosition(targetLiftPosition);
             }
-            if(gamepad2.right_stick_y != 0)
+            /**
+            double sigma = 1;
+            if(liftAuton && Math.abs(motorLift.getCurrentPosition() - targetLiftPosition) <= sigma)
+            {
+                liftAuton = false;
+            }
+             **/
+            if(Math.abs(gamepad2.right_stick_y) > 0.1)
             {
                 liftAuton = false;
                 motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorLift.setPower(gamepad2.right_stick_y);
+                motorLift.setPower(-gamepad2.right_stick_y*0.40);
             }
             else if(liftAuton)
             {
                 motorLift.setPower(0.75);
             }
+            else if(liftToggled)
+            {
+                motorLift.setTargetPosition(motorLift.getCurrentPosition());
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            servoIntake.setPower(gamepad2.right_trigger);
+
+            }
+            servoIntake.setPower(gamepad2.right_trigger > 0.80 ? 0.79 : gamepad2.right_trigger);
+            servoIntake.setPower(gamepad2.left_trigger>0.80 ? -0.79 : -gamepad2.left_trigger);
 
 //            if(gamepad1.b) {
 //                motorFrontLeft.setPower(200);
@@ -148,11 +169,13 @@ public class MecanumTeleOp extends LinearOpMode {
 //            if(gamepad1.y) {
 //                motorBackRight.setPower(200);
 //            }
-
+            telemetry.addData("gamepad trigger", gamepad2.right_trigger);
             telemetry.addData("Power: ", power);
             telemetry.addData("Strafe: ", strafe);//0 is straight forward, 1 is straight to the side
             telemetry.addData("IMU Heading: ", -imu.getAngularOrientation().firstAngle);
             telemetry.addData("Field Centric: ", drive.isFieldCentric);
+            telemetry.addData("Lift Encoder Position", motorLift.getCurrentPosition());
+            telemetry.addData("Lift Brake Toggled: ", liftToggled);
             //telemetry.addData("LiftAuton On?: ", liftAuton);
             //telemetry.addData("LiftAuton: ", targetLiftPosition);
             telemetry.update();
