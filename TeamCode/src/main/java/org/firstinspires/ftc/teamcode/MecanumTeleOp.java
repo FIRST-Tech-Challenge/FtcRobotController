@@ -29,13 +29,12 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
         // --- DECLARE DC MOTORS FOR DRIVE --- //
-        //DcMotorEx leftLift = hardwareMap.get(DcMotorEx.class, "leftLift");
-        //DcMotorEx rightLift = hardwareMap.get(DcMotorEx.class, "rightLift");
+        DcMotorEx motorLift = hardwareMap.get(DcMotorEx.class, "motorLift");
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
-        //CRServo servoIntake = hardwareMap.crservo.get("intake");
+        CRServo servoIntake = hardwareMap.crservo.get("intake");
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         //Motor Configuration Settings
@@ -54,24 +53,19 @@ public class MecanumTeleOp extends LinearOpMode {
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        /**
-        leftLift.setDirection(DcMotor.Direction.FORWARD);
-        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        rightLift.setDirection(DcMotor.Direction.FORWARD);
-        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLift.setDirection(DcMotor.Direction.FORWARD);
+        motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         servoIntake.setDirection(DcMotor.Direction.FORWARD);
-        **/
+
         // --- RESET ALL MOTOR POWERS TO 0 --- //
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
-        //leftLift.setPower(0);
-        //rightLift.setPower(0);
+        motorLift.setPower(0);
 
         Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, imu);
 
@@ -109,7 +103,7 @@ public class MecanumTeleOp extends LinearOpMode {
             else {
                 drive.mecanum(power, strafe, turn);
             }
-            /**
+
             //Lift Stuff
             if(gamepad2.back)//turn off liftAuton
             {
@@ -117,39 +111,30 @@ public class MecanumTeleOp extends LinearOpMode {
             }
             if(gamepad2.x)//mid
             {
-                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 targetLiftPosition = 1;
                 liftAuton = true;
-                leftLift.setTargetPosition(targetLiftPosition);
-                rightLift.setTargetPosition(targetLiftPosition);
+                motorLift.setTargetPosition(targetLiftPosition);
             }
             if(gamepad2.y)//low
             {
-                leftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 targetLiftPosition = 2;
                 liftAuton = true;
-                leftLift.setTargetPosition(targetLiftPosition);
-                rightLift.setTargetPosition(targetLiftPosition);
+                motorLift.setTargetPosition(targetLiftPosition);
             }
             if(gamepad2.right_stick_y != 0)
             {
                 liftAuton = false;
-                leftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftLift.setPower(gamepad2.right_stick_y);
-                rightLift.setPower(gamepad2.right_stick_y);
+                motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motorLift.setPower(gamepad2.right_stick_y);
             }
             else if(liftAuton)
             {
-                leftLift.setPower(0.75);
-                rightLift.setPower(0.75);
-
+                motorLift.setPower(0.75);
             }
 
             servoIntake.setPower(gamepad2.right_trigger);
-             **/
 
 //            if(gamepad1.b) {
 //                motorFrontLeft.setPower(200);
@@ -167,7 +152,7 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Power: ", power);
             telemetry.addData("Strafe: ", strafe);//0 is straight forward, 1 is straight to the side
             telemetry.addData("IMU Heading: ", -imu.getAngularOrientation().firstAngle);
-            //telemetry.addData("Field Centric: ", drive.isFieldCentric);
+            telemetry.addData("Field Centric: ", drive.isFieldCentric);
             //telemetry.addData("LiftAuton On?: ", liftAuton);
             //telemetry.addData("LiftAuton: ", targetLiftPosition);
             telemetry.update();
