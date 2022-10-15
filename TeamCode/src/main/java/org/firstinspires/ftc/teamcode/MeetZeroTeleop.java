@@ -70,6 +70,7 @@ public class MeetZeroTeleop extends LinearOpMode {
 
             if (gamepad2.x) {
                 servoGrabberThing.setPosition(clampPosition);
+                
             }
             if (gamepad2.a) {
                 servoGrabberThing.setPosition(releasePosition);
