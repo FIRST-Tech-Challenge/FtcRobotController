@@ -25,11 +25,11 @@ public class WebcamTest extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
         pipeline = new SamplePipeline();
-        webcam.setPipeline(pipeline);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
+        webcam.setPipeline(pipeline);
         // OR...  Do Not Activate the Camera Monitor View:
         // webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
 

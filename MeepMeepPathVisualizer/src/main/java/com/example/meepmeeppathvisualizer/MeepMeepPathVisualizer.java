@@ -37,7 +37,7 @@ public class MeepMeepPathVisualizer {
                 .setColorScheme(new ColorSchemeRedDark())
 
                 // Dimensions of the bot
-                .setDimensions(13, 16)
+                .setDimensions(15, 15)
 
                 // () -> {} is the syntax for taking in a function, aka a lambda
                 // Assuming FRONT of the bot is the EXTAKE
