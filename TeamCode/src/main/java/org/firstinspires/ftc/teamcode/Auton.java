@@ -11,22 +11,23 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 // PSEUDOCODE
 public class Auton {
 
-    private final int parkingZone;//1, 2, 3
+    private static int parkingZone;//1, 2, 3
     private boolean direction;//true = left, false = right
 
-    public Auton(int pz, boolean left) {
-        this.parkingZone = pz;
+    public Auton(boolean left) {
         this.direction = left;
     }
 
-    public void runAuton()
+    public void runAuton(int pz, SampleMecanumDrive getDrive)
     {
+        parkingZone = pz;
+
         int angle = -45;
         if(direction)
         {
             angle = 45;
         }
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = getDrive;
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
                 .forward(18)
