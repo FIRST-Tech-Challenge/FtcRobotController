@@ -250,6 +250,7 @@ public class DriveMethods extends LinearOpMode{
         }
     }
     public void driveForDistance(double distanceMeters, Direction movementDirection, double power, double targetRotation) { // distance: 2, strafe: false, power: 0.5
+        targetZ = getCurrentZ();
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -302,7 +303,7 @@ public class DriveMethods extends LinearOpMode{
                 // motorFR.setPower(power);
                 // motorBR.setPower(power);
                 // targetZ = getCurrentZ();
-                targetZ = targetRotation;
+
                 break;
                 /*
             case ROTATE_RIGHT:
@@ -341,14 +342,15 @@ public class DriveMethods extends LinearOpMode{
             BLPosition = Math.abs(motorBL.getCurrentPosition());
             FRPosition = Math.abs(motorFR.getCurrentPosition());
             BRPosition = Math.abs(motorBR.getCurrentPosition());
+
             double currentZ = getCurrentZ();
             double rotateError = targetZ - currentZ;
 
             avgPosition = (int) (FLPosition + BLPosition + FRPosition + BRPosition) / 4;
-            motorFL.setPower(FLPower - (rotateError / 100));
-            motorBL.setPower(BLPower - (rotateError / 100));
-            motorFR.setPower(FRPower + (rotateError / 100));
-            motorBR.setPower(BRPower + (rotateError / 100));
+            motorFL.setPower(FLPower - (rotateError / 150));
+            motorBL.setPower(BLPower - (rotateError / 150));
+            motorFR.setPower(FRPower + (rotateError / 150));
+            motorBR.setPower(BRPower + (rotateError / 150));
             telemetry.addLine("MotorFL Power " + motorFL.getPower());
             telemetry.addLine("MotorBL Power " + motorBL.getPower());
             telemetry.addLine("MotorFR Power " + motorFR.getPower());
