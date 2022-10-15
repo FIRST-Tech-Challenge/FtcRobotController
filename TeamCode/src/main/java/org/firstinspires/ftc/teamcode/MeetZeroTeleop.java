@@ -95,8 +95,9 @@ public class MeetZeroTeleop extends DriveMethods {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Motors", "left (%.2f), right (%.2f)");
-            telemetry.addLine("ClampPositoin: " + clampPosition);
+            telemetry.addLine("ClampPosition: " + clampPosition);
             telemetry.addLine("ReleasePosition: " + releasePosition);
+            telemetry.addLine("SpeedDiv: " + speedDiv);
             telemetry.update();
         }
     }
