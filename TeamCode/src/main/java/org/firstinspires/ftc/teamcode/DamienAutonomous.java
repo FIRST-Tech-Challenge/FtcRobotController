@@ -50,8 +50,33 @@ public class DamienAutonomous extends DriveMethods {
 
     // Declare OpMode members.
 
+    DcMotor motorLinearSlide;
+    int currentSlidePosClicks;
+    private enum slidePositionEnum {
+        LOWEST,
+        HIGHEST,
+    }
+    private void moveSlideToPos(double distanceMeters) {
+        int targetPos = (int) ((distanceMeters * clicksPerRotation * rotationsPerMeter) / 1.15);
+        motorLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLinearSlide.setTargetPosition((targetPos));
+        motorLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        int currentPos = motorLinearSlide.getCurrentPosition();
+        if(distanceMeters > 0) {
+            motorLinearSlide.setPower(-1/6);
+        } else {
+            motorLinearSlide.setPower(1/6);
+        }
 
+        while(targetPos >= currentPos){
+            currentPos = Math.abs(motorLinearSlide.getCurrentPosition());
+            telemetry.addLine("Current Position: " + motorLinearSlide.getCurrentPosition());
+            telemetry.addLine("Target Position: " + targetPos);
+            telemetry.update();
+        }
+        motorLinearSlide.setPower(0);
 
+    }
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -61,29 +86,16 @@ public class DamienAutonomous extends DriveMethods {
 
         initMotorsBlue();
         CalibrateIMU();
+        motorLinearSlide = hardwareMap.get(DcMotor.class,"motorLS");
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-//        driveForDistance(1, Direction.FORWARD, 0.5);
-//        driveForDistance(1, Direction.RIGHT, 0.5);
-//        driveForDistance(1, Direction.BACKWARD, 0.5);
-//        driveForDistance(1, Direction.LEFT, 0.5);
-
         // run until the end of the match (driver presses STOP)
 
         while (opModeIsActive()) {
 
-            if (gamepad1.a) {
-                driveForDistance(1, Direction.FORWARD, 0.5,0);
-            } else if (gamepad1.b) {
-                driveForDistance(1, Direction.BACKWARD, 0.5,0);
-            } else if (gamepad1.x) {
-                driveForDistance(1, Direction.LEFT, 0.5,0);
-            } else if (gamepad1.y) {
-                driveForDistance(1, Direction.RIGHT, 0.5,0);
-            }
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)");
