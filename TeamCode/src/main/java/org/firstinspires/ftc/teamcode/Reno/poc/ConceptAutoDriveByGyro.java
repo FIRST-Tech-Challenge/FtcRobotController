@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -90,7 +91,7 @@ import org.firstinspires.ftc.teamcode.Reno.HardwareRobot;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="POC: Auto Drive By Gyro", group="Concept")
+@Autonomous(name="POC: Drive By Gyro", group="Concept")
 //@Disabled
 public class ConceptAutoDriveByGyro extends LinearOpMode {
 
@@ -140,6 +141,8 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
 
 
+    private ElapsedTime     runtime = new ElapsedTime();
+
     @Override
     public void runOpMode() {
 
@@ -151,7 +154,7 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // define initialization values for IMU, and then initialize it.
@@ -169,13 +172,21 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
             telemetry.addData(">", "Robot Heading = %4.0f", getRawHeading());
+            telemetry.addData(">", "Robot Roll = %4.0f", getRawRoll());
+            telemetry.addData(">", "Robot Pitch = %4.0f", getRawPitch());
             telemetry.update();
         }
+
+
 
         // Set the encoders for closed loop speed control, and reset the heading.
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetHeading();
+
+        waitForStart();
+
+        runtime.reset();
 
         // Step through each leg of the path,
         // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
@@ -421,6 +432,16 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
     public double getRawHeading() {
         Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
+    }
+
+    public double getRawRoll() {
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.secondAngle;
+    }
+
+    public double getRawPitch() {
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.thirdAngle;
     }
 
     /**
