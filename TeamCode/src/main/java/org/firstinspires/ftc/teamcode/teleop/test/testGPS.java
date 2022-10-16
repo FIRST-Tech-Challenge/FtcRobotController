@@ -15,14 +15,12 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="TeleopTest34", group="Drive")
+@TeleOp(name="Test GPS", group="Drive")
 //@Disabled
-public class teleopTesting extends OpMode{
+public class testGPS extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
-    TeleopKinematics kinematics;
-
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -43,7 +41,6 @@ public class teleopTesting extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new TeleopKinematics(posSystem);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -73,13 +70,13 @@ public class teleopTesting extends OpMode{
     }
 
     void UpdatePlayer2(){
-
     }
 
     void UpdateTelemetry(){
         telemetry.addData("X", gamepad1.left_stick_x);
         telemetry.addData("Y", -gamepad1.left_stick_y);
         telemetry.addData("R", gamepad1.right_stick_x);
+        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
 
         for(int i = 0; i < 4; i++){
             posData[i] = posSystem.getPositionArr()[i];
@@ -88,7 +85,6 @@ public class teleopTesting extends OpMode{
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
-        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
         telemetry.update();
     }
 
@@ -100,17 +96,48 @@ public class teleopTesting extends OpMode{
     }
 
     void DriveTrainBasePower(){
+        int powerBotL = 1;
+        int powerTopL = 1;
 
+        if (gamepad1.dpad_up){
+            robot.botL.setPower(powerBotL);
+            robot.topL.setPower(powerTopL);
+        }
+        else{
+            robot.botL.setPower(0);
+            robot.topL.setPower(0);
+        }
     }
 
     void DriveTrainPowerEncoder(){
+        posSystem.calculatePos();
 
+        int posBotL = robot.botL.getCurrentPosition();
+        int posTopL = robot.topL.getCurrentPosition();
 
+        double alpha = 0.5;
+        double beta = 1 - alpha;
+
+        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
+        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
+
+        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
+        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
+
+        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
+        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
+
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
     }
 
     private void reset(){
 
     }
+
     /*
      * Code to run ONCE after the driver hits STOP
      */

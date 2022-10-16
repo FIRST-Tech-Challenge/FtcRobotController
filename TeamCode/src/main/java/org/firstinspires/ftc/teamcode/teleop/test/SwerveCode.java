@@ -44,12 +44,14 @@ public class SwerveCode extends OpMode{
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
+
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-      //  robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
@@ -132,7 +134,6 @@ public class SwerveCode extends OpMode{
 
         robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
         robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-
     }
 
     private void reset(){
