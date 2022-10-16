@@ -25,11 +25,12 @@ public class Field {
     //todo decide on start position
     public Pose2d startPose = new Pose2d(0, 0, 0);
 
-    public Pose2d targetCoordinate =  new Pose2d(0, 0, 0);
+    public Pose2d targetCoordinate;
 
-    public double inchesPerGrid = 12;
+    public double inchesPerGrid = 24;
     public int fieldWidth = 12;
     public Field(boolean isBlue){
+        targetCoordinate = poseToCoordinates(startPose);
         this.isBlue = isBlue;
         if(isBlue){
             objects[0] = new FieldObject("AllianceTerminalClose",2.5,0.5,0);
@@ -138,9 +139,9 @@ public class Field {
 
     public void updateTargetPose(double dx, double dy, DriveTrain driveTrain){
         Pose2d newTarget = new Pose2d(targetCoordinate.getX() + dx, targetCoordinate.getY() + dy, 0);
-        if(newTarget.getX() > fieldWidth || newTarget.getX() < 0)
+        //if(newTarget.getX() > fieldWidth || newTarget.getX() < 0) return;
 
-        if(newTarget.getY() > fieldWidth || newTarget.getY() < 0)
+        //if(newTarget.getY() > fieldWidth || newTarget.getY() < 0) return;
 
         targetCoordinate = newTarget;
         driveTrain.setGridDriveStateMachine(getPathToTarget(driveTrain));

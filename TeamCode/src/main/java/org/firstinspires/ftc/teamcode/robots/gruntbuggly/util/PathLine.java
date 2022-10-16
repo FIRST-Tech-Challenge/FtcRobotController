@@ -76,4 +76,8 @@ public class PathLine {
         return totalDistance - 0.5 * acceleration * Math.pow(totalTime - time, 2);
     }
 
+    public double getTotalTime(){
+        return  totalTime;
+    }
+
 }

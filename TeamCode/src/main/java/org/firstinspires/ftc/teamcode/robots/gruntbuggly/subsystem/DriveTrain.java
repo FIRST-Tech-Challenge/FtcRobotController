@@ -117,6 +117,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private PathLine gridPathLine;
 
     public DriveTrain (HardwareMap hardwareMap, boolean simulated){
+
         super(simulated);
         useMotorPowers = false;
 
@@ -187,6 +188,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         //default pose - gotta have some initial pose
         setPoseEstimate(Position.START_RIGHT.getPose());
         currentPose = new Pose2d(0,0,0);
+
+        driveToNextTarget = Utils.getStateMachine(gridDrive)
+                .addState(() -> false)
+                .build();
 
     }
     public double updateHeading(double dtheta){
@@ -430,7 +435,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             startTime = System.nanoTime()/1e9;
             return false;
         }
-        Pose2d newPoint = gridPathLine.getPointAtTime(System.nanoTime() / 1e9 + timeStep - startTime);
+        double time = System.nanoTime() / 1e9 + timeStep - startTime;
+        Pose2d newPoint = gridPathLine.getPointAtTime(time);
         Pose2d currentPoseEstimate = getPoseEstimate();
         double dx = newPoint.getX() - currentPoseEstimate.getX();
         double dy = newPoint.getY() - currentPoseEstimate.getY();
@@ -438,13 +444,17 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         //direction
         double heading = getRawExternalHeading();
         double sign = Math.signum(dx * ( -Math.sin(heading)) + dy * (Math.cos(heading)));
-        double newHeading = Math.atan2(dy,dx) + sign>0 ? 0:2*Math.PI;
+        double newHeading = Math.atan2(dy,dx) + (sign>0 ? 0:2*Math.PI);
 
-        headingPID.setSetpoint(turnAngle);
-        headingPID.setInput(poseEstimate.getHeading());
+
+
+        headingPID.setSetpoint(newHeading);
+        headingPID.setInput(getPoseEstimate().getHeading());
         double correction = headingPID.performPID();
-        //todo finish path following
-        return false;
+
+        setDriveSignal(new DriveSignal(new Pose2d(-velocity*sign, 0, correction), new Pose2d(0, 0, 0)));
+
+        return time > gridPathLine.getTotalTime();
     }
 
 

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -56,6 +57,10 @@ public class Robot implements Subsystem {
     private Mat craneMat;
     public static int CB_WIDTH = 320;
     public static int CB_HEIGHT = 240;
+    boolean updatePoseHappens = false;
+
+    double current_dx = 0;
+    double current_dy = 0;
 
     public Robot(HardwareMap hardwareMap, boolean simulated) {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -93,6 +98,14 @@ public class Robot implements Subsystem {
                 telemetryMap.put(name + " Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (subsystemUpdateTimes[i] * 1e-6), (int) (1 / (subsystemUpdateTimes[i] * 1e-9))));
             }
         }
+        telemetryMap.put("Update Pose happens " ,updatePoseHappens);
+
+        Pose2d target =field.targetCoordinate;
+        telemetryMap.put("Target X", target.getX());
+        telemetryMap.put("Target Y", target.getY());
+        telemetryMap.put(" X", current_dx);
+        telemetryMap.put(" Y", current_dy);
+        telemetryMap.put("heading",driveTrain.getRawExternalHeading());
 
         return telemetryMap;
     }
@@ -201,6 +214,9 @@ public class Robot implements Subsystem {
     }
 
     public void updateFieldTargetPose(double dx, double dy){
+        updatePoseHappens = true;
+        current_dx = dx;
+        current_dy = dy;
         field.updateTargetPose(dx, dy, driveTrain);
     }
 }
