@@ -38,7 +38,7 @@ where $d_{lp}$ and $d_{rp}$ are the left pod distance traveled and the right pod
 distance traveled, respectively and $r_{lr}$ is the distance between the left 
 and right pod, respectively. 
 
-### Estimating Distance Traveled in Each Direction 
+### Estimating Distance Traveled in Each Direction Generic Wheel Diagram.drawio.png
 
 For a given pod at distance $\vec{r}$ from the center of the robot, and measuring 
 distance traveled perpendicular to the radius, we can write the distance measured, $d_m$ 
@@ -54,6 +54,15 @@ minus the distance it would be expected to travel based on the robot's rotation:
 $$ \frac{dy}{dt} = lp - r_l \frac{d\theta}{dt} $$
 
 ## A Generalized Solution
+
+The formalism I started with seemed a little convoluted, so I thought it would be helpful 
+to start from first-principles. It's helpful to flip the problem around and calculate the 
+expected **pod measurement** based on the motion and rotation of the robot. Figure 2
+illustrates the concept: 
+
+![Generic Wheel Diagram](Generic Wheel Diagram.drawio.png)
+
+*Figure 2: The layout of the odometry pods and definitions of vectors.*
 
 The measured distance on an arbitrary odometry pod, $d_m$, is equal to the sum of:
 
