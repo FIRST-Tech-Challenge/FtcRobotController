@@ -73,9 +73,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleopDriving", group="Concept")
+@TeleOp(name="TeleopIMU_Driving", group="Concept")
 //@Disabled
-public class TeleopDriving extends LinearOpMode {
+public class TeleopIMU_Driving extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -138,7 +138,7 @@ public class TeleopDriving extends LinearOpMode {
     static final int COUNTS_PER_FEET_MOTION = 360; // robot moving 1 feet for 360 counts position.
     double robotAutoLoadMovingDistance = 0.0; // in feet
     double robotAutoUnloadMovingDistance = 0.25; // in feet
-
+    
 
     @Override
     public void runOpMode() {
