@@ -1,0 +1,38 @@
+<mxfile host="app.diagrams.net" modified="2022-10-16T18:39:03.309Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36" etag="ZA3R-k-rCf40Dk_ZAVn4" version="20.4.0" type="github">
+  <diagram id="zmkDvn243D7gALXEXFXQ" name="Page-1">
+    <mxGraphModel dx="639" dy="551" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" style="locked=1;" parent="0" />
+        <mxCell id="AdgE19KjICtTeteZ4ssc-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#647687;fontColor=#ffffff;strokeColor=none;" parent="1" vertex="1">
+          <mxGeometry x="160" y="170" width="490" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-2" value="Front Pod" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=6;" parent="1" vertex="1">
+          <mxGeometry x="365" y="185" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-4" value="Left Pod" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=6;rotation=-90;" parent="1" vertex="1">
+          <mxGeometry x="160" y="550" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-5" value="center" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#a20025;fontColor=#ffffff;strokeColor=#6F0000;" parent="1" vertex="1">
+          <mxGeometry x="390" y="400" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="_e36Luap0TfPQ91Z3ZsY-8" value="Untitled Layer" style="" parent="0" />
+        <mxCell id="_e36Luap0TfPQ91Z3ZsY-10" value="Right Pod" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=6;rotation=-90;" vertex="1" parent="_e36Luap0TfPQ91Z3ZsY-8">
+          <mxGeometry x="570" y="300" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="_e36Luap0TfPQ91Z3ZsY-11" value="$$ \vec r_{pod} $$" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="_e36Luap0TfPQ91Z3ZsY-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="416.2737733357585" y="408.01380350749537" as="sourcePoint" />
+            <mxPoint x="593" y="315.0000000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_e36Luap0TfPQ91Z3ZsY-12" value="$$ \hat m_{pod} $$" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="_e36Luap0TfPQ91Z3ZsY-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="610" y="275" as="sourcePoint" />
+            <mxPoint x="611" y="206" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
