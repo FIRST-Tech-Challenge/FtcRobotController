@@ -15,5 +15,12 @@ public class Extension {
     private Telemetry telemetry;
     public DcMotorEx extensionMotor;
 
-    static final double     MM_TO_INCHES = 0.0393700787;
+    static final double MM_TO_INCHES = 0.0393700787;
+    static final double COUNTS_PER_SERVO_REV =;
+
+    static final double MOVE_OUT_SPEED = 0.5;
+    static final double MOVE_BACK_SPEED = 0.5;
+
+    static final double MINIMUM_CLEARANCE_DISTANCE = 95.875 * MM_TO_INCHES;
+
 }
