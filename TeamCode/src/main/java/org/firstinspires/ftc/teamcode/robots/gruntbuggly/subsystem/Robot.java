@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.Field;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
@@ -38,6 +40,7 @@ public class Robot implements Subsystem {
     public Turret turret;
     public Crane crane;
     public Subsystem[] subsystems;
+    public Field field;
 
     private long[] subsystemUpdateTimes;
     private boolean autoDumpEnabled, doubleDuckEnabled;
@@ -76,7 +79,7 @@ public class Robot implements Subsystem {
 
         craneBitmap = Bitmap.createBitmap(CB_WIDTH, CB_HEIGHT, Bitmap.Config.RGB_565);
         craneMat = new Mat(CB_HEIGHT, CB_WIDTH, CvType.CV_8UC3);
-
+        field = new Field(true);
     }
 
     @Override
@@ -195,5 +198,9 @@ public class Robot implements Subsystem {
             return true;
         }
         return false;
+    }
+
+    public void updateFieldTargetPose(double dx, double dy){
+        field.updateTargetPose(dx, dy, driveTrain);
     }
 }

@@ -22,8 +22,7 @@ public class Constants {
     public static final double TRACK_WIDTH = 13.5;
     public static final double DISTANCE_BETWEEN_WHEELS = TRACK_WIDTH;
 
-    public static double MAX_VEL = 30;
-    public static double MAX_ACCEL = 10;
+
     public static double MAX_ANG_VEL = Math.toRadians(120);
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
     public static final double MAX_RPM = 150;
@@ -33,6 +32,9 @@ public class Constants {
             getMotorVelocityF(MAX_RPM / 60 * 1120));
     public static PIDFCoefficients SWERVE_VELOCITY_PID = new PIDFCoefficients(10, 3, 0,
             getMotorVelocityF(MAX_RPM / 60 * 1120));
+
+    public static final double MAX_VELOCITY = 2;
+    public static final double MAX_ACCELERATION = 1;
 
     // ratios
 

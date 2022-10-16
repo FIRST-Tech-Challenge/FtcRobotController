@@ -1,12 +1,34 @@
 package org.firstinspires.ftc.teamcode.robots.gruntbuggly;
 
+import android.net.wifi.p2p.WifiP2pManager;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
+import org.checkerframework.checker.units.qual.C;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem.DriveTrain;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.PathLine;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.State;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.Vector2;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class Field {
 
     public FieldObject[] objects = new FieldObject[35];
     public boolean isBlue;
 
+    //todo decide on start position
+    public Pose2d startPose = new Pose2d(0, 0, 0);
+
+    public Pose2d targetCoordinate =  new Pose2d(0, 0, 0);
+
+    public double inchesPerGrid = 12;
+    public int fieldWidth = 12;
     public Field(boolean isBlue){
         this.isBlue = isBlue;
         if(isBlue){
@@ -113,6 +135,139 @@ public class Field {
         }
         return minIndex;
     }
+
+
+    public void updateTargetPose(double dx, double dy, DriveTrain driveTrain){
+        Pose2d newTarget = new Pose2d(targetCoordinate.getX() + dx, targetCoordinate.getY() + dy, 0);
+        if(newTarget.getX() > fieldWidth || newTarget.getX() < 0) return;
+        if(newTarget.getY() > fieldWidth || newTarget.getY() < 0) return;
+        targetCoordinate = newTarget;
+        driveTrain.setGridDriveStateMachine(getPathToTarget(driveTrain));
+    }
+    /**
+     * returns a state machine that will drive the robot to target grid position
+     * each path is composed of atmost a vertical component and a horizontal component.
+     */
+    public Pose2d poseToCoordinates(Pose2d currentPose){
+        //todo
+        return new Pose2d(
+                (currentPose.getX() - inchesPerGrid/2) / inchesPerGrid,
+                (currentPose.getY() - inchesPerGrid/2) / inchesPerGrid,
+                0);
+
+    }
+    public boolean orthogonalPoses(Pose2d pose1, Pose2d pose2){
+        return (Utils.approxEquals(pose1.getX(), pose2.getX())) || Utils.approxEquals(pose1.getY(), pose2.getY());
+    }
+    public double angleToPose(Pose2d startPose, Pose2d endPose){
+        //todo
+        return 0;
+    }
+    public double angleDistance( double a1, double a2){
+        return Math.min(
+                Math.abs(a2 - a1),
+                Math.abs( (a2+Math.PI) % (2*Math.PI) - (a1+Math.PI) % (2*Math.PI) )
+        );
+    }
+    public boolean facingTargetDirection(double angle1, Pose2d currentCoordinate){
+        double dy = targetCoordinate.getY() - currentCoordinate.getY();
+        double dx = targetCoordinate.getX() - currentCoordinate.getX();
+        double a2 = Math.atan2(dy, dx);
+        return angleDistance(angle1, a2) < Math.PI/4;
+
+    }
+    public double getMagnitude(Pose2d pose2d){
+        return Math.sqrt( Math.pow(pose2d.getX(), 2) + Math.pow(pose2d.getY(), 2));
+    }
+    public double getVelocityDot(Pose2d velocity, Pose2d currentCoordinate, Pose2d targetCoor){
+        return (velocity.getX() * (targetCoor.getX() - currentCoordinate.getX())
+                + velocity.getY() * (targetCoor.getY() - currentCoordinate.getY())) / getMagnitude(currentCoordinate);
+    }
+    public Pose2d getIntermediatePose(Pose2d currentCoordinate, double heading){
+
+        double dx = targetCoordinate.getX() - currentCoordinate.getX();
+        double dy = targetCoordinate.getY() - currentCoordinate.getY();
+        //if line is horizontal
+        if(!(angleDistance(0, heading) < Math.PI/4)){
+            return new Pose2d(targetCoordinate.getX(), (int)currentCoordinate.getY(),0);
+
+        }
+
+        return  new Pose2d( (int)currentCoordinate.getY(), targetCoordinate.getY(),0);
+
+
+    }
+    public double getHeadingToPose(Pose2d currentPose, Pose2d targetPose){
+        return Math.atan2(
+                targetPose.getY() - currentPose.getY(),
+                targetPose.getX() - currentPose.getX()
+        );
+    }
+
+    public StateMachine getPathToTarget(DriveTrain driveTrain){
+        StateMachine state;
+
+        Pose2d currentCoordinate = poseToCoordinates(driveTrain.getPoseEstimate());
+        double currentHeading = driveTrain.getRawExternalHeading();
+        Pose2d velocity = driveTrain.getPoseVelocity();
+        //does the robot only need one component to make it
+        if (orthogonalPoses(currentCoordinate, targetCoordinate)){
+            //if robot is heading in the right direction already, then you only need one path
+            if(facingTargetDirection(currentHeading, currentCoordinate)){
+
+                state = Utils.getStateMachine(new Stage())
+                        .addState(() ->
+                            driveTrain.setPath(new PathLine(currentCoordinate,targetCoordinate,getVelocityDot(velocity,currentCoordinate,targetCoordinate), Constants.MAX_VELOCITY, Constants.MAX_ACCELERATION))
+                        )
+                        .addState(() ->
+                                driveTrain.followPath()
+                        )
+                        //todo add drivetrain
+                        .build();
+                return state;
+            }
+           // otherwise, just treat it as two copmonents
+        }
+
+
+        //it will require two components
+
+            Pose2d intermediatePose = getIntermediatePose(currentCoordinate,currentHeading);
+            double newHeading = getHeadingToPose(intermediatePose,targetCoordinate);
+            state = Utils.getStateMachine(new Stage())
+                    .addState(() ->
+                            driveTrain.setPath(new PathLine(
+                                    currentCoordinate,
+                                    intermediatePose,
+                                    getVelocityDot(velocity,currentCoordinate,intermediatePose),
+                                    Constants.MAX_VELOCITY, Constants.MAX_ACCELERATION
+                            ))
+                    )
+                    .addState(() ->
+                            driveTrain.followPath()
+                    )
+                    .addState(()-> driveTrain.turnUntil(newHeading))
+                    .addState(() ->
+                            driveTrain.setPath(new PathLine(
+                                    intermediatePose,
+                                    targetCoordinate,
+                                    0,
+                                    Constants.MAX_VELOCITY, Constants.MAX_ACCELERATION
+                            ))
+                    )
+                    .addState(() ->
+                            driveTrain.followPath()
+                    )
+                    //todo add drivetrain
+                    .build();
+            return state;
+
+
+
+
+    }
+
+
 
 }
 

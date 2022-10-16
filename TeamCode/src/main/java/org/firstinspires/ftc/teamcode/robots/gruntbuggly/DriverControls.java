@@ -58,7 +58,23 @@ public class DriverControls {
         //manual override of drivetrain
         if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
             robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-        else robot.driveTrain.ManualDriveOff();
+        else {
+            robot.driveTrain.ManualDriveOff();
+        }
+
+        //update TargetPose
+        if( gamepad1.dpad_down){
+            robot.updateFieldTargetPose(0, -1);
+        }
+        if( gamepad1.dpad_up){
+            robot.updateFieldTargetPose(0, 1);
+        }
+        if( gamepad1.dpad_left){
+            robot.updateFieldTargetPose(-1, 0);
+        }
+        if( gamepad1.dpad_right){
+            robot.updateFieldTargetPose(1, 0);
+        }
 
         //if (notJoystickDeadZone(gamepad1.right_stick_x))
             //pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
