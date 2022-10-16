@@ -51,7 +51,6 @@ import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.vision.VisionProviders;
-import org.firstinspires.ftc.teamcode.vision.SkystoneTargetInfo;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -183,7 +182,6 @@ public class PowerPlay_6832 extends OpMode {
     private int soundID = -1;
 
     // auto stuff
-    private SkystoneTargetInfo initGoldPosTest;
     private double pCoeff = 0.14;
     private double dCoeff = 1.31;
     private double targetAngle = 287.25;
