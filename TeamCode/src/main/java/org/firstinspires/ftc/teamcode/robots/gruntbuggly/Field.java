@@ -134,13 +134,15 @@ public class Field {
 
         }
         return minIndex;
-    }
 
+         
 
     public void updateTargetPose(double dx, double dy, DriveTrain driveTrain){
         Pose2d newTarget = new Pose2d(targetCoordinate.getX() + dx, targetCoordinate.getY() + dy, 0);
-        if(newTarget.getX() > fieldWidth || newTarget.getX() < 0) return;
-        if(newTarget.getY() > fieldWidth || newTarget.getY() < 0) return;
+        if(newTarget.getX() > fieldWidth || newTarget.getX() < 0)
+
+        if(newTarget.getY() > fieldWidth || newTarget.getY() < 0)
+
         targetCoordinate = newTarget;
         driveTrain.setGridDriveStateMachine(getPathToTarget(driveTrain));
     }
