@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.koawalib.Robot
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lights
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.SlideMove
 
 @TeleOp
@@ -31,6 +32,8 @@ class KTeleOp : KOpMode() {
             )
         )
 
+//        robot.lightsDevice.setPattern(Lights.BlinkinPattern.BLACK)
+
         driver.x.onPress(InstantCmd({ driver.rumbleBlips(3) }))
         driver.y.onPress(InstantCmd({ driver.rumble(2500) }))
 
@@ -44,6 +47,8 @@ class KTeleOp : KOpMode() {
 
 //        driver.leftBumper.onPress(Arm.ArmReset(robot.armServo))
 //        driver.rightBumper.onPress(Arm.ArmOut(robot.armServo))
+
+
     }
 
     override fun mLoop() {
