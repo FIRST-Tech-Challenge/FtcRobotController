@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_GROUND;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_GROUND_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_HIGH;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_LOW;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_MID;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
@@ -48,8 +53,8 @@ public class LiftArm {
             this.status = status;
             if(status) {
                 for (int i = 0; i < liftArmStates.values().length; i++) {
-                    if (liftArmStates.values()[i].status != status) {
-                        liftArmStates.values()[i].setStatus(false);
+                    if (liftArmStates.values()[i] != this) {
+                        liftArmStates.values()[i].status = false;
                     }
                 }
             }
@@ -65,6 +70,8 @@ public class LiftArm {
 
     public void toggleArmPosition() {
         liftArmServo.flipServoInterval(liftArmIntakePos, liftArmOuttakePos);
+        logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",toggleArmPosition()"
+                + ",Lift Arm Toggled", true);
     }
 
 
@@ -73,18 +80,19 @@ public class LiftArm {
         //no input
 
         //the state of claw open has to be true (cone has already been dropped)
-//        if (CLAW_OPEN.status) {
+        //&& LIFT_GROUND.status
+        if (CLAW_OPEN.status && ARM_OUTTAKE.status) {
 
-        //set servo position
-        liftArmServo.setPosition(liftArmIntakePos);
+            //set servo position
+            liftArmServo.setPosition(liftArmIntakePos);
 
-        //set state of claw open to true
-        ARM_INTAKE.setStatus(true);
+            //set state of claw open to true
+            ARM_INTAKE.setStatus(true);
 
-        //log to general robot log that the claw has been opened through function openClaw()
-        logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",lowerLiftArmToIntake()"
-                + ",Lift Arm Lowered to Intake Position", true);
-//        }
+            //log to general robot log that the claw has been opened through function openClaw()
+            logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",lowerLiftArmToIntake()"
+                    + ",Lift Arm Lowered to Intake Position", true, true);
+        }
     }
 
     //lower arm to intake position
@@ -92,18 +100,19 @@ public class LiftArm {
         //no input
 
         //the state of claw closed has to be true (cone has already been grabbed)
-//        if (CLAW_CLOSED.status) {
+        // && (LIFT_GROUND_JUNCTION.status || LIFT_LOW.status || LIFT_MID.status || LIFT_HIGH.status)
+        if (CLAW_CLOSED.status && ARM_INTAKE.status) {
 
-        //set servo position
-        liftArmServo.setPosition(liftArmOuttakePos);
+            //set servo position
+            liftArmServo.setPosition(liftArmOuttakePos);
 
-        //set state of claw open to true
-        ARM_OUTTAKE.setStatus(true);
+            //set state of claw open to true
+            ARM_OUTTAKE.setStatus(true);
 
-        //log to general robot log that the claw has been opened through function openClaw()
-        logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",raiseLiftArmToOuttake()"
-                + ",Lift Arm Raised to Outtake Position", true);
-//        }
+            //log to general robot log that the claw has been opened through function openClaw()
+            logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",raiseLiftArmToOuttake()"
+                    + ",Lift Arm Raised to Outtake Position", true, true);
+        }
     }
 
 }

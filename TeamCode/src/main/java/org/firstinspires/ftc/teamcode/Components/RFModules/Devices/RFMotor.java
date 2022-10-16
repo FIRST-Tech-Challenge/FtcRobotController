@@ -51,7 +51,8 @@ public class RFMotor extends Motor {
         maxtickcount = maxtick;
         mintickcount = mintick;
 
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime,Action,Value");
+        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
+                "Function               Action");
     }
 
     //same as above but assuming motor direction is foward
@@ -67,7 +68,8 @@ public class RFMotor extends Motor {
         maxtickcount = maxtick;
         mintickcount = mintick;
 
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime,Action,Value");
+        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
+                "Function               Action");
     }
 
     //same as above but using default coefficients
@@ -85,7 +87,8 @@ public class RFMotor extends Motor {
         maxtickcount = maxtick;
         mintickcount = mintick;
 
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime,Action,Value");
+        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
+                "Function               Action");
     }
 
     //for chassis wheels where you only need it to spin continuously
@@ -97,7 +100,8 @@ public class RFMotor extends Motor {
         }
         rfMotor.setMode(runMode);
 
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime,Action,Value");
+        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
+                "Function               Action");
     }
 
     //BUG WITH CALCULATION

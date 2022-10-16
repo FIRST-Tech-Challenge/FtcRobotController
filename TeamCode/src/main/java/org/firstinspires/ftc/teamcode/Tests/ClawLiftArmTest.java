@@ -59,12 +59,13 @@ public class ClawLiftArmTest extends LinearOpMode{
 //            sleep(2000);
             robot.lowerLiftArmToIntake();
             sleep(3000);
+
+            robot.setFirstLoop(false);
         }
 
         logger.log("/RobotLogs/GeneralRobot", "Program stopped normally. ");
 
         idle();
-
 
     }
 }

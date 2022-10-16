@@ -94,6 +94,15 @@ public class PwPRobot extends BasicRobot{
     }
 
 
+    public void toggleClawPosition() {
+        if (queuer.queue(true, op.getRuntime() > claw.clawServoLastSwitchTime +
+                claw.CLAW_SERVO_SWITCH_TIME)) {
+
+            claw.clawServoLastSwitchTime = op.getRuntime();
+            claw.toggleClawPosition();
+        }
+    }
+
     public void closeClaw() {
         if (queuer.queue(true, op.getRuntime() > claw.clawServoLastSwitchTime +
                 claw.CLAW_SERVO_SWITCH_TIME)) {
@@ -103,12 +112,25 @@ public class PwPRobot extends BasicRobot{
         }
     }
 
+    public boolean isConeReady() {
+        return claw.isConeReady();
+    }
+
     public void lowerLiftArmToIntake() {
         if (queuer.queue(true, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
                 liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
 
             liftArm.liftArmServoLastSwitchTime = op.getRuntime();
             liftArm.lowerLiftArmToIntake();
+        }
+    }
+
+    public void toggleArmPosition() {
+        if (queuer.queue(true, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
+                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
+
+            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.toggleArmPosition();
         }
     }
 
@@ -179,14 +201,19 @@ public class PwPRobot extends BasicRobot{
             lift.toggleLiftPosition(-1);
         }
         //toggle liftArm position
-        if(op.gamepad2.a){
-            liftArm.toggleArmPosition();
+        if(op.gamepad2.x){
+            liftArm.raiseLiftArmToOuttake();
+        }
+        if (op.gamepad2.y) {
+            liftArm.lowerLiftArmToIntake();
         }
         //manual open/close claw (will jsut be open claw in the future)
-        if(op.gamepad1.a){
-            claw.toggleClawPosition();
+        if(op.gamepad1.x){
+            claw.openClaw();
         }
-        //will only close when detect cone
-        //claw.closeClaw
+        if (op.gamepad1.y) {
+            claw.closeClaw();
+        }
+        claw.logClawStates();
     }
 }

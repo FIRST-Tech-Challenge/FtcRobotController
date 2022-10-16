@@ -71,10 +71,14 @@ public class RFServo implements Servo {
         if (op.getRuntime() - lasttime > 0.2) {
             if (flipped) {
                 RFServo.setPosition(lowerpos);
+                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
+                        + df.format(lowerpos), true);
                 flipped = false;
             }
             else {
                 RFServo.setPosition(upperpos);
+                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
+                        + df.format(upperpos), true);
                 flipped = true;
             }
             lasttime = op.getRuntime();
@@ -85,9 +89,13 @@ public class RFServo implements Servo {
         if (op.getRuntime() - lasttime > 0.2) {
             if (flipped) {
                 RFServo.setPosition(0);
+                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
+                        + df.format(0), true);
                 flipped = false;
             } else {
                 RFServo.setPosition(servolimit);
+                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
+                        + df.format(servolimit), true);
                 flipped = true;
             }
             lasttime = op.getRuntime();
