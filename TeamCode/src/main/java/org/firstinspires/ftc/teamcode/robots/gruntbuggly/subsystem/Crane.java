@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -87,12 +88,15 @@ public class Crane implements Subsystem {
 
     private boolean bulbGripped;
 
+    private Robot robot;
+
 
     private Articulation articulation;
 
     boolean USE_MOTOR_SMOOTHING = true;
 
-    public Crane(HardwareMap hardwareMap, Turret turret, boolean simulated) {
+    public Crane(HardwareMap hardwareMap, Robot robot, boolean simulated) {
+        this.robot = robot;
         extenderTargetPos = 0;
         shoulderTargetPos = 0;
         if (simulated) {
@@ -280,6 +284,11 @@ public class Crane implements Subsystem {
     boolean inverseKinematic = false;
     double targetHeight = 0;
     double targetDistance = 0.43;
+    double targetTurretAngle = 0;
+
+    double x;
+    double y;
+    double z;
 
     @Override
     public void update(Canvas fieldOverlay) {
@@ -291,14 +300,18 @@ public class Crane implements Subsystem {
         shoulderAngle = shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
         extendMeters = extendPosition / EXTEND_TICKS_PER_METER;
 
-        shoulderAmps= shoulderMotor.getCurrent(CurrentUnit.AMPS);
-        extenderAmps= extenderMotor.getCurrent(CurrentUnit.AMPS);
+        shoulderAmps = shoulderMotor.getCurrent(CurrentUnit.AMPS);
+        extenderAmps = extenderMotor.getCurrent(CurrentUnit.AMPS);
 
         if(inverseKinematic){
+
+
+
             double angle = Math.atan(targetHeight/targetDistance);
             double length = Math.sqrt( Math.pow(targetHeight,2) + Math.pow(targetDistance,2) );
             setShoulderTargetDeg(angle);
             setExtendTargetDistance(length);
+            robot.turret.setTargetHeading(targetTurretAngle);
         }
 
         if(shoulderActivePID)
