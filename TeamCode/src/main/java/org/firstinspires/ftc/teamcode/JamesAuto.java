@@ -41,9 +41,9 @@ JamesAuto extends DriveMethods {
 //        driveForDistance(1.7,0.75,Direction.FORWARD);
 //        driveForDistance(0.3,0.2,Direction.FORWARD);
         while (opModeIsActive()) {
-            linearMotor(0.1234);
-            telemetry.addLine("Current Angle Off: " + CumulativeZ());
-            telemetry.update();
+            if (gamepad2.b){
+                 linearMotor(0.35);
+            }
         }
 
     }
@@ -99,7 +99,7 @@ JamesAuto extends DriveMethods {
             double dif = target_encoder - motorLinearSlide.getCurrentPosition();
             while (dif>12){
                 dif = target_encoder - motorLinearSlide.getCurrentPosition();
-                    motorLinearSlide.setPower(dif / 3000);
+                    motorLinearSlide.setPower(dif / 3000 + 0.05);
             }
         }
     }
