@@ -415,15 +415,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public void setGridDriveStateMachine(StateMachine s){
         driveToNextTarget = s;
     }
-    public void setPath(PathLine path){
+    public boolean setPath(PathLine path){
         gridPathLine = path;
         followPathInitialized = false;
+        return true;
     }
     boolean followPathInitialized = false;
     double startTime = 0;
 
     double timeStep = 0.1;
-    public void followPath(){
+    public boolean followPath(){
         if(!followPathInitialized){
             followPathInitialized = true;
             startTime = System.nanoTime()/1e9;
@@ -442,6 +443,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID.setSetpoint(turnAngle);
         headingPID.setInput(poseEstimate.getHeading());
         double correction = headingPID.performPID();
+        //todo finish path following
+        return false;
     }
 
 
