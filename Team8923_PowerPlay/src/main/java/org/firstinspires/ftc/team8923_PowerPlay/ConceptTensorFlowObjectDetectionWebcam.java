@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team8923_PowerPlay;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -12,8 +11,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "ConceptTensorFlowObjectDetectionWebcam")
-public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
+public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -22,7 +20,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay_BCDM.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
 
@@ -45,11 +43,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            "AQYaetf/////AAABmTKBOnYV+03Dsg0qldOiWBJtNgHX1kGW8jNu7X1SH7uDsyjR8VKoRbCeY5QE5OArcAm/vmSbxm/" +
-                    "fUO7ImfFpyNDYUGMG6vCXg/aLnGdT6Obt380jnlTQJwYGhJv1J3ULYK4J07HrtN+T6nGUfF0XTBo07gHQNa6QU0P" +
-                    "c4P2qmu3/l25K1Tm7P4Fjf2NXvk0AR29y37IP0MOSJJ7/oMcDDs/vBxvEwjXo5ycvHyuzqieNcK7VR9gOBYb2fpC246" +
-                    "GZD7GykaILZoqU3bDTw0Ofcssc3OxnjQJP8DTgsqpJxwXG0DVrfWF3eYFI5aXNQozmoEJYRAA4iLesJMQI58VVzz2R+frn" +
-                    "Ts8vyznlTzstxsO6";
+            "AQYaetf";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
