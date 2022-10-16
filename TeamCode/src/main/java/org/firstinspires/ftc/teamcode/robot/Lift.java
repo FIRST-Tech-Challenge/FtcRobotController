@@ -32,7 +32,7 @@ public class Lift {
     public final double     LIFT_POSITION_GROUND = 10;
     public final double     LIFT_POSITION_LOWPOLE= 20;
     public final double     LIFT_POSITION_MIDPOLE= 30;
-    public final double     LIFT_POSITION_HIGHPOLE = 40 ;
+    public final double     LIFT_POSITION_HIGHPOLE = 40;
     public final double     LIFT_POSITION_PICKUP = 8;
 
     public static double currentLiftHeight;
