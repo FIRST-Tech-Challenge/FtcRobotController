@@ -87,44 +87,44 @@ public class Field {
     }
 
     //todo: gets closest pole of a certain height
-    public int GetNearest(int h,Vector2 pos){
+    public int GetNearest(int h,Vector2 pos) {
         int minIndex = 0;
         double min = 999;
-        switch(h){
+        switch (h) {
             case 1:
-                for(int i = 10; i < 19; i++){
-                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                for (int i = 10; i < 19; i++) {
+                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
                 break;
 
             case 2:
-                for(int i = 19; i <27; i++){
-                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                for (int i = 19; i < 27; i++) {
+                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
                 break;
 
             case 3:
-                for(int i = 27; i < 31; i++){
-                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                for (int i = 27; i < 31; i++) {
+                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
                 break;
 
             case 4:
-                for(int i = 31; i < 35; i++){
-                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                for (int i = 31; i < 35; i++) {
+                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
 
             case -1:
-                for(int i = 35; i < 37; i++){
-                    if(Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min){
+                for (int i = 35; i < 37; i++) {
+                    if (Vector2.magnitude(objects[i].getPosition().subtract(pos)) < min) {
                         minIndex = i;
                     }
                 }
@@ -136,11 +136,12 @@ public class Field {
         return minIndex;
     }
 
-
     public void updateTargetPose(double dx, double dy, DriveTrain driveTrain){
         Pose2d newTarget = new Pose2d(targetCoordinate.getX() + dx, targetCoordinate.getY() + dy, 0);
-        if(newTarget.getX() > fieldWidth || newTarget.getX() < 0) return;
-        if(newTarget.getY() > fieldWidth || newTarget.getY() < 0) return;
+        if(newTarget.getX() > fieldWidth || newTarget.getX() < 0)
+
+        if(newTarget.getY() > fieldWidth || newTarget.getY() < 0)
+
         targetCoordinate = newTarget;
         driveTrain.setGridDriveStateMachine(getPathToTarget(driveTrain));
     }
