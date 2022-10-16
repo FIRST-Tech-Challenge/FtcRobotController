@@ -100,7 +100,7 @@ public class BrainStemRobot {
 
 
     public void initializePosition(){
-        turret.getPosition();
+        turret.initializePosition();
 
     }
 
