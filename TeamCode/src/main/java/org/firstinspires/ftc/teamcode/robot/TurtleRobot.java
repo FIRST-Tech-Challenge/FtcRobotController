@@ -63,9 +63,6 @@ public class TurtleRobot {
 //        leftfrontmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        rightfrontmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        rightbackmotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        leftslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        rightslidemotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
     }
 
