@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class Field {
 
-    public FieldObject[] objects = new FieldObject[35];
+    public FieldObject[] objects = new FieldObject[37];
     public boolean isBlue;
 
     //todo decide on start position

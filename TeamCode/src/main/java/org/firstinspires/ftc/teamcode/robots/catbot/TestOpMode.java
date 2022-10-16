@@ -90,11 +90,13 @@ public class TestOpMode extends OpMode {
             powerElevator = -gamepad1.left_trigger;
         }
         elevator.setPower(powerElevator);
+        currElevHeight += powerElevator;
     }
     public void clawMove()
     {
+        telemetry.addData("Claw servo position:", claw.getPosition());
         if(gamepad1.left_bumper)
-            claw.setPosition(1);
+            claw.setPosition(.5);
         if(gamepad1.right_bumper)
             claw.setPosition(0);
     }
