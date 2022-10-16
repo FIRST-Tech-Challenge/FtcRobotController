@@ -21,7 +21,7 @@ public class Lift {
     static final double     COUNTS_PER_MOTOR_REV    = 8192;     // ticks at the motor shaft
     static final double     DRIVE_GEAR_REDUCTION    = 5.23;     // 5:1 gear reduction (slowing down)
     static final double     PULLEY_WHEEL_DIAMETER_INCHES   = 22 * MM_TO_INCHES ;     // convert mm to inches
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (PULLEY_WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     TICK_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (PULLEY_WHEEL_DIAMETER_INCHES * 3.1415);
 
     static final double     LIFT_UP_SPEED           = 0.5;
     static final double     LIFT_DOWN_SPEED         = 0.5;
@@ -30,16 +30,17 @@ public class Lift {
 
     public final double     LIFT_POSITION_RESET = 0;
     public final double     LIFT_POSITION_GROUND = 10;
-    public final double     LIFT_POSITION_LOWPOLE = 20;
-    public final double     LIFT_POSITION_MIDPOLE = 30;
-    public final double     LIFT_POSITION_HIGHPOLE = 40;
+    public final double     LIFT_POSITION_LOWPOLE= 20;
+    public final double     LIFT_POSITION_MIDPOLE= 30;
+    public final double     LIFT_POSITION_HIGHPOLE = 40 ;
+    public final double     LIFT_POSITION_PICKUP = 8;
 
     public static double currentLiftHeight;
 
     public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         liftMotor = (DcMotorEx) hwMap.dcMotor.get("Lift");
-
+        liftMotor.setPower(0.5);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -48,17 +49,34 @@ public class Lift {
         return liftMotor.getCurrentPosition();
     }
 
-
-    public void setLiftHeight (LiftHeight liftHeight) {
+    public void setLiftHeight (double liftHeight) {
 
     }
 
     public void raiseHeightTo (double heightInInches) {
         //raising heights to reach different junctions, so four values
+        int ticksNeeded = (int)(heightInInches/TICK_PER_INCH) + 1;
+        liftMotor.setTargetPosition(ticksNeeded);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public boolean isClear () {
         //true means turret can turn and lift is raised to minimum clearance; false is the opposite
+        currentLiftHeight = liftMotor.getCurrentPosition() * TICK_PER_INCH;
+        if(currentLiftHeight >= MINIMUM_CLEARANCE_HEIGHT){
+            return true;
+        }
+        return false;
+
+    }
+    public void getToClear(){
+        raiseHeightTo(MINIMUM_CLEARANCE_HEIGHT);
+    }
+    public void initializePosition( ) {
+        liftMotor.setTargetPosition(30);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 

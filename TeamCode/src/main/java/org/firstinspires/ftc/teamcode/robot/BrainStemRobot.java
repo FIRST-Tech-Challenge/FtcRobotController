@@ -51,6 +51,7 @@ public class BrainStemRobot {
     private Telemetry telemetry;
     private OpMode opMode;
     public Turret turret;
+    public Lift lift;
 
     public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -96,6 +97,7 @@ public class BrainStemRobot {
     public void initializeRobotPosition(){
         turret.initializePosition();
         lift.initializePosition();
+
     }
 
 
