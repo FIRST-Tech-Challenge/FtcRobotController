@@ -60,8 +60,8 @@ import java.util.Map;
 
 @Config(value = "PPDriveTrain")
 public class DriveTrain extends DiffyDrive implements Subsystem {
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL);
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VELOCITY, MAX_ANG_VEL);
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCELERATION);
     private double targetHeading, targetVelocity = 0;
 
     public Pose2d currentPose;
@@ -428,7 +428,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if(!followPathInitialized){
             followPathInitialized = true;
             startTime = System.nanoTime()/1e9;
-            return;
+            return false;
         }
         Pose2d newPoint = gridPathLine.getPointAtTime(System.nanoTime() / 1e9 + timeStep - startTime);
         Pose2d currentPoseEstimate = getPoseEstimate();
