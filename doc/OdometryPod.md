@@ -60,17 +60,18 @@ to start from first-principles. It's helpful to flip the problem around and calc
 expected **pod measurement** based on the motion and rotation of the robot. Figure 2
 illustrates the concept: 
 
-![Generic Wheel Diagram](Generic Wheel Diagram.drawio.png)
+![Generic Wheel Diagram](Generic%20Wheel%20Diagram.drawio.png)
 
 *Figure 2: The layout of the odometry pods and definitions of vectors.*
 
-The measured distance on an arbitrary odometry pod, $d_m$, is equal to the sum of:
+From these definitions, we can compute the measured distance on an arbitrary odometry pod, $d_m$,
+equal to the sum of:
 
   * (a) distance traveled by the center of the robot $\vec d$ dotted with the measrement 
 unit vector $\hat m$ and 
   * (b) the rotation of the robot $\theta$ times the cross product of the pod's measurement 
 vector, $\hat m$ and the radius to the odometry pod from the center of the robot, $\vec r$.
 
-$$ d_m = \underbrace{\vec d \cdot \hat m}_a + \underbrace{\theta \left(\hat m \times \vec r \right)}_b $$
+$$ d_m = \underbrace{ \vec d \cdot \hat m_{pod} }_a + \underbrace{\theta \left( { \hat m_{pod} } \times \vec r_{pod} \right)}_b $$
 
 
