@@ -77,5 +77,8 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
+    public void setMotor(double power){
+        liftMotor.setPower(power);
+    }
 
 }

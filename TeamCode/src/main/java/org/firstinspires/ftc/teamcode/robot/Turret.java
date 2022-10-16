@@ -37,10 +37,13 @@ public class Turret {
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
-    public void moveTurret(int targetDegrees){
-        int numberOfTicks = (int) (targetDegrees * NUMBEROFTICKSPERDEGREE);
+    public void moveTurret(int position){
+        int numberOfTicks = (int) (position * NUMBEROFTICKSPERDEGREE);
         turretMotor.setTargetPosition(numberOfTicks);
         turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+    public void setMotor(double power){
+        turretMotor.setPower(power);
     }
 
 }

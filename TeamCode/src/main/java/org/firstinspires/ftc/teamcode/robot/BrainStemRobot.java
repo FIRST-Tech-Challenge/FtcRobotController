@@ -107,9 +107,9 @@ public class BrainStemRobot {
             lift.getToClear();
         }
         turret.moveTurret(targetDegrees);
-
-
     }
+
+
 
 
 }
