@@ -161,8 +161,8 @@ public class RFMotor extends Motor {
 //            inputlogs.add(rfMotorName);
 //            inputlogs.add("setVelocity()");
 //            inputlogs.add("Setting Velocity: " + velocity);
-            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setVelocity()," +
-                    "Setting Velocity: " + df.format(velocity), true, true);
+//            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setVelocity()," +
+//                    "Setting Velocity: " + df.format(velocity), true, true);
 //            inputlogs.clear();
 //            logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Velocity," + velocity);
 //            logger.log("/RobotLogs/GeneralRobot", rfMotorName + "\nsetVelocity():\nSetting Velocity:" + velocity);

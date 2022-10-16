@@ -52,4 +52,7 @@ public class Queuer {
         }
         return isReady;
     }
+    public void resetQueuer(){
+        queueElements.clear();
+    }
 }

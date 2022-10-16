@@ -20,4 +20,7 @@ public class BasicRobot{
         isTeleop = p_isTeleop;
 
     }
+    public void resetQueuer() {
+        queuer.resetQueuer();
+    }
 }

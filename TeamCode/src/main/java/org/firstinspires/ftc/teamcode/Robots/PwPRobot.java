@@ -80,17 +80,17 @@ public class PwPRobot extends BasicRobot{
         }
     }
     public void liftToPosition(Lift.LiftConstants targetJunction){
-        if (queuer.queue(true, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 5)){
+        if (queuer.queue(false, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 5)){
             lift.liftToPosition(targetJunction);
         }
     }
     public void liftToPosition(int tickTarget){
-        if(queuer.queue(true, Math.abs(tickTarget - lift.getLiftPosition()) < 5)){
+        if(queuer.queue(false, Math.abs(tickTarget - lift.getLiftPosition()) < 5)){
             lift.liftToPosition(tickTarget);
         }
     }
     public void setLiftPower(double p_power){
-        lift.setPower(p_power);
+        lift.setLiftPower(p_power);
     }
 
 
@@ -163,11 +163,11 @@ public class PwPRobot extends BasicRobot{
             );
         //manual lift up/down
         if(op.gamepad2.right_trigger!=0||op.gamepad2.left_trigger!=0){
-            lift.setPower(op.gamepad2.right_trigger-op.gamepad2.left_trigger);
+            lift.setLiftPower(op.gamepad2.right_trigger-op.gamepad2.left_trigger);
         }
         //when not manual lifting, automate lifting
         else{
-            lift.setPower(0);
+            lift.setLiftPower(0);
 //            lift.liftToTarget();
         }
         //toggle automate lift target to higher junc

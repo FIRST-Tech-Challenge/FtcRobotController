@@ -26,9 +26,13 @@ public class RFGamepad{
         booleanMap.put("gamepad1_right_bumper", false);
         booleanMap.put("gamepad1_dpad_left", false);
         booleanMap.put("gamepad1_dpad_right", false);
+        booleanMap.put("gamepad1_dpad_up", false);
+        booleanMap.put("gamepad1_dpad_down", false);
         floatMap.put("gamepad1_left_stick_y", 0f);
         floatMap.put("gamepad1_right_stick_x", 0f);
         floatMap.put("gamepad1_right_stick_y", 0f);
+        floatMap.put("gamepad1_right_trigger", 0f);
+        floatMap.put("gamepad1_left_trigger", 0f);
     }
     public void readGamepad(float value, String name, String action){
         if(value != floatMap.get(name)){
