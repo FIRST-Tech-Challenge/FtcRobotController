@@ -26,8 +26,8 @@ public class Mecanum extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 while (gamepad1.a) {
-                    robot.leftslidemotor.setPower(-0.5);
-                    robot.rightslidemotor.setPower(-0.5);
+                    robot.leftslidemotor.setPower(-1);
+                    robot.rightslidemotor.setPower(-1);
                 }
                 while (gamepad1.b) {
                     robot.leftslidemotor.setPower(1);
