@@ -50,6 +50,22 @@ abstract public class BaseTeleOp extends BaseOpMode {
         return (AllStickAVGS);
     }
 
+    public void deadZoneFinderDriveTest(){
+        double LeftStickX = gamepad1.left_stick_x;
+        double LeftStickY = gamepad1.left_stick_y;
+        if(Math.abs(((Math.atan2(LeftStickY, LeftStickX)*180)/Math.PI)) < Constants.deadzoneRange){
+            driveRobot(LeftStickX, 0, gamepad1.right_stick_x);
+            telemetry.addData("X to Y angle", ((Math.atan2(LeftStickY, LeftStickX)*180)/Math.PI));
+            telemetry.update();
+        } else if(Math.abs(((Math.atan2(LeftStickX, LeftStickY)*180)/Math.PI)) < Constants.deadzoneRange) {
+            driveRobot(0, LeftStickY, gamepad1.right_stick_x);
+            telemetry.addData("Y to X angle", ((Math.atan2(LeftStickX, LeftStickY)*180)/Math.PI));
+            telemetry.update();
+        }else{
+            driveRobot(LeftStickX, LeftStickY, gamepad2.right_stick_x);
+        }
+    }
+
 
     public void TeleOpDrive(){
 
@@ -61,7 +77,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         //FilteredInput[3] = Right stick Y pos
 
         //Driving / pivoting, not sure how we want it to be structured so this can be fixed later
-        driveRobot(gamepad1.left_stick_x, gamepad2.left_stick_y, gamepad1.left_stick_x);
+        deadZoneFinderDriveTest();
 
     }
 
