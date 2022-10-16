@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 @TeleOp(name="Competition Teleop", group="Iterative Opmode")
@@ -14,6 +17,7 @@ public class CompetitionTeleop2023 extends OpMode {
     private DcMotor RF = null;
     private DcMotor LB = null;
     private DcMotor RB = null;
+    private  DcMotor arm = null;
     /*boolean changed = false; //Outside of loop()
     boolean changed2 = false;
     boolean changed3 = false;
@@ -22,7 +26,10 @@ public class CompetitionTeleop2023 extends OpMode {
     private CRServo intake = null;
     private DcMotor armboom = null;
     //private  DcMotor intakemotor = null;
-    */private double PowerFactor = 1.0f;
+    */
+    private double PowerFactor = 1.0f;
+    private double maxEncode = 4200;
+    private double minEncode = 100;
     //private Servo platform = null;
     //private Servo tester = null;
     /*double tgtPower = 0;
@@ -51,6 +58,7 @@ public class CompetitionTeleop2023 extends OpMode {
         RF = hardwareMap.get(DcMotor.class, "RF");
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
+        arm = hardwareMap.get(DcMotor.class, "arm");
         /*intake = hardwareMap.get(CRServo.class, "intake");
         spinspinducky = hardwareMap.get(CRServo.class, "spinspinducky");
         platform  = hardwareMap.get(Servo.class, "platform");
@@ -66,8 +74,11 @@ public class CompetitionTeleop2023 extends OpMode {
         RF.setDirection(DcMotor.Direction.REVERSE);
         LB.setDirection(DcMotor.Direction.FORWARD);
         RB.setDirection(DcMotor.Direction.REVERSE);
-      /*armboom.setDirection(DcMotor.Direction.FORWARD);
-        armboom.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setDirection(DcMotor.Direction.REVERSE);
+
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        /*
         // Tell the driver that initialization is complete
         telemetry.addData("Status", "Initialized");
 */
@@ -180,18 +191,22 @@ public class CompetitionTeleop2023 extends OpMode {
             dr_position -=.005f;
             dr_magnet.setPosition(dr_position);
         }
-
+*/
         //boom up
-        if (gamepad2.left_trigger >= .1)
+        if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode )
         {
-            armboom.setPower(gamepad2.left_trigger/3);
-        } else if (gamepad2.right_trigger >= .1) {
-            armboom.setPower(-gamepad2.right_trigger/3);
+            arm.setPower(gamepad2.left_trigger);
+            telemetry.addData("arm ticks", arm.getCurrentPosition()); telemetry.update();
+
+        }
+        else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > minEncode){
+            arm.setPower(-gamepad2.right_trigger);
         } else {
-            armboom.setPower(0);
-            armboom.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            arm.setPower(0);
+            arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
+/*
         if (gamepad2.left_bumper){
             spinspinducky.setPower(1);
         }
