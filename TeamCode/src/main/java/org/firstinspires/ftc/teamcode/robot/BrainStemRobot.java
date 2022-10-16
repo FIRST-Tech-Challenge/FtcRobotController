@@ -47,35 +47,28 @@ public class BrainStemRobot {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor.RunMode currentDrivetrainMode;
-    //public states state = states.STOPPED_L;
+
     private Telemetry telemetry;
     private OpMode opMode;
     public Turret turret;
 
-    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
+    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        this.opMode = opMode;
-        turret = new Turret(hwMap, telemetry);
-        frontLeft = (DcMotorEx) hwMap.dcMotor.get("FL");
-        frontRight = (DcMotorEx) hwMap.dcMotor.get("FR");
-        backLeft = (DcMotorEx) hwMap.dcMotor.get("BL");
-        backRight = (DcMotorEx) hwMap.dcMotor.get("BR");
+        // this.opMode = opMode;
 
+        // instantiate components turret, lift, arm, grabber
+        turret  = new Turret(hwMap, telemetry);
+        lift    = new Lift(hwMap, telemetry);
 
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-
-        setMotorModes(currentDrivetrainMode);
+        // BTBRT: We do not need to detail the drive train motors here. We will use sampleMecanumDrive in respective entry points (@Autonomous or @Teleop)
+        // setMotorModes(currentDrivetrainMode);
 
         telemetry.addData("Robot", " Is Ready");
         telemetry.update();
     }
 
+/************************************************************************************************
+    // BTBRT: We do not need the methods used for motor modes/powers. sampleMecanumDrive handles it for us.
 
     private void setMotorModes(DcMotor.RunMode mode) {
         if (mode != currentDrivetrainMode) {
@@ -98,9 +91,11 @@ public class BrainStemRobot {
         setMotorPowers(0, 0, 0, 0);
     }
 
+**********************************************************************************************/
 
-    public void initializePosition(){
-        turret.getPosition();
+    public void initializeRobotPosition(){
+        turret.initializePosition();
+        lift.initializePosition();
 
     }
 

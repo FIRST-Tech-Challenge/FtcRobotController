@@ -10,24 +10,54 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+
+
 public class Lift {
     private Telemetry telemetry;
     public DcMotorEx liftMotor;
 
-    public final double MINIMUM_CLEARANCE_HEIGHT= 8;
-    public static double CURRENT_LIFT_POSITION;
+    static final double     MM_TO_INCHES = 0.0393700787;
+
+    static final double     COUNTS_PER_MOTOR_REV    = 8192;     // ticks at the motor shaft
+    static final double     DRIVE_GEAR_REDUCTION    = 5.23;     // 5:1 gear reduction (slowing down)
+    static final double     PULLEY_WHEEL_DIAMETER_INCHES   = 22 * MM_TO_INCHES ;     // convert mm to inches
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (PULLEY_WHEEL_DIAMETER_INCHES * 3.1415);
+
+    static final double     LIFT_UP_SPEED           = 0.5;
+    static final double     LIFT_DOWN_SPEED         = 0.5;
+
+    public final double     MINIMUM_CLEARANCE_HEIGHT    = 43 * MM_TO_INCHES;    // inches to lift to clear side panels
+
+    public final double     LIFT_POSITION_RESET = 0;
+    public final double     LIFT_POSITION_GROUND;
+    public final double     LIFT_POSITION_LOWPOLE;
+    public final double     LIFT_POSITION_MIDPOLE;
+    public final double     LIFT_POSITION_HIGHPOLE;
+
+    public static double currentLiftHeight;
 
     public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        liftMotor = (DcMotorEx) hwMap.dcMotor.get("motorLift");
+        liftMotor = (DcMotorEx) hwMap.dcMotor.get("Lift");
 
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-    public int getPosition (){
-        int position = liftMotor.getCurrentPosition();
-        return position;
+    public int getPosition () {
+        return liftMotor.getCurrentPosition();
+    }
 
+    public void setLiftHeight (LiftHeight liftHeight) {
+
+    }
+
+    public raiseHeightTo (double heightInInches) {
+        //raising heights to reach different junctions, so four values
+    }
+
+    public boolean isClear () {
+        //true means turret can turn and lift is raised to minimum clearance; false is the opposite
     }
 
 }
