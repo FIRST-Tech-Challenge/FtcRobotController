@@ -95,8 +95,19 @@ public class BrainStemRobot {
 **********************************************************************************************/
 
     public void initializeRobotPosition(){
-        turret.initializePosition();
         lift.initializePosition();
+        lift.getToClear();
+        turret.initializePosition();
+        lift.setLiftHeight(0);
+
+
+    }
+    public void moveTurret(int targetDegrees){
+        if(!lift.isClear()){
+            lift.getToClear();
+        }
+        turret.moveTurret(targetDegrees);
+
 
     }
 

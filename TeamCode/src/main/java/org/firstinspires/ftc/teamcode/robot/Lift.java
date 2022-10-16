@@ -74,8 +74,6 @@ public class Lift {
         raiseHeightTo(MINIMUM_CLEARANCE_HEIGHT);
     }
     public void initializePosition( ) {
-        liftMotor.setTargetPosition(30);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
