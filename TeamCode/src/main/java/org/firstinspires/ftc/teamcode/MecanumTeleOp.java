@@ -61,7 +61,7 @@ public class MecanumTeleOp extends LinearOpMode {
         motorFrontRight.setPower(0);
         motorLift.setPower(0);
 
-        Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, imu);
+        Drive drive = new Drive(hardwareMap);
 
         waitForStart();
 
@@ -162,6 +162,7 @@ public class MecanumTeleOp extends LinearOpMode {
 //            if(gamepad1.y) {
 //                motorBackRight.setPower(200);
 //            }
+
             telemetry.addData("gamepad trigger", gamepad2.right_trigger);
             telemetry.addData("Power: ", power);
             telemetry.addData("Strafe: ", strafe);//0 is straight forward, 1 is straight to the side
