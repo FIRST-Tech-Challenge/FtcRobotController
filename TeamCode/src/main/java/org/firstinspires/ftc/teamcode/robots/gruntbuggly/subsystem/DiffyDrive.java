@@ -38,6 +38,7 @@ public abstract class DiffyDrive extends Drive {
             this.drive = drive;
             this.useExternalHeading = useExternalHeading;
             lastWheelPositions = new ArrayList<>();
+            poseEstimate = new Pose2d(0,0,0);
         }
 
         @Override
