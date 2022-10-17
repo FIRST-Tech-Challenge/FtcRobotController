@@ -32,7 +32,7 @@ class KTeleOp : KOpMode() {
             )
         )
 
-//        robot.lightsDevice.setPattern(Lights.BlinkinPattern.BLACK)
+        robot.lightsDevice.setPattern(Lights.BlinkinPattern.RED)
 
         driver.x.onPress(InstantCmd({ driver.rumbleBlips(3) }))
         driver.y.onPress(InstantCmd({ driver.rumble(2500) }))

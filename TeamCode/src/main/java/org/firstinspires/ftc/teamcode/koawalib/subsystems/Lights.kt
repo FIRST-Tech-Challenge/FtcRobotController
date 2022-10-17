@@ -47,6 +47,5 @@ class Lights(val servo : KServo) : Subsystem() {
         val pwm =
             BASE_SERVO_POSITION + PATTERN_OFFSET * pattern.ordinal * PULSE_WIDTH_INCREMENTOR
         servo.position = pwm
-
     }
 }

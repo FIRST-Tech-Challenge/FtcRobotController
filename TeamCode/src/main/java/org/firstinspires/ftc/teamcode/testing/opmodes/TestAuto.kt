@@ -12,6 +12,7 @@ import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
 import com.asiankoala.koawalib.path.CubicPath
 import com.asiankoala.koawalib.path.QuinticPath
+import com.asiankoala.koawalib.path.ReversedCubicPath
 import com.asiankoala.koawalib.util.OpModeState
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
@@ -25,11 +26,11 @@ class TestAuto : KOpMode() {
 
     private lateinit var mainCommand: Cmd
 
-    val path1 = CubicPath(
+    val path1 = ReversedCubicPath(
         startPose,
-        Pose(-10.0,-35.0, 270.0.radians),
-        Pose(-30.0,-60.0, 180.0.radians),
-        Pose(-59.0, -10.0, 90.0.radians)
+        Pose(-10.0,-10.0, 0.0.radians)
+//        Pose(-30.0,-60.0, 180.0.radians),
+//        Pose(-59.0, -10.0, 270.0.radians)
     )
 
 

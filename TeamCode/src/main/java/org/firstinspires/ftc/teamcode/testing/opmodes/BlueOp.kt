@@ -11,10 +11,11 @@ import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.path.PathBuilder
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.logger.LoggerConfig
+import com.asiankoala.koawalib.util.Alliance
 
 @TeleOp
 @Config
-class BlueOp : KOpMode() {
+class BlueOp( private val alliance: Alliance) : KOpMode(photonEnabled = true) {
     private val startPose = Pose(-36.0, -60.0, 90.0.radians)
     private val robot by lazy { Robot(startPose) }
 
@@ -29,7 +30,14 @@ class BlueOp : KOpMode() {
                 0.9,
                 1.0,
                 1.0,
-                1.0
+                1.0,
+                alliance,
+                true,
+                true,
+                { robot.drive.pose.heading },
+                60.0.radians
+
+
             )
         )
 

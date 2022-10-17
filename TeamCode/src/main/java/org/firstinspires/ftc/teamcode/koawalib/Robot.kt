@@ -24,7 +24,7 @@ class Robot(startPose: Pose) {
 //    val clawServo = Claw(hardware.claw)
 //    val slidesMotor = Slides(hardware.slides)
 
-//    val lightsDevice = Lights(hardware.lights)
+    val lightsDevice = Lights(hardware.lights)
 
     val webcam = WebcamDevice(hardware.webcam, AprilTagDetectionPipeline(0.166, 578.272, 578.272, 402.145, 221.506))
 }
