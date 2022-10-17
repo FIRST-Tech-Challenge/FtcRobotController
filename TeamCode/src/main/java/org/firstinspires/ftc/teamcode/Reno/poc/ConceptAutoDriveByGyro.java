@@ -166,8 +166,10 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
         // define initialization values for IMU, and then initialize it.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
 
         // Ensure the robot is stationary.  Reset the encoders and set the motors to BRAKE mode
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -180,6 +182,8 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
+            telemetry.addData("gyro Cali status", imu.isGyroCalibrated());
+            telemetry.addData("sys Cali status", imu.isSystemCalibrated());
             telemetry.addData(">", "Robot Heading = %4.0f", getRawHeading());
             telemetry.addData(">", "Robot Roll = %4.0f", getRawRoll());
             telemetry.addData(">", "Robot Pitch = %4.0f", getRawPitch());
@@ -198,6 +202,11 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
         waitForStart();
 
         runtime.reset();
+
+        while(!isStopRequested() && imu.isGyroCalibrated()) {
+            sleep(50);
+            idle();
+        }
 
         // Step through each leg of the path,
         // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
