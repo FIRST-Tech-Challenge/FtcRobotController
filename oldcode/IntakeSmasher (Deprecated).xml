@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ2EZU0X" parentModuleAddress="5">
+        <LynxModule name="Expansion Hub 1" port="1">
+            <RevRobotics40HDHexMotor name="Right Intake Motor" port="0" />
+            <RevRobotics40HDHexMotor name="Lift Motor" port="1" />
+            <RevRobotics40HDHexMotor name="Top Right" port="2" />
+            <RevRobotics40HDHexMotor name="Bottom Right" port="3" />
+            <Servo name="Left Grab Servo" port="1" />
+            <Servo name="Right Grab Servo" port="2" />
+            <Servo name="Arm Servo" port="3" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+            <LynxColorSensor name="Color Sensor" port="1" bus="0" />
+        </LynxModule>
+        <LynxModule name="Expansion Hub 5" port="5">
+            <RevRobotics40HDHexMotor name="Bottom Left" port="0" />
+            <RevRobotics40HDHexMotor name="Top Left" port="1" />
+            <RevRobotics40HDHexMotor name="Left Intake Motor" port="2" />
+            <RevRobotics40HDHexMotor name="" port="3" />
+            <Servo name="Left Foundation Servo" port="0" />
+            <Servo name="Right Foundation Servo" port="1" />
+            <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
+            <LynxColorSensor name="Color Sensor (Red side)" port="1" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
