@@ -89,11 +89,18 @@ public class Turret implements Subsystem {
     Pose2d worldPos;
 
     public Pose2d getTurretPosition(Robot robot){
-       localPosition = new Pose2d(-6.0*Math.sin(Math.toRadians(heading)), -2-6.0*Math.cos(Math.toRadians(heading)));
-       robotPos = robot.driveTrain.getPoseEstimate();
-       worldPos = new Pose2d( robotPos.getX() + localPosition.getX() - 2.0*Math.sin(robot.driveTrain.getExternalHeading()), robotPos.getY() + localPosition.getY() - 2.0*Math.cos(robot.driveTrain.getExternalHeading()));
 
-       return worldPos;
+        double robotHeading = robot.driveTrain.getRawExternalHeading();
+
+        double localX = -6.0*Math.sin(Math.toRadians(heading));
+        double localY = -8-6.0*Math.cos(Math.toRadians(heading));
+
+        double robotX = 0;
+        double robotY = 0;
+
+        double worldX = robotX + (localX)*Math.cos(-robotHeading) - (localY)*Math.sin(-robotHeading);
+        double worldY = robotY + (localY)*Math.cos(-robotHeading) + (localX)*Math.sin(-robotHeading);
+       return new Pose2d(worldX,worldY);
     }
 
     public boolean isTurretNearTarget(){
