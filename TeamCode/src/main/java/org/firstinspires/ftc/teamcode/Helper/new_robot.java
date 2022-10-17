@@ -27,33 +27,20 @@ public class new_robot {
     public DcMotor horizontalSlider;
     public Servo claw;
 
-    //IMU
-    public static BNO055IMU imu;
-    public Orientation angles;
-    public Acceleration gravity;
-    static final double MAX_POS     =  1.0;
-    static final double MIN_POS     =  0.0;
+    //Drivetrain Motor
+    public DcMotor FLMotor = null;
+    public DcMotor FRMotor = null;
+    public DcMotor BLMotor = null;
+    public DcMotor BRMotor = null;
 
-    //How many times the encoder counts a tick per revolution of the motor.
-    static final double COUNTS_PER_MOTOR_REV    = 538;      // eg: GoBuilda 5203 Planetery
-
-    //Gear ratio of the motor to the wheel. 1:1 would mean that 1 turn of the motor is one turn of the wheel, 2:1 would mean two turns of the motor is one turn of the wheel, and so on.
-    static final double DRIVE_GEAR_REDUCTION    = 1;        // This is < 1.0 if geared UP
-
-    //Diameter of the wheel in CM
-    static final double WHEEL_DIAMETER_CM   = 10;     // For figuring circumference
-
-    //How many times the encoder counts a tick per CM moved. (Ticks per rev * Gear ration) / perimeter
-    static final double COUNTS_PER_CM         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_CM * 3.1415);
 
 
 
     /* local OpMode members. */
-
     //Init hardware map
     HardwareMap hwMap = null;
     HardwareMap imuHwMap = null;
+
 
     public ElapsedTime period = new ElapsedTime();
     //tells you how long the robot has run for
@@ -66,11 +53,6 @@ public class new_robot {
 
     }
 
-    public enum MoveStep {
-        yaxix, xaxis, turn, stop
-    }
-
-    public MoveStep moveStep;
 
     //private static LinearOpmode opModeObj;
 
@@ -82,10 +64,42 @@ public class new_robot {
         verticalSlider = hwMap.get(DcMotor.class, "verticalSlider");
         horizontalSlider = hwMap.get(DcMotor.class, "horizontalSlider");
 
+        //Init motors and servos
+        FLMotor = hwMap.get(DcMotor.class, "FLMotor");
+        BLMotor = hwMap.get(DcMotor.class, "BLMotor");
+        FRMotor = hwMap.get(DcMotor.class, "FRMotor");
+        BRMotor = hwMap.get(DcMotor.class, "BRMotor");
 
         //Setting the run mode
+        FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         claw.setDirection(Servo.Direction.FORWARD);
         verticalSlider.setDirection(DcMotorSimple.Direction.FORWARD);
         horizontalSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        //Setting the direction
+        FLMotor.setDirection(DcMotor.Direction.FORWARD);
+        BLMotor.setDirection(DcMotor.Direction.FORWARD);
+        FRMotor.setDirection(DcMotor.Direction.REVERSE);
+        BRMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        FLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        FLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        FLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        BLMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        FRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        BRMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
     }
 }
