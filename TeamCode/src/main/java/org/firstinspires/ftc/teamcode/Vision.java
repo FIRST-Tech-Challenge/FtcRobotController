@@ -91,7 +91,7 @@ public class Vision {
         xherny = bitmap.getWidth() - 1;
         yherny = bitmap.getHeight() - 1;
 
-        while (!isOrange(bitmap.getPixel(xherny, yherny)) && monkus < bitmap.getHeight()) {
+        while (!isMagenta(bitmap.getPixel(xherny, yherny)) && !isCyan(bitmap.getPixel(xherny, yherny)) && !isOrange(bitmap.getPixel(xherny, yherny)) && monkus < bitmap.getHeight()) {
             yherny = bitmap.getHeight() - monkus;
             crongemac = 1;
             xherny = bitmap.getWidth() - crongemac;
@@ -105,10 +105,10 @@ public class Vision {
             }
         }
 
-        if (xherny < 372) {
+        if (isMagenta(bitmap.getPixel(xherny, yherny))) {
             level = 1;
         }
-        else if (xherny > 372 && xherny < 530) {
+        else if (isCyan(bitmap.getPixel(xherny, yherny))) {
             level = 2;
         }
         else {
@@ -118,9 +118,20 @@ public class Vision {
         return level;
     }
 
-    public boolean isOrange(int pixel){
+    private boolean isCyan(int pixel) {
+        return ((CYAN_RED_LOW <= red(pixel)) && (red(pixel) <= CYAN_RED_HIGH) && (CYAN_GREEN_LOW <= green(pixel)) &&
+                    (green(pixel) <= CYAN_GREEN_HIGH) && (CYAN_BlUE_LOW<= blue(pixel)) && (blue(pixel) <= CYAN_BlUE_HIGH));
+    }
+
+    private boolean isOrange(int pixel) {
         return ((RED_LOW <= red(pixel)) && (red(pixel) <= RED_HIGH) && (GREEN_LOW <= green(pixel)) &&
                 (green(pixel) <= GREEN_HIGH) && (BLUE_LOW <= blue(pixel)) && (blue(pixel) <= BLUE_HIGH));
+    }
+
+
+    public boolean isMagenta(int pixel){
+        return ((MAGENTA_RED_LOW <= red(pixel)) && (red(pixel) <= MAGENTA_RED_HIGH) && (MAGENTA_GREEN_LOW <= green(pixel)) &&
+                (green(pixel) <= MAGENTA_GREEN_HIGH) && (MAGENTA_BLUE_LOW<= blue(pixel)) && (blue(pixel) <= MAGENTA_BLUE_HIGH));
     }
 
     public Bitmap getBitmap() throws InterruptedException {
