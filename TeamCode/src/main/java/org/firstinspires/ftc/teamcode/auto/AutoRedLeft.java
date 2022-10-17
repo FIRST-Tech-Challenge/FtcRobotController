@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -40,6 +41,7 @@ public class AutoRedLeft extends LinearOpMode {
     @Override
     public void runOpMode()
     {
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         int webcam = hardwareMap.appContext.getResources().getIdentifier("Webcam1", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), webcam);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -112,6 +114,7 @@ public class AutoRedLeft extends LinearOpMode {
         if(tagOfInterest.id == left )
         {
             //insert trajectories for parking zone 1
+            //drive.followTrajectory(myTrajectory)
         }
 
         else if(tagOfInterest.id == middle)
