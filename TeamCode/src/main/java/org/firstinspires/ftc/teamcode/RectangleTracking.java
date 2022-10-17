@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -33,22 +31,23 @@ class RectangleTracking extends OpenCvPipeline
 
     Size viewportSize;
 
-    double hHSVAverage = 0;
-    double sHSVAverage = 0;
-    double vHSVAverage = 0;
+    double hHSVAverage = -1;
+    double sHSVAverage = -1;
+    double vHSVAverage = -1;
 
     int rangeAccuracyH = 10;
     int rangeAccuracyS = 30;
 
+    Button colorSet;
+
     double[] rectangleCoordinates = {0, 0};
 
     Telemetry telemetry;
-    Gamepad gamepad;
 
-    public RectangleTracking(Telemetry telemetry, Gamepad gamepad)
+    public RectangleTracking(Telemetry telemetry, ExtendedGamepad gamepad)
     {
         this.telemetry = telemetry;
-        this.gamepad = gamepad;
+        colorSet = gamepad.options;
     }
 
     @Override
@@ -70,7 +69,7 @@ class RectangleTracking extends OpenCvPipeline
         double[] pixel4 = imgHSV.get((int) viewportSize.height/2, (int) viewportSize.width/2+1);
 
         //Getting Average HSV Values only when Stage=THRESHOLD
-        if(gamepad.options) {
+        if(colorSet.isPressed()) {
             hHSVAverage = (pixel1[0] + pixel2[0] + pixel3[0] + pixel4[0]) / 4;
             sHSVAverage = (pixel1[1] + pixel2[1] + pixel3[1] + pixel4[1]) / 4;
             vHSVAverage = (pixel1[2] + pixel2[2] + pixel3[2] + pixel4[2]) / 4;
@@ -166,9 +165,13 @@ class RectangleTracking extends OpenCvPipeline
     {
         double[] centerOfScreen = {0, 0};
         double[] rectangleCoordinatesMapped = {0, 0};
+
+        if (hHSVAverage == -1) {
+            return rectangleCoordinatesMapped;
+        }
         centerOfScreen[0] = this.viewportSize.width/2;
         centerOfScreen[1] = this.viewportSize.height/2;
-        rectangleCoordinatesMapped[0] = (rectangleCoordinates[0] - centerOfScreen[0]) / (this.viewportSize.width / 2 + 0.000000000000000000001);
+        rectangleCoordinatesMapped[0] = -(rectangleCoordinates[0] - centerOfScreen[0]) / (this.viewportSize.width / 2 + 0.000000000000000000001);
         rectangleCoordinatesMapped[1] = (centerOfScreen[1] - rectangleCoordinates[1]) / (this.viewportSize.height / 2 + 0.000000000000000000001);
 
         return rectangleCoordinatesMapped;

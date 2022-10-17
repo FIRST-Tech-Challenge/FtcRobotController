@@ -16,6 +16,7 @@ public class Robot {
     protected IMU gyro;
     protected MecanumDrivetrain drivetrain;
     protected HeadingController gyroFollow;
+    protected HeadingController cameraFollow;
 
     protected Camera camera;
 
@@ -30,7 +31,7 @@ public class Robot {
         this.telemetry = telemetry;
 
         /******************************** Camera ********************************/
-        camera = new Camera(hardwareMap, dashboard, telemetry, gamepad1);
+        camera = new Camera(hardwareMap, dashboard, telemetry, this.gamepad1);
 
         /************************ Setup and Initialize Mechanisms Objects *************************/
         initMechanisms(hardwareMap);
@@ -38,8 +39,8 @@ public class Robot {
         gyro = new IMU(hardwareMap, telemetry, dashboardTelemetry);
         drivetrain = new MecanumDrivetrain(hardwareMap);
 
-        // If camera-follow then HeadingController.Type.CAMERA - Not Yet Implemented
         gyroFollow = new HeadingController(this.gamepad1, gyro);
+        cameraFollow = new HeadingController(this.gamepad1, camera);
     }
 
 //    public double[] transformFieldXY2RobotXY(double xG, double yG) {
@@ -57,6 +58,7 @@ public class Robot {
         gamepad2.update();
         gyro.update();
         gyroFollow.update();
+        cameraFollow.update();
     }
 
     public void initMechanisms(HardwareMap hardwareMap) {
@@ -71,10 +73,10 @@ public class Robot {
         double heading = -gyro.getRawValue();
         double rot;
 
-        if(gyroFollow.isEnabled()) {
+        if (gyroFollow.isEnabled()) {
             rot = gyroFollow.calculateTurn();
-        } else if(camera.isEnabled()){
-            rot = camera.getPipeline().getElementsAnalogCoordinates()[0];
+        } else if (cameraFollow.isEnabled()) {
+            rot = cameraFollow.calculateTurn();
         } else {
             rot = gamepad1.right_stick_x;
         }

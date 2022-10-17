@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class ExtendedGamepad {
     public Gamepad gamepad;
 
+    public Button options = new Button();
+    public Button share = new Button();
     public Button a = new Button();
     public Button b = new Button();
     public Button x = new Button();
@@ -36,6 +38,8 @@ public class ExtendedGamepad {
         right_stick_x = gamepad.right_stick_x;
         right_stick_y = gamepad.right_stick_y;
 
+        options.update(gamepad.options);
+        share.update(gamepad.share);
         a.update(gamepad.a);
         b.update(gamepad.b);
         x.update(gamepad.x);

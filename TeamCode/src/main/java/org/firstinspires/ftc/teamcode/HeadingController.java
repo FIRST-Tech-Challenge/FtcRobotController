@@ -10,7 +10,7 @@ public class HeadingController {
     private Type fType;
 
     private IMU gyro;
-    // private Camera camera;
+    private Camera camera;
 
     private double target = 0;
     private double kp = 0.02;
@@ -31,13 +31,11 @@ public class HeadingController {
     PIDController controller;
 
 
-    public HeadingController(ExtendedGamepad gamepad1) {
-        north = gamepad1.dpad_up;
-        east = gamepad1.dpad_right;
-        west = gamepad1.dpad_left;
-        south = gamepad1.dpad_down;
-
-        enabledToggle = gamepad1.right_stick_button;
+    public HeadingController(ExtendedGamepad gamepad) {
+        north = gamepad.dpad_up;
+        east = gamepad.dpad_right;
+        west = gamepad.dpad_left;
+        south = gamepad.dpad_down;
 
         controller = new PIDController(kP, kI, kD);
     }
@@ -48,15 +46,17 @@ public class HeadingController {
         fType = Type.GYRO;
         kP = 0.02;
         controller.setP(kP);
+        enabledToggle = gamepad.right_stick_button;
     }
 
-//     public HeadingController(ExtendedGamepad gamepad, Camera camera) {
-//         this(gamepad);
-//         this.camera = camera;
-//         fType = Type.CAMERA;
-//         kP = 0.6;
-//        controller.setP(kP);
-//     }
+     public HeadingController(ExtendedGamepad gamepad, Camera camera) {
+         this(gamepad);
+         this.camera = camera;
+         fType = Type.CAMERA;
+         kP = 0.6;
+         controller.setP(kP);
+         enabledToggle = gamepad.share;
+     }
 
     public void update() {
         updateState();
@@ -67,8 +67,9 @@ public class HeadingController {
     public double calculateTurn() {
         double curValue;
         if (fType == Type.CAMERA) {
-            // curValue = camera.getObject_x();
-            curValue = 0;
+            curValue = camera.getObject_x();
+//            curValue = camera.getPipeline().getElementsAnalogCoordinates()[0];
+//            curValue = 0;
         } else {
             if (findClosestTarget) {
                 target = gyro.findClosestOrientationTarget();
