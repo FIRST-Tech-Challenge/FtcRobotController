@@ -205,13 +205,13 @@ class AprilTagDetectionPipeline extends OpenCvPipeline
         // The origin of the coordinate space is assumed to be in the center of the detection.
         MatOfPoint3f axis = new MatOfPoint3f(
                 new Point3(-tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2,-tagHeight/2,0),
+                new Point3(tagWidth/2, tagHeight/2,0),
+                new Point3(tagWidth/2,-tagHeight/2,0),
                 new Point3(-tagWidth/2,-tagHeight/2,0),
                 new Point3(-tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2,-tagHeight/2,-length),
-                new Point3(-tagWidth/2,-tagHeight/2,-length));
+                new Point3(tagWidth/2, tagHeight/2,-length),
+                new Point3(tagWidth/2,-tagHeight/2,-length),
+                new Point3(-tagWidth/2, -tagHeight/2,-length));
 
         // Project those points
         MatOfPoint2f matProjectedPoints = new MatOfPoint2f();

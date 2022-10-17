@@ -29,7 +29,6 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
-        exclude("META-INF/native-image/ios-x86_64/jnijavacpp/reflect-config.json")
     }
     namespace = 'org.firstinspires.ftc.teamcode'
     dexOptions{
