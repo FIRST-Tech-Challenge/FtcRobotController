@@ -203,10 +203,11 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
 
         runtime.reset();
 
-        while(!isStopRequested() && imu.isGyroCalibrated()) {
-            sleep(50);
-            idle();
-        }
+        //while(!isStopRequested() && imu.isGyroCalibrated()) {
+        //    sleep(50);
+        //    idle();
+
+        //}
 
         // Step through each leg of the path,
         // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
