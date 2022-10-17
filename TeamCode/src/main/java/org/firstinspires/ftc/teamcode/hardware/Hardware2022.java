@@ -105,12 +105,13 @@ public class Hardware2022 {
      */
     void checkAndGrabCone ( ) {
 
-        //Only try to gram cone if in No Cone state.
+        //Only try to grab cone if in No Cone state.
         if ( currentState.equals(RobotState.NoCone)){
             //TODO:  Logic here
 
 
             currentState = RobotState.HasCone;
+            //TODO:  Logic Here
         }
     }
 

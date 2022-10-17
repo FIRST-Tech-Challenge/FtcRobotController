@@ -3,7 +3,8 @@ THis is the code ofr FTC Team 9010
 ## Setting up Android Studio for FTC
 This document assumes the reader has a basic understanding of Java
 * New Device
-Download Android Studio Chipmunk | 2021.2.1 Patch 2
+
+* Download Android Studio Chipmunk | 2021.2.1 Patch 2
 Android Studio download archives  |  Android Developers
 Download the latest version of the FTC Robot Controller
 Releases · FIRST-Tech-Challenge/FtcRobotController (github.com)
@@ -12,7 +13,8 @@ Transfer code from previous laptops for Hardware Map, Hardware, and Mecanum Whee
 Confirm if any legacy code is useful and if so transfer it
 
 * Previously Used Device
-Create a new class for a new TeleOp
+
+* Create a new class for a new TeleOp
 Copy import statements for hardware
 
 * How to upload code from a device
