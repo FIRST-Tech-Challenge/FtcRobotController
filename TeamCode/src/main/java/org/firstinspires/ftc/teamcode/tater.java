@@ -32,5 +32,6 @@ public class tater {
         hwMap = ahwMap;
 
         frontLeft = hwMap.get(DcMotor.class, "frontLeft");
+
     }
 }
