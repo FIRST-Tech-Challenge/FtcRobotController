@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.wra
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -52,7 +53,7 @@ public class Turret implements Subsystem {
         if(heading > 180)
             heading -= 360;
 
-        targetHeading = Range.clip(targetHeading, -90, 90);
+        targetHeading = Range.clip(targetHeading, -180, 180);
         heading = simulated ? targetHeading : Range.clip(heading, -90, 90);
 
         turretPID.setPID(TURRET_PID);
@@ -66,7 +67,9 @@ public class Turret implements Subsystem {
 
     public void stop() {
         setTargetHeading(heading);
-    }    public void setTargetHeading(double targetHeading){
+    }
+
+    public void setTargetHeading(double targetHeading){
         targetHeading = wrapAngle(targetHeading);
         if(targetHeading > 180)
             targetHeading -= 360;
@@ -79,6 +82,18 @@ public class Turret implements Subsystem {
 
     public double getHeading() {
         return heading;
+    }
+
+    Pose2d localPosition;
+    Pose2d robotPos;
+    Pose2d worldPos;
+
+    public Pose2d getTurretPosition(Robot robot){
+       localPosition = new Pose2d(-6.0*Math.sin(Math.toRadians(heading)), -2-6.0*Math.cos(Math.toRadians(heading)));
+       robotPos = robot.driveTrain.getPoseEstimate();
+       worldPos = new Pose2d( robotPos.getX() + localPosition.getX() - 2.0*Math.sin(robot.driveTrain.getExternalHeading()), robotPos.getY() + localPosition.getY() - 2.0*Math.cos(robot.driveTrain.getExternalHeading()));
+
+       return worldPos;
     }
 
     public boolean isTurretNearTarget(){
@@ -94,6 +109,9 @@ public class Turret implements Subsystem {
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turret near target", isTurretNearTarget());
             telemetryMap.put("turret correction", power);
+            telemetryMap.put("Local Pos", localPosition);
+            telemetryMap.put("Robot Pos", robotPos);
+            telemetryMap.put("World Pos", worldPos);
         }
 
         return telemetryMap;
