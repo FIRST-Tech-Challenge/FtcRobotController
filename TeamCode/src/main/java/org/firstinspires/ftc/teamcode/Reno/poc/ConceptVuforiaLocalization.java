@@ -109,6 +109,7 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
     private static final float halfField        = 72 * mmPerInch;
     private static final float halfTile         = 12 * mmPerInch;
     private static final float oneAndHalfTile   = 36 * mmPerInch;
+    private static final float meterPerInch        = 0.0254f;
 
 
     // Class Members
@@ -160,7 +161,7 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
         target.setName("red wall");
 
 
-        target.setLocation(createMatrix(0, 0, 0, 90, 0, 90));
+        target.setLocation(createMatrix((24 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
 
         // Set phone location on robot
         cameraLocation = createMatrix(0, 0, 0, 90, 0, 0);
