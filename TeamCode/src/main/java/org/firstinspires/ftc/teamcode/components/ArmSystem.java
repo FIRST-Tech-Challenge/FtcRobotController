@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.params.DriveParams;
@@ -38,6 +39,7 @@ public class ArmSystem {
     private int mTargetTicks;
     // Target heading to run to when turning
     private double mTargetHeading;
+    private DigitalChannel beamBreaker;
 
     private double ticksPerRev;
 
@@ -62,6 +64,7 @@ public class ArmSystem {
         this.armMotors = motors;
         mTargetTicks = 0;
         initMotors();
+
     }
 
     /** Initializes motors
@@ -311,5 +314,15 @@ public class ArmSystem {
     private int millimetersToTicks(int millimeters) {
         return (int) Math.round(millimeters * TICKS_IN_MM);
     }
+    public class BeamBreaker{
+        private DigitalChannel beamBreaker;
 
+        public BeamBreaker(DigitalChannel beam){
+            beamBreaker = beam;
+        }
+
+        public boolean isBeamBroken(){
+            return beamBreaker.getState();
+        }
+    }
 }
