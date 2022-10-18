@@ -124,6 +124,7 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
     private float robotX = 0;
     private float robotY = 0;
     private float robotAngle = 0;
+    private VuforiaTrackableDefaultListener listener;
 
     private void setupVuforia()
     {
@@ -162,7 +163,7 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
         target.setLocation(createMatrix(0, 0, 0, 90, 0, 90));
 
         // Set phone location on robot
-        cameraLocation = createMatrix(0, (-7.25f)*mmPerInch, 0, 90, 0, 0);
+        cameraLocation = createMatrix(0, 0, 0, 90, 0, 0);
 
         // Setup listener and inform it of phone information
         //listener = (VuforiaTrackableDefaultListener) target.getListener();
@@ -203,11 +204,18 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
 
                 // getUpdatedRobotLocation() will return null if no new information is available since
                 // the last time that call was made, or if the trackable is not currently visible.
-                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)target.getListener()).getUpdatedRobotLocation();
-                OpenGLMatrix targetLocationTransform = ((VuforiaTrackableDefaultListener)target.getListener()).getVuforiaCameraFromTarget();
+                listener = ((VuforiaTrackableDefaultListener)target.getListener());
+                OpenGLMatrix robotLocationTransform = listener.getUpdatedRobotLocation();
+                OpenGLMatrix targetLocationTransform = listener.getVuforiaCameraFromTarget();
+                OpenGLMatrix robotLocationOnField = listener.getFtcFieldFromRobot();
+                OpenGLMatrix cameraLocationOnRobot = listener.getCameraLocationOnRobot(webcamName);
+                OpenGLMatrix targetLocationOnField = target.getFtcFieldFromTarget();
+
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
+
+
 
                 float[] coordinates = lastLocation.getTranslation().getData();
 
@@ -223,6 +231,9 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
                 telemetry.addData("Last Known Location", formatMatrix(lastLocation));
                 telemetry.addData("Target Location", formatMatrix(targetLocationTransform));
+                telemetry.addData("camera Location", formatMatrix(cameraLocationOnRobot));
+                telemetry.addData("robot Location", formatMatrix(robotLocationOnField));
+                telemetry.addData("target Location", formatMatrix(targetLocationOnField));
 
                 telemetry.update();
                 idle();
