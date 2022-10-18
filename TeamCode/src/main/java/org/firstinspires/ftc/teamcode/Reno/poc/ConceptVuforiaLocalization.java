@@ -34,10 +34,12 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XZY;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -77,7 +79,7 @@ import java.util.List;
  * is explained below.
  */
 
-@TeleOp(name="POC - Vuforia Localization", group ="Concept")
+@Autonomous(name="POC - Vuforia Localization", group ="Concept")
 //@Disabled
 public class ConceptVuforiaLocalization extends LinearOpMode {
 
@@ -148,15 +150,19 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
         allTrackables.addAll(targets);
 
         // Setup the target to be tracked
-        target = identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
+        //target = identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
         identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
         identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
         identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
 
-        target.setLocation(createMatrix(0, 24*mmPerInch, 0, 90, 0, 90));
+        target = allTrackables.get(0);
+        target.setName("red wall");
+
+
+        target.setLocation(createMatrix(0, 0, 0, 90, 0, 90));
 
         // Set phone location on robot
-        cameraLocation = createMatrix(0, 8*mmPerInch, 0, 90, 0, 0);
+        cameraLocation = createMatrix(0, (-7.25f)*mmPerInch, 0, 90, 0, 0);
 
         // Setup listener and inform it of phone information
         //listener = (VuforiaTrackableDefaultListener) target.getListener();
@@ -198,6 +204,7 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
                 // getUpdatedRobotLocation() will return null if no new information is available since
                 // the last time that call was made, or if the trackable is not currently visible.
                 OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)target.getListener()).getUpdatedRobotLocation();
+                OpenGLMatrix targetLocationTransform = ((VuforiaTrackableDefaultListener)target.getListener()).getVuforiaCameraFromTarget();
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
@@ -215,6 +222,7 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
                 telemetry.addData("Last Known Location", formatMatrix(lastLocation));
+                telemetry.addData("Target Location", formatMatrix(targetLocationTransform));
 
                 telemetry.update();
                 idle();
