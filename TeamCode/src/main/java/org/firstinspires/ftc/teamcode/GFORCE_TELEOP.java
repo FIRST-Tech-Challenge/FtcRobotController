@@ -69,7 +69,11 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             // Update everything.
             drive.update();
-
+            if(gamepad1.dpad_left) {
+                elevator.setHandPosition(elevator.HAND_OPEN);
+            } else if(gamepad1.dpad_right) {
+                elevator.setHandPosition(elevator.HAND_CLOSE);
+            }
             // reset heading if double button press
             if (gamepad1.back && gamepad1.start) {
                 drive.setPoseEstimate( new Pose2d() );
