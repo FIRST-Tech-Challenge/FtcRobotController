@@ -43,7 +43,7 @@ public class BeamBreakerOpMode extends OpMode {
         return this.stopRequested || Thread.currentThread().isInterrupted();
     }
     public void loop(){
-        telemetry.addData("cone????" beamBreaker.isBeamBroken());
+        telemetry.addData("cone????", beamBreaker.isBeamBroken());
         telemetry.update();
     }
 

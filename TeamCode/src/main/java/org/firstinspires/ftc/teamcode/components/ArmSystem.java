@@ -314,7 +314,7 @@ public class ArmSystem {
     private int millimetersToTicks(int millimeters) {
         return (int) Math.round(millimeters * TICKS_IN_MM);
     }
-    public class BeamBreaker{
+    public static class BeamBreaker{
         private DigitalChannel beamBreaker;
 
         public BeamBreaker(DigitalChannel beam){
