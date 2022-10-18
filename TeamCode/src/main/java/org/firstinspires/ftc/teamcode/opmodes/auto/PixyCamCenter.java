@@ -24,7 +24,7 @@ public class PixyCamCenter extends OpMode {
         this.msStuckDetectInit     = 20000;
         this.msStuckDetectInitLoop = 20000;
         // Initialize motors
-        pixycam = new PixyCam(hardwareMap.get(I2cDeviceSynch.class, "sensor_color"));
+        pixycam = hardwareMap.get(PixyCam.class, "sensor_color");
 
 
 
