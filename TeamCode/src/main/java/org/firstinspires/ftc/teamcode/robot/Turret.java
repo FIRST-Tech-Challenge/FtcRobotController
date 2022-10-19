@@ -66,7 +66,7 @@ public class Turret {
             case TURRET_LEFT_POSITION:
             {
                 //where code for turning left goes
-                if(!lift.isInClear()){
+                if(!lift.isClear()){
                     lift.getToClear();
                 }
                 moveTurret(0);

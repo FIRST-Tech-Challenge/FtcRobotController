@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
@@ -35,6 +36,8 @@ public class Lift {
     public final double     LIFT_POSITION_HIGHPOLE = 40;
     public final double     LIFT_POSITION_PICKUP = 8;
 
+    public final double     HARD_STOP_CURRENT_DRAW = 100;
+
     public static double currentLiftHeight;
 
     public Lift(HardwareMap hwMap, Telemetry telemetry) {
@@ -56,17 +59,16 @@ public class Lift {
         int ticksNeeded = (int)(heightInInches/TICK_PER_INCH) + 1;
         liftMotor.setTargetPosition(ticksNeeded);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
     }
 
-    public boolean isInClear () {
+    public boolean isClear () {
         //true means turret can turn and lift is raised to minimum clearance; false is the opposite
         double currentLiftHeight = liftMotor.getCurrentPosition() * TICK_PER_INCH;
         return currentLiftHeight >= MINIMUM_CLEARANCE_HEIGHT;
 
     }
-    public void getToClear(){
-        if (!isInClear()) {
+    public void moveToMinHeight(){
+        if (!isClear()) {
             raiseHeightTo(MINIMUM_CLEARANCE_HEIGHT);
         }
     }
