@@ -128,6 +128,7 @@ public class Extension {
 
     // Returns current position of the grabber. 0 is wide open (dropped cone)
     public double grabberPosition() {
-        grabber.getPosition();
+        return grabber.getPosition();
     }
+
 }

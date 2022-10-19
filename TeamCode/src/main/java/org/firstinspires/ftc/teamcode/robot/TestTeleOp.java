@@ -10,11 +10,12 @@ public class TestTeleOp extends LinearOpMode {
     public void runOpMode(){
 
         robot = new BrainStemRobot(hardwareMap, telemetry);
+        Turret turret = new Turret(hardwareMap, telemetry);
         robot.initializeRobotPosition();
 
         // Preset positions for turret via buttons x, y, b
         if(gamepad1.y){
-            robot.moveTurret(90);
+            robot.moveToPreset(turret.TURRET_LEFT_POSITION, robot.lift);
         }
         if(gamepad1.b){
             robot.moveTurret(180);
@@ -49,7 +50,7 @@ public class TestTeleOp extends LinearOpMode {
 
         // TODO: The following segment will not work. Need to latch the position until next time the trigger is clicked.
         // Grab or drop the cone via right trigger (toggle)
-        if (gamepad1.right_trigger) {
+        if (gamepad1.right_bumper) {
             if (robot.arm.grabberPosition() > robot.arm.GRABBER_POSITION_OPEN)
                 robot.arm.grabberOpen();
             else
@@ -57,7 +58,7 @@ public class TestTeleOp extends LinearOpMode {
         }
 
         // Tilt the grabber via left trigger; hold to keep it tilted, release to reset tilt
-        if (gamepad1.left_trigger) {
+        if (gamepad1.left_bumper) {
             robot.arm.tiltUp();
         }
         else {
