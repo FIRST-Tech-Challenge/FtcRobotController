@@ -281,14 +281,16 @@ public class Crane implements Subsystem {
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
 
+    double shoulderHeight = 0;
+
     boolean inverseKinematic = false;
     double targetHeight = 0;
     double targetDistance = 0.43;
     double targetTurretAngle = 0;
 
-    double x;
-    double y;
-    double z;
+    double targetX;
+    double targetY;
+    double targetZ;
 
     @Override
     public void update(Canvas fieldOverlay) {
@@ -304,8 +306,13 @@ public class Crane implements Subsystem {
         extenderAmps = extenderMotor.getCurrent(CurrentUnit.AMPS);
 
         if(inverseKinematic){
+            Pose2d robotPos = robot.driveTrain.getPoseEstimate();
+            Pose2d turretPos = robot.turret.getTurretPosition(robotPos);
+            targetTurretAngle = Math.atan2(targetY - turretPos.getY(),targetX-turretPos.getX());
 
+            targetHeight = targetZ-shoulderHeight;
 
+            targetDistance = Math.sqrt(Math.pow(targetY - turretPos.getY(),2) + Math.pow(targetX - turretPos.getX(),2));
 
             double angle = Math.atan(targetHeight/targetDistance);
             double length = Math.sqrt( Math.pow(targetHeight,2) + Math.pow(targetDistance,2) );

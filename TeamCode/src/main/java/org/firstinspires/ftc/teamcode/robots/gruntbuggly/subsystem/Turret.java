@@ -88,15 +88,15 @@ public class Turret implements Subsystem {
     Pose2d robotPos;
     Pose2d worldPos;
 
-    public Pose2d getTurretPosition(Robot robot){
+    public Pose2d getTurretPosition(Pose2d robot){
 
-        double robotHeading = robot.driveTrain.getRawExternalHeading();
+        double robotHeading = robot.getHeading();
 
         double localX = -6.0*Math.sin(Math.toRadians(heading));
         double localY = -8-6.0*Math.cos(Math.toRadians(heading));
 
-        double robotX = 0;
-        double robotY = 0;
+        double robotX = robot.getX();
+        double robotY = robot.getY();
 
         double worldX = robotX + (localX)*Math.cos(-robotHeading) - (localY)*Math.sin(-robotHeading);
         double worldY = robotY + (localY)*Math.cos(-robotHeading) + (localX)*Math.sin(-robotHeading);

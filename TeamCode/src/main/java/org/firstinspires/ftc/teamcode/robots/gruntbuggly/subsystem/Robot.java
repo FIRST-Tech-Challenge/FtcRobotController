@@ -71,7 +71,7 @@ public class Robot implements Subsystem {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap, simulated);
         turret = new Turret(hardwareMap, simulated);
-        crane = new Crane(hardwareMap, turret, simulated);
+        crane = new Crane(hardwareMap, this, simulated);
 
         subsystems = new Subsystem[] {driveTrain, turret, crane}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
