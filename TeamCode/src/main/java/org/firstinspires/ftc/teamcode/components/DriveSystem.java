@@ -143,7 +143,7 @@ public class DriveSystem {
      * @param leftX Left X joystick value
      * @param leftY Left Y joystick value in case you couldn't tell from the others
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public void drive(float rightX, float leftX, float leftY) {
         // Prevent small values from causing the robot to drift
         if (Math.abs(rightX) < 0.01) {
@@ -186,7 +186,7 @@ public class DriveSystem {
      * @param direction The direction the robot is moving in
      * @param maxPower The maximum power of the motors
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean driveToPositionTicks(int ticks, Direction direction, double maxPower) {
         // Initialize target position
         if(mTargetTicks == 0) {
@@ -232,8 +232,7 @@ public class DriveSystem {
      * @param direction Which way is the robot moving
      * @param maxPower The maximum power of the motors
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void driveToPositionInit(int ticks, Direction direction, double maxPower) {
+  private void driveToPositionInit(int ticks, Direction direction, double maxPower) {
         mTargetTicks = direction == Direction.BACKWARD ? -ticks : ticks;
         // Set target position for each motor
         motors.forEach((name, motor) -> {
@@ -269,7 +268,7 @@ public class DriveSystem {
      * @param direction sets which direction to go
      * @param maxPower sets the power to run at
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower)
     {
         Log.d("going to ", millimeters + " " + direction);
@@ -281,7 +280,7 @@ public class DriveSystem {
      * @param leftPower sets the left side power of the robot
      * @param rightPower sets the right side power of the robot
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     private void tankDrive(double leftPower, double rightPower) {
         motors.forEach((name, motor) -> {
             switch(name) {
@@ -305,7 +304,7 @@ public class DriveSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean turnAbsolute(double degrees, double maxPower) {
         return turn(diffFromAbs(degrees), maxPower);
     }
@@ -316,7 +315,7 @@ public class DriveSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean turn(double degrees, double maxPower) {
         // If controller hub is vertical, use pitch instead of heading
         double heading = DriveParams.IMU_VERT ? imuSystem.getPitch() : imuSystem.getHeading();
@@ -347,7 +346,7 @@ public class DriveSystem {
      * @param heading current heading
      * @return if it finished its turn
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean onHeading(double speed, double heading) {
         double leftSpeed;
 

@@ -48,7 +48,6 @@ public class ArmSystem {
     /**
      * Handles the data for the abstract creation of a drive system with four wheels
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArmSystem(EnumMap<MotorNames, DcMotor> motors, BNO055IMU imu) {
         this.armMotors = motors;
         mTargetTicks = 0;
@@ -59,7 +58,6 @@ public class ArmSystem {
     /**
      * Handles the data for the abstract creation of a drive system with four wheels without IMU
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArmSystem(EnumMap<MotorNames, DcMotor> motors) {
         this.armMotors = motors;
         mTargetTicks = 0;
@@ -69,7 +67,6 @@ public class ArmSystem {
 
     /** Initializes motors
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void initMotors() {
         armMotors.forEach((name, motor) -> {
             // Reset encoders
@@ -120,7 +117,6 @@ public class ArmSystem {
      * @param direction The direction the robot is moving in
      * @param maxPower The maximum power of the motors
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean driveToPositionTicks(int ticks, Direction direction, double maxPower) {
         // Initialize target position
         if(mTargetTicks == 0) {
@@ -148,7 +144,7 @@ public class ArmSystem {
      * @param direction Which way is the robot moving
      * @param maxPower The maximum power of the motors
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     private void driveToPositionInit(int ticks, Direction direction, double maxPower) {
         mTargetTicks = direction == Direction.REVERSE ? -ticks : ticks;
         // Set target position for each motor
@@ -166,7 +162,7 @@ public class ArmSystem {
      * @param direction sets which direction to go
      * @param maxPower sets the power to run at
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower)
     {
         Log.d("going to ", millimeters + " " + direction);
@@ -174,7 +170,7 @@ public class ArmSystem {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     private void armSystem(double power) {
         armMotors.forEach((name, motor) -> {
             switch(name) {
@@ -194,7 +190,7 @@ public class ArmSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean turnAbsolute(double degrees, double maxPower) {
         return turn(diffFromAbs(degrees), maxPower);
     }
@@ -205,7 +201,7 @@ public class ArmSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean turn(double degrees, double maxPower) {
         // If controller hub is vertical, use pitch instead of heading
         double heading = DriveParams.IMU_VERT ? imuSystem.getPitch() : imuSystem.getHeading();
@@ -236,7 +232,7 @@ public class ArmSystem {
      * @param heading current heading
      * @return if it finished its turn
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean onHeading(double speed, double heading) {
         double leftSpeed;
 
