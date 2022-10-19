@@ -144,5 +144,82 @@ public class HardwareRobot
 
     }
 
+    public void tankDrive(double leftPower, double rightPower) {
+
+        this.leftDriveFront.setPower(leftPower);
+        this.leftDriveBack.setPower(leftPower);
+        this.rightDriveBack.setPower(rightPower);
+        this.rightDriveFront.setPower(rightPower);
+    }
+
+    public void arcadeDrive(double drive, double rotate) {
+
+        double maximum = Math.max(Math.abs(drive), Math.abs(rotate));
+        double total = drive + rotate;
+        double difference = drive - rotate;
+
+
+        if(drive >= 0)
+        {
+            if (rotate >= 0)
+            {
+                this.tankDrive(maximum, difference);
+            }
+            else
+            {
+                this.tankDrive(total, maximum);
+            }
+
+        }
+        else
+        {
+            if (rotate >= 0)
+            {
+                this.tankDrive(total, -1 * maximum);
+            }
+            else
+            {
+                this.tankDrive(-1 * maximum, difference);
+            }
+        }
+
+    }
+
+    public void setDriveForward()
+    {
+        this.leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    public void setDriveBackward()
+    {
+        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    public void resetEncoder()
+    {
+        leftDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDriveBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDriveBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftDriveFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDriveFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftDriveBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDriveBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void enableENcoder()
+    {
+        leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
  }
 
