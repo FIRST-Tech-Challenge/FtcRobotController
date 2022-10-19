@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
-import org.firstinspires.ftc.teamcode.hardware.Hardware9010;
 import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
 @TeleOp(name="GeneralDriver2022", group="TeleOps")
@@ -71,6 +70,9 @@ public class GeneralDriver extends BaseTele {
             hdw.wheelFrontLeft.setPower(robotWheel.wheelFrontLeftPower * powerDrivePercentage);
             hdw.wheelBackRight.setPower(robotWheel.wheelBackRightPower * powerDrivePercentage);
             hdw.wheelBackLeft.setPower(robotWheel.wheelBackLeftPower * powerDrivePercentage);
+
+            telemetry.addData("[>]", "All set?");
+            telemetry.update();
 
         }
 
