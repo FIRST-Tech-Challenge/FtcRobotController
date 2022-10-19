@@ -29,7 +29,6 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
-        exclude("META-INF/native-image/ios-x86_64/jnijavacpp/reflect-config.json")
     }
     namespace = 'org.firstinspires.ftc.teamcode'
     dexOptions{
@@ -49,4 +48,5 @@ dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.6'
     implementation 'com.android.support:support-compat:28.0.0'
     implementation 'org.openftc:easyopencv:1.5.2'
+    implementation 'org.openftc:apriltag:1.1.0'
 }
