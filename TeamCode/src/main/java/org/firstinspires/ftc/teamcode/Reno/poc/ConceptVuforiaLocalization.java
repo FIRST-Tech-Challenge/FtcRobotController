@@ -220,8 +220,8 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
 
                 float[] coordinates = lastLocation.getTranslation().getData();
 
-                robotX = coordinates[0];
-                robotY = coordinates[1];
+                robotX = coordinates[0] *1000;
+                robotY = coordinates[1] * 1000;
                 robotAngle = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
 
                 telemetry.addData("Pos (inches)", "{X, Y, Z} = %.1f, %.1f, %.1f",
