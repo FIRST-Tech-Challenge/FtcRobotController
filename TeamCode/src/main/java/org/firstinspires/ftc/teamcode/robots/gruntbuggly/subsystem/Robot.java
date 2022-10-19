@@ -105,7 +105,7 @@ public class Robot implements Subsystem {
         telemetryMap.put("Target Y", target.getY());
         telemetryMap.put(" X", current_dx);
         telemetryMap.put(" Y", current_dy);
-        telemetryMap.put("heading",driveTrain.getRawExternalHeading());
+        telemetryMap.put("heading",driveTrain.getExternalHeading());
 
 
         return telemetryMap;
