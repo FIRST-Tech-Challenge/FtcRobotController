@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * is explained below.
  */
 @TeleOp(name = "camera")
+@Disabled
 public class camera extends LinearOpMode {
     /*
      * Specify the source for the Tensor Flow Model.

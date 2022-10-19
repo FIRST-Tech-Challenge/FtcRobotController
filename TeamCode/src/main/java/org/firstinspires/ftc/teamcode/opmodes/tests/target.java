@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 @TeleOp(name="Drive To Target", group = "Concept")
 public class target extends LinearOpMode
 {
+    TurtleRobot robot = new TurtleRobot(this);
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
     //  The GAIN constants set the relationship between the measured position error,

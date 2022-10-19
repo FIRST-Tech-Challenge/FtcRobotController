@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Autonomous")
+@Autonomous(name = "basic autonomous")
 public class auto_camera extends LinearOpMode {
     int detect = 0;
     TurtleRobot robot = new TurtleRobot(this);
@@ -95,7 +95,7 @@ public class auto_camera extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(0.8, 16.0/9.0);
+            tfod.setZoom(1.0, 16.0/9.0);
         }
 
         /** Wait for the game to begin */

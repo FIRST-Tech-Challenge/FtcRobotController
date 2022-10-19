@@ -1,43 +1,15 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
-package org.firstinspires.ftc.teamcode.opmodes.tests;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
+
 
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -49,10 +21,10 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Custom object detection test", group = "Concept")
-@Disabled
-public class CustomObjectDetectionTest extends LinearOpMode {
-
+@Autonomous(name = "camera")
+public class asd extends LinearOpMode {
+    int detect = 0;
+    TurtleRobot robot = new TurtleRobot(this);
     /*
      * Specify the source for the Tensor Flow Model.
      * If the TensorFlowLite object model is included in the Robot Controller App as an "asset",
@@ -60,13 +32,13 @@ public class CustomObjectDetectionTest extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "customcone.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
     private static final String[] LABELS = {
-      "Bike",
-            "Car",
-            "Turtle"
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
     /*
@@ -116,7 +88,7 @@ public class CustomObjectDetectionTest extends LinearOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(0.8, 16.0/9.0);
+            tfod.setZoom(1.0, 16.0/9.0);
         }
 
         /** Wait for the game to begin */
@@ -140,7 +112,9 @@ public class CustomObjectDetectionTest extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-
+                            if (recognition.getLabel()=="1 Bolt") detect=1;
+                            if (recognition.getLabel()=="2 Bulb") detect=2;
+                            if (recognition.getLabel()=="3 Panel") detect=3;
                             telemetry.addData(""," ");
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
                             telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
@@ -150,6 +124,22 @@ public class CustomObjectDetectionTest extends LinearOpMode {
                     }
                 }
             }
+            if (detect==1) {
+                strafeLeft(0.5,1000);
+                stopRobot();
+                straight(0.5,1000);
+                stopRobot();
+            }
+            if (detect==2) {
+                straight(0.5,1000);
+                stopRobot();
+            }
+            if (detect==3) {
+                strafeRight(0.5,1000);
+                stopRobot();
+                straight(0.5,1000);
+                stopRobot();
+            }
         }
     }
 
@@ -157,9 +147,7 @@ public class CustomObjectDetectionTest extends LinearOpMode {
      * Initialize the Vuforia localization engine.
      */
     private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
+        /*Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.*/
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -174,16 +162,44 @@ public class CustomObjectDetectionTest extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.75f;
+        tfodParameters.minResultConfidence = 0.7f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 300;
+        tfodParameters.useObjectTracker = false;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+    }
+    public void straight(double power, int time) {
+        robot.leftfrontmotor.setPower(power);
+        robot.leftbackmotor.setPower(power);
+        robot.rightfrontmotor.setPower(power);
+        robot.rightbackmotor.setPower(power);
+        sleep(time);
+    }
+    public void strafeRight(double power, int time) {
+        robot.leftfrontmotor.setPower(power);
+        robot.leftbackmotor.setPower(-power);
+        robot.rightfrontmotor.setPower(-power);
+        robot.rightbackmotor.setPower(power);
+        sleep(time);
+    }
+    public void strafeLeft(double power, int time) {
+        robot.leftfrontmotor.setPower(-power);
+        robot.leftbackmotor.setPower(power);
+        robot. rightfrontmotor.setPower(power);
+        robot.rightbackmotor.setPower(-power);
+        sleep(time);
+    }
+    public void stopRobot() {
+        robot.leftfrontmotor.setPower(0);
+        robot.leftbackmotor.setPower(0);
+        robot.rightfrontmotor.setPower(0);
+        robot.rightbackmotor.setPower(0);
     }
 }
