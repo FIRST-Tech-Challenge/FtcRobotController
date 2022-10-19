@@ -32,12 +32,12 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)); // todo tune pid values
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.10, 0, 0.15,
+            500);//getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)); // todo tune pid values, 1.3882);//
 
     /*
-     * These are physical constants that can be determined from your robot (including the track
-     * width; it will be tune empirically later although a rough estimate is important). Users are
+     * These are physical constants hat can be determined from your robot (including the track
+     * width; it will be tune empirictally later although a rough estimate is important). Users are
      * free to chose whichever linear distance unit they would like so long as it is consistently
      * used. The default values were selected with inches in mind. Road runner uses radians for
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
@@ -65,7 +65,11 @@ public class DriveConstants {
      * inches.
      */
     // todo tune for these values
-    public static double MAX_VEL = 30;
+    public static double MAX_VEL = 30;//60.98193; //77.08;//45.2895;
+    /*
+    max velocity: 67.75770052509085
+    voltage compensated kf: 1.1919485351737802
+     */
     public static double MAX_ACCEL = 30;
     public static double MAX_ANG_VEL = Math.toRadians(60);
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
