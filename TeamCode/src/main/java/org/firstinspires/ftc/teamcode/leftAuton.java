@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.Drive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -56,7 +56,7 @@ public class leftAuton extends LinearOpMode {
         waitForStart();
 
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Drive drive = new Drive(hardwareMap);
 
         telemetry.addData("Color", currentColor);
         telemetry.update();

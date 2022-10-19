@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.Drive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 // PSEUDOCODE
@@ -21,7 +21,7 @@ public class Auton {
         //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void runAuton(int pz, SampleMecanumDrive getDrive)
+    public void runAuton(int pz, Drive getDrive)
     {
         parkingZone = pz;
 
@@ -30,7 +30,7 @@ public class Auton {
         {
             angle = 45;
         }
-        SampleMecanumDrive drive = getDrive;
+        Drive drive = getDrive;
         drive.setMotorPowers(0.5,0.5,0.5,0.5);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
                 .forward(30)
@@ -51,8 +51,6 @@ public class Auton {
         }
 
     }
-
-
 
     public void placeFirstCone() {
         // places first cone

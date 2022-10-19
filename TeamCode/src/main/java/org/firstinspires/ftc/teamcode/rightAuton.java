@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.Drive;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -55,15 +55,12 @@ public class rightAuton extends LinearOpMode {
 
         waitForStart();
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Drive drive = new Drive(hardwareMap);
 
         telemetry.addData("Color", currentColor);
         telemetry.update();
         Auton auto = new Auton(false);
         auto.runAuton(currentColor, drive);
-
-
-
     }
 
     class CameraColorPipeline extends OpenCvPipeline
@@ -92,7 +89,6 @@ public class rightAuton extends LinearOpMode {
             } else { // blue
                 currentColor=3;
             }
-
 
             return input;
         }
