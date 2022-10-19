@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes.tests;
 
 import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name="hello world")
+@Disabled
 public class hello_world extends LinearOpMode{
     @Override
     public void runOpMode() {
