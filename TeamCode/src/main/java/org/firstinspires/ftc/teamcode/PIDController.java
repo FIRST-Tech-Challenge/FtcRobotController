@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 // PID controller courtesy of Peter Tischler, with modifications.
+// copied from https://raw.githubusercontent.com/stemrobotics/Tetrix-Exercises/master/PIDController.java
 
 public class PIDController
 {

@@ -201,7 +201,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
         SliderMotor.setTargetPosition(sliderMotorTargetPosition);
         // Reset slider motor encoder counts kept by the motor
         SliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Using encoder mode to run slider motor
+        // Using encoder mode to run slider motor, maybe we dont need it before RUN_TO_POSITION
         SliderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Set motor to run to target encoder position and top with brakes on.
         SliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -225,8 +225,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
         pidDrive = new PIDController(.05, 0, 0);
 
         // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !imu.isGyroCalibrated())
-        {
+        while (!isStopRequested() && !imu.isGyroCalibrated()) {
             sleep(50);
             idle();
         }
@@ -238,13 +237,11 @@ public class TeleopIMU_Driving extends LinearOpMode {
         pidDrive.setSetpoint(0);
         pidDrive.setOutputRange(0, power);
         pidDrive.setInputRange(-90, 90);
-        pidDrive.enable();
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-
 
 
         // run until the end of the match (driver presses STOP)
@@ -260,6 +257,14 @@ public class TeleopIMU_Driving extends LinearOpMode {
             double turn  =  POWER_FACTOR * Math.pow(-gamepad1.right_stick_x, 1 + (2 * RAMP_ON));
             double strafe = POWER_FACTOR * Math.pow(-gamepad1.left_stick_x, 1 + (2 * RAMP_ON));
 
+            // only enable correction when the turn button is not pressed.
+            if (Math.abs(turn) > Math.ulp(0)) {
+                pidDrive.reset();
+            }
+            else {
+                pidDrive.enable();
+            }
+
             // Use PID with imu input to drive in a straight line.
             correction = pidDrive.performPID(getAngle());
 
@@ -273,11 +278,8 @@ public class TeleopIMU_Driving extends LinearOpMode {
             BackLeftPower    = Range.clip(-drive - turn + strafe, -1, 1) ;
             BackRightPower   = Range.clip(-drive + turn - strafe, -1, 1) ;
 
-            // only enable correction when the turn button is not pressed.
-            if (Math.abs(turn) > Math.ulp(0)) {
-                correction = 0.0;
-            }
 
+            telemetry.addData("5 final correction", correction);
             // Send calculated power to wheels
             FrontLeftDrive.setPower(FrontLeftPower - correction);
             FrontRightDrive.setPower(FrontRightPower + correction);
@@ -456,6 +458,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
         }
     }
 
+    /* isBF : Back forward(1), or left right (0) */
     private void setTargetPositionsToWheels(int tPos, boolean isBF) {
         if (isBF) {
             FrontLeftDrive.setTargetPosition( tPos );
@@ -463,14 +466,12 @@ public class TeleopIMU_Driving extends LinearOpMode {
             BackLeftDrive.setTargetPosition( tPos );
             BackRightDrive.setTargetPosition( tPos );
         }
-        else // move left or right, positive for right
-        {
+        else {// move left or right, positive for right
             FrontLeftDrive.setTargetPosition( tPos );
             FrontRightDrive.setTargetPosition( -tPos );
             BackLeftDrive.setTargetPosition( -tPos );
             BackRightDrive.setTargetPosition( tPos );
         }
-
     }
 
     private void setPowerToWheels(double power) {
@@ -491,8 +492,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
     /**
      * Resets the cumulative angle tracking to zero.
      */
-    private void resetAngle()
-    {
+    private void resetAngle() {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         globalAngle = 0;
@@ -502,8 +502,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
      * Get current cumulative angle rotation from last reset.
      * @return Angle in degrees. + = left, - = right from zero point.
      */
-    private double getAngle()
-    {
+    private double getAngle() {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
         // We have to process the angle because the imu works in euler angles so the Z axis is
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
@@ -529,8 +528,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
      * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    private void rotate(int degrees, double power)
-    {
+    private void rotate(int degrees, double power) {
         // restart imu angle tracking.
         resetAngle();
 
@@ -558,26 +556,22 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
         // rotate until turn is completed.
 
-        if (degrees < 0)
-        {
+        if (degrees < 0) {
             // On right turn we have to get off zero first.
-            while (opModeIsActive() && getAngle() == 0)
-            {
+            while (opModeIsActive() && getAngle() == 0) {
                 leftMotorSetPower(power);
                 rightMotorSetPower(-power);
                 sleep(100);
             }
 
-            do
-            {
+            do {
                 power = pidRotate.performPID(getAngle()); // power will be - on right turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
             } while (opModeIsActive() && !pidRotate.onTarget());
         }
         else    // left turn.
-            do
-            {
+            do {
                 power = pidRotate.performPID(getAngle()); // power will be + on left turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
