@@ -57,6 +57,9 @@ public class Turret {
     public void setMotor(double power){
         turretMotor.setPower(power);
     }
+    public int getPosition(){
+        return turretMotor.getCurrentPosition();
+    }
 
     private int convertAngleToTicks(double degrees){
         return (int)(degrees * NUMBEROFTICKSPERDEGREE);
@@ -72,8 +75,20 @@ public class Turret {
                 moveTurret(0);
                 break;
             }
-            case TURRET_RIGHT_POSITION;
+            case TURRET_RIGHT_POSITION:
             {
+                if(!lift.isInClear()){
+                    lift.getToClear();
+                }
+                moveTurret(180);
+                break;
+            }
+            case TURRET_CENTER_POSITION:
+            {
+                if(!lift.isInClear()){
+                    lift.getToClear();
+                }
+                moveTurret(90);
                 break;
             }
 

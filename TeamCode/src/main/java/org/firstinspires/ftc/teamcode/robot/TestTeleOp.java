@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 @TeleOp(name="Robot: Test Scaffold", group="Robot")
 public class TestTeleOp extends LinearOpMode {
@@ -13,15 +14,16 @@ public class TestTeleOp extends LinearOpMode {
         Turret turret = new Turret(hardwareMap, telemetry);
         robot.initializeRobotPosition();
 
+
         // Preset positions for turret via buttons x, y, b
         if(gamepad1.y){
-            robot.moveToPreset(turret.TURRET_LEFT_POSITION, robot.lift);
+            robot.turret.moveToPreset(turret.TURRET_LEFT_POSITION, robot.lift);
         }
         if(gamepad1.b){
-            robot.moveTurret(180);
+            robot.turret.moveToPreset(turret.TURRET_RIGHT_POSITION, robot.lift);
         }
         if(gamepad1.x){
-            robot.moveTurret(0);
+            robot.turret.moveToPreset(turret.TURRET_CENTER_POSITION, robot.lift);
         }
 
         // operator controlled lift via left stick y axis
@@ -64,6 +66,12 @@ public class TestTeleOp extends LinearOpMode {
         else {
             robot.arm.tiltDown();
         }
+        telemetry.addData("Lift" , robot.lift.getPosition());
+        telemetry.addData("Turret", robot.turret.getPosition());
+        telemetry.addData("Extension", robot.arm.getExtensionPosition());
+
+        telemetry.update();
+
 
     }
 

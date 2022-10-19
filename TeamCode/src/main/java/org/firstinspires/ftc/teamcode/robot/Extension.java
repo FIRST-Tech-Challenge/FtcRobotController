@@ -130,5 +130,8 @@ public class Extension {
     public double grabberPosition() {
         return grabber.getPosition();
     }
+    public double getExtensionPosition(){
+        return extension.getPosition();
+    }
 
 }
