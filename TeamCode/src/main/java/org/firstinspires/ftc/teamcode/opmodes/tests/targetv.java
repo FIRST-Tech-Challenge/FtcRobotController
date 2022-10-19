@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 
 /**
  * This OpMode illustrates using a webcam to locate and drive towards ANY Vuforia target.
@@ -39,10 +38,9 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
  * is explained below.
  */
 
-@TeleOp(name="Drive To Target", group = "Concept")
-public class target extends LinearOpMode
+@TeleOp(name="Drive To Target v", group = "Concept")
+public class targetv extends LinearOpMode
 {
-    TurtleRobot robot = new TurtleRobot(this);
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
     //  The GAIN constants set the relationship between the measured position error,
@@ -82,8 +80,6 @@ public class target extends LinearOpMode
          * To get an on-phone camera preview, use the code below.
          * If no camera preview is desired, use the parameter-less constructor instead (commented out below).
          */
-        TurtleRobot robot = new TurtleRobot(this);
-        robot.init(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
@@ -99,7 +95,10 @@ public class target extends LinearOpMode
 
         // Load the trackable objects from the Assets file, and give them meaningful names
         VuforiaTrackables targetsPowerPlay = this.vuforia.loadTrackablesFromAsset("PowerPlay");
-        targetsPowerPlay.get(0).setName("Red Cone");targetsPowerPlay.get(1).setName("Blue Cone");
+        targetsPowerPlay.get(0).setName("Red Audience Wall");
+        targetsPowerPlay.get(1).setName("Red Rear Wall");
+        targetsPowerPlay.get(2).setName("Blue Audience Wall");
+        targetsPowerPlay.get(3).setName("Blue Rear Wall");
 
         // Start tracking targets in the background
         targetsPowerPlay.activate();
@@ -117,16 +116,7 @@ public class target extends LinearOpMode
 
         while (opModeIsActive())
         {
-            while (gamepad1.a) {
-                robot.leftslidemotor.setPower(-1);
-                robot.rightslidemotor.setPower(-1);
-            }
-            while (gamepad1.b) {
-                robot.leftslidemotor.setPower(1);
-                robot.rightslidemotor.setPower(1);
-            }
-            robot.leftslidemotor.setPower(0);
-            robot.rightslidemotor.setPower(0);
+
             // Look for first visible target, and save its pose.
             targetFound = false;
             for (VuforiaTrackable trackable : targetsPowerPlay)
@@ -195,10 +185,6 @@ public class target extends LinearOpMode
             // Calculate left and right wheel powers and send to them to the motors.
             double leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             double rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-            robot.rightfrontmotor.setPower(frontRightDrive+rightPower);
-            robot.rightbackmotor.setPower(backRightDrive+rightPower);
-            robot.leftbackmotor.setPower(backLeftDrive+leftPower);
-            robot.leftfrontmotor.setPower(frontLeftDrive+leftPower);
 
             sleep(10);
         }
