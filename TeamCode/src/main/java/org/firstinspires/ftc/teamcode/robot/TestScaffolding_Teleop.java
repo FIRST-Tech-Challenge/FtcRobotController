@@ -23,43 +23,24 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Robot: Test Scaffold", group="Robot")
+@Disabled
 public class TestScaffolding_Teleop extends LinearOpMode {
 
-    /* BTBRT: Declare the robot which includes scaffold components turret, lift, arm, grabber (claw). */
+    // Declare the robot which includes scaffold components turret, lift, arm.
     public BrainStemRobot robot = null;
 
-    double clawOffset = 0;
-
-    // BTBRT: The following may move into the respective component classes
-    public static final double MID_SERVO   =  0.5 ;
-    public static final double CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
     public static final double LIFT_UP_POWER    =  0.45 ;
     public static final double LIFT_DOWN_POWER  = -0.45 ;
 
     @Override
     public void runOpMode() {
-        double left;
-        double right;
+
         double drive;
         double turn;
-        double max;
 
         // Define and Initialize Motors
         robot = new BrainStemRobot(hardwareMap, telemetry);
         robot.initializeRobotPosition();
-
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        /******************* MODIFY THE FOLLOWING SAMPLE CODE FOR BRAINSTEM ROBOT *******************/
-
-        // BTBRT: The following code for Claw should be moved to the new Grabber class construct
-        // Define and initialize ALL installed servos.
-        leftClaw  = hardwareMap.get(Servo.class, "left_hand");
-        rightClaw = hardwareMap.get(Servo.class, "right_hand");
-        leftClaw.setPosition(MID_SERVO);
-        rightClaw.setPosition(MID_SERVO);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press Play.");    //

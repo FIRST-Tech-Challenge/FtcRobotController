@@ -21,37 +21,17 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class BrainStemRobot {
 
-    public DcMotorEx frontLeft;
-    public DcMotorEx frontRight;
-    public DcMotorEx backLeft;
-    public DcMotorEx backRight;
-
-    // public DcMotorEx turret;
-
-    //public DcMotorEx extention;
-
-
-
-    /*
-    public I2cDeviceSynch pixyCam;
-    public DigitalChannel expanLimit;
-    public DigitalChannel cLimit;
-    public DigitalChannel frontLimit;
-    public CRServo swod;
-    public Servo linearActuator;
-    public Servo cServo;
-    public Servo cap;
-    public Object drive;
-*/
-
-
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor.RunMode currentDrivetrainMode;
 
     private Telemetry telemetry;
     private OpMode opMode;
+
+    // declare robot components
     public Turret turret;
     public Lift lift;
+    public Extension arm;
+    public SampleMecanumDrive drive;
 
     public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -60,52 +40,25 @@ public class BrainStemRobot {
         // instantiate components turret, lift, arm, grabber
         turret  = new Turret(hwMap, telemetry);
         lift    = new Lift(hwMap, telemetry);
-
-        // BTBRT: We do not need to detail the drive train motors here. We will use sampleMecanumDrive in respective entry points (@Autonomous or @Teleop)
-        // setMotorModes(currentDrivetrainMode);
+        arm     = new Extension(hwMap, telemetry);
+        drive   = new SampleMecanumDrive(hwMap);
 
         telemetry.addData("Robot", " Is Ready");
         telemetry.update();
     }
 
-/************************************************************************************************
-    // BTBRT: We do not need the methods used for motor modes/powers. sampleMecanumDrive handles it for us.
-
-    private void setMotorModes(DcMotor.RunMode mode) {
-        if (mode != currentDrivetrainMode) {
-            frontLeft.setMode(currentDrivetrainMode);
-            frontRight.setMode(currentDrivetrainMode);
-            backLeft.setMode(currentDrivetrainMode);
-            backRight.setMode(currentDrivetrainMode);
-            currentDrivetrainMode = mode;
-        }
-    }
-
-    public void setMotorPowers(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
-    }
-
-    public void stop() {
-        setMotorPowers(0, 0, 0, 0);
-    }
-
-**********************************************************************************************/
-
     public void initializeRobotPosition(){
         lift.initializePosition();
-        lift.getToClear();
+        lift.getToClear();  // Raise lift to clear side panels. This does not clear the arm holding cone.
+        arm.getToClear();   // Extend the arm so it clears corner of the robot when swinging
         turret.initializePosition();
-        lift.setLiftHeight(0);
+        lift.raiseHeightTo(0);
 
 
     }
     public void moveTurret(int targetDegrees){
-        if(!lift.isClear()){
-            lift.getToClear();
-        }
+        lift.getToClear();
+        arm.getToClear();
         turret.moveTurret(targetDegrees);
     }
 

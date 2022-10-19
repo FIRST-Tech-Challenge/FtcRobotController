@@ -20,7 +20,7 @@ public class Lift {
 
     static final double     COUNTS_PER_MOTOR_REV    = 8192;     // ticks at the motor shaft
     static final double     DRIVE_GEAR_REDUCTION    = 5.23;     // 5:1 gear reduction (slowing down)
-    static final double     PULLEY_WHEEL_DIAMETER_INCHES   = 22 * MM_TO_INCHES ;     // convert mm to inches
+    static final double     PULLEY_WHEEL_DIAMETER_INCHES   = 24.25 * MM_TO_INCHES ;     // convert mm to inches
     static final double     TICK_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (PULLEY_WHEEL_DIAMETER_INCHES * 3.1415);
 
     static final double     LIFT_UP_SPEED           = 0.5;
@@ -40,17 +40,15 @@ public class Lift {
     public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         liftMotor = (DcMotorEx) hwMap.dcMotor.get("Lift");
-        liftMotor.setPower(0.5);
+
+        liftMotor.setPower(LIFT_UP_SPEED);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+
     public int getPosition () {
         return liftMotor.getCurrentPosition();
-    }
-
-    public void setLiftHeight (double liftHeight) {
-
     }
 
     public void raiseHeightTo (double heightInInches) {
@@ -61,18 +59,18 @@ public class Lift {
 
     }
 
-    public boolean isClear () {
+    public boolean isInClear () {
         //true means turret can turn and lift is raised to minimum clearance; false is the opposite
-        currentLiftHeight = liftMotor.getCurrentPosition() * TICK_PER_INCH;
-        if(currentLiftHeight >= MINIMUM_CLEARANCE_HEIGHT){
-            return true;
-        }
-        return false;
+        double currentLiftHeight = liftMotor.getCurrentPosition() * TICK_PER_INCH;
+        return currentLiftHeight >= MINIMUM_CLEARANCE_HEIGHT;
 
     }
     public void getToClear(){
-        raiseHeightTo(MINIMUM_CLEARANCE_HEIGHT);
+        if (!isInClear()) {
+            raiseHeightTo(MINIMUM_CLEARANCE_HEIGHT);
+        }
     }
+
     public void initializePosition( ) {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
