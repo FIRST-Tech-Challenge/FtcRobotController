@@ -460,7 +460,7 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
             telemetry.addData("Motion", "Turning");
         }
 
-        telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", targetHeading, robotHeading);
+        telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", targetHeading, this.getRawHeading());
         telemetry.addData("Error:Steer",  "%5.1f:%5.1f", headingError, turnSpeed);
         telemetry.addData("Wheel Speeds L:R.", "%5.2f : %5.2f", leftSpeed, rightSpeed);
         telemetry.update();

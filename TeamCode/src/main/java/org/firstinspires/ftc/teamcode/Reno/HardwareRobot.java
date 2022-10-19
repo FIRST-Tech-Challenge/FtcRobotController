@@ -144,6 +144,19 @@ public class HardwareRobot
 
     }
 
+    public void stop()
+    {
+        // Moving forward
+        //telemetry.addData("Status", "ready to move forward for 4 seconds");
+        //power = 0.2;
+        this.leftDriveFront.setPower(0);
+        this.leftDriveBack.setPower(0);
+        this.rightDriveBack.setPower(0);
+        this.rightDriveFront.setPower(0);
+
+
+    }
+
     public void tankDrive(double leftPower, double rightPower) {
 
         this.leftDriveFront.setPower(leftPower);

@@ -88,7 +88,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.05;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.02;     // Max Turn speed to limit turn rate
-    static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
+    static final double     HEADING_THRESHOLD       = 5.0 ;    // How close must the heading get to the target before moving to next step.
                                                                // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
@@ -164,8 +164,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
         //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -45.0, 2);   // Hold -45 Deg heading for a 1/2 second
+        turnToHeading( TURN_SPEED, -90.0);               // Turn  CW to -45 Degrees
+        //holdHeading( TURN_SPEED, -45.0, 2);   // Hold -45 Deg heading for a 1/2 second
 
         //driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
         //turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
@@ -287,13 +287,33 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
      */
     public void turnToHeading(double maxTurnSpeed, double heading)
     {
+        //getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+        // Normalize the error to be within +/- 180 degrees
+        //while (headingError > 180)  headingError -= 360;
+        //while (headingError <= -180) headingError += 360;
+
+        motorController = new ConceptPidMotorController(0.002, 0, 0.02);
         motorController.setGoal(heading);
         motorController.setFeedbackValue(this.getRawHeading());
-        while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD))
+        telemetry.addData("Error:Steer",  "%5.1f:%5.1f", motorController.getError(), heading);
+
+        while (opModeIsActive() && (Math.abs(motorController.getError()) > 1))
         {
+            motorController.setFeedbackValue(this.getRawHeading());
             double rotate = motorController.getValue();
             robot.arcadeDrive(0, rotate);
+
+            telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", heading, this.getRawHeading());
+            telemetry.addData("PID", "%5.2f - %5.0f - %5.2f", motorController.getProportional(),
+                    motorController.getIntegral(), motorController.getDerivative());
+             telemetry.addData("Error:Speed",  "%5.1f:%5.1f", motorController.getError(), rotate);
+            //telemetry.addData("Wheel Speeds L:R.", "%5.2f : %5.2f", leftSpeed, rightSpeed);
+            telemetry.update();
+            //sleep(250);
         }
+        robot.stop();
+        sleep(2*1000);
         /*
         // Run getSteeringCorrection() once to pre-calculate the current error
         getSteeringCorrection(heading, P_DRIVE_GAIN);

@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.util.Range;
 import java.time.LocalTime;
 
 public class ConceptPidMotorController extends ConceptMotorController{
-    private double Kp = 0.03;                     // factor for "proportional" control
-    private double Ki = 0.001;                     // factor for "integral" control
-    private double Kd = 0.002;                     // factor for "derivative" control
+    private double Kp = 0.002;                     // factor for "proportional" control
+    private double Ki = 0.0001;                     // factor for "integral" control
+    private double Kd = 0.0002;                     // factor for "derivative" control
     private double previousError = 0.0;       // the prior sensor input (used to compute velocity)
 
     private double error = 0.0;
@@ -22,6 +22,7 @@ public class ConceptPidMotorController extends ConceptMotorController{
     private double derivative = 0.0;
     private double miniValue = -1.0;
     private double maxValue = 1.0;
+
 
     public ConceptPidMotorController(double goal)
     {
@@ -39,11 +40,31 @@ public class ConceptPidMotorController extends ConceptMotorController{
     {
         this.feedBackValue = value;
     }
+
+    public double getProportional()
+    {
+        return this.proportional;
+    }
+
+    public double getIntegral()
+    {
+        return this.integral;
+    }
+
+    public double getDerivative()
+    {
+        return this.derivative;
+    }
+
     public void setGoal(double goal)
     {
         this.goal = goal;
+        this.error = this.goal - this.feedBackValue;
     }
-
+    public double getError()
+    {
+        return this.error;
+    }
     public void reset()
     {
         this.Kp = 0.0;
@@ -78,6 +99,11 @@ public class ConceptPidMotorController extends ConceptMotorController{
         previousTime = currentTime;
 
         double pid = proportional + integral + derivative;
+
+
+        if(this.goal < 0) {
+            return -1 * Range.clip(pid, miniValue, maxValue);
+        }
         return Range.clip(pid, miniValue, maxValue);
 
     }
