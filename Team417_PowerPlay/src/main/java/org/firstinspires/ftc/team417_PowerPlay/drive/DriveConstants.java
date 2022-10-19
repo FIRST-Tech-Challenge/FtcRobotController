@@ -20,8 +20,8 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 5281.1;
-    public static final double MAX_RPM = 30;
+    public static final double TICKS_PER_REV = 537.7;//5281.1;
+    public static final double MAX_RPM = 312;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -33,7 +33,7 @@ public class DriveConstants {
      */
     public static final boolean RUN_USING_ENCODER = true;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.10, 0, 0.15,
-            500);//getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)); // todo tune pid values, 1.3882);//
+            12);//getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)); // todo tune pid values, 1.3882);//
 
     /*
      * These are physical constants hat can be determined from your robot (including the track
@@ -65,13 +65,17 @@ public class DriveConstants {
      * inches.
      */
     // todo tune for these values
-    public static double MAX_VEL = 30;//60.98193; //77.08;//45.2895;
+    public static double MAX_VEL = 60;//60.98193; //77.08;//45.2895;
     /*
     max velocity: 67.75770052509085
     voltage compensated kf: 1.1919485351737802
      */
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(60);
+    public static double MAX_ANG_VEL = 8.9284;//12.1226;//Math.toRadians(60);
+    /*
+    511.5612322270716
+8.928427827921725
+     */
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
 
