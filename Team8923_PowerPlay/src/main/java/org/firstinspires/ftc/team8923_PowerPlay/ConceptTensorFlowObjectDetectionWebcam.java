@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.team8923_PowerPlay;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
-
+@Autonomous(name = "ConceptTensorFlowObjectDetectionWebcam ")
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
     /*
@@ -43,7 +43,11 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            "AQYaetf";
+            "AQYaetf/////AAABmTKBOnYV+03Dsg0qldOiWBJtNgHX1kGW8jNu7X1SH7uDsyjR8VKoRbCeY5QE5OArcAm/vmSbxm" +
+                    "/fUO7ImfFpyNDYUGMG6vCXg/aLnGdT6Obt380jnlTQJwYGhJv1J3ULYK4J07HrtN+T6nGUfF0XTBo07gHQN" +
+                    "a6QU0Pc4P2qmu3/l25K1Tm7P4Fjf2NXvk0AR29y37IP0MOSJJ7/oMcDDs/vBxvEwjXo5ycvHyuzqieNcK7V" +
+                    "R9gOBYb2fpC246GZD7GykaILZoqU3bDTw0Ofcssc3OxnjQJP8DTgsqpJxwXG0DVrfWF3eYFI5aXNQozmoE" +
+                    "JYRAA4iLesJMQI58VVzz2R+frnTs8vyznlTzstxsO6";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
