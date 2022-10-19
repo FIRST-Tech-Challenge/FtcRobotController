@@ -194,12 +194,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 .build();
 
     }
-    public double updateHeading(double dtheta){
-        //TODO Mix IMU data with encoder data
-        Orientation orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.RADIANS);
-
-        return orientation.firstAngle;
-    }
 
     public void setTargetVelocity(double vel){
         velocityPID.setSetpoint(vel);
@@ -209,85 +203,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID.setSetpoint(vel);
     }
 
-    public void updatePose(){ //this might be David's stuff
-        double dLeft = diffEncoderTicksToInches(leftMotor.getCurrentPosition());
-        double dRight = diffEncoderTicksToInches(rightMotor.getCurrentPosition());
-
-        if(dLeft == dRight) {
-            //in this case, robot just moves forward, and just use simple trig to update pose
-            currentPose = new Pose2d(currentPose.getX() + dLeft*Math.sin(currentPose.getHeading()),
-                    currentPose.getY() + dRight*Math.cos(currentPose.getHeading()));
-            return;
-        }
-        if((dLeft > 0 && dRight > 0) || (dLeft < 0 && dRight < 0)){
-
-        // in this case, robot is turning with both motors in the same direction.
-
-                double R = Constants.DISTANCE_BETWEEN_WHEELS / (1 - Math.min(dLeft / dRight, dRight/dLeft));
-                double midpointRadius = R - Constants.DISTANCE_BETWEEN_WHEELS/2;
-
-                double thetaModifier = (Math.abs(dRight) > Math.abs(dLeft) ? 0 : Math.PI);
-                double x1 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
-                double y1 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
-
-                double newTheta = updateHeading(R/Math.max(Math.abs(dRight), Math.abs(dLeft)));
-                //if turning left, we use normal theta
-                //if turning right, we use theta + pi
-
-                double x2 = Math.cos(newTheta + thetaModifier) * midpointRadius;
-                double y2 = Math.sin(newTheta + thetaModifier) * midpointRadius;
-                currentPose = new Pose2d( currentPose.getX() + (x2 - x1),
-                        currentPose.getY() + (y2 - y1), newTheta);
-                return;
-
-        }
-        if (dLeft != 0 && dRight != 0) {
-            //r + l = L
-            //r = dr/dl l
-
-            double rLeft = Constants.DISTANCE_BETWEEN_WHEELS / (1 + Math.abs(dRight/dLeft));
-            // if rLeft is greater than half the distance between the wheels, the center of the circle is to the right
-            // if rLeft is less than half the distance between the wheels, the center of the circle is to the left.
-            double rRight = Constants.DISTANCE_BETWEEN_WHEELS - rLeft;
-            double midpointRadius = Math.max(rLeft, rRight) - Constants.DISTANCE_BETWEEN_WHEELS/2;
-
-
-            double thetaModifier = (rRight > rLeft ? 0 : Math.PI);
-            double x1 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
-            double y1 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
-
-            double newTheta = updateHeading(Math.abs(rRight/dRight));
-            double x2 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
-            double y2 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
-            currentPose = new Pose2d( currentPose.getX() + (x2 - x1),
-                    currentPose.getY() + (y2 - y1), newTheta);
-            return;
-
-
-        }
-        else {
-
-            double midpointRadius = Constants.DISTANCE_BETWEEN_WHEELS/2;
-
-
-            double thetaModifier = (dLeft == 0 ? 0 : Math.PI);
-            double x1 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
-            double y1 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
-
-            double newTheta = updateHeading(Math.max(Math.abs(dRight), Math.abs(dLeft)) / Constants.DISTANCE_BETWEEN_WHEELS);
-            double x2 = Math.cos(currentPose.getHeading() + thetaModifier)*midpointRadius;
-            double y2 = Math.sin(currentPose.getHeading() + thetaModifier)*midpointRadius;
-            currentPose = new Pose2d( currentPose.getX() + (x2 - x1),
-                    currentPose.getY() + (y2 - y1), newTheta);
-            return;
-        }
-
-    }
-
     @Override
     public void update(Canvas fieldOverlay) {
         //updatePose(); //David's update
-        // sensor readings
+        // sensor reading
+
         leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
         rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
 
@@ -442,11 +362,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         double dy = newPoint.getY() - currentPoseEstimate.getY();
         double velocity = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))/timeStep;
         //direction
-        double heading = getRawExternalHeading();
-        double sign = Math.signum(dx * ( -Math.sin(heading)) + dy * (Math.cos(heading)));
-        double newHeading = Math.atan2(dy,dx) + (sign>0 ? 0:(2*Math.PI));
-
-
+        double heading = getExternalHeading();
+        double sign = Math.signum(dx * ( -Math.sin(heading)) + dy * (Math.cos(heading))) >= 0 ? 1:-1;
+        double newHeading = Math.atan2(dy,dx) + (sign>=0 ? 0:(2*Math.PI));
 
         headingPID.setSetpoint(newHeading);
         headingPID.setInput(getPoseEstimate().getHeading());
@@ -687,12 +605,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     @Override
     public double getRawExternalHeading() {
-        Pose2d pose = getPoseEstimate();
-       try {
-           return getPoseEstimate().getHeading();
-       } catch(Exception e){
-           return -1;
-       }
+        return getExternalHeading();
     }
 
     @Override

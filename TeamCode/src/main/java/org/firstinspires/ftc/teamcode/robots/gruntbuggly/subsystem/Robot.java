@@ -71,7 +71,7 @@ public class Robot implements Subsystem {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap, simulated);
         turret = new Turret(hardwareMap, simulated);
-        crane = new Crane(hardwareMap, turret, simulated);
+        crane = new Crane(hardwareMap, this, simulated);
 
         subsystems = new Subsystem[] {driveTrain, turret, crane}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
@@ -105,7 +105,7 @@ public class Robot implements Subsystem {
         telemetryMap.put("Target Y", target.getY());
         telemetryMap.put(" X", current_dx);
         telemetryMap.put(" Y", current_dy);
-        telemetryMap.put("heading",driveTrain.getRawExternalHeading());
+        telemetryMap.put("heading",driveTrain.getExternalHeading());
 
 
         return telemetryMap;
