@@ -74,6 +74,7 @@ public class HardwareRobot
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
+    private String motorStatus;
 
     /* Constructor */
     public HardwareRobot(){
@@ -163,6 +164,7 @@ public class HardwareRobot
         this.leftDriveBack.setPower(leftPower);
         this.rightDriveBack.setPower(rightPower);
         this.rightDriveFront.setPower(rightPower);
+        this.setMotorStatus(leftPower, leftPower, rightPower, rightPower);
     }
 
     public void arcadeDrive(double drive, double rotate) {
@@ -232,6 +234,16 @@ public class HardwareRobot
         rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setMotorStatus(double leftFrontSpeed, double leftBackSpeed, double rightFrontSpeed, double rightBackSpeed)
+    {
+        motorStatus =  String.format("Speed - LF %5.2f:LB %5.2f:RF %5.2f:RB %5.2f", leftFrontSpeed, leftBackSpeed, rightFrontSpeed, rightBackSpeed);
+    }
+
+    public String getMotorStatus()
+    {
+        return this.motorStatus;
     }
 
  }

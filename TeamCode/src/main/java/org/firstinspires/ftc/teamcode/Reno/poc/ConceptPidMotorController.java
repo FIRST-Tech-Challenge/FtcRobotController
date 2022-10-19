@@ -82,7 +82,7 @@ public class ConceptPidMotorController extends ConceptMotorController{
     {
         this.error = this.goal - this.feedBackValue;
         long currentTime = System.nanoTime();
-        double deltaTime = currentTime - previousTime;
+        double deltaTime = (currentTime - previousTime)/1000000; //millisecond
         double deltaError = this.goal - this.previousError;
 
         proportional = Kp * error;

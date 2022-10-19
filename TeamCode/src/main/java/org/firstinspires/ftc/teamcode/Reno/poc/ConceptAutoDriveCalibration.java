@@ -287,11 +287,10 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
      */
     public void turnToHeading(double maxTurnSpeed, double heading)
     {
-        //getSteeringCorrection(heading, P_DRIVE_GAIN);
-
-        // Normalize the error to be within +/- 180 degrees
-        //while (headingError > 180)  headingError -= 360;
-        //while (headingError <= -180) headingError += 360;
+        // Normalize the heading to be within +/- 180 degrees
+        heading -= this.getRawHeading();
+        while (heading > 180)  heading -= 360;
+        while (heading <= -180) heading += 360;
 
         motorController = new ConceptPidMotorController(0.002, 0, 0.02);
         motorController.setGoal(heading);
@@ -308,35 +307,13 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
             telemetry.addData("PID", "%5.2f - %5.0f - %5.2f", motorController.getProportional(),
                     motorController.getIntegral(), motorController.getDerivative());
              telemetry.addData("Error:Speed",  "%5.1f:%5.1f", motorController.getError(), rotate);
-            //telemetry.addData("Wheel Speeds L:R.", "%5.2f : %5.2f", leftSpeed, rightSpeed);
+             telemetry.addData("", robot.getMotorStatus());
+
             telemetry.update();
-            //sleep(250);
+
         }
         robot.stop();
         sleep(2*1000);
-        /*
-        // Run getSteeringCorrection() once to pre-calculate the current error
-        getSteeringCorrection(heading, P_DRIVE_GAIN);
-
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
-
-            // Determine required steering to keep on heading
-            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
-
-            // Clip the speed to the maximum permitted value.
-            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
-
-            // Pivot in place by applying the turning correction
-            moveRobot(0, turnSpeed);
-
-            // Display drive status for the driver.
-            sendTelemetry(false);
-        }
-
-        // Stop all motion;
-        moveRobot(0, 0);
-        */
 
     }
 
