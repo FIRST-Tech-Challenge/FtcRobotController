@@ -27,17 +27,22 @@ public class AprilTagOpMode extends LinearOpMode
     Check constructMatrix in apriltagdetectionpipeline file for more information
 
     */
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
+    double fx = 369.50;
+    double fy = 369.50;
+    double cx = 320;
+    double cy = 240;
+//    double fx = 578.272;
+//    double fy = 578.272;
+//    double cx = 402.145;
+//    double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize = 0.166;
+    double tagsize = 0.0406;
+//    double tagsize = 0.166;
 
-    final int ID_LEFT = 18; // RANDOM TAG CHOSEN
-    final int ID_MIDDLE = 19;
-    final int ID_RIGHT = 20;
+    final int ID_LEFT = 0; // RANDOM TAG CHOSEN
+    final int ID_MIDDLE = 1;
+    final int ID_RIGHT = 2;
 
     AprilTagDetection tagOfInterest = null;
 
@@ -80,6 +85,7 @@ public class AprilTagOpMode extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
+                    telemetry.addLine(String.format("\ntagid", tag.id));
                     if(tag.id == ID_LEFT)
                     {
                         tagOfInterest = tag;
@@ -104,7 +110,7 @@ public class AprilTagOpMode extends LinearOpMode
                 {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     processTag(tagOfInterest);
-                    break;
+//                    break;
                 }
                 else
                 {
@@ -118,7 +124,7 @@ public class AprilTagOpMode extends LinearOpMode
                     {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         processTag(tagOfInterest);
-                        break;
+//                        break;
                     }
                 }
 
@@ -135,7 +141,8 @@ public class AprilTagOpMode extends LinearOpMode
                 {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     processTag(tagOfInterest);
-                    break;
+//                    break;
+
                 }
 
             }
@@ -182,9 +189,14 @@ public class AprilTagOpMode extends LinearOpMode
                 break;
         }
 
+        int parkingSpace = 0;
+        if (detection.id == 1) { parkingSpace = 1; }
+        else if (detection.id == 0) { parkingSpace = 2; }
+        else { parkingSpace = 3; }
+
         telemetry.update();
 
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        telemetry.addLine(String.format("\nDetected tag ID=%d", parkingSpace));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
