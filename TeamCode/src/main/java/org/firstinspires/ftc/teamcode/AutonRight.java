@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagOpMode extends LinearOpMode
+public class AutonRight extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetect;
@@ -43,6 +43,7 @@ public class AprilTagOpMode extends LinearOpMode
     final int ID_LEFT = 0; // RANDOM TAG CHOSEN
     final int ID_MIDDLE = 1;
     final int ID_RIGHT = 2;
+    int parkingSpace;
 
     AprilTagDetection tagOfInterest = null;
 
@@ -110,7 +111,7 @@ public class AprilTagOpMode extends LinearOpMode
                 {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     processTag(tagOfInterest);
-//                    break;
+                    break;
                 }
                 else
                 {
@@ -124,7 +125,7 @@ public class AprilTagOpMode extends LinearOpMode
                     {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         processTag(tagOfInterest);
-//                        break;
+                        break;
                     }
                 }
 
@@ -163,6 +164,16 @@ public class AprilTagOpMode extends LinearOpMode
             telemetry.addLine("Could not find the tag...");
             telemetry.update();
         }
+        else{
+            waitForStart();
+
+            Drive drive = new Drive(hardwareMap);
+
+            telemetry.addData("Parking Space", parkingSpace);
+            telemetry.update();
+            Auton auto = new Auton(false);
+            auto.runAuton(parkingSpace, drive);
+        }
 
 
 
@@ -173,8 +184,8 @@ public class AprilTagOpMode extends LinearOpMode
     void processTag(AprilTagDetection detection)
     {
         /*
-        * this is where we run the auton
-        */
+         * this is where we run the auton
+         */
 
         // three different tags:
         switch(detection.id) {
@@ -189,7 +200,7 @@ public class AprilTagOpMode extends LinearOpMode
                 break;
         }
 
-        int parkingSpace = 0;
+
         if (detection.id == 1) { parkingSpace = 1; }
         else if (detection.id == 0) { parkingSpace = 2; }
         else { parkingSpace = 3; }

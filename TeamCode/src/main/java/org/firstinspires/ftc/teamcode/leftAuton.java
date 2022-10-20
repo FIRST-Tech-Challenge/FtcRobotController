@@ -1,154 +1,207 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Drive;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.*;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "Left Auton")
-public class leftAuton extends LinearOpMode {
-    OpenCvWebcam webcam;
-    CameraColorPipeline pipeline;
-    int currentColor = 0;
-    String colorName;
+import java.util.ArrayList;
+
+@TeleOp
+public class LeftAuton extends LinearOpMode
+{
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetect;
+
+    static final double FEET_PER_METER = 3.28084;
+
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448. WE MUST CHANGE THESE TO MATCH OUR CONFIGURATIONS
+
+    /*
+    Check constructMatrix in apriltagdetectionpipeline file for more information
+
+    */
+    double fx = 369.50;
+    double fy = 369.50;
+    double cx = 320;
+    double cy = 240;
+//    double fx = 578.272;
+//    double fy = 578.272;
+//    double cx = 402.145;
+//    double cy = 221.506;
+
+    // UNITS ARE METERS
+    double tagsize = 0.0406;
+//    double tagsize = 0.166;
+
+    final int ID_LEFT = 0; // RANDOM TAG CHOSEN
+    final int ID_MIDDLE = 1;
+    final int ID_RIGHT = 2;
+
+    AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode()
     {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetect = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        pipeline = new CameraColorPipeline();
-        webcam.setPipeline(pipeline);
-        webcam.setMillisecondsPermissionTimeout(2500);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        camera.setPipeline(aprilTagDetect);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                telemetry.addLine("Camera Opened");
-                telemetry.update();
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode)
             {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-                telemetry.addLine("Error, onError() function activated");
-                telemetry.update();
+
             }
         });
 
-        telemetry.addLine("Waiting for start");
-        telemetry.update();
+        telemetry.setMsTransmissionInterval(50);
 
-        waitForStart();
+        /*
+         * This REPLACES waitForStart
+         */
 
-
-        Drive drive = new Drive(hardwareMap);
-
-        telemetry.addData("Color", currentColor);
-        telemetry.update();
-        Auton auto = new Auton(false);
-        auto.runAuton(currentColor, drive);
-
-
-
-    }
-
-    class CameraColorPipeline extends OpenCvPipeline
-    {
-        boolean viewportPaused;
-        final Rect ROI = new Rect(new Point(155, 115), new Point(165, 125));
-
-        @Override
-        public Mat processFrame(Mat input)
+        boolean continueAuton = true;
+        while (!isStarted() && !isStopRequested() && continueAuton)
         {
-            Imgproc.rectangle(
-                    input,
-                    new Point(
-                            input.cols()/4.0,
-                            input.rows()/4.0),
-                    new Point(
-                            input.cols()*(3f/4f),
-                            input.rows()*(3f/4f)),
-                    new Scalar(0, 255, 0), 4);
-
-            String colorName = getColor(input);
-            if (colorName.equals("red")) {
-                currentColor=1;
-            } else if (colorName.equals("green")) {
-                currentColor=2;
-            } else { // blue
-                currentColor=3;
-            }
-
-
-            return input;
-        }
-
-        public String getColor(Mat input) {
-            int[] camValues = new int[3];
-
-            Mat coneRegion = input.submat(ROI);
-            camValues[0] = (int) Core.sumElems(coneRegion).val[0] / (int) ROI.area();
-            camValues[1] = (int) Core.sumElems(coneRegion).val[1] / (int) ROI.area();
-            camValues[2] = (int) Core.sumElems(coneRegion).val[2] / (int) ROI.area();
-            String colorString = camValues[0] + ", " + camValues[1] + ", " + camValues[2];
-            telemetry.addData("Color in RGB: ", colorString);
-
-            String colorName = MSE(camValues);
-            telemetry.addData("Closest Color: ", colorName);
-            coneRegion.release();
-
-            return colorName;
-        }
-
-        public String MSE(int[] camValues) {
-            int[][] coneColorValues = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}};
-            // red, green, blue
-
-            int[] diffs = new int[3];
-
-            for (int i = 0; i < 3; i++) {
-                int rDiff = (int) Math.pow(coneColorValues[i][0] - camValues[0], 2);
-                int gDiff = (int) Math.pow(coneColorValues[i][1] - camValues[1], 2);
-                int bDiff = (int) Math.pow(coneColorValues[i][2] - camValues[2], 2);
-                diffs[i] = rDiff + gDiff + bDiff;
-            }
-
-            String diffsString = diffs[0] + ", " + diffs[1] + ", " + diffs[2];
-            telemetry.addData("diffs: ", diffsString);
-
-            if (diffs[1] < diffs[2] && diffs[1] < diffs[0]) { return "green"; }
-            else if (diffs[2] < diffs[0] && diffs[2]< diffs[1]) { return "blue"; }
-            else { return "red"; }
-        }
-
-        @Override
-        public void onViewportTapped()
-        {
-            viewportPaused = !viewportPaused;
-
-            if(viewportPaused)
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetect.getLatestDetections();
+            if(currentDetections.size() != 0)
             {
-                webcam.pauseViewport();
+                boolean tagFound = false;
+
+                for(AprilTagDetection tag : currentDetections)
+                {
+                    telemetry.addLine(String.format("\ntagid", tag.id));
+                    if(tag.id == ID_LEFT)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                    else if(tag.id == ID_MIDDLE)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                    else if(tag.id == ID_RIGHT)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+
+                if(tagFound)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    processTag(tagOfInterest);
+//                    break;
+                }
+                else
+                {
+                    telemetry.addLine("Tag of interest not in sight");
+
+                    if(tagOfInterest == null)
+                    {
+                        telemetry.addLine("(The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                        processTag(tagOfInterest);
+//                        break;
+                    }
+                }
+
             }
             else
             {
-                webcam.resumeViewport();
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if(tagOfInterest == null)
+                {
+                    telemetry.addLine("(The tag has never been seen)");
+                }
+                else
+                {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    processTag(tagOfInterest);
+//                    break;
+
+                }
+
             }
+
+            telemetry.update();
+            sleep(20);
         }
+
+
+
+        /* Actually do something useful */
+        if(tagOfInterest == null)
+        {
+            /*
+             * Well then, something went wrong!
+             */
+
+            telemetry.addLine("Could not find the tag...");
+            telemetry.update();
+        }
+
+
+
+        /* Prevent the sample from ending */
+        while (opModeIsActive()) {sleep(20);}
+    }
+
+    void processTag(AprilTagDetection detection)
+    {
+        /*
+        * this is where we run the auton
+        */
+
+        // three different tags:
+        switch(detection.id) {
+            case ID_LEFT:
+                telemetry.addLine("FOUND LEFT");
+                break;
+            case ID_MIDDLE:
+                telemetry.addLine("FOUND MIDDLE");
+                break;
+            case ID_RIGHT:
+                telemetry.addLine("FOUND RIGHT");
+                break;
+        }
+
+        int parkingSpace = 0;
+        if (detection.id == 1) { parkingSpace = 1; }
+        else if (detection.id == 0) { parkingSpace = 2; }
+        else { parkingSpace = 3; }
+
+        telemetry.update();
+
+        telemetry.addLine(String.format("\nDetected tag ID=%d", parkingSpace));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+//        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
+//        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
+//        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
