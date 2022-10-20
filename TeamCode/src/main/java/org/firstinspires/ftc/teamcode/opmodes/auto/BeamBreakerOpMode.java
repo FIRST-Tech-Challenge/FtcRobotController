@@ -48,6 +48,7 @@ public class BeamBreakerOpMode extends OpMode {
     }
     public void loop(){
         telemetry.addData("cone????", intake.isBeamBroken());
+        telemetry.addData("time elapsed: ", time.seconds());
         telemetry.update();
 
         if(gamepad1.a){

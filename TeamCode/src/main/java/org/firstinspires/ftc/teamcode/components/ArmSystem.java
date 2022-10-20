@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.params.DriveParams;
 
 import java.util.EnumMap;
+import java.util.concurrent.TimeUnit;
 
 public class ArmSystem {
 
@@ -323,22 +324,25 @@ public class ArmSystem {
         }
 
         public boolean isBeamBroken(){
-            return beamBreaker.getState();
+            return !beamBreaker.getState();
         }
 
         public boolean intake(){
+            coneTake.setDirection(DcMotor.Direction.REVERSE);
             while(!isBeamBroken()){
-                coneTake.setDirection(DcMotor.Direction.FORWARD);
                 coneTake.setPower(0.5);
             }
+            coneTake.setPower(0);
             return true;
         }
 
         public boolean outtake(ElapsedTime time){
+            coneTake.setDirection(DcMotor.Direction.FORWARD);
             time.reset();
-            while(time.seconds() < 5){
+            while(time.time(TimeUnit.SECONDS) < 0.5){
                 coneTake.setPower(0.5);
             }
+            coneTake.setPower(0);
             return true;
         }
 
