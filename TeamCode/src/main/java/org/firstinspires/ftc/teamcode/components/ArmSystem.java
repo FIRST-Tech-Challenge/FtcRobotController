@@ -9,6 +9,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.params.DriveParams;
@@ -34,6 +35,7 @@ public class ArmSystem {
     /******************************** Systems **************************************************/
     public EnumMap<MotorNames, DcMotor> armMotors;
     public IMUSystem imuSystem;
+    public DcMotor coneTake;
 
     // Target position to run to when driving to position
     private int mTargetTicks;
@@ -49,11 +51,11 @@ public class ArmSystem {
      * Handles the data for the abstract creation of a drive system with four wheels
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public ArmSystem(EnumMap<MotorNames, DcMotor> motors, BNO055IMU imu) {
+    public ArmSystem(EnumMap<MotorNames, DcMotor> motors, DcMotor coneTake) {
         this.armMotors = motors;
         mTargetTicks = 0;
         initMotors();
-        imuSystem = new IMUSystem(imu);
+        this.coneTake = coneTake;
     }
 
     /**
@@ -166,15 +168,12 @@ public class ArmSystem {
      * @param direction sets which direction to go
      * @param maxPower sets the power to run at
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean driveToPosition(int millimeters, Direction direction, double maxPower)
     {
         Log.d("going to ", millimeters + " " + direction);
         return driveToPositionTicks(millimetersToTicks(millimeters), direction, maxPower);
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void armSystem(double power) {
         armMotors.forEach((name, motor) -> {
             switch(name) {
@@ -194,7 +193,7 @@ public class ArmSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public boolean turnAbsolute(double degrees, double maxPower) {
         return turn(diffFromAbs(degrees), maxPower);
     }
@@ -205,7 +204,6 @@ public class ArmSystem {
      * @param maxPower The maximum power of the motors
      * @return if on heading
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public boolean turn(double degrees, double maxPower) {
         // If controller hub is vertical, use pitch instead of heading
         double heading = DriveParams.IMU_VERT ? imuSystem.getPitch() : imuSystem.getHeading();
@@ -284,6 +282,22 @@ public class ArmSystem {
         return robotDiff;
     }
 
+    public boolean intake(Intake intake){
+        while(!intake.isBeamBroken()){
+            coneTake.setDirection(DcMotor.Direction.FORWARD);
+            coneTake.setPower(0.5);
+        }
+        return true;
+    }
+
+    public boolean outtake(ElapsedTime time){
+        time.reset();
+        while(time.seconds() < 5){
+            coneTake.setPower(0.5);
+        }
+        return true;
+    }
+
     /***************************    HELPER METHODS    ********************************************/
 
     /**
@@ -314,11 +328,14 @@ public class ArmSystem {
     private int millimetersToTicks(int millimeters) {
         return (int) Math.round(millimeters * TICKS_IN_MM);
     }
-    public static class BeamBreaker{
+    public static class Intake{
         private DigitalChannel beamBreaker;
+        private DcMotor coneTake;
 
-        public BeamBreaker(DigitalChannel beam){
+        public Intake(DigitalChannel beam, DcMotor intake){
             beamBreaker = beam;
+            beamBreaker.setMode(DigitalChannel.Mode.INPUT);
+            coneTake = intake;
         }
 
         public boolean isBeamBroken(){

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.opmodes.auto.BaseAutonomous;
 
@@ -30,6 +31,7 @@ public class BaseStateMachine extends BaseAutonomous {
         POSITION_ROBOT_AT_JUNCTION,
         PLACE_CONE,
         PARK,
+        ALIGN_WITH_POLE,
         END_STATE,
         LOGGING,
     }
@@ -52,6 +54,7 @@ public class BaseStateMachine extends BaseAutonomous {
         this.msStuckDetectInitLoop = 15000;
         // Starts state machine
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
+        pixyCam = hardwareMap.get(PixyCam.class, "sensor_color");
         newState(State.IDENTIFY_TARGET);
 
 
@@ -107,6 +110,12 @@ public class BaseStateMachine extends BaseAutonomous {
                     newState(State.POSITION_ROBOT_AT_JUNCTION);
                 }
                 break;
+            case ALIGN_WITH_POLE:
+                int offsetX;
+                PixyCam.Block block = pixyCam.GetBiggestBlock(3);
+                offsetX = pixyCam.offSetX();
+                //create a function that will decrease speed based on how close offset is from 0
+
             case PARK:
                 park();
                 break;
