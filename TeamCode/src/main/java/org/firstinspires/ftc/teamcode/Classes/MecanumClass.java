@@ -22,13 +22,13 @@ public class MecanumClass extends DrivetrainClass implements MotorInterface {
     }
 
     // time + speed are parameters for all the movement
-    void moveForward(time,speed) {
+    void moveForward(int time,double speed) {
         frontLeft.setPower(-speed);
         frontRight.setPower(speed);
         backLeft.setPower(-speed);
         backRight.setpower(speed);
 
-        sleep(time*1000);
+        thread.sleep(time);
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -37,13 +37,13 @@ public class MecanumClass extends DrivetrainClass implements MotorInterface {
 
     }
 
-    void moveBackward(time,speed) {
+    void moveBackward(int time,double speed) {
         frontLeft.setPower(speed);
         frontRight.setPower(-speed);
         backLeft.setPower(speed);
         frontRight.setpower(-speed);
 
-        sleep(time*1000);
+        thread.sleep(time);
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -51,13 +51,13 @@ public class MecanumClass extends DrivetrainClass implements MotorInterface {
         backRight.setpower(0);
     }
 
-    void moveRight(time,speed) {
+    void moveRight(int time,double speed) {
         frontLeft.setPower(speed);
         frontRight.setPower(-speed);
         backLeft.setPower(-speed);
         frontRight.setpower(speed);
 
-        sleep(time*1000);
+        thread.sleep(time);
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -66,13 +66,13 @@ public class MecanumClass extends DrivetrainClass implements MotorInterface {
 
     }
 
-    void moveLeft(time,speed) {
+    void moveLeft(int time,double speed) {
         frontLeft.setPower(-speed);
         frontRight.setPower(speed);
         backLeft.setPower(speed);
         frontRight.setpower(-speed);
 
-        sleep(time*1000);
+        thread.sleep(time);
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -80,13 +80,13 @@ public class MecanumClass extends DrivetrainClass implements MotorInterface {
         backRight.setpower(0);
     }
 
-    void turnLeft(time,speed) {
+    void turnLeft(int time,double speed) {
         frontLeft.setPower(speed);
         frontRight.setPower(speed);
         backLeft.setPower(speed);
         frontRight.setpower(speed);
 
-        sleep(time*1000);
+        thread.sleep(time);
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -95,13 +95,13 @@ public class MecanumClass extends DrivetrainClass implements MotorInterface {
 
     }
 
-    void turnRight(time,speed) {
+    void turnRight(int time,double speed) {
         frontLeft.setPower(-speed);
         frontRight.setPower(-speed);
         backLeft.setPower(-speed);
         frontRight.setpower(-speed);
 
-        sleep(time*1000);
+        thread.sleep(time);
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
