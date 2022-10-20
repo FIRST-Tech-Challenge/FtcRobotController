@@ -277,22 +277,6 @@ public class ArmSystem {
         return robotDiff;
     }
 
-    public boolean intake(Intake intake){
-        while(!intake.isBeamBroken()){
-            coneTake.setDirection(DcMotor.Direction.FORWARD);
-            coneTake.setPower(0.5);
-        }
-        return true;
-    }
-
-    public boolean outtake(ElapsedTime time){
-        time.reset();
-        while(time.seconds() < 5){
-            coneTake.setPower(0.5);
-        }
-        return true;
-    }
-
     /***************************    HELPER METHODS    ********************************************/
 
     /**
@@ -336,5 +320,22 @@ public class ArmSystem {
         public boolean isBeamBroken(){
             return beamBreaker.getState();
         }
+
+        public boolean intake(){
+            while(!isBeamBroken()){
+                coneTake.setDirection(DcMotor.Direction.FORWARD);
+                coneTake.setPower(0.5);
+            }
+            return true;
+        }
+
+        public boolean outtake(ElapsedTime time){
+            time.reset();
+            while(time.seconds() < 5){
+                coneTake.setPower(0.5);
+            }
+            return true;
+        }
+
     }
 }
