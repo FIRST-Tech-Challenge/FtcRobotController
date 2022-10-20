@@ -12,8 +12,6 @@ public class MeepMeepQuadThree {
     public static void main(String[] args){
         int aprilTagsId = 1;
 
-        //ヾ(⌐■_■)ノ♪
-
         MeepMeep mm = new MeepMeep(800,90);
         new MeepMeepPersistence(mm);
 
@@ -36,7 +34,7 @@ public class MeepMeepQuadThree {
 
                 .setColorScheme(new ColorSchemeBlueDark())
 
-                .setDimensions(13, 16)
+                .setDimensions(14.6, 15.4)
 
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);

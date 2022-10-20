@@ -55,12 +55,6 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     @Override
     public void runOpMode()
     {
-
-
-
-
-
-
         // bot object created
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
 
@@ -91,7 +85,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
             bot.followTrajectorySequenceAsync(sussyBaka);
             telemetry.addData("Chris Pratt","Is Currently In The Mushroom Kingdom");
         }else if(tagUse ==2) {
-            telemetry.addData("Walter White","Currently Has No Pants");
+            telemetry.addData("Walter White","Curently Has No Pants");
         }else{
             TrajectorySequence jacobIsCute = bot.trajectorySequenceBuilder(endPose)
                     .lineTo(new Vector2d(-58.2,24.6))
@@ -125,8 +119,8 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
                 .waitSeconds(1)//Under the impression that using the async PID, the slides will be already be moved up
                 .build();
 
+        bot.followTrajectorySequenceAsync(openingMove);
         for(int i = 1; i <= 3; i++){
-          bot.followTrajectorySequenceAsync(openingMove);
           bot.followTrajectorySequenceAsync(cycles);
          }
         return endPose;
