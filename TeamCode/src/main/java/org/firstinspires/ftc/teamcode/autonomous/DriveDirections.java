@@ -47,16 +47,17 @@ abstract class DriveDirections extends LinearOpMode {
         //Calibrate NavX
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = (IntegratingGyroscope)navxMicro;
-        telemetry.log().add("Gyro Calibrating. Do Not Move!");
+        telemetry.addLine("Gyro Calibrating. Do Not Move!");
+        telemetry.update();
 
         // Wait until the gyro calibration is complete
         while (navxMicro.isCalibrating())  {
-            telemetry.addLine("calibrating");
+            telemetry.addLine("calibrating...");
             telemetry.update();
             sleep(50);
         }
-        telemetry.log().clear(); telemetry.log().add("Gyro Calibrated. Press Start.");
-        telemetry.clear(); telemetry.update();
+        telemetry.addLine("Gyro Calibrated. Press Start.");
+        telemetry.update();
 
     }
 
