@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -59,6 +60,7 @@ public class Lift {
         int ticksNeeded = (int)(heightInInches/TICK_PER_INCH) + 1;
         liftMotor.setTargetPosition(ticksNeeded);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public boolean isClear () {
