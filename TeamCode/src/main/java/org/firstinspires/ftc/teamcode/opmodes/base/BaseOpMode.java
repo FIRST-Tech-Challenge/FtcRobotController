@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.IMUSystem;
+import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
 
@@ -21,6 +22,7 @@ public abstract class BaseOpMode extends OpMode {
     protected DriveSystem driveSystem;
     protected Vuforia vuforia;
     private boolean stopRequested;
+    protected PixyCam pixyCam;
 
     /** Initialization */
     public void init(){
@@ -35,13 +37,6 @@ public abstract class BaseOpMode extends OpMode {
         }
         driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
-    }
-
-    /** Initialize Vuforia object with given camera
-     * @param cameraChoice
-     */
-    protected void setCamera(CameraChoice cameraChoice) {
-        vuforia = new Vuforia(hardwareMap, cameraChoice);
     }
 
     /** Returns if a stop has been requested or if execution is

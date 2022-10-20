@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
@@ -19,7 +20,7 @@ public class BeamBreakerOpMode extends OpMode {
     protected PixyCam pixycam;
     private boolean stopRequested;
     private PixyCam.Block block;
-    private ArmSystem.BeamBreaker beamBreaker;
+    private ArmSystem.Intake intake;
 
 
     /** Initialization */
@@ -29,7 +30,7 @@ public class BeamBreakerOpMode extends OpMode {
         this.msStuckDetectInit = 20000;
         this.msStuckDetectInitLoop = 20000;
         // Initialize motors
-        beamBreaker = new ArmSystem.BeamBreaker(hardwareMap.get(DigitalChannel.class, "beambreaker"));
+        intake = new ArmSystem.Intake(hardwareMap.get(DigitalChannel.class, "beambreaker"), hardwareMap.get(DcMotor.class, "intake"));
     }
 
 
@@ -43,10 +44,9 @@ public class BeamBreakerOpMode extends OpMode {
         return this.stopRequested || Thread.currentThread().isInterrupted();
     }
     public void loop(){
-        telemetry.addData("cone????", beamBreaker.isBeamBroken());
+        telemetry.addData("cone????", intake.isBeamBroken());
         telemetry.update();
     }
-
     public void stop() {
         stopRequested = true;
         super.stop();
