@@ -363,6 +363,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         double velocity = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))/timeStep;
         //direction
         double heading = getExternalHeading();
+
+        //todo check this heading code
         double sign = Math.signum(dx * ( -Math.sin(heading)) + dy * (Math.cos(heading))) >= 0 ? 1:-1;
         double newHeading = Math.atan2(dy,dx) + (sign>=0 ? 0:(2*Math.PI));
 
@@ -370,7 +372,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID.setInput(getPoseEstimate().getHeading());
         double correction = headingPID.performPID();
 
-        setDriveSignal(new DriveSignal(new Pose2d(velocity*sign, 0, correction), new Pose2d(0, 0, 0)));
+        setLeftVelocity(velocity - correction);
+        setRightVelocity(velocity+correction);
 
         return time > gridPathLine.getTotalTime();
     }
