@@ -47,6 +47,8 @@ public class AutonRight extends LinearOpMode
 
     AprilTagDetection tagOfInterest = null;
 
+    int tagCount = 0;
+
     @Override
     public void runOpMode()
     {
@@ -164,15 +166,16 @@ public class AutonRight extends LinearOpMode
             telemetry.addLine("Could not find the tag...");
             telemetry.update();
         }
-        else{
+        else {
             waitForStart();
 
-            Drive drive = new Drive(hardwareMap);
-
-            telemetry.addData("Parking Space", parkingSpace);
-            telemetry.update();
-            Auton auto = new Auton(false);
-            auto.runAuton(parkingSpace, drive);
+            if (tagCount == 1) {
+                Drive drive = new Drive(hardwareMap);
+                telemetry.addData("Parking Space", parkingSpace);
+                telemetry.update();
+                Auton auto = new Auton(false);
+                auto.runAuton(parkingSpace, drive);
+            }
         }
 
 
@@ -204,6 +207,8 @@ public class AutonRight extends LinearOpMode
         if (detection.id == 1) { parkingSpace = 1; }
         else if (detection.id == 0) { parkingSpace = 2; }
         else { parkingSpace = 3; }
+
+        tagCount++;
 
         telemetry.update();
 
