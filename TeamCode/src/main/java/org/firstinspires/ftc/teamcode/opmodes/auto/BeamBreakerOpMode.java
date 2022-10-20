@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
@@ -20,6 +21,7 @@ public class BeamBreakerOpMode extends OpMode {
     protected PixyCam pixycam;
     private boolean stopRequested;
     private PixyCam.Block block;
+    private ElapsedTime time;
     private ArmSystem.Intake intake;
 
 
@@ -30,6 +32,7 @@ public class BeamBreakerOpMode extends OpMode {
         this.msStuckDetectInit = 20000;
         this.msStuckDetectInitLoop = 20000;
         // Initialize motors
+        time = new ElapsedTime();
         intake = new ArmSystem.Intake(hardwareMap.get(DigitalChannel.class, "beambreaker"), hardwareMap.get(DcMotor.class, "intake"));
     }
 
@@ -46,6 +49,14 @@ public class BeamBreakerOpMode extends OpMode {
     public void loop(){
         telemetry.addData("cone????", intake.isBeamBroken());
         telemetry.update();
+
+        if(gamepad1.a){
+            intake.intake();
+        }
+
+        if(gamepad1.b){
+            intake.outtake(time);
+        }
     }
     public void stop() {
         stopRequested = true;
