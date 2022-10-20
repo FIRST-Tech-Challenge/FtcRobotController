@@ -10,13 +10,14 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
 public class GeneralDriver extends BaseTele {
 
+    private boolean debug = true;
     Hardware2022 hdw;
 
     MecanumWheels robotWheel;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        hdw = new Hardware2022(hardwareMap); //init hardware
+        hdw = new Hardware2022(hardwareMap, telemetry); //init hardware
         hdw.createHardware();
         robotWheel = new MecanumWheels();
 
@@ -33,11 +34,17 @@ public class GeneralDriver extends BaseTele {
 
         //hdw.servoRingCounter.setPosition(0.0);
 
+        telemetry.addData("[>]", "All set?");
+        telemetry.update();
 
         waitForStart();
+        telemetry.clearAll();
+
 
         //This is the main loop of operation.
         while (opModeIsActive()) {
+            hdw.checkAndGrabCone();
+
             if (gamepad1.start) {
             }
             if (gamepad2.dpad_up) {
@@ -48,11 +55,16 @@ public class GeneralDriver extends BaseTele {
                 hdw.Encoders.setPosition(0.35);
                 sleep(100);
             }
-            if (gamepad2.y) {
+            if (gamepad1.y) {
+                hdw.raiseVerticalSlide();
 
             }
-            if (gamepad2.a) {
-
+            if (gamepad1.a) {
+                if ( debug) {
+                    telemetry.addLine().addData("[>]  ", "Relase cone, open claw.");
+                    telemetry.update();
+                }
+                hdw.releaeCone();
             }
 
             if (gamepad2.x) {
@@ -71,8 +83,7 @@ public class GeneralDriver extends BaseTele {
             hdw.wheelBackRight.setPower(robotWheel.wheelBackRightPower * powerDrivePercentage);
             hdw.wheelBackLeft.setPower(robotWheel.wheelBackLeftPower * powerDrivePercentage);
 
-            telemetry.addData("[>]", "All set?");
-            telemetry.update();
+
 
         }
 

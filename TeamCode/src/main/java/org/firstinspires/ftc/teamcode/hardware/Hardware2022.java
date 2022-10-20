@@ -6,7 +6,15 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class Hardware2022 {
+    private Telemetry telemetry;
+    private final double CLAW_CLOSED = 1.0;
+    private final double CLAW_OPEN = 0.7 ;
+
+    private boolean debug = true;
 
     enum RobotState {
         HasCone,
@@ -20,8 +28,10 @@ public class Hardware2022 {
      * Constructor
      * @param m This is the HarewareMap, which is configured on the dirver stataion.
      */
-    public Hardware2022(HardwareMap m) {
+    public Hardware2022(HardwareMap m, Telemetry tm )
+    {
         hwMap = m;
+        telemetry = tm;
     }
 
     public HardwareMap hwMap;
@@ -103,16 +113,54 @@ public class Hardware2022 {
      * If so, close the claw, and change current stats to has Cone.
      *
      */
-    void checkAndGrabCone ( ) {
+    public void checkAndGrabCone ( ) {
 
         //Only try to grab cone if in No Cone state.
         if ( currentState.equals(RobotState.NoCone)){
             //TODO:  Logic here
+            if ( debug) {
+                telemetry.addLine().addData("[>]  ", "No cone, checking cone.");
+                telemetry.update();
+            }
 
+            // Check if there is a cone close by, if so close claw
+            if (sensorDistance.getDistance(DistanceUnit.CM) < 2) {
+                if (debug) {
+                    telemetry.addLine().addData("[>]  ", "Found cone,close claw.");
+                    telemetry.update();
+                }
+                grabberclaw.setPosition(CLAW_CLOSED);
+                currentState = RobotState.HasCone;
+            }
 
-            currentState = RobotState.HasCone;
-            //TODO:  Logic Here
         }
+    }
+
+    public void raiseVerticalSlide (  ) {
+        telemetry.addLine().addData("[Dummy >]  ", "Slide Raised ");
+        telemetry.update();
+    }
+
+    public void releaeCone ( ){
+
+        grabberclaw.setPosition(CLAW_OPEN);
+        currentState = RobotState.NoCone;
+
+
+    }
+
+    /**
+     * This is the method to move robot state to Has Cone state
+     */
+    public void moveToHasCone ( ) {
+        //TODO:
+    }
+
+    /**
+     *
+     */
+    public void moveToNoCone () {
+
     }
 
 }
