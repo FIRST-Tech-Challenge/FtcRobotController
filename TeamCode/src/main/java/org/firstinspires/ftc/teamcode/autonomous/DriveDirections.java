@@ -1,9 +1,16 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 abstract class DriveDirections extends LinearOpMode {
 
@@ -13,6 +20,13 @@ abstract class DriveDirections extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor leftBackDrive = null;
     private double moveSpeed = 0.3;
+
+    IntegratingGyroscope gyro;
+    NavxMicroNavigationSensor navxMicro;
+
+    double previousHeading = 0;
+    double intergratedHeading = 0;
+
 
 
     public void runOpMode() {
@@ -29,6 +43,21 @@ abstract class DriveDirections extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        //Calibrate NavX
+        navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
+        gyro = (IntegratingGyroscope)navxMicro;
+        telemetry.log().add("Gyro Calibrating. Do Not Move!");
+
+        // Wait until the gyro calibration is complete
+        while (navxMicro.isCalibrating())  {
+            telemetry.addLine("calibrating");
+            telemetry.update();
+            sleep(50);
+        }
+        telemetry.log().clear(); telemetry.log().add("Gyro Calibrated. Press Start.");
+        telemetry.clear(); telemetry.update();
+
     }
 
         public void DriveInDirection(double power, String direction){
@@ -148,5 +177,26 @@ abstract class DriveDirections extends LinearOpMode {
             leftBackDrive.setPower(0);
         }
     }
+
+    public double getCurrentZ() {
+        Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
+
+    public double getCumulativeZ() {
+        double currentHeading = getCurrentZ();
+        double deltaHeading = currentHeading - previousHeading;
+        if (deltaHeading <= -180) {
+            deltaHeading += 360;
+        } else if (deltaHeading >= 180) {
+            deltaHeading -= 360;
+        }
+
+        intergratedHeading += deltaHeading;
+        previousHeading = currentHeading;
+
+        return  intergratedHeading;
+    }
+
 }
 
