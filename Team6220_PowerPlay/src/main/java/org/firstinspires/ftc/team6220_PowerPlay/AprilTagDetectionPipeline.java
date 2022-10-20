@@ -29,14 +29,8 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
     Scalar green = new Scalar(0, 255, 0, 255);
     Scalar white = new Scalar(255, 255, 255, 255);
 
-    double fx;
-    double fy;
-    double cx;
-    double cy;
-
-    double tagSize;
-    double tagSizeX;
-    double tagSizeY;
+    double fx, fy, cx, cy;
+    double tagSize, tagSizeX, tagSizeY;
 
     private float decimation;
     private boolean needToSetDecimation;
@@ -127,15 +121,6 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
         cameraMatrix.put(2, 2, 1);
     }
 
-    /**
-     * Draw a 3D axis marker on a detection. (Similar to what Vuforia does)
-     *
-     * @param buffer the RGB buffer on which to draw the marker
-     * @param length the length of each of the marker 'poles'
-     * @param rVector the rotation vector of the detection
-     * @param tVector the translation vector of the detection
-     * @param cameraMatrix the camera matrix used when finding the detection
-     */
     public void drawAxisMarker(Mat buffer, double length, int thickness, Mat rVector, Mat tVector, Mat cameraMatrix) {
         MatOfPoint3f axis = new MatOfPoint3f(
                 new Point3(0, 0, 0),
@@ -181,29 +166,16 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
         Imgproc.line(buffer, projectedPoints[4], projectedPoints[7], green, thickness);
     }
 
-    /**
-     * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
-     * original size of the tag.
-     *
-     * @param points the points which form the trapezoid
-     * @param cameraMatrix the camera intrinsics matrix
-     * @param tagSizeX the original width of the tag
-     * @param tagSizeY the original height of the tag
-     * @return the 6DOF pose of the camera relative to the tag
-     */
     public Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagSizeX, double tagSizeY) {
-        // The actual 2d points of the tag detected in the image
         MatOfPoint2f points2D = new MatOfPoint2f(points);
-
-        // The 3d points of the tag in an 'ideal projection'
         Point3[] arrayPoints3D = new Point3[4];
+
         arrayPoints3D[0] = new Point3(-tagSizeX / 2, tagSizeY / 2, 0);
         arrayPoints3D[1] = new Point3(tagSizeX / 2, tagSizeY / 2, 0);
         arrayPoints3D[2] = new Point3(tagSizeX / 2, -tagSizeY / 2, 0);
         arrayPoints3D[3] = new Point3(-tagSizeX / 2, -tagSizeY / 2, 0);
-        MatOfPoint3f points3D = new MatOfPoint3f(arrayPoints3D);
 
-        // Using this information, actually solve for pose
+        MatOfPoint3f points3D = new MatOfPoint3f(arrayPoints3D);
         Pose pose = new Pose();
         Calib3d.solvePnP(points3D, points2D, cameraMatrix, new MatOfDouble(), pose.rVector, pose.tVector, false);
 
