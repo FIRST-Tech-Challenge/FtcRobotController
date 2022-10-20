@@ -53,6 +53,8 @@ public class testingIMU extends DriveDirections {
            telemetry.addLine("cumulativeZ" + getCumulativeZ());
            telemetry.update();
 
+           rotateToZ(90, 0.5);
+            rotateToZ(0, 0.5);
 
 
         }

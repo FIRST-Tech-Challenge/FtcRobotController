@@ -176,7 +176,58 @@ abstract class DriveDirections extends LinearOpMode {
             leftFrontDrive.setPower(0);
             rightBackDrive.setPower(0);
             leftBackDrive.setPower(0);
+        }else if(direction.equals("ROTATE_RIGHT")){
+            rightFrontDrive.setPower(-power);
+            leftFrontDrive.setPower(power);
+            rightBackDrive.setPower(-power);
+            leftBackDrive.setPower(power);
+            sleep((long)time);
+            rightFrontDrive.setPower(0);
+            leftFrontDrive.setPower(0);
+            rightBackDrive.setPower(0);
+            leftBackDrive.setPower(0);
         }
+        else if(direction.equals("ROTATE_LEFT")){
+            rightFrontDrive.setPower(power);
+            leftFrontDrive.setPower(-power);
+            rightBackDrive.setPower(power);
+            leftBackDrive.setPower(-power);
+            sleep((long)time);
+            rightFrontDrive.setPower(0);
+            leftFrontDrive.setPower(0);
+            rightBackDrive.setPower(0);
+            leftBackDrive.setPower(0);
+        }
+    }
+
+    public void rotateToZ(double targetAngle, double power){
+        double angle = getCumulativeZ();
+        double difference = targetAngle - angle;
+        if(difference > 0){
+            while (angle <= targetAngle) {
+                angle = getCumulativeZ();
+                rightFrontDrive.setPower(-power);
+                leftFrontDrive.setPower(power);
+                rightBackDrive.setPower(-power);
+                leftBackDrive.setPower(power);
+            }
+        }
+
+        else if(difference > 0){
+            while (angle >= targetAngle) {
+                angle = getCumulativeZ();
+                rightFrontDrive.setPower(power);
+                leftFrontDrive.setPower(-power);
+                rightBackDrive.setPower(power);
+                leftBackDrive.setPower(-power);
+            }
+        } else {}
+
+        rightFrontDrive.setPower(0);
+        leftFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        leftBackDrive.setPower(0);
+
     }
 
     public double getCurrentZ() {
@@ -198,6 +249,8 @@ abstract class DriveDirections extends LinearOpMode {
 
         return  intergratedHeading;
     }
+
+
 
 }
 
