@@ -21,16 +21,13 @@ public class LinearSlideClass {
   }
 
   public void linearSlideUp() {
-
-
-
+    leftDrive.setPower(power);
+    rightDrive.setPower(power);
   }
 
   public void linearSlideDown() {
-
-
-
-
+    leftDrive.setPower(-power);
+    rightDrive.setPower(-power);
   }
 
 }
