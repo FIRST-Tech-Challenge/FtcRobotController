@@ -10,10 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class RedCornerTrauma extends DriveDirections {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor rightFrontDrive = null;
-    private DcMotor leftFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    private DcMotor leftBackDrive = null;
     private double moveSpeed = 0.3;
 
     @Override
