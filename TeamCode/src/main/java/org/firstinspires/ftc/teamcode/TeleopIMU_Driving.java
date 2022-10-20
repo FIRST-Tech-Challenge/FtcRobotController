@@ -97,7 +97,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
 
     // Driving motor variables
-    static final int RAMP_ON = 0; // ramp on: 1; off: 0
+    static final int RAMP_ON = 1; // ramp on to improve small moving control. On: 1; off: 0
     static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
     static final double ADJUST_POSITION_POWER = 0.2; // used for auto driving
 
@@ -201,8 +201,6 @@ public class TeleopIMU_Driving extends LinearOpMode {
         SliderMotor.setTargetPosition(sliderMotorTargetPosition);
         // Reset slider motor encoder counts kept by the motor
         SliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Using encoder mode to run slider motor, maybe we dont need it before RUN_TO_POSITION
-        SliderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Set motor to run to target encoder position and top with brakes on.
         SliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -260,6 +258,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
             // only enable correction when the turn button is not pressed.
             if (Math.abs(turn) > Math.ulp(0)) {
                 pidDrive.reset();
+                resetAngle(); // Resets the cumulative angle tracking to zero.
             }
             else {
                 pidDrive.enable();
@@ -370,7 +369,8 @@ public class TeleopIMU_Driving extends LinearOpMode {
         SliderMotor.setPower(0.0);
     }
 
-    /* 1. Robot moving back to aim at junction for unloading cone
+    /**
+     * 1. Robot moving back to aim at junction for unloading cone
      * 2. Slider moving down a little bit to put cone in junction pole
      * 3. Open claw to fall down cone
      * 4. Lift slider from junction pole
@@ -397,7 +397,8 @@ public class TeleopIMU_Driving extends LinearOpMode {
         waitMotorActionComplete(SliderMotor);
     }
 
-    /* 1. Lift slider and open claw to get read to load a cone
+    /**
+     * 1. Lift slider and open claw to get read to load a cone
      * 2. Robot moving back to aim at cone for loading
      * 2. Slider moving down to load the cone
      * 3. Close claw to grip the cone
@@ -420,33 +421,42 @@ public class TeleopIMU_Driving extends LinearOpMode {
         waitMotorActionComplete(SliderMotor);
     }
 
+    /**
+     * Set target position for every wheel motor, and set power to motors to move the robot.
+     * Turn off encode mode after moving.
+     * @param targetDistance: Input value for the target distance.
+     * @param isBackForward: flag for back-forward (true) moving, or left-right moving (false)
+     */
     private void robotMovingDistance(double targetDistance, boolean isBackForward) {
         int targetPosition = (int)(targetDistance * COUNTS_PER_FEET_MOTION);
         telemetry.addData("Status", "driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForward);
-        robotWithEncoderModeOn(true); // turn on encoder mode
+        robotRunWithPositionModeOn(true); // turn on encoder mode
         setPowerToWheels(ADJUST_POSITION_POWER); // low speed for more accurate, start moving
         waitMotorActionComplete(FrontLeftDrive); // just check one wheel.
         setPowerToWheels(0.0); //stop moving
-        robotWithEncoderModeOn(false); // turn off encoder mode
+        robotRunWithPositionModeOn(false); // turn off encoder mode
     }
 
-    private void robotWithEncoderModeOn(boolean withEncoder) {
-        if (withEncoder) {
+    /**
+     * Set wheels motors to stop and reset encode to set the current encoder position to zero.
+     * And then set to run to position mode if withPositionMode is on.
+     * Otherwise, set to run without encode mode.
+     * @param withPositionMode: flag for wheels motors run with position mode on,
+     *                       or off(run without encode)
+     */
+    private void robotRunWithPositionModeOn(boolean withPositionMode) {
+        if (withPositionMode) {
             FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else {
@@ -458,7 +468,12 @@ public class TeleopIMU_Driving extends LinearOpMode {
         }
     }
 
-    /* isBF : Back forward(1), or left right (0) */
+    /**
+     * Set wheels motors target positions according to back-forward moving flag
+     * @param tPos: target position values for motors
+     * @param isBF: flag for back-forward moving or left-right moving.
+     *            Back forward(1), or left right (0)
+     */
     private void setTargetPositionsToWheels(int tPos, boolean isBF) {
         if (isBF) {
             FrontLeftDrive.setTargetPosition( tPos );
@@ -474,6 +489,10 @@ public class TeleopIMU_Driving extends LinearOpMode {
         }
     }
 
+    /**
+     * Set wheels motors power
+     * @param power: the power value set to motors (0.0 ~ 1.0)
+     */
     private void setPowerToWheels(double power) {
         FrontLeftDrive.setPower(power);
         FrontRightDrive.setPower(power);
@@ -481,6 +500,10 @@ public class TeleopIMU_Driving extends LinearOpMode {
         BackRightDrive.setPower(power);
     }
 
+    /**
+     * Wait until the motor complete action.
+     * @param mot: the motor which be checked if it is in active.
+     */
     private void waitMotorActionComplete(DcMotor mot) {
         while(mot.isBusy()) {
             idle();
@@ -488,7 +511,6 @@ public class TeleopIMU_Driving extends LinearOpMode {
     }
 
 
-    // from IMU
     /**
      * Resets the cumulative angle tracking to zero.
      */

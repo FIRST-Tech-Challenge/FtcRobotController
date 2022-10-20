@@ -86,7 +86,7 @@ public class TeleopDriving extends LinearOpMode {
 
 
     // Driving motor variables
-    static final int RAMP_ON = 0; // ramp on: 1; off: 0
+    static final int RAMP_ON = 1; // ramp on: 1; off: 0
     static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
     static final double ADJUST_POSITION_POWER = 0.2; // used for auto driving
 
