@@ -185,7 +185,12 @@ public class LocalizerIMU implements Localizer{
             heading = (gyro.getHeading() + headingOffSet)%360;
         }
     }
-    public void gyroCalibrate(){
-        gyro.calibrate();
+
+    @Override
+    public double getHeading() {
+        return heading;
     }
+//    public void gyroCalibrate(){
+//        gyro.calibrate();
+//    }
 }
