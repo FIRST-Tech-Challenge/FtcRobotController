@@ -88,7 +88,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.05;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.02;     // Max Turn speed to limit turn rate
-    static final double     HEADING_THRESHOLD       = 5.0 ;    // How close must the heading get to the target before moving to next step.
+    static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
                                                                // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
@@ -145,26 +145,15 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
 
         // Set the encoders for closed loop speed control, and reset the heading.
-        robot.enableENcoder();
+        robot.enableEncoder();
         resetHeading();
         motorController = new ConceptPidMotorController(this.getRawHeading());
         waitForStart();
 
         runtime.reset();
 
-        //while(!isStopRequested() && imu.isGyroCalibrated()) {
-        //    sleep(50);
-        //    idle();
-
-        //}
-
-        // Step through each leg of the path,
-        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
-        //          holdHeading() is used after turns to let the heading stabilize
-        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
-
         //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -90.0);               // Turn  CW to -45 Degrees
+        turnAndDrive( TURN_SPEED, -90.0);               // Turn  CW to -45 Degrees
         //holdHeading( TURN_SPEED, -45.0, 2);   // Hold -45 Deg heading for a 1/2 second
 
         //driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
@@ -207,101 +196,69 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
                               double distance,
                               double heading) {
 
-        // Ensure that the opmode is still active
+        robot.resetEncoder();
+        robot.enableEncoder();
+
+        headingError = Math.abs(heading - this.getRawHeading());
+        if(distance < 0)
+        {
+            if(headingError <= HEADING_THRESHOLD )
+            {
+                robot.setDriveBackward();
+            }
+            if(Math.abs(headingError - 90) <= HEADING_THRESHOLD)
+            {
+                robot.setDriveLeft();
+            }
+        }
+        else
+        {
+            if(headingError <= HEADING_THRESHOLD )
+            {
+                robot.setDriveForward();
+            }
+            if(Math.abs(headingError - 90) <= HEADING_THRESHOLD)
+            {
+                robot.setDriveRight();
+            }
+        }
+
         if (opModeIsActive()) {
 
-            // Determine new target position, and pass to motor controller
-            int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
-            rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
-            leftBackTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
-            rightBackTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
-            // Set Target FIRST, then turn on RUN_TO_POSITION
-            leftFrontDrive.setTargetPosition(leftFrontTarget);
-            rightFrontDrive.setTargetPosition(rightFrontTarget);
-            leftBackDrive.setTargetPosition(leftBackTarget);
-            rightBackDrive.setTargetPosition(rightBackTarget);
+            robot.setTargetPosition(distance);
 
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftFrontTarget,  rightFrontTarget);
-            telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftBackTarget,  rightBackTarget);
-            telemetry.addData("Actual Pos L:R",  "%7d:%7d",      leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
-            //telemetry.addData(">", "Robot Pitch = %4.0f", getRawPitch());
-            //telemetry.update();
-            telemetry.update();
-
-            sleep(10*1000);
-
-            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
-            // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
-            moveRobot(maxDriveSpeed, 0);
+            robot.tankDrive(maxDriveSpeed, maxDriveSpeed);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
-                   (leftFrontDrive.isBusy() && rightFrontDrive.isBusy())) {
-
-                // Determine required steering to keep on heading
-                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
-
-                telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftFrontTarget,  rightFrontTarget);
-                telemetry.addData("Actual Pos L:R",  "%7d:%7d",      leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
-                telemetry.addData(">", "Turn speed = %4.0f", turnSpeed);
-                //telemetry.update();
-                telemetry.update();
-
-                sleep(10*1000);
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    turnSpeed *= -1.0;
-
-                // Apply the turning correction to the current driving speed.
-                moveRobot(driveSpeed, turnSpeed);
-
-                // Display drive status for the driver.
-                sendTelemetry(true);
+            while (opModeIsActive() && (leftFrontDrive.isBusy() && rightFrontDrive.isBusy()))
+            {
+                turnAndDrive(maxDriveSpeed, heading);
             }
 
-            // Stop all motion & Turn off RUN_TO_POSITION
-            moveRobot(0, 0);
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.stop();
+            robot.resetEncoder();
         }
     }
 
-    /**
-     *  Method to spin on central axis to point in a new direction.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the heading (angle)
-     *  2) Driver stops the opmode running.
-     *
-     * @param maxTurnSpeed Desired MAX speed of turn. (range 0 to +1.0)
-     * @param heading Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *              If a relative angle is required, add/subtract from current heading.
-     */
-    public void turnToHeading(double maxTurnSpeed, double heading)
+
+    public void turnAndDrive(double driveSpeed, double heading)
     {
         // Normalize the heading to be within +/- 180 degrees
         heading -= this.getRawHeading();
         while (heading > 180)  heading -= 360;
         while (heading <= -180) heading += 360;
 
+
         motorController = new ConceptPidMotorController(0.002, 0, 0.02);
         motorController.setGoal(heading);
         motorController.setFeedbackValue(this.getRawHeading());
         telemetry.addData("Error:Steer",  "%5.1f:%5.1f", motorController.getError(), heading);
 
-        while (opModeIsActive() && (Math.abs(motorController.getError()) > 1))
+        while (opModeIsActive() && (Math.abs(motorController.getError()) > HEADING_THRESHOLD))
         {
             motorController.setFeedbackValue(this.getRawHeading());
             double rotate = motorController.getValue();
-            robot.arcadeDrive(0, rotate);
+            robot.arcadeDrive(driveSpeed, rotate);
 
             telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", heading, this.getRawHeading());
             telemetry.addData("PID", "%5.2f - %5.0f - %5.2f", motorController.getProportional(),

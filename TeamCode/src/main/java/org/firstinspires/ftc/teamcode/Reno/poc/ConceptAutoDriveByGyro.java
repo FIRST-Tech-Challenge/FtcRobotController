@@ -34,7 +34,6 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -191,7 +190,7 @@ public class ConceptAutoDriveByGyro extends LinearOpMode {
 
 
         // Set the encoders for closed loop speed control, and reset the heading.
-        robot.enableENcoder();
+        robot.enableEncoder();
         resetHeading();
 
         waitForStart();

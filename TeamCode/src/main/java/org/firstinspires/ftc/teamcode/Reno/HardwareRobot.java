@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.Reno;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -52,6 +53,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class HardwareRobot
 {
+    static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;   // eg: GoBILDA 312 RPM Yellow Jacket
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+
     /* Public OpMode members. */
     public DcMotor  leftDriveFront   = null;
     public DcMotor  rightDriveFront  = null;
@@ -166,6 +173,15 @@ public class HardwareRobot
         this.rightDriveFront.setPower(rightPower);
         this.setMotorStatus(leftPower, leftPower, rightPower, rightPower);
     }
+    public void tankDrive(double leftFrontPower, double leftBackPower, double rightFrontPower, double rightBackPower)
+    {
+
+        this.leftDriveFront.setPower(leftFrontPower);
+        this.leftDriveBack.setPower(leftBackPower);
+        this.rightDriveBack.setPower(rightBackPower);
+        this.rightDriveFront.setPower(rightFrontPower);
+        this.setMotorStatus(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
+    }
 
     public void arcadeDrive(double drive, double rotate) {
 
@@ -216,6 +232,55 @@ public class HardwareRobot
         rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    public void setDriveLeft()
+    {
+        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
+    }
+    public void setDriveRight()
+    {
+        leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    public void driveForward(double leftSpeed, double rightSpeed)
+    {
+        leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        this.tankDrive(leftSpeed, rightSpeed);
+    }
+
+    public void driveBackward(double leftSpeed, double rightSpeed)
+    {
+        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
+        this.tankDrive(leftSpeed, rightSpeed);
+    }
+    public void driveLeft(double leftSpeed, double rightSpeed)
+    {
+        leftDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        this.tankDrive(leftSpeed, rightSpeed);
+    }
+    public void driveRight(double leftSpeed, double rightSpeed)
+    {
+        leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
+        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);
+        this.tankDrive(leftSpeed, rightSpeed);
+    }
+
     public void resetEncoder()
     {
         leftDriveFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -228,12 +293,32 @@ public class HardwareRobot
         rightDriveBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void enableENcoder()
+    public void enableEncoder()
     {
         leftDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setTargetPosition(double distance)
+    {
+
+        int moveCounts = (int)(distance * COUNTS_PER_INCH);
+        int leftFrontTarget = leftDriveFront.getCurrentPosition() + moveCounts;
+        int rightFrontTarget = rightDriveFront.getCurrentPosition() + moveCounts;
+        int leftBackTarget = leftDriveBack.getCurrentPosition() + moveCounts;
+        int rightBackTarget = rightDriveBack.getCurrentPosition() + moveCounts;
+        // Set Target FIRST, then turn on RUN_TO_POSITION
+        leftDriveFront.setTargetPosition(leftFrontTarget);
+        rightDriveFront.setTargetPosition(rightFrontTarget);
+        leftDriveBack.setTargetPosition(leftBackTarget);
+        rightDriveBack.setTargetPosition(rightBackTarget);
+
+        leftDriveFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDriveFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void setMotorStatus(double leftFrontSpeed, double leftBackSpeed, double rightFrontSpeed, double rightBackSpeed)
