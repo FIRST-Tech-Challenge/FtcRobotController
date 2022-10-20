@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-class VisionClass {
+public class VisionClass {
 
 
         String camera = null;
@@ -23,21 +23,21 @@ class VisionClass {
         HardwareMap hardwareMap;
 
         //first init the file that we are using
-        String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+        String TFOD_MODEL_ASSET = "customModel.tflite";
 
         // next init the name of vuforia and tfod variables
         VuforiaLocalizer vuforia;
 
-        TFObjectDetector tfod;
+        public TFObjectDetector tfod;
 
         // next init the vuforia key
         String VUFORIA_KEY = "AZ3E1e//////AAABmYYnnAVE7UQ3r8htn2k0qaxt+gAIhwTJimI+HGMl8mBiRRtW3AxF8CTljgMJfhjt06DnzmcRCnLde7m7wYlDxLE41DkFtLG8929BwtuF9hLIBgnIZFR8sqqSfSbd1G5g1tJ5TO8sItT58OLmRIyNwHbdMOj6Fdrc9fRZSu1Vn1ziuLshTmnNvv/2rBqDaQEUI+UnLrvSIJma9OIc04Rn983vgCj54k6oYvuUW9m1fFfWSrNabMvZa3fiT6GG5vyId9A/yHV/kkbulT2WZhxm2cs5poJiRb8tWX5F4LQvDLEnX12/qNDbyLi8IA2tKPnaaL4bFRfk2TvVXtj38FouN2t2+xeTjOy6Znxlvin872sc";
 
         // init the labels
         String[] LABELS = {
-                "1 Bolt",
-                "2 Bulb",
-                "3 Panel"
+                "1 circle",
+                "2 square",
+                "3 star"
         };
 
 

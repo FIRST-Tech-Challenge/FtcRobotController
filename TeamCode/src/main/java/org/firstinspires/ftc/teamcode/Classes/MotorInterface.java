@@ -4,6 +4,14 @@ package org.firstinspires.ftc.teamcode.Classes;
 public interface MotorInterface {
 
 
+    void motorName();
+
+    void motorType();
+
+
+
+
+
 
 
 }
