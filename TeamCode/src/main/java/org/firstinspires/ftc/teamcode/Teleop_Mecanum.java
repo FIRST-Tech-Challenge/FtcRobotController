@@ -74,7 +74,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="TeleopMecanum", group="Concept")
-//@Disabled
+@Disabled
 public class Teleop_Mecanum extends LinearOpMode {
 
     // Declare OpMode members.
