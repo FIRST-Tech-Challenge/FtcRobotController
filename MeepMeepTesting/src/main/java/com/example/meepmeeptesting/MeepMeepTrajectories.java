@@ -22,6 +22,9 @@ public class MeepMeepTrajectories {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                        .forward(22)
+                                        //scan signal sleeve
+                                        .back(22)
                                         .turn(Math.toRadians(-60))
                                         .forward(20)
                                         .turn(Math.toRadians(20))
@@ -47,6 +50,9 @@ public class MeepMeepTrajectories {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                        .forward(22)
+                                        //scan signal sleeve
+                                        .back(22)
                                         .turn(Math.toRadians(-60))
                                         .forward(20)
                                         .turn(Math.toRadians(20))
@@ -69,6 +75,9 @@ public class MeepMeepTrajectories {
                         .setDimensions(14, 10.5)
                         .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(-35.5, -64.75, 1.57))
+                                        .forward(22)
+                                        //scan signal sleeve
+                                        .back(22)
                                         .turn(Math.toRadians(-60))
                                         .forward(20)
                                         .turn(Math.toRadians(20))
