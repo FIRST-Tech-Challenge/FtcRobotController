@@ -330,7 +330,7 @@ public class ArmSystem {
         public boolean intake(){
             coneTake.setDirection(DcMotor.Direction.REVERSE);
             while(!isBeamBroken()){
-                coneTake.setPower(0.5);
+                coneTake.setPower(0.75);
             }
             coneTake.setPower(0);
             return true;
@@ -339,8 +339,8 @@ public class ArmSystem {
         public boolean outtake(ElapsedTime time){
             coneTake.setDirection(DcMotor.Direction.FORWARD);
             time.reset();
-            while(time.time(TimeUnit.SECONDS) < 0.5){
-                coneTake.setPower(0.5);
+            while(time.time(TimeUnit.SECONDS) < 0.2){
+                coneTake.setPower(0.75);
             }
             coneTake.setPower(0);
             return true;
