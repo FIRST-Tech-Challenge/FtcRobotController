@@ -6,17 +6,19 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 @TeleOp(name="Robot: Test Scaffold", group="Robot")
 public class TestTeleOp extends LinearOpMode {
-    public BrainStemRobot robot;
-    public final double SLOW = 0.5;
+//    public BrainStemRobot robot;
+    public final double SLOW = 1.0;
+
     public void runOpMode(){
 
-        robot = new BrainStemRobot(hardwareMap, telemetry);
-        Turret turret = new Turret(hardwareMap, telemetry);
-        robot.initializeRobotPosition();
+        //robot = new BrainStemRobot(hardwareMap, telemetry);
+        //Turret turret = new Turret(hardwareMap, telemetry);
+        //robot.initializeRobotPosition();
+        Lift lift = new Lift(hardwareMap, telemetry, this);
 
 
         // Preset positions for turret via buttons x, y, b
-        if(gamepad1.y){
+        /*if(gamepad1.y){
             robot.turret.moveToPreset(turret.TURRET_LEFT_POSITION, robot.lift);
         }
         if(gamepad1.b){
@@ -27,14 +29,19 @@ public class TestTeleOp extends LinearOpMode {
         }
 
         // operator controlled lift via left stick y axis
-        if(gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2){
-            robot.lift.setMotor((gamepad1.left_stick_y * SLOW));
-        }
-        else{
-            robot.lift.setMotor(0);
+
+         */
+        waitForStart();
+        while(opModeIsActive()) {
+            if (gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2) {
+                lift.setMotor((gamepad1.left_stick_y * SLOW));
+            } else {
+                lift.setMotor(0);
+            }
         }
 
         // operator controlled turret via right stick x axis
+        /*
         if(gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2){
             robot.turret.setMotor((gamepad1.right_stick_x * SLOW));
         }
@@ -66,9 +73,11 @@ public class TestTeleOp extends LinearOpMode {
         else {
             robot.arm.tiltDown();
         }
-        telemetry.addData("Lift" , robot.lift.getPosition());
-        telemetry.addData("Turret", robot.turret.getPosition());
-        telemetry.addData("Extension", robot.arm.getExtensionPosition());
+
+         */
+        telemetry.addData("Lift" , lift.getPosition());
+        //telemetry.addData("Turret", robot.turret.getPosition());
+        //telemetry.addData("Extension", robot.arm.getExtensionPosition());
 
         telemetry.update();
 

@@ -34,7 +34,7 @@ public class BrainStemRobot {
     public SampleMecanumDrive drive;
 
     public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
-        this.telemetry = telemetry;
+        /*this.telemetry = telemetry;
         // this.opMode = opMode;
 
         // instantiate components turret, lift, arm, grabber
@@ -49,7 +49,7 @@ public class BrainStemRobot {
 
     public void initializeRobotPosition(){
         lift.initializePosition();
-        lift.getToClear();  // Raise lift to clear side panels. This does not clear the arm holding cone.
+        lift.moveToMinHeight();  // Raise lift to clear side panels. This does not clear the arm holding cone.
         arm.getToClear();   // Extend the arm so it clears corner of the robot when swinging
         turret.initializePosition();
         lift.raiseHeightTo(0);
@@ -57,7 +57,7 @@ public class BrainStemRobot {
 
     }
     public void moveTurret(int targetDegrees){
-        lift.getToClear();
+        lift.moveToMinHeight();
         arm.getToClear();
         turret.moveTurret(targetDegrees);
     }
@@ -65,4 +65,8 @@ public class BrainStemRobot {
 
 
 
+
+
+         */
+    }
 }

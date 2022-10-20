@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Lift {
     private Telemetry telemetry;
-    public DcMotorEx liftMotor;
+    public DcMotor liftMotor;
 
     static final double     MM_TO_INCHES = 0.0393700787;
 
@@ -40,14 +40,14 @@ public class Lift {
 
     public static double currentLiftHeight;
 
-    public Lift(HardwareMap hwMap, Telemetry telemetry) {
+    public Lift(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
         this.telemetry = telemetry;
-        liftMotor = (DcMotorEx) hwMap.dcMotor.get("Lift");
+        liftMotor = hwMap.dcMotor.get("Lift");
 
-        liftMotor.setPower(LIFT_UP_SPEED);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        liftMotor.setPower(LIFT_UP_SPEED);
+//        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public int getPosition () {
@@ -78,6 +78,7 @@ public class Lift {
 
     }
     public void setMotor(double power){
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setPower(power);
     }
 
