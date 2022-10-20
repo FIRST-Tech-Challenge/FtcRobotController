@@ -41,6 +41,9 @@ public class BaseDrive extends OpMode{
 
     @Override
     public void init() { //When "init" is clicked
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         robot.init(hardwareMap);
 
         telemetry.addData("Say", "Hello Driver");
@@ -53,12 +56,12 @@ public class BaseDrive extends OpMode{
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
     public void start() { //When "start" is pressed
+
     }
 
     @Override
@@ -132,6 +135,7 @@ public class BaseDrive extends OpMode{
 
         reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
     }
+
 
 
     private void setPower(){
