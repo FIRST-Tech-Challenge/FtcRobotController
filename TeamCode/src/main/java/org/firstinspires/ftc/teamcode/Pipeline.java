@@ -155,8 +155,7 @@ public class Pipeline extends OpenCvPipeline{
 
         return output;
     }
-    public int getRectHeight(){
-        return maxRect.height;}
+    public int getRectHeight(){return maxRect.height;}
     public int getRectWidth(){ return maxRect.width; }
     public int getRectX(){ return maxRect.x; }
     public int getRectY(){ return maxRect.y; }
@@ -166,4 +165,3 @@ public class Pipeline extends OpenCvPipeline{
     public double getAspectRatio(){ return getRectArea()/(CAMERA_HEIGHT*CAMERA_WIDTH); }
     public double getRectArea(){ return maxRect.area(); }
 }
-
