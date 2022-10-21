@@ -18,16 +18,21 @@ public class LinearSlideClass {
 
     leftDrive.setDirection(DcMotor.Direction.FORWARD);
     rightDrive.setDirection(DcMotor.Direction.REVERSE);
+
   }
 
-  public void linearSlideUp() {
+  public void linearSlideUp(double power) {
+
     leftDrive.setPower(power);
     rightDrive.setPower(power);
+
   }
 
-  public void linearSlideDown() {
+  public void linearSlideDown(double power) {
+
     leftDrive.setPower(-power);
     rightDrive.setPower(-power);
+
   }
 
 }

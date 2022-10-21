@@ -13,14 +13,15 @@ public class VisionClass {
 
         String camera = null;
 
-        // constructor
+        HardwareMap hardwareMap;
+
+    // constructor
         public VisionClass(String cameraName) {
 
              camera = cameraName;
 
         }
 
-        HardwareMap hardwareMap;
 
         //first init the file that we are using
         String TFOD_MODEL_ASSET = "customModel.tflite";
