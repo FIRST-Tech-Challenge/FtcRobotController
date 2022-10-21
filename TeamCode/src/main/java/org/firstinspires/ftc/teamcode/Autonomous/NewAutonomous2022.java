@@ -40,9 +40,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Functions.AccelerationReader;
-import org.firstinspires.ftc.teamcode.Functions.DataLogger;
+
 import org.firstinspires.ftc.teamcode.Functions.EncoderMove;
-import org.firstinspires.ftc.teamcode.Functions.NewCorrectionRotateMove;
 import org.firstinspires.ftc.teamcode.Functions.Arm;
 
 import org.firstinspires.ftc.teamcode.Functions.ArmServos;

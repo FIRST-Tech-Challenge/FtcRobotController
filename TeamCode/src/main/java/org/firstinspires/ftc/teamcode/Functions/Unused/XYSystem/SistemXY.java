@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.Functions.Unused.XYSystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.functions.mv.MVTurnTowardsPoint;
-import org.firstinspires.ftc.teamcode.functions.mv.MVVariables;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.MV.MVTurnTowardsPoint;
+import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
 
 
 // facut de Vlad
@@ -18,7 +18,7 @@ public class SistemXY {
 
 
     PositionCalculator positionCalculator;
-    org.firstinspires.ftc.teamcode.functions.mv.MVTurnTowardsPoint MVTurnTowardsPoint;
+    MVTurnTowardsPoint MVTurnTowardsPoint;
     RotationDetector rotationDetector;
     Move move;
     Rotate rotate;

@@ -45,7 +45,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Functions.ArmServos;
 import org.firstinspires.ftc.teamcode.Functions.CarouselMotor;
 
-import org.firstinspires.ftc.teamcode.Functions.NewCorrectionRotateMove;
 import org.firstinspires.ftc.teamcode.Functions.Arm;
 import org.firstinspires.ftc.teamcode.Functions.ArmEncoder;
 import org.firstinspires.ftc.teamcode.Functions.EncoderMove;

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Functions;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import org.firstinspires.ftc.teamcode.functions.AccelerationDetector;
+import org.firstinspires.ftc.teamcode.Functions.AccelerationDetector;
 import java.io.IOException;
 
 

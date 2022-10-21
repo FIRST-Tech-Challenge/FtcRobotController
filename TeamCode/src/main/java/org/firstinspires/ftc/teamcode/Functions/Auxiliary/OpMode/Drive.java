@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.functions.movement.Movement;
-import org.firstinspires.ftc.teamcode.functions.movement.Rotation;
-import org.firstinspires.ftc.teamcode.functions.opmode.DefaultVariables;
+import org.firstinspires.ftc.teamcode.Functions.Auxiliary.Movement.Movement;
+import org.firstinspires.ftc.teamcode.Functions.Auxiliary.Movement.Rotation;
+import org.firstinspires.ftc.teamcode.Functions.Auxiliary.DefaultVariables;
 
 @TeleOp(name="Default Name", group="Default Group")
 public abstract class Drive extends DefaultVariables {

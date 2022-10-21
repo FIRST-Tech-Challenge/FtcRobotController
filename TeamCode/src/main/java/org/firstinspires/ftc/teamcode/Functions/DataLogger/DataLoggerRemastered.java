@@ -13,9 +13,9 @@ import java.util.Calendar;
 
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.functions.AccelerationDetector;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.AccelerationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 
 public class DataLoggerRemastered {
     private Writer writer;

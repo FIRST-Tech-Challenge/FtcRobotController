@@ -5,7 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.functions.mv.MVVariables;
+import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
 
 
 public class RotationDetector {

@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.Functions.Unused.XYSystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.functions.AccelerationDetector;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.functions.VoltageReader;
-import org.firstinspires.ftc.teamcode.functions.mv.MVVariables;
+import org.firstinspires.ftc.teamcode.Functions.AccelerationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
+import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
 
 import java.io.IOException;
 import java.lang.Math;

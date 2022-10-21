@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Functions;
 
-import org.firstinspires.ftc.teamcode.functions.mv.MVVariables;
+import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
 
 public class MoveDirectJoystick {
 

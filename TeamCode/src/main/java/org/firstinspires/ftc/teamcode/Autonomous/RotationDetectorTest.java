@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Functions.Arm;
 import org.firstinspires.ftc.teamcode.Functions.Collector;
 import org.firstinspires.ftc.teamcode.Functions.Move;
-import org.firstinspires.ftc.teamcode.Functions.NewCorrectionRotateMove2;
 import org.firstinspires.ftc.teamcode.Functions.Rotate;
 import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;

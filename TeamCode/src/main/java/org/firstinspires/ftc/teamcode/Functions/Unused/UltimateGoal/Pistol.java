@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Functions.Unused.UltimateGoal;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.functions.VoltageReader;
+import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 
 // Facut de Vlad

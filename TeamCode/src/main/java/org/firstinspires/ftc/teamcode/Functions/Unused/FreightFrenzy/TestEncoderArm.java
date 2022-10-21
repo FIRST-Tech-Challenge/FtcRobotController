@@ -35,10 +35,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.MoveAutocorrect2;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.MoveAutocorrect2;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 
 
 /**

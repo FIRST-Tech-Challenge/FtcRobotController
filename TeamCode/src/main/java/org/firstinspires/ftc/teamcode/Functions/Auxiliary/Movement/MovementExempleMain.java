@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.functions.auxiliary.AuxiliaryTemplate;
+import org.firstinspires.ftc.teamcode.Functions.Auxiliary.AuxiliaryTemplate;
 
 @TeleOp(name="MovementExempleMain", group="TEST")
 public class MovementExempleMain extends OpMode {

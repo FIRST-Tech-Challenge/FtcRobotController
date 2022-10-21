@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Date;
 
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.old.toredo.PositionCalculator;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Unused.XYSystem.PositionCalculator;
 
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 

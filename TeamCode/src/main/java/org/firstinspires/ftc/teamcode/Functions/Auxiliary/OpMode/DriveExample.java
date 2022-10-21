@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Functions.Auxiliary.OpMode;
 
-import org.firstinspires.ftc.teamcode.functions.movement.MovementFunction;
+import org.firstinspires.ftc.teamcode.Functions.Auxiliary.Movement.MovementFunction;
 
 public class DriveExample extends Drive {
 

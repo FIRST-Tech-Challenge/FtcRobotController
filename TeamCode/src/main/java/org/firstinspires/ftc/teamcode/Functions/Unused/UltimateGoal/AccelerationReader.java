@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.Functions.Unused.UltimateGoal;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.teamcode.functions.AccelerationDetector;
-import org.firstinspires.ftc.teamcode.functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.AccelerationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Move;
 
 import java.io.IOException;
 
