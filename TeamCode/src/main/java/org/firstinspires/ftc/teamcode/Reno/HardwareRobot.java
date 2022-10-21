@@ -29,11 +29,20 @@
 
 package org.firstinspires.ftc.teamcode.Reno;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 /**
  * This is NOT an opmode.
@@ -82,6 +91,7 @@ public class HardwareRobot
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
     private String motorStatus;
+    private BNO055IMU imu = null;
 
     /* Constructor */
     public HardwareRobot(){
@@ -113,19 +123,17 @@ public class HardwareRobot
 
         gripperServo.setPosition(0.0);
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-       // leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //leftDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //rightDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
-        // Define and initialize ALL installed servos.
-       // leftClaw  = hwMap.get(Servo.class, "left_hand");
-       // rightClaw = hwMap.get(Servo.class, "right_hand");
-        //leftClaw.setPosition(MID_SERVO);
-       // rightClaw.setPosition(MID_SERVO);
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }
 
     public void turn(double power)
@@ -331,5 +339,24 @@ public class HardwareRobot
         return this.motorStatus;
     }
 
- }
+    public boolean isBusyDriving()
+    {
+        return leftDriveFront.isBusy() && rightDriveFront.isBusy() && leftDriveBack.isBusy() && rightDriveBack.isBusy();
+    }
+    public double getRawHeading() {
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return AngleUnit.DEGREES.normalize(angles.firstAngle);
+    }
+
+    public double getRawRoll() {
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return AngleUnit.DEGREES.normalize(angles.secondAngle);
+    }
+
+    public double getRawPitch() {
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return AngleUnit.DEGREES.normalize(angles.thirdAngle);
+    }
+
+}
 

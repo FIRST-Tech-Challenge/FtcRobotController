@@ -45,7 +45,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.Reno.HardwareRobot;
 
-@Autonomous(name="POC: Drive Calibration", group="Concept")
+@Autonomous(name="POC: Auto Drive Calibration", group="Concept")
 //@Disabled
 public class ConceptAutoDriveCalibration extends LinearOpMode {
 
@@ -54,7 +54,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
-    private BNO055IMU       imu         = null;      // Control/Expansion Hub IMU
+    //private BNO055IMU       imu         = null;      // Control/Expansion Hub IMU
     private HardwareRobot robot   = new HardwareRobot();
 
     private double          robotHeading  = 0;
@@ -117,25 +117,12 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         robot.setDriveForward();
 
-        // define initialization values for IMU, and then initialize it.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
         // Ensure the robot is stationary.  Reset the encoders and set the motors to BRAKE mode
         robot.resetEncoder();
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
-            telemetry.addData("gyro Cali status", imu.isGyroCalibrated());
-            telemetry.addData("sys Cali status", imu.isSystemCalibrated());
+            //telemetry.addData("gyro Cali status", imu.isGyroCalibrated());
+            //telemetry.addData("sys Cali status", imu.isSystemCalibrated());
             telemetry.addData(">", "Robot Heading = %4.0f", getRawHeading());
             telemetry.addData(">", "Robot Roll = %4.0f", getRawRoll());
             telemetry.addData(">", "Robot Pitch = %4.0f", getRawPitch());
@@ -152,7 +139,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
         runtime.reset();
 
-        //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
+        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
+        driveStraight(DRIVE_SPEED, -24.0, 0.0);    // Drive Forward 24"
         turnAndDrive( TURN_SPEED, -90.0);               // Turn  CW to -45 Degrees
         //holdHeading( TURN_SPEED, -45.0, 2);   // Hold -45 Deg heading for a 1/2 second
 
@@ -186,53 +174,38 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
     *  1) Move gets to the desired position
     *  2) Driver stops the opmode running.
     *
-    * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
+    * @param driveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
     */
-    public void driveStraight(double maxDriveSpeed,
+    public void driveStraight(double driveSpeed,
                               double distance,
                               double heading) {
 
         robot.resetEncoder();
         robot.enableEncoder();
 
-        headingError = Math.abs(heading - this.getRawHeading());
         if(distance < 0)
         {
-            if(headingError <= HEADING_THRESHOLD )
-            {
-                robot.setDriveBackward();
-            }
-            if(Math.abs(headingError - 90) <= HEADING_THRESHOLD)
-            {
-                robot.setDriveLeft();
-            }
+            robot.setDriveBackward();
         }
         else
         {
-            if(headingError <= HEADING_THRESHOLD )
-            {
-                robot.setDriveForward();
-            }
-            if(Math.abs(headingError - 90) <= HEADING_THRESHOLD)
-            {
-                robot.setDriveRight();
-            }
+            robot.setDriveForward();
         }
 
         if (opModeIsActive()) {
 
             robot.setTargetPosition(distance);
 
-            robot.tankDrive(maxDriveSpeed, maxDriveSpeed);
+            robot.tankDrive(driveSpeed, driveSpeed);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() && (leftFrontDrive.isBusy() && rightFrontDrive.isBusy()))
+            while (opModeIsActive() && robot.isBusyDriving())
             {
-                turnAndDrive(maxDriveSpeed, heading);
+                turnAndDrive(driveSpeed, heading);
             }
 
             robot.stop();
@@ -243,6 +216,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
     public void turnAndDrive(double driveSpeed, double heading)
     {
+        double requestHeading = heading;
         // Normalize the heading to be within +/- 180 degrees
         heading -= this.getRawHeading();
         while (heading > 180)  heading -= 360;
@@ -252,25 +226,25 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         motorController = new ConceptPidMotorController(0.002, 0, 0.02);
         motorController.setGoal(heading);
         motorController.setFeedbackValue(this.getRawHeading());
-        telemetry.addData("Error:Steer",  "%5.1f:%5.1f", motorController.getError(), heading);
+        //telemetry.addData("Error:Steer",  "%5.1f:%5.1f", motorController.getError(), heading);
 
         while (opModeIsActive() && (Math.abs(motorController.getError()) > HEADING_THRESHOLD))
         {
             motorController.setFeedbackValue(this.getRawHeading());
-            double rotate = motorController.getValue();
-            robot.arcadeDrive(driveSpeed, rotate);
+            double turnSpeed = motorController.getValue();
+            robot.arcadeDrive(driveSpeed, turnSpeed);
 
-            telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", heading, this.getRawHeading());
+            telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", requestHeading, this.getRawHeading());
             telemetry.addData("PID", "%5.2f - %5.0f - %5.2f", motorController.getProportional(),
                     motorController.getIntegral(), motorController.getDerivative());
-             telemetry.addData("Error:Speed",  "%5.1f:%5.1f", motorController.getError(), rotate);
+             telemetry.addData("Error: turn Speed",  "%5.1f:%5.1f", motorController.getError(), turnSpeed);
              telemetry.addData("", robot.getMotorStatus());
 
             telemetry.update();
 
         }
         robot.stop();
-        sleep(2*1000);
+        sleep(250);
 
     }
 
@@ -388,18 +362,15 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
      * read the raw (un-offset Gyro heading) directly from the IMU
      */
     public double getRawHeading() {
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return AngleUnit.DEGREES.normalize(angles.firstAngle);
+        return robot.getRawHeading();
     }
 
     public double getRawRoll() {
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return AngleUnit.DEGREES.normalize(angles.secondAngle);
+       return robot.getRawRoll();
     }
 
     public double getRawPitch() {
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return AngleUnit.DEGREES.normalize(angles.thirdAngle);
+        return robot.getRawPitch();
     }
 
     /**
