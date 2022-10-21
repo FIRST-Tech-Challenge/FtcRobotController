@@ -30,9 +30,11 @@ public class AprilTagTest extends LinearOpMode {
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagSize = 0.166;
+    double tagSize = 0.058;
 
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+    final int ID_TAG_OF_INTEREST_0 = 0; // Tag ID 0 from the 36h11 family
+    final int ID_TAG_OF_INTEREST_1 = 1; // Tag ID 1 from the 36h11 family
+    final int ID_TAG_OF_INTEREST_2 = 2; // Tag ID 2 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
@@ -62,7 +64,7 @@ public class AprilTagTest extends LinearOpMode {
                 boolean tagFound = false;
 
                 for (AprilTagDetection tag : currentDetections) {
-                    if (tag.id == ID_TAG_OF_INTEREST) {
+                    if (tag.id == ID_TAG_OF_INTEREST_0 || tag.id == ID_TAG_OF_INTEREST_1 || tag.id == ID_TAG_OF_INTEREST_2) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
