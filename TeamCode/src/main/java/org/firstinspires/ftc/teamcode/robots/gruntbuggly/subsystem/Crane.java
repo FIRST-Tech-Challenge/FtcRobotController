@@ -20,6 +20,9 @@ import org.firstinspires.ftc.teamcode.robots.gruntbuggly.simulation.DcMotorExSim
 
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.simulation.ServoSim;
 
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils;
+import org.firstinspires.ftc.teamcode.statemachine.Stage;
+import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.LinkedHashMap;
@@ -27,6 +30,15 @@ import java.util.Map;
 
 @Config(value = "PPCrane")
 public class Crane implements Subsystem {
+
+
+
+    //control constants
+    public static double PICK_UP_VELOCITY = 0.5;
+    public static double HEIGHT_AFTER_PICKING_UP_CONE = 8;
+
+
+
     public static int SHOULDER_START_ANGLE = 0;
     public static int BULB_HOME_PWM = 1500;
 
@@ -94,6 +106,9 @@ public class Crane implements Subsystem {
     private Articulation articulation;
 
     boolean USE_MOTOR_SMOOTHING = true;
+
+
+    StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).build();
 
     public Crane(HardwareMap hardwareMap, Robot robot, boolean simulated) {
         this.robot = robot;
@@ -292,6 +307,7 @@ public class Crane implements Subsystem {
     double targetY;
     double targetZ;
 
+
     @Override
     public void update(Canvas fieldOverlay) {
         //todo - switch shoulderPosition to read the dedicated angle encoder
@@ -305,21 +321,7 @@ public class Crane implements Subsystem {
         shoulderAmps = shoulderMotor.getCurrent(CurrentUnit.AMPS);
         extenderAmps = extenderMotor.getCurrent(CurrentUnit.AMPS);
 
-        if(inverseKinematic){
-            Pose2d robotPos = robot.driveTrain.getPoseEstimate();
-            Pose2d turretPos = robot.turret.getTurretPosition(robotPos);
-            targetTurretAngle = Math.atan2(targetY - turretPos.getY(),targetX-turretPos.getX());
-
-            targetHeight = targetZ-shoulderHeight;
-
-            targetDistance = Math.sqrt(Math.pow(targetY - turretPos.getY(),2) + Math.pow(targetX - turretPos.getX(),2));
-
-            double angle = Math.atan(targetHeight/targetDistance);
-            double length = Math.sqrt( Math.pow(targetHeight,2) + Math.pow(targetDistance,2) );
-            setShoulderTargetDeg(angle);
-            setExtendTargetDistance(length);
-            robot.turret.setTargetHeading(targetTurretAngle);
-        }
+        currentStateMachine.execute();
 
         if(shoulderActivePID)
             movePIDShoulder(kpShoulder, kiShoulder, kdShoulder, shoulderDirectAnglePos, shoulderTargetPos);
@@ -337,6 +339,76 @@ public class Crane implements Subsystem {
             bulbServo.setPosition(servoNormalize(BULB_OPEN_POS));
         }
     }
+
+
+
+    public boolean setTargets(double x, double y, double z){
+        Pose2d robotPos = robot.driveTrain.getPoseEstimate();
+        Pose2d turretPos = robot.turret.getTurretPosition(robotPos);
+        targetTurretAngle = Math.atan2(y - turretPos.getY(), x-turretPos.getX());
+
+        targetHeight = z-shoulderHeight;
+
+        targetDistance = Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2));
+
+        double angle = Math.atan(targetHeight/targetDistance);
+        double length = Math.sqrt( Math.pow(targetHeight,2) + Math.pow(targetDistance,2) );
+        setShoulderTargetDeg(angle);
+        setExtendTargetDistance(length);
+        robot.turret.setTargetHeading(targetTurretAngle);
+        return true;
+    }
+    public boolean setHeight(double newHeight){
+        targetHeight = newHeight;
+        return true;
+    }
+    public boolean goToTarget(){
+        return shoulderPID.onTarget() && extendPID.onTarget() && robot.turret.isTurretNearTarget();
+    }
+    boolean pickUpConeInitialized = false;
+    double pickUpLastTime;
+    public boolean descendToCone(){
+        if(!pickUpConeInitialized){
+            pickUpLastTime = System.nanoTime() / 1e9;
+            pickUpConeInitialized = true;
+            return false;
+        }
+
+        if(shoulderMotor.getCurrent(CurrentUnit.AMPS) > 1){
+            pickUpConeInitialized = false;
+            return true;
+        }
+        targetHeight = targetHeight - (System.nanoTime() / 1e9 - pickUpLastTime) * PICK_UP_VELOCITY;
+        return false;
+    }
+
+    StateMachine pickUpConeStateMachine = Utils.getStateMachine(new Stage())
+            .addState(() -> descendToCone())
+            .addState(() -> {closeGripper(); return true;})
+            .addTimedState(1, () -> {}, ()-> {})
+            .addState(() -> setHeight(targetHeight + HEIGHT_AFTER_PICKING_UP_CONE) )
+            .build();
+
+    StateMachine dropConeStateMachine = Utils.getStateMachine(new Stage())
+            .addState(() -> descendToCone())
+            .addState(() -> setHeight(targetHeight + 1))
+            .addState(() -> goToTarget())
+            .addState(() -> {openGripper(); return true;})
+            .addTimedState((float)0.5, () -> {}, ()-> {})
+            .addState(() -> setHeight(targetHeight + HEIGHT_AFTER_PICKING_UP_CONE) )
+            .build();
+
+    public void setCurrentStateMachineToPickUp(){
+        currentStateMachine = pickUpConeStateMachine;
+    }
+    public void setCurrentStateMachineToDropCone(){
+        currentStateMachine = dropConeStateMachine;
+    }
+    public void setCurrentStateMachine(StateMachine statemachine){
+        currentStateMachine = statemachine;
+    }
+
+
 
     @Override
     public void stop() {

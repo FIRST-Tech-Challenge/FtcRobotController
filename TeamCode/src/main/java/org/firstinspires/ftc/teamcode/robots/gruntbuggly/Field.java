@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem.DriveTrain;
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.PathLine;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils;
@@ -16,6 +17,8 @@ import org.firstinspires.ftc.teamcode.util.Vector2;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class Field {
 
@@ -29,6 +32,10 @@ public class Field {
 
     public double inchesPerGrid = 24;
     public int fieldWidth = 12;
+
+    HashMap<String, FieldObject[]> mapObjects;
+
+
     public Field(boolean isBlue){
         targetCoordinate = poseToCoordinates(startPose);
         this.isBlue = isBlue;
@@ -37,26 +44,38 @@ public class Field {
             objects[1] = new FieldObject("AllianceTerminalFar",-2.5,5.5,0);
             objects[2] = new FieldObject("EnemyTerminalClose",-2.5,0.5,0);
             objects[3] = new FieldObject("EnemyTerminalFar",2.5,5.5,0);
+
         }else{
             objects[0] = new FieldObject("AllianceTerminalClose",-2.5,0.5,0);
             objects[1] = new FieldObject("AllianceTerminalFar",2.5,5.5,0);
             objects[2] = new FieldObject("EnemyTerminalClose",2.5,0.5,0);
             objects[3] = new FieldObject("EnemyTerminalFar",-2.5,5.5,0);
         }
+        mapObjects.put("AllianceTerminal", new FieldObject[]{objects[0], objects[1]});
+        mapObjects.put("EnemyTerminal", new FieldObject[]{objects[2], objects[3]} );
 
         objects[4] = new FieldObject("AllianceLeftStack",-2.5,2.5,0);
         objects[5] = new FieldObject("AllianceRightStack",2.5,2.5,0);
         objects[6] = new FieldObject("EnemyLeftStack",-2.5,3.5,0);
         objects[7] = new FieldObject("EnemyRightStack",2.5,3.5,0);
 
+        mapObjects.put("AllianceStack", new FieldObject[]{objects[4], objects[5]});
+        mapObjects.put("EnemyStack", new FieldObject[]{objects[6], objects[7]} );
+
         objects[8] = new FieldObject("AllianceSubstation",0,0.5,0);
         objects[9] = new FieldObject("EnemySubstation",0,5.5,0);
+
+        mapObjects.put("AllianceSubstation", new FieldObject[]{objects[8]});
+        mapObjects.put("EnemySubstation", new FieldObject[]{objects[9]} );
+
 
         for(int i = 0; i < 3 ; i++){
             for(int j = 0; j < 3; j++){
                 objects[i*3+j+10] = new FieldObject("GroundStation"+(i*3+j+1),-2 + j*2,5-i*2,1);
+
             }
         }
+        mapObjects.put("GroundStation", Arrays.copyOfRange(objects,10,18));
 
         objects[19] = new FieldObject("LowPole1",-1,5,2);
         objects[20] = new FieldObject("LowPole2",1,5,2);
@@ -67,24 +86,49 @@ public class Field {
         objects[25] = new FieldObject("LowPole7",-1,1,2);
         objects[26] = new FieldObject("LowPole8",1,1,2);
 
+        mapObjects.put("LowPole", Arrays.copyOfRange(objects,19,26));
 
         objects[27] = new FieldObject("MidPole1",-1,4,3);
         objects[28] = new FieldObject("MidPole2",1,4,3);
         objects[20] = new FieldObject("MidPole3",-1,2,3);
         objects[30] = new FieldObject("MidPole4",1,2,3);
 
+        mapObjects.put("MidPole", Arrays.copyOfRange(objects,27,30));
+
         objects[31] = new FieldObject("HighPole1",0,4,4);
         objects[32] = new FieldObject("HighPole2",-1,3,4);
         objects[33] = new FieldObject("HighPole3",1,3,4);
         objects[34] = new FieldObject("HighPole4",0,2,4);
 
+        mapObjects.put("HighPole", Arrays.copyOfRange(objects,31,34));
+
         objects[35] = new FieldObject("AllianceSignal1",-1.5,1.5,-1);
         objects[36] = new FieldObject("AllianceSignal2",1.5,1.5,-1);
+
+        mapObjects.put("AllianceSignal", Arrays.copyOfRange(objects,35,36));
 
     }
 
     public void changeOwnership(int ID, boolean isBlue, boolean isRed){
         objects[ID].setOwnership(isBlue,isRed);
+    }
+
+    public double distanceToFieldObject(Pose2d currentCoordinate, FieldObject object){
+        return Math.sqrt( Math.pow(object.x() - currentCoordinate.getX(), 2) + Math.pow(object.y() - currentCoordinate.getY(), 2));
+    }
+    public FieldObject getNearestObject(String name, Pose2d currentCoordinate){
+        FieldObject[] objectsOfType = mapObjects.get(name);
+        double minDistance  = distanceToFieldObject(currentCoordinate, objectsOfType[0]);
+        int minIndex = 0;
+        for(int i = 1; i < objectsOfType.length ; i++){
+            double distance = distanceToFieldObject(currentCoordinate, objectsOfType[i]);
+            if( distance < minDistance){
+                minDistance = distance;
+                minIndex = i;
+            }
+
+        }
+        return objectsOfType[minIndex];
     }
 
     //todo: gets closest pole of a certain height
@@ -267,6 +311,64 @@ public class Field {
 
 
 
+    }
+
+    public void goToStack(Robot robot){
+        Pose2d currentPose = robot.driveTrain.getPoseEstimate();
+        FieldObject nearestStack = getNearestObject("AllianceStack", poseToCoordinates(currentPose));
+
+        StateMachine path = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.goToTarget())
+                .stateEndAction(() -> {robot.crane.setCurrentStateMachineToPickUp();})
+                .build();
+        robot.crane.setCurrentStateMachine(path);
+    }
+    public void goToHighPole(Robot robot){
+        Pose2d currentPose = robot.driveTrain.getPoseEstimate();
+        FieldObject nearestStack = getNearestObject("HighPole", poseToCoordinates(currentPose));
+
+        StateMachine path = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.goToTarget())
+                .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
+                .build();
+        robot.crane.setCurrentStateMachine(path);
+
+    }
+    public void goToMediumPole(Robot robot){
+        Pose2d currentPose = robot.driveTrain.getPoseEstimate();
+        FieldObject nearestStack = getNearestObject("MidPole", poseToCoordinates(currentPose));
+
+        StateMachine path = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.goToTarget())
+                .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
+                .build();
+        robot.crane.setCurrentStateMachine(path);
+    }
+    public void goToLowPole(Robot robot){
+        Pose2d currentPose = robot.driveTrain.getPoseEstimate();
+        FieldObject nearestStack = getNearestObject("LowPole", poseToCoordinates(currentPose));
+
+        StateMachine path = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.goToTarget())
+                .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
+                .build();
+        robot.crane.setCurrentStateMachine(path);
+    }
+
+    public void goToGroundStation(Robot robot){
+        Pose2d currentPose = robot.driveTrain.getPoseEstimate();
+        FieldObject nearestStack = getNearestObject("GroundStation", poseToCoordinates(currentPose));
+
+        StateMachine path = Utils.getStateMachine(new Stage())
+                .addState(() -> robot.crane.setTargets( nearestStack.x()*fieldWidth, nearestStack.y() * fieldWidth, nearestStack.getHeight()))
+                .addState(() -> robot.crane.goToTarget())
+                .stateEndAction(() -> {robot.crane.setCurrentStateMachineToDropCone();})
+                .build();
+        robot.crane.setCurrentStateMachine(path);
     }
 
 

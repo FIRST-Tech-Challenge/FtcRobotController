@@ -75,6 +75,9 @@ public class DriverControls {
             robot.updateFieldTargetPose(1, 0);
         }
 
+        if(stickyGamepad1.right_bumper){
+            robot.field.goToHighPole(robot);
+        }
         //if (notJoystickDeadZone(gamepad1.right_stick_x))
             //pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
