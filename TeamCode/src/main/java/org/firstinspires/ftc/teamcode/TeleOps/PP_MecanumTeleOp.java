@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
+import static org.firstinspires.ftc.teamcode.Tempates.ArmClass.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.PIDs.PIDController;
+import org.firstinspires.ftc.teamcode.Tempates.ArmClass;
 
 
 @TeleOp(name = "PP_MecanumTeleOp")
@@ -18,6 +19,8 @@ public class PP_MecanumTeleOp extends OpMode {
     // Declaring class members to be used in other methods
     private ElapsedTime runtime = new ElapsedTime();
     PIDController motorPID = new PIDController(0,0,0,runtime);
+
+
 
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, slideMotorLeft, slideMotorRight, armMotor;
     private Servo clawJoint, wristJoint;
@@ -88,13 +91,9 @@ public class PP_MecanumTeleOp extends OpMode {
         // Our variables
         boolean precisionToggle = gamepad1.right_trigger > 0.1;
 
-
-
         drive(precisionToggle);
         arm();
         }
-
-
 
 //        BOT METHODS       \\
     public void drive(boolean precisionToggle){
@@ -156,117 +155,46 @@ public class PP_MecanumTeleOp extends OpMode {
     public void arm(){
         // BUTTONS
         if(gamepad2.a){
-            goToJunction(1000);
             // 1000 represents an arbitrary value for the max, 700 mid, 400 low, 0 ground
+            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 1000);
+
         }
         else if(gamepad2.b){
-            goToJunction(700);
+            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 700);
         }
         else if(gamepad2.y){
-            goToJunction(400);
+            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 400);
         }
         else if(gamepad2.x){
-            goToJunction(0);
+            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 0);
         }
 
         // DPAD
         if(gamepad2.dpad_left){
-            clawRotate(-0.01);
+            clawRotate(wristJoint, -0.01);
         }
         else if(gamepad2.dpad_right){
-            clawRotate(0.01);
+            clawRotate(wristJoint, 0.01);
         }
         else if(gamepad2.dpad_up){
-            armPivot(-500); // pivots up
+            armPivot(motorPID, armMotor, -500); // pivots up
         }
         else if(gamepad2.dpad_down){
-            armPivot(500); // pivots down
+            armPivot(motorPID, armMotor, 500); // pivots down
         }
 
         // BUMPER
         if(gamepad2.right_bumper){
-            claw();
+            claw(clawJoint, OPEN, CLOSE);
         }
 
         // TRIGGERS
         if(gamepad2.right_trigger > 0.2){
-            slides(1);
+            slides(motorPID, slideMotorLeft, slideMotorRight, 1);
         }
         else if(gamepad2.left_trigger > 0.2){
-            slides(-1);
+            slides(motorPID, slideMotorLeft, slideMotorRight, -1);
         }
     }
 
-    public void goToJunction(int target){
-        double currentPosition = (slideMotorLeft.getCurrentPosition() + slideMotorRight.getCurrentPosition())/2.0; // average position
-
-        slideMotorLeft.setTargetPosition(target);
-        slideMotorRight.setTargetPosition(target);
-
-        while(Math.abs(currentPosition - target) > 5) {
-            slideMotorLeft.setPower(motorPID.update(target, currentPosition));
-            slideMotorRight.setPower(motorPID.update(target, currentPosition));
-
-            currentPosition = (slideMotorLeft.getCurrentPosition() + slideMotorRight.getCurrentPosition())/2.0; // average new position
-        }
-    }
-
-
-    public void armPivot(int target){
-        double currentPosition = armMotor.getCurrentPosition(); // average position
-        armMotor.setTargetPosition(target);
-
-        while(Math.abs(currentPosition - target) > 5) {
-            armMotor.setPower(motorPID.update(target, currentPosition));
-            currentPosition = armMotor.getCurrentPosition(); // average new position
-        }
-    }
-
-    public void clawRotate(double increment){
-        wristJoint.setPosition(wristJoint.getPosition() + increment);
-    }
-
-    public void claw(){
-        if(clawJoint.getPosition() == OPEN){
-            clawJoint.setPosition(CLOSE);
-        }else{
-            clawJoint.setPosition(OPEN);
-        }
-    }
-
-    public void slides(int increment){
-        double currentPosition = (slideMotorLeft.getCurrentPosition() + slideMotorRight.getCurrentPosition())/2.0; // average position
-        int target = (int)currentPosition + increment; // we want to set the target to just above the current position every time this loop runs
-
-        slideMotorLeft.setTargetPosition(target + increment);
-        slideMotorRight.setTargetPosition(target + increment);
-
-        while(Math.abs(target - currentPosition) > 5) {
-            slideMotorLeft.setPower(motorPID.update(target, currentPosition));
-            slideMotorRight.setPower(motorPID.update(target, currentPosition));
-
-            currentPosition = (slideMotorLeft.getCurrentPosition() + slideMotorRight.getCurrentPosition())/2.0; // average new position
-        }
-
-
-    }
-
-   /*public void lift(boolean precisionToggle){
-   if(gamepad1.right_trigger > 0){
-        if(precisionToggle)
-            liftMotor.setPower(gamepad1.right_trigger * 0.6);
-
-        else
-            liftMotor.setPower(gamepad1.right_trigger);
-       }
-
-   if(gamepad1.left_trigger > 0){
-        if (precisionToggle)
-            liftMotor.setPower(-(gamepad1.left_trigger * 0.6)); // making this value negative because we want the motor to spin in the opposite direction
-
-        else
-            liftMotor.setPower(-gamepad1.left_trigger);
-       }
-
-*/
    }// end of class

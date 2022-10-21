@@ -20,7 +20,10 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 {
 
-    private DcMotorEx intakeMotor, liftMotorLeft, liftMotorRight;
+    final int OPEN = 0;
+    final double CLOSE = 0.5; // probably adjust later
+
+    private DcMotorEx armMotor, liftMotorLeft, liftMotorRight;
     private Servo armJoint, clawJoint, wristJoint;
     ElapsedTime timer = new ElapsedTime();
 
@@ -38,12 +41,17 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         // Motors \\
         liftMotorLeft = (DcMotorEx)hardwareMap.dcMotor.get("liftMotorLeft");
         liftMotorRight = (DcMotorEx)hardwareMap.dcMotor.get("liftMotorRight");
+        armMotor = (DcMotorEx)hardwareMap.dcMotor.get("armMotor");
 
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // RUN_USING_ENCODER limits motors to about 80% of their full potential
         liftMotorRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Servos \\
         armJoint = hardwareMap.get(Servo.class, "armJoint");
@@ -65,9 +73,11 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
             bot.update();
 
             // Our motors will stop running exactly at position 100
-            power = motorPID.update(100, intakeMotor.getCurrentPosition());
+           /* power = motorPID.update(100, intakeMotor.getCurrentPosition());
             liftMotorLeft.setPower(power);
             liftMotorRight.setPower(power);
+            */
+
         }
     }// end of runOpMode()
 
@@ -100,12 +110,19 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
 
     public Pose2d cycle(SampleMecanumDrive bot, Pose2d currentPosition){
         TrajectorySequence openingMove =  bot.trajectorySequenceBuilder(currentPosition)
+            .addTemporalMarker(2.2,() -> {
+                goToJunction(1000);
+                armPivot(500);
+                claw();
+                armPivot(-500);})//temporal marker for the extake
             .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack
-
-            // TEMPORAL MARKER TO INTAKE
-
+            .addTemporalMarker(1,()->{
+                goToJunction(0);
+                armPivot(-950);
+                claw();
+                armPivot(950);})//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
             .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0)))
-            .waitSeconds(2.5) //This would be replaced with an actual intake function
+            //.addTemporalMarker()
             .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75)))
             .waitSeconds(1)//Deposit at junction; Under the impression that using the async PID, the slides will be already be moved up
             .build();
@@ -113,8 +130,8 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         Pose2d endPose = new Pose2d(-33,8,Math.toRadians(-39.75)); // Deposit at junction
 
         TrajectorySequence cycles =  bot.trajectorySequenceBuilder(currentPosition)
+                .addTemporalMarker(3,() -> {goToJunction(0);claw();})
                 .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0))) // back to the cone stack
-                .waitSeconds(2.5) //This would be replaced with an actual intake function
                 .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75))) // go to junction
                 .waitSeconds(1)//Under the impression that using the async PID, the slides will be already be moved up
                 .build();
@@ -125,4 +142,46 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
          }
         return endPose;
     }
+
+    public void goToJunction(int target){
+        double currentPosition = (liftMotorLeft.getCurrentPosition() + liftMotorRight.getCurrentPosition())/2.0; // average position
+
+        liftMotorLeft.setTargetPosition(target);
+        liftMotorRight.setTargetPosition(target);
+
+        while(Math.abs(currentPosition - target) > 5) {
+            liftMotorLeft.setPower(motorPID.update(target, currentPosition));
+            liftMotorRight.setPower(motorPID.update(target, currentPosition));
+
+            currentPosition = (liftMotorLeft.getCurrentPosition() + liftMotorRight.getCurrentPosition())/2.0; // average new position
+        }
+    }
+
+    public void armPivot(int target){
+        double currentPosition = armMotor.getCurrentPosition(); // average position
+        armMotor.setTargetPosition(target);
+
+        while(Math.abs(currentPosition - target) > 5) {
+            armMotor.setPower(motorPID.update(target, currentPosition));
+            currentPosition = armMotor.getCurrentPosition(); // average new position
+        }
+    }
+
+    public void clawRotate(double increment){
+        wristJoint.setPosition(wristJoint.getPosition() + increment);
+    }
+
+    public void claw(){
+        if(clawJoint.getPosition() == OPEN){
+            clawJoint.setPosition(CLOSE);
+        }else{
+            clawJoint.setPosition(OPEN);
+        }
+    }
+
+
+
+
+
+
 }

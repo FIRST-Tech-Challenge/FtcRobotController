@@ -22,7 +22,7 @@ public class MeepMeepTest {
         MeepMeepPersistence persist = new MeepMeepPersistence(mm);
         persist.restore();
 
-        Pose2d startPose = new Pose2d(-12, -59, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-57, 12.3, Math.toRadians(0));
 
         // Creating bot
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
@@ -45,37 +45,10 @@ public class MeepMeepTest {
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
 
-                    TrajectoryVelocityConstraint STVC = new TrajectoryVelocityConstraint() {
-                        @Override
-                        public double get(double v, @NotNull Pose2d pose2d, @NotNull Pose2d pose2d1, @NotNull Pose2d pose2d2) {
-                            return 5;
-                        }
-                    };
 
-                    TrajectoryAccelerationConstraint STAC = new TrajectoryAccelerationConstraint() {
-                        @Override
-                        public double get(double v, @NotNull Pose2d pose2d, @NotNull Pose2d pose2d1, @NotNull Pose2d pose2d2) {
-                            return 0;
-                        }
-                    };
 
-                    TrajectoryVelocityConstraint STVE = (a, b, c, d) -> 5;
-                    TrajectoryVelocityConstraint SpTVC = (a, b, c, d) -> 1000;
-                    TrajectoryAccelerationConstraint SpTAC = (a, b, c, d) -> 1000;
 
-                    builder.forward(15);
-
-                    builder.waitSeconds(1.5);
-                    builder.lineToLinearHeading(new Pose2d(-55, -55, Math.toRadians(40)));
-                    builder.waitSeconds(3);
-                    builder.lineToLinearHeading(new Pose2d(-57, -57, Math.toRadians(90)));
-                    builder.strafeRight(15, STVE, STAC); // You have to pass both a velo and accel constraint
-                    builder.lineToLinearHeading(new Pose2d(-12.3, -44, Math.toRadians(90)));
-                    builder.waitSeconds(2);
-                    builder.lineToLinearHeading(new Pose2d(-60, -34, Math.toRadians(180)));
-                    builder.splineTo(new Vector2d(5, 10), 2, SpTVC, SpTAC);
-
-                    builder.setReversed(true);
+                    builder.lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75)));
 
 
                     return builder.build();
