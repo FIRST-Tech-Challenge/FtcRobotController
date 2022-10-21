@@ -15,11 +15,12 @@ public class TeleopGOODOneController extends LinearOpMode {
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("backleft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontright");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backright");
+        DcMotor linearslide = hardwareMap.dcMotor.get("linearslide");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -34,10 +35,41 @@ public class TeleopGOODOneController extends LinearOpMode {
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
+            double frontLeftPower = (y - x + rx) / denominator;
+            double backLeftPower = (y + x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
+
+            if (gamepad2.dpad_up) {
+                linearslide.setPower(1);
+            } else if (gamepad2.dpad_down) {
+                linearslide.setPower(-1);
+            } else {
+                linearslide.setPower(0);
+            }
+
+            if (gamepad2.dpad_right) { // Dumps cup right
+                linearslide.setTargetPosition(500);
+                linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearslide.setPower(.5);
+            }
+
+//            if (gamepad2.dpad_left) { // Dumps cup right
+//                linearslide.setTargetPosition(500);
+//                linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                linearslide.setPower(.5);
+//            }
+
+            if (gamepad2.dpad_up) { // Dumps cup right
+                linearslide.setTargetPosition(500);
+                linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearslide.setPower(.5);
+            }
+
+            telemetry.addData("GamepadX", x);
+            telemetry.addData("GamepadY", y);
+            telemetry.addData("Linear Slide Position", linearslide.getCurrentPosition());
+            telemetry.update();
 
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
