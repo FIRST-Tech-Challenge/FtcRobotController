@@ -162,7 +162,6 @@ public class TeleopIMU_Driving extends LinearOpMode {
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -227,9 +226,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
             sleep(50);
             idle();
         }
-        telemetry.addData("Mode", "waiting for start");
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        telemetry.update();
 
         // Set up parameters for driving in a straight line.
         pidDrive.setSetpoint(0);
@@ -239,8 +236,10 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
+        telemetry.addData("Mode", "waiting for start");
+        telemetry.update();
 
+        runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -339,13 +338,6 @@ public class TeleopIMU_Driving extends LinearOpMode {
             armServo.setPosition(armServoPosition);
             telemetry.addData("Status", "Arm Servo position %.2f", armServoPosition);
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
-                    " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
-                    BackLeftPower,BackRightPower);
-            telemetry.update();
-
             //  auto driving, grip cone, and lift slider
             if(gamepad1.left_bumper) {
                 autoLoadCone();
@@ -363,6 +355,13 @@ public class TeleopIMU_Driving extends LinearOpMode {
                 clawServoPosition = clawServo.getPosition();
                 sliderMotorTargetPosition = SliderMotor.getCurrentPosition();
             }
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
+                            " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
+                    BackLeftPower,BackRightPower);
+            telemetry.update(); // update message at the end of while loop
         }
 
         // The motor stop on their own but power is still applied. Turn off motor.
