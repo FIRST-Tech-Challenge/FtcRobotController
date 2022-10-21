@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Drive extends OpMode {
     Warbotron warbotron;
 
-    public final double SNEAK_ACCEL = 0.25;
+    // Seconds to max speed
+    public final double SNEAK_ACCEL = 0.125;
 
     @Override
     public void init() {
@@ -25,15 +26,25 @@ public class Drive extends OpMode {
         double leftTargetPower = -gamepad1.left_stick_y;
         double rightTargetPower = -gamepad1.right_stick_y;
 
-        leftPower += (leftTargetPower - leftPower) * deltaTime.seconds() / SNEAK_ACCEL;
-        rightPower += (rightTargetPower - rightPower) * deltaTime.seconds() / SNEAK_ACCEL;
+        if(gamepad1.right_bumper) {
+            leftPower += (leftTargetPower - leftPower) * deltaTime.seconds() / SNEAK_ACCEL;
+            rightPower += (rightTargetPower - rightPower) * deltaTime.seconds() / SNEAK_ACCEL;
+        } else {
+            leftPower = leftTargetPower;
+            rightPower = rightTargetPower;
+        }
+
         deltaTime.reset();
 
-        warbotron.frontLeft.setPower(-gamepad1.left_stick_y * leftPower);
-        warbotron.frontRight.setPower(-gamepad1.right_stick_y * rightPower);
-        warbotron.backLeft.setPower(-gamepad1.left_stick_y * leftPower);
-        warbotron.backRight.setPower(-gamepad1.right_stick_y * rightPower);
+        warbotron.frontLeft.setPower(leftPower);
+        warbotron.frontRight.setPower(rightPower);
+        warbotron.backLeft.setPower(leftPower);
+        warbotron.backRight.setPower(rightPower);
+
         warbotron.hammer1.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
         warbotron.hammer2.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+
+        telemetry.addData("Left", leftPower);
+        telemetry.addData("Right", rightPower);
     }
 }

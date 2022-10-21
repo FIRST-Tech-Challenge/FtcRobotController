@@ -12,7 +12,6 @@ public class Warbotron {
     public DcMotor hammer1;
     public DcMotor hammer2;
 
-
     public Warbotron(HardwareMap hwmap){
         frontLeft = hwmap.get(DcMotor.class, "FrontLeft");
         frontRight = hwmap.get(DcMotor.class, "FrontRight");
