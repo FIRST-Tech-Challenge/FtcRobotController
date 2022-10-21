@@ -20,10 +20,10 @@ public class Auton {
     {
         parkingZone = pz;
 
-        int angle = -45;
+        int angle = 45;
         if(direction)
         {
-            angle = 45;
+            angle = -45;
         }
         SampleMecanumDrive drive = getDrive;
 

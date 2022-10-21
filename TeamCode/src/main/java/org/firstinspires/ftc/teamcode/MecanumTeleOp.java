@@ -22,12 +22,12 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
         // --- DECLARE DC MOTORS FOR DRIVE --- //
-        DcMotorEx motorLift = hardwareMap.get(DcMotorEx.class, "motorLift");
+//        DcMotorEx motorLift = hardwareMap.get(DcMotorEx.class, "motorLift");
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
-        CRServo servoIntake = hardwareMap.crservo.get("intake");
+//        CRServo servoIntake = hardwareMap.crservo.get("intake");
         BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         //Motor Configuration Settings
@@ -47,18 +47,18 @@ public class MecanumTeleOp extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorLift.setDirection(DcMotor.Direction.FORWARD);
-        motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motorLift.setDirection(DcMotor.Direction.FORWARD);
+//        motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        servoIntake.setDirection(DcMotor.Direction.FORWARD);
+//        servoIntake.setDirection(DcMotor.Direction.FORWARD);
 
         // --- RESET ALL MOTOR POWERS TO 0 --- //
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
-        motorLift.setPower(0);
+//        motorLift.setPower(0);
 
         Drive drive = new Drive(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, imu);
 
@@ -98,36 +98,8 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             //Lift Stuff
-            if(gamepad2.back)//turn off liftAuton
-            {
-                liftAuton = false;
-            }
-            if(gamepad2.x)//mid
-            {
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                targetLiftPosition = 1;
-                liftAuton = true;
-                motorLift.setTargetPosition(targetLiftPosition);
-            }
-            if(gamepad2.y)//low
-            {
-                motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                targetLiftPosition = 2;
-                liftAuton = true;
-                motorLift.setTargetPosition(targetLiftPosition);
-            }
-            if(gamepad2.right_stick_y != 0)
-            {
-                liftAuton = false;
-                motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorLift.setPower(gamepad2.right_stick_y);
-            }
-            else if(liftAuton)
-            {
-                motorLift.setPower(0.75);
-            }
 
-            servoIntake.setPower(gamepad2.right_trigger);
+//            servoIntake.setPower(gamepad2.right_trigger);
 
 //            if(gamepad1.b) {
 //                motorFrontLeft.setPower(200);

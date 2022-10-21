@@ -27,14 +27,14 @@ public class AprilTagOpMode extends LinearOpMode
     Check constructMatrix in apriltagdetectionpipeline file for more information
 
     */
-    double fx = 369.50;
-    double fy = 369.50;
-    double cx = 320;
-    double cy = 240;
-//    double fx = 578.272;
-//    double fy = 578.272;
-//    double cx = 402.145;
-//    double cy = 221.506;
+//    double fx = 369.50;
+//    double fy = 369.50;
+//    double cx = 320;
+//    double cy = 240;
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
     // UNITS ARE METERS
     double tagsize = 0.0406;
@@ -59,7 +59,7 @@ public class AprilTagOpMode extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -110,7 +110,7 @@ public class AprilTagOpMode extends LinearOpMode
                 {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     processTag(tagOfInterest);
-//                    break;
+                    break;
                 }
                 else
                 {
@@ -124,7 +124,7 @@ public class AprilTagOpMode extends LinearOpMode
                     {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         processTag(tagOfInterest);
-//                        break;
+                        break;
                     }
                 }
 
@@ -141,7 +141,7 @@ public class AprilTagOpMode extends LinearOpMode
                 {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     processTag(tagOfInterest);
-//                    break;
+                    break;
 
                 }
 
