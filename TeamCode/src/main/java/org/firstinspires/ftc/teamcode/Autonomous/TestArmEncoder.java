@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.functions.ArmEncoder;
+import org.firstinspires.ftc.teamcode.Functions.ArmEncoder;
 
 @Autonomous(name = "TestArmEncoder", group="Concept")
 @Disabled

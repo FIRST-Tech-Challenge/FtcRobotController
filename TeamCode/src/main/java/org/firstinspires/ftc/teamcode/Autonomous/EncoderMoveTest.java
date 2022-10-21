@@ -42,19 +42,19 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 //import org.firstinspires.ftc.teamcode.functions.AccelerationReader;
 //import org.firstinspires.ftc.teamcode.functions.DataLogger;
 
-import org.firstinspires.ftc.teamcode.functions.ArmServos;
-import org.firstinspires.ftc.teamcode.functions.CarouselMotor;
+import org.firstinspires.ftc.teamcode.Functions.ArmServos;
+import org.firstinspires.ftc.teamcode.Functions.CarouselMotor;
 
-//import org.firstinspires.ftc.teamcode.functions.NewCorrectionRotateMove;
-import org.firstinspires.ftc.teamcode.functions.Arm;
-import org.firstinspires.ftc.teamcode.functions.ArmEncoder;
-import org.firstinspires.ftc.teamcode.functions.EncoderMove;
-import org.firstinspires.ftc.teamcode.functions.Collector;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.functions.Vacuum;
-import org.firstinspires.ftc.teamcode.functions.VoltageReader;
+import org.firstinspires.ftc.teamcode.Functions.NewCorrectionRotateMove;
+import org.firstinspires.ftc.teamcode.Functions.Arm;
+import org.firstinspires.ftc.teamcode.Functions.ArmEncoder;
+import org.firstinspires.ftc.teamcode.Functions.EncoderMove;
+import org.firstinspires.ftc.teamcode.Functions.Collector;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Vacuum;
+import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 
 /**

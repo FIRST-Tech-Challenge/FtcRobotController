@@ -45,11 +45,11 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.old.UltimateGoal.Pistol;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.old.UltimateGoal.Aspirator;
-import org.firstinspires.ftc.teamcode.functions.VoltageReader;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.Unused.UltimateGoal.Pistol;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.Unused.UltimateGoal.Aspirator;
+import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 /**
  * This 2020-2021 OpMode illustrates the basics of using the TensorFlow Object Detection API to

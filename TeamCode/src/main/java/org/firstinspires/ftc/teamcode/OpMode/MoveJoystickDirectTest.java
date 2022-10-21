@@ -35,14 +35,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.functions.GamepadAlert;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.MoveDirectJoystick;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-
-//import org.firstinspires.ftc.teamcode.functions.DataLogger;
-///import org.firstinspires.ftc.teamcode.functions.NewCorrectionRotateMove;
+import org.firstinspires.ftc.teamcode.Functions.GamepadAlert;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.MoveDirectJoystick;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 
 
 /**

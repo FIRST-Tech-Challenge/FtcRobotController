@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.functions.Arm;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.MoveAutocorrect2;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.functions.VoltageReader;
+import org.firstinspires.ftc.teamcode.Functions.Arm;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.MoveAutocorrect2;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 @Autonomous(name = "TestMoveAutocorrect2", group = "Concept")
 //@Disabled

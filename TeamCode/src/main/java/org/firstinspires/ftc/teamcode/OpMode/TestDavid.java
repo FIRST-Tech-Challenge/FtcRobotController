@@ -9,16 +9,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.functions.Arm;
-import org.firstinspires.ftc.teamcode.functions.ArmEncoder;
-//import org.firstinspires.ftc.teamcode.functions.CarouselMotor;
-import org.firstinspires.ftc.teamcode.functions.ArmServos;
-import org.firstinspires.ftc.teamcode.functions.CupServo;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.functions.Vacuum;
-import org.firstinspires.ftc.teamcode.functions.Collector;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.Arm;
+import org.firstinspires.ftc.teamcode.Functions.ArmEncoder;
+import org.firstinspires.ftc.teamcode.Functions.CarouselMotor;
+import org.firstinspires.ftc.teamcode.Functions.ArmServos;
+import org.firstinspires.ftc.teamcode.Functions.CupServo;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Vacuum;
+import org.firstinspires.ftc.teamcode.Functions.Collector;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
 
 @Disabled
 @TeleOp(name="Test David", group="TEST")

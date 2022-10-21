@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.functions.ColorSensor;
+import org.firstinspires.ftc.teamcode.Functions.ColorSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 @Disabled

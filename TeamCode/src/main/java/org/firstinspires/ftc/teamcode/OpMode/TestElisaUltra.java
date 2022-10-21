@@ -9,19 +9,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.functions.AccelerationDetector;
-import org.firstinspires.ftc.teamcode.functions.DataLogger.DataLoggerRemastered;
+import org.firstinspires.ftc.teamcode.Functions.AccelerationDetector;
+import org.firstinspires.ftc.teamcode.Functions.DataLogger.DataLoggerRemastered;
 
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.UltraSoundSensor;
-//import org.firstinspires.ftc.teamcode.functions.old.toredo.PositionCalculator;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-//import org.firstinspires.ftc.teamcode.functions.old.toredo.SistemXY;
-import org.firstinspires.ftc.teamcode.functions.mv.MVTurnTowardsPoint;
-import org.firstinspires.ftc.teamcode.functions.mv.MVVariables;
-import org.firstinspires.ftc.teamcode.functions.VoltageReader;
-import org.firstinspires.ftc.teamcode.functions.UltraSoundSensor;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.UltraSoundSensor;
+import org.firstinspires.ftc.teamcode.Functions.Unused.XYSystem.PositionCalculator;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Unused.XYSystem.SistemXY;
+import org.firstinspires.ftc.teamcode.Functions.MV.MVTurnTowardsPoint;
+import org.firstinspires.ftc.teamcode.Functions.MV.MVVariables;
+import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
+import org.firstinspires.ftc.teamcode.Functions.UltraSoundSensor;
 
 import java.io.IOException;
 

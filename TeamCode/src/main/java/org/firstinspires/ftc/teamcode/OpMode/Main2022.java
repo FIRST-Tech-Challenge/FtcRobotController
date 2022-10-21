@@ -8,15 +8,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.functions.Arm;
-import org.firstinspires.ftc.teamcode.functions.ArmServos;
-import org.firstinspires.ftc.teamcode.functions.Collector;
-import org.firstinspires.ftc.teamcode.functions.Move;
-import org.firstinspires.ftc.teamcode.functions.MoveDirectJoystick;
-import org.firstinspires.ftc.teamcode.functions.Rotate;
-import org.firstinspires.ftc.teamcode.functions.RotateMove;
-import org.firstinspires.ftc.teamcode.functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.functions.Vacuum;
+import org.firstinspires.ftc.teamcode.Functions.Arm;
+import org.firstinspires.ftc.teamcode.Functions.ArmServos;
+import org.firstinspires.ftc.teamcode.Functions.Collector;
+import org.firstinspires.ftc.teamcode.Functions.Move;
+import org.firstinspires.ftc.teamcode.Functions.MoveDirectJoystick;
+import org.firstinspires.ftc.teamcode.Functions.Rotate;
+import org.firstinspires.ftc.teamcode.Functions.RotateMove;
+import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
+import org.firstinspires.ftc.teamcode.Functions.Vacuum;
 
 @TeleOp(name="MAIN 4", group="GAME")
 public class Main2022 extends OpMode {
