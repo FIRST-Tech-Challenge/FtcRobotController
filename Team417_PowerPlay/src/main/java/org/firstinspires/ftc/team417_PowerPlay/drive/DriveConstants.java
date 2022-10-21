@@ -45,7 +45,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 50.0 / 25.4; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 11.75; // in
+    public static double TRACK_WIDTH = 15.5; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -71,7 +71,7 @@ public class DriveConstants {
     voltage compensated kf: 1.1919485351737802
      */
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = 8.9284;//12.1226;//Math.toRadians(60);
+    public static double MAX_ANG_VEL = 12.1226;//Math.toRadians(60);
     /*
     511.5612322270716
 8.928427827921725
