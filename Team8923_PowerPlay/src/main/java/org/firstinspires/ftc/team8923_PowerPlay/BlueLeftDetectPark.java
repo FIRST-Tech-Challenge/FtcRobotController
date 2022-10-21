@@ -13,7 +13,6 @@ public class BlueLeftDetectPark extends BaseAutonomous{
         while (opModeIsActive()){
             //detection
             //move forward
-            //
            moveAuto(0, 10, 10, 5);
            idle();
         }
