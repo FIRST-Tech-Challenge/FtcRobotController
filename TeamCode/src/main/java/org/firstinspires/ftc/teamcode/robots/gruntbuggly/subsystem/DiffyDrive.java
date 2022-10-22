@@ -41,6 +41,10 @@ public abstract class DiffyDrive extends Drive {
             poseEstimate = new Pose2d(0,0,0);
         }
 
+        public void setHeading(double imuHeading){
+            poseEstimate = new Pose2d(poseEstimate.getX(), poseEstimate.getY(), imuHeading);
+        }
+
         @Override
         public void update() {
             List<Double> wheelPositions = drive.getWheelPositions();
@@ -53,7 +57,10 @@ public abstract class DiffyDrive extends Drive {
 
                 double displacement = (wheelDeltas.get(0) + wheelDeltas.get(1)) / 2;
                 double heading = useExternalHeading ?
-                        wrapAngleRad(poseEstimate.getHeading() + wrapAngleRad(externalHeading - lastExternalHeading)) :
+
+                        //Vance, I changed this!! 
+                        //wrapAngleRad(poseEstimate.getHeading() + wrapAngleRad(externalHeading - lastExternalHeading))
+                        externalHeading :
                         wrapAngleRad(poseEstimate.getHeading() + wrapAngleRad((-wheelDeltas.get(0) + wheelDeltas.get(1)) / TRACK_WIDTH));
                 poseEstimate = new Pose2d(
                         poseEstimate.getX() + displacement * Math.cos(heading),
@@ -86,13 +93,19 @@ public abstract class DiffyDrive extends Drive {
             if(useExternalHeading)
                 drive.setExternalHeading(poseEstimate.getHeading());
             this.poseEstimate = poseEstimate;
+
+
         }
+
+
 
         @Nullable
         @Override
         public Pose2d getPoseVelocity() {
             return poseVelocity;
         }
+
+
     }
 
     @NonNull
@@ -104,6 +117,10 @@ public abstract class DiffyDrive extends Drive {
     @Override
     public void setLocalizer(@NonNull Localizer localizer) {
         this.localizer = localizer;
+    }
+
+    public void setHeading(double imuHeading){
+        setHeading(imuHeading);
     }
 
     public abstract List<Double> getWheelPositions();

@@ -422,11 +422,11 @@ public class PowerPlay_6832 extends OpMode {
         telemetry.addLine("target X" + target.getX());
         telemetry.addLine("target Y" + target.getY());
 
-        telemetry.addLine("current X" + current.getX());
-        telemetry.addLine("current Y" + current.getY());
+        telemetry.addLine("current_coordinate X" + current.getX());
+        telemetry.addLine("current_coordinate Y" + current.getY());
 
-        telemetry.addLine("current_actual X" + current2.getX());
-        telemetry.addLine("current_actual Y" + current2.getY());
+        telemetry.addLine("current_Pose X" + current2.getX());
+        telemetry.addLine("current_Pose Y" + current2.getY());
         TelemetryPacket packet = new TelemetryPacket();
 
         long updateStartTime = System.nanoTime();

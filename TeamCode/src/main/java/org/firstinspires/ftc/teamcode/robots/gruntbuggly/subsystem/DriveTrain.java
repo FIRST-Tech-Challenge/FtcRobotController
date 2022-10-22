@@ -184,12 +184,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         driveVelocity = new Pose2d(0, 0, 0);
         lastDriveVelocity = new Pose2d(0, 0, 0);
-        currentPose = new Pose2d(0,0,0);
+
 
         //default pose - gotta have some initial pose
         setPoseEstimate(Position.START_RIGHT.getPose());
 
-        currentPose = new Pose2d(0,0,0);
+
 
         driveToNextTarget = Utils.getStateMachine(gridDrive)
                 .addState(() -> false)
@@ -370,7 +370,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         //todo check this heading code
         double sign = Math.signum(dx * ( Math.cos(heading)) - dy * (Math.sin(heading))) >= 0 ? 1:-1;
-        double newHeading = Math.atan2(dy,dx) + (sign>=0 ? 0:(2*Math.PI));
+        double newHeading = wrapAngleRad(Math.atan2(dy,dx) + (sign>=0 ? 0:(Math.PI)));
 
         headingPID.setSetpoint(newHeading);
         headingPID.setInput(getPoseEstimate().getHeading());
