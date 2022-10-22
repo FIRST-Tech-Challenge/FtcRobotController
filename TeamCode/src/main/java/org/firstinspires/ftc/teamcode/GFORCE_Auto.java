@@ -97,7 +97,7 @@ public class GFORCE_Auto extends LinearOpMode {
                         .setReversed(false)
                         .lineTo(new Vector2d(24,12))
                         .splineTo(new Vector2d(35,0), Math.toRadians(-90))
-                        .lineTo(new Vector2d(35,-62))
+                        .lineTo(new Vector2d(35,-56))
                         .setReversed(true)
                         .lineTo(new Vector2d(35,35))
                         .build();

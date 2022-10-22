@@ -16,16 +16,21 @@ public class Elevator {
     double SLOW_LIFT = 0.2;
     double SLOW_LOWER = 0;
     double FAST_LIFT = 0.5;
-    double FAST_LOWER = 0;
+    double FAST_LOWER = -0.05;
     int DEAD_BAND = 4;
     double WRIST_HOME_POSITION = 0.6;
     double HAND_HOME_POSITION = 0.8;
      double HAND_OPEN = 0.7;
-     double HAND_CLOSE = 0.9;
-     double ENCODER_TO_ANGLEM = 0.0864;
-     double ENCODER_TO_ANGLEC = -30;
-     double WRIST_TO_SERVOM = 0.00443;
-     double WRIST_TO_SERVOC = 0.454;
+     double HAND_CLOSE = 1;
+     double ENCODER_TO_ANGLEM = 0.0992;
+     double ENCODER_TO_ANGLEC = -37.2;
+     double WRIST_TO_SERVOM = 0.00374;
+     double WRIST_TO_SERVOC = 0.472;
+     int ELEVATOR_GROUND = 320;
+     int ELEVATOR_LOW = 520;
+     int ELEVATOR_MID = 720;
+     int ELEVATOR_HIGH = 920;
+     int ELEVATOR_HOME = 50;
 
     private DcMotorEx liftMaster;
     private DcMotorEx liftSlave;
@@ -37,6 +42,8 @@ public class Elevator {
     private int     lastPosition = 0;
     private double  power    = 0;
     private boolean liftActive = false;
+    private double wristOffset = 0;
+
 
     public Elevator(LinearOpMode opMode) {
 
@@ -76,6 +83,7 @@ public class Elevator {
         //adjust the angle of the servo
         double armAngle = elevatorEncoderToAngle(getPosition());
         double servoAngle = -armAngle;
+        servoAngle += wristOffset;
         double servoPosition = wristAngleToServo(servoAngle);
         setWristPosition(servoPosition);
         myOpMode.telemetry.addData("arm angle", armAngle);
@@ -166,12 +174,20 @@ public class Elevator {
         }
     }
 
+    public void setWristOffset(double angle){
+        wristOffset = angle;
+    }
+
     public void setWristPosition(double angle) {
         wrist.setPosition(angle);
     }
 
     public void setHandPosition(double angle) {
         hand.setPosition(angle);
+    }
+
+    public void jogElevator(double speed) {
+        target = target + (int)(speed * 6);
     }
 }
 

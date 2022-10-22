@@ -69,39 +69,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             // Update everything.
             drive.update();
-            if(gamepad1.dpad_left) {
-                elevator.setHandPosition(elevator.HAND_OPEN);
-            } else if(gamepad1.dpad_right) {
-                elevator.setHandPosition(elevator.HAND_CLOSE);
-            }
-            // reset heading if double button press
-            if (gamepad1.back && gamepad1.start) {
-                drive.setPoseEstimate( new Pose2d() );
-                drive.setExternalHeading(0);
-                headingSetpoint = 0;
-                headingController.setTargetPosition(headingSetpoint);
-            }
 
-            //Homes elevator
-            if (gamepad1.a) {
-                telemetry.addData("Homing...", "now");
-                telemetry.update();
-                elevator.setHome();
-            }
-
-            //elevator.manualControl();
-
-            if (gamepad1.x) {
-                elevator.setTarget(800);
-            }
-
-            if (gamepad1.b) {
-                elevator.setTarget(200);
-            }
-
-            elevator.runControlLoop();
-
-
+            //-----------PILOT-----------
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
 
@@ -113,20 +82,23 @@ public class GFORCE_TELEOP extends LinearOpMode {
             ).rotated(-poseEstimate.getHeading());
 
             // Determine the required rotate rate
-            if (gamepad1.left_bumper)
-                joysticRotate = 0.2;
-            else if (gamepad1.right_bumper)
-                joysticRotate = -0.2;
-            else
-                joysticRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE * DriveConstants.kV  ;
+            joysticRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE * DriveConstants.kV * 5  ;
 
+            //set one of four desired headings
+            if(gamepad1.triangle) {
+                lockNewHeading(Math.toRadians(0));
+            }else if (gamepad1.circle) {
+                lockNewHeading(Math.toRadians(270));
+            }else if (gamepad1.cross) {
+                lockNewHeading(Math.toRadians(180));
+            }else if (gamepad1.square) {
+                lockNewHeading(Math.toRadians(90));
+            }
 
             // are we turning or should heading be locked.
             if (Math.abs(joysticRotate) < 0.01) {
                 if (!headingLock && drive.notTurning()) {
-                    headingLock = true;
-                    headingSetpoint = drive.getExternalHeading();
-                    headingController.setTargetPosition(headingSetpoint);
+                    lockNewHeading(drive.getExternalHeading());
                 }
             } else {
                 headingLock = false;
@@ -155,6 +127,50 @@ public class GFORCE_TELEOP extends LinearOpMode {
                         )
                 );
             }
+            // reset heading if double button press
+            if (gamepad1.back && gamepad1.start) {
+                drive.setPoseEstimate( new Pose2d() );
+                drive.setExternalHeading(0);
+                headingSetpoint = 0;
+                headingController.setTargetPosition(headingSetpoint);
+            }
+
+
+
+            //-----------CO-PILOT--------------
+            //Homes elevator
+            if (gamepad2.left_bumper) {
+                elevator.setHandPosition(elevator.HAND_CLOSE);
+                elevator.setTarget(elevator.ELEVATOR_HOME);
+            }
+
+            //elevator.manualControl();
+
+            if (gamepad2.dpad_down) {
+                elevator.setTarget(elevator.ELEVATOR_LOW);
+            } else if (gamepad2.dpad_left) {
+                elevator.setTarget(elevator.ELEVATOR_MID);
+            } else if (gamepad2.dpad_up) {
+                elevator.setTarget(elevator.ELEVATOR_HIGH);
+            } else if (gamepad2.dpad_right) {
+                elevator.setTarget(elevator.ELEVATOR_GROUND);
+            }
+
+            if (gamepad2.circle) {
+                elevator.setHandPosition(elevator.HAND_OPEN);
+                elevator.setWristOffset(0);
+            } else if(gamepad2.square) {
+                elevator.setHandPosition(elevator.HAND_CLOSE);
+            }
+
+            if (gamepad1.right_bumper || gamepad2.right_bumper) {
+                elevator.setWristOffset(90);
+            }
+
+            elevator.jogElevator(-gamepad2.left_stick_y);
+
+
+            elevator.runControlLoop();
 
             telemetry.addData("Lock", headingLock);
             telemetry.addData("x", poseEstimate.getX());
@@ -162,9 +178,15 @@ public class GFORCE_TELEOP extends LinearOpMode {
             telemetry.addData("ODO  heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
             telemetry.addData ("Elevator position", elevator.getPosition());
+            telemetry.addData ("arm position", elevator.getPosition());
             telemetry.update();
         }
     }
 
+    public void lockNewHeading(double heading) {
+        headingLock = true;
+        headingSetpoint = heading;
+        headingController.setTargetPosition(headingSetpoint);
+    }
 
 }
