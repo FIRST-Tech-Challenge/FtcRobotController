@@ -389,7 +389,8 @@ public class MultipleCameraCV {
         static final int REGION_HEIGHT = 42;
 
         /*
-        * Top left anchor points for freight regions         */
+        * Top left anchor points for freight regions
+        */
         static final Point REGION1_TOP_LEFT_ANCHOR_POINT = new Point(45, 180);
         static final Point REGION2_TOP_LEFT_ANCHOR_POINT = new Point(300, 180);
         static final Point REGION3_TOP_LEFT_ANCHOR_POINT = new Point(575, 180);

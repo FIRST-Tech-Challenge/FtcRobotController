@@ -10,7 +10,6 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-//@Config //Disable if not using FTC Dashboard https://github.com/PinkToTheFuture/OpenCV_FreightFrenzy_2021-2022#opencv_freightfrenzy_2021-2022
 @Autonomous(name="CAMShift Test", group="drive")
 public class CAMShiftTest extends LinearOpMode {
     private OpenCvCamera webcam;
@@ -25,8 +24,8 @@ public class CAMShiftTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         //OpenCV Pipeline
-        CAMShiftPipelineHopefully myPipeline;
-        webcam.setPipeline(myPipeline = new CAMShiftPipelineHopefully(telemetry));
+        CAMShiftPipelinePowerPlay myPipeline;
+        webcam.setPipeline(myPipeline = new CAMShiftPipelinePowerPlay(telemetry));
         // Configuration of Pipeline
         // Webcam Streaming
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
