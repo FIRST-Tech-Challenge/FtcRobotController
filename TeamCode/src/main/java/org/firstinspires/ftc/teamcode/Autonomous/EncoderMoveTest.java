@@ -76,9 +76,8 @@ public class EncoderMoveTest extends LinearOpMode {
     /**
      * Initialize the motors.
      */
-    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack,vaccumRight,vaccumLeft, carouselMotor, leftMotorEncoder, rightMotorEncoder, leftMotorBackEncoder, rightMotorBackEncoder;
+    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack,vaccumLeft;
     private DcMotorEx armMotorLeft, armMotorRight;
-    //private Servo collectorServo;
     private CRServo collectorCr;
     private Move move;
     private Rotate rotate;
@@ -104,19 +103,16 @@ public class EncoderMoveTest extends LinearOpMode {
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
-
         vaccumLeft = hardwareMap.dcMotor.get("VL");
         L1Servo = hardwareMap.servo.get("L1S");
         L2Servo = hardwareMap.servo.get("L2S");
         armMotorRight = hardwareMap.get(DcMotorEx.class, "AMR");
         armMotorLeft = hardwareMap.get(DcMotorEx.class, "AML");
-        //arm = new Arm(armMotorLeft, armMotorRight);
         armEncoder = new ArmEncoder(armMotorLeft, armMotorRight);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         vaccum = new Vacuum(vaccumLeft);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
-        //_carouselMotor = new CarouselMotor(carouselMotor);
         collectorCr = hardwareMap.crservo.get("CR");
         collector = new Collector(collectorCr);
         VoltageSensor VS = this.hardwareMap.voltageSensor.iterator().next();
@@ -192,10 +188,4 @@ public class EncoderMoveTest extends LinearOpMode {
 //        }
 //        sleep(500);
     }
-
-    public void Meters(){
-
-
-    }
-
 }

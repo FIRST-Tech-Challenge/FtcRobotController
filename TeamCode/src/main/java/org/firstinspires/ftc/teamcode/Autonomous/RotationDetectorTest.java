@@ -27,8 +27,6 @@ public class RotationDetectorTest extends LinearOpMode {
     private Arm arm;
     private Collector collector;
     public VoltageReader voltageReader;
-  //  public NewCorrectionRotateMove2 AutoCorrection;
-    //public MoveAutocorrectTest MoveAutocorrectTest;
     public RotationDetector rotationDetector;
 
     @Override
@@ -39,17 +37,12 @@ public class RotationDetectorTest extends LinearOpMode {
         rightMotorBack = hardwareMap.dcMotor.get("BR");
         armMotorLeft = hardwareMap.dcMotor.get("AML");
         armMotorRight = hardwareMap.dcMotor.get("AMR");
-        //collectorServo = hardwareMap.servo.get("CL");
-        //collectorCr = hardwareMap.crservo.get("CS");
         collector = new Collector(collectorCr);
-        //arm = new Arm(armMotorLeft, armMotorRight);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         VoltageSensor VS = this.hardwareMap.voltageSensor.iterator().next();
         voltageReader = new VoltageReader(VS);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
-        //AutoCorrection = new NewCorrectionRotateMove2(rotationDetector,move,rotate);
-        //MoveAutocorrectTest = new MoveAutocorrectTest(rotationDetector, move);
         waitForStart();
 
         int angle = 180;

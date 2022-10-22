@@ -81,7 +81,6 @@ public class NewAutonomous2022 extends LinearOpMode {
     private DcMotor rightMotorBack;
     private MoveAutocorrect2 AutoCorrection;
     private RotationDetector rotationDetector;
-
     private Move move;
     private Rotate rotate;
     private EncoderMove encoderMove;
@@ -120,7 +119,6 @@ public class NewAutonomous2022 extends LinearOpMode {
         armServos = new ArmServos(L1Servo, L2Servo);
         armMotorRight = hardwareMap.get(DcMotorEx.class, "AMR");
         armMotorLeft = hardwareMap.get(DcMotorEx.class, "AML");
-        //arm = new Arm(armMotorLeft, armMotorRight);
 
 
         waitForStart();
@@ -216,16 +214,4 @@ public class NewAutonomous2022 extends LinearOpMode {
 //            Autocorrect();
         }
     }
-
-    /**
-     * This function corrects the robot's trajectory while opMode is active
-     * and the 2 motors keep moving.
-     */
-
-//    int InitialAngle = 0;
-
-//    private void Autocorrect(){
-////        int InitialAngle = 0;
-//        AutoCorrection.GivenAngle(InitialAngle);
-
 }

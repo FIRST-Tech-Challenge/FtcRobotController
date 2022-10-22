@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.Functions.Unused.UltimateGoal;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -29,8 +29,6 @@ import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 import java.io.IOException;
 
-
-//import org.firstinspires.ftc.teamcode.Autonomie.WebcamDetector;
 
 
 @Autonomous(name = "AutonomieTestare", group = "Concept")

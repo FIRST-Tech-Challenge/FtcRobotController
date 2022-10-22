@@ -8,10 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
 import org.firstinspires.ftc.teamcode.Functions.Arm;
 import org.firstinspires.ftc.teamcode.Functions.ArmServos;
-import org.firstinspires.ftc.teamcode.Functions.CarouselMotor;
 import org.firstinspires.ftc.teamcode.Functions.Collector;
 import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.MoveAutocorrect2;
@@ -23,29 +21,27 @@ import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 @Autonomous(name="AutonomieShowOff", group="TEST")
 public class AutonomieShowOff extends LinearOpMode {
 
-    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack,vaccumRight,vaccumLeft, carouselMotor, leftMotorEncoder, rightMotorEncoder, leftMotorBackEncoder, rightMotorBackEncoder, armMotorChain;
+    private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack,vaccumLeft, armMotorChain;
     private DcMotorEx armMotorLeft, armMotorRight;
-    //private Servo collectorServo;
     private CRServo collectorCr;
     private Move move;
     private Rotate rotate;
     private Arm arm;
     private Vacuum vaccum;
     private RotationDetector rotationDetector;
-    private CarouselMotor _carouselMotor;
     private Collector collector;
     public VoltageReader voltageReader;
     private Servo L1Servo;
     private Servo L2Servo;
     public MoveAutocorrect2 AutoCorrection;
     private ArmServos armServos;
+
     @Override
     public void runOpMode() throws InterruptedException {
         leftMotor = hardwareMap.dcMotor.get("FL");
         rightMotor = hardwareMap.dcMotor.get("FR");
         leftMotorBack = hardwareMap.dcMotor.get("BL");
         rightMotorBack = hardwareMap.dcMotor.get("BR");
-
         vaccumLeft = hardwareMap.dcMotor.get("VL");
         L1Servo = hardwareMap.servo.get("L1S");
         L2Servo = hardwareMap.servo.get("L2S");
@@ -57,13 +53,11 @@ public class AutonomieShowOff extends LinearOpMode {
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         vaccum = new Vacuum(vaccumLeft);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
-        //_carouselMotor = new CarouselMotor(carouselMotor);
         collectorCr = hardwareMap.crservo.get("CR");
         collector = new Collector(collectorCr);
         VoltageSensor VS = this.hardwareMap.voltageSensor.iterator().next();
         voltageReader = new VoltageReader(VS);
         armServos = new ArmServos(L1Servo, L2Servo);
-        //encoderMove = new EncoderMove(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         AutoCorrection = new MoveAutocorrect2(rotationDetector,move,rotate);
 
         waitForStart();

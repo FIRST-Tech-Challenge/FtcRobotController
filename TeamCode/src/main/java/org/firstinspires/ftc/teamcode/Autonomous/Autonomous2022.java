@@ -38,22 +38,17 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-
-import org.firstinspires.ftc.teamcode.Functions.Arm;
 import org.firstinspires.ftc.teamcode.Functions.ArmEncoder;
 import org.firstinspires.ftc.teamcode.Functions.CameraDetector;
-import org.firstinspires.ftc.teamcode.Functions.CarouselMotor;
 import org.firstinspires.ftc.teamcode.Functions.Collector;
 import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.CupServo;
 import org.firstinspires.ftc.teamcode.Functions.MoveAutocorrect2;
 import org.firstinspires.ftc.teamcode.Functions.Rotate;
 import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
-import org.firstinspires.ftc.teamcode.Functions.Vacuum;
 import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 
 /**
@@ -79,8 +74,6 @@ public class Autonomous2022 extends LinearOpMode {
     private CRServo collectorCr;
     private Move move;
     private Rotate rotate;
-    private Arm arm;
-    private Vacuum vaccum;
     private RotationDetector rotationDetector;
     private ArmEncoder armEncoder;
     private Collector collector;
@@ -102,13 +95,10 @@ public class Autonomous2022 extends LinearOpMode {
         vaccumLeft = hardwareMap.dcMotor.get("VL");
         armMotorRight = hardwareMap.get(DcMotorEx.class, "AMR");
         armMotorLeft = hardwareMap.get(DcMotorEx.class, "AML");
-        //arm = new Arm(armMotorLeft, armMotorRight);
         armEncoder = new ArmEncoder(armMotorLeft, armMotorRight);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
-        //vaccum = new Vacuum(vaccumLeft, vaccumRight);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
-        //moveJoystick = new MoveJoystick(rotationDetector, move, rotate);
         collectorCr = hardwareMap.crservo.get("CR");
         collector = new Collector(collectorCr);
         cameraDetector = new CameraDetector(vuforia,tfod,hardwareMap.get(WebcamName.class, "Webcam"));
@@ -258,17 +248,4 @@ public class Autonomous2022 extends LinearOpMode {
             //Autocorrect();
         }
     }
-
-    /**
-     * This function corrects the robot's trajectory while opMode is active
-     * and the 2 motors keep moving.
-     */
-
-
-
-
-
-
-
-
 }

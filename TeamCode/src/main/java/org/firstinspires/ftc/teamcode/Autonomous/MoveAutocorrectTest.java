@@ -17,15 +17,11 @@ import org.firstinspires.ftc.teamcode.Functions.VoltageReader;
 //@Disabled
 public class MoveAutocorrectTest extends LinearOpMode {
     private DcMotor leftMotor, rightMotor, leftMotorBack, rightMotorBack, armMotorLeft, armMotorRight;
- //   private Servo collectorServo;
-   // private CRServo collectorCr;
     private Move move;
     private Rotate rotate;
     private Arm arm;
-  //  private Collector collector;
     public VoltageReader voltageReader;
     public MoveAutocorrect2 AutoCorrection;
-    //public MoveAutocorrectTest MoveAutocorrectTest;
     public RotationDetector rotationDetector;
 
     @Override
@@ -36,19 +32,13 @@ public class MoveAutocorrectTest extends LinearOpMode {
         rightMotorBack = hardwareMap.dcMotor.get("BR");
         armMotorLeft = hardwareMap.dcMotor.get("AML");
         armMotorRight = hardwareMap.dcMotor.get("AMR");
-        //collectorServo = hardwareMap.servo.get("CL");
-       // collectorCr = hardwareMap.crservo.get("CR");
-      //  collector = new Collector(collectorCr);
-        //arm = new Arm(armMotorLeft, armMotorRight);
         move = new Move(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         rotate = new Rotate(leftMotor, rightMotor, leftMotorBack, rightMotorBack);
         VoltageSensor VS = this.hardwareMap.voltageSensor.iterator().next();
         voltageReader = new VoltageReader(VS);
         rotationDetector = new RotationDetector(hardwareMap.get(BNO055IMU.class, "imu"));
         AutoCorrection = new MoveAutocorrect2(rotationDetector,move,rotate);
-        //MoveAutocorrectTest = new MoveAutocorrectTest(rotationDetector, move);
         waitForStart();
-
         Autocorrect();
 
     }
