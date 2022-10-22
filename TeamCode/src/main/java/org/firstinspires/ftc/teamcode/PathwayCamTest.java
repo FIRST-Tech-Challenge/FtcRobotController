@@ -122,13 +122,12 @@ public class PathwayCamTest extends LinearOpMode {
                             telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
 
-                            if (recognition.getLabel().equals("1 Bulb")) {
+                            String imageCheck = recognition.getLabel();
+                            if (imageCheck.equals("1 Bolt")) {
                                 resultROI = 1;
-                            }
-                            if (recognition.getLabel().equals("2 Bolt")) {
+                            } else if (imageCheck.equals("2 Bulb")) {
                                 resultROI = 2;
-                            }
-                            if (recognition.getLabel().equals("3 Panel")) {
+                            } else if (imageCheck.equals("3 Panel")) {
                                 resultROI = 3;
                             }
                             telemetry.addData("ResultROI", resultROI);
@@ -137,35 +136,22 @@ public class PathwayCamTest extends LinearOpMode {
                         telemetry.update();
                     }
                 }
-            }
+
                 switch (resultROI) {
                     case 1:
-                        telemetry.addData("1: ", "bolts");
+                        // Left (Bottom Level)
+                        moveUtils.goStraight(1,MAX_SPEED,MIN_SPEED,ACCEL);
+                        moveUtils.turnCCW(90);
                         break;
                     case 2:
-                        telemetry.addData("2: ", "bulbs");
+                        // Middle (Middle Level)
+                        moveUtils.goStraight(5, MAX_SPEED, MIN_SPEED, ACCEL);
                         break;
                     case 3:
-                        telemetry.addData("3: ", "panel");
-                        break;
-                    default:
-                        telemetry.addData("Resulting ROI: ", "Something went wrong.");
+                        moveUtils.goStraight(1,MAX_SPEED,MIN_SPEED,ACCEL);
+                        moveUtils.turnCW(90);
                         break;
                 }
-
-            switch (resultROI) {
-                case 1:
-                    // Left (Bottom Level)
-                    moveUtils.goStraight(1, MAX_SPEED, MIN_SPEED, ACCEL);
-                    break;
-                case 2:
-                    // Middle (Middle Level)
-                    moveUtils.goStraight(2, MAX_SPEED, MIN_SPEED, ACCEL);
-                    break;
-                case 3:
-                    // Right (Top Level)
-                    moveUtils.goStraight(3, MAX_SPEED, MIN_SPEED, ACCEL);
-                    break;
             }
         }
     }
