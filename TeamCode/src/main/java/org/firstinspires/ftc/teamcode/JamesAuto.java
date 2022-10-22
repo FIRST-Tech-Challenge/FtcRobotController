@@ -18,12 +18,14 @@ import org.firstinspires.ftc.teamcode.DriveMethods;
 import static org.firstinspires.ftc.teamcode.Variables.*;
 import static org.firstinspires.ftc.teamcode.Variables.imu;
 
-@Autonomous(name="JamesAuto", group="B")
+import java.util.Locale;
+
+@TeleOp(name="JamesAuto", group="B")
 public class
 JamesAuto extends DriveMethods {
-    boolean calibrated = false;
-    double previousZ = 0;
-    double integratedZ = 0;
+//    boolean calibrated = false;
+//    double previousZ = 0;
+//    double integratedZ = 0;
     BNO055IMU imu;
     DcMotor motorLinearSlide;
     @Override
@@ -45,9 +47,9 @@ JamesAuto extends DriveMethods {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        telemetry.addLine("imu should be calibrated!");
-        telemetry.update();
-        sleep(1000);
+//        telemetry.addLine("imu should be calibrated!");
+//        telemetry.update();
+//        sleep(1000);
 
 
         waitForStart();
@@ -64,16 +66,26 @@ JamesAuto extends DriveMethods {
          */
 
         double currentZ = 0;
-
-
+        Orientation currentAngle;
         while (opModeIsActive()) {
-            Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+
+            formatAngle(currentAngle.angleUnit, currentAngle.firstAngle);
+
             currentZ = currentAngle.firstAngle;
-          telemetry.addLine("CurrentZ: " + currentZ);
+          telemetry.addLine("heading: " + currentZ);
           telemetry.addLine("CumulativeZ: " + getCumulativeZ());
+          telemetry.addLine("formatAngleThing: " + formatAngle(currentAngle.angleUnit, currentAngle.firstAngle));
           telemetry.update();
         }
 
+    }
+    String formatAngle(AngleUnit angleUnit, double angle) {
+        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+    }
+
+    String formatDegrees(double degrees){
+        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 //    public enum Direction {
 //        FORWARD,
