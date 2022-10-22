@@ -31,13 +31,11 @@ class BlueOp( private val alliance: Alliance) : KOpMode(photonEnabled = true) {
                 1.0,
                 1.0,
                 1.0,
-                alliance,
-                true,
-                true,
-                { robot.drive.pose.heading },
-                60.0.radians
-
-
+//                alliance,
+//                true,
+//                true,
+//                { robot.drive.pose.heading },
+//                60.0.radians
             )
         )
 
