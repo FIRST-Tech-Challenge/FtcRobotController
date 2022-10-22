@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ArmSystem {
 
+
     public static class Intake{
         private final DigitalChannel beamBreaker;
-        private final DcMotor coneTake;
+        private final DcMotorSimple coneTake;
         private final ElapsedTime elapsedTime;
         public enum State { IDLE, INTAKING, OUTTAKING }
         private State state;
 
-        public Intake(DcMotor intake, DigitalChannel beam){
+        public Intake(DcMotorSimple intake, DigitalChannel beam){
             beamBreaker = beam;
             beamBreaker.setMode(DigitalChannel.Mode.INPUT);
             coneTake = intake;
@@ -43,7 +45,7 @@ public class ArmSystem {
         public boolean outtake(){
             if (state != State.OUTTAKING) {
                 state = State.OUTTAKING;
-                coneTake.setDirection(DcMotor.Direction.FORWARD);
+                coneTake.setDirection(DcMotorSimple.Direction.FORWARD);
                 coneTake.setPower(0.75);
                 elapsedTime.reset();
             }

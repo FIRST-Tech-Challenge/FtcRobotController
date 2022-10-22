@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
 
-public abstract class BaseAutonomous extends BaseOpMode {
+public abstract class BaseAutonomous extends BaseOpMqode {
     Team currentTeam;
     Vuforia vuforia;
 
