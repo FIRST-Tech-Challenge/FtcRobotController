@@ -39,6 +39,7 @@ public class ConceptPidMotorController extends ConceptMotorController{
     public void setFeedbackValue(double value)
     {
         this.feedBackValue = value;
+        this.error = this.goal - this.feedBackValue;
     }
 
     public double getProportional()

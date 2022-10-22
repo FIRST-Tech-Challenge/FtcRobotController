@@ -161,10 +161,10 @@ public class ConceptVuforiaLocalization extends LinearOpMode {
         target.setName("red wall");
 
 
-        target.setLocation(createMatrix((24 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
+        target.setLocation(createMatrix((0 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
 
         // Set phone location on robot
-        cameraLocation = createMatrix(0, 0, 0, 90, 0, 0);
+        cameraLocation = createMatrix((10 * meterPerInch), (float)(-4.75 * meterPerInch), 0, 90, 0, 0);
 
         // Setup listener and inform it of phone information
         //listener = (VuforiaTrackableDefaultListener) target.getListener();

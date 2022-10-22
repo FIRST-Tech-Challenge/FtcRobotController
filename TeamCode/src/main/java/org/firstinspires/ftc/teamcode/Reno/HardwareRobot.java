@@ -223,10 +223,34 @@ public class HardwareRobot
         }
 
     }
+    public void drive(double drive, double turn) {
+        double driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
+        double turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
+
+        double leftSpeed  = drive - turn;
+        double rightSpeed = drive + turn;
+
+        // Scale speeds down if either one exceeds +/- 1.0;
+        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        if (max > 1.0)
+        {
+            leftSpeed /= max;
+            rightSpeed /= max;
+        }
+
+        //leftSpeed = Math.abs(leftSpeed);
+        //rightSpeed = Math.abs(rightSpeed);
+
+        leftDriveFront.setPower(leftSpeed);
+        rightDriveFront.setPower(rightSpeed);
+        leftDriveBack.setPower(leftSpeed);
+        rightDriveBack.setPower(rightSpeed);
+        this.setMotorStatus(leftSpeed,leftSpeed, rightSpeed, rightSpeed);
+    }
 
     public void setDriveForward()
     {
-        this.leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
+        leftDriveFront.setDirection(DcMotor.Direction.REVERSE);
         rightDriveFront.setDirection(DcMotor.Direction.FORWARD);
         leftDriveBack.setDirection(DcMotor.Direction.REVERSE);
         rightDriveBack.setDirection(DcMotor.Direction.FORWARD);
