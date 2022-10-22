@@ -16,7 +16,8 @@ import java.util.ArrayList;
 
 
 public class Lift {
-//    public enum LiftFunctionStates {
+    private final int MAX_LIFT_TICKS = 2000;
+    //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
 //        LIFT_MED_JUNCTION(false),
 //        LIFT_LOW_JUNCTION(false),
@@ -98,15 +99,15 @@ public class Lift {
     }
     //TODO: RFMotor
     private RFMotor liftMotor;
-    Claw LC = new Claw();
-    private double MAX_LIFT_TICKS = 2000, liftTarget = 0;
+    private Claw LC = new Claw();
+    private double liftTarget = 0;
     private double dfco1 = 1.5; private double dfco2 = 150.0;
     private ArrayList<Double> coefficients = new ArrayList<>();
-    private double tth1 = 0;
-    private double tth2 = 0;
+
     public Lift(){ //constructor
         // hardware map
-        logger.createFile("LiftLog", "Time Junction Ticks");
+        Claw LC = new Claw();
+        logger.createFile("LiftLog", "Time Component Function Action");
         coefficients.add(dfco1);
         coefficients.add(dfco2);
         liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.FORWARD, DcMotorEx.RunMode.RUN_USING_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
@@ -168,11 +169,9 @@ public class Lift {
         //if(targetHeight != LiftConstants.LIFT_LOW_JUNCTION && targetHeight != LiftConstants.LIFT_GROUND_JUNCTION && Claw.ClawStates.CLAW_CLOSED.status == true){
             //liftMotor.setPosition(targetHeight.value);
         //}
-        tth2 = targetHeight.value;
-        //if(LC.isConeReady() == true /*&& Claw.ClawStates.CLAW_CLOSED.status == true*/){
+        if(LC.isConeReady() == true /*&& Claw.ClawStates.CLAW_CLOSED.status == true*/){
             liftMotor.setPosition(targetHeight.value);
-            tth1 = targetHeight.value;
-        //}
+        }
         double distance = targetHeight.value-liftMotor.getCurrentPosition();
         boolean done = (Math.abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
         if(!done){
@@ -181,23 +180,16 @@ public class Lift {
         else{
             targetHeight.setLfc(false);
         }
-        op.telemetry.addData("LiftPos", liftMotor.getCurrentPosition());
-        op.telemetry.addData("LiftVelo", liftMotor.getVelocity());
-        op.telemetry.addData("LiftTH1", tth1);
-        op.telemetry.addData("LiftTH2", tth2);
-        op.telemetry.update();
         // no conditions
         // log when movement starts & when reach target position
-        logger.log("LiftLog", "Claw lift to " + targetHeight.value + " ticks", false, true);
+        logger.log("LiftLog", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value + " ticks", true, true, true);
         //async, no use sleep/wait with time, can use multiple processes
         return done;
     }
     public void liftToPosition(int targetTickCount){
         liftMotor.setPosition(targetTickCount);
-        op.telemetry.addData("LiftPos", liftMotor.getCurrentPosition());
-        op.telemetry.addData("LiftVelo", liftMotor.getVelocity());
-        op.telemetry.update();
-        logger.log("LiftLog", "Claw lift to " + targetTickCount + " ticks", false, true);
+
+        logger.log("LiftLog", "Lift," + "liftToPosition(targetTickCount)," + "Lifting to " + targetTickCount + " ticks", true, true, true);
         updateLiftStates();
     }
     public void setLiftPower(double power){
@@ -212,9 +204,7 @@ public class Lift {
         //    liftMotor.setPower(0);
         //}
         //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
-        op.telemetry.addData("LiftPos", liftMotor.getCurrentPosition());
-        op.telemetry.addData("LiftVelo", liftMotor.getVelocity());
-        op.telemetry.update();
+        logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
     }
     public void liftToTarget(){
         liftMotor.setPosition(liftTarget);
