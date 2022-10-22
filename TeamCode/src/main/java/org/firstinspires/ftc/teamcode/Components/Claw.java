@@ -35,7 +35,7 @@ public class Claw {
 
     public double clawServoLastSwitchTime = 0;
     //temporary
-    public final double CLAW_SERVO_SWITCH_TIME = 0.2;
+    public final double CLAW_SERVO_SWITCH_TIME = 1;
 
     //States:
     //CLAW_CLOSED
@@ -53,14 +53,14 @@ public class Claw {
         boolean status;
         String name;
 
-        ClawStates(boolean value, String name) {
-            this.status = value;
-            this.name = name;
+        ClawStates(boolean p_status, String p_name) {
+            this.status = p_status;
+            this.name = p_name;
         }
 
-        public void setStatus(boolean status) {
-            this.status = status;
-            if(status) {
+        public void setStatus(boolean p_status) {
+            this.status = p_status;
+            if(p_status) {
                 for (int i = 0; i < ClawStates.values().length; i++) {
                     if (ClawStates.values()[i] != this) {
                         ClawStates.values()[i].status = false;
@@ -84,9 +84,13 @@ public class Claw {
     }
 
     public void toggleClawPosition() {
-        claw.flipServoInterval(CLAW_OPEN_POS, CLAW_CLOSED_POS);
+        if (claw.flipServoInterval(CLAW_OPEN_POS, CLAW_CLOSED_POS)) {
+            clawServoLastSwitchTime = claw.getlasttime();
+        }
         logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",toggleClawPosition()"
                 + ",Claw Toggled", true);
+        logger.log("/RobotLogs/GeneralRobot", clawServoLastSwitchTime + " " +
+                CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
     }
 
     //close the claw

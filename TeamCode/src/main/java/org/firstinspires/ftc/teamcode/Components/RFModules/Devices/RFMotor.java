@@ -24,7 +24,7 @@ public class RFMotor extends Motor {
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 1.5, DEFAULTCOEF2 = 150.0;
-    private double TICK_BOUNDARY_PADDING = 5, TICK_STOP_PADDING=5;
+    private double TICK_BOUNDARY_PADDING = 5, TICK_STOP_PADDING = 5;
     private double velocity = 0;
     private String rfMotorName;
 
@@ -105,7 +105,7 @@ public class RFMotor extends Motor {
     }
 
     //BUG WITH CALCULATION
-    public void setPosition (double targetpos) {
+    public void setPosition(double targetpos) {
         velocity = 0;
 //        if (targetpos >= -1 && targetpos <= 1) {
 //            targetpos *= maxtickcount;
@@ -116,38 +116,35 @@ public class RFMotor extends Motor {
 //        }
 
 //        op.telemetry.addData("newPosition", targetpos);
-        if(targetpos>maxtickcount){
+        if (targetpos > maxtickcount) {
             targetpos = maxtickcount - TICK_BOUNDARY_PADDING;
         }
-        if(targetpos<mintickcount){
+        if (targetpos < mintickcount) {
             targetpos = mintickcount + TICK_BOUNDARY_PADDING;
         }
-        double distance = targetpos-getCurrentPosition();
+        double distance = targetpos - getCurrentPosition();
 
         if (Math.abs(distance) > TICK_STOP_PADDING) {
-            distance = targetpos-getCurrentPosition();
+            distance = targetpos - getCurrentPosition();
             if (distance > 0) {
-                for (int i = 0; i < coefs.size(); i++){
+                for (int i = 0; i < coefs.size(); i++) {
                     velocity += pow(distance, coefs.size() - i - 1) * coefs.get(i);
                 }
                 setVelocity(velocity);
-            }
-            else if (distance < 0) {
+            } else if (distance < 0) {
                 for (int i = 0; i < coefs.size(); i++) {
                     velocity -= pow(Math.abs(distance), coefs.size() - i - 1) * coefs.get(i);
                 }
                 setVelocity(velocity);
-            }
-            else {
+            } else {
                 logger.log("/MotorLogs/RFMotor" + rfMotorName, "ERROR: distance should not be equal to 0 in setPosition() in RFMotor");
             }
-        }
-        else {
+        } else {
             setVelocity(0);
         }
     }
 
-    public void setPower(double power){
+    public void setPower(double power) {
         if (rfMotor.getPower() != power) {
 //            inputlogs.add(rfMotorName);
 //            inputlogs.add("setPower()");
@@ -160,6 +157,7 @@ public class RFMotor extends Motor {
         }
         rfMotor.setPower(power);
     }
+
     public void setVelocity(double velocity) {
         if (rfMotor.getVelocity() != velocity) {
 //            inputlogs.add(rfMotorName);
@@ -184,6 +182,7 @@ public class RFMotor extends Motor {
 //        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Current Tick Count," + rfMotor.getCurrentPosition());
         return rfMotor.getCurrentPosition();
     }
+
     public void setMode(DcMotor.RunMode runMode) {
         rfMotor.setMode(runMode);
         if (rfMotor.getMode() != runMode) {
@@ -198,11 +197,28 @@ public class RFMotor extends Motor {
 //            logger.log("/RobotLogs/GeneralRobot", rfMotorName + "setMode():\nSetting Mode," + runMode);
         }
     }
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
+
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
         rfMotor.setZeroPowerBehavior(behavior);
     }
 
     public double getVelocity() {
         return rfMotor.getVelocity();
+    }
+
+    public double getTICK_BOUNDARY_PADDING() {
+        return TICK_BOUNDARY_PADDING;
+    }
+
+    public double getTICK_STOP_PADDING() {
+        return TICK_STOP_PADDING;
+    }
+
+    public void setTICK_BOUNDARY_PADDING(double p_TICK_BOUNDARY_PADDING) {
+        TICK_BOUNDARY_PADDING = p_TICK_BOUNDARY_PADDING;
+    }
+
+    public void setTICK_STOP_PADDING(double p_TICK_STOP_PADDING) {
+        TICK_STOP_PADDING = p_TICK_STOP_PADDING;
     }
 }

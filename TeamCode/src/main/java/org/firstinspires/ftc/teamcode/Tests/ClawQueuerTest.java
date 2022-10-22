@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "ClawLiftArmTest")
+@Autonomous(name = "ClawQueuerTest")
 //@Disabled
-public class ClawLiftArmTest extends LinearOpMode{
+public class ClawQueuerTest extends LinearOpMode{
 
     public void runOpMode() {
 
@@ -32,7 +32,7 @@ public class ClawLiftArmTest extends LinearOpMode{
         FtcDashboard dashboard = FtcDashboard.getInstance();
         waitForStart();
 
-        logger.log("/RobotLogs/GeneralRobot", "Running: ClawTest\n");
+        logger.log("/RobotLogs/GeneralRobot", "Running: ClawQueuerTest\n");
 
 
 
@@ -51,21 +51,14 @@ public class ClawLiftArmTest extends LinearOpMode{
 
         while (opModeIsActive() && !isStopRequested()) {
             logger.loopcounter++;
-//            robot.closeClaw();
-//            sleep(2000);
-            robot.raiseLiftArmToOuttake();
-            sleep(3000);
-//            robot.openClaw();
-//            sleep(2000);
-            robot.lowerLiftArmToIntake();
-            sleep(3000);
 
+            robot.toggleClawPosition(false);
             robot.setFirstLoop(false);
         }
 
         logger.log("/RobotLogs/GeneralRobot", "Program stopped normally. ");
 
-        idle();
+        robot.stop();
 
     }
 }

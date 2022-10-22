@@ -61,28 +61,27 @@ public class RFServo implements Servo {
 
 //                logger.logRegulated("/ServoLogs/RFServo", "Setting Position:" + position);
 //                logger.logRegulated("/RobotLogs/GeneralRobot", rfServoName + "\nsetPosition():\nSetting Position:" + position);
-            }
+
             RFServo.setPosition(position);
             lasttime = op.getRuntime();
-//        }
+        }
     }
 
-    public void flipServoInterval(double lowerpos, double upperpos) {
-        if (op.getRuntime() - lasttime > 0.2) {
-            if (flipped) {
-                RFServo.setPosition(lowerpos);
-                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                        + df.format(lowerpos), true);
-                flipped = false;
-            }
-            else {
-                RFServo.setPosition(upperpos);
-                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                        + df.format(upperpos), true);
-                flipped = true;
-            }
-            lasttime = op.getRuntime();
+    public boolean flipServoInterval(double lowerpos, double upperpos) {
+
+        if (flipped) {
+            RFServo.setPosition(lowerpos);
+            logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
+                    + df.format(lowerpos), true);
+            flipped = false;
         }
+        else {
+            RFServo.setPosition(upperpos);
+            logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
+                    + df.format(upperpos), true);
+            flipped = true;
+        }
+        return op.getRuntime() - lasttime > 0.2;
     }
 
     public void flipServoMax() {
@@ -109,6 +108,10 @@ public class RFServo implements Servo {
 //        logger.log("/RobotLogs/GeneralRobot", inputlogs);
 //        logger.log("RFServoLog", "Current Position:" + RFServo.getPosition());
         return RFServo.getPosition();
+    }
+
+    public double getlasttime() {
+        return lasttime;
     }
 
     @Override
