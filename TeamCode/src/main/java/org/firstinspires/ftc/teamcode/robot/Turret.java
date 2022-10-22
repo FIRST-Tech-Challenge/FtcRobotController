@@ -29,6 +29,7 @@ public class Turret {
 
     public Telemetry telemetry;
     public DcMotorEx turretMotor;
+    /*
 
     public Turret(HardwareMap hwMap, Telemetry telemetry) {
         //getting turret motor from the hardware map
@@ -70,23 +71,23 @@ public class Turret {
             {
                 //where code for turning left goes
                 if(!lift.isClear()){
-                    lift.getToClear();
+                    lift.moveToMinHeight();
                 }
                 moveTurret(0);
                 break;
             }
             case TURRET_RIGHT_POSITION:
             {
-                if(!lift.isInClear()){
-                    lift.getToClear();
+                if(!lift.isClear()){
+                    lift.moveToMinHeight();
                 }
                 moveTurret(180);
                 break;
             }
             case TURRET_CENTER_POSITION:
             {
-                if(!lift.isInClear()){
-                    lift.getToClear();
+                if(!lift.isClear()){
+                    lift.moveToMinHeight();
                 }
                 moveTurret(90);
                 break;
@@ -95,5 +96,7 @@ public class Turret {
         }
 
     }
+
+     */
 
 }

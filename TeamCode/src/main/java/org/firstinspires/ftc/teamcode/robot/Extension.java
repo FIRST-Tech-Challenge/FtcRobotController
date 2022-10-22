@@ -31,7 +31,7 @@ public class Extension {
     public final double GRABBER_POSITION_CLOSED = 1;    // closed
 
     public final double EXTENSION_MAX_REACH = 10; // TODO: measure actual value in inches and replace this value
-
+    /*
     public Extension(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
@@ -54,6 +54,7 @@ public class Extension {
 
     // This method is intended for Teleop mode getting speed value coming from controller (-1..1)
     // Negative speed values will retract the extension arm.
+    /*
     public void extend(double speed) {
         double currentPosition = extension.getPosition();
 
@@ -101,7 +102,7 @@ public class Extension {
 
 
     /************************* TWO-BAR UTILITIES **************************/
-
+    /*
     // Tilt the two-bar to its max position.
     // No micro adjustments envisioned for the two-bar
     public void tiltUp() {
@@ -115,7 +116,7 @@ public class Extension {
     }
 
     /************************* GRABBER UTILITIES **************************/
-
+    /*
     // Opens the claw
     public void grabberOpen() {
         grabber.setPosition(GRABBER_POSITION_OPEN);
@@ -133,5 +134,11 @@ public class Extension {
     public double getExtensionPosition(){
         return extension.getPosition();
     }
+
+     */
+
+
+
+
 
 }

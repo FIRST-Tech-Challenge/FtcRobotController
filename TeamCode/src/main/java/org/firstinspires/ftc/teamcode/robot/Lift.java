@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -14,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Lift {
     private Telemetry telemetry;
-    public DcMotorEx liftMotor;
+    public DcMotor liftMotor;
 
     static final double     MM_TO_INCHES = 0.0393700787;
 
@@ -39,14 +40,14 @@ public class Lift {
 
     public static double currentLiftHeight;
 
-    public Lift(HardwareMap hwMap, Telemetry telemetry) {
+    public Lift(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
         this.telemetry = telemetry;
-        liftMotor = (DcMotorEx) hwMap.dcMotor.get("Lift");
+        liftMotor = hwMap.dcMotor.get("Lift");
 
-        liftMotor.setPower(LIFT_UP_SPEED);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        liftMotor.setPower(LIFT_UP_SPEED);
+//        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public int getPosition () {
@@ -58,6 +59,7 @@ public class Lift {
         int ticksNeeded = (int)(heightInInches/TICK_PER_INCH) + 1;
         liftMotor.setTargetPosition(ticksNeeded);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public boolean isClear () {
@@ -77,6 +79,7 @@ public class Lift {
 
     }
     public void setMotor(double power){
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setPower(power);
     }
 
