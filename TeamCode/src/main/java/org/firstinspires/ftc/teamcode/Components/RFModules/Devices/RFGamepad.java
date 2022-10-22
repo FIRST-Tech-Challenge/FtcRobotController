@@ -36,13 +36,13 @@ public class RFGamepad{
     }
     public void readGamepad(float value, String name, String action){
         if(value != floatMap.get(name)){
-//            logger.log("gamepad", " " + name + " | " + action + ": " + value);
+            logger.log("gamepad", " " + name + " | " + action + ": " + value);
             floatMap.put(name, value);
         }
     }
     public void readGamepad(boolean value, String name, String action){
         if(value != booleanMap.get(name)){
-//            logger.log("gamepad", " " + name + " | " + action + ": " + value);
+            logger.log("gamepad", " " + name + " | " + action + ": " + value);
             booleanMap.put(name, value);
         }
     }

@@ -127,12 +127,12 @@ public class PwPRobot extends BasicRobot{
 
 
     public void liftToPosition(Lift.LiftConstants targetJunction){
-        if (queuer.queue(false, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 5)){
+        if (queuer.queue(false, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 10 && lift.getLiftVelocity()==0)){
             lift.liftToPosition(targetJunction);
         }
     }
     public void liftToPosition(int tickTarget){
-        if(queuer.queue(false, Math.abs(tickTarget - lift.getLiftPosition()) < 5)){
+        if(queuer.queue(false, Math.abs(tickTarget - lift.getLiftPosition()) < 10&& lift.getLiftVelocity()==0)){
             lift.liftToPosition(tickTarget);
         }
     }
