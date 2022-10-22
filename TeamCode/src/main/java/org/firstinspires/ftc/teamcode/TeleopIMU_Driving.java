@@ -105,10 +105,8 @@ public class TeleopIMU_Driving extends LinearOpMode {
     private DcMotor SliderMotor = null;
     static final double SLIDER_MOTOR_POWER = 0.4; // slider string gets loose with too high speed
     static final int COUNTS_PER_INCH = 115;
-
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // Leave 100 counts for buffer.
     static final int SLIDER_MIN_POS = 0;
-
     static final int GROUND_JUNCTION_POS = 400;
     static final int READY_FOR_GRIP_POSITION = 700; // lift a little bit to get ready for unloading
 
@@ -116,22 +114,19 @@ public class TeleopIMU_Driving extends LinearOpMode {
     static final int LOW_JUNCTION_POS = COUNTS_PER_INCH * 10 + READY_FOR_GRIP_POSITION; // need double check by testing
     static final int MEDIUM_JUNCTION_POS = COUNTS_PER_INCH * 20 + READY_FOR_GRIP_POSITION;
     static final int HIGH_JUNCTION_POS = COUNTS_PER_INCH * 30 + READY_FOR_GRIP_POSITION;
-
     static final int SLIDER_MOVE_DOWN_POSITION = 700; // move down a little bit to unload cone
-
     static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 512; // Approximate value from testing
-
     int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION/40; // set value based on testing
     int sliderMotorTargetPosition = 0;
 
 
     // claw servo motor variables
     private Servo clawServo = null;
-    static final double CLAW_INCREMENT = 0.004;     // amount to slew servo each CYCLE_MS cycle
-    static final double CLAW_OPEN_POS = 0.08;     // Maximum rotational position
-    static final double CLAW_CLOSE_POS = 0.25;
-    static final double CLAW_MAX_POS = CLAW_CLOSE_POS;
-    static final double CLAW_MIN_POS = CLAW_OPEN_POS;     // Minimum rotational position
+    static final double CLAW_INCREMENT = -0.004;  // amount to slew servo each CYCLE_MS cycle
+    static final double CLAW_OPEN_POS = 0.25;     // Maximum rotational position
+    static final double CLAW_CLOSE_POS = 0.08;
+    static final double CLAW_MAX_POS = CLAW_OPEN_POS;
+    static final double CLAW_MIN_POS = CLAW_CLOSE_POS;  // Minimum rotational position
     double clawServoPosition = CLAW_OPEN_POS;
 
 
@@ -178,9 +173,6 @@ public class TeleopIMU_Driving extends LinearOpMode {
         clawServo = hardwareMap.get(Servo.class, "TestServo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        // claw servo motor initial
-        clawServoPosition = CLAW_INCREMENT;
-        clawServo.setPosition(clawServoPosition);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -203,6 +195,10 @@ public class TeleopIMU_Driving extends LinearOpMode {
         // Set motor to run to target encoder position and top with brakes on.
         SliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+
+        // claw servo motor initial
+        clawServoPosition = CLAW_OPEN_POS;
+        clawServo.setPosition(clawServoPosition);
 
         // IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
