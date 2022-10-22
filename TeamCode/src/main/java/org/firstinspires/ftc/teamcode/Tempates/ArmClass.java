@@ -6,11 +6,24 @@ import org.firstinspires.ftc.teamcode.PIDs.PIDController;
 
 public class ArmClass {
 
-    public ArmClass(){
+    PIDController motorPID;
+    DcMotorEx slideLeft; DcMotorEx slideRight;
+    DcMotorEx armMotor;
+    Servo wristJoint; Servo clawJoint;
+    double OPEN; double CLOSE;
 
+    public ArmClass(PIDController mp, DcMotorEx sl, DcMotorEx sr, DcMotorEx a, Servo wj, Servo cj, double[] oc){
+        this.motorPID = mp;
+        this.slideLeft = sl;
+        this.slideRight = sr;
+        this.armMotor = a;
+        this.wristJoint = wj;
+        this.clawJoint = cj;
+        this.OPEN = oc[0];
+        this.CLOSE = oc[1];
     }
 
-    public static void goToJunction(PIDController motorPID, DcMotorEx slideLeft, DcMotorEx slideRight, int target){
+    public void goToJunction(int target){
         double currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average position
 
         slideLeft.setTargetPosition(target);
@@ -25,7 +38,7 @@ public class ArmClass {
 
     }
 
-    public static void armPivot(PIDController motorPID, DcMotorEx armMotor, int target){
+    public void armPivot(int target){
         double currentPosition = armMotor.getCurrentPosition(); // average position
         armMotor.setTargetPosition(target);
 
@@ -35,11 +48,11 @@ public class ArmClass {
         }
     }
 
-    public static void clawRotate(Servo wristJoint, double increment){
+    public void clawRotate(double increment){
         wristJoint.setPosition(wristJoint.getPosition() + increment);
     }
 
-    public static void slides(PIDController motorPID, DcMotorEx slideLeft, DcMotorEx slideRight,  int increment){
+    public void slides(int increment){
         double currentPosition = (slideLeft.getCurrentPosition() + slideRight.getCurrentPosition())/2.0; // average position
         int target = (int)currentPosition + increment; // we want to set the target to just above the current position every time this loop runs
 
@@ -54,7 +67,7 @@ public class ArmClass {
         }
     }
 
-    public static void claw(Servo clawJoint, double OPEN, double CLOSE){
+    public void claw(){
         if(clawJoint.getPosition() == OPEN){
             clawJoint.setPosition(CLOSE);
         }else{
