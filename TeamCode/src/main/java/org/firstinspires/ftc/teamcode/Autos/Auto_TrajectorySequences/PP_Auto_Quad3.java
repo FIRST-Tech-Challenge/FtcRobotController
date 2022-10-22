@@ -31,7 +31,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
     double power;
 
     // Declaring our motor PID for the lift; passing through our PID values
-    PIDController motorPID = new PIDController(0,0,0, timer); // This is where we tune PID values
+    PIDController motorPID = new PIDController(0,0,0,0, timer); // This is where we tune PID values
 
     public PP_Auto_Quad3(){
         super.runOpMode();
@@ -114,14 +114,20 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
                 goToJunction(1000);
                 armPivot(500);
                 claw();
-                armPivot(-500);})//temporal marker for the extake
+                armPivot(-500);
+                })//temporal marker for the extake
+
             .lineToLinearHeading(new Pose2d(-33,8,Math.toRadians(-39.75))) // Drive to cone stack
+
             .addTemporalMarker(1,()->{
                 goToJunction(0);
                 armPivot(-950);
                 claw();
-                armPivot(950);})//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
+                armPivot(950);
+                })//marker for the intake, the timing will be tested so where the markers are located and times are subject to change
+
             .lineToLinearHeading(new Pose2d(-57, 12.3, Math.toRadians(0)))
+
             //.addTemporalMarker()
             .lineToLinearHeading(new Pose2d(-33, 8, Math.toRadians(-39.75)))
             .waitSeconds(1)//Deposit at junction; Under the impression that using the async PID, the slides will be already be moved up
@@ -143,26 +149,27 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         return endPose;
     }
 
-    public void goToJunction(int target){
+
+    public void goToJunction(int targetSlidePosition){
         double currentPosition = (liftMotorLeft.getCurrentPosition() + liftMotorRight.getCurrentPosition())/2.0; // average position
 
-        liftMotorLeft.setTargetPosition(target);
-        liftMotorRight.setTargetPosition(target);
+        liftMotorLeft.setTargetPosition(targetSlidePosition);
+        liftMotorRight.setTargetPosition(targetSlidePosition);
 
-        while(Math.abs(currentPosition - target) > 5) {
-            liftMotorLeft.setPower(motorPID.update(target, currentPosition));
-            liftMotorRight.setPower(motorPID.update(target, currentPosition));
+        while(Math.abs(currentPosition - targetSlidePosition) > 5) {
+            liftMotorLeft.setPower(motorPID.update(targetSlidePosition, currentPosition));
+            liftMotorRight.setPower(motorPID.update(targetSlidePosition, currentPosition));
 
             currentPosition = (liftMotorLeft.getCurrentPosition() + liftMotorRight.getCurrentPosition())/2.0; // average new position
         }
     }
 
-    public void armPivot(int target){
+    public void armPivot(int targetArmPosition){
         double currentPosition = armMotor.getCurrentPosition(); // average position
-        armMotor.setTargetPosition(target);
+        armMotor.setTargetPosition(targetArmPosition);
 
-        while(Math.abs(currentPosition - target) > 5) {
-            armMotor.setPower(motorPID.update(target, currentPosition));
+        while(Math.abs(currentPosition - targetArmPosition) > 5) {
+            armMotor.setPower(motorPID.update(targetArmPosition, currentPosition));
             currentPosition = armMotor.getCurrentPosition(); // average new position
         }
     }
@@ -171,6 +178,7 @@ public class PP_Auto_Quad3 extends PowerPlay_AprilTagDetection
         wristJoint.setPosition(wristJoint.getPosition() + increment);
     }
 
+    // Can be used in teleOp and Autonomous
     public void claw(){
         if(clawJoint.getPosition() == OPEN){
             clawJoint.setPosition(CLOSE);

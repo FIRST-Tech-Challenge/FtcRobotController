@@ -6,6 +6,7 @@ public class PIDController {
     double kp;
     double ki;
     double kd;
+    double kf;
     double derivative;
     ElapsedTime timer;
 
@@ -23,10 +24,11 @@ public class PIDController {
      * @param Ki Integral coefficient
      * @param Kd Derivative coefficient
      */
-    public PIDController(double Kp, double Ki, double Kd, ElapsedTime timer) {
+    public PIDController(double Kp, double Ki, double Kd, double Kf, ElapsedTime timer) {
         this.kp = Kp;
         this.ki = Ki;
         this.kd = Kd;
+        this.kf = Kf;
         this.timer = timer;
     }
 
@@ -71,7 +73,7 @@ public class PIDController {
         derivative = (error - lastError) / timer.seconds();
         lastError = error;
 
-        double outputPower = (error * kp) + (derivative * kd) + (integralSum * ki);
+        double outputPower = (error * kp) + (derivative * kd) + (integralSum * ki) + (target * kf);
         return outputPower;
     }
 }
