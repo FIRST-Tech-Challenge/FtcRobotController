@@ -26,6 +26,7 @@ public class Drivetrain{
     private DcMotor rightBackDrive;
     private BNO055IMU imu;
     private Telemetry telemetry;
+    static final int TickPerRev = 10; // need to measure
 
     Drivetrain(HardwareMap hardwareMap, Telemetry telemetry) throws InterruptedException {
 
@@ -239,10 +240,10 @@ public class Drivetrain{
 
         //set up the list of motor powers, related to the movement vectors, z being rotation
 //        double[] motorPowers = new double[]{
-//                (x + y + joyz)*spd,
-//                (-x + y + joyz)*spd,
-//                (-x + y - joyz)*spd,
-//                (x + y - joyz)*spd
+//                (1 + joyz)*spd,
+//                (-1 + joyz)*spd,
+//                (-1 - joyz)*spd,
+//                (1 - joyz)*spd
 //        };
     }
 }

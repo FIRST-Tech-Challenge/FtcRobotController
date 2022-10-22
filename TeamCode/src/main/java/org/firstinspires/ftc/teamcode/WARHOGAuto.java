@@ -6,16 +6,12 @@ import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.Drivetrain;
 
-@Autonomous(name="WARHOGAuto", group="")
+@Autonomous(name="WARHOGAuto_testing", group="")
 public class WARHOGAuto extends LinearOpMode {
 
 //    private Drivetrain drivetrain = new Drivetrain(hardwareMap, telemetry);
 //    private Intake intake = new Intake(hardwareMap, telemetry);
     private StartPos startPos = null;
-
-    public WARHOGAuto() throws InterruptedException {
-    }
-
     private enum StartPos {
         redLeft,
         redRight,
@@ -23,11 +19,16 @@ public class WARHOGAuto extends LinearOpMode {
         blueRight,
     };
 
+    public WARHOGAuto() throws InterruptedException {
+    }
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
+        waitForStart();
+
         //set up startPos
-//        Gamepad gamepad = gamepad1;
         if (gamepad1.a) {
             startPos = StartPos.redLeft;
         } else if (gamepad1.b) {
@@ -37,12 +38,37 @@ public class WARHOGAuto extends LinearOpMode {
         } else if (gamepad1.y) {
             startPos = StartPos.blueRight;
         }
-
-        waitForStart();
+        telemetry.addData("Start Position", startPos);
+        telemetry.update();
 
         while(opModeIsActive()) {
-            telemetry.addData("start position", startPos);
+
+
+            // use camera to detect parking pos
+            telemetry.addData("camera detecting", true);
             telemetry.update();
+
+            // drive forward
+
+            // putting cone on pole
+
+
+            // turn to cone stack
+
+            // move forward
+
+            // take another cone
+
+            // turn back
+
+            // drive forward
+
+            // putting cone on pole
+
+            // park
+
+            // end this part
+            break;
         }
     }
 }
