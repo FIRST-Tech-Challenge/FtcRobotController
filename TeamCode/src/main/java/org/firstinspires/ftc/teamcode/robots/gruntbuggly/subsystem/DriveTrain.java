@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.gruntbuggly.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.*;
 import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Utils.wrapAngleRad;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.diffInchesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants.diffInchesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.swerveInchesToEncoderTicks;
 
 
@@ -369,13 +369,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         double heading = getExternalHeading();
 
         //todo check this heading code
-        double sign = Math.signum(dx * ( Math.cos(heading)) - dy * (Math.sin(heading))) >= 0 ? 1:-1;
+        double sign = Math.signum(dx * ( Math.cos(heading)) - dy * (Math.sin(heading)));
         double newHeading = wrapAngleRad(Math.atan2(dy,dx) + (sign>=0 ? 0:(Math.PI)));
 
         headingPID.setSetpoint(newHeading);
-        headingPID.setInput(getPoseEstimate().getHeading());
+        headingPID.setInput(heading);
         double correction = headingPID.performPID();
 
+
+        //check if the correction is in the right direction
+        //todo
         setLeftVelocity(sign*velocity + correction);
         setRightVelocity(sign*velocity-correction);
 

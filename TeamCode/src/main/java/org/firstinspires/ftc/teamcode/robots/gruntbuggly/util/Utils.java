@@ -27,6 +27,7 @@ public class Utils {
     }
 
 
+
     public static int servoToPWM(double setting){
         return (int)((setting * 2000)+500);
     }
