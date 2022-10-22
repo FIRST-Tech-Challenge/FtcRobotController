@@ -23,6 +23,7 @@ KieranAuto extends DriveMethods {
     boolean calibrated = false;
     double previousHeading = 0;
     double integratedZ = 0;
+    DcMotor motorLinearSlide;
     BNO055IMU imu;
     @Override
     public void runOpMode() {
@@ -188,4 +189,22 @@ KieranAuto extends DriveMethods {
 
 
     }
+    public void autonomousSlide(double distance, double power){
+
+        motorLinearSlide = hardwareMap.get(DcMotor.class,"motorLS");
+        motorLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double encoderClicks = distance * (537.7/.112);
+        while (motorLinearSlide.getCurrentPosition() < encoderClicks) {
+            motorLinearSlide.setPower(power * (Math.abs(motorLinearSlide.getCurrentPosition() - encoderClicks)));
+        }
+        if (motorLinearSlide.getCurrentPosition() > 0.5 * (537.7 / 0.112)){
+            motorLinearSlide.setPower(-.5);
+        }
+
+
+
+
+    }
+
 }
