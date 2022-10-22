@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
-import static org.firstinspires.ftc.teamcode.Tempates.ArmClass.*;
+import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.teamcode.Tempates.ArmClass.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,9 +25,13 @@ public class PP_MecanumTeleOp extends OpMode {
 
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight, slideMotorLeft, slideMotorRight, armMotor;
     private Servo clawJoint, wristJoint;
+
+
     // Claw Servo open and close constants
     final int OPEN = 0;
     final double CLOSE = 0.5; // probably adjust later
+    final double[] OCARR = {0, 0.5};
+    ArmClass acControl = new ArmClass(motorPID, slideMotorLeft, slideMotorRight, armMotor, wristJoint, clawJoint, OCARR);
 
     /**
      * Get the maximum absolute value from a static array of doubles
@@ -156,44 +161,44 @@ public class PP_MecanumTeleOp extends OpMode {
         // BUTTONS
         if(gamepad2.a){
             // 1000 represents an arbitrary value for the max, 700 mid, 400 low, 0 ground
-            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 1000);
+            acControl.goToJunction(1000);
 
         }
         else if(gamepad2.b){
-            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 700);
+            acControl.goToJunction(700);
         }
         else if(gamepad2.y){
-            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 400);
+            acControl.goToJunction(400);
         }
         else if(gamepad2.x){
-            goToJunction(motorPID, slideMotorLeft, slideMotorRight, 0);
+            acControl.goToJunction(0);
         }
 
         // DPAD
         if(gamepad2.dpad_left){
-            clawRotate(wristJoint, -0.01);
+            acControl.clawRotate(-0.01);
         }
         else if(gamepad2.dpad_right){
-            clawRotate(wristJoint, 0.01);
+            acControl.clawRotate(0.01);
         }
         else if(gamepad2.dpad_up){
-            armPivot(motorPID, armMotor, -500); // pivots up
+            acControl.armPivot(100); // pivots up
         }
         else if(gamepad2.dpad_down){
-            armPivot(motorPID, armMotor, 500); // pivots down
+            acControl.armPivot(-100); // pivots down
         }
 
         // BUMPER
         if(gamepad2.right_bumper){
-            claw(clawJoint, OPEN, CLOSE);
+            acControl.claw();
         }
 
         // TRIGGERS
         if(gamepad2.right_trigger > 0.2){
-            slides(motorPID, slideMotorLeft, slideMotorRight, 1);
+            acControl.slides(5);
         }
         else if(gamepad2.left_trigger > 0.2){
-            slides(motorPID, slideMotorLeft, slideMotorRight, -1);
+            acControl.slides(-5);
         }
     }
 
