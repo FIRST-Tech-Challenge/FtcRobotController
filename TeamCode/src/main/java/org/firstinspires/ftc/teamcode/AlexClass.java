@@ -109,13 +109,13 @@ public class AlexClass extends DriveMethods {
 
         motorSlide.setPower(-(dif / 3000.0));
 
-        while (Math.abs(dif) >= 10) { // doesn't work when trying to go down
+        while (Math.abs(dif) >= 20) { // doesn't work when trying to go down
             telemetry.addLine(dif + "..difference");
             telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
             telemetry.addLine(target + "..target");
             telemetry.update();
             dif = (target - Math.abs(motorSlide.getCurrentPosition()));
-            motorSlide.setPower(-((dif / 3000.0) + 0.05));
+            motorSlide.setPower(-((dif / 3000.0) - 0.05));
         }
         motorSlide.setPower(-0.05);
     }
