@@ -97,6 +97,7 @@ public class MeetZeroTeleop extends DriveMethods {
             telemetry.addLine("ClampPosition: " + clampPosition);
             telemetry.addLine("ReleasePosition: " + releasePosition);
             telemetry.addLine("SpeedDiv: " + speedDiv);
+            telemetry.addLine("linear slide position " + motorLinearSlide.getCurrentPosition());
             telemetry.update();
         }
     }
