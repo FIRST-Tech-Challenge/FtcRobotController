@@ -203,14 +203,15 @@ public class Crane implements Subsystem {
                 break;
 
             case 4:
-                if (EXTENDER_CALIBRATE_MAX){
-                    if (extenderMotor.getCurrent(CurrentUnit.AMPS) > 6 ){ //should be stalled at full extension
+                if (EXTENDER_CALIBRATE_MAX) {
+                    if (extenderMotor.getCurrent(CurrentUnit.AMPS) > 6) { //should be stalled at full extension
                         extendMaxTics = extenderMotor.getCurrentPosition();
                         calibrateStage++;
                     }
-                }
-                else
+                }else {
+                    extendMaxTics = 3075;
                     calibrateStage++;
+                }
                 break;
 
             case 5: //enable extender PID to zero position - give 2 seconds to retract a good bit
@@ -316,12 +317,18 @@ public class Crane implements Subsystem {
         extendPosition = extenderMotor.getCurrentPosition();
 
         shoulderAngle = shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
-        extendMeters = extendPosition / EXTEND_TICKS_PER_METER;
+        extendMeters = extendPosition / EXTEND_TICKS_PER_METER + 0.4;
 
         shoulderAmps = shoulderMotor.getCurrent(CurrentUnit.AMPS);
         extenderAmps = extenderMotor.getCurrent(CurrentUnit.AMPS);
 
         currentStateMachine.execute();
+
+        double angle = Math.atan(targetHeight/targetDistance);
+        double length = Math.sqrt( Math.pow(targetHeight,2) + Math.pow(targetDistance,2) );
+        setShoulderTargetDeg(angle);
+        setExtendTargetDistance(length);
+        robot.turret.setTargetHeading(targetTurretAngle);
 
         if(shoulderActivePID)
             movePIDShoulder(kpShoulder, kiShoulder, kdShoulder, shoulderDirectAnglePos, shoulderTargetPos);
@@ -340,6 +347,25 @@ public class Crane implements Subsystem {
         }
     }
 
+    public void adjustHeight(double speed){
+        setHeight(getHeight() + (int)(100 * speed));
+    }
+    public void adjustDistance(double speed){
+        setDistance(getDistance() + (int)(100 * speed));
+    }
+
+    public void adjustTurretAngle(double speed){
+        robot.turret.setTargetHeading(robot.turret.getHeading() + (int)(100 * speed));
+    }
+
+    public double getHeight(){
+        return getExtendMeters()*Math.sin(getShoulderAngle());
+    }
+
+    public double getDistance(){
+        return getExtendMeters()*Math.cos(getShoulderAngle());
+    }
+
 
 
     public boolean setTargets(double x, double y, double z){
@@ -350,18 +376,18 @@ public class Crane implements Subsystem {
         targetHeight = z-shoulderHeight;
 
         targetDistance = Math.sqrt(Math.pow(y - turretPos.getY(),2) + Math.pow(x - turretPos.getX(),2));
-
-        double angle = Math.atan(targetHeight/targetDistance);
-        double length = Math.sqrt( Math.pow(targetHeight,2) + Math.pow(targetDistance,2) );
-        setShoulderTargetDeg(angle);
-        setExtendTargetDistance(length);
-        robot.turret.setTargetHeading(targetTurretAngle);
         return true;
     }
     public boolean setHeight(double newHeight){
         targetHeight = newHeight;
         return true;
     }
+
+    public boolean setDistance(double newDistance){
+        targetDistance = newDistance;
+        return true;
+    }
+
     public boolean goToTarget(){
         return shoulderPID.onTarget() && extendPID.onTarget() && robot.turret.isTurretNearTarget();
     }
@@ -444,31 +470,19 @@ public class Crane implements Subsystem {
         shoulderTargetPos = (int)(deg*SHOULDER_DIRECT_TICKS_PER_DEGREE);
     }
     public void setExtendTargetDistance(double dis){
-        setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
+        setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER + 1104));
     }
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
     public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),0)); }
     public  int getShoulderTargetPos(){ return shoulderTargetPos; }
-    public  void setExtendTargetPos(int t){ extenderTargetPos = t; }
+    public  void setExtendTargetPos(int t){ extenderTargetPos = Math.min(Math.max(t,0),extendMaxTics); }
     public boolean nearTargetShoulder(){
         if ((Math.abs( getShoulderPos()-getShoulderTargetPos()))<55) return true;
         else return false;
     }
 
-    public void adjustShoulderAngle(double speed){
-        setShoulderTargetPos(Math.max(getShoulderPos() + (int)(100 * speed), (int)(SHOULDER_DEG_MAX * SHOULDER_TICKS_PER_DEGREE)));
-    }
-    public void adjustArmLength(double speed){
-        setExtendTargetPos(Math.min(getextenderPos() + (int)(100 * speed), (int)(EXTENDER_TICS_MAX)));
-    }
 
-    public void decreaseShoulderAngle(double speed){
-        setShoulderTargetPos(getShoulderPos() - (int)(100.0*speed));
-    }
 
-    public void increaseShoulderAngle(double speed){
-        setShoulderTargetPos(getShoulderPos() + (int)(100.0*speed));
-    }
     public int getextenderPos(){ return  extendPosition; }
     public int getShoulderPos(){ return  shoulderDirectAnglePos; }
     public double getShoulderAngle(){ return shoulderAngle;}
