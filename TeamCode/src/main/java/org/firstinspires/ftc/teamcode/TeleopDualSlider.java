@@ -47,6 +47,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ /*
+  * PID controller and IMU codes are copied from
+  * https://stemrobotics.cs.pdx.edu/node/7268%3Froot=4196.html
+  */
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -58,6 +63,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 /**
@@ -73,9 +83,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleopDriving", group="Concept")
-@Disabled
-public class TeleopDriving extends LinearOpMode {
+@TeleOp(name="TeleopDualSlider", group="Concept")
+//@Disabled
+public class TeleopDualSlider extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -83,44 +93,41 @@ public class TeleopDriving extends LinearOpMode {
     private DcMotor FrontRightDrive = null;
     private DcMotor BackLeftDrive = null;
     private DcMotor BackRightDrive = null;
+    private BNO055IMU imu = null;
 
 
     // Driving motor variables
-    static final int RAMP_ON = 1; // ramp on: 1; off: 0
+    static final int RAMP_ON = 1; // ramp on to improve small moving control. On: 1; off: 0
     static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
     static final double ADJUST_POSITION_POWER = 0.2; // used for auto driving
 
     // slider motor variables
-    private DcMotor SliderMotor = null;
+    private DcMotor RightSliderMotor = null;
+    private DcMotor LeftSliderMotor = null;
     static final double SLIDER_MOTOR_POWER = 0.4; // slider string gets loose with too high speed
     static final int COUNTS_PER_INCH = 115;
-
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // Leave 100 counts for buffer.
     static final int SLIDER_MIN_POS = 0;
-
     static final int GROUND_JUNCTION_POS = 400;
     static final int READY_FOR_GRIP_POSITION = 700; // lift a little bit to get ready for unloading
 
-    // 10inch for low junction, 20inch for medium, andREVERSE 30 for high
+    // 10inch for low junction, 20inch for medium, and 30 for high
     static final int LOW_JUNCTION_POS = COUNTS_PER_INCH * 10 + READY_FOR_GRIP_POSITION; // need double check by testing
     static final int MEDIUM_JUNCTION_POS = COUNTS_PER_INCH * 20 + READY_FOR_GRIP_POSITION;
     static final int HIGH_JUNCTION_POS = COUNTS_PER_INCH * 30 + READY_FOR_GRIP_POSITION;
-
     static final int SLIDER_MOVE_DOWN_POSITION = 700; // move down a little bit to unload cone
-
     static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 512; // Approximate value from testing
-
     int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION/40; // set value based on testing
     int sliderMotorTargetPosition = 0;
 
 
     // claw servo motor variables
     private Servo clawServo = null;
-    static final double CLAW_INCREMENT = 0.004;     // amount to slew servo each CYCLE_MS cycle
-    static final double CLAW_OPEN_POS = 0.08;     // Maximum rotational position
-    static final double CLAW_CLOSE_POS = 0.25;
-    static final double CLAW_MAX_POS = CLAW_CLOSE_POS;
-    static final double CLAW_MIN_POS = CLAW_OPEN_POS;     // Minimum rotational position
+    static final double CLAW_INCREMENT = -0.004;  // amount to slew servo each CYCLE_MS cycle
+    static final double CLAW_OPEN_POS = 0.25;     // Maximum rotational position
+    static final double CLAW_CLOSE_POS = 0.08;
+    static final double CLAW_MAX_POS = CLAW_OPEN_POS;
+    static final double CLAW_MIN_POS = CLAW_CLOSE_POS;  // Minimum rotational position
     double clawServoPosition = CLAW_OPEN_POS;
 
 
@@ -140,25 +147,34 @@ public class TeleopDriving extends LinearOpMode {
     double robotAutoUnloadMovingDistance = 0.25; // in feet
 
 
+    // IMU related
+    Orientation lastAngles = new Orientation();
+    double globalAngle = 0.0;
+    double power = POWER_FACTOR; // 0.30;
+    double correction = 0.0;
+    double rotation = 0.0;
+    PIDController pidRotate, pidDrive;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
-        telemetry.update();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
         FrontLeftDrive  = hardwareMap.get(DcMotor.class, "FrontLeft");
         FrontRightDrive = hardwareMap.get(DcMotor.class, "FrontRight");
         BackLeftDrive = hardwareMap.get(DcMotor.class,"BackLeft");
         BackRightDrive = hardwareMap.get(DcMotor.class,"BackRight");
-        SliderMotor = hardwareMap.get(DcMotor.class,"SliderMotor");
+        RightSliderMotor = hardwareMap.get(DcMotor.class,"RightSlider");
+        LeftSliderMotor = hardwareMap.get(DcMotor.class,"LeftSlider");
         armServo = hardwareMap.get(Servo.class, "ArmServo");
-        clawServo = hardwareMap.get(Servo.class, "TestServo");
+        clawServo = hardwareMap.get(Servo.class, "ClawServo");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        // claw servo motor initial
-        clawServoPosition = CLAW_INCREMENT;
-        clawServo.setPosition(clawServoPosition);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -167,19 +183,64 @@ public class TeleopDriving extends LinearOpMode {
         BackLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         BackRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        FrontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FrontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         /* slider motor control */
         // based on how Motor installed on robot.
-        SliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        SliderMotor.setTargetPosition(sliderMotorTargetPosition);
+        RightSliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        LeftSliderMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        RightSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+        LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition);
         // Reset slider motor encoder counts kept by the motor
-        SliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // Using encoder mode to run slider motor
-        SliderMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RightSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Set motor to run to target encoder position and top with brakes on.
-        SliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RightSliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LeftSliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        // claw servo motor initial
+        clawServoPosition = CLAW_OPEN_POS;
+        clawServo.setPosition(clawServoPosition);
+
+        // IMU
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
+        imu.initialize(parameters);
+
+        // Set PID proportional value to start reducing power at about 50 degrees of rotation.
+        // P by itself may stall before turn completed so we add a bit of I (integral) which
+        // causes the PID controller to gently increase power if the turn is not completed.
+        pidRotate = new PIDController(.003, .00003, 0);
+
+        // Set PID proportional value to produce non-zero correction value when robot veers off
+        // straight line. P value controls how sensitive the correction is.
+        pidDrive = new PIDController(.05, 0, 0);
+
+        // make sure the imu gyro is calibrated before continuing.
+        while (!isStopRequested() && !imu.isGyroCalibrated()) {
+            sleep(50);
+            idle();
+        }
+        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+
+        // Set up parameters for driving in a straight line.
+        pidDrive.setSetpoint(0);
+        pidDrive.setOutputRange(0, power);
+        pidDrive.setInputRange(-90, 90);
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        telemetry.addData("Mode", "waiting for start");
+        telemetry.update();
+
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
@@ -195,16 +256,35 @@ public class TeleopDriving extends LinearOpMode {
             double turn  =  POWER_FACTOR * Math.pow(-gamepad1.right_stick_x, 1 + (2 * RAMP_ON));
             double strafe = POWER_FACTOR * Math.pow(-gamepad1.left_stick_x, 1 + (2 * RAMP_ON));
 
+            // only enable correction when the turn button is not pressed.
+            if (Math.abs(turn) > Math.ulp(0)) {
+                pidDrive.reset();
+                resetAngle(); // Resets the cumulative angle tracking to zero.
+            }
+            else {
+                pidDrive.enable();
+            }
+
+            // Use PID with imu input to drive in a straight line.
+            correction = pidDrive.performPID(getAngle());
+
+            telemetry.addData("1 imu heading", lastAngles.firstAngle);
+            telemetry.addData("2 global heading", globalAngle);
+            telemetry.addData("3 correction", correction);
+            telemetry.addData("4 turn rotation", rotation);
+
             FrontLeftPower    = Range.clip(-drive - turn - strafe, -1, 1) ;
             FrontRightPower   = Range.clip(-drive + turn + strafe, -1, 1) ;
             BackLeftPower    = Range.clip(-drive - turn + strafe, -1, 1) ;
             BackRightPower   = Range.clip(-drive + turn - strafe, -1, 1) ;
 
+
+            telemetry.addData("5 final correction", correction);
             // Send calculated power to wheels
-            FrontLeftDrive.setPower(FrontLeftPower);
-            FrontRightDrive.setPower(FrontRightPower);
-            BackLeftDrive.setPower(BackLeftPower);
-            BackRightDrive.setPower(BackRightPower);
+            FrontLeftDrive.setPower(FrontLeftPower - correction);
+            FrontRightDrive.setPower(FrontRightPower + correction);
+            BackLeftDrive.setPower(BackLeftPower - correction);
+            BackRightDrive.setPower(BackRightPower + correction);
 
             // use Y button to lift up the slider reaching high junction
             if (gamepad1.y) {
@@ -233,10 +313,14 @@ public class TeleopDriving extends LinearOpMode {
             telemetry.addData("Status", "slider motor Target position %d",
                     sliderMotorTargetPosition);
 
-            SliderMotor.setTargetPosition(sliderMotorTargetPosition);
-            SliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
-            telemetry.addData("Status", "slider motor current position %d",
-                    SliderMotor.getCurrentPosition());
+            RightSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+            LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+            RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
+            LeftSliderMotor.setPower(SLIDER_MOTOR_POWER);
+            telemetry.addData("Status", "Right slider motor current position %d",
+                    RightSliderMotor.getCurrentPosition());
+            telemetry.addData("Status", "Left slider motor current position %d",
+                    LeftSliderMotor.getCurrentPosition());
 
             // Keep stepping up until we hit the max value.
             if (gamepad1.dpad_up) {
@@ -260,20 +344,14 @@ public class TeleopDriving extends LinearOpMode {
             armServo.setPosition(armServoPosition);
             telemetry.addData("Status", "Arm Servo position %.2f", armServoPosition);
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
-                    " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
-                    BackLeftPower,BackRightPower);
-            telemetry.update();
-
             //  auto driving, grip cone, and lift slider
             if(gamepad1.left_bumper) {
                 autoLoadCone();
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
                 clawServoPosition = clawServo.getPosition();
-                sliderMotorTargetPosition = SliderMotor.getCurrentPosition();
+                // left motor has same position with right one
+                sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
             }
 
             //  auto driving, unload cone
@@ -282,15 +360,24 @@ public class TeleopDriving extends LinearOpMode {
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
                 clawServoPosition = clawServo.getPosition();
-                sliderMotorTargetPosition = SliderMotor.getCurrentPosition();
+                sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
             }
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
+                            " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
+                    BackLeftPower,BackRightPower);
+            telemetry.update(); // update message at the end of while loop
         }
 
         // The motor stop on their own but power is still applied. Turn off motor.
-        SliderMotor.setPower(0.0);
+        RightSliderMotor.setPower(0.0);
+        LeftSliderMotor.setPower(0.0);
     }
 
-    /* 1. Robot moving back to aim at junction for unloading cone
+    /**
+     * 1. Robot moving back to aim at junction for unloading cone
      * 2. Slider moving down a little bit to put cone in junction pole
      * 3. Open claw to fall down cone
      * 4. Lift slider from junction pole
@@ -302,22 +389,29 @@ public class TeleopDriving extends LinearOpMode {
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // moving back in feet
 
         // move down slider a little bit (100 count) to unload cone
-        sliderMotorTargetPosition = SliderMotor.getCurrentPosition();
-        SliderMotor.setTargetPosition(sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION);
-        waitMotorActionComplete(SliderMotor);
+        sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
+        RightSliderMotor.setTargetPosition(sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION);
+        LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION);
+        waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
+        waitMotorActionComplete(LeftSliderMotor);
 
         clawServo.setPosition(CLAW_OPEN_POS); // unload  cone
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
 
-        SliderMotor.setTargetPosition(sliderMotorTargetPosition);
-        waitMotorActionComplete(SliderMotor);
+        RightSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+        LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // move out from junction
         armServo.setPosition(ARM_LOAD_POSITION);
-        SliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
-        waitMotorActionComplete(SliderMotor);
+        RightSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+        LeftSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
     }
 
-    /* 1. Lift slider and open claw to get read to load a cone
+    /**
+     * 1. Lift slider and open claw to get read to load a cone
      * 2. Robot moving back to aim at cone for loading
      * 2. Slider moving down to load the cone
      * 3. Close claw to grip the cone
@@ -326,47 +420,64 @@ public class TeleopDriving extends LinearOpMode {
      * 6. Slider moving down to get ready to grip another cone
      */
     private void autoLoadCone() {
-        SliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+        RightSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+        LeftSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
         clawServo.setPosition(CLAW_OPEN_POS);
         armServo.setPosition(ARM_LOAD_POSITION);
-        SliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor starts movement
-        robotMovingDistance(-robotAutoLoadMovingDistance, true); // moving back
-        SliderMotor.setTargetPosition(SLIDER_MIN_POS);
-        waitMotorActionComplete(SliderMotor);
+        RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor starts movement
+        LeftSliderMotor.setPower(SLIDER_MOTOR_POWER);
+        robotMovingDistance(-robotAutoLoadMovingDistance, true); // moving to loading position
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
+        RightSliderMotor.setTargetPosition(SLIDER_MIN_POS);
+        LeftSliderMotor.setTargetPosition(SLIDER_MIN_POS);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
         clawServo.setPosition(CLAW_CLOSE_POS);
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
         armServo.setPosition(ARM_UNLOAD_POSITION);
-        SliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-        waitMotorActionComplete(SliderMotor);
+        RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+        LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
     }
 
+    /**
+     * Set target position for every wheel motor, and set power to motors to move the robot.
+     * Turn off encode mode after moving.
+     * @param targetDistance: Input value for the target distance.
+     * @param isBackForward: flag for back-forward (true) moving, or left-right moving (false)
+     */
     private void robotMovingDistance(double targetDistance, boolean isBackForward) {
         int targetPosition = (int)(targetDistance * COUNTS_PER_FEET_MOTION);
         telemetry.addData("Status", "driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForward);
-        robotWithEncoderModeOn(true); // turn on encoder mode
+        robotRunWithPositionModeOn(true); // turn on encoder mode
         setPowerToWheels(ADJUST_POSITION_POWER); // low speed for more accurate, start moving
         waitMotorActionComplete(FrontLeftDrive); // just check one wheel.
         setPowerToWheels(0.0); //stop moving
-        robotWithEncoderModeOn(false); // turn off encoder mode
+        robotRunWithPositionModeOn(false); // turn off encoder mode
     }
 
-    private void robotWithEncoderModeOn(boolean withEncoder) {
-        if (withEncoder) {
+    /**
+     * Set wheels motors to stop and reset encode to set the current encoder position to zero.
+     * And then set to run to position mode if withPositionMode is on.
+     * Otherwise, set to run without encode mode.
+     * @param withPositionMode: flag for wheels motors run with position mode on,
+     *                       or off(run without encode)
+     */
+    private void robotRunWithPositionModeOn(boolean withPositionMode) {
+        if (withPositionMode) {
             FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FrontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             FrontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            FrontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             FrontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BackLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BackLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            BackRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             BackRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else {
@@ -378,6 +489,12 @@ public class TeleopDriving extends LinearOpMode {
         }
     }
 
+    /**
+     * Set wheels motors target positions according to back-forward moving flag
+     * @param tPos: target position values for motors
+     * @param isBF: flag for back-forward moving or left-right moving.
+     *            Back forward(1), or left right (0)
+     */
     private void setTargetPositionsToWheels(int tPos, boolean isBF) {
         if (isBF) {
             FrontLeftDrive.setTargetPosition( tPos );
@@ -385,16 +502,18 @@ public class TeleopDriving extends LinearOpMode {
             BackLeftDrive.setTargetPosition( tPos );
             BackRightDrive.setTargetPosition( tPos );
         }
-        else // move left or right, positive for right
-        {
+        else {// move left or right, positive for right
             FrontLeftDrive.setTargetPosition( tPos );
             FrontRightDrive.setTargetPosition( -tPos );
             BackLeftDrive.setTargetPosition( -tPos );
             BackRightDrive.setTargetPosition( tPos );
         }
-
     }
 
+    /**
+     * Set wheels motors power
+     * @param power: the power value set to motors (0.0 ~ 1.0)
+     */
     private void setPowerToWheels(double power) {
         FrontLeftDrive.setPower(power);
         FrontRightDrive.setPower(power);
@@ -402,6 +521,10 @@ public class TeleopDriving extends LinearOpMode {
         BackRightDrive.setPower(power);
     }
 
+    /**
+     * Wait until the motor complete action.
+     * @param mot: the motor which be checked if it is in active.
+     */
     private void waitMotorActionComplete(DcMotor mot) {
         while(mot.isBusy()) {
             idle();
@@ -409,4 +532,114 @@ public class TeleopDriving extends LinearOpMode {
     }
 
 
+    /**
+     * Resets the cumulative angle tracking to zero.
+     */
+    private void resetAngle() {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        globalAngle = 0;
+    }
+
+    /**
+     * Get current cumulative angle rotation from last reset.
+     * @return Angle in degrees. + = left, - = right from zero point.
+     */
+    private double getAngle() {
+        // We experimentally determined the Z axis is the axis we want to use for heading angle.
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return globalAngle;
+    }
+
+    /**
+     * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
+     * @param degrees Degrees to turn, + is left - is right
+     */
+    private void rotate(int degrees, double power) {
+        // restart imu angle tracking.
+        resetAngle();
+
+        // if degrees > 359 we cap at 359 with same sign as original degrees.
+        if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
+
+        // start pid controller. PID controller will monitor the turn angle with respect to the
+        // target angle and reduce power as we approach the target angle. This is to prevent the
+        // robots momentum from overshooting the turn after we turn off the power. The PID controller
+        // reports onTarget() = true when the difference between turn angle and target angle is within
+        // 1% of target (tolerance) which is about 1 degree. This helps prevent overshoot. Overshoot is
+        // dependant on the motor and gearing configuration, starting power, weight of the robot and the
+        // on target tolerance. If the controller overshoots, it will reverse the sign of the output
+        // turning the robot back toward the setpoint value.
+
+        pidRotate.reset();
+        pidRotate.setSetpoint(degrees);
+        pidRotate.setInputRange(0, degrees);
+        pidRotate.setOutputRange(0, power);
+        pidRotate.setTolerance(1);
+        pidRotate.enable();
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        // rotate until turn is completed.
+
+        if (degrees < 0) {
+            // On right turn we have to get off zero first.
+            while (opModeIsActive() && getAngle() == 0) {
+                leftMotorSetPower(power);
+                rightMotorSetPower(-power);
+                sleep(100);
+            }
+
+            do {
+                power = pidRotate.performPID(getAngle()); // power will be - on right turn.
+                leftMotorSetPower(-power);
+                rightMotorSetPower(power);
+            } while (opModeIsActive() && !pidRotate.onTarget());
+        }
+        else    // left turn.
+            do {
+                power = pidRotate.performPID(getAngle()); // power will be + on left turn.
+                leftMotorSetPower(-power);
+                rightMotorSetPower(power);
+            } while (opModeIsActive() && !pidRotate.onTarget());
+
+        // turn the motors off.
+        rightMotorSetPower(0);
+        leftMotorSetPower(0);
+
+        rotation = getAngle();
+
+        // wait for rotation to stop.
+        sleep(500);
+
+        // reset angle tracking on new heading.
+        resetAngle();
+    }
+
+    private void leftMotorSetPower(double p) {
+        FrontLeftDrive.setPower(p);
+        BackLeftDrive.setPower(p);
+    }
+
+    private void rightMotorSetPower(double p) {
+        FrontRightDrive.setPower(p);
+        BackRightDrive.setPower(p);
+    }
 }

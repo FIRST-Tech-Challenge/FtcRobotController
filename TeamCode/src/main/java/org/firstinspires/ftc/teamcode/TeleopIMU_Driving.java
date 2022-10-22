@@ -97,7 +97,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
 
     // Driving motor variables
-    static final int RAMP_ON = 1; // ramp on to improve small moving control. On: 1; off: 0
+    static final int RAMP_ON = 0; // ramp on to improve small moving control. On: 1; off: 0
     static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
     static final double ADJUST_POSITION_POWER = 0.2; // used for auto driving
 
@@ -142,7 +142,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
     // variables for auto load and unload cone
     static final int COUNTS_PER_FEET_MOTION = 360; // robot moving 1 feet for 360 counts position.
-    double robotAutoLoadMovingDistance = 0.0; // in feet
+    double robotAutoLoadMovingDistance = 0.05; // in feet
     double robotAutoUnloadMovingDistance = 0.25; // in feet
 
 
@@ -170,7 +170,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
         BackRightDrive = hardwareMap.get(DcMotor.class,"BackRight");
         SliderMotor = hardwareMap.get(DcMotor.class,"SliderMotor");
         armServo = hardwareMap.get(Servo.class, "ArmServo");
-        clawServo = hardwareMap.get(Servo.class, "TestServo");
+        clawServo = hardwareMap.get(Servo.class, "ClawServo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
 
