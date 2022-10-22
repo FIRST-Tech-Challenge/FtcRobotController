@@ -52,7 +52,7 @@ class TestAuto : KOpMode() {
 
 
         mainCommand = SequentialGroup(
-            WaitUntilCmd { opmodeState == OpModeState.LOOP },
+            WaitUntilCmd { opModeState == OpModeState.LOOP },
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(path1, 0.6, 1.0/22.5, 4.0, 0.95, 2.0)

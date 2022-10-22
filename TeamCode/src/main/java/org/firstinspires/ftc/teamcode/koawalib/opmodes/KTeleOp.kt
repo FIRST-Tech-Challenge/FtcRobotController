@@ -5,6 +5,7 @@ import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.math.radians
+import com.asiankoala.koawalib.subsystem.Subsystem
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.koawalib.Robot
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
@@ -18,8 +19,7 @@ class KTeleOp : KOpMode() {
     private val startPose = Pose(-60.0, -10.0, 0.0.radians)
 
     override fun mInit() {
-        robot.drive.setDefaultCommand(
-            MecanumCmd(
+        robot.drive.defaultCommand = MecanumCmd(
                 robot.drive,
                 driver.leftStick,
                 driver.rightStick.xInverted,
@@ -30,7 +30,6 @@ class KTeleOp : KOpMode() {
                 0.9,
                 0.9
             )
-        )
 
         robot.lightsDevice.setPattern(Lights.BlinkinPattern.RED)
 
@@ -47,8 +46,6 @@ class KTeleOp : KOpMode() {
 
 //        driver.leftBumper.onPress(Arm.ArmReset(robot.armServo))
 //        driver.rightBumper.onPress(Arm.ArmOut(robot.armServo))
-
-
     }
 
     override fun mLoop() {

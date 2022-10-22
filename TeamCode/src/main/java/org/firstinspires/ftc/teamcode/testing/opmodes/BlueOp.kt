@@ -20,8 +20,7 @@ class BlueOp( private val alliance: Alliance) : KOpMode(photonEnabled = true) {
     private val robot by lazy { Robot(startPose) }
 
     override fun mInit() {
-        robot.drive.setDefaultCommand(
-            MecanumCmd(
+        robot.drive.defaultCommand = MecanumCmd(
                 robot.drive,
                 driver.leftStick,
                 driver.rightStick,
@@ -37,7 +36,6 @@ class BlueOp( private val alliance: Alliance) : KOpMode(photonEnabled = true) {
 //                { robot.drive.pose.heading },
 //                60.0.radians
             )
-        )
 
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
 
