@@ -30,15 +30,36 @@ public class AlexClass extends DriveMethods {
 //    double prevHead = 0;
 //    double inteHead = 0;
 //    BNO055IMU imu;
+    boolean inSlideLoop = false;
+    int target;
+    int dif;
 
     public void runOpMode() {
         motorSlide = hardwareMap.get(DcMotor.class, "motorSlide");
 
         waitForStart();
 
-        GoToHeight(500);
+        GoToHeight(1950);
+
 
         while (opModeIsActive()) {
+            GoToHeight(100);
+            GoToHeight(1950);
+//            GoToHeight(1950);
+//            if (inSlideLoop) {
+//                if ((Math.abs(dif) >= 150)) {
+//                    telemetry.addLine(dif + "..difference");
+//                    telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
+//                    telemetry.addLine(target + "..target");
+//                    telemetry.addLine(((dif / 3000.0) + 0.05) + "..power");
+//                    telemetry.update();
+//                    dif = (target - Math.abs(motorSlide.getCurrentPosition()));
+//                    motorSlide.setPower(((dif / 3000.0) + 0.05));
+//                } else {
+//                    motorSlide.setPower(0.05);
+//                    inSlideLoop = false;
+//                }
+//            }
 //            double leftY = -gamepad1.left_stick_y;
 //            motorSlide = hardwareMap.get(DcMotor.class, "motorSlide");
 //
@@ -106,17 +127,26 @@ public class AlexClass extends DriveMethods {
     public void GoToHeight(int Clicks) {
         int target = (Clicks);
         int dif = (target - Math.abs(motorSlide.getCurrentPosition()));
+        double aggressiveness = 3000;
+        double holdingPower = 0;
+        if (dif < 0) {
+            aggressiveness = 3000;
+            holdingPower = 0;
+        } if (dif > 0) {
+            aggressiveness = 2000;
+            holdingPower = 0.05;
+        }
+        motorSlide.setPower((dif / aggressiveness));
 
-        motorSlide.setPower(-(dif / 3000.0));
-
-        while (Math.abs(dif) >= 20) { // doesn't work when trying to go down
+        while (Math.abs(dif) >= 150) { // doesn't work when trying to go down
             telemetry.addLine(dif + "..difference");
             telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
             telemetry.addLine(target + "..target");
+            telemetry.addLine(((dif / aggressiveness) + holdingPower) + "..power");
             telemetry.update();
             dif = (target - Math.abs(motorSlide.getCurrentPosition()));
-            motorSlide.setPower(-((dif / 3000.0) - 0.05));
+            motorSlide.setPower(((dif / aggressiveness) + holdingPower));
         }
-        motorSlide.setPower(-0.05);
+        motorSlide.setPower(holdingPower);
     }
 }
