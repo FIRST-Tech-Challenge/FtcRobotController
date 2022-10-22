@@ -134,6 +134,7 @@ public class HardwareRobot
         imu.initialize(parameters);
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
     }
 
     public void turn(double power)
@@ -332,6 +333,13 @@ public class HardwareRobot
         leftDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    public void disableEncoder()
+{
+    leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    leftDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    rightDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+}
 
     public void setTargetPosition(double distance)
     {

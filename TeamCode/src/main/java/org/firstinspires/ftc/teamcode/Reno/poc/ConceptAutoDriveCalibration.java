@@ -139,27 +139,23 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
         runtime.reset();
 
-        //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        //holdHeading( TURN_SPEED, -90.0, 2);
-        //driveStraight(DRIVE_SPEED, -24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( 0, -90.0);               // Turn  CW to -45 Degrees
-        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( 0, -90.0);               // Turn  CW to -45 Degrees
         driveStraight(DRIVE_SPEED, 24.0, 0.0);
-        //holdHeading( TURN_SPEED, -45.0, 2);   // Hold -45 Deg heading for a 1/2 second
+        sleep(2000);
 
-        //driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
-        //turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
-        //holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-
-        //driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
-        //turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
-        //holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
-
-        //driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
-
-        telemetry.addData("Path", "Complete");
+        turnToHeading( 0, -90.0 );
+        telemetry.addData("turn -90 ", this.getRawHeading());
         telemetry.update();
+        sleep(2000);
+
+        driveStraight(DRIVE_SPEED, 24.0, 0.0);
+        sleep(2000);
+        turnToHeading( 0, -180);
+        telemetry.addData("turn -90 ", this.getRawHeading());
+        telemetry.update();
+        sleep(2000);
+        driveStraight(DRIVE_SPEED, 24.0, 0.0);
+
+
         sleep(1000);  // Pause to display last telemetry message.
     }
 
@@ -244,6 +240,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         while (heading > 180)  heading -= 360;
         while (heading <= -180) heading += 360;
 
+        robot.disableEncoder();
         robot.setDriveForward();
         /*
         if(heading < 0) {
@@ -255,7 +252,7 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         }
         */
 
-        motorController = new ConceptPidMotorController(0.009, 0, -0.02);
+        motorController = new ConceptPidMotorController(0.02, 0.0, 0.03);
         motorController.setGoal(heading);
         motorController.setFeedbackValue(this.getRawHeading());
         telemetry.addData("Error:Steer",  "%5.1f:%5.1f", motorController.getError(), heading);
