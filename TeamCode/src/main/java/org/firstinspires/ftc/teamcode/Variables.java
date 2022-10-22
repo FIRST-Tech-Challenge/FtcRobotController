@@ -10,6 +10,7 @@ public class Variables {
     public static DcMotor motorBL;          //motor02
     public static DcMotor motorFR;          //motor03
     public static DcMotor motorBR;          //motor04
+    public static DcMotor motorSlide;
     public enum Direction {
         FORWARD,
         BACKWARD,
