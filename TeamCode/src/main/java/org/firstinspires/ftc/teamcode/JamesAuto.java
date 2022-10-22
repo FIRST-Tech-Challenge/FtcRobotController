@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.DriveMethods;
 import static org.firstinspires.ftc.teamcode.Variables.*;
+import static org.firstinspires.ftc.teamcode.Variables.imu;
 
 @Autonomous(name="JamesAuto", group="B")
 public class
@@ -28,176 +29,203 @@ JamesAuto extends DriveMethods {
     @Override
     public void runOpMode() {
 
-        initMotorsBlue();
+        initMotorsSecondBot();
 
-
-        motorLinearSlide = hardwareMap.get(DcMotor.class,"motorLS");
-        motorLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        waitForStart();
-
-//        driveForDistance(1.25,0.5,Direction.FORWARD);
-//        driveForDistance(0.15,0.4,Direction.RIGHT);
-//        driveForDistance(3.5,0.7,Direction.LEFT);
-//        driveForDistance(1.7,0.75,Direction.FORWARD);
-//        driveForDistance(0.3,0.2,Direction.FORWARD);
-        while (opModeIsActive()) {
-            if (gamepad2.b){
-                 linearMotor(0.35);
-            }
-        }
-
-    }
-    public enum Direction {
-        FORWARD,
-        BACKWARD,
-        ROTATE_LEFT,
-        ROTATE_RIGHT,
-        RIGHT,
-        LEFT,
-
-    }
-
-    public double currentZ(){
-        if (!calibrated) {
-            CalibrateIMU();
-        }
-        Orientation CurrentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double currentz = CurrentAngle.firstAngle;
-        return currentz;
-    }
-
-    public double CumulativeZ(){
-        double currentZ = currentZ();
-        double deltaZ = currentZ-previousZ;
-        if (deltaZ<-180){
-            deltaZ += 360;
-        } else if (deltaZ>=180) {
-            deltaZ -= 360;
-        }
-        integratedZ+=deltaZ;
-        previousZ = currentZ();
-        return integratedZ;
-    }
-
-    public void CalibrateIMU (){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        calibrated = true;
-    }
 
-    public void linearMotor(double meters) {
-        if (meters<0.5) {
-            motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            double target_encoder = meters * 537.7 / 0.112;
-            double dif = target_encoder - motorLinearSlide.getCurrentPosition();
-            while (dif>12){
-                dif = target_encoder - motorLinearSlide.getCurrentPosition();
-                    motorLinearSlide.setPower(dif / 3000 + 0.05);
-            }
-        }
-    }
+        telemetry.addLine("imu should be calibrated!");
+        telemetry.update();
+        sleep(1000);
 
-    public void driveDirection(Direction direction, double power){
-        switch (direction) {
-            case FORWARD:
-                motorFL.setPower(power);
-                motorBL.setPower(power);
-                motorFR.setPower(power);
-                motorBR.setPower(power);
-                break;
-            case BACKWARD:
-                motorFL.setPower(-power);
-                motorBL.setPower(-power);
-                motorFR.setPower(-power);
-                motorBR.setPower(-power);
-                break;
-            case RIGHT:
-                motorFL.setPower(power);
-                motorBL.setPower(-power);
-                motorFR.setPower(-power);
-                motorBR.setPower(power);
-                break;
-            case LEFT:
-                motorFL.setPower(-power);
-                motorBL.setPower(power);
-                motorFR.setPower(power);
-                motorBR.setPower(-power);
-                break;
-            case ROTATE_LEFT:
-                motorFL.setPower(-power);
-                motorBL.setPower(-power);
-                motorFR.setPower(power);
-                motorBR.setPower(power);
-                break;
-            case ROTATE_RIGHT:
-                motorFL.setPower(power);
-                motorBL.setPower(power);
-                motorFR.setPower(-power);
-                motorBR.setPower(-power);
-                break;
 
+        waitForStart();
+
+
+
+        /**
+        driveForDistance(10, Variables.Direction.FORWARD, 0.35, 0);
+        driveForDistance(10, Variables.Direction.RIGHT, 0.35, 0);
+
+        driveForDistance(10, Variables.Direction.BACKWARD, 0.35, 0);
+
+        driveForDistance(10, Variables.Direction.LEFT, 0.35, 0);
+         */
+
+        double currentZ = 0;
+
+
+        while (opModeIsActive()) {
+            Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+            currentZ = currentAngle.firstAngle;
+          telemetry.addLine("CurrentZ: " + currentZ);
+          telemetry.addLine("CumulativeZ: " + getCumulativeZ());
+          telemetry.update();
         }
 
-
     }
-
-    public void driveForTime(int seconds, double power, Direction direction){
-        //Fl is 0
-        //Bl is 1
-        //Fr is 2
-        //Br is 3
-        driveDirection(direction,power);
-
-        int mili = seconds*1000;
-        sleep(mili);
-
-        motorFL.setPower(0);
-        motorBL.setPower(0);
-        motorFR.setPower(0);
-        motorBR.setPower(0);
-
-    }
-
-    public void driveForDistance(double distance, double power, Direction direction) {
-
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        double targetClicks = distance*clicksPerRotation*rotationsPerMeter;
-
-        motorBL.setTargetPosition((int)(targetClicks));
-        motorBR.setTargetPosition((int)(targetClicks));
-        motorFR.setTargetPosition((int)(targetClicks));
-        motorFL.setTargetPosition((int)(targetClicks));
-
-        motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        double avg = 0;
-
-        while (avg<=targetClicks){
-
-            driveDirection(direction,power);
-
-            avg = (Math.abs((motorFL.getCurrentPosition()))+ Math.abs(motorBL.getCurrentPosition())+ Math.abs(motorFR.getCurrentPosition())+ Math.abs(motorBR.getCurrentPosition()))/4;
-
-        }
-        motorFL.setPower(0);
-        motorBL.setPower(0);
-        motorFR.setPower(0);
-        motorBR.setPower(0);
-
-
-    }
+//    public enum Direction {
+//        FORWARD,
+//        BACKWARD,
+//        ROTATE_LEFT,
+//        ROTATE_RIGHT,
+//        RIGHT,
+//        LEFT,
+//
+//    }
+//
+////    public double currentZ(){
+////        if (!calibrated) {
+////            CalibrateIMU();
+////        }
+////        Orientation CurrentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+////        double currentz = CurrentAngle.firstAngle;
+////        return currentz;
+////    }
+////
+////    public double CumulativeZ(){
+////        double currentZ = currentZ();
+////        double deltaZ = currentZ-previousZ;
+////        if (deltaZ<-180){
+////            deltaZ += 360;
+////        } else if (deltaZ>=180) {
+////            deltaZ -= 360;
+////        }
+////        integratedZ+=deltaZ;
+////        previousZ = currentZ();
+////        return integratedZ;
+////    }
+////
+////    public void CalibrateIMU (){
+////        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+////        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+////        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+////        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+////        parameters.loggingEnabled      = true;
+////        parameters.loggingTag          = "IMU";
+////        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+////        imu = hardwareMap.get(BNO055IMU.class, "imu");
+////        imu.initialize(parameters);
+////        calibrated = true;
+////    }
+//
+//    public void linearMotor(double meters) {
+//        if (meters<0.5) {
+//            motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            double target_encoder = meters * 537.7 / 0.112;
+//            double dif = target_encoder - motorLinearSlide.getCurrentPosition();
+//            while (dif>12){
+//                dif = target_encoder - motorLinearSlide.getCurrentPosition();
+//                    motorLinearSlide.setPower(dif / 3000 + 0.05);
+//            }
+//        }
+//    }
+//
+//    public void driveDirection(Direction direction, double power){
+//        switch (direction) {
+//            case FORWARD:
+//                motorFL.setPower(power);
+//                motorBL.setPower(power);
+//                motorFR.setPower(power);
+//                motorBR.setPower(power);
+//                break;
+//            case BACKWARD:
+//                motorFL.setPower(-power);
+//                motorBL.setPower(-power);
+//                motorFR.setPower(-power);
+//                motorBR.setPower(-power);
+//                break;
+//            case RIGHT:
+//                motorFL.setPower(power);
+//                motorBL.setPower(-power);
+//                motorFR.setPower(-power);
+//                motorBR.setPower(power);
+//                break;
+//            case LEFT:
+//                motorFL.setPower(-power);
+//                motorBL.setPower(power);
+//                motorFR.setPower(power);
+//                motorBR.setPower(-power);
+//                break;
+//            case ROTATE_LEFT:
+//                motorFL.setPower(-power);
+//                motorBL.setPower(-power);
+//                motorFR.setPower(power);
+//                motorBR.setPower(power);
+//                break;
+//            case ROTATE_RIGHT:
+//                motorFL.setPower(power);
+//                motorBL.setPower(power);
+//                motorFR.setPower(-power);
+//                motorBR.setPower(-power);
+//                break;
+//
+//        }
+//
+//
+//    }
+//
+//    public void driveForTime(int seconds, double power, Direction direction){
+//        //Fl is 0
+//        //Bl is 1
+//        //Fr is 2
+//        //Br is 3
+//        driveDirection(direction,power);
+//
+//        int mili = seconds*1000;
+//        sleep(mili);
+//
+//        motorFL.setPower(0);
+//        motorBL.setPower(0);
+//        motorFR.setPower(0);
+//        motorBR.setPower(0);
+//
+//    }
+//
+//    public void driveForDistance(double distance, double power, Direction direction) {
+//
+//        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        double targetClicks = distance*clicksPerRotation*rotationsPerMeter;
+//
+//        motorBL.setTargetPosition((int)(targetClicks));
+//        motorBR.setTargetPosition((int)(targetClicks));
+//        motorFR.setTargetPosition((int)(targetClicks));
+//        motorFL.setTargetPosition((int)(targetClicks));
+//
+//        motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        double avg = 0;
+//
+//        while (avg<=targetClicks){
+//
+//            driveDirection(direction,power);
+//
+//            avg = (Math.abs((motorFL.getCurrentPosition()))+ Math.abs(motorBL.getCurrentPosition())+ Math.abs(motorFR.getCurrentPosition())+ Math.abs(motorBR.getCurrentPosition()))/4;
+//
+//        }
+//        motorFL.setPower(0);
+//        motorBL.setPower(0);
+//        motorFR.setPower(0);
+//        motorBR.setPower(0);
+//
+//
+//    }
 }

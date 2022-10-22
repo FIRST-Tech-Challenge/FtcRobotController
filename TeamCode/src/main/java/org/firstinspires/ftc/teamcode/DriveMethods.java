@@ -183,41 +183,43 @@ public class DriveMethods extends LinearOpMode{
     }
     */
     public void CalibrateIMU() {
-        if(!isImuCallibrated) {
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-            parameters.loggingEnabled = true;
-            parameters.loggingTag = "IMU";
-            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-            // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-            // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-            // and named "imu".
-            imu = hardwareMap.get(BNO055IMU.class, "imu");
-            imu.initialize(parameters);
-            isImuCallibrated = true;
-        }
+    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+    parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+    parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+    parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+    parameters.loggingEnabled = true;
+    parameters.loggingTag = "IMU";
+    parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+    // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+    // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+    // and named "imu".
+    imu = hardwareMap.get(BNO055IMU.class, "imu");
+    imu.initialize(parameters);
+
+    telemetry.addLine("imu should be calibrated!");
+    telemetry.update();
+    isImuCalibrated = true;
+    sleep(1000);
+
+
     }
 
     public double getCurrentZ() {
-        CalibrateIMU();
-        /*
-        try {
-            Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
-        } catch(Error e) {
-            String errorCause = e.getMessage();
-            telemetry.addLine(errorCause);
-            telemetry.update();
-            return 0;
+        if(!isImuCalibrated){
+            CalibrateIMU();
         }
-        */
+
         Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
         double currentZ = currentAngle.firstAngle;
         return currentZ;
     }
     public double getCumulativeZ(){
+        if(!isImuCalibrated){
+            CalibrateIMU();
+
+        }
         double currentHeading = getCurrentZ();
         double deltaHeading = currentHeading - previousHeading;
         if(deltaHeading <= -180) {
@@ -257,11 +259,6 @@ public class DriveMethods extends LinearOpMode{
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         double distanceTraveled = 0;
         int targetPos = (int) ((distanceMeters * clicksPerRotation * rotationsPerMeter) / 1.15);
-        motorFL.setTargetPosition((targetPos));
-        motorBL.setTargetPosition((targetPos));
-        motorFR.setTargetPosition((targetPos));
-        motorBR.setTargetPosition((targetPos));
-
 
         motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -327,7 +324,7 @@ public class DriveMethods extends LinearOpMode{
             targetZ = targetRotation;
         }
         */
-        int currentPos = motorFL.getCurrentPosition();
+        int currentPos = 0;
         int FLPosition;
         int BLPosition;
         int FRPosition;
@@ -351,6 +348,7 @@ public class DriveMethods extends LinearOpMode{
             motorBL.setPower(BLPower - (rotateError / 150));
             motorFR.setPower(FRPower + (rotateError / 150));
             motorBR.setPower(BRPower + (rotateError / 150));
+
             telemetry.addLine("MotorFL Power " + motorFL.getPower());
             telemetry.addLine("MotorBL Power " + motorBL.getPower());
             telemetry.addLine("MotorFR Power " + motorFR.getPower());
@@ -371,14 +369,14 @@ public class DriveMethods extends LinearOpMode{
         motorBR.setPower(0);
     }
 
-    public void initMotorsRed() {
+    public void initMotorsSecondBot() {
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
         
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBL.setDirection(DcMotorSimple.Direction.FORWARD);
         motorFR.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBR.setDirection(DcMotorSimple.Direction.FORWARD);
     }
