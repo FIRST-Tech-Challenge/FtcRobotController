@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
-
 public class Lift {
     private Telemetry telemetry;
     public DcMotorEx liftMotor;
@@ -20,7 +19,7 @@ public class Lift {
     static final double     MM_TO_INCHES = 0.0393700787;
 
     static final double     COUNTS_PER_MOTOR_REV    = 8192;     // ticks at the motor shaft
-    static final double     DRIVE_GEAR_REDUCTION    = 5.23;     // 5:1 gear reduction (slowing down)
+    static final double     DRIVE_GEAR_REDUCTION    = 5.23;     // TODO: Fix to 3:1 gear reduction (slowing down)
     static final double     PULLEY_WHEEL_DIAMETER_INCHES   = 24.25 * MM_TO_INCHES ;     // convert mm to inches
     static final double     TICK_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (PULLEY_WHEEL_DIAMETER_INCHES * 3.1415);
 
