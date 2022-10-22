@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 /**
- * THis is the class to operate the Mecanum wheels.
+ * THis is the class to caculate the power sending to the wheel motor. .
  * This fits for the wheel configuration of :
  *   The wheels need to form an "X" configuration
  */
@@ -20,7 +20,7 @@ public class MecanumWheels {
     public MecanumWheels(){ }
 
     /**
-     * This method operates the wheel according to the input of game pad.
+     * This method calculate the wheel according to the input of game pad.
      *
      * @param gamepad1  This is the game pad object, that contains input of game pad
      * @param turbo  Power factor.  Range is 0-1

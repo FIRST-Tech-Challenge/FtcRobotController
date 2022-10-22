@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import static java.lang.Thread.*;
+
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -96,6 +98,49 @@ public class Hardware2022 {
 
     }
 
+    /**
+     * This operation move robot foward/backwork according to the input
+     * @param distance   Pososive value, moving foard ,  Nagtive value, moving backward
+     */
+    public void moveXAxis( int distance ) {
+
+        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        wheelFrontRight.setPower(0.3);
+        wheelFrontLeft.setPower(0.3);
+        wheelBackRight.setPower(-0.3);
+        wheelBackLeft.setPower(-0.3);
+
+        telemetry.addLine().addData("[FL Position >]  ", ""+wheelFrontLeft.getCurrentPosition() );
+        telemetry.update();
+
+        while ( (-wheelFrontLeft.getCurrentPosition()) < distance ) {
+
+            telemetry.addLine().addData("[FL Position >]  ", ""+wheelFrontLeft.getCurrentPosition() );
+            telemetry.update();
+            try {
+                sleep(50);
+            } catch (InterruptedException e) {
+                telemetry.addLine().addData("[Error  >]  ", e.getMessage() );
+                telemetry.update();
+            }
+
+        }
+
+        wheelFrontRight.setPower(0);
+        wheelFrontLeft.setPower(0);
+        wheelBackRight.setPower(0);
+        wheelBackLeft.setPower(0);
+
+    }
 
     /**
      * This method checks current state of robot.

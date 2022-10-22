@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -7,7 +8,6 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware2022;
 import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
 @TeleOp(name="GeneralDriver2022", group="TeleOps")
-
 public class GeneralDriver extends BaseTele {
 
     private boolean debug = true;
@@ -59,7 +59,7 @@ public class GeneralDriver extends BaseTele {
                 hdw.raiseVerticalSlide();
 
             }
-            if (gamepad1.a) {
+            if (gamepad1.b) {
                 if ( debug) {
                     telemetry.addLine().addData("[>]  ", "Relase cone, open claw.");
                     telemetry.update();
@@ -67,22 +67,19 @@ public class GeneralDriver extends BaseTele {
                 hdw.releaeCone();
             }
 
-            if (gamepad2.x) {
-
+            if (gamepad1.x) {
+                hdw.moveXAxis( 720 );
+                //sleep(6000);
             }
 
             //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%
             robotWheel.joystick(gamepad1, 1);
-
-            float powerTwoRight = gamepad1.right_trigger;
-            float powerTwoLeft = gamepad1.left_trigger;
 
             /* This is important for the driving to work ⬇⬇ */
             hdw.wheelFrontRight.setPower(robotWheel.wheelFrontRightPower * powerDrivePercentage);
             hdw.wheelFrontLeft.setPower(robotWheel.wheelFrontLeftPower * powerDrivePercentage);
             hdw.wheelBackRight.setPower(robotWheel.wheelBackRightPower * powerDrivePercentage);
             hdw.wheelBackLeft.setPower(robotWheel.wheelBackLeftPower * powerDrivePercentage);
-
 
 
         }
