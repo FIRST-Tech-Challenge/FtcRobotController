@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Test GPS", group="Drive")
+@TeleOp(name="Test setTargetPos", group="Drive")
 //@Disabled
-public class testGPS extends OpMode{
+public class testSetTargetPos extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
@@ -80,14 +80,9 @@ public class testGPS extends OpMode{
         telemetry.addData("Y", -gamepad1.left_stick_y);
         telemetry.addData("R", gamepad1.right_stick_x);
         //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
+        telemetry.addData("TopL Clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("BotL Clicks", robot.botL.getCurrentPosition());
 
-        for(int i = 0; i < 4; i++){
-            posData[i] = posSystem.getPositionArr()[i];
-        }
-        telemetry.addData("Xpos", posData[0]);
-        telemetry.addData("Ypos", posData[1]);
-        telemetry.addData("W", posData[2]);
-        telemetry.addData("R", posData[3]);
         telemetry.update();
     }
 
@@ -113,28 +108,47 @@ public class testGPS extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
-        posSystem.calculatePos();
+        if (a.getState() == Button.State.TAP){
+            setTargetSpinPosTest(240);
+            robot.botL.setPower(0.5);
+            robot.topL.setPower(0.5);
+        } else if (a.getState() == Button.State.DOUBLE_TAP){
+            setTargetRotatePosTest(340);
+            robot.botL.setPower(0.5);
+            robot.topL.setPower(0.5);
+        } else if (b.getState() == Button.State.TAP){
+            robot.botL.setPower(0);
+            robot.topL.setPower(0);
+        }
 
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
+        //the goal of this test is to see whether or not the motor actually stops spinning after reaching its target.
+        /*
+        If it does, then we need to make the amount of clicks the robot rotates EXACT.  (But there's still room to consider the formula in SwerveCode for rotating).
 
-        double alpha = 0.5;
-        double beta = 1 - alpha;
+        If it doesn't, we can just use the formula in SwerveCode (I think).
+         */
 
-        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
+        /*
+        Additionally, if the motor rotates 90 degrees while testing the rotation, then we know that the Constant for degrees per click is correct.
+         */
+    }
 
-        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
-
-        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
-        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
+    private void setTargetSpinPosTest(int clicks){
+        int botLCurrPos = robot.botL.getCurrentPosition();
+        int topLCurrPos = robot.topL.getCurrentPosition();
+        robot.botL.setTargetPosition(botLCurrPos + clicks);
+        robot.topL.setTargetPosition(topLCurrPos + clicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
-        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+    private void setTargetRotatePosTest(int clicks){
+        robot.botL.setTargetPosition(-clicks);
+        robot.topL.setTargetPosition(clicks);
+
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void reset(){
