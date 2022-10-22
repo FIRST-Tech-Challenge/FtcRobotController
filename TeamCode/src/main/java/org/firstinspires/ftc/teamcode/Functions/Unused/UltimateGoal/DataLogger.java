@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.Functions.Unused.UltimateGoal;
 
 import android.os.Environment;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+//import org.apache.commons.csv.CSVFormat;
+//import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -144,7 +144,7 @@ public class DataLogger {
             else {
 
                 Writer writer = new FileWriter(file);
-                CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
+                //CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
                 /*csvPrinter.printRecord(move.ReadMotor(1), move.ReadMotor(2), move.ReadMotor(3), move.ReadMotor(4),
                         pistol.ReturnMotorSpeed(), voltageSensor.getVoltage(), rotationDetector.ReturnPositiveRotation(), rotationDetector.ReturnRotation(),
                         positionCalculator.ReturnXAcc(), positionCalculator.ReturnYAcc(), positionCalculator.ReturnZAcc(), positionCalculator.ReturnX(),
@@ -153,15 +153,15 @@ public class DataLogger {
                 {
                     for (int j = 0; j <= i; j++)
                     {
-                        csvPrinter.printRecord(leftMotor[j], rightMotor[j], leftMotorBack[j], rightMotorBack[j], currentDirection[j],
-                                pistolMotor[j], voltage[j], currentAnglePositive[j], currentAngleRaw[j],
-                                accelX[j], accelY[j], accelZ[j], currentX[j],
-                                currentY[j], runtime[j], className);
+//                        csvPrinter.printRecord(leftMotor[j], rightMotor[j], leftMotorBack[j], rightMotorBack[j], currentDirection[j],
+//                                pistolMotor[j], voltage[j], currentAnglePositive[j], currentAngleRaw[j],
+//                                accelX[j], accelY[j], accelZ[j], currentX[j],
+//                                currentY[j], runtime[j], className);
                     }
                 }
 
                 writer.close();
-                csvPrinter.close();
+                //csvPrinter.close();
             }
 
 

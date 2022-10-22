@@ -4,8 +4,8 @@ import android.os.Environment;
 
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+//import org.apache.commons.csv.CSVFormat;
+//import org.apache.commons.csv.CSVPrinter;
 import org.firstinspires.ftc.teamcode.Functions.Move;
 import org.firstinspires.ftc.teamcode.Functions.RotationDetector;
 import org.firstinspires.ftc.teamcode.Functions.Unused.UltimateGoal.Pistol;
@@ -140,7 +140,7 @@ public class DataLoggerText {
             else {
 
                 Writer writer = new FileWriter(file);
-                CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
+                //CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
                 /*csvPrinter.printRecord(move.ReadMotor(1), move.ReadMotor(2), move.ReadMotor(3), move.ReadMotor(4),
                         pistol.ReturnMotorSpeed(), voltageSensor.getVoltage(), rotationDetector.ReturnPositiveRotation(), rotationDetector.ReturnRotation(),
                         positionCalculator.ReturnXAcc(), positionCalculator.ReturnYAcc(), positionCalculator.ReturnZAcc(), positionCalculator.ReturnX(),
@@ -149,14 +149,14 @@ public class DataLoggerText {
                 {
                     for (int j = 0; j <= i; j++)
                     {
-                        csvPrinter.printRecord(currentDirection[j],
-                                pistolMotor[j], voltage[j], currentAnglePositive[j], currentAngleRaw[j],
-                                accelX[j], accelY[j], accelZ[j], currentPosition[j],
-                                sistemXYData[j], accelData[j], runtime[j], className);
+//                        csvPrinter.printRecord(currentDirection[j],
+//                                pistolMotor[j], voltage[j], currentAnglePositive[j], currentAngleRaw[j],
+//                                accelX[j], accelY[j], accelZ[j], currentPosition[j],
+//                                sistemXYData[j], accelData[j], runtime[j], className);
                     }
                 }
                 writer.close();
-                csvPrinter.close();
+                //csvPrinter.close();
             }
             return " Works Well";
 

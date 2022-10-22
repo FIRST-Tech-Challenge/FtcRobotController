@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode.Functions.DataLogger;
 
 import android.os.Environment;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+//import org.apache.commons.csv.CSVFormat;
+//import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,7 +30,7 @@ import java.util.Date;
  *  (ex: dataLoggerController.functions.gamepad1a="robotul coboara bratul 1")
  *  LAST STEP is important if we want to recreate matches in UNITY OR DIRECTLY ON THE ROBOT.
  */
-
+@Disabled
 public class DataLoggerController {
 
     Gamepad gamepad1;
@@ -319,23 +320,23 @@ public class DataLoggerController {
             else {
                 Writer writer = new FileWriter(file);
                 DeclareHeaders();
-                CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
+                //CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
                 if (i >= 98)
                 {
                     for (int j = 0; j <= i; j++)
                     {
-                        csvPrinter.printRecord(className, voltage[i], runtime[j], gamepad1A[j], gamepad1B[j], gamepad1X[j], gamepad1Y[j], gamepad1A[j], gamepad1RightStickX[j],
-                                gamepad1RightStickX[j], gamepad1RightStickY[j], gamepad1LeftStickX[j], gamepad1LeftStickY[j], gamepad1RightStickButton[j],
-                                gamepad1DpadUp[j], gamepad1DpadDown[j], gamepad1DpadLeft[j], gamepad1DpadRight[j],
-                                gamepad1LeftBumper[j], gamepad1LeftTrigger[j], gamepad1RightBumper[j], gamepad1RightTrigger[j],
-                                gamepad2A[j], gamepad2B[j], gamepad2X[j], gamepad2Y[j],
-                                gamepad2RightStickX[j], gamepad2RightStickY[j], gamepad2LeftStickX[j], gamepad2LeftStickY[j], gamepad2RightStickButton[j],
-                                gamepad2DpadUp[j], gamepad2DpadDown[j], gamepad2DpadLeft[j], gamepad2DpadRight[j],
-                                gamepad2LeftBumper[j], gamepad2LeftTrigger[j], gamepad2RightBumper[j], gamepad2RightTrigger[j]);
+//                        csvPrinter.printRecord(className, voltage[i], runtime[j], gamepad1A[j], gamepad1B[j], gamepad1X[j], gamepad1Y[j], gamepad1A[j], gamepad1RightStickX[j],
+//                                gamepad1RightStickX[j], gamepad1RightStickY[j], gamepad1LeftStickX[j], gamepad1LeftStickY[j], gamepad1RightStickButton[j],
+//                                gamepad1DpadUp[j], gamepad1DpadDown[j], gamepad1DpadLeft[j], gamepad1DpadRight[j],
+//                                gamepad1LeftBumper[j], gamepad1LeftTrigger[j], gamepad1RightBumper[j], gamepad1RightTrigger[j],
+//                                gamepad2A[j], gamepad2B[j], gamepad2X[j], gamepad2Y[j],
+//                                gamepad2RightStickX[j], gamepad2RightStickY[j], gamepad2LeftStickX[j], gamepad2LeftStickY[j], gamepad2RightStickButton[j],
+//                                gamepad2DpadUp[j], gamepad2DpadDown[j], gamepad2DpadLeft[j], gamepad2DpadRight[j],
+//                                gamepad2LeftBumper[j], gamepad2LeftTrigger[j], gamepad2RightBumper[j], gamepad2RightTrigger[j]);
                     }
                 }
                 writer.close();
-                csvPrinter.close();
+                //csvPrinter.close();
             }
             return " Works Well";
         }
@@ -372,20 +373,20 @@ public class DataLoggerController {
             if(!AddLine(_runtime)){
                 Writer writer = new FileWriter(file);
                 DeclareHeaders();
-                CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
+                //CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers));
                 for (int j = 0; j <= i; j++)
                 {
-                    csvPrinter.printRecord(className, runtime[j], gamepad1A[j], gamepad1B[j], gamepad1X[j], gamepad1Y[j], gamepad1A[j], gamepad1RightStickX[j],
-                            gamepad1RightStickX[j], gamepad1RightStickY[j], gamepad1LeftStickX[j], gamepad1LeftStickY[j], gamepad1RightStickButton[j],
-                            gamepad1DpadUp[j], gamepad1DpadDown[j], gamepad1DpadLeft[j], gamepad1DpadRight[j],
-                            gamepad1LeftBumper[j], gamepad1LeftTrigger[j], gamepad1RightBumper[j], gamepad1RightTrigger[j],
-                            gamepad2A[j], gamepad2B[j], gamepad2X[j], gamepad2Y[j],
-                            gamepad2RightStickX[j], gamepad2RightStickY[j], gamepad2LeftStickX[j], gamepad2LeftStickY[j], gamepad2RightStickButton[j],
-                            gamepad2DpadUp[j], gamepad2DpadDown[j], gamepad2DpadLeft[j], gamepad2DpadRight[j],
-                            gamepad2LeftBumper[j], gamepad2LeftTrigger[j], gamepad2RightBumper[j], gamepad2RightTrigger[j]);
+//                    csvPrinter.printRecord(className, runtime[j], gamepad1A[j], gamepad1B[j], gamepad1X[j], gamepad1Y[j], gamepad1A[j], gamepad1RightStickX[j],
+//                            gamepad1RightStickX[j], gamepad1RightStickY[j], gamepad1LeftStickX[j], gamepad1LeftStickY[j], gamepad1RightStickButton[j],
+//                            gamepad1DpadUp[j], gamepad1DpadDown[j], gamepad1DpadLeft[j], gamepad1DpadRight[j],
+//                            gamepad1LeftBumper[j], gamepad1LeftTrigger[j], gamepad1RightBumper[j], gamepad1RightTrigger[j],
+//                            gamepad2A[j], gamepad2B[j], gamepad2X[j], gamepad2Y[j],
+//                            gamepad2RightStickX[j], gamepad2RightStickY[j], gamepad2LeftStickX[j], gamepad2LeftStickY[j], gamepad2RightStickButton[j],
+//                            gamepad2DpadUp[j], gamepad2DpadDown[j], gamepad2DpadLeft[j], gamepad2DpadRight[j],
+//                            gamepad2LeftBumper[j], gamepad2LeftTrigger[j], gamepad2RightBumper[j], gamepad2RightTrigger[j]);
                 }
                 writer.close();
-                csvPrinter.close();
+                //csvPrinter.close();
             }
             return " Works Well";
         }

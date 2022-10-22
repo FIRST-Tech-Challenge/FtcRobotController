@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.hardware.TimestampedI2cData;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.util.ThreadPool;
 
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
+//import org.firstinspires.ftc.robotcore.internal.opmode.OpModeManagerImpl;
+// error: not finding OpModeManagerImpl
 import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryInternal;
 import org.firstinspires.ftc.teamcode.Functions.Auxiliary.DefaultVariables;
 
@@ -301,14 +302,15 @@ public abstract class LinearDrive extends DefaultVariables  {
                     // If the user has given us a telemetry.update() that hasn't get gone out, then
                     // push it out now. However, any NEW device health warning should be suppressed while
                     // doing so, since required state might have been cleaned up by now and thus generate errors.
-                    TimestampedI2cData.suppressNewHealthWarningsWhile(new Runnable() {
-                        @Override public void run() {
-                            if (telemetry instanceof TelemetryInternal) {
-                                telemetry.setMsTransmissionInterval(0); // will be reset the next time the opmode runs
-                                ((TelemetryInternal) telemetry).tryUpdateIfDirty();
-                            }
-                        }
-                    });
+//                    TimestampedI2cData.suppressNewHealthWarningsWhile(new Runnable() {
+//                        @Override public void run() {
+//                            if (telemetry instanceof TelemetryInternal) {
+//                                telemetry.setMsTransmissionInterval(0); // will be reset the next time the opmode runs
+//                                ((TelemetryInternal) telemetry).tryUpdateIfDirty();
+//                            }
+//                        }
+//                    });
+                    // error: commented here because of the same thing as above
                     // Do the necessary bookkeeping
                     isShutdown = true;
                 }

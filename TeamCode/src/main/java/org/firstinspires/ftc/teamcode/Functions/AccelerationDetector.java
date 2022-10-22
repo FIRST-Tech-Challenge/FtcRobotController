@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Functions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -38,12 +38,12 @@ public class AccelerationDetector {
         parameter.loggingEnabled = true;
         parameter.loggingTag = "IMU";
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        //ObjectMapper objectMapper = new ObjectMapper();
         String filename = "AdafruitIMUCalibration.json";
         File file = AppUtil.getInstance().getSettingsFile(filename);
         BNO055IMU.CalibrationData calibrationData;
-        calibrationData = objectMapper.readValue( ReadWriteFile.readFile(file), BNO055IMU.CalibrationData.class);
-        gyro.writeCalibrationData(calibrationData);
+        //calibrationData = objectMapper.readValue( ReadWriteFile.readFile(file), BNO055IMU.CalibrationData.class);
+        //gyro.writeCalibrationData(calibrationData);
         InitializeGyro();
 
     }
