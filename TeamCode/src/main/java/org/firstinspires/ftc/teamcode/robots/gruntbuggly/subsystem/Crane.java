@@ -108,7 +108,7 @@ public class Crane implements Subsystem {
     boolean USE_MOTOR_SMOOTHING = true;
 
 
-    StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).build();
+    StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
     public Crane(HardwareMap hardwareMap, Robot robot, boolean simulated) {
         this.robot = robot;

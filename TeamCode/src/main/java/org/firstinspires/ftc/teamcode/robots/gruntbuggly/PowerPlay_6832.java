@@ -236,6 +236,8 @@ public class PowerPlay_6832 extends OpMode {
             configureDashboardMatch();
         telemetry.update();
 
+
+
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -416,11 +418,15 @@ public class PowerPlay_6832 extends OpMode {
 
        Pose2d target = robot.field.targetCoordinate;
        Pose2d current = robot.field.poseToCoordinates(robot.driveTrain.getPoseEstimate());
+       Pose2d current2 = robot.driveTrain.getPoseEstimate();
         telemetry.addLine("target X" + target.getX());
         telemetry.addLine("target Y" + target.getY());
 
         telemetry.addLine("current X" + current.getX());
         telemetry.addLine("current Y" + current.getY());
+
+        telemetry.addLine("current_actual X" + current2.getX());
+        telemetry.addLine("current_actual Y" + current2.getY());
         TelemetryPacket packet = new TelemetryPacket();
 
         long updateStartTime = System.nanoTime();

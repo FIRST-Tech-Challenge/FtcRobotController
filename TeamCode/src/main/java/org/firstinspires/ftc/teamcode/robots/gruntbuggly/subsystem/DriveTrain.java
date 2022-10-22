@@ -38,6 +38,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.firstinspires.ftc.teamcode.robots.gruntbuggly.Field;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.gruntbuggly.trajectorysequence.TrajectorySequenceBuilder;
@@ -95,7 +96,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //PID LOOPS_______________________________________________________________________
 
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.1, 0, 0);
     public static double HEADING_PID_TOLERANCE = 1;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
@@ -187,11 +188,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         //default pose - gotta have some initial pose
         setPoseEstimate(Position.START_RIGHT.getPose());
+
         currentPose = new Pose2d(0,0,0);
 
         driveToNextTarget = Utils.getStateMachine(gridDrive)
                 .addState(() -> false)
                 .build();
+
+
 
     }
 
@@ -231,14 +235,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
 
         heading = wrapAngleRad(orientation.firstAngle - headingOffset);
+
         roll = wrapAngleRad(orientation.secondAngle - rollOffset);
         pitch = wrapAngleRad(orientation.thirdAngle - pitchOffset);
 
         AngularVelocity angularVelocities = imu.getAngularVelocity();
         pitchVelocity = wrapAngleRad(angularVelocities.yRotationRate);
         angularVelocity = wrapAngleRad(angularVelocities.xRotationRate);
-        if (angularVelocity > Math.PI)
-            angularVelocity -= 2 * Math.PI;
+
 
         updatePoseEstimate();
         poseEstimate = getPoseEstimate();
@@ -356,7 +360,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             return false;
         }
         double time = System.nanoTime() / 1e9 + timeStep - startTime;
-        Pose2d newPoint = gridPathLine.getPointAtTime(time);
+        Pose2d newPoint = Field.coordinatesToPose(gridPathLine.getPointAtTime(time));
         Pose2d currentPoseEstimate = getPoseEstimate();
         double dx = newPoint.getX() - currentPoseEstimate.getX();
         double dy = newPoint.getY() - currentPoseEstimate.getY();
@@ -365,15 +369,15 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         double heading = getExternalHeading();
 
         //todo check this heading code
-        double sign = Math.signum(dx * ( -Math.sin(heading)) + dy * (Math.cos(heading))) >= 0 ? 1:-1;
+        double sign = Math.signum(dx * ( Math.cos(heading)) - dy * (Math.sin(heading))) >= 0 ? 1:-1;
         double newHeading = Math.atan2(dy,dx) + (sign>=0 ? 0:(2*Math.PI));
 
         headingPID.setSetpoint(newHeading);
         headingPID.setInput(getPoseEstimate().getHeading());
         double correction = headingPID.performPID();
 
-        setLeftVelocity(velocity - correction);
-        setRightVelocity(velocity+correction);
+        setLeftVelocity(sign*velocity + correction);
+        setRightVelocity(sign*velocity-correction);
 
         return time > gridPathLine.getTotalTime();
     }
@@ -606,10 +610,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     }
 
-    @Override
-    public double getRawExternalHeading() {
-        return getExternalHeading();
-    }
+
 
     @Override
     public Double getExternalHeadingVelocity() {
@@ -651,4 +652,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
 
 
+    @Override
+    protected double getRawExternalHeading() {
+        return heading-headingOffset;
+    }
 }

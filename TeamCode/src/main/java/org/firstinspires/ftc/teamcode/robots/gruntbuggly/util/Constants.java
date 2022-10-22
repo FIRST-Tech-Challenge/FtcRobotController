@@ -76,7 +76,7 @@ public class Constants {
 
     public enum Position {
         START_LEFT(new Pose2d(-1.5, 9, Math.toRadians(0))),
-        START_RIGHT(new Pose2d(-1.5, 9, Math.toRadians(0))),
+        START_RIGHT(new Pose2d(12, 12, Math.toRadians(0))),
 
         RED_SHIPPING_HUB(new Pose2d(-12, -24)),
         BLUE_SHIPPING_HUB(new Pose2d(-12, 24));

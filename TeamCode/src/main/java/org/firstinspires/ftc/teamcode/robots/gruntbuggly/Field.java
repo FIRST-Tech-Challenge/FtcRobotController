@@ -30,10 +30,10 @@ public class Field {
 
     public Pose2d targetCoordinate;
 
-    public double inchesPerGrid = 24;
+    public static double inchesPerGrid = 24;
     public int fieldWidth = 12;
 
-    HashMap<String, FieldObject[]> mapObjects;
+    HashMap<String, FieldObject[]> mapObjects = new HashMap<String, FieldObject[]>();
 
 
     public Field(boolean isBlue){
@@ -109,6 +109,13 @@ public class Field {
 
     }
 
+    public static Pose2d coordinatesToPose(Pose2d coordinate){
+        return new Pose2d(
+                coordinate.getX()*inchesPerGrid + inchesPerGrid/2,
+                coordinate.getY()*inchesPerGrid + inchesPerGrid/2,
+                0
+        );
+    }
     public void changeOwnership(int ID, boolean isBlue, boolean isRed){
         objects[ID].setOwnership(isBlue,isRed);
     }
@@ -249,12 +256,24 @@ public class Field {
                 targetPose.getX() - currentPose.getX()
         );
     }
-
     public StateMachine getPathToTarget(DriveTrain driveTrain){
+        Pose2d currentCoordinate = poseToCoordinates(driveTrain.getPoseEstimate());
+        StateMachine state = Utils.getStateMachine(new Stage())
+                .addState(() ->
+                        driveTrain.setPath(new PathLine(new Pose2d(0,0,0),new Pose2d(2,0,0),0, 2, 1))
+                )
+                .addState(() ->
+                        driveTrain.followPath()
+                )
+                //todo add drivetrain
+                .build();
+        return  state;
+    }
+    /*public StateMachine getPathToTarget(DriveTrain driveTrain){
         StateMachine state;
 
         Pose2d currentCoordinate = poseToCoordinates(driveTrain.getPoseEstimate());
-        double currentHeading = driveTrain.getRawExternalHeading();
+        double currentHeading = driveTrain.getExternalHeading();
         Pose2d velocity = driveTrain.getPoseVelocity();
         //does the robot only need one component to make it
         if (orthogonalPoses(currentCoordinate, targetCoordinate)){
@@ -312,7 +331,7 @@ public class Field {
 
 
     }
-
+*/
     public void goToStack(Robot robot){
         Pose2d currentPose = robot.driveTrain.getPoseEstimate();
         FieldObject nearestStack = getNearestObject("AllianceStack", poseToCoordinates(currentPose));
