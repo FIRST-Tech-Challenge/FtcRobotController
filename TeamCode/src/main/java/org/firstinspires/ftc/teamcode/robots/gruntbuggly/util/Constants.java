@@ -36,10 +36,12 @@ public class Constants {
     public static final double MAX_VELOCITY = 2;
     public static final double MAX_ACCELERATION = 1;
 
+    public static final double DIFF_TICKS_PER_INCH = 307.699557;
+
     // ratios
 
     public static double DIFF_TICKS_PER_REV = 768; //dummy - update to estimate and then validated
-    public static double DIFF_TICKS_PER_INCH = 30.7708333333; //dummy - update to estimate and then validated
+
 
 
     //----------------------------------------------------------------------------------------------

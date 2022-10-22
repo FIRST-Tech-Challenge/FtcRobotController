@@ -260,7 +260,7 @@ public class Field {
         Pose2d currentCoordinate = poseToCoordinates(driveTrain.getPoseEstimate());
         StateMachine state = Utils.getStateMachine(new Stage())
                 .addState(() ->
-                        driveTrain.setPath(new PathLine(new Pose2d(0,0,0),new Pose2d(2,0,0),0, 2, 1))
+                        driveTrain.setPath(new PathLine(new Pose2d(0,0,0),new Pose2d(2,0,0),0, 12, 10))
                 )
                 .addState(() ->
                         driveTrain.followPath()
