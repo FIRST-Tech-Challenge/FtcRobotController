@@ -143,7 +143,7 @@ public class TeleopDualSlider extends LinearOpMode {
 
     // variables for auto load and unload cone
     static final int COUNTS_PER_FEET_MOTION = 360; // robot moving 1 feet for 360 counts position.
-    double robotAutoLoadMovingDistance = 0.0; // in feet
+    double robotAutoLoadMovingDistance = 0.05; // in feet
     double robotAutoUnloadMovingDistance = 0.25; // in feet
 
 
@@ -154,6 +154,8 @@ public class TeleopDualSlider extends LinearOpMode {
     double correction = 0.0;
     double rotation = 0.0;
     PIDController pidRotate, pidDrive;
+    boolean resetAngleFlag = false;
+    static final int INERTIA_WAIT_TIME = 500; // in ms
 
     @Override
     public void runOpMode() {
@@ -234,7 +236,7 @@ public class TeleopDualSlider extends LinearOpMode {
         pidDrive.setSetpoint(0);
         pidDrive.setOutputRange(0, power);
         pidDrive.setInputRange(-90, 90);
-
+        pidDrive.enable();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -252,6 +254,7 @@ public class TeleopDualSlider extends LinearOpMode {
             double BackLeftPower;
             double BackRightPower;
 
+
             double drive = POWER_FACTOR * Math.pow(gamepad1.left_stick_y, 1 + (2 * RAMP_ON));
             double turn  =  POWER_FACTOR * Math.pow(-gamepad1.right_stick_x, 1 + (2 * RAMP_ON));
             double strafe = POWER_FACTOR * Math.pow(-gamepad1.left_stick_x, 1 + (2 * RAMP_ON));
@@ -259,15 +262,25 @@ public class TeleopDualSlider extends LinearOpMode {
             // only enable correction when the turn button is not pressed.
             if (Math.abs(turn) > Math.ulp(0)) {
                 pidDrive.reset();
+                runtime.reset();
+                resetAngleFlag = true;
                 resetAngle(); // Resets the cumulative angle tracking to zero.
             }
-            else {
+
+            // turn on PID after a duration time to avoid robot inertia after turning.
+            if ((runtime.milliseconds() > INERTIA_WAIT_TIME) && resetAngleFlag) {
+                resetAngle(); // Resets the cumulative angle tracking to zero.
+                resetAngleFlag = false;
                 pidDrive.enable();
             }
 
             // Use PID with imu input to drive in a straight line.
-            correction = pidDrive.performPID(getAngle());
-
+            if ((Math.abs(drive) > Math.ulp(0)) || (Math.abs(strafe) > Math.ulp(0))) {
+                correction = pidDrive.performPID(getAngle());
+            }
+            else {
+                correction = 0.0;
+            }
             telemetry.addData("1 imu heading", lastAngles.firstAngle);
             telemetry.addData("2 global heading", globalAngle);
             telemetry.addData("3 correction", correction);

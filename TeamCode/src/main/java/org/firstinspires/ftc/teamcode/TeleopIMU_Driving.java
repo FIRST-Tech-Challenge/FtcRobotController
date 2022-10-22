@@ -168,7 +168,7 @@ public class TeleopIMU_Driving extends LinearOpMode {
         FrontRightDrive = hardwareMap.get(DcMotor.class, "FrontRight");
         BackLeftDrive = hardwareMap.get(DcMotor.class,"BackLeft");
         BackRightDrive = hardwareMap.get(DcMotor.class,"BackRight");
-        SliderMotor = hardwareMap.get(DcMotor.class,"SliderMotor");
+        SliderMotor = hardwareMap.get(DcMotor.class,"RightSlider");
         armServo = hardwareMap.get(Servo.class, "ArmServo");
         clawServo = hardwareMap.get(Servo.class, "ClawServo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
