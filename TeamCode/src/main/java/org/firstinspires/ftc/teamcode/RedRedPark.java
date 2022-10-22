@@ -15,20 +15,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous(name ="MOAuto", group = "A")
-public class mostlyOperationalAutonomous extends DriveMethods {
-    @Override
+public class RedRedPark extends DriveMethods {
     public void runOpMode() {
-        BNO055IMU imu;
-
-        initMotorsBlue();
-
-        //calibrateImu();
+        initMotorsSecondBot();
 
         waitForStart();
 
+        driveForDistance(1, Direction.FORWARD, 0.5,0);
 
         while(opModeIsActive()) {
 
         }
+
+
     }
+
+
+
 }

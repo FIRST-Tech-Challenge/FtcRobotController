@@ -252,7 +252,7 @@ public class DriveMethods extends LinearOpMode{
         }
     }
     public void driveForDistance(double distanceMeters, Direction movementDirection, double power, double targetRotation) { // distance: 2, strafe: false, power: 0.5
-        targetZ = getCurrentZ();
+        //targetZ = getCurrentZ();
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -271,28 +271,28 @@ public class DriveMethods extends LinearOpMode{
                 motorBL.setPower(power);
                 motorFR.setPower(power);
                 motorBR.setPower(power);
-                targetZ = 0;
+                //targetZ = 0;
                 break;
             case BACKWARD:
                 motorFL.setPower(-power);
                 motorBL.setPower(-power);
                 motorFR.setPower(-power);
                 motorBR.setPower(-power);
-                targetZ = 0;
+                //targetZ = 0;
                 break;
             case RIGHT:
                 motorFL.setPower(power);
                 motorBL.setPower(-power);
                 motorFR.setPower(-power);
                 motorBR.setPower(power);
-                targetZ = getCurrentZ();
+                //targetZ = getCurrentZ();
                 break;
             case LEFT:
                 motorFL.setPower(-power);
                 motorBL.setPower(power);
                 motorFR.setPower(power);
                 motorBR.setPower(-power);
-                targetZ = getCurrentZ();
+                //targetZ = getCurrentZ();
                 break;
             case ROTATE:
                 // motorFL.setPower(-power);
@@ -334,6 +334,7 @@ public class DriveMethods extends LinearOpMode{
         double BLPower = motorBL.getPower();
         double FRPower = motorFR.getPower();
         double BRPower = motorBR.getPower();
+        /*
         while (targetPos >= avgPosition) {
             FLPosition = Math.abs(motorFL.getCurrentPosition());
             BLPosition = Math.abs(motorBL.getCurrentPosition());
@@ -361,7 +362,7 @@ public class DriveMethods extends LinearOpMode{
             telemetry.addLine("Current Z " + getCurrentZ());
             telemetry.addLine("Error " + rotateError);
             telemetry.update();
-        }
+        }*/
 
         motorFL.setPower(0);
         motorBL.setPower(0);
