@@ -244,6 +244,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         while (heading > 180)  heading -= 360;
         while (heading <= -180) heading += 360;
 
+        robot.setDriveForward();
+        /*
         if(heading < 0) {
             robot.setDriveBackward();
         }
@@ -251,6 +253,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         {
             robot.setDriveForward();
         }
+        */
+
         motorController = new ConceptPidMotorController(0.009, 0, -0.02);
         motorController.setGoal(heading);
         motorController.setFeedbackValue(this.getRawHeading());
@@ -266,6 +270,12 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
                 turnSpeed = motorController.getValue();
 
                 //turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+            if(motorController.getError() < 0 && turnSpeed > 0) {
+                turnSpeed *= -1;
+            }
+            if(motorController.getError() > 0 && turnSpeed < 0) {
+                turnSpeed *= -1;
+            }
 
                 robot.drive(0, turnSpeed);
 
