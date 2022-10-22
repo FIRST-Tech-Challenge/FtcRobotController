@@ -139,9 +139,9 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
         runtime.reset();
 
-        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        driveStraight(DRIVE_SPEED, -24.0, 0.0);    // Drive Forward 24"
-        turnAndDrive( TURN_SPEED, -90.0);               // Turn  CW to -45 Degrees
+        //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
+        //driveStraight(DRIVE_SPEED, -24.0, 0.0);    // Drive Forward 24"
+        turnAndDrive( 0, -90.0);               // Turn  CW to -45 Degrees
         //holdHeading( TURN_SPEED, -45.0, 2);   // Hold -45 Deg heading for a 1/2 second
 
         //driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
@@ -200,14 +200,16 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
             robot.setTargetPosition(distance);
 
-            robot.tankDrive(driveSpeed, driveSpeed);
+            //robot.tankDrive(driveSpeed, driveSpeed);
+            turnAndDrive(driveSpeed, heading);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() && robot.isBusyDriving())
-            {
-                turnAndDrive(driveSpeed, heading);
-            }
+            //while (opModeIsActive() && robot.isBusyDriving())
+            //{
+                //turnAndDrive(driveSpeed, heading);
+            //}
 
+            //robot.tankDrive(driveSpeed, driveSpeed);
             robot.stop();
             robot.resetEncoder();
         }
@@ -223,15 +225,18 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         while (heading <= -180) heading += 360;
 
 
-        motorController = new ConceptPidMotorController(0.002, 0, 0.02);
+        motorController = new ConceptPidMotorController(0.009, 0, 0.02);
         motorController.setGoal(heading);
         motorController.setFeedbackValue(this.getRawHeading());
-        //telemetry.addData("Error:Steer",  "%5.1f:%5.1f", motorController.getError(), heading);
+        telemetry.addData("Error:Steer",  "%5.1f:%5.1f", motorController.getError(), heading);
 
-        while (opModeIsActive() && (Math.abs(motorController.getError()) > HEADING_THRESHOLD))
+        while (opModeIsActive())
         {
-            motorController.setFeedbackValue(this.getRawHeading());
-            double turnSpeed = motorController.getValue();
+            double turnSpeed = driveSpeed;
+            if((Math.abs(motorController.getError()) > HEADING_THRESHOLD)) {
+                motorController.setFeedbackValue(this.getRawHeading());
+                turnSpeed = motorController.getValue();
+            }
             robot.arcadeDrive(driveSpeed, turnSpeed);
 
             telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", requestHeading, this.getRawHeading());

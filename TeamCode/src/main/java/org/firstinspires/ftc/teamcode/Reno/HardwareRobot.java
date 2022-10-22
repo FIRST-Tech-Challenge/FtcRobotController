@@ -327,6 +327,12 @@ public class HardwareRobot
         rightDriveFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //motorStatus =  String.format("Speed - LF %d:LB %d:RF %d:RB %d", leftFrontTarget, rightFrontTarget, leftBackTarget, rightBackTarget);
+    }
+
+    public String getCurrentPosition() {
+
+        return String.format("Position - LF %d:LB %d:RF %d:RB %d", leftDriveFront.getCurrentPosition(), rightDriveFront.getCurrentPosition() , leftDriveBack.getCurrentPosition(), rightDriveBack.getCurrentPosition());
     }
 
     public void setMotorStatus(double leftFrontSpeed, double leftBackSpeed, double rightFrontSpeed, double rightBackSpeed)
