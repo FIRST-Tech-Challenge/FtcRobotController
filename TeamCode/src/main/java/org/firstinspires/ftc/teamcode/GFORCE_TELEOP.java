@@ -51,7 +51,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         elevator = new Elevator(this);
 
-        elevator.setHome();
+        elevator.resetHome();
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
