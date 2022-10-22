@@ -92,6 +92,8 @@ public class PowerPlayComputerVisionPipelines {
                  */
             }
         });
+
+
     }
 
     public void stopCamera(){
@@ -146,10 +148,13 @@ public class PowerPlayComputerVisionPipelines {
 
 
 //        The thresholds to which the averages are compared.
-        final int RED_SLEEVE_SIDE = 140;
+        final int RED_SLEEVE_SIDE = 189;
         final int YELLOW_SLEEVE_SIDE = 140;
-        final int GREEN_SLEEVE_SIDE = 140;
+        final int GREEN_SLEEVE_SIDE = 115;
 
+        int distanceFromGreen;
+        int distanceFromRed;
+        int distanceFromYellow;
 
 
         /*
@@ -159,6 +164,12 @@ public class PowerPlayComputerVisionPipelines {
         Mat LAB = new Mat();
         Mat A = new Mat();
         Mat B = new Mat();
+
+        Mat aRegion;
+        Mat bRegion;
+
+        int aChannelAvg;
+        int bChannelAvg;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile SleeveColor color = SleeveColor.RED;
@@ -187,12 +198,11 @@ public class PowerPlayComputerVisionPipelines {
             inputToLAB(input);
 
 //            Declare regions
-            Mat aRegion = A.submat(new Rect(topLeftPoint, bottomRightPoint));
-            Mat bRegion = B.submat(new Rect(topLeftPoint, bottomRightPoint));
+            aRegion = A.submat(new Rect(topLeftPoint, bottomRightPoint));
+            bRegion = B.submat(new Rect(topLeftPoint, bottomRightPoint));
 
-
-            int aChannelAvg = (int) Core.mean(aRegion).val[0];
-            int bChannelAvg = (int) Core.mean(bRegion).val[0];
+            aChannelAvg = (int) Core.mean(aRegion).val[0];
+            bChannelAvg = (int) Core.mean(bRegion).val[0];
 
 
 //              This is what displays the rectangle to the camera stream on the drive hub
@@ -207,16 +217,23 @@ public class PowerPlayComputerVisionPipelines {
             telemetry.addData("A Average", aChannelAvg);
             telemetry.addData("B Average", bChannelAvg);
 
+
 //
-            int distanceFromGreen = aChannelAvg - GREEN_SLEEVE_SIDE;
-            int distanceFromRed = aChannelAvg - RED_SLEEVE_SIDE;
-            int distanceFromYellow = bChannelAvg - YELLOW_SLEEVE_SIDE;
+            distanceFromGreen = Math.abs(aChannelAvg - GREEN_SLEEVE_SIDE);
+            distanceFromRed = Math.abs(aChannelAvg - RED_SLEEVE_SIDE);
+            distanceFromYellow = Math.abs(bChannelAvg - YELLOW_SLEEVE_SIDE);
+
+
+            telemetry.addData("distanceFromGreen", distanceFromGreen);
+            telemetry.addData("distanceFromRed", distanceFromRed);
+            telemetry.addData("distanceFromYellow", distanceFromYellow);
+
 
             if (distanceFromGreen < distanceFromRed && distanceFromGreen < distanceFromYellow) {
                 color = SleeveColor.GREEN;
             } else if (distanceFromRed < distanceFromGreen && distanceFromRed < distanceFromYellow) {
                 color = SleeveColor.RED;
-            } else if (distanceFromYellow > distanceFromRed) {
+            } else if (distanceFromYellow < distanceFromRed) {
                 color = SleeveColor.YELLOW;
             }
 
