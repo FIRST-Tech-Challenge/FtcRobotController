@@ -230,6 +230,14 @@ abstract class DriveDirections extends LinearOpMode {
 
     }
 
+//    public void straightDrive(String direction, double power, double dist, double errorThresh, double powerDifference){
+//        switch(direction){
+//            case "FORWARD":
+//
+//                break;
+//        }
+//    }
+
     public double getCurrentZ() {
         Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
