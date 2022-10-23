@@ -105,6 +105,8 @@ public class HardwareDrive
 
         topL = hwMap.get(DcMotorEx.class, "top_left");
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
+        topR = hwMap.get(DcMotorEx.class, "top_right");
+        botR = hwMap.get(DcMotorEx.class, "bottom_right");
 
 
 
@@ -125,6 +127,8 @@ public class HardwareDrive
         //Set Motor Directions
         botL.setDirection(DcMotorSimple.Direction.REVERSE);
         topL.setDirection(DcMotorSimple.Direction.REVERSE);
+        botR.setDirection(DcMotorSimple.Direction.REVERSE);
+        topR.setDirection(DcMotorSimple.Direction.REVERSE);
        // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -143,16 +147,22 @@ public class HardwareDrive
             // Grady Conwell Was Here
             botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         } else {
             botL.setPower(0);
             topL.setPower(0);
+            botR.setPower(0);
+            topR.setPower(0);
         }
     }
 
     public void setRunMode(DcMotor.RunMode runState){
         botL.setMode(runState);
         topL.setMode(runState);
+        topR.setMode(runState);
+        botR.setMode(runState);
         //make sure to not add arm here
     }
 

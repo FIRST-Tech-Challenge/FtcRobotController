@@ -99,17 +99,17 @@ public class testGPS extends OpMode{
     }
 
     void DriveTrainBasePower(){
-        int powerBotL = 1;
-        int powerTopL = 1;
-
-        if (gamepad1.dpad_up){
-            robot.botL.setPower(powerBotL);
-            robot.topL.setPower(powerTopL);
-        }
-        else{
-            robot.botL.setPower(0);
-            robot.topL.setPower(0);
-        }
+//        int powerBotL = 1;
+//        int powerTopL = 1;
+//
+//        if (gamepad1.dpad_up){
+//            robot.botL.setPower(powerBotL);
+//            robot.topL.setPower(powerTopL);
+//        }
+//        else{
+//            robot.botL.setPower(0);
+//            robot.topL.setPower(0);
+//        }
     }
 
     void DriveTrainPowerEncoder(){
@@ -117,24 +117,36 @@ public class testGPS extends OpMode{
 
         int posBotL = robot.botL.getCurrentPosition();
         int posTopL = robot.topL.getCurrentPosition();
+        int posBotR = robot.botR.getCurrentPosition();
+        int posTopR = robot.topR.getCurrentPosition();
 
         double alpha = 0.5;
         double beta = 1 - alpha;
 
         int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
         int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
+        int distanceTopR = (int) (gamepad1.left_stick_y * 100 * beta);
+        int distanceBotR = (int) (-gamepad1.left_stick_y * 100 * beta);
 
         int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
         int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
+        int rotationalTopR = (int) (gamepad1.left_stick_x * 100 * alpha);
+        int rotationalBotR = (int) (gamepad1.left_stick_x * 100 * alpha);
 
         robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
         robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
+        robot.botR.setTargetPosition(posBotR + distanceBotR + rotationalBotR);
+        robot.topR.setTargetPosition(posTopR + distanceTopR + rotationalTopR);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
         robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.botR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.topR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
     }
 
     private void reset(){
