@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.Math.SplineMath;
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -22,6 +23,7 @@ public class testGPS extends OpMode{
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
     TeleopKinematics kinematics;
+    Constants constants = new Constants();
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -91,6 +93,7 @@ public class testGPS extends OpMode{
         telemetry.update();
     }
 
+
     void UpdateButton(){
         x.update(gamepad1.x);
         y.update(gamepad1.y);
@@ -115,38 +118,41 @@ public class testGPS extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
-        int posBotR = robot.botR.getCurrentPosition();
-        int posTopR = robot.topR.getCurrentPosition();
-
         double alpha = 0.7;
         double beta = 1 - alpha;
 
-        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
-        int distanceTopR = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotR = (int) (-gamepad1.left_stick_y * 100 * beta);
+        int[] clicksArr = getClicksTurn(0, 90);
+        int distanceClicks = clicksArr[0];
+        int rotClicks = clicksArr[1];
 
-        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalTopR = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotR = (int) (gamepad1.left_stick_x * 100 * alpha);
+        drive(distanceClicks, rotClicks);
 
-        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
-        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
-        robot.botR.setTargetPosition(posBotR + distanceBotR + rotationalBotR);
-        robot.topR.setTargetPosition(posTopR + distanceTopR + rotationalTopR);
+        robot.botL.setPower(0.5);
+        robot.topL.setPower(0.5);
+        robot.botR.setPower(0.5);
+        robot.topR.setPower(0.5);
+    }
+
+    public void drive(int distanceClicks, int rotClicks){
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
 
-        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.botR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+    public int[] getClicksTurn(double distance, double rotation){
+        int[] clicks = new int[2];
+        double translationClicks = distance * constants.CLICKS_PER_INCH; //rotation clicks
+        double rotationClicks = rotation * constants.CLICKS_PER_DEGREE; //table spinning clicks
+
+        clicks[0] = (int)translationClicks;
+        clicks[1] = (int)rotationClicks;
+        return clicks;
     }
 
     private void reset(){
