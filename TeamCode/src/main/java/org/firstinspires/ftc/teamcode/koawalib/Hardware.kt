@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode.koawalib
 
+import com.asiankoala.koawalib.control.controller.PIDGains
+import com.asiankoala.koawalib.control.motor.DisabledPosition
+import com.asiankoala.koawalib.control.motor.FFGains
+import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.KEncoder
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
+import com.asiankoala.koawalib.hardware.sensor.KDistanceSensor
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
+import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 import org.firstinspires.ftc.teamcode.koawalib.vision.AprilTagDetectionPipeline
-import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
 
 class Hardware(startPose: Pose) {
@@ -30,14 +37,37 @@ class Hardware(startPose: Pose) {
         .brake
         .build()
 
-//    val slides = MotorFactory("Slides")
-//        .reverse
-//        .brake
-//        .build()
+    val liftMotor = MotorFactory("Lift")
+        .float
+        .forward
+        .createEncoder(Lift.ticksPerUnit, false)
+        .zero(Lift.homePos)
+        .withMotionProfileControl(
+            PIDGains(TODO(), TODO(), TODO()),
+            FFGains(kG = TODO(), kS = TODO(), kV = TODO(), kA = TODO()),
+            MotionConstraints(TODO(), TODO()),
+            allowedPositionError = TODO(),
+            disabledPosition = DisabledPosition(TODO())
+        )
+        .build()
 
+    val armMotor = MotorFactory("Arm")
+        .float
+        .createEncoder(Arm.ticksPerUnit, false)
+        .zero(Arm.homePos)
+        .withMotionProfileControl(
+            PIDGains(TODO(), TODO(), TODO()),
+            FFGains(kCos = TODO()),
+            MotionConstraints(TODO(), TODO()),
+            allowedPositionError = TODO(),
+            disabledPosition = DisabledPosition(TODO())
+        )
+        .build()
 
-//    val arm = KServo("Arm")
-//    val claw = KServo("Claw").startAt(Claw.openPos)
+    val clawServo = KServo("Claw")
+        .startAt(Claw.closePos)
+
+    val distanceSensor = KDistanceSensor("distanceSensor")
 
     val lights = KServo("Lights")
 
@@ -51,15 +81,12 @@ class Hardware(startPose: Pose) {
         leftEncoder,
         rightEncoder,
         auxEncoder,
-        9.86,
-        8.325,
+        TODO(),
+        TODO(),
         startPose
     )
 
     companion object {
         private const val ticksPerUnit = 1892.3724
     }
-
-
-
 }

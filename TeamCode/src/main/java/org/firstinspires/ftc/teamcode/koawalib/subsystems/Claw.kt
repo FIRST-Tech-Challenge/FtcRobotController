@@ -1,23 +1,21 @@
 package org.firstinspires.ftc.teamcode.koawalib.subsystems
 
-import com.asiankoala.koawalib.command.commands.InstantCmd
+import com.asiankoala.koawalib.hardware.sensor.KDistanceSensor
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.subsystem.Subsystem
 
-class Claw(val servo: KServo) : Subsystem() {
+class Claw(private val servo: KServo,
+           private val distanceSensor: KDistanceSensor
+) : Subsystem() {
     companion object {
-        const val openPos = 1.0
-        const val closePos = 0.65
+        val openPos : Double = TODO()
+        val closePos : Double = TODO()
+        val distanceThreshold: Double = TODO()
     }
 
-    fun open(){
-        servo.position = openPos
-    }
+    val readyToGrab get() = distanceSensor.lastRead < distanceThreshold
 
-    fun close(){
-        servo.position = closePos
+    fun setPos(pos: Double) {
+        servo.position = pos
     }
-
-    class ClawOpen(claw : Claw) : InstantCmd(claw::open, claw)
-    class ClawClose(claw : Claw) : InstantCmd(claw::close, claw)
 }

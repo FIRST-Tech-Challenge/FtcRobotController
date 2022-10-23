@@ -1,53 +1,76 @@
 package org.firstinspires.ftc.teamcode.koawalib.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
+import com.asiankoala.koawalib.command.commands.ChooseCmd
 import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.MecanumCmd
-import com.asiankoala.koawalib.math.Pose
+import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.math.radians
-import com.asiankoala.koawalib.subsystem.Subsystem
+import com.asiankoala.koawalib.subsystem.odometry.Odometry
+import com.asiankoala.koawalib.util.Alliance
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.koawalib.Robot
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lights
-import org.firstinspires.ftc.teamcode.koawalib.subsystems.SlideMove
+import org.firstinspires.ftc.teamcode.koawalib.RobotState
+import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.DepositSequence
+import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.IntakeSequence
+import org.firstinspires.ftc.teamcode.koawalib.commands.sequences.ReadySequence
 
 @TeleOp
-class KTeleOp : KOpMode() {
-    private val robot by lazy { Robot(startPose) }
-    private val startPose = Pose(-60.0, -10.0, 0.0.radians)
+class KTeleOp : KOpMode(photonEnabled = true) {
+    private val robot by lazy { Robot(Odometry.lastPose) }
 
     override fun mInit() {
-        robot.drive.defaultCommand = MecanumCmd(
+        bindDrive()
+        bindStrat()
+        bindCycles()
+    }
+
+    private fun bindDrive() {
+            robot.drive.defaultCommand = MecanumCmd(
                 robot.drive,
                 driver.leftStick,
-                driver.rightStick.xInverted,
+                driver.rightStick,
+                0.5,
+                0.5,
+                0.5,
                 1.0,
                 1.0,
                 1.0,
-                0.9,
-                0.9,
-                0.9
+                RobotState.alliance,
+                isTranslationFieldCentric = true,
+                isHeadingFieldCentric = true,
+                { robot.drive.pose.heading },
+                60.0.radians
             )
 
-        robot.lightsDevice.setPattern(Lights.BlinkinPattern.RED)
+            driver.a.onToggle(
+                InstantCmd({robot.driveHack.aimbot(driver.leftStick::vector)})
+            )
 
-        driver.x.onPress(InstantCmd({ driver.rumbleBlips(3) }))
-        driver.y.onPress(InstantCmd({ driver.rumble(2500) }))
+            driver.leftTrigger.onToggle(
+            InstantCmd({robot.driveHack.spaceglide(driver.leftStick::vector)})
+        )
+    }
 
-//        driver.dpadUp.onPress(InstantCmd({robot.slidesMotor.setPower(0.25)}, robot.slidesMotor))
-//        driver.dpadDown.onPress(InstantCmd({robot.slidesMotor.setPower(-0.25)}, robot.slidesMotor))
-//        driver.dpadUp.onRelease(InstantCmd({robot.slidesMotor.setPower(0.0)}, robot.slidesMotor))
-//        driver.dpadDown.onRelease(InstantCmd({robot.slidesMotor.setPower(0.0)}, robot.slidesMotor))
-//
-//        driver.a.onPress(Claw.ClawOpen(robot.clawServo))
-//        driver.b.onPress(Claw.ClawClose(robot.clawServo))
+    private fun bindStrat() {
+        driver.leftBumper.onPress(InstantCmd(RobotState::incStrat))
+        driver.rightBumper.onPress(InstantCmd(RobotState::decStrat))
+    }
 
-//        driver.leftBumper.onPress(Arm.ArmReset(robot.armServo))
-//        driver.rightBumper.onPress(Arm.ArmOut(robot.armServo))
+    private fun bindCycles() {
+        driver.rightTrigger.onPress(
+            ChooseCmd(
+                IntakeSequence(robot.claw)
+                    .andThen(ReadySequence(robot)),
+                DepositSequence(robot)
+            ) { RobotState.state == RobotState.State.INTAKING }
+        )
     }
 
     override fun mLoop() {
+        Logger.addTelemetryData("state", RobotState.state)
+        Logger.addTelemetryData("strat", RobotState.strategy)
+        Logger.addTelemetryData("aimbot", driver.a.isToggled)
+        Logger.addTelemetryData("spaceglide", driver.leftTrigger.isToggled)
     }
 }
