@@ -67,6 +67,7 @@ public class Lift {
     public void setState(String level, String subheight){
         switch(level){
             case LIFT_POLE_LOW:{
+
                 raiseHeightTo(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
             }
         }
