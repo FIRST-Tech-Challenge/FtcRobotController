@@ -13,7 +13,8 @@ public class TurtleRobot {
     public DcMotor rightbackmotor = null;
     public DcMotor leftfrontmotor = null;
     public DcMotor leftbackmotor = null;
-    //public CRServo ClawMotor = null;
+    public CRServo ClawMotor = null;
+    public CRServo ArmServo = null;
     public DcMotor leftslidemotor = null;
     public DcMotor rightslidemotor = null;
     public ElapsedTime runtime = new ElapsedTime();
@@ -37,7 +38,8 @@ public class TurtleRobot {
         leftbackmotor = hwMap.get(DcMotor.class, "leftbackmotor");
         rightfrontmotor = hwMap.get(DcMotor.class, "rightfrontmotor");
         rightbackmotor = hwMap.get(DcMotor.class, "rightbackmotor");
-        //ClawMotor = hwMap.get(CRServo.class, "ClawMotor");
+        ClawMotor = hwMap.get(CRServo.class, "ClawMotor");
+        ArmServo = hwMap.get(CRServo.class, "ArmServo");
         leftslidemotor = hwMap.get(DcMotor.class, "leftslidemotor");
         rightslidemotor = hwMap.get(DcMotor.class, "rightslidemotor");
 

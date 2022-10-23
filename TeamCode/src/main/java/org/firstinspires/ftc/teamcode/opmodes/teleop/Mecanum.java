@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
 @TeleOp(name = "Mecanum")
 public class Mecanum extends LinearOpMode {
 
-    double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive;
+    double frontLeftDrive, frontRightDrive, backRightDrive, backLeftDrive, armServo, clawServo, linearslide;
     double driveSpeed = 1;
 
     @Override
@@ -24,28 +24,23 @@ public class Mecanum extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                while (gamepad1.a) {
-                    robot.leftslidemotor.setPower(-1);
-                    robot.rightslidemotor.setPower(-1);
-                }
-                while (gamepad1.b) {
-                    robot.leftslidemotor.setPower(1);
-                    robot.rightslidemotor.setPower(1);
-                }
-                robot.leftslidemotor.setPower(0);
-                robot.rightslidemotor.setPower(0);
+                linearslide = (gamepad2.left_stick_y);
             //                     FORWARD                     TURN                       STRAFE
             frontRightDrive = (-gamepad1.left_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
             frontLeftDrive  = (-gamepad1.left_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backLeftDrive   = (-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
+            clawServo = (gamepad2.right_stick_x);
+            armServo = (gamepad2.right_stick_y);
 
             robot.rightfrontmotor.setPower(frontRightDrive);
             robot.rightbackmotor.setPower(backRightDrive);
             robot.leftbackmotor.setPower(backLeftDrive);
             robot.leftfrontmotor.setPower(frontLeftDrive);
-
-
+            robot.ArmServo.setPower(clawServo);
+            robot.ClawMotor.setPower(armServo);
+            robot.leftslidemotor.setPower(linearslide);
+            robot.rightslidemotor.setPower(linearslide);
             if (frontLeftDrive>0 && frontRightDrive>0 && backLeftDrive>0 && backRightDrive>0) {
                 telemetry.addLine("Going forward");
             }
