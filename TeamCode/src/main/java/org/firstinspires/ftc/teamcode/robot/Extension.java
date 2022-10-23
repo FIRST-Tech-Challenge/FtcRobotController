@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -31,8 +32,8 @@ public class Extension {
     public final double GRABBER_POSITION_CLOSED = 1;    // closed
 
     public final double EXTENSION_MAX_REACH = 10; // TODO: measure actual value in inches and replace this value
-    /*
-    public Extension(HardwareMap hwMap, Telemetry telemetry) {
+
+    public Extension(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
         this.telemetry = telemetry;
 
         extension = (ServoImplEx) hwMap.servo.get("Extension");
@@ -54,7 +55,7 @@ public class Extension {
 
     // This method is intended for Teleop mode getting speed value coming from controller (-1..1)
     // Negative speed values will retract the extension arm.
-    /*
+
     public void extend(double speed) {
         double currentPosition = extension.getPosition();
 
@@ -102,7 +103,7 @@ public class Extension {
 
 
     /************************* TWO-BAR UTILITIES **************************/
-    /*
+
     // Tilt the two-bar to its max position.
     // No micro adjustments envisioned for the two-bar
     public void tiltUp() {
@@ -116,7 +117,7 @@ public class Extension {
     }
 
     /************************* GRABBER UTILITIES **************************/
-    /*
+
     // Opens the claw
     public void grabberOpen() {
         grabber.setPosition(GRABBER_POSITION_OPEN);
@@ -135,7 +136,7 @@ public class Extension {
         return extension.getPosition();
     }
 
-     */
+
 
 
 
