@@ -213,7 +213,7 @@ abstract class DriveDirections extends LinearOpMode {
             }
         }
 
-        else if(difference > 0){
+        else if(difference < 0){
             while (angle > targetAngle) {
                 angle = getCumulativeZ();
                 rightFrontDrive.setPower(-power);
