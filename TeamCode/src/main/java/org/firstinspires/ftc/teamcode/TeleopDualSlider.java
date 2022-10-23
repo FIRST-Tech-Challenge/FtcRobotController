@@ -99,12 +99,12 @@ public class TeleopDualSlider extends LinearOpMode {
     // Driving motor variables
     static final int RAMP_ON = 1; // ramp on to improve small moving control. On: 1; off: 0
     static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
-    static final double ADJUST_POSITION_POWER = 0.2; // used for auto driving
+    static final double AUTO_DRIVE_POWER = 0.3; // used for auto driving
 
     // slider motor variables
     private DcMotor RightSliderMotor = null;
     private DcMotor LeftSliderMotor = null;
-    static final double SLIDER_MOTOR_POWER = 0.4; // slider string gets loose with too high speed
+    static final double SLIDER_MOTOR_POWER = 0.6; // slider string gets loose with too high speed
     static final int COUNTS_PER_INCH = 115;
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // Leave 100 counts for buffer.
     static final int SLIDER_MIN_POS = 0;
@@ -245,8 +245,25 @@ public class TeleopDualSlider extends LinearOpMode {
 
         runtime.reset();
 
+
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            // Game pad buttons design
+            float robotMovingBAckForth = gamepad1.left_stick_y;
+            float robotMovingRightLeft = gamepad1.left_stick_x;
+            float robotTurn = gamepad1.right_stick_x;
+            float sliderUpDown = gamepad1.right_stick_y;
+            boolean sliderGroundJunctionPosition = gamepad1.x;
+            boolean sliderLowJunctionPosition = gamepad1.a;
+            boolean sliderMediumJunctionPosition = gamepad1.b;
+            boolean sliderHighJunctionPosition = gamepad1.y;
+            boolean clawClose = gamepad1.dpad_up;
+            boolean clawOpen = gamepad1.dpad_down;
+            boolean armTurnLeft = gamepad1.dpad_left;
+            boolean armTurnRight = gamepad1.dpad_right;
+            boolean autoLoadCone = gamepad1.left_bumper;
+            boolean autoUnloadCone = gamepad1.right_bumper;
 
             // Setup a variable for each drive wheel to save power level for telemetry
             double FrontLeftPower;
@@ -255,9 +272,9 @@ public class TeleopDualSlider extends LinearOpMode {
             double BackRightPower;
 
 
-            double drive = POWER_FACTOR * Math.pow(gamepad1.left_stick_y, 1 + (2 * RAMP_ON));
-            double turn  =  POWER_FACTOR * Math.pow(-gamepad1.right_stick_x, 1 + (2 * RAMP_ON));
-            double strafe = POWER_FACTOR * Math.pow(-gamepad1.left_stick_x, 1 + (2 * RAMP_ON));
+            double drive = POWER_FACTOR * Math.pow(robotMovingBAckForth, 1 + (2 * RAMP_ON));
+            double turn  =  POWER_FACTOR * Math.pow(-robotTurn, 1 + (2 * RAMP_ON));
+            double strafe = POWER_FACTOR * Math.pow(-robotMovingRightLeft, 1 + (2 * RAMP_ON));
 
             // only enable correction when the turn button is not pressed.
             if (Math.abs(turn) > Math.ulp(0)) {
@@ -281,9 +298,9 @@ public class TeleopDualSlider extends LinearOpMode {
             else {
                 correction = 0.0;
             }
-            telemetry.addData("1 imu heading", lastAngles.firstAngle);
-            telemetry.addData("2 global heading", globalAngle);
-            telemetry.addData("3 correction", correction);
+            telemetry.addData("1 imu heading (%0.2f)", lastAngles.firstAngle);
+            telemetry.addData("2 global heading (%0.2f)", globalAngle);
+            telemetry.addData("3 correction  (%0.2f)", correction);
             telemetry.addData("4 turn rotation", rotation);
 
             FrontLeftPower    = Range.clip(-drive - turn - strafe, -1, 1) ;
@@ -292,7 +309,6 @@ public class TeleopDualSlider extends LinearOpMode {
             BackRightPower   = Range.clip(-drive + turn - strafe, -1, 1) ;
 
 
-            telemetry.addData("5 final correction", correction);
             // Send calculated power to wheels
             FrontLeftDrive.setPower(FrontLeftPower - correction);
             FrontRightDrive.setPower(FrontRightPower + correction);
@@ -300,27 +316,27 @@ public class TeleopDualSlider extends LinearOpMode {
             BackRightDrive.setPower(BackRightPower + correction);
 
             // use Y button to lift up the slider reaching high junction
-            if (gamepad1.y) {
+            if (sliderHighJunctionPosition) {
                 sliderMotorTargetPosition = HIGH_JUNCTION_POS;
             }
 
             // use B button to lift up the slider reaching medium junction
-            if (gamepad1.b) {
+            if (sliderMediumJunctionPosition) {
                 sliderMotorTargetPosition = MEDIUM_JUNCTION_POS;
             }
 
             // use A button to lift up the slider reaching low junction
-            if (gamepad1.a) {
+            if (sliderLowJunctionPosition) {
                 sliderMotorTargetPosition = LOW_JUNCTION_POS;
             }
 
             // use X button to move the slider for ground junction position
-            if (gamepad1.x) {
+            if (sliderGroundJunctionPosition) {
                 sliderMotorTargetPosition = GROUND_JUNCTION_POS;
             }
 
             // use right stick_Y to lift or down slider continuously
-            sliderMotorTargetPosition -= (int)((gamepad1.right_stick_y) * motorPositionInc);
+            sliderMotorTargetPosition -= (int)((sliderUpDown) * motorPositionInc);
             sliderMotorTargetPosition = Range.clip(sliderMotorTargetPosition, SLIDER_MIN_POS,
                     FOUR_STAGE_SLIDER_MAX_POS);
             telemetry.addData("Status", "slider motor Target position %d",
@@ -336,10 +352,10 @@ public class TeleopDualSlider extends LinearOpMode {
                     LeftSliderMotor.getCurrentPosition());
 
             // Keep stepping up until we hit the max value.
-            if (gamepad1.dpad_up) {
+            if (clawClose) {
                 clawServoPosition += CLAW_INCREMENT;
             }
-            else if (gamepad1.dpad_down) {
+            else if (clawOpen) {
                 clawServoPosition -= CLAW_INCREMENT;
             }
             clawServoPosition = Range.clip(clawServoPosition, CLAW_MIN_POS, CLAW_MAX_POS);
@@ -347,10 +363,10 @@ public class TeleopDualSlider extends LinearOpMode {
             telemetry.addData("Status", "Claw Servo position %.2f", clawServoPosition);
 
             // arm servo motor control. Keep stepping up until we hit the max value.
-            if (gamepad1.dpad_left) {
+            if (armTurnLeft) {
                 armServoPosition += ARM_INCREMENT;
             }
-            else if (gamepad1.dpad_right) {
+            else if (armTurnRight) {
                 armServoPosition -= ARM_INCREMENT;
             }
             armServoPosition = Range.clip(armServoPosition, ARM_MIN_POS, ARM_MAX_POS);
@@ -358,7 +374,7 @@ public class TeleopDualSlider extends LinearOpMode {
             telemetry.addData("Status", "Arm Servo position %.2f", armServoPosition);
 
             //  auto driving, grip cone, and lift slider
-            if(gamepad1.left_bumper) {
+            if(autoLoadCone) {
                 autoLoadCone();
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
@@ -368,7 +384,7 @@ public class TeleopDualSlider extends LinearOpMode {
             }
 
             //  auto driving, unload cone
-            if(gamepad1.right_bumper) {
+            if(autoUnloadCone) {
                 autoUnloadCone();
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
@@ -376,11 +392,17 @@ public class TeleopDualSlider extends LinearOpMode {
                 sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
             }
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            // Show the elapsed game time and wheel power, positions.
             telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
                             " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
                     BackLeftPower,BackRightPower);
+
+            telemetry.addData("Motors Positions:",
+                    "Frontleft (%d), Frontright (%d)," + " Backleft (%d), Backright (%d)",
+                    FrontLeftDrive.getCurrentPosition(), FrontRightDrive.getCurrentPosition(),
+                    BackLeftDrive.getCurrentPosition(), BackRightDrive.getCurrentPosition());
+
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update(); // update message at the end of while loop
         }
 
@@ -463,10 +485,10 @@ public class TeleopDualSlider extends LinearOpMode {
      */
     private void robotMovingDistance(double targetDistance, boolean isBackForward) {
         int targetPosition = (int)(targetDistance * COUNTS_PER_FEET_MOTION);
-        telemetry.addData("Status", "driving target position %d", targetPosition);
+        telemetry.addData("Status", "auto driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForward);
         robotRunWithPositionModeOn(true); // turn on encoder mode
-        setPowerToWheels(ADJUST_POSITION_POWER); // low speed for more accurate, start moving
+        setPowerToWheels(AUTO_DRIVE_POWER); // low speed for more accurate, start moving
         waitMotorActionComplete(FrontLeftDrive); // just check one wheel.
         setPowerToWheels(0.0); //stop moving
         robotRunWithPositionModeOn(false); // turn off encoder mode
