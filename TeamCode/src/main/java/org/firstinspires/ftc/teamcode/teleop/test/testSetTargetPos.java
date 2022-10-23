@@ -20,9 +20,6 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 public class testSetTargetPos extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
-    GlobalPosSystem posSystem;
-    TeleopKinematics kinematics;
-    private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -41,9 +38,6 @@ public class testSetTargetPos extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        posSystem = new GlobalPosSystem(robot);
-        kinematics = new TeleopKinematics(posSystem);
-        posSystem.grabKinematics(kinematics);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -82,6 +76,8 @@ public class testSetTargetPos extends OpMode{
         //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
         telemetry.addData("TopL Clicks", robot.topL.getCurrentPosition());
         telemetry.addData("BotL Clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("TopR Clicks", robot.topR.getCurrentPosition());
+        telemetry.addData("BotR Clicks", robot.botR.getCurrentPosition());
 
         telemetry.update();
     }
@@ -134,21 +130,37 @@ public class testSetTargetPos extends OpMode{
     }
 
     private void setTargetSpinPosTest(int clicks){
-        int botLCurrPos = robot.botL.getCurrentPosition();
-        int topLCurrPos = robot.topL.getCurrentPosition();
-        robot.botL.setTargetPosition(botLCurrPos + clicks);
-        robot.topL.setTargetPosition(topLCurrPos + clicks);
+        int posBotL = robot.botL.getCurrentPosition();
+        int posTopL = robot.topL.getCurrentPosition();
+        int posBotR = robot.botR.getCurrentPosition();
+        int posTopR = robot.topR.getCurrentPosition();
+
+        robot.botL.setTargetPosition(posBotL - clicks);
+        robot.topL.setTargetPosition(posTopL + clicks);
+        robot.botR.setTargetPosition(posBotR - clicks);
+        robot.topR.setTargetPosition(posTopR + clicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void setTargetRotatePosTest(int clicks){
-        robot.botL.setTargetPosition(-clicks);
-        robot.topL.setTargetPosition(clicks);
+        int posBotL = robot.botL.getCurrentPosition();
+        int posTopL = robot.topL.getCurrentPosition();
+        int posBotR = robot.botR.getCurrentPosition();
+        int posTopR = robot.topR.getCurrentPosition();
+
+        robot.botL.setTargetPosition(posBotL + clicks);
+        robot.topL.setTargetPosition(posTopL + clicks);
+        robot.botR.setTargetPosition(posBotR + clicks);
+        robot.topR.setTargetPosition(posTopR + clicks);
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void reset(){
