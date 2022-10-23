@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
@@ -77,21 +76,14 @@ public class PwPRobot extends BasicRobot{
             claw.openClaw();
         }
     }
-    public void liftToPosition(Lift.LiftConstants targetJunction){
-        if (queuer.queue(false, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 5)){
-            lift.liftToPosition(targetJunction);
+    public void openClaw(boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, op.getRuntime() > claw.clawServoLastSwitchTime +
+                claw.CLAW_SERVO_SWITCH_TIME)) {
+
+            claw.clawServoLastSwitchTime = op.getRuntime();
+            claw.openClaw();
         }
     }
-    public void liftToPosition(int tickTarget){
-        if(queuer.queue(false, Math.abs(tickTarget - lift.getLiftPosition()) < 5)){
-            lift.liftToPosition(tickTarget);
-        }
-    }
-    public void setLiftPower(double p_power){
-        lift.setLiftPower(p_power);
-    }
-
-
     public void closeClaw() {
         if (queuer.queue(true, op.getRuntime() > claw.clawServoLastSwitchTime +
                 claw.CLAW_SERVO_SWITCH_TIME)) {
@@ -100,9 +92,46 @@ public class PwPRobot extends BasicRobot{
             claw.closeClaw();
         }
     }
+    public void toggleClawPosition() {
+        if (queuer.queue(true, op.getRuntime() > claw.clawServoLastSwitchTime +
+                claw.CLAW_SERVO_SWITCH_TIME)) {
 
+            claw.clawServoLastSwitchTime = op.getRuntime();
+            claw.toggleClawPosition();
+        }
+    }
+    public void toggleClawPosition(boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, op.getRuntime() > claw.clawServoLastSwitchTime +
+                claw.CLAW_SERVO_SWITCH_TIME)) {
+            claw.toggleClawPosition();
+        }
+    }
+    public void closeClaw(boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, op.getRuntime() > claw.clawServoLastSwitchTime +
+                claw.CLAW_SERVO_SWITCH_TIME)) {
+
+            claw.clawServoLastSwitchTime = op.getRuntime();
+            claw.closeClaw();
+        }
+    }
     public boolean isConeReady() {
         return claw.isConeReady();
+    }
+
+
+
+    public void liftToPosition(Lift.LiftConstants targetJunction){
+        if (queuer.queue(false, Math.abs(targetJunction.getValue() - lift.getLiftPosition()) < 10 && lift.getLiftVelocity()==0)){
+            lift.liftToPosition(targetJunction);
+        }
+    }
+    public void liftToPosition(int tickTarget){
+        if(queuer.queue(false, Math.abs(tickTarget - lift.getLiftPosition()) < 10&& lift.getLiftVelocity()==0)){
+            lift.liftToPosition(tickTarget);
+        }
+    }
+    public void setLiftPower(double p_power){
+        lift.setLiftPower(p_power);
     }
 
     public void lowerLiftArmToIntake() {
@@ -113,6 +142,30 @@ public class PwPRobot extends BasicRobot{
             liftArm.lowerLiftArmToIntake();
         }
     }
+    public void lowerLiftArmToIntake(boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
+                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
+
+            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.lowerLiftArmToIntake();
+        }
+    }
+    public void raiseLiftArmToOuttake() {
+        if (queuer.queue(true, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
+                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
+
+            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.raiseLiftArmToOuttake();
+        }
+    }
+    public void raiseLiftArmToOuttake(boolean p_asynchronous) {
+        if (queuer.queue(p_asynchronous, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
+                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
+
+            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.raiseLiftArmToOuttake();
+        }
+    }
 
     public void toggleArmPosition() {
         if (queuer.queue(true, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
@@ -120,15 +173,6 @@ public class PwPRobot extends BasicRobot{
 
             liftArm.liftArmServoLastSwitchTime = op.getRuntime();
             liftArm.toggleArmPosition();
-        }
-    }
-
-    public void raiseLiftArmToOuttake() {
-        if (queuer.queue(true, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
-                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
-
-            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
-            liftArm.raiseLiftArmToOuttake();
         }
     }
 
@@ -174,33 +218,6 @@ public class PwPRobot extends BasicRobot{
         else{
             lift.setLiftPower(0);
 //            lift.liftToTarget();
-        }
-        op.telemetry.addData("centerOffset", cv.centerOfPole());
-        op.telemetry.addData("centerSize", cv.poleSize());
-        op.telemetry.addData("cvtheta",cv.rotatedPolarCoordDelta()[0]);
-        op.telemetry.addData("cvdistance",cv.rotatedPolarCoordDelta()[1]);
-        op.telemetry.addData("x", roadrun.getPoseEstimate().getX());
-        op.telemetry.addData("y", roadrun.getPoseEstimate().getY());
-        op.telemetry.addData("heading", roadrun.getPoseEstimate().getHeading()*180/PI);
-        op.telemetry.update();
-        if(op.gamepad1.x&&!roadrun.isBusy()&&field.lookingAtPole()){
-            setFirstLoop(true);
-            queuer.reset();
-            autoAim();
-            setFirstLoop(false);
-        }
-        else if(roadrun.isBusy()){
-            autoAim();
-        }
-        else{
-            queuer.reset();
-            roadrun.setWeightedDrivePower(
-                    new Pose2d(
-                            -op.gamepad1.left_stick_y,
-                            -op.gamepad1.left_stick_x,
-                            -op.gamepad1.right_stick_x
-                    )
-            );
         }
         //toggle automate lift target to higher junc
         if(op.gamepad2.dpad_up){

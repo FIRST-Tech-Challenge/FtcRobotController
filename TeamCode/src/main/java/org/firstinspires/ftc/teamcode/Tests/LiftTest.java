@@ -65,13 +65,13 @@ public class LiftTest extends LinearOpMode {
                 robot.liftToPosition(0);
             }
             if(gamepad1.dpad_right){
-                robot.liftToPosition(1000);
+                robot.liftToPosition(500);
             }
             if(gamepad1.dpad_up){
-                robot.liftToPosition(2000);
+                robot.liftToPosition(1000);
             }
             if(gamepad1.dpad_left){
-                robot.liftToPosition(3000);
+                robot.liftToPosition(2000);
             }
             if(gamepad1.right_trigger!=0||gamepad1.left_trigger!=0){
                 robot.setLiftPower(gamepad1.right_trigger-gamepad1.left_trigger);

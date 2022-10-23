@@ -44,14 +44,14 @@ public class LiftArm {
         boolean status;
         String name;
 
-        liftArmStates(boolean value, String name) {
-            this.status = value;
-            this.name = name;
+        liftArmStates(boolean p_status, String p_name) {
+            this.status = p_status;
+            this.name = p_name;
         }
 
-        public void setStatus(boolean status) {
-            this.status = status;
-            if(status) {
+        public void setStatus(boolean p_status) {
+            this.status = p_status;
+            if(p_status) {
                 for (int i = 0; i < liftArmStates.values().length; i++) {
                     if (liftArmStates.values()[i] != this) {
                         liftArmStates.values()[i].status = false;

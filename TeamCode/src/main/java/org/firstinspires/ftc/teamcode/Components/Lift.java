@@ -16,7 +16,8 @@ import java.util.ArrayList;
 
 
 public class Lift {
-//    public enum LiftFunctionStates {
+    private final int MAX_LIFT_TICKS = 2000;
+    //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
 //        LIFT_MED_JUNCTION(false),
 //        LIFT_LOW_JUNCTION(false),
@@ -49,16 +50,16 @@ public class Lift {
         boolean status;
         String name;
 
-        LiftStates(boolean value, String name) {
-            this.status = value;
-            this.name = name;
+        LiftStates(boolean p_status, String p_name) {
+            status = p_status;
+            name = p_name;
         }
 
-        public void setStatus(boolean status) {
-            this.status = status;
-            if(status==true){
+        public void setStatus(boolean p_status) {
+            status = p_status;
+            if(p_status==true){
                 for(int i = 0; i< ClawExtension.ClawExtensionStates.values().length; i++){
-                    if(this.name != ClawExtension.ClawExtensionStates.values()[i].name()){
+                    if(name != ClawExtension.ClawExtensionStates.values()[i].name()){
                         ClawExtension.ClawExtensionStates.values()[i].setStatus(false);
                     }
                 }
@@ -66,10 +67,10 @@ public class Lift {
         }
     }
     public enum LiftConstants{
-        LIFT_HIGH_JUNCTION(3500, false),
-        LIFT_MED_JUNCTION(2161, false),
-        LIFT_LOW_JUNCTION(1035, false),
-        LIFT_GROUND_JUNCTION(100,false),
+        LIFT_HIGH_JUNCTION(2000, false),
+        LIFT_MED_JUNCTION(1500, false),
+        LIFT_LOW_JUNCTION(1000, false),
+        LIFT_GROUND_JUNCTION(250,false),
         LIFT_GROUND(0, true);
 
         double value;
@@ -82,6 +83,13 @@ public class Lift {
         }
         public void setLfc(boolean newVal){
             this.lfcValue = newVal;
+            if(newVal==true){
+                for(int i = 0; i< LiftConstants.values().length; i++){
+                    if(this != LiftConstants.values()[i]){
+                        LiftConstants.values()[i].setLfc(false);
+                    }
+                }
+            }
         }
         LiftConstants(double num_of_ticks, boolean status) {
             value = num_of_ticks;
@@ -91,16 +99,21 @@ public class Lift {
     }
     //TODO: RFMotor
     private RFMotor liftMotor;
-    private double MAX_LIFT_TICKS = 3500, liftTarget = 0;
+    private Claw LC = new Claw();
+    private double liftTarget = 0;
     private double dfco1 = 1.5; private double dfco2 = 150.0;
     private ArrayList<Double> coefficients = new ArrayList<>();
+
     public Lift(){ //constructor
         // hardware map
-        logger.createFile("LiftLog", "Time Junction Ticks");
+        Claw LC = new Claw();
+        logger.createFile("LiftLog", "Time Component Function Action");
         coefficients.add(dfco1);
         coefficients.add(dfco2);
         liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.FORWARD, DcMotorEx.RunMode.RUN_USING_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
         liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        liftMotor.setTICK_BOUNDARY_PADDING(10);
+        liftMotor.setTICK_STOP_PADDING(10);
     }
     public int getLiftPosition(){
         return liftMotor.getCurrentPosition();
@@ -111,91 +124,87 @@ public class Lift {
     private void updateLiftStates(){
         int liftPos = liftMotor.getCurrentPosition();
         double liftVelocity = liftMotor.getVelocity();
-        if(liftPos < 10 && liftVelocity == 0){
+        if(liftPos < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
             LiftStates.LIFT_GROUND.setStatus(true);
         }
-        if(liftPos > 0 && Math.abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > 10 && liftVelocity > 0){
+        if(liftPos > 0 && Math.abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
             LiftStates.LIFT_GROUND_RAISING.setStatus(true);
         }
-        if(liftPos > 0 && Math.abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > 10 && liftVelocity < 0){
+        if(liftPos > 0 && Math.abs(liftPos - LiftConstants.LIFT_GROUND_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
             LiftStates.LIFT_GROUND_JUNCTION_LOWERING.setStatus(true);
         }
-        if(Math.abs(LiftConstants.LIFT_GROUND_JUNCTION.value - liftPos) < 10 && liftVelocity == 0){
+        if(Math.abs(LiftConstants.LIFT_GROUND_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
             LiftStates.LIFT_GROUND_JUNCTION.setStatus(true);
         }
-        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > 10 && liftVelocity > 0){
+        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
             LiftStates.LIFT_GROUND_JUNCTION_RAISING.setStatus(true);
         }
-        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > 10 && liftVelocity > 0){
+        if(liftPos > LiftConstants.LIFT_GROUND_JUNCTION.value && liftPos < LiftConstants.LIFT_LOW_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_LOW_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
             LiftStates.LIFT_LOW_LOWERING.setStatus(true);
         }
-        if(Math.abs(LiftConstants.LIFT_LOW_JUNCTION.value - liftPos) < 10 && liftVelocity == 0){
+        if(Math.abs(LiftConstants.LIFT_LOW_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
             LiftStates.LIFT_LOW.setStatus(true);
         }
-        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > 10 && liftVelocity > 0){
+        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
             LiftStates.LIFT_LOW_RAISING.setStatus(true);
         }
-        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > 10 && liftVelocity < 0){
+        if(liftPos > LiftConstants.LIFT_LOW_JUNCTION.value && liftPos < LiftConstants.LIFT_MED_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_MED_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
             LiftStates.LIFT_MID_LOWERING.setStatus(true);
         }
-        if(Math.abs(LiftConstants.LIFT_MED_JUNCTION.value - liftPos) < 10 && liftVelocity == 0){
+        if(Math.abs(LiftConstants.LIFT_MED_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
             LiftStates.LIFT_MID.setStatus(true);
         }
-        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > 10 && liftVelocity > 0){
+        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity > 0){
             LiftStates.LIFT_MID_RAISING.setStatus(true);
         }
-        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > 10 && liftVelocity < 0){
+        if(liftPos > LiftConstants.LIFT_MED_JUNCTION.value && liftPos < LiftConstants.LIFT_HIGH_JUNCTION.value && Math.abs(liftPos - LiftConstants.LIFT_HIGH_JUNCTION.value) > liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity < 0){
             LiftStates.LIFT_HIGH_LOWERING.setStatus(true);
         }
-        if(Math.abs(LiftConstants.LIFT_HIGH_JUNCTION.value - liftPos) < 10 && liftVelocity == 0){
+        if(Math.abs(LiftConstants.LIFT_HIGH_JUNCTION.value - liftPos) < liftMotor.getTICK_BOUNDARY_PADDING() && liftVelocity == 0){
             LiftStates.LIFT_HIGH.setStatus(true);
         }
     }
-    public void liftToPosition(LiftConstants targetHeight){//TODO: make sure this is async
+    public boolean liftToPosition(LiftConstants targetHeight){//TODO: make sure this is async
         //use rfmotor setPosition function to lift in accordance with the enum
         //if(targetHeight != LiftConstants.LIFT_LOW_JUNCTION && targetHeight != LiftConstants.LIFT_GROUND_JUNCTION && Claw.ClawStates.CLAW_CLOSED.status == true){
             //liftMotor.setPosition(targetHeight.value);
         //}
-        liftMotor.setPosition(targetHeight.value);
+        if(LC.isConeReady() == true /*&& Claw.ClawStates.CLAW_CLOSED.status == true*/){
+            liftMotor.setPosition(targetHeight.value);
+        }
         double distance = targetHeight.value-liftMotor.getCurrentPosition();
-        boolean done = !(Math.abs(distance) > 20);
+        boolean done = (Math.abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
         if(!done){
             targetHeight.setLfc(true);
         }
         else{
             targetHeight.setLfc(false);
         }
-        op.telemetry.addData("LiftPos", liftMotor.getCurrentPosition());
-        op.telemetry.addData("LiftVelo", liftMotor.getVelocity());
-        op.telemetry.update();
         // no conditions
         // log when movement starts & when reach target position
-        logger.log("LiftLog", "Claw lift to " + targetHeight.value + " ticks");
+        logger.log("LiftLog", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value + " ticks", true, true, true);
         //async, no use sleep/wait with time, can use multiple processes
+        return done;
     }
     public void liftToPosition(int targetTickCount){
         liftMotor.setPosition(targetTickCount);
-        op.telemetry.addData("LiftPos", liftMotor.getCurrentPosition());
-        op.telemetry.addData("LiftVelo", liftMotor.getVelocity());
-        op.telemetry.update();
-        logger.log("LiftLog", "Claw lift to " + targetTickCount + " ticks");
+
+        logger.log("LiftLog", "Lift," + "liftToPosition(targetTickCount)," + "Lifting to " + targetTickCount + " ticks", true, true, true);
         updateLiftStates();
     }
     public void setLiftPower(double power){
-        liftTarget=liftMotor.getCurrentPosition();
-        if(liftTarget<MAX_LIFT_TICKS&&power>0) {
+        //liftTarget=liftMotor.getCurrentPosition();
+        //if(liftTarget<MAX_LIFT_TICKS&&power>0) {
+        //    liftMotor.setPower(power);
+        //}
+        //else if(liftTarget>10&&power<0) {
             liftMotor.setPower(power);
-        }
-        else if(liftTarget>10&&power<0) {
-            liftMotor.setPower(power);
-        }
-        else{
-            liftMotor.setPower(0);
-        }
+        //}
+        //else{
+        //    liftMotor.setPower(0);
+        //}
         //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
-        op.telemetry.addData("LiftPos", liftMotor.getCurrentPosition());
-        op.telemetry.addData("LiftVelo", liftMotor.getVelocity());
-        op.telemetry.update();
+        logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
     }
     public void liftToTarget(){
         liftMotor.setPosition(liftTarget);
