@@ -25,9 +25,9 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
 
     private static final String[] LABELS = {
-            "Blue Circle",
-            "Purple Rectangles",
-            "Green Stars"
+            "Blue Bats",
+            "Black Fish",
+            "Flowers"
     };
 
     /*
