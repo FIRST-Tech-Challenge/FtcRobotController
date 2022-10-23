@@ -30,17 +30,27 @@ public class Lift {
     public final double     MINIMUM_CLEARANCE_HEIGHT    = 43 * MM_TO_INCHES;    // inches to lift to clear side panels
 
     public final double     LIFT_POSITION_RESET = 0;
-    public final double     LIFT_POSITION_GROUND = 10;
-    public final double     LIFT_POSITION_LOWPOLE= 20;
+    public final double     LIFT_POSITION_GROUND = 12;
+    public final double     LIFT_POSITION_LOWPOLE= 14;
     public final double     LIFT_POSITION_MIDPOLE= 30;
     public final double     LIFT_POSITION_HIGHPOLE = 40;
     public final double     LIFT_POSITION_PICKUP = 8;
+    public final double     LIFT_ADJUSTMENT = -2;
 
     public final double     HARD_STOP_CURRENT_DRAW = 100;
 
+    public final String LIFT_SYSTEM_NAME = "Lift";
+    public final String LIFT_POLE_LOW = "POLE_ONE";
+    public final String DELIVERY_HEIGHT = "DELIVERY_HEIGHT";
+    public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
+    public final String LIFT_SUBHEIGHT  = "SUB_HEIGHT";
+
+    public final String TRANSATION_STATE = "TRANSITION";
+    public final double HEIGHT_TOLERANCE  = 0.25;
+
     public static double currentLiftHeight;
 
-    public Lift(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
+    public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         liftMotor = hwMap.dcMotor.get("Lift");
 
@@ -51,8 +61,34 @@ public class Lift {
     }
 
     public int getPosition () {
+
         return liftMotor.getCurrentPosition();
     }
+    public void setState(String level, String subheight){
+        switch(level){
+            case LIFT_POLE_LOW:{
+                raiseHeightTo(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
+            }
+        }
+    }
+    public  String  getCurrentState(){
+        String state = TRANSATION_STATE;
+        double currentPosition = getHeightInInches();
+        if(currentPosition > LIFT_POSITION_LOWPOLE)
+        return state;
+    }
+    private double getHeightInInches(){
+        return (double)getPosition()/TICK_PER_INCH;
+
+    }
+    public int deliveryHeight(String subheight){
+        int height = 0;
+        if(subheight.equalsIgnoreCase(DELIVERY_HEIGHT)){
+            height -= LIFT_ADJUSTMENT;
+        }
+        return height;
+    }
+
 
     public void raiseHeightTo (double heightInInches) {
         //raising heights to reach different junctions, so four values

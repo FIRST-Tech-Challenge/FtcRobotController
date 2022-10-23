@@ -29,7 +29,7 @@ public class Turret {
 
     public Telemetry telemetry;
     public DcMotorEx turretMotor;
-    /*
+
 
     public Turret(HardwareMap hwMap, Telemetry telemetry) {
         //getting turret motor from the hardware map
@@ -97,6 +97,6 @@ public class Turret {
 
     }
 
-     */
+
 
 }

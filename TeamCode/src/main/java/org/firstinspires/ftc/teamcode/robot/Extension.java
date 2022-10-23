@@ -33,7 +33,7 @@ public class Extension {
 
     public final double EXTENSION_MAX_REACH = 10; // TODO: measure actual value in inches and replace this value
 
-    public Extension(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
+    public Extension(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         extension = (ServoImplEx) hwMap.servo.get("Extension");

@@ -8,18 +8,21 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+import java.util.HashMap;
+
 @TeleOp(name="Robot: Test Scaffold", group="Robot")
 public class TestTeleOp extends LinearOpMode {
 //    public BrainStemRobot robot;
     public final double SLOW = 1.0;
+    public HashMap stateMap;
 
     public void runOpMode(){
 
-        //robot = new BrainStemRobot(hardwareMap, telemetry);
+        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry);
         //Turret turret = new Turret(hardwareMap, telemetry);
         //robot.initializeRobotPosition();
-        Lift lift = new Lift(hardwareMap, telemetry, this);
-        Extension arm = new Extension(hardwareMap, telemetry, this);
+        Lift lift = new Lift(hardwareMap, telemetry);
+        Extension arm = new Extension(hardwareMap, telemetry);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -44,8 +47,11 @@ public class TestTeleOp extends LinearOpMode {
             } else {
                 lift.setMotor(0);
             }
-            if(gamepad2.a){
-                arm.extension.setPosition(0);
+            if(gamepad2.y){
+                stateMap.put(robot.LIFT_SYSTEM_NAME,robot.LIFT_POLE_LOW);
+            }
+            if(gamepad2.x){
+                stateMap.put(ro
             }
             if(gamepad2.b){
                 arm.extension.setPosition(0.75);

@@ -33,9 +33,15 @@ public class BrainStemRobot {
     public Extension arm;
     public SampleMecanumDrive drive;
 
+    public final String LIFT_SYSTEM_NAME = "Lift";
+    public final String LIFT_POLE_LOW = "POLE_ONE";
+    public final String DELIVERY_HEIGHT = "DELIVERY_HEIGHT";
+    public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
+    public final String LIFT_SUBHEIGHT  = "SUB_HEIGHT";
+
     public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
-        /*this.telemetry = telemetry;
-        // this.opMode = opMode;
+        this.telemetry = telemetry;
+        this.opMode = opMode;
 
         // instantiate components turret, lift, arm, grabber
         turret  = new Turret(hwMap, telemetry);
@@ -62,11 +68,5 @@ public class BrainStemRobot {
         turret.moveTurret(targetDegrees);
     }
 
-
-
-
-
-
-         */
     }
-}
+
