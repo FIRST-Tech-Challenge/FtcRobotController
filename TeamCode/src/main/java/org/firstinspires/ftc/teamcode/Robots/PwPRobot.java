@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
@@ -13,9 +14,7 @@ import org.firstinspires.ftc.teamcode.Components.Claw;
 import org.firstinspires.ftc.teamcode.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Components.Field;
 import org.firstinspires.ftc.teamcode.Components.Lift;
-import org.firstinspires.ftc.teamcode.Components.StateMachine;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
-import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
@@ -34,13 +33,13 @@ public class PwPRobot extends BasicRobot{
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
         roadrun = new SampleMecanumDrive(op.hardwareMap);
-        field = new Field(roadrun);
+        cv = new CVMaster();
+        field = new Field(roadrun,cv);
 //        aligner = new Aligner();
         claw = new Claw();
         liftArm = new LiftArm();
 //        clawExtension = new ClawExtension();
         lift = new Lift();
-        cv = new CVMaster(roadrun);
 
     }
     public void stop(){
@@ -51,12 +50,11 @@ public class PwPRobot extends BasicRobot{
     public void autoAim(){
         if(queuer.queue(false,!roadrun.isBusy())) {
             if (!roadrun.isBusy()&&field.lookingAtPole()) {
-                double[] coords = field.lookedAtPole();
-
+                double[] coords = cv.rotatedPolarCoordDelta();
                 Trajectory trajectory = roadrun.trajectoryBuilder(roadrun.getPoseEstimate()).lineToLinearHeading(
-                        new Pose2d(roadrun.getPoseEstimate().getX() + (coords[0] - 9) * cos(roadrun.getPoseEstimate().getHeading() + coords[1]),
-                                roadrun.getPoseEstimate().getY() + (coords[0] - 9) * sin(roadrun.getPoseEstimate().getHeading() + coords[1]),
-                                roadrun.getPoseEstimate().getHeading() + coords[1])).build();
+                        new Pose2d(roadrun.getPoseEstimate().getX() + (coords[1] - 9) * cos(roadrun.getPoseEstimate().getHeading() + coords[0]),
+                                roadrun.getPoseEstimate().getY() + (coords[1] - 9) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]),
+                                roadrun.getPoseEstimate().getHeading() + coords[0])).build();
                 roadrun.followTrajectoryAsync(trajectory);
             }
         }
@@ -93,15 +91,6 @@ public class PwPRobot extends BasicRobot{
         lift.setLiftPower(p_power);
     }
 
-
-    public void toggleClawPosition() {
-        if (queuer.queue(true, op.getRuntime() > claw.clawServoLastSwitchTime +
-                claw.CLAW_SERVO_SWITCH_TIME)) {
-
-            claw.clawServoLastSwitchTime = op.getRuntime();
-            claw.toggleClawPosition();
-        }
-    }
 
     public void closeClaw() {
         if (queuer.queue(true, op.getRuntime() > claw.clawServoLastSwitchTime +
@@ -176,13 +165,7 @@ public class PwPRobot extends BasicRobot{
     public void teleOp(){
         //omnidirectional movement + turning
 
-            roadrun.setWeightedDrivePower(
-                    new Pose2d(
-                            -op.gamepad1.left_stick_y,
-                            -op.gamepad1.left_stick_x,
-                            -op.gamepad1.right_stick_x
-                    )
-            );
+
         //manual lift up/down
         if(op.gamepad2.right_trigger!=0||op.gamepad2.left_trigger!=0){
             lift.setLiftPower(op.gamepad2.right_trigger-op.gamepad2.left_trigger);
@@ -191,6 +174,33 @@ public class PwPRobot extends BasicRobot{
         else{
             lift.setLiftPower(0);
 //            lift.liftToTarget();
+        }
+        op.telemetry.addData("centerOffset", cv.centerOfPole());
+        op.telemetry.addData("centerSize", cv.poleSize());
+        op.telemetry.addData("cvtheta",cv.rotatedPolarCoordDelta()[0]);
+        op.telemetry.addData("cvdistance",cv.rotatedPolarCoordDelta()[1]);
+        op.telemetry.addData("x", roadrun.getPoseEstimate().getX());
+        op.telemetry.addData("y", roadrun.getPoseEstimate().getY());
+        op.telemetry.addData("heading", roadrun.getPoseEstimate().getHeading()*180/PI);
+        op.telemetry.update();
+        if(op.gamepad1.x&&!roadrun.isBusy()&&field.lookingAtPole()){
+            setFirstLoop(true);
+            queuer.reset();
+            autoAim();
+            setFirstLoop(false);
+        }
+        else if(roadrun.isBusy()){
+            autoAim();
+        }
+        else{
+            queuer.reset();
+            roadrun.setWeightedDrivePower(
+                    new Pose2d(
+                            -op.gamepad1.left_stick_y,
+                            -op.gamepad1.left_stick_x,
+                            -op.gamepad1.right_stick_x
+                    )
+            );
         }
         //toggle automate lift target to higher junc
         if(op.gamepad2.dpad_up){
@@ -211,6 +221,9 @@ public class PwPRobot extends BasicRobot{
         if(op.gamepad1.x){
             claw.openClaw();
         }
+        roadrun.update();
+        //will only close when detect cone
+        //claw.closeClaw
         if (op.gamepad1.y) {
             claw.closeClaw();
         }

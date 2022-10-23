@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
 
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Old.Components.Chassis.BasicChassis;
-import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
-import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
+import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -22,11 +19,10 @@ import org.firstinspires.ftc.teamcode.Old.Robots.BlackoutRobot;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SummerMecRobot robot = new SummerMecRobot(this, false);
+        PwPRobot robot = new PwPRobot(this, false);
 
+        Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(57, -54, 0);
-
         robot.roadrun.setPoseEstimate(startPose);
         waitForStart();
 
@@ -42,9 +38,9 @@ public class LocalizationTest extends LinearOpMode {
             robot.roadrun.update();
 
             Pose2d poseEstimate = robot.roadrun.getPoseEstimate();
+            telemetry.addData("angle", poseEstimate.getHeading());
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
         }
     }

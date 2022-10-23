@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -16,14 +19,12 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.WaitSegment;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +58,6 @@ public class TrajectorySequenceRunner {
 
     List<TrajectoryMarker> remainingMarkers = new ArrayList<>();
 
-    private final FtcDashboard dashboard;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
     private SampleMecanumDrive drive = null;
 

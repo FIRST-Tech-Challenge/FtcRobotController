@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 
@@ -20,7 +21,8 @@ public class StickObserverPipeline extends OpenCvPipeline {
     int width = 320, height = 240;
     //-1.3182 , 16.007
     //155, 397
-    double centerOfPole = 0, poleSize = 0, degPerPix = 13.627/197, widTimesDist = 16.007*397;
+    //-1.309724/18.74214, -22.5/320
+    double centerOfPole = 0, poleSize = 0, degPerPix = -22.5/320, widTimesDist = 16.007*58;
     ArrayList<double[]> frameList;
 
 
@@ -35,8 +37,8 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if (mat.empty()) {
             return input;
         }
-        Scalar lowHSV = new Scalar(22, 75, 60); // lower bound HSV for yellow
-        Scalar highHSV = new Scalar(40, 255, 255); // higher bound HSV for yellow
+        Scalar lowHSV = new Scalar(20, 70, 80); // lower bound HSV for yellow
+        Scalar highHSV = new Scalar(32, 255, 255); // higher bound HSV for yellow
 
         Mat thresh = new Mat();
 
@@ -47,18 +49,35 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
         Mat test = new Mat();
         thresh.copyTo(test);
-        Core.bitwise_and(input, input, thresh, test);
+        Core.bitwise_and(mat, mat, thresh, test);
+        Mat scaledThresh = new Mat();
+        Scalar aberage = Core.mean(thresh,test);
+        op.telemetry.addData("aberage0",aberage.val[0]);
+        op.telemetry.addData("aberage1",aberage.val[1]);
+        op.telemetry.addData("aberage2",aberage.val[2]);
+        thresh.convertTo(scaledThresh,-1,150/aberage.val[1],0);
+        Scalar aberage2 = Core.mean(scaledThresh,test);
+        op.telemetry.addData("aberage0",aberage2.val[0]);
+        op.telemetry.addData("aberage1",aberage2.val[1]);
+        op.telemetry.addData("aberage2",aberage2.val[2]);
+        op.telemetry.update();
+        Scalar strictLowHSV = new Scalar(0, 150, 100); // lower bound HSV for yellow
+        Scalar strictHighHSV = new Scalar(255, 255, 255); // higher bound HSV for yellow
+        Mat scaledThresh2 = new Mat();
+        Core.inRange(scaledThresh,strictLowHSV,strictHighHSV,scaledThresh2);
         // Use Canny Edge Detection to find edges
         // you might have to tune the thresholds for hysteresis
+        Mat masked = new Mat();
+        Core.bitwise_and(thresh, thresh, masked, scaledThresh2);
         Mat edges = new Mat();
-        Imgproc.Canny(thresh, edges, 100, 200, 3, false);
+        Imgproc.Canny(masked, edges, 100, 200);
 
         // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
         // Oftentimes the edges are disconnected. findContours connects these edges.
         // We then find the bounding rectangles of those contours
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
-        Imgproc.findContours(test, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         Rect[] boundRect = new Rect[contours.size()];
         RotatedRect[] rectangle = new RotatedRect[contours.size()];
@@ -74,16 +93,21 @@ public class StickObserverPipeline extends OpenCvPipeline {
                 maxAreaIndex = i;
             }
         }
-        centerOfPole = rectangle[maxAreaIndex].center.x+sin(rectangle[maxAreaIndex].angle)*rectangle[maxAreaIndex].size.height/2 - 320;
-        poleSize = rectangle[maxAreaIndex].size.height;
-        frameList.add(new double[]{centerOfPole,poleSize});
+        if(rectangle.length>0) {
+            centerOfPole = rectangle[maxAreaIndex].center.y + sin(rectangle[maxAreaIndex].angle) * rectangle[maxAreaIndex].size.width / 2 - 320;
+            poleSize = rectangle[maxAreaIndex].size.height;
+            frameList.add(new double[]{centerOfPole, poleSize});
+        }
         if(frameList.size()>5) {
             frameList.remove(0);
         }
         input.release();
+        edges.copyTo(input);
+        scaledThresh.release();
+        scaledThresh2.release();
         mat.release();
+        masked.release();
         edges.release();
-        thresh.copyTo(input);
         thresh.release();
         hierarchy.release();
         test.release();

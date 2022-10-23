@@ -8,7 +8,9 @@ import static java.lang.Math.sin;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.LED;
 
@@ -16,7 +18,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
+//5900,4900
+//5700,4300
+//3853
+//2/1.337/pi*8092
 public class OdometryTracker extends Tracker {
     private DcMotorEx encoderLeft, encoderRight, encoderBack;
     private DigitalChannel limitSwitchRight, limitSwitchLeft;
@@ -33,9 +38,14 @@ public class OdometryTracker extends Tracker {
         super();
         touch = limitSwitch;
         ultras = ultra;
-        encoderLeft = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
-        encoderRight = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
-        encoderBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
+        encoderLeft = (DcMotorEx) op.hardwareMap.dcMotor.get("leftEncoder");
+        encoderRight = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
+        encoderBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
+        encoderBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        encoderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoderBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         globalAngle=0;
         deltaAngle=0;
         lastAngles=null;
@@ -111,9 +121,9 @@ public class OdometryTracker extends Tracker {
         op.telemetry.addData("xpos",xpos);
         op.telemetry.addData("ypos",ypos);
         op.telemetry.addData("angle",angle);
-        op.telemetry.addData("xpos",turningRadius[0]);
-        op.telemetry.addData("ypos",turningRadius[0]*(cossin - sincos));
-        op.telemetry.addData("angle",deltaY/ticks_per_inch);
+        op.telemetry.addData("left",encoderLeft.getCurrentPosition());
+        op.telemetry.addData("right",encoderRight.getCurrentPosition());
+        op.telemetry.addData("front",encoderBack.getCurrentPosition());
         op.telemetry.update();
     }
     public double getAngle() {

@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.Components.CV;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -11,12 +12,10 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class CVMaster {
     private OpenCvWebcam webcam;
-    private SampleMecanumDrive roadrun = null;
     private StickObserverPipeline opencv = null;
-    public CVMaster(SampleMecanumDrive p_roadrun){
+    public CVMaster(){
         int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        roadrun = p_roadrun;
     }
     public void observeStick(){
         opencv = new StickObserverPipeline();
@@ -44,6 +43,7 @@ public class CVMaster {
                  */
                 webcam.setPipeline(opencv);
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
             }
 
