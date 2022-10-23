@@ -116,8 +116,6 @@ public class BaseDrive extends OpMode{
         //put power into the motors
         setPower();
 
-        //update telemetry
-        telemetry.update();
     }
 
     private void setVariables(){
