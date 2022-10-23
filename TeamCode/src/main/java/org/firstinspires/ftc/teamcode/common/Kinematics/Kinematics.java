@@ -15,7 +15,7 @@ public class Kinematics {
         STOP,
         NOT_INITIALIZED
     }
-    protected DriveType type = DriveType.NOT_INITIALIZED;
+    public DriveType type = DriveType.NOT_INITIALIZED;
 
     //robot's power
     protected double rotatePower = 0.0;

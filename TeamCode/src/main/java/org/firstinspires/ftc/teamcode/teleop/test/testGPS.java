@@ -90,6 +90,7 @@ public class testGPS extends OpMode{
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
+        telemetry.addData("DriveType, ", kinematics.getDriveType());
         telemetry.update();
     }
 
