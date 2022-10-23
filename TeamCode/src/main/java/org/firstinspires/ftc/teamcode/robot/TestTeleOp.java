@@ -4,23 +4,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import java.util.HashMap;
+
 @TeleOp(name="Robot: Test Scaffold", group="Robot")
 public class TestTeleOp extends LinearOpMode {
-//    public BrainStemRobot robot;
+    public BrainStemRobot robot;
     public final double SLOW = 1.0;
+    public HashMap stateMap;
 
     public void runOpMode(){
 
-        //robot = new BrainStemRobot(hardwareMap, telemetry);
+        robot = new BrainStemRobot(hardwareMap, telemetry, stateMap);
         //Turret turret = new Turret(hardwareMap, telemetry);
         //robot.initializeRobotPosition();
         Lift lift = new Lift(hardwareMap, telemetry, this);
 
 
         // Preset positions for turret via buttons x, y, b
-        /*if(gamepad1.y){
-            robot.turret.moveToPreset(turret.TURRET_LEFT_POSITION, robot.lift);
-        }
+
+        /*
         if(gamepad1.b){
             robot.turret.moveToPreset(turret.TURRET_RIGHT_POSITION, robot.lift);
         }
@@ -38,6 +40,18 @@ public class TestTeleOp extends LinearOpMode {
             } else {
                 lift.setMotor(0);
             }
+
+            if(gamepad1.y){
+                stateMap.put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.POLE_ONE);
+            }
+
+            if (gamepad1.x) {
+                stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.PLACEMENT_HEIGHT);
+            } else {
+                stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.DELIVERY_HEIGHT);
+            }
+
+            robot.updateSystems();
         }
 
         // operator controlled turret via right stick x axis

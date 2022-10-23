@@ -40,21 +40,78 @@ public class Lift {
 
     public static double currentLiftHeight;
 
+    public String LIFT_SYSTEM_NAME = "LIFT";
+    public final String POLE_LOW = "POLE_LOW";
+    private final double POLE_LOW_HEIGHT = 14;
+    public final String POLE_MEDIUM = "POLE_MEDIUM";
+    private final double POLE_MEDIUM_HEIGHT = 24;
+    public final String POLE_HIGH = "POLE_HIGH";
+    private final double POLE_HIGH_HEIGHT = 34;
+
+    public String LIFT_SUBHEIGHT ="LIFT_SUBHEIGHT";
+    public final String DELIVERY_HEIGHT = "DELIVERY_HEIGHT";
+    public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
+
+    public final String TRANSITION_STATE = "TRANSITION";
+
+    public final int DELIVERY_ADJUSTMENT = -3;
+    public final double HEIGHT_TOLERANCE = 0.25;
+
     public Lift(HardwareMap hwMap, Telemetry telemetry, LinearOpMode opMode) {
         this.telemetry = telemetry;
         liftMotor = hwMap.dcMotor.get("Lift");
 
 //        liftMotor.setPower(LIFT_UP_SPEED);
-//        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public int getPosition () {
+    public void setState(String level, String subheight) {
+        switch(level) {
+            case POLE_LOW: {
+                raiseHeightTo(POLE_LOW_HEIGHT + deliverHeight(subheight));
+                break;
+            }
+        }
+    }
+
+    private int deliverHeight(String subheight) {
+        int height = 0;
+
+        if(subheight == DELIVERY_HEIGHT) {
+            height -= DELIVERY_ADJUSTMENT;
+        }
+        return height;
+    }
+
+    public int getPosition() {
         return liftMotor.getCurrentPosition();
     }
 
-    public void raiseHeightTo (double heightInInches) {
+    public String getCurrentState() {
+        String state = TRANSITION_STATE;
+        double currentPosition = getHeightInInches();
+        if (inHeightTolerance(currentPosition, POLE_LOW_HEIGHT)) {
+            state = POLE_LOW;
+        } else if (inHeightTolerance(currentPosition, POLE_MEDIUM_HEIGHT)) {
+            state = POLE_MEDIUM;
+        }  else if (inHeightTolerance(currentPosition, POLE_HIGH_HEIGHT)) {
+            state = POLE_HIGH;
+        }
+
+        return state;
+    }
+
+    private boolean inHeightTolerance(double heightPosition, double poleHeight) {
+        return (heightPosition > poleHeight - HEIGHT_TOLERANCE) && (heightPosition < poleHeight + HEIGHT_TOLERANCE);
+    }
+
+    private double getHeightInInches() {
+        return (double) getPosition() / TICK_PER_INCH;
+    }
+
+    private void raiseHeightTo (double heightInInches) {
         //raising heights to reach different junctions, so four values
         int ticksNeeded = (int)(heightInInches/TICK_PER_INCH) + 1;
         liftMotor.setTargetPosition(ticksNeeded);
