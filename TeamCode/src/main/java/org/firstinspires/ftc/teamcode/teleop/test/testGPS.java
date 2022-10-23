@@ -120,7 +120,7 @@ public class testGPS extends OpMode{
         int posBotR = robot.botR.getCurrentPosition();
         int posTopR = robot.topR.getCurrentPosition();
 
-        double alpha = 0.5;
+        double alpha = 0.7;
         double beta = 1 - alpha;
 
         int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);

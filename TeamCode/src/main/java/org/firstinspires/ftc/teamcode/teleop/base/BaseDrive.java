@@ -214,7 +214,7 @@ public class BaseDrive extends OpMode{
         int posBotL = robot.botL.getCurrentPosition();
         int posTopL = robot.topL.getCurrentPosition();
 
-        double alpha = 0.5;
+        double alpha = 0.7;
         double beta = 1 - alpha;
 
         int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);

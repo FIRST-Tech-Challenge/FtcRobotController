@@ -54,19 +54,20 @@ public class AutoHub {
 
         switch(movementType){
             case "linear":
-                robot.botL.setPower(0);
+//                robot.botL.setPower(0);
+                
                 break;
 
             case "throttle":
-                robot.topL.setPower(1);
+//                robot.topL.setPower(1);
                 break;
 
             case "tableSpin":
-                robot.botR.setPower(0.5);
+//                robot.botR.setPower(0.5);
                 break;
 
             case "rotate":
-                robot.topR.setPower(0.3);
+//                robot.topR.setPower(0.3);
                 break;
 
 
