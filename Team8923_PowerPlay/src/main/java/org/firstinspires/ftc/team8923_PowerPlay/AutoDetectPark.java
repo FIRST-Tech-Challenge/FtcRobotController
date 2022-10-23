@@ -17,6 +17,7 @@ public class AutoDetectPark extends BaseAutonomous {
                 break;
             case TWO:
                 // Already aligned for position two. Do nothing. :)
+                driveInches(0, 25);
                 break;
             case THREE:
                 // Strafe right one tile.
