@@ -4,9 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 /**
@@ -18,21 +16,16 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
  * See lines 42-57.
  */
 @TeleOp(name="G-FORCE AUTO", group = "advanced")
-public class GFORCE_Auto extends LinearOpMode {
-
-    boolean headingLock = false;
-    double  headingSetpoint = 0;
+public class GFORCE_AUTO extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException{
 
+        // apply hub performance
+        HubPerformance.enable(hardwareMap);
 
         // Initialize GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
-
-        // We want to turn off velocity control for teleop
-        // Velocity control per wheel is not necessary outside of motion profiled auto
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details

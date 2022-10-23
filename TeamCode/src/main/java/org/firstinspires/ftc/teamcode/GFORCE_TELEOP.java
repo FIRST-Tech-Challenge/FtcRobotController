@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
 
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.GFORCE_KiwiDrive;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
 /**
@@ -24,16 +23,15 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 @TeleOp(name="G-FORCE TELEOP", group = "advanced")
 public class GFORCE_TELEOP extends LinearOpMode {
 
-    boolean headingLock = false;
-    double  headingSetpoint = 0;
-
-    double AXIAL_RATE = 0.8;
-    double LATERAL_RATE = 0.8;
-    double YAW_RATE = 0.8;
-
+    // Joystick constants
+    final double AXIAL_RATE = 0.8;
+    final double LATERAL_RATE = 0.8;
+    final double YAW_RATE = 0.2;
 
     private Elevator elevator;
 
+    boolean headingLock = false;
+    double  headingSetpoint = 0;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
@@ -42,20 +40,19 @@ public class GFORCE_TELEOP extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        double joysticRotate;
+        // apply hub performance
+        HubPerformance.enable(hardwareMap);
+
+        double manualRotate;
 
         headingController.setInputBounds(0.0, 2.0 * Math.PI);
+        headingController.setOutputBounds(-MAX_ANG_VEL, MAX_ANG_VEL);
 
         // Initialize GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         elevator = new Elevator(this);
-
-        elevator.resetHome();
-
-        // We want to turn off velocity control for teleop
-        // Velocity control per wheel is not necessary outside of motion profiled auto
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        elevator.recalibrateHomePosition();
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
@@ -63,12 +60,11 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
-
         while (opModeIsActive()) {
 
             // Update everything.
             drive.update();
+            elevator.update();
 
             //-----------PILOT-----------
             // Read pose
@@ -82,7 +78,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
             ).rotated(-poseEstimate.getHeading());
 
             // Determine the required rotate rate
-            joysticRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE * DriveConstants.kV * 5  ;
+            manualRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE  ;
 
             //set one of four desired headings
             if(gamepad1.triangle) {
@@ -96,7 +92,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
             }
 
             // are we turning or should heading be locked.
-            if (Math.abs(joysticRotate) < 0.01) {
+            if (Math.abs(manualRotate) < 0.01) {
                 if (!headingLock && drive.notTurning()) {
                     lockNewHeading(drive.getExternalHeading());
                 }
@@ -105,16 +101,15 @@ public class GFORCE_TELEOP extends LinearOpMode {
             }
 
             if (headingLock) {
-                // Set desired angular velocity to the heading controller output + angular
-                // velocity feedforward
-                double headingInput = headingController.update(drive.getExternalHeading())
-                        * DriveConstants.kV ;
+                // Set desired angular velocity to the heading-controller output
+                double autoRotate = headingController.update(drive.getExternalHeading())
+                        * DriveConstants.kV ;  // note: this scale may need to be tweaked.
 
                 drive.setWeightedDrivePower(
                         new Pose2d(
                                 joysticInput.getX(),
                                 joysticInput.getY(),
-                                headingInput
+                                autoRotate
                         )
                 );
             } else {
@@ -123,7 +118,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
                         new Pose2d(
                                 joysticInput.getX(),
                                 joysticInput.getY(),
-                                joysticRotate
+                                manualRotate
                         )
                 );
             }
@@ -135,17 +130,14 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 headingController.setTargetPosition(headingSetpoint);
             }
 
-
-
             //-----------CO-PILOT--------------
-            //Homes elevator
+            // Lower the elevator to the base
             if (gamepad2.left_bumper) {
                 elevator.setHandPosition(elevator.HAND_CLOSE);
                 elevator.setTarget(elevator.ELEVATOR_HOME);
             }
 
-            //elevator.manualControl();
-
+            // Select one of the 4 preset heights
             if (gamepad2.dpad_down) {
                 elevator.setTarget(elevator.ELEVATOR_LOW);
             } else if (gamepad2.dpad_left) {
@@ -156,6 +148,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 elevator.setTarget(elevator.ELEVATOR_GROUND);
             }
 
+            // Open or close the hand (gripper)
             if (gamepad2.circle) {
                 elevator.setHandPosition(elevator.HAND_OPEN);
                 elevator.setWristOffset(0);
@@ -163,15 +156,15 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 elevator.setHandPosition(elevator.HAND_CLOSE);
             }
 
+            // Put the hand in safe position
             if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 elevator.setWristOffset(90);
             }
 
+            // Manually jog the elevator.
             elevator.jogElevator(-gamepad2.left_stick_y);
 
-
-            elevator.runControlLoop();
-
+            // Display Telemetry data
             telemetry.addData("Lock", headingLock);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
@@ -183,10 +176,10 @@ public class GFORCE_TELEOP extends LinearOpMode {
         }
     }
 
+    // Lock in a new heading for the Auto Heading Hold..
     public void lockNewHeading(double heading) {
         headingLock = true;
         headingSetpoint = heading;
         headingController.setTargetPosition(headingSetpoint);
     }
-
 }

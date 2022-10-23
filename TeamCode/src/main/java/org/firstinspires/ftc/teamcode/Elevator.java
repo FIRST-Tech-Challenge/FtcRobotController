@@ -78,10 +78,11 @@ public class Elevator {
      * Perform closed loop control on elevator and wrist
      * @return
      */
-    public boolean runControlLoop() {
+    public boolean update() {
         currentPosition = liftMaster.getCurrentPosition();
         boolean inPosition = false;
 
+        // Run the elevator motor with 4 different speed zones.  Two up and two down.
         if (liftActive) {
             double error = target - getPosition();
             if (error > DEAD_BAND * 4) {
@@ -107,9 +108,8 @@ public class Elevator {
             }
 
             // Adjust the angle of the servo.
-            // first calc arm angle and negate it for level wrist
+            // first calculate arm angle and negate it for level wrist
             // Then add desired wrist offset angle and send to servo.
-
             double armAngle = elevatorEncoderToAngle(currentPosition);
             double servoAngle = -armAngle;
             servoAngle += wristOffset;
@@ -125,9 +125,10 @@ public class Elevator {
     }
 
     /***
+     * Re-learn the elevator home position.
      * Lower the elevator until it stops and then reset zero position.
      */
-    public void resetHome() {
+    public void recalibrateHomePosition() {
         disableLift();  // Stop any closed loop control
         lastPosition = liftMaster.getCurrentPosition();
         setPower(HOME_POWER);
@@ -171,19 +172,6 @@ public class Elevator {
 
     public void jogElevator(double speed) {
         target = target + (int)(speed * 6);
-    }
-
-    public void manualControl() {
-        currentPosition = liftMaster.getCurrentPosition();
-        if (myOpMode.gamepad1.dpad_up && (currentPosition <= 1000)) {
-            setPower(SLOW_LIFT);
-        }
-        else if (myOpMode.gamepad1.dpad_down && getPosition() > 0) {
-            setPower(SLOW_LOWER);
-        }
-        else {
-            setPower(0);
-        }
     }
 
     // ----- Wrist controls
