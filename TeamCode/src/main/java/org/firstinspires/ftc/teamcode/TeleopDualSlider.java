@@ -88,6 +88,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class TeleopDualSlider extends LinearOpMode {
 
     // Declare OpMode members.
+    static final double MAX_WAIT_TIME = 30; // in seconds
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor FrontLeftDrive = null;
     private DcMotor FrontRightDrive = null;
@@ -108,7 +109,7 @@ public class TeleopDualSlider extends LinearOpMode {
     static final int COUNTS_PER_INCH = 115;
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // Leave 100 counts for buffer.
     static final int SLIDER_MIN_POS = 0;
-    static final int GROUND_JUNCTION_POS = 400;
+    static final int GROUND_JUNCTION_POS = 250;
     static final int READY_FOR_GRIP_POSITION = 700; // lift a little bit to get ready for unloading
 
     // 10inch for low junction, 20inch for medium, and 30 for high
@@ -142,8 +143,9 @@ public class TeleopDualSlider extends LinearOpMode {
 
 
     // variables for auto load and unload cone
-    static final int COUNTS_PER_FEET_MOTION = 360; // robot moving 1 feet for 360 counts position.
-    double robotAutoLoadMovingDistance = 0.05; // in feet
+    static final int COUNTS_PER_FEET_DRIVE = 360; // robot drive 1 feet. Back-forth moving
+    static final int COUNTS_PER_FEET_STRAFE = 600; // robot strafe 1 feet. Left-right moving.
+    double robotAutoLoadMovingDistance = 0.1; // in feet
     double robotAutoUnloadMovingDistance = 0.25; // in feet
 
 
@@ -423,18 +425,22 @@ public class TeleopDualSlider extends LinearOpMode {
         armServo.setPosition(ARM_UNLOAD_POSITION);
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // moving back in feet
 
-        // move down slider a little bit (100 count) to unload cone
+        // move down slider a little bit to unload cone
         sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
-        RightSliderMotor.setTargetPosition(sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION);
-        LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION);
+        int moveSlider = sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION;
+        moveSlider = Math.max(moveSlider, SLIDER_MIN_POS);
+        RightSliderMotor.setTargetPosition(moveSlider);
+        LeftSliderMotor.setTargetPosition(moveSlider);
         waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
         waitMotorActionComplete(LeftSliderMotor);
 
         clawServo.setPosition(CLAW_OPEN_POS); // unload  cone
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
 
-        RightSliderMotor.setTargetPosition(sliderMotorTargetPosition);
-        LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+        sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
+        moveSlider = sliderMotorTargetPosition + SLIDER_MOVE_DOWN_POSITION;
+        RightSliderMotor.setTargetPosition(moveSlider);
+        LeftSliderMotor.setTargetPosition(moveSlider);
         waitMotorActionComplete(RightSliderMotor);
         waitMotorActionComplete(LeftSliderMotor);
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // move out from junction
@@ -480,13 +486,14 @@ public class TeleopDualSlider extends LinearOpMode {
     /**
      * Set target position for every wheel motor, and set power to motors to move the robot.
      * Turn off encode mode after moving.
-     * @param targetDistance: Input value for the target distance.
-     * @param isBackForward: flag for back-forward (true) moving, or left-right moving (false)
+     * @param targetDistance: Input value for the target distance in feet.
+     * @param isBackForth: flag for back-forth (true) moving, or left-right moving (false)
      */
-    private void robotMovingDistance(double targetDistance, boolean isBackForward) {
-        int targetPosition = (int)(targetDistance * COUNTS_PER_FEET_MOTION);
+    private void robotMovingDistance(double targetDistance, boolean isBackForth) {
+        int countsPerFeet = isBackForth? COUNTS_PER_FEET_DRIVE : COUNTS_PER_FEET_STRAFE;
+        int targetPosition = (int)(targetDistance * countsPerFeet);
         telemetry.addData("Status", "auto driving target position %d", targetPosition);
-        setTargetPositionsToWheels(targetPosition, isBackForward);
+        setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
         setPowerToWheels(AUTO_DRIVE_POWER); // low speed for more accurate, start moving
         waitMotorActionComplete(FrontLeftDrive); // just check one wheel.
@@ -558,10 +565,12 @@ public class TeleopDualSlider extends LinearOpMode {
 
     /**
      * Wait until the motor complete action.
+     * The MAXIMUM waiting time is MAX_WAIT_TIME to avoid death.
      * @param mot: the motor which be checked if it is in active.
      */
     private void waitMotorActionComplete(DcMotor mot) {
-        while(mot.isBusy()) {
+        double curTime = runtime.seconds();
+        while((mot.isBusy()) && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
             idle();
         }
     }
