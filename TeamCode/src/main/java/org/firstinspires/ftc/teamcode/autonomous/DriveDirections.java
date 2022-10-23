@@ -204,7 +204,17 @@ abstract class DriveDirections extends LinearOpMode {
         double angle = getCumulativeZ();
         double difference = targetAngle - angle;
         if(difference > 0){
-            while (angle <= targetAngle) {
+            while (angle < targetAngle) {
+                angle = getCumulativeZ();
+                rightFrontDrive.setPower(power);
+                leftFrontDrive.setPower(-power);
+                rightBackDrive.setPower(power);
+                leftBackDrive.setPower(-power);
+            }
+        }
+
+        else if(difference > 0){
+            while (angle > targetAngle) {
                 angle = getCumulativeZ();
                 rightFrontDrive.setPower(-power);
                 leftFrontDrive.setPower(power);
@@ -212,16 +222,6 @@ abstract class DriveDirections extends LinearOpMode {
                 leftBackDrive.setPower(power);
             }
         }
-
-        else if(difference > 0){
-            while (angle >= targetAngle) {
-                angle = getCumulativeZ();
-                rightFrontDrive.setPower(power);
-                leftFrontDrive.setPower(-power);
-                rightBackDrive.setPower(power);
-                leftBackDrive.setPower(-power);
-            }
-        } else {}
 
         rightFrontDrive.setPower(0);
         leftFrontDrive.setPower(0);
