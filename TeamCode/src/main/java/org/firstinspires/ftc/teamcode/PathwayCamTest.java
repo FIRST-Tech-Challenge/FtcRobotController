@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 //test
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -51,7 +52,9 @@ public class PathwayCamTest extends LinearOpMode {
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
 
-    private int resultROI;
+    private int resultROI=0;
+
+    private  boolean done = false;
 
 
     @Override
@@ -87,22 +90,25 @@ public class PathwayCamTest extends LinearOpMode {
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading);
         moveUtils.resetEncoders();
 
+        Long startTime = System.currentTimeMillis();
+        Long currTime = startTime;
+
         initVuforia();
         initTfod();
 
         if (tfod != null) {
             tfod.activate();
 
-            tfod.setZoom(1.0, 16.0 / 9.0);
+            tfod.setZoom(2.0, 16.0 / 9.0);
         }
 
         waitForStart();
         telemetry.update();
 
+        while ((currTime - startTime < 2000)&& !done) {
+            if (opModeIsActive()) {
+                if (tfod != null && resultROI == 0) {
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -129,6 +135,8 @@ public class PathwayCamTest extends LinearOpMode {
                                 resultROI = 2;
                             } else if (imageCheck.equals("3 Panel")) {
                                 resultROI = 3;
+                            } else {
+                                resultROI = 2;
                             }
                             telemetry.addData("ResultROI", resultROI);
 
@@ -136,23 +144,31 @@ public class PathwayCamTest extends LinearOpMode {
                         telemetry.update();
                     }
                 }
-
-                switch (resultROI) {
-                    case 1:
-                        // Left (Bottom Level)
-                        moveUtils.goStraight(1,MAX_SPEED,MIN_SPEED,ACCEL);
-                        moveUtils.turnCCW(90);
-                        break;
-                    case 2:
-                        // Middle (Middle Level)
-                        moveUtils.goStraight(5, MAX_SPEED, MIN_SPEED, ACCEL);
-                        break;
-                    case 3:
-                        moveUtils.goStraight(1,MAX_SPEED,MIN_SPEED,ACCEL);
-                        moveUtils.turnCW(90);
-                        break;
-                }
             }
+
+        switch (resultROI) {
+            case 1:
+                // Far left
+                moveUtils.strafeBuddy(-35);
+                moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
+                done=true;
+
+                break;
+            case 2:
+                // Middle
+
+                moveUtils.goStraight(34, MAX_SPEED, MIN_SPEED, ACCEL);
+                done=true;
+
+                break;
+            case 3:
+                // Far right
+                moveUtils.strafeBuddy(35);
+                moveUtils.goStraight(26, MAX_SPEED, MIN_SPEED, ACCEL);
+                done=true;
+
+                break;
+        }
         }
     }
     void composeTelemetry() {
