@@ -24,6 +24,7 @@ public class BaseStateMachine extends BaseAutonomous {
     private static final float oneAndHalfTile   = 36 * mmPerInch;
     private int parkStep = 0;
     private int currentPos = 0;
+    private int junctionStep = 0;
 
     public enum State {
         IDENTIFY_TARGET,
@@ -33,6 +34,7 @@ public class BaseStateMachine extends BaseAutonomous {
         PARK,
         ALIGN_WITH_POLE,
         END_STATE,
+        REVERSE_JUNCTION,
         LOGGING,
     }
 
@@ -54,7 +56,7 @@ public class BaseStateMachine extends BaseAutonomous {
         this.msStuckDetectInitLoop = 15000;
         // Starts state machine
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
-        pixyCam = hardwareMap.get(PixyCam.class, "sensor_color");
+        //pixyCam = hardwareMap.get(PixyCam.class, "sensor_color");
         newState(State.IDENTIFY_TARGET);
 
 
@@ -102,20 +104,20 @@ public class BaseStateMachine extends BaseAutonomous {
                     telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
 
                 } else {
-                    newState(State.PARK);
+                    newState(State.DRIVE_TO_MEDIUM_JUNCTION);
                 }
                 break;
             case DRIVE_TO_MEDIUM_JUNCTION:
-                if (driveSystem.driveToPosition(300, DriveSystem.Direction.BACKWARD, 0.2)) {
-                    newState(State.POSITION_ROBOT_AT_JUNCTION);
-                }
+                mediumJunction();
                 break;
             case ALIGN_WITH_POLE:
                 int offsetX;
-                PixyCam.Block block = pixyCam.GetBiggestBlock(3);
-                offsetX = pixyCam.offSetX();
+                //PixyCam.Block block = pixyCam.GetBiggestBlock(3);
+                //offsetX = pixyCam.offSetX();
                 //create a function that will decrease speed based on how close offset is from 0
-
+            case REVERSE_JUNCTION:
+                reverseJunction();
+                break;
             case PARK:
                 park();
                 break;
@@ -151,6 +153,42 @@ public class BaseStateMachine extends BaseAutonomous {
             }
             if (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) {
                 newState(State.END_STATE);
+            }
+        }
+    }
+
+    private void mediumJunction(){
+        if(junctionStep == 0){
+            if(driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.4)){
+                junctionStep++;
+            }
+        }
+        if(junctionStep == 1){
+            if(driveSystem.turn(-15, 0.2)){
+                junctionStep++;
+            }
+        }
+        if(junctionStep == 2){
+            if(driveSystem.driveToPosition(20, DriveSystem.Direction.BACKWARD,0.4)) {
+                newState(State.REVERSE_JUNCTION);
+            }
+        }
+    }
+
+    private void reverseJunction(){
+        if(junctionStep == 2){
+            if(driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.4)){
+                junctionStep--;
+            }
+        }
+        if(junctionStep == 1){
+            if(driveSystem.turn(15, 0.2)){
+                junctionStep--;
+            }
+        }
+        if(junctionStep == 0){
+            if(driveSystem.driveToPosition(20, DriveSystem.Direction.FORWARD,0.4)) {
+                newState(State.PARK);
             }
         }
     }
