@@ -45,20 +45,17 @@ public class DriverControls {
 
     void joystickDrive() {
 
+        if(notJoystickDeadZone(gamepad1.right_stick_x))
+            robot.crane.adjustDistance(gamepad1.right_stick_x);
 
-        //manual override of turret
-        if (notJoystickDeadZone(gamepad2.right_stick_x)) {
-            robot.crane.adjustDistance(gamepad2.right_stick_x);
-        }
+        if(notJoystickDeadZone(gamepad1.right_stick_y))
+            robot.crane.adjustHeight(-gamepad1.right_stick_y);
 
-        if (notJoystickDeadZone(gamepad2.right_stick_y)) {
-            robot.crane.adjustHeight(gamepad2.right_stick_y);
-        }
+        robot.crane.adjustTurretAngle(10*gamepad1.right_trigger);
+        robot.crane.adjustTurretAngle(-10*gamepad1.left_trigger);
 
-        if (notJoystickDeadZone(gamepad2.left_stick_x)) {
-            robot.crane.adjustTurretAngle(gamepad2.left_stick_x);
-        }
-
+        if(stickyGamepad1.x)
+            robot.crane.toggleGripper();
 
 
 
@@ -69,7 +66,7 @@ public class DriverControls {
             robot.driveTrain.ManualDriveOff();
         }
 
-        //update TargetPose
+        /*
         if( stickyGamepad1.a){
             robot.updateFieldTargetPose(0, -1);
         }
@@ -92,7 +89,7 @@ public class DriverControls {
         //if (notJoystickDeadZone(gamepad1.right_stick_x))
             //pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
-            /*
+
         if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.isNavigating) {
         } else {
             robot.isNavigating = false; // take control back from any auton navigation if any joystick input is running
