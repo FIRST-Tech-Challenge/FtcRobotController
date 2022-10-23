@@ -112,34 +112,23 @@ public class asd extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-                            if (recognition.getLabel()=="1 Bolt") detect=1;
-                            if (recognition.getLabel()=="2 Bulb") detect=2;
-                            if (recognition.getLabel()=="3 Panel") detect=3;
+                            if (recognition.getLabel()=="1 Bolt") {detect=1; telemetry.addData("This", "Works");
+                            one();}
+                            if (recognition.getLabel()=="2 Bulb") {detect=2; telemetry.addData("This", "Works");
+                            two();}
+                            if (recognition.getLabel()=="3 Panel") {detect=3;telemetry.addData("This", "Works");
+                            three();}
                             telemetry.addData(""," ");
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
                             telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
                         }
-                        telemetry.update();
+
                     }
                 }
             }
-            if (detect==1) {
-                strafeLeft(0.5,1000);
-                stopRobot();
-                straight(0.5,1000);
-                stopRobot();
-            }
-            if (detect==2) {
-                straight(0.5,1000);
-                stopRobot();
-            }
-            if (detect==3) {
-                strafeRight(0.5,1000);
-                stopRobot();
-                straight(0.5,1000);
-                stopRobot();
-            }
+
+            telemetry.update();
         }
     }
 
@@ -201,5 +190,29 @@ public class asd extends LinearOpMode {
         robot.leftbackmotor.setPower(0);
         robot.rightfrontmotor.setPower(0);
         robot.rightbackmotor.setPower(0);
+    }
+    public void one() {
+        if (detect == 1) {
+
+            strafeLeft(0.5, 1000);
+            stopRobot();
+            straight(0.5, 1000);
+            stopRobot();
+        }
+    }
+    public void two() {
+        if (detect == 2) {
+            telemetry.addData("Ashay is cool", "%s (%.0f %% Conf.)", detect);
+            straight(0.5, 1000);
+            stopRobot();
+        }
+    }
+    public void three() {
+        if (detect == 3) {
+            strafeRight(0.5, 1000);
+            stopRobot();
+            straight(0.5, 1000);
+            stopRobot();
+        }
     }
 }
