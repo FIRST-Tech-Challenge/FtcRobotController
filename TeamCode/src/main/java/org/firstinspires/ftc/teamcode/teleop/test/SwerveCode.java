@@ -21,6 +21,7 @@ public class SwerveCode extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
+    Kinematics kinematics;
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -41,6 +42,8 @@ public class SwerveCode extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
+        kinematics = new Kinematics(posSystem);
+        posSystem.grabKinematics(kinematics);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();

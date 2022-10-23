@@ -49,6 +49,12 @@ public class testGPS extends OpMode{
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
+
+        int[] clicksArr = getClicksTurn(0, 90);
+        int distanceClicks = clicksArr[0];
+        int rotClicks = clicksArr[1];
+
+        drive(distanceClicks, rotClicks);
     }
 
     @Override
@@ -117,15 +123,6 @@ public class testGPS extends OpMode{
 
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
-
-        double alpha = 0.7;
-        double beta = 1 - alpha;
-
-        int[] clicksArr = getClicksTurn(0, 90);
-        int distanceClicks = clicksArr[0];
-        int rotClicks = clicksArr[1];
-
-        drive(distanceClicks, rotClicks);
 
         robot.botL.setPower(0.5);
         robot.topL.setPower(0.5);
