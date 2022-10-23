@@ -12,9 +12,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.team8923_PowerPlay.BaseOpMode;
 
-
-@Autonomous(name = "BaseAutonomous")
-
 public abstract class BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -66,8 +63,12 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     public Position detectSignalSleeve() {
+
         return Position.ONE;
     }
+
+
+
     /**
      * Moves the robot forward, backwards, and strafes right and left in inches.
      * @param x strafes the robot right x inches. If moving left, pass in negative value.
