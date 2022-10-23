@@ -31,7 +31,7 @@ public class Mecanum extends LinearOpMode {
             backRightDrive  = (-gamepad1.left_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)*driveSpeed;
             backLeftDrive   = (-gamepad1.left_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x)*driveSpeed;
             clawServo = (gamepad2.right_stick_x);
-            armServo = (gamepad2.right_stick_y);
+            armServo = (gamepad2.left_stick_x);
 
             robot.rightfrontmotor.setPower(frontRightDrive);
             robot.rightbackmotor.setPower(backRightDrive);
