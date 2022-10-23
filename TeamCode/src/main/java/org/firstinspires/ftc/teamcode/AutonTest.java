@@ -32,32 +32,76 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.apriltags.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
 
 
-@TeleOp(name="AutonTest", group="Linear Opmode")
+@TeleOp(name="AutonTest")
 //@Disabled
 public class AutonTest extends LinearOpMode {
+    double fx = 369.50;
+    double fy = 369.50;
+    double cx = 960;
+    double cy = 540;
+    double tagsize = 0.0406;//meters
+
+    final int ID_LEFT = 0;
+    final int ID_MIDDLE = 1;
+    final int ID_RIGHT = 2;
+
+    AprilTagDetection tagOfInterest = null;
+
+    private OpenCvCamera camera;
+    private AprilTagDetectionPipeline aprilTagDetect;
     @Override
     public void runOpMode() {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetect = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        TrajectorySequence myTrajectory = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(48)
-                .turn(Math.toRadians(45))
-                .turn(Math.toRadians(-45))
-                .waitSeconds(0.5)
-                .back(24)
-                .waitSeconds(0.5)
-                .strafeRight(48)
-                .build();
+        camera.setPipeline(aprilTagDetect);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
+            }
 
-        waitForStart();
+            @Override
+            public void onError(int errorCode) {
 
-        if(isStopRequested()) return;
+            }
+        });
 
-        drive.followTrajectorySequence(myTrajectory);
+        while(!opModeIsActive())
+        {
+            telemetry.clear();
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetect.getLatestDetections();
+            if(currentDetections.size() != 0)
+            {
+                for(AprilTagDetection tag : currentDetections)
+                {
+                    telemetry.addLine(Integer.toString(tag.id));
+                }
+            }
+            else
+            {
+                telemetry.addLine("No data");
+            }
+            telemetry.update();
+            sleep(20);
+        }
+
+
     }
 }

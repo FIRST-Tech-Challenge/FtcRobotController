@@ -3,37 +3,36 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Drive;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
 
 // PSEUDOCODE
 public class Auton {
-
-    private static int parkingZone;//1, 2, 3
-    private boolean direction;//true = left, false = right
-    private DcMotor lift;
-
-    public Auton(boolean left) {
+    private boolean direction;
+    private int parkingZone;
+    public Auton(boolean left, int tag_id) {
         this.direction = left;
-        //lift = hardwareMap.dcMotor.get("motorLift");
-        //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.parkingZone = tag_id + 1;//0-->1, 1-->2, 2-->3
+
     }
 
-    public void runAuton(int pz, Drive getDrive)
+    public void runAuton(SampleMecanumDrive drive)
     {
-        parkingZone = pz;
 
         int angle = -45;
         if(direction)
         {
             angle = 45;
         }
-        Drive drive = getDrive;
-        drive.setMotorPowers(0.5,0.5,0.5,0.5);
+
+        drive.setMotorPowers(0.1,0.1,0.1,0.1);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(30)
+                .forward(24)
                 .build();
 
         drive.followTrajectorySequence(trajSeq);
