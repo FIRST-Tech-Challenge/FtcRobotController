@@ -30,6 +30,7 @@ public class camera extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
+    int detect = 0;
     private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
@@ -110,6 +111,9 @@ public class camera extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+                            if (recognition.getLabel()=="1 Bolt") {detect=1; telemetry.addData("This", "Works");}
+                            if (recognition.getLabel()=="2 Bulb") {detect=2; telemetry.addData("This", "Works");}
+                            if (recognition.getLabel()=="3 Panel") {detect=3;telemetry.addData("This", "Works");}
 
                             telemetry.addData(""," ");
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
