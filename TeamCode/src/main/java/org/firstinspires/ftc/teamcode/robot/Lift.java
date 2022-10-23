@@ -79,7 +79,6 @@ public class Lift {
     }
     private double getHeightInInches(){
         return (double)getPosition()/TICK_PER_INCH;
-
     }
     public int deliveryHeight(String subheight){
         int height = 0;
