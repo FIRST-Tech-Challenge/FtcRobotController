@@ -144,6 +144,7 @@ public class PathwayCamTest extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+
             }
 
         switch (resultROI) {
@@ -169,6 +170,8 @@ public class PathwayCamTest extends LinearOpMode {
 
                 break;
         }
+
+
         }
     }
     void composeTelemetry() {
