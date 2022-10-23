@@ -70,22 +70,31 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     public void driveRobot(double x, double y, double t)  {
 
-        telemetry.addData("org: ", IMUOriginalAngles.firstAngle);
-        telemetry.addData("t1=", t);
-        telemetry.addData("error=", 0);
+        telemetry.addData("org: ", IMUOriginalAngles.firstAngle);//temp
+        telemetry.addData("t1=", t);//temp
+        telemetry.addData("error=", 0);//temp
         // read imu when turning (when t != 0)
         if (t != 0) {
             IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         // otherwise read imu for correction
         } else {
+            // obtain the current angle's error from the original angle
             Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double angleError = IMUOriginalAngles.firstAngle - currentAngle.firstAngle;
-            telemetry.addData("error=", angleError);
+            // flip to inverse of angles above 180/below -180
+            // to make sure to use the shorter angle
+            if (angleError > 180.0) {
+                angleError -= 360.0;
+            } else if (angleError < -180.0) {
+                angleError += 360.0;
+            }
+            telemetry.addData("error=", angleError);//temp
+            // apply a constant to turn the angle into a turn speed
             t = -correctionConstant * angleError;
         }
 
-        telemetry.addData("t2=", t);
-        telemetry.update();
+        telemetry.addData("t2=", t);//temp
+        telemetry.update();//temp
 
         double speedFL = (-y+x+t);
         double speedFR = (-y-x-t);
