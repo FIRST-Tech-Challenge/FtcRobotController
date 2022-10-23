@@ -1,13 +1,29 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
 abstract public class BaseTeleOp extends BaseOpMode{
+
+    //Stick curve method. the function can be changed whenever
+    public double stickCurve(double input){
+        return (Math.signum(input)*(Math.pow(input, 2)));
+    }
+
     public void teleOpDrive(){
-        if(Math.abs(Math.atan2(gamepad1.left_stick_y, gamepad2.left_stick_x)) > 5){
-            driveRobot(gamepad1.left_stick_x, 0, gamepad1.right_stick_x);
-        }else if(Math.abs(Math.atan2(gamepad1.left_stick_x, gamepad2.left_stick_y)) > 5){
-            driveRobot(0, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        //Saving the gamepad inputs into variables
+        double LeftXPos = stickCurve(gamepad1.left_stick_x);
+        double LeftYPos = stickCurve(gamepad1.left_stick_y);
+        double TurnPos = stickCurve(gamepad1.right_stick_x);
+
+        //Deadzones, 5 is the deadzone angle. Atan2 determines angle between the two sticks
+
+        if(Math.abs(Math.atan2(LeftYPos, LeftXPos)) > 5){
+            //Case for driving the robot left and right
+            driveRobot(LeftXPos, 0, TurnPos);
+        }else if(Math.abs(Math.atan2(LeftXPos, LeftYPos)) > 5){
+            //Case for driving the robot up and
+            driveRobot(0, LeftYPos, TurnPos);
         }else{
-            driveRobot(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            //Case for if the deadzones limits are passed, the robot drives normally
+            driveRobot(LeftXPos, LeftYPos, TurnPos);
         }
     }
 };
