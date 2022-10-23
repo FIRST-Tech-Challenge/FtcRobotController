@@ -41,6 +41,8 @@ public class testSetTargetPos extends OpMode{
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
+
+        setTargetRotatePosTest(340);
     }
 
     @Override
@@ -79,6 +81,11 @@ public class testSetTargetPos extends OpMode{
         telemetry.addData("TopR Clicks", robot.topR.getCurrentPosition());
         telemetry.addData("BotR Clicks", robot.botR.getCurrentPosition());
 
+        telemetry.addData("TopL State", robot.topL.isBusy());
+        telemetry.addData("BotL State", robot.botL.isBusy());
+        telemetry.addData("TopR State", robot.topR.isBusy());
+        telemetry.addData("BotR State", robot.botR.isBusy());
+
         telemetry.update();
     }
 
@@ -104,18 +111,17 @@ public class testSetTargetPos extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
-        if (a.getState() == Button.State.TAP){
-            setTargetSpinPosTest(240);
-            robot.botL.setPower(0.5);
-            robot.topL.setPower(0.5);
-        } else if (a.getState() == Button.State.DOUBLE_TAP){
-            setTargetRotatePosTest(340);
-            robot.botL.setPower(0.5);
-            robot.topL.setPower(0.5);
-        } else if (b.getState() == Button.State.TAP){
-            robot.botL.setPower(0);
-            robot.topL.setPower(0);
-        }
+//        setTargetSpinPosTest(240);
+//        robot.botL.setPower(0.5);
+//        robot.topL.setPower(0.5);
+
+
+        robot.botL.setPower(0.5);
+        robot.topL.setPower(0.5);
+        robot.topR.setPower(0.5);
+        robot.botR.setPower(0.5);
+
+
 
         //the goal of this test is to see whether or not the motor actually stops spinning after reaching its target.
         /*
