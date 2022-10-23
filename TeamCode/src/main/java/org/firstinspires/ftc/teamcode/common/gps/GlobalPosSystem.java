@@ -91,8 +91,12 @@ public class GlobalPosSystem {
             otherAngle = (Math.PI / 2.0) - otherAngle;
         }
 
+        double currentDegrees = positionArr[2] + Math.toDegrees(otherAngle);
+        currentDegrees = kinematics.clamp(currentDegrees);
+        currentDegrees = Math.toRadians(currentDegrees);
+
         if (translationalInches == 0){
-            update(translationalInches * Math.sin(otherAngle), translationalInches * Math.cos(otherAngle) , rotationalDegrees, 0);
+            update(translationalInches * Math.sin(currentDegrees), translationalInches * Math.cos(currentDegrees) , rotationalDegrees, 0);
         /*
         Problems:
         - completely breaks when robot rotates on its center (because the one of the arcs is reflected)
@@ -101,29 +105,32 @@ public class GlobalPosSystem {
          */
         }
         else{
-            update(translationalInches * Math.cos(otherAngle), translationalInches * Math.sin(otherAngle), splineOrientation, rotationalDegrees + splineOrientation);
+            update(translationalInches * Math.cos(currentDegrees), translationalInches * Math.sin(currentDegrees), splineOrientation, rotationalDegrees + splineOrientation);
         }
     }
 
     public void update ( double x, double y, double wheelR, double robotR){
         //update
-        positionArr[0] += x * constants.INCHES_PER_CLICK;
-        positionArr[1] += y * constants.INCHES_PER_CLICK;
-        positionArr[2] += kinematics.clamp(wheelR * constants.DEGREES_PER_CLICK);
-        positionArr[3] += kinematics.clamp(robotR * constants.DEGREES_PER_CLICK);
+        positionArr[0] += x;
+        positionArr[1] += y;
+        positionArr[2] += wheelR;
+        positionArr[3] += robotR;
+
+        positionArr[2] = kinematics.clamp(positionArr[2]);
+        positionArr[3] = kinematics.clamp(positionArr[3]);
         //wth does "R" stand for in "wheelR" and "robotR" ?????????????
-        try {
-            FileWriter myWriter = new FileWriter("gpsLog.txt");
-            myWriter.write("GPS Log\n");
-            myWriter.write((int) positionArr[0] + "\n");
-            myWriter.write((int) positionArr[1] + "\n");
-            myWriter.write((int) positionArr[2] + "\n");
-            myWriter.write((int) positionArr[3] + "\n\n");
-            myWriter.close();
-        } catch (IOException e) {
-           // System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+//        try {
+//            FileWriter myWriter = new FileWriter("gpsLog.txt");
+//            myWriter.write("GPS Log\n");
+//            myWriter.write((int) positionArr[0] + "\n");
+//            myWriter.write((int) positionArr[1] + "\n");
+//            myWriter.write((int) positionArr[2] + "\n");
+//            myWriter.write((int) positionArr[3] + "\n\n");
+//            myWriter.close();
+//        } catch (IOException e) {
+//           // System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
     }
 
     public void hardResetGPS(){
