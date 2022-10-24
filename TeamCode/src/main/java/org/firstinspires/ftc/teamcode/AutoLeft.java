@@ -54,6 +54,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -83,9 +84,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleopDualSlider", group="Concept")
+@Autonomous(name="AutoLeft", group="Concept")
 //@Disabled
-public class TeleopDualSlider extends LinearOpMode {
+public class AutoLeft extends LinearOpMode {
 
     // Declare OpMode members.
     static final double MAX_WAIT_TIME = 30; // in seconds
@@ -244,15 +245,15 @@ public class TeleopDualSlider extends LinearOpMode {
         waitForStart();
         telemetry.addData("Mode", "waiting for start");
         telemetry.update();
-
         runtime.reset();
 
 
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        //while (opModeIsActive()) {
+        if (opModeIsActive() && (runtime.seconds() < 30.0)) {
             // Game pad buttons design
-            float robotMovingBAckForth = gamepad1.left_stick_y;
+            float robotMovingBackForth = gamepad1.left_stick_y;
             float robotMovingRightLeft = gamepad1.left_stick_x;
             float robotTurn = gamepad1.right_stick_x;
             float sliderUpDown = gamepad1.right_stick_y;
@@ -274,7 +275,7 @@ public class TeleopDualSlider extends LinearOpMode {
             double BackRightPower;
 
 
-            double drive = POWER_FACTOR * Math.pow(robotMovingBAckForth, 1 + (2 * RAMP_ON));
+            double drive = POWER_FACTOR * Math.pow(robotMovingBackForth, 1 + (2 * RAMP_ON));
             double turn  =  POWER_FACTOR * Math.pow(-robotTurn, 1 + (2 * RAMP_ON));
             double strafe = POWER_FACTOR * Math.pow(-robotMovingRightLeft, 1 + (2 * RAMP_ON));
 
@@ -403,6 +404,44 @@ public class TeleopDualSlider extends LinearOpMode {
                     "Frontleft (%d), Frontright (%d)," + " Backleft (%d), Backright (%d)",
                     FrontLeftDrive.getCurrentPosition(), FrontRightDrive.getCurrentPosition(),
                     BackLeftDrive.getCurrentPosition(), BackRightDrive.getCurrentPosition());
+
+
+            /** code for autonomous
+             * 1. take a picture, recognize the color on sleeve signal
+             * 2. Move robot the high junction
+             * 3. Unload cone on high junction
+             * 4. Move robot to cone loading area
+             * 5. Load cone
+             * 6. Move robot to parking area
+             */
+            int sleevSignal = 1; // sleeve signal will be 1 for red, 2 for green, 3 for blue
+            double parkingLocation = 1.0; // distance between cone loading area to parking area
+            switch (sleevSignal) {
+                case 1:
+                    parkingLocation = 5.0; // parking lot #1 (red), third mat
+                    break;
+                case 2:
+                    parkingLocation = 3.0; // parking lot #2 (green), third mat
+                    break;
+                case 3:
+                    parkingLocation = 1.0; // parking lot #3 (blue), third mat
+                    break;
+                default:
+                    parkingLocation = 0.0;
+            }
+            telemetry.addData("Status", "auto mode - sleeve signal (%d)," +
+                    "moving distance (%0.1f) feet", sleevSignal, parkingLocation);
+
+            robotMovingDistance(5.0, true); // drive robot to the center of 3rd mat
+            robotMovingDistance(-1.0, false); // strafe robot half mat to left side
+            robotMovingDistance(1.0, true); // drive robot half mat to high junction
+            autoUnloadCone();
+            rotate(90, AUTO_DRIVE_POWER); // turn robot 90 degree to right
+            robotMovingDistance(3.5, true); // drive robot to loading area
+            autoLoadCone(); // need update to input cone height position
+            rotate(180, AUTO_DRIVE_POWER); // turn robot 90 degree to right
+            robotMovingDistance(parkingLocation, true); // drive robot to parking
+            robotMovingDistance(5.0, false); // strafe robot to parking mat
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update(); // update message at the end of while loop
