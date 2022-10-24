@@ -14,16 +14,16 @@ public class TestAutonomous extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .splineToConstantHeading(new Vector2d(40, 40), Math.toRadians(0))
-                .build();
-
         Trajectory traject1 = drive.trajectoryBuilder(new Pose2d())
                 .splineToConstantHeading(new Vector2d(5, 0), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(5, -24), Math.toRadians(0))
-                .splineToSplineHeading(new Pose2d(41, -24, Math.toRadians(90)), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(5, -30), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(41, -30), Math.toRadians(0))
                 //.splineTo(new Vector2d(41, -24), Math.toRadians(90))
                 //.splineToConstantHeading(new Vector2d(47, -24), Math.toRadians(90))
+                .build();
+
+        Trajectory traject2 = drive.trajectoryBuilder(traject1.end(), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(41, -28), Math.toRadians(0))
                 .build();
 
 
@@ -32,8 +32,10 @@ public class TestAutonomous extends LinearOpMode {
         if(isStopRequested()) return;
 
         drive.followTrajectory(traject1);
+        drive.turn(Math.toRadians(90));
+        drive.followTrajectory(traject2);
         telemetry.addData("heading", drive.getLocalizer().getPoseEstimate());
         telemetry.update();
-        wait(3000);
+        sleep(10000);
     }
 }
