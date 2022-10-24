@@ -200,28 +200,86 @@ abstract class DriveDirections extends LinearOpMode {
         }
     }
 
-    public void rotateToZ(double targetAngle, double power){
+    public void rotateToZAbs(double targetAngle, double power){
         double angle = getCumulativeZ();
         double difference = targetAngle - angle;
         if(difference > 0){
             while (angle < targetAngle) {
                 angle = getCumulativeZ();
-                rightFrontDrive.setPower(power);
-                leftFrontDrive.setPower(-power);
-                rightBackDrive.setPower(power);
-                leftBackDrive.setPower(-power);
+                rightFrontDrive.setPower(-power);
+                leftFrontDrive.setPower(power);
+                rightBackDrive.setPower(-power);
+                leftBackDrive.setPower(power);
+
+                telemetry.addLine("currentZ: " + getCurrentZ());
+                telemetry.addLine("cumulativeZ: " + getCumulativeZ());
+                telemetry.addLine("targetAngle: " + targetAngle);
+                telemetry.addLine("rotation: counter clockwise");
+                telemetry.update();
             }
         }
 
         else if(difference < 0){
             while (angle > targetAngle) {
                 angle = getCumulativeZ();
-                rightFrontDrive.setPower(-power);
-                leftFrontDrive.setPower(power);
-                rightBackDrive.setPower(-power);
-                leftBackDrive.setPower(power);
+                rightFrontDrive.setPower(power);
+                leftFrontDrive.setPower(-power);
+                rightBackDrive.setPower(power);
+                leftBackDrive.setPower(-power);
+
+                telemetry.addLine("currentZ" + getCurrentZ());
+                telemetry.addLine("cumulativeZ" + getCumulativeZ());
+                telemetry.addLine("targetAngle: " + targetAngle);
+                telemetry.addLine("rotation: clockwise");
+                telemetry.update();
             }
         }
+
+        rightFrontDrive.setPower(0);
+        leftFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        leftBackDrive.setPower(0);
+
+    }
+    //WIPPPPPPPP!!!!
+    public void rotateToZLoc(double targetAngle, double power){
+        double startAngle = getCumulativeZ();
+        double angle = startAngle;
+        double localAngle = startAngle;
+        while (localAngle < targetAngle) {
+
+
+            //rotate clockwise/right
+            rightFrontDrive.setPower(-power);
+            leftFrontDrive.setPower(power);
+            rightBackDrive.setPower(-power);
+            leftBackDrive.setPower(power);
+
+
+            //telemetry
+            telemetry.addLine("currentZ: " + getCurrentZ());
+            telemetry.addLine("cumulativeZ: " + getCumulativeZ());
+            telemetry.addLine("targetAngle: " + targetAngle);
+            telemetry.addLine("rotation: counter clockwise");
+            telemetry.update();
+        }
+
+        while () {
+
+            //rotate counter-clock/left
+            rightFrontDrive.setPower(power);
+            leftFrontDrive.setPower(-power);
+            rightBackDrive.setPower(power);
+            leftBackDrive.setPower(-power);
+
+            //telemetry
+            telemetry.addLine("currentZ" + getCurrentZ());
+            telemetry.addLine("cumulativeZ" + getCumulativeZ());
+            telemetry.addLine("targetAngle: " + targetAngle);
+            telemetry.addLine("rotation: clockwise");
+            telemetry.update();
+        }
+
 
         rightFrontDrive.setPower(0);
         leftFrontDrive.setPower(0);

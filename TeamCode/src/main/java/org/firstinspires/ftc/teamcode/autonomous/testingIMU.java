@@ -47,16 +47,10 @@ public class testingIMU extends DriveDirections {
 
         waitForStart();
 
+        rotateToZLoc(90, 0.3);
 
-        while (opModeIsActive()) {
-            telemetry.addLine("currentZ" + getCurrentZ());
-           telemetry.addLine("cumulativeZ" + getCumulativeZ());
-           telemetry.update();
-
-           rotateToZ(90, 0.5);
-            rotateToZ(0, 0.5);
-
-
-        }
+//        while (opModeIsActive()) {
+//
+//        }
     }
 }
