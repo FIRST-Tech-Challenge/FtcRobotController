@@ -69,62 +69,79 @@ public class GFORCE_TELEOP extends LinearOpMode {
             drive.update();
             elevator.update();
             coneTracker.update();
+            coneTracker.showRanges();
 
             //-----------PILOT-----------
-            // Read pose and use it to convery joystick inputs to Field Centric.
-            Pose2d poseEstimate = drive.getPoseEstimate();
+            //check for auto cone tracking
+            if (gamepad1.right_bumper && coneTracker.coneDetected) {
+                double turn = coneTracker.coneDirection / 40.0;
+                double speed = 0;
 
-            // Create a vector from the gamepad x/y inputs
-            // Then, rotate that vector by the inverse of the heading
-            Vector2d joysticInput = new Vector2d(
-                    -gamepad1.left_stick_y * LATERAL_RATE,
-                    -gamepad1.right_stick_x * AXIAL_RATE
-            ).rotated(-poseEstimate.getHeading());
-
-            // Determine the rotate rate being requested by pilot.
-            manualRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE  ;
-
-            // also check to see if the pilot is requesting a spin to one of the XY axes
-            if(gamepad1.triangle) {
-                lockNewHeading(Math.toRadians(0));
-            }else if (gamepad1.circle) {
-                lockNewHeading(Math.toRadians(270));
-            }else if (gamepad1.cross) {
-                lockNewHeading(Math.toRadians(180));
-            }else if (gamepad1.square) {
-                lockNewHeading(Math.toRadians(90));
-            }
-
-            // are we turning or should heading be locked.
-            if (Math.abs(manualRotate) < 0.01) {
-                if (!headingLock && drive.notTurning()) {
-                    lockNewHeading(drive.getExternalHeading());
+                if (coneTracker.coneRange > 100) {
+                    speed = 0.2;
+                }else if (coneTracker.coneRange > 55) {
+                    speed = 0.1;
+                }else if (coneTracker.coneRange < 45) {
+                    speed = -0.05;
                 }
-            } else {
-                headingLock = false;
-            }
 
-            if (headingLock) {
-                // Set desired angular velocity to the heading-controller output
-                double autoRotate = headingController.update(drive.getExternalHeading())
-                        * DriveConstants.kV ;  // note: this scale may need to be tweaked.
-
-                drive.setWeightedDrivePower(
-                        new Pose2d(
-                                joysticInput.getX(),
-                                joysticInput.getY(),
-                                autoRotate
-                        )
-                );
+                drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
             } else {
-                // Pass in the rotated input + right stick value for rotation
-                drive.setWeightedDrivePower(
-                        new Pose2d(
-                                joysticInput.getX(),
-                                joysticInput.getY(),
-                                manualRotate
-                        )
-                );
+                // Read pose and use it to convery joystick inputs to Field Centric.
+                Pose2d poseEstimate = drive.getPoseEstimate();
+
+                // Create a vector from the gamepad x/y inputs
+                // Then, rotate that vector by the inverse of the heading
+                Vector2d joysticInput = new Vector2d(
+                        -gamepad1.left_stick_y * LATERAL_RATE,
+                        -gamepad1.right_stick_x * AXIAL_RATE
+                ).rotated(-poseEstimate.getHeading());
+
+                // Determine the rotate rate being requested by pilot.
+                manualRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE;
+
+                // also check to see if the pilot is requesting a spin to one of the XY axes
+                if (gamepad1.triangle) {
+                    lockNewHeading(Math.toRadians(0));
+                } else if (gamepad1.circle) {
+                    lockNewHeading(Math.toRadians(270));
+                } else if (gamepad1.cross) {
+                    lockNewHeading(Math.toRadians(180));
+                } else if (gamepad1.square) {
+                    lockNewHeading(Math.toRadians(90));
+                }
+
+                // are we turning or should heading be locked.
+                if (Math.abs(manualRotate) < 0.01) {
+                    if (!headingLock && drive.notTurning()) {
+                        lockNewHeading(drive.getExternalHeading());
+                    }
+                } else {
+                    headingLock = false;
+                }
+
+                if (headingLock) {
+                    // Set desired angular velocity to the heading-controller output
+                    double autoRotate = headingController.update(drive.getExternalHeading())
+                            * DriveConstants.kV;  // note: this scale may need to be tweaked.
+
+                    drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    joysticInput.getX(),
+                                    joysticInput.getY(),
+                                    autoRotate
+                            )
+                    );
+                } else {
+                    // Pass in the rotated input + right stick value for rotation
+                    drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    joysticInput.getX(),
+                                    joysticInput.getY(),
+                                    manualRotate
+                            )
+                    );
+                }
             }
             // reset heading if double button press
             if (gamepad1.back && gamepad1.start) {
@@ -169,10 +186,6 @@ public class GFORCE_TELEOP extends LinearOpMode {
             elevator.jogElevator(-gamepad2.left_stick_y);
 
             // Display Telemetry data
-            telemetry.addData("Lock", headingLock);
-            telemetry.addData("x", poseEstimate.getX());
-            telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("ODO  heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
             telemetry.addData ("Elevator position", elevator.getPosition());
             telemetry.addData ("arm position", elevator.getPosition());

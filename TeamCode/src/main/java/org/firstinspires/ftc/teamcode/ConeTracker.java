@@ -9,6 +9,7 @@ public class ConeTracker {
 
     final private double MAX_RANGE = 300;
     final private double MIN_RANGE = 50;
+    final private double DEAD_BAND = 15;
 
     public  boolean coneDetected  = false;
     public  double  coneRange     = MAX_RANGE;
@@ -78,10 +79,38 @@ public class ConeTracker {
 
         // Determine the direction to the cone.
         // +1 is max CCW direction, 0 is straight ahead, -1 is max CW direction.
+
         coneDirection = 0;
+        if (numberSeen == 1){
+            if (leftSeen) {
+                coneDirection = 1;
+            } else if (rightSeen) {
+                coneDirection = -1;
+            }
+        } else if (numberSeen == 2) {
+            if (leftSeen && centerSeen) {
+                coneDirection = 0.5;
+            } else if (rightSeen && centerSeen) {
+                coneDirection = -0.5;
+            }
+        } else {
+            double rangeDifference = (leftRange - rightRange);
+            if (rangeDifference > DEAD_BAND) {
+                coneDirection = 0.2;
+            } else if (rangeDifference < -DEAD_BAND) {
+                coneDirection = -0.2;
+            }
+        }
+
     }
 
     public void showRanges() {
+        myOpMode.telemetry.addData("cone found", coneDetected);
+        myOpMode.telemetry.addData("left", leftRange);
+        myOpMode.telemetry.addData("center", centerRange);
+        myOpMode.telemetry.addData("right", rightRange);
+        myOpMode.telemetry.addData("cone range", coneRange);
+        myOpMode.telemetry.addData("cone direction", coneDirection);
 
     }
 }
