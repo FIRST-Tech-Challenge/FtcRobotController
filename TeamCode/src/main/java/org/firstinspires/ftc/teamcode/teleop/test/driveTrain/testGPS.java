@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.teleop.test;
+package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
 
 import android.view.View;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
 @TeleOp(name="Test GPS", group="Drive")
-//@Disabled
+@Disabled
 public class testGPS extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();

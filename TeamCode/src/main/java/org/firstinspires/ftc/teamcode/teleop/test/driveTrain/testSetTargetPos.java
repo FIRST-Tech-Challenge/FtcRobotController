@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.test;
+package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
 
 import android.view.View;
 
@@ -126,6 +126,7 @@ public class testSetTargetPos extends OpMode{
         //the goal of this test is to see whether or not the motor actually stops spinning after reaching its target.
         /*
         If it does, then we need to make the amount of clicks the robot rotates EXACT.  (But there's still room to consider the formula in SwerveCode for rotating).
+        - Result: the robot stops moving after it hits its target.
 
         If it doesn't, we can just use the formula in SwerveCode (I think).
          */
