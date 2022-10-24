@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.DriveMethods;
 import static org.firstinspires.ftc.teamcode.Variables.*;
 
 @Autonomous(name="KieranAuto", group="B")
+@Disabled
 public class
 KieranAuto extends DriveMethods {
     boolean calibrated = false;

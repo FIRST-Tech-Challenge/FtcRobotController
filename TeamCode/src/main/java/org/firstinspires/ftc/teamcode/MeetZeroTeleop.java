@@ -89,7 +89,7 @@ public class MeetZeroTeleop extends DriveMethods {
             }
 
             if(gamepad2.left_stick_y != 0){
-                slideTarget += (int)-gamepad2.left_stick_y*5;
+                slideTarget += (int)-gamepad2.left_stick_y*25;
                 sleep(50);
             }
 

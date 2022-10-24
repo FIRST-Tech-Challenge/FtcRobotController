@@ -32,10 +32,11 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.Variables.Direction;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Autonomous3", group="Linear Opmode")
-
+@Disabled
 public class Autonomous3 extends DriveMethods {
 
     // Declare OpMode members.

@@ -40,7 +40,7 @@ import static org.firstinspires.ftc.teamcode.Variables.*;
 import static org.firstinspires.ftc.teamcode.DriveMethods.*;
 
 @TeleOp(name="TeleOp1", group="Linear Opmode")
-
+@Disabled
 public class TeleOp1 extends DriveMethods {
 
     // Declare OpMode members.

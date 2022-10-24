@@ -21,6 +21,7 @@ import static org.firstinspires.ftc.teamcode.Variables.imu;
 import java.util.Locale;
 
 @TeleOp(name="JamesAuto", group="B")
+@Disabled
 public class
 JamesAuto extends DriveMethods {
 //    boolean calibrated = false;

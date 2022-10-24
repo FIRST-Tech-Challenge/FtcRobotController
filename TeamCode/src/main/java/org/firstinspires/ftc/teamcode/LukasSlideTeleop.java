@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="LukasSlideTeleop", group="Linear Opmode")
-
+@Disabled
 public class LukasSlideTeleop extends LinearOpMode {
 
     // Declare OpMode members.

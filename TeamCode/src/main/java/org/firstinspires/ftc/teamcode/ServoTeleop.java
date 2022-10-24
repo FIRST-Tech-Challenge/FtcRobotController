@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Servo Teleop", group="Linear Opmode")
 
-
+@Disabled
 public class ServoTeleop extends DriveMethods {
 
     // Declare OpMode members.

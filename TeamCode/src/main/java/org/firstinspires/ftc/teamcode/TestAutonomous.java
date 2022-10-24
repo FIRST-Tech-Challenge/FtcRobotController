@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.DriveMethods;
 import static org.firstinspires.ftc.teamcode.Variables.*;
 @Autonomous(name="TestStraightDriving", group="B")
+@Disabled
 public class TestAutonomous extends DriveMethods{
     public void runOpMode() {
         boolean calibrated = false;
