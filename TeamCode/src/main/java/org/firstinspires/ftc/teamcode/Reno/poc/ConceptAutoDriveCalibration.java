@@ -55,6 +55,8 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
         robot.init(hardwareMap);
 
+        telemetry.setMsTransmissionInterval(50);
+
        // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
             //telemetry.addData("gyro Cali status", imu.isGyroCalibrated());
@@ -64,16 +66,17 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
             telemetry.addData(">", "Robot Pitch = %4.0f", getRawPitch());
             telemetry.update();
         }
+        telemetry.setMsTransmissionInterval(50);
         waitForStart();
 
         driveStraight(DRIVE_SPEED, 24.0 * 2);
-        turnToHeading(-90.0 );
+        turnHeading(-90.0 );
         driveStraight(DRIVE_SPEED, 24.0);
-        turnToHeading( -90);
+        turnHeading( -90);
         driveStraight(DRIVE_SPEED, 24.0 * 2);
-        turnToHeading( -90);
+        turnHeading( -90);
         driveStraight(DRIVE_SPEED, 24.0);
-        turnToHeading( -90);
+        turnHeading( -90);
 
         sleep(1000);  // Pause to display last telemetry message.
     }
@@ -104,33 +107,49 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
 
             ConceptTurnPidController pid = new ConceptTurnPidController(targetHeading, 0.01, 0, 0.003);
 
-            while (opModeIsActive() && robot.isBusyDriving() && Math.abs(targetHeading - robot.getRawHeading()) > HEADING_THRESHOLD)
+            while (opModeIsActive() && robot.isBusyDriving())
             {
 
-                sendTelemetry(HardwareRobot.RobotAction.DRIVE_TURN);
-                // Determine required steering to keep on heading
-                double turnPower = pid.getValue(robot.getRawHeading());
+                if(Math.abs(targetHeading - robot.getRawHeading()) > HEADING_THRESHOLD)
+                {
+                    sendTelemetry(HardwareRobot.RobotAction.DRIVE_TURN);
+                    // Determine required steering to keep on heading
+                    double turnPower = pid.getValue(robot.getRawHeading());
 
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    turnPower *= -1.0;
+                    // if driving in reverse, the motor correction also needs to be reversed
+                    if (distance < 0)
+                        turnPower *= -1.0;
 
-                // Apply the turning correction to the current driving speed.
-                robot.drive(drivePower, turnPower);
+                    // Apply the turning correction to the current driving speed.
+                    robot.drive(drivePower, turnPower);
+                }
+                else
+                {
+                    robot.drive(drivePower, 0);
+                }
+
             }
             robot.stop();
-            robot.resetEncoder();
         }
     }
 
+    public void turnHeading(double angle)
+    {
+        turnToHeading(angle+ robot.getRawHeading());
+    }
+
     public void turnToHeading(double targetAngle) {
+
+        robot.setDriveForward();
+        robot.disableEncoder();
         targetHeading = targetAngle;
         ConceptTurnPidController pid = new ConceptTurnPidController(targetAngle, 0.01, 0, 0.003);
-        telemetry.setMsTransmissionInterval(50);
+
         // Checking lastSlope to make sure that it's not oscillating when it quits
-        while (Math.abs(targetAngle - robot.getRawHeading()) > HEADING_THRESHOLD || pid.getLastSlope() > 0.75) {
+        while (Math.abs(targetAngle - robot.getRawHeading()) > HEADING_THRESHOLD) {
             double turnPower = pid.getValue(robot.getRawHeading());
-            robot.setMotorPower(-turnPower, turnPower, -turnPower, turnPower);
+            //robot.setMotorPower(-turnPower, turnPower, -turnPower, turnPower);
+            robot.drive(0, turnPower);
 
             sendTelemetry(HardwareRobot.RobotAction.TURN);
         }

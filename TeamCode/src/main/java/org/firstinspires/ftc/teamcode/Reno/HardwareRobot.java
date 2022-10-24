@@ -211,6 +211,7 @@ public class HardwareRobot
         this.leftDriveBack.setPower(0);
         this.rightDriveBack.setPower(0);
         this.rightDriveFront.setPower(0);
+        this.resetEncoder();
     }
 
     public void tankDrive(double leftPower, double rightPower) {
