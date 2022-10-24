@@ -73,7 +73,7 @@ public class HardwareDrive
     public DcMotorEx  botL;
 
 
-//    public DcMotorEx[] dtMotors;
+    public DcMotorEx[] dtMotors;
 
     /*
     Top Left  0                              Top Right 2
@@ -108,8 +108,10 @@ public class HardwareDrive
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
 
-
-
+        dtMotors[0] = topL;
+        dtMotors[1] = botL;
+        dtMotors[2] = topR;
+        dtMotors[3] = botR;
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

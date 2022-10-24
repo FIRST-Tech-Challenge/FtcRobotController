@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.teleop.test;
+package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
 
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
 @TeleOp(name="Swerve Code", group="Drive")
 //@Disabled
-public class testConstants extends OpMode{
+public class SwerveCode extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
@@ -26,13 +25,6 @@ public class testConstants extends OpMode{
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
-
-    public enum State{
-        SAME_DIRECTION,
-        SINGLE,
-        NOT_INITIALIZED
-    }
-    public State state = State.NOT_INITIALIZED;
 
     Button x = new Button();
     Button y = new Button();
@@ -78,7 +70,7 @@ public class testConstants extends OpMode{
     }
 
     void UpdatePlayer1(){
-        // DriveTrainBasePower();
+       // DriveTrainBasePower();
         DriveTrainPowerEncoder();
     }
 
@@ -98,7 +90,6 @@ public class testConstants extends OpMode{
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
-
         telemetry.update();
     }
 
@@ -109,14 +100,28 @@ public class testConstants extends OpMode{
         b.update(gamepad1.b);
     }
 
+    void DriveTrainBasePower(){
+        int powerBotL = 1;
+        int powerTopL = 1;
+
+        if (gamepad1.dpad_up){
+            robot.botL.setPower(powerBotL);
+            robot.topL.setPower(powerTopL);
+        }
+        else{
+            robot.botL.setPower(0);
+            robot.topL.setPower(0);
+        }
+    }
+
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        double beta = 0.5;
-        double alpha = 1 - beta;
+        int posBotL = robot.botL.getCurrentPosition();
+        int posTopL = robot.topL.getCurrentPosition();
 
-        if (x.getState() == Button.State.TAP) state = State.SAME_DIRECTION;
-        else if (b.getState() == Button.State.TAP) state = State.SINGLE;
+        double alpha = 0.5;
+        double beta = 1 - alpha;
 
         int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
         int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
@@ -124,23 +129,14 @@ public class testConstants extends OpMode{
         int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
         int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
 
-        switch (state){
-            case SAME_DIRECTION:
-                robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceTopL + rotationalTopL);
-                robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + distanceBotL + rotationalBotL);
+        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
+        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
 
-                robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-                robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-                break;
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            case SINGLE:
-                robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceTopL + rotationalTopL);
-                robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-                break;
-        }
-
-
-
+        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
     }
 
     private void reset(){

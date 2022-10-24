@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.teleop.test;
+package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
 
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.auto.Math.SplineMath;
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
@@ -16,17 +16,23 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Test GPS", group="Drive")
+@TeleOp(name="Swerve Code", group="Drive")
 //@Disabled
-public class testGPS extends OpMode{
+public class testConstants extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     GlobalPosSystem posSystem;
-    TeleopKinematics kinematics;
-    Constants constants = new Constants();
+    Kinematics kinematics;
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    public enum State{
+        SAME_DIRECTION,
+        SINGLE,
+        NOT_INITIALIZED
+    }
+    public State state = State.NOT_INITIALIZED;
 
     Button x = new Button();
     Button y = new Button();
@@ -44,23 +50,19 @@ public class testGPS extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new TeleopKinematics(posSystem);
+        kinematics = new Kinematics(posSystem);
         posSystem.grabKinematics(kinematics);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        int[] clicksArr = getClicksTurn(0, 90);
-        int distanceClicks = clicksArr[0];
-        int rotClicks = clicksArr[1];
-
-        drive(distanceClicks, rotClicks);
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-        //  robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
@@ -96,10 +98,9 @@ public class testGPS extends OpMode{
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
-        telemetry.addData("DriveType, ", kinematics.getDriveType());
+
         telemetry.update();
     }
-
 
     void UpdateButton(){
         x.update(gamepad1.x);
@@ -108,53 +109,42 @@ public class testGPS extends OpMode{
         b.update(gamepad1.b);
     }
 
-    void DriveTrainBasePower(){
-//        int powerBotL = 1;
-//        int powerTopL = 1;
-//
-//        if (gamepad1.dpad_up){
-//            robot.botL.setPower(powerBotL);
-//            robot.topL.setPower(powerTopL);
-//        }
-//        else{
-//            robot.botL.setPower(0);
-//            robot.topL.setPower(0);
-//        }
-    }
-
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        robot.botL.setPower(0.5);
-        robot.topL.setPower(0.5);
-        robot.botR.setPower(0.5);
-        robot.topR.setPower(0.5);
-    }
+        double beta = 0.5;
+        double alpha = 1 - beta;
 
-    public void drive(int distanceClicks, int rotClicks){
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
+        if (x.getState() == Button.State.TAP) state = State.SAME_DIRECTION;
+        else if (b.getState() == Button.State.TAP) state = State.SINGLE;
 
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
+        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
+        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
 
-    public int[] getClicksTurn(double distance, double rotation){
-        int[] clicks = new int[2];
-        double translationClicks = distance * constants.CLICKS_PER_INCH; //rotation clicks
-        double rotationClicks = rotation * constants.CLICKS_PER_DEGREE; //table spinning clicks
+        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
+        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
 
-        clicks[0] = (int)translationClicks;
-        clicks[1] = (int)rotationClicks;
-        return clicks;
+        switch (state){
+            case SAME_DIRECTION:
+                robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceTopL + rotationalTopL);
+                robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + distanceBotL + rotationalBotL);
+
+                robot.topL.setPower(gamepad1.left_stick_y * 0.2 + gamepad1.left_stick_x * 0.2);
+                robot.botL.setPower(gamepad1.left_stick_y * 0.2 + gamepad1.left_stick_x * 0.2);
+                break;
+
+            case SINGLE:
+                robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceTopL + rotationalTopL);
+                robot.topL.setPower(gamepad1.left_stick_y * 0.2 + gamepad1.left_stick_x * 0.2);
+                break;
+        }
+
+
+
     }
 
     private void reset(){
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     /*
