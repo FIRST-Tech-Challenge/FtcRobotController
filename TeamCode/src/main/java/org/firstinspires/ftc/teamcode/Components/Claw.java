@@ -79,8 +79,8 @@ public class Claw {
     }
 
     public void logClawStates() {
-        op.telemetry.addData("claw closed or open", CLAW_CLOSED.status + " " + CLAW_OPEN.status);
-        op.telemetry.update();
+        logger.log("/RobotLogs/GeneralRobot", CLAW_CLOSED.status + " " + CLAW_OPEN.status, false,
+                false, true);
     }
 
     public void toggleClawPosition() {

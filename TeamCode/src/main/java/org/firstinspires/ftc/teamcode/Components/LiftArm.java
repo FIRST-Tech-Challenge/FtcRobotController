@@ -20,9 +20,9 @@ public class LiftArm {
 
     private RFServo liftArmServo;
 
-    private final double liftArmIntakePos = 0.1;
+    private final double LIFT_ARM_INTAKE_POS = 0.1;
 
-    private final double liftArmOuttakePos = 0.4;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.4;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
@@ -69,7 +69,7 @@ public class LiftArm {
     }
 
     public void toggleArmPosition() {
-        liftArmServo.flipServoInterval(liftArmIntakePos, liftArmOuttakePos);
+        liftArmServo.flipServoInterval(LIFT_ARM_INTAKE_POS, LIFT_ARM_OUTTAKE_POS);
         logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",toggleArmPosition()"
                 + ",Lift Arm Toggled", true);
     }
@@ -84,7 +84,7 @@ public class LiftArm {
         if (CLAW_OPEN.status && ARM_OUTTAKE.status) {
 
             //set servo position
-            liftArmServo.setPosition(liftArmIntakePos);
+            liftArmServo.setPosition(LIFT_ARM_INTAKE_POS);
 
             //set state of claw open to true
             ARM_INTAKE.setStatus(true);
@@ -104,7 +104,7 @@ public class LiftArm {
         if (CLAW_CLOSED.status && ARM_INTAKE.status) {
 
             //set servo position
-            liftArmServo.setPosition(liftArmOuttakePos);
+            liftArmServo.setPosition(LIFT_ARM_OUTTAKE_POS);
 
             //set state of claw open to true
             ARM_OUTTAKE.setStatus(true);

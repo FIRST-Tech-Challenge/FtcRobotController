@@ -80,10 +80,6 @@ public class Queuer {
         return isReady;
     }
 
-    public void resetQueuer() {
-        queueElements.clear();
-    }
-
     public void reset() {
         queueElements.clear();
     }
