@@ -28,7 +28,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
     final double LATERAL_RATE = 0.8;
     final double YAW_RATE = 0.2;
 
-    private Elevator elevator;
+    private Elevator    elevator;
+    private ConeTracker coneTracker;
 
     boolean headingLock = false;
     double  headingSetpoint = 0;
@@ -48,10 +49,12 @@ public class GFORCE_TELEOP extends LinearOpMode {
         headingController.setInputBounds(0.0, 2.0 * Math.PI);
         headingController.setOutputBounds(-MAX_ANG_VEL, MAX_ANG_VEL);
 
-        // Initialize GFORCE_KiwiDrive
+        // Initialize robot hardware classes GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
-
         elevator = new Elevator(this);
+        coneTracker = new ConeTracker(this);
+
+        // Home the elevator....  This may need to be changed once we have an Auto.
         elevator.recalibrateHomePosition();
 
         // Retrieve our pose from the PoseStorage.currentPose static field
@@ -65,9 +68,10 @@ public class GFORCE_TELEOP extends LinearOpMode {
             // Update everything.
             drive.update();
             elevator.update();
+            coneTracker.update();
 
             //-----------PILOT-----------
-            // Read pose
+            // Read pose and use it to convery joystick inputs to Field Centric.
             Pose2d poseEstimate = drive.getPoseEstimate();
 
             // Create a vector from the gamepad x/y inputs
@@ -77,10 +81,10 @@ public class GFORCE_TELEOP extends LinearOpMode {
                     -gamepad1.right_stick_x * AXIAL_RATE
             ).rotated(-poseEstimate.getHeading());
 
-            // Determine the required rotate rate
+            // Determine the rotate rate being requested by pilot.
             manualRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE  ;
 
-            //set one of four desired headings
+            // also check to see if the pilot is requesting a spin to one of the XY axes
             if(gamepad1.triangle) {
                 lockNewHeading(Math.toRadians(0));
             }else if (gamepad1.circle) {
