@@ -31,12 +31,21 @@ class TestAuto : KOpMode() {
         )
     }
 
-    val path1 = ReversedCubicPath(
+    private val path1 = ReversedCubicPath(
         Pose(-66.0, -36.0, 0.0),
         Pose(-24.0, -36.0, 30.0.radians)
     )
 
-//    val path2 = Path(HermiteSplineInterpolator(
+    private val intakePath = CubicPath(
+        Pose(-3.0, -36.0, 210.0.radians),
+        Pose(-12.0, -66.0, 270.0.radians)
+    )
+
+    private val depositPath = ReversedCubicPath(
+        Pose(-12.0, -66.0, 90.0.radians),
+        Pose(-3.0, -36.0, 30.0.radians)
+    )
+//    val example_path = Path(HermiteSplineInterpolator(
 //        HeadingController { it.angle + 180.0.radians },
 //        Pose(0.0, 0.0, 0.0),
 //        Pose(24.0, 24.0, 0.0)
@@ -56,7 +65,15 @@ class TestAuto : KOpMode() {
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(path1, 0.6, 1.0/22.5, 4.0, 0.95, 2.0)
-            )
+            ),
+           GVFCmd(
+               robot.drive,
+               SimpleGVFController(intakePath, 0.6, 1.0/22.5, 4.0, 0.95, 2.0)
+           ),
+           GVFCmd(
+               robot.drive,
+               SimpleGVFController(depositPath, 0.6, 1.0/22.5, 4.0, 0.95, 2.0)
+           )
         )
         mainCommand.schedule()
     }

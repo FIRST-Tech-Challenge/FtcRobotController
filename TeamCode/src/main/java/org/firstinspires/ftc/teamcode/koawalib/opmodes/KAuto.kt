@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.koawalib.opmodes
 
-import com.acmerobotics.roadrunner.geometry.Vector2d
-import com.acmerobotics.roadrunner.path.PathBuilder
 import com.asiankoala.koawalib.command.KOpMode
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.GVFCmd
