@@ -7,6 +7,9 @@ abstract public class BaseTeleOp extends BaseOpMode{
         return (Math.signum(input)*(Math.pow(input, 2)));
     }
 
+    // servo testing stuff
+    double servoPos = 0.0;
+
     public void teleOpDrive(){
         //Saving the gamepad inputs into variables
         double LeftXPos = stickCurve(gamepad1.left_stick_x);
@@ -25,5 +28,15 @@ abstract public class BaseTeleOp extends BaseOpMode{
             //Case for if the deadzones limits are passed, the robot drives normally
             driveRobot(LeftXPos, LeftYPos, TurnPos);
         }
+
+        // servo testing stuff
+        if (gamepad2.dpad_up) {
+            servoPos += 0.5;
+        } else if (gamepad2.dpad_down) {
+            servoPos -= 0.5;
+        }
+        servoGrabber.setPosition(servoPos);
+        telemetry.addData("servoPos", servoPos);
+        telemetry.update();
     }
 };

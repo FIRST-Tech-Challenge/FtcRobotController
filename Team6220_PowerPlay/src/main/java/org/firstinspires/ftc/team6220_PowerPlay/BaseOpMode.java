@@ -3,6 +3,9 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+// import servo
+import com.qualcomm.robotcore.hardware.Servo;
+
 // used for reading IMU
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,6 +20,9 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorFR;
     DcMotor motorBL;
     DcMotor motorBR;
+
+    // declare servo
+    Servo servoGrabber;
 
     // declare imu sensor
     BNO055IMU imu;
@@ -54,6 +60,9 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
+        // init servo
+        servoGrabber = hardwareMap.servo.get("servoGrabber");
+
         //create parameters for IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -72,7 +81,6 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         telemetry.addData("org: ", IMUOriginalAngles.firstAngle);//temp
         telemetry.addData("t1=", t);//temp
-        telemetry.addData("error=", 0);//temp
         // read imu when turning (when t != 0)
         if (t != 0) {
             IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -94,6 +102,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         }
 
         telemetry.addData("t2=", t);//temp
+        telemetry.addLine("hello, this is cool!");
         telemetry.update();//temp
 
         double speedFL = (-y+x+t);
