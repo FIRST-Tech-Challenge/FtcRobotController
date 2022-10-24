@@ -19,13 +19,14 @@ public class LinearGPS {
     private Kinematics.DriveType driveType;
 
     private double[] positionArr = new double[4];
-    private HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<>();
-    private HashMap<DcMotorEx, Integer> prevMotorClicks = new HashMap<>();
+    public HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<>();
+    public HashMap<DcMotorEx, Integer> prevMotorClicks = new HashMap<>();
 
     HardwareDrive robot;
 
     public double rotationalDegrees;
     public double translationalInches;
+    public boolean goodGapw;
 
     public LinearGPS(HardwareDrive robot, Kinematics.DriveType k ){
         this.robot = robot;
@@ -34,19 +35,30 @@ public class LinearGPS {
             positionArr[i] = 0;
         }
 
-        for (DcMotorEx motor : robot.dtMotors){
-            motorClicksPose.put(motor, motor.getCurrentPosition());
-            prevMotorClicks.put(motor, motor.getCurrentPosition());
-        }
+
+        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
+        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
+        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
+        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
+
+        prevMotorClicks.put(robot.topR, robot.topR.getCurrentPosition());
+        prevMotorClicks.put(robot.botR, robot.botR.getCurrentPosition());
+        prevMotorClicks.put(robot.topL, robot.topL.getCurrentPosition());
+        prevMotorClicks.put(robot.botL, robot.botL.getCurrentPosition());
     }
 
     public void calculatePos(){
-        if (!goodGap()) return;
+        if (goodGap()) return;
 
-        for (DcMotorEx motor : robot.dtMotors){
-            prevMotorClicks.put(motor, motorClicksPose.get(motor));
-            motorClicksPose.put(motor, motor.getCurrentPosition());
-        }
+        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
+        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
+        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
+        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
+
+        prevMotorClicks.put(robot.topR, motorClicksPose.get(robot.topR));
+        prevMotorClicks.put(robot.botR, motorClicksPose.get(robot.botR));
+        prevMotorClicks.put(robot.topL, motorClicksPose.get(robot.topL));
+        prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
 
         //left
         int topL = motorClicksPose.get(robot.topL) - prevMotorClicks.get(robot.topL); //change in top left
@@ -104,24 +116,29 @@ public class LinearGPS {
         return (Math.abs(positionArr[3]) <= 1);
     }
 
-    public void hardResetGPS(){
-        //Reset GPS
-        for (int i = 0; i < 4; i++){
-            positionArr[i] = 0;
-        }
-
-        //Reset Motor Clicks
-        for (DcMotorEx motor : robot.dtMotors){
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motorClicksPose.put(motor, motor.getCurrentPosition());
-            prevMotorClicks.put(motor, motor.getCurrentPosition());
-        }
-    }
+//    public void hardResetGPS(){
+//        //Reset GPS
+//        for (int i = 0; i < 4; i++){
+//            positionArr[i] = 0;
+//        }
+//
+//        //Reset Motor Clicks
+//        for (DcMotorEx motor : robot.dtMotors){
+//            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            motorClicksPose.put(motor, motor.getCurrentPosition());
+//            prevMotorClicks.put(motor, motor.getCurrentPosition());
+//        }
+//    }
 
     private boolean goodGap(){
-        for (DcMotorEx motor : robot.dtMotors){
-            if (Math.abs(motor.getCurrentPosition() - prevMotorClicks.get(motor)) <= constants.clickTOLERANCE) return false;
+        if ( //will need to add the left side later
+                Math.abs(robot.topR.getCurrentPosition() - prevMotorClicks.get(robot.topR)) <= constants.clickTOLERANCE && Math.abs(robot.botR.getCurrentPosition() - prevMotorClicks.get(robot.botR)) <= constants.clickTOLERANCE
+        ) {
+            goodGapw = false;
+            return false;
         }
+
+        goodGapw = true;
         return true;
     }
 

@@ -97,6 +97,11 @@ public class testRotateGPS extends OpMode{
         telemetry.addData("DriveType, ", posSystem.getDriveType());
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
+
+        telemetry.addData("TopR Clicks Hash", posSystem.motorClicksPose.get(robot.topR));
+        telemetry.addData("BotR Clicks Pos Hash", posSystem.motorClicksPose.get(robot.botR));
+        telemetry.addData("Good gap", posSystem.goodGapw);
+
         telemetry.update();
     }
 
