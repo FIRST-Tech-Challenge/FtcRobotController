@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.gps.LinearGPS;
 
-@TeleOp(name="Test GPS", group="Drive")
+@TeleOp(name="Test translate GPS", group="Drive")
 //@Disabled
 public class testTranslateGPS extends OpMode{
     /* Declare OpMode members. */
@@ -25,6 +25,8 @@ public class testTranslateGPS extends OpMode{
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
+    int distanceClicks;
+    int rotClicks;
 
     Button x = new Button();
     Button y = new Button();
@@ -46,9 +48,9 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        int[] clicksArr = getClicksTurn(5, 0);
-        int distanceClicks = clicksArr[0];
-        int rotClicks = clicksArr[1];
+        int[] clicksArr = getClicks(5, 0);
+        distanceClicks = clicksArr[0];
+        rotClicks = clicksArr[1];
 
         drive(distanceClicks, rotClicks);
     }
@@ -93,6 +95,8 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
         telemetry.addData("DriveType, ", posSystem.getDriveType());
+        telemetry.addData("Target Rot", rotClicks);
+        telemetry.addData("Target Distance", distanceClicks);
         telemetry.update();
     }
 
@@ -139,7 +143,7 @@ public class testTranslateGPS extends OpMode{
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public int[] getClicksTurn(double distance, double rotation){
+    public int[] getClicks(double distance, double rotation){
         int[] clicks = new int[2];
         double translationClicks = distance * constants.CLICKS_PER_INCH; //rotation clicks
         double rotationClicks = rotation * constants.CLICKS_PER_DEGREE; //table spinning clicks
