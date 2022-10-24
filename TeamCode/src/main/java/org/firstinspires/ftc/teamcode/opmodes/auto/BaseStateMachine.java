@@ -22,6 +22,7 @@ public class BaseStateMachine extends BaseAutonomous {
     private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField        = 72 * mmPerInch;
     private static final float oneAndHalfTile   = 36 * mmPerInch;
+    private static double tile = 500.0;
     private int parkStep = 0;
     private int currentPos = 0;
     private int junctionStep = 0;
@@ -159,36 +160,26 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void mediumJunction(){
         if(junctionStep == 0){
-            if(driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.4)){
+            if(driveSystem.driveToPosition(950 - currentPos, DriveSystem.Direction.BACKWARD, 0.4)){
                 junctionStep++;
             }
         }
         if(junctionStep == 1){
-            if(driveSystem.turn(-15, 0.2)){
-                junctionStep++;
-            }
-        }
-        if(junctionStep == 2){
-            if(driveSystem.driveToPosition(20, DriveSystem.Direction.BACKWARD,0.4)) {
+            if(driveSystem.turn(-45, 0.2)){
                 newState(State.REVERSE_JUNCTION);
             }
         }
     }
 
     private void reverseJunction(){
-        if(junctionStep == 2){
-            if(driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.4)){
-                junctionStep--;
+        if(junctionStep == 0){
+            if(driveSystem.driveToPosition(950, DriveSystem.Direction.FORWARD, 0.4)){
+                newState(State.END_STATE);
             }
         }
         if(junctionStep == 1){
-            if(driveSystem.turn(15, 0.2)){
+            if(driveSystem.turn(45, 0.2)){
                 junctionStep--;
-            }
-        }
-        if(junctionStep == 0){
-            if(driveSystem.driveToPosition(20, DriveSystem.Direction.FORWARD,0.4)) {
-                newState(State.PARK);
             }
         }
     }
