@@ -65,6 +65,13 @@ public class PwPRobot extends BasicRobot{
             }
         }
     }
+    public void followTrajectoryAsync (Trajectory trajectory) {
+        if (queuer.queue(false, !roadrun.isBusy())) {
+            if (!roadrun.isBusy()) {
+                roadrun.followTrajectory(trajectory);
+            }
+        }
+    }
     public void setFirstLoop(boolean value){
         queuer.setFirstLoop(value);
     }
