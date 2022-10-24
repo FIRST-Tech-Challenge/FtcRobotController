@@ -1,4 +1,4 @@
-THis is the code ofr FTC Team 9010
+This is the code of FTC Team 9010
 
 ## Setting up Android Studio for FTC
 This document assumes the reader has a basic understanding of Java
@@ -29,3 +29,9 @@ Then run the program and once it finishes the it should show up on the Driver Hu
 Android Studio Tutorial:
 Android Studio Tutorial · FIRST-Tech-Challenge/FtcRobotController Wiki · GitHub
 Follow the Opmode to get a basic understanding of using the code
+
+* Overview
+This year we will be optimizing and cleaning up code left behind.
+	New hardware class
+	New general diver controlled and autonomous
+	Creating constants to ease programming
