@@ -4,7 +4,7 @@ This is the code of FTC Team 9010
 This document assumes the reader has a basic understanding of Java
 * New Device
 
-Download Android Studio Chipmunk | 2021.2.1 Patch 2
+	Download Android Studio Chipmunk | 2021.2.1 Patch 2
 	Android Studio download archives  |  Android Developers
 
 	Download the latest version of the FTC Robot Controller
