@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.util.math.MathUtil
 
 @TeleOp
 class TestOp: OpMode() {
-    private val robot = Robot()
+//    private val robot = Robot()
 
     lateinit var fl: DcMotor
     lateinit var fr: DcMotor
@@ -30,42 +30,42 @@ class TestOp: OpMode() {
         br.power = drive + strafe - rotate
     }
 
-    private fun clawControl() {
-        if (gamepad1.a) {
-            robot.clawOpened()
-        }
-        if(gamepad1.b) {
-            robot.clawClosed()
-        }
-    }
-
-    private fun slidesControl() {
-        if (gamepad1.dpad_up) {
-            robot.slidesUp()
-        }
-        else {
-            robot.slidesOff()
-        }
-
-        if (gamepad1.dpad_down) {
-            robot.slidesDown()
-        }
-        else {
-            robot.slidesOff()
-        }
-    }
-
-    private fun getTelemetry() {
-    }
+//    private fun clawControl() {
+//        if (gamepad1.a) {
+//            robot.clawOpened()
+//        }
+//        if(gamepad1.b) {
+//            robot.clawClosed()
+//        }
+//    }
+//
+//    private fun slidesControl() {
+//        if (gamepad1.dpad_up) {
+//            robot.slidesUp()
+//        }
+//        else {
+//            robot.slidesOff()
+//        }
+//
+//        if (gamepad1.dpad_down) {
+//            robot.slidesDown()
+//        }
+//        else {
+//            robot.slidesOff()
+//        }
+//    }
+//
+//    private fun getTelemetry() {
+//    }
 
     override fun init() {
-        robot.init(hardwareMap)
-        robot.reset()
+//        robot.init(hardwareMap)
+//        robot.reset()
 
-        fl = hardwareMap.get(DcMotor::class.java, "FL")
-        fr = hardwareMap.get(DcMotor::class.java, "FR")
-        bl = hardwareMap.get(DcMotor::class.java, "BL")
-        br = hardwareMap.get(DcMotor::class.java, "BR")
+        fl = hardwareMap.get(DcMotor::class.java, "fl")
+        fr = hardwareMap.get(DcMotor::class.java, "fr")
+        bl = hardwareMap.get(DcMotor::class.java, "bl")
+        br = hardwareMap.get(DcMotor::class.java, "br")
 
         fl.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         fr.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -78,9 +78,9 @@ class TestOp: OpMode() {
 
     override fun loop() {
         driveControl()
-        clawControl()
-        slidesControl()
-        getTelemetry()
-        robot.update()
+//        clawControl()
+//        slidesControl()
+//        getTelemetry()
+//        robot.update()
     }
 }

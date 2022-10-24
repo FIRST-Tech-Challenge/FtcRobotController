@@ -7,19 +7,17 @@ import com.asiankoala.koawalib.math.radians
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.testing.Robot
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.roadrunner.geometry.Vector2d
-import com.acmerobotics.roadrunner.path.PathBuilder
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.logger.LoggerConfig
-import com.asiankoala.koawalib.util.Alliance
 
 @TeleOp
 @Config
-class BlueOp( private val alliance: Alliance) : KOpMode(photonEnabled = true) {
+class BlueOp : KOpMode(photonEnabled = false) {
     private val startPose = Pose(-36.0, -60.0, 90.0.radians)
-    private val robot by lazy { Robot(startPose) }
+    lateinit var robot : Robot
 
     override fun mInit() {
+        robot = Robot(startPose)
         robot.drive.defaultCommand = MecanumCmd(
                 robot.drive,
                 driver.leftStick,
