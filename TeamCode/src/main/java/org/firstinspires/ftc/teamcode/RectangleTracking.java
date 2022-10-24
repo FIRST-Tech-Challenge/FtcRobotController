@@ -95,6 +95,11 @@ class RectangleTracking extends OpenCvPipeline
         numContoursFound = contoursList.size();
         input.copyTo(contoursOnFrameMat);
 
+        // Hopefully no null errors fro contourList later with this!
+        if (numContoursFound == 0) {
+            return contoursOnFrameMat;
+        }
+
         //Find the biggest contour
         int contourIdx = 0;
         for(MatOfPoint c : contoursList) {
