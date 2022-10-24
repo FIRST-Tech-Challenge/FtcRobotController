@@ -32,17 +32,26 @@ package org.firstinspires.ftc.teamcode.Reno;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is NOT an opmode.
@@ -62,6 +71,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  */
 public class HardwareRobot
 {
+    public enum  RobotAction
+    {
+        DRIVE_STRAIGHT,
+        DRIVE_TURN,
+        TURN,
+        PICKUP_CONE,
+        DROP_CONE,
+        Localization
+    }
+
     static final double     COUNTS_PER_MOTOR_REV    = 537.7 ;   // eg: GoBILDA 312 RPM Yellow Jacket
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -88,10 +107,40 @@ public class HardwareRobot
     //public static final double ARM_DOWN_POWER  = -0.45 ;
 
     /* local OpMode members. */
-    HardwareMap hwMap           =  null;
+    HardwareMap hardwareMap =  null;
     private ElapsedTime period  = new ElapsedTime();
-    private String motorStatus;
+    private String motorStatus, positionStatus;
     private BNO055IMU imu = null;
+
+    private static final String VUFORIA_KEY =
+            "AQFuTJD/////AAABmRQf1MrshUsMqfZFoea5LcBlQ79rSmu2Hsy0VUgvFAIXZWBCbzYDL8mVWF1K4NKNgTmlUGl" +
+                    "mL6QrKaxd+oCP2VfTB5U+hgJ6KfZ5y2b6eV05AXaI/YWSyXQSdU/U7sKj+DuHMLbbK8wROJaJhoCoFz3" +
+                    "HVWr9wknksiGASbHmm3B60ItfxXUm4oKrkBQGhVwOFfejn/Cq2tticMWg0Vv8fy/v4O2nf0vgLIHV5unW5" +
+                    "CpuKiTfKAZqkfHgHYcB693Ebnkx3ZOBJy1Vv74xk1BSRRoR1HIjqQINhUWhws/yoHKsgq1z7COmzOzoh" +
+                    "0WFj5jmLgjKDslJccFmcemOOYdejUA8u4SIARjiErm6Ow+kfvuU";
+
+    private static final float mmPerInch        = 25.4f;
+    private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
+    private static final float halfField        = 72 * mmPerInch;
+    private static final float halfTile         = 12 * mmPerInch;
+    private static final float oneAndHalfTile   = 36 * mmPerInch;
+    private static final float meterPerInch        = 0.0254f;
+
+
+    // Class Members
+    private OpenGLMatrix lastLocation   = null;
+    private VuforiaLocalizer vuforia    = null;
+    private VuforiaTrackables targets   = null ;
+    private WebcamName webcamName       = null;
+
+    private VuforiaTrackable target;
+    private OpenGLMatrix cameraLocation;
+
+    private boolean targetVisible       = false;
+    private float robotX = 0;
+    private float robotY = 0;
+    private float robotAngle = 0;
+    private VuforiaTrackableDefaultListener listener;
 
     /* Constructor */
     public HardwareRobot(){
@@ -99,27 +148,22 @@ public class HardwareRobot
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap hardwareMap) {
         // Save reference to Hardware map
-        hwMap = ahwMap;
+        this.hardwareMap = hardwareMap;
 
         // Define and Initialize Motors
-        leftDriveFront  = hwMap.get(DcMotor.class, "FrontLeft");
-        rightDriveFront = hwMap.get(DcMotor.class, "FrontRight");
-        leftDriveBack  = hwMap.get(DcMotor.class, "BackLeft");
-        rightDriveBack = hwMap.get(DcMotor.class, "BackRight");
-        sliderMotor = hwMap.get(DcMotor.class, "SliderMotor");  // for slider dc motor
+        leftDriveFront  = this.hardwareMap.get(DcMotor.class, "FrontLeft");
+        rightDriveFront = this.hardwareMap.get(DcMotor.class, "FrontRight");
+        leftDriveBack  = this.hardwareMap.get(DcMotor.class, "BackLeft");
+        rightDriveBack = this.hardwareMap.get(DcMotor.class, "BackRight");
+        sliderMotor = this.hardwareMap.get(DcMotor.class, "SliderMotor");  // for slider dc motor
 
-        gripperServo = hwMap.get(Servo.class, "TestServo");  // for gripper servo motor
+        gripperServo = this.hardwareMap.get(Servo.class, "TestServo");  // for gripper servo motor
 
-        leftDriveFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors// Drive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        leftDriveBack.setDirection(DcMotor.Direction.FORWARD);
+        this.setDriveForward();
         // Set all motors to zero power
-        leftDriveFront.setPower(0);
-        rightDriveFront.setPower(0);
-        leftDriveBack.setPower(0);
-        rightDriveBack.setPower(0);
-        sliderMotor.setPower(0);
+        this.stop();
 
         gripperServo.setPosition(0.0);
 
@@ -130,7 +174,7 @@ public class HardwareRobot
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu = this.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
@@ -163,15 +207,10 @@ public class HardwareRobot
 
     public void stop()
     {
-        // Moving forward
-        //telemetry.addData("Status", "ready to move forward for 4 seconds");
-        //power = 0.2;
         this.leftDriveFront.setPower(0);
         this.leftDriveBack.setPower(0);
         this.rightDriveBack.setPower(0);
         this.rightDriveFront.setPower(0);
-
-
     }
 
     public void tankDrive(double leftPower, double rightPower) {
@@ -359,22 +398,32 @@ public class HardwareRobot
         rightDriveFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //motorStatus =  String.format("Speed - LF %d:LB %d:RF %d:RB %d", leftFrontTarget, rightFrontTarget, leftBackTarget, rightBackTarget);
+        positionStatus =  String.format("Target Pos - LF %d:LB %d:RF %d:RB %d", leftFrontTarget, rightFrontTarget, leftBackTarget, rightBackTarget);
+    }
+    public void setMotorPower(double leftFront, double rightFront, double leftBack, double rightBack){
+        leftDriveFront.setPower(leftFront);
+        leftDriveBack.setPower(leftBack);
+        rightDriveBack.setPower(rightBack);
+        rightDriveFront.setPower(rightFront);
     }
 
     public String getCurrentPosition() {
 
-        return String.format("Position - LF %d:LB %d:RF %d:RB %d", leftDriveFront.getCurrentPosition(), rightDriveFront.getCurrentPosition() , leftDriveBack.getCurrentPosition(), rightDriveBack.getCurrentPosition());
+        return String.format("Current Pos - LF %d:LB %d:RF %d:RB %d", leftDriveFront.getCurrentPosition(), rightDriveFront.getCurrentPosition() , leftDriveBack.getCurrentPosition(), rightDriveBack.getCurrentPosition());
     }
 
     public void setMotorStatus(double leftFrontSpeed, double leftBackSpeed, double rightFrontSpeed, double rightBackSpeed)
     {
-        motorStatus =  String.format("Speed - LF %5.2f:LB %5.2f:RF %5.2f:RB %5.2f", leftFrontSpeed, leftBackSpeed, rightFrontSpeed, rightBackSpeed);
+        motorStatus =  String.format("Power - LF %5.2f:LB %5.2f:RF %5.2f:RB %5.2f", leftFrontSpeed, leftBackSpeed, rightFrontSpeed, rightBackSpeed);
     }
 
     public String getMotorStatus()
     {
         return this.motorStatus;
+    }
+    public String getTargetPosition()
+    {
+        return this.positionStatus;
     }
 
     public boolean isBusyDriving()
@@ -394,6 +443,60 @@ public class HardwareRobot
     public double getRawPitch() {
         Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return AngleUnit.DEGREES.normalize(angles.thirdAngle);
+    }
+
+    private void setupVuforia()
+    {
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = webcamName;
+
+        // Turn off Extended tracking.  Set this true if you want Vuforia to track beyond the target.
+        parameters.useExtendedTracking = false;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Load the data sets for the trackable objects. These particular data
+        // sets are stored in the 'assets' part of our application.
+        targets = this.vuforia.loadTrackablesFromAsset("PowerPlay");
+
+        // For convenience, gather together all the trackable objects in one easily-iterable collection */
+        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        allTrackables.addAll(targets);
+
+        // Setup the target to be tracked
+        //target = identifyTarget(0, "Red Audience Wall",   -halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0,  90);
+        //identifyTarget(1, "Red Rear Wall",        halfField,  -oneAndHalfTile, mmTargetHeight, 90, 0, -90);
+        //identifyTarget(2, "Blue Audience Wall",  -halfField,   oneAndHalfTile, mmTargetHeight, 90, 0,  90);
+        //identifyTarget(3, "Blue Rear Wall",       halfField,   oneAndHalfTile, mmTargetHeight, 90, 0, -90);
+
+        target = allTrackables.get(0);
+        target.setName("Red Audience Wall");
+
+
+        target.setLocation(createMatrix((0 * meterPerInch), (24 * meterPerInch), 0, 90, 0, 90));
+
+        // Set phone location on robot
+        cameraLocation = createMatrix((10 * meterPerInch), (float)(-4.75 * meterPerInch), 0, 90, 0, 0);
+
+        // Setup listener and inform it of phone information
+        //listener = (VuforiaTrackableDefaultListener) target.getListener();
+        //listener.setPhoneInformation(phoneLocation, parameters.cameraDirection);
+        for (VuforiaTrackable trackable : allTrackables) {
+            ((VuforiaTrackableDefaultListener) trackable.getListener()).setCameraLocationOnRobot(parameters.cameraName, cameraLocation);
+        }
+    }
+
+    private OpenGLMatrix createMatrix(float x, float y, float z, float u, float v, float w)
+    {
+        return OpenGLMatrix.translation(x, y, z).
+                multiplied(Orientation.getRotationMatrix(
+                        AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, u, v, w));
     }
 
 }
