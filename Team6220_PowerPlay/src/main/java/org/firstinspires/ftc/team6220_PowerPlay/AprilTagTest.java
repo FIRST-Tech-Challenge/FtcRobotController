@@ -30,7 +30,8 @@ public class AprilTagTest extends LinearOpMode {
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagSize = 0.058;
+    //double tagSize = 0.0508;
+    double tagSize = 0.03556;
 
     final int ID_TAG_OF_INTEREST_0 = 0; // Tag ID 0 from the 36h11 family
     final int ID_TAG_OF_INTEREST_1 = 1; // Tag ID 1 from the 36h11 family
