@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 
@@ -8,7 +7,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -18,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StickObserverPipeline extends OpenCvPipeline {
-    int width = 320, height = 240;
-    //-1.3182 , 16.007
-    //155, 397
-    //-1.309724/18.74214, -22.5/320
     double centerOfPole = 0, poleSize = 0, degPerPix = -22.5/320, widTimesDist = 16.007*58;
     ArrayList<double[]> frameList;
 
@@ -33,84 +27,93 @@ public class StickObserverPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Mat mat = new Mat();
+
+        //mat turns into HSV value
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
         if (mat.empty()) {
             return input;
         }
-        Scalar lowHSV = new Scalar(20, 70, 80); // lower bound HSV for yellow
-        Scalar highHSV = new Scalar(32, 255, 255); // higher bound HSV for yellow
+
+        Scalar lowHSV = new Scalar(20, 70, 80); // lenient lower bound HSV for yellow
+        Scalar highHSV = new Scalar(32, 255, 255); // lenient higher bound HSV for yellow
 
         Mat thresh = new Mat();
 
-
-        // We'll get a black and white image. The white regions represent the regular stones.
-        // inRange(): thresh[i][j] = {255,255,255} if mat[i][i] is within the range
+        // Get a black and white image of yellow objects
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
-        Mat test = new Mat();
-        thresh.copyTo(test);
-        Core.bitwise_and(mat, mat, thresh, test);
-        Mat scaledThresh = new Mat();
-        Scalar aberage = Core.mean(thresh,test);
-        op.telemetry.addData("aberage0",aberage.val[0]);
-        op.telemetry.addData("aberage1",aberage.val[1]);
-        op.telemetry.addData("aberage2",aberage.val[2]);
-        thresh.convertTo(scaledThresh,-1,150/aberage.val[1],0);
-        Scalar aberage2 = Core.mean(scaledThresh,test);
-        op.telemetry.addData("aberage0",aberage2.val[0]);
-        op.telemetry.addData("aberage1",aberage2.val[1]);
-        op.telemetry.addData("aberage2",aberage2.val[2]);
-        op.telemetry.update();
-        Scalar strictLowHSV = new Scalar(0, 150, 100); // lower bound HSV for yellow
-        Scalar strictHighHSV = new Scalar(255, 255, 255); // higher bound HSV for yellow
-        Mat scaledThresh2 = new Mat();
-        Core.inRange(scaledThresh,strictLowHSV,strictHighHSV,scaledThresh2);
-        // Use Canny Edge Detection to find edges
-        // you might have to tune the thresholds for hysteresis
         Mat masked = new Mat();
-        Core.bitwise_and(thresh, thresh, masked, scaledThresh2);
-        Mat edges = new Mat();
-        Imgproc.Canny(masked, edges, 100, 200);
+        //color the white portion of thresh in with HSV from mat
+        //output into masked
+        Core.bitwise_and(mat, mat, masked, thresh);
+        //calculate average HSV values of the white thresh values
+        Scalar average = Core.mean(masked,thresh);
 
-        // https://docs.opencv.org/3.4/da/d0c/tutorial_bounding_rects_circles.html
-        // Oftentimes the edges are disconnected. findContours connects these edges.
-        // We then find the bounding rectangles of those contours
+        Mat scaledMask = new Mat();
+        //scale the average saturation to 150
+        masked.convertTo(scaledMask,-1,150/average.val[1],0);
+
+        Scalar strictLowHSV = new Scalar(0, 150, 100); //strict lower bound HSV for yellow
+        Scalar strictHighHSV = new Scalar(255, 255, 255); //strict higher bound HSV for yellow
+
+        Mat scaledThresh = new Mat();
+
+        //apply strict HSV filter onto scaledMask to get rid of any yellow other than pole
+        Core.inRange(scaledMask, strictLowHSV,strictHighHSV,scaledThresh);
+
+        Mat finalMask = new Mat();
+        //color in scaledThresh with HSV(for showing result)
+        Core.bitwise_and(thresh, thresh, finalMask, scaledThresh);
+
+        Mat edges = new Mat();
+        //detect edges of finalMask
+        Imgproc.Canny(finalMask, edges, 100, 200);
+
+
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
+        //find contours of edges
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
-        Rect[] boundRect = new Rect[contours.size()];
+        //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
         RotatedRect[] rectangle = new RotatedRect[contours.size()];
+        //iterate through each contour
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
+            //convert contour to approximate polygon
             Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 5, true);
-            boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+            //find rotatedRect for polygon
             rectangle[i] = Imgproc.minAreaRect(contoursPoly[i]);
         }
+
+        //find index of largest rotatedRect(assumed that it is closest tile)
         int maxAreaIndex = 0;
+        //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
             if (rectangle[i].size.height > rectangle[maxAreaIndex].size.height) {
                 maxAreaIndex = i;
             }
         }
+        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
             centerOfPole = rectangle[maxAreaIndex].center.y + sin(rectangle[maxAreaIndex].angle) * rectangle[maxAreaIndex].size.width / 2 - 320;
             poleSize = rectangle[maxAreaIndex].size.height;
             frameList.add(new double[]{centerOfPole, poleSize});
         }
+        //list of frames to reduce inconsistency, not too many so that it is still real-time
         if(frameList.size()>5) {
             frameList.remove(0);
         }
         input.release();
         edges.copyTo(input);
         scaledThresh.release();
-        scaledThresh2.release();
+        scaledMask.release();
         mat.release();
         masked.release();
         edges.release();
         thresh.release();
         hierarchy.release();
-        test.release();
+        finalMask.release();
         return input;
     }
 

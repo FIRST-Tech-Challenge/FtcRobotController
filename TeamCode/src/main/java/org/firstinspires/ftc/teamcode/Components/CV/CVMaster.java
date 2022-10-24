@@ -43,6 +43,7 @@ public class CVMaster {
                  */
                 webcam.setPipeline(opencv);
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                //FPS as high as possible
                 FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
             }
