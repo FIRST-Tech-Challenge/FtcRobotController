@@ -10,8 +10,9 @@ public class ConeTracker {
     final private double MAX_RANGE = 300;
     final private double MIN_RANGE = 50;
 
-    public  double coneRange     = MAX_RANGE;
-    public  double coneDirection = 0;
+    public  boolean coneDetected  = false;
+    public  double  coneRange     = MAX_RANGE;
+    public  double  coneDirection = 0;
 
     private LinearOpMode        myOpMode = null;
     private Rev2mDistanceSensor left    = null;
@@ -73,11 +74,14 @@ public class ConeTracker {
             rightRange = 0;
         }
 
+        coneDetected = (numberSeen > 0);
+
         // Determine the direction to the cone.
         // +1 is max CCW direction, 0 is straight ahead, -1 is max CW direction.
         coneDirection = 0;
-
     }
 
+    public void showRanges() {
 
+    }
 }
