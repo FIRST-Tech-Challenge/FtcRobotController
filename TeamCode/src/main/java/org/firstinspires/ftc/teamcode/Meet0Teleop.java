@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="Meet0Teleop", group = "A")
-public class MeetZeroTeleop extends DriveMethods {
+public class Meet0Teleop extends DriveMethods {
 
    
     Servo servoGrabberThing;
