@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 /*
  * Constants shared between multiple drive types.
  *
- * TODO: Tune or adjust the following constants to fit your robot. Note that the non-final
+ * Tune or adjust the following constants to fit your robot. Note that the non-final
  * fields may also be edited through the dashboard (connect to the robot's WiFi network and
  * navigate to https://192.168.49.1:8080/dash). Make sure to save the values here after you
  * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
@@ -20,7 +20,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.7;//5281.1;
+    public static final double TICKS_PER_REV = 537.7;
     public static final double MAX_RPM = 312;
 
     /*
@@ -33,7 +33,7 @@ public class DriveConstants {
      */
     public static final boolean RUN_USING_ENCODER = true;
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0.10, 0, 0.15,
-            12);//getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV)); // todo tune pid values, 1.3882);//
+            12);
 
     /*
      * These are physical constants hat can be determined from your robot (including the track
@@ -64,18 +64,9 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    // todo tune for these values
-    public static double MAX_VEL = 60;//60.98193; //77.08;//45.2895;
-    /*
-    max velocity: 67.75770052509085
-    voltage compensated kf: 1.1919485351737802
-     */
+    public static double MAX_VEL = 60;
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = 12.1226;//Math.toRadians(60);
-    /*
-    511.5612322270716
-8.928427827921725
-     */
+    public static double MAX_ANG_VEL = 12.1226;
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
 

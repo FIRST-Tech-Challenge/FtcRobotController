@@ -18,8 +18,6 @@ public class TestAutonomous extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(5, 0), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(5, -30), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(41, -30), Math.toRadians(0))
-                //.splineTo(new Vector2d(41, -24), Math.toRadians(90))
-                //.splineToConstantHeading(new Vector2d(47, -24), Math.toRadians(90))
                 .build();
 
         Trajectory traject2 = drive.trajectoryBuilder(traject1.end(), Math.toRadians(90))
