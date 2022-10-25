@@ -57,7 +57,7 @@ public class BaseStateMachine extends BaseAutonomous {
         this.msStuckDetectInitLoop = 15000;
         // Starts state machine
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
-        //pixyCam = hardwareMap.get(PixyCam.class, "sensor_color");
+        //pixyCam = hardwareMap.get(PixyCam.class, "pixy");
         newState(State.IDENTIFY_TARGET);
 
 
@@ -141,11 +141,6 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void park() {
         if (parkStep == 0) {
-            if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.3)) {
-                parkStep++;
-            }
-        }
-        if (parkStep == 1) {
             if (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3)) {
                 newState(State.END_STATE);
             }
@@ -173,8 +168,8 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void reverseJunction(){
         if(junctionStep == 0){
-            if(driveSystem.driveToPosition(950, DriveSystem.Direction.FORWARD, 0.4)){
-                newState(State.END_STATE);
+            if(driveSystem.driveToPosition(440, DriveSystem.Direction.FORWARD, 0.4)){
+                newState(State.PARK);
             }
         }
         if(junctionStep == 1){
