@@ -8,7 +8,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
     }
 
     // servo testing stuff
-    double servoPos = 0.0;
+    double servoPos = 0.5;
 
     public void teleOpDrive(){
         //Saving the gamepad inputs into variables
