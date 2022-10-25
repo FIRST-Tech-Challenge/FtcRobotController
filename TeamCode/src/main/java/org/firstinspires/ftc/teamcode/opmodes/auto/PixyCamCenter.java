@@ -11,8 +11,10 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
+import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
+
 @Autonomous (name = "pixycam testing", group = "Autonomous")
-public class PixyCamCenter extends OpMode {
+public class PixyCamCenter extends BaseOpMode {
 
     protected PixyCam pixycam;
     private boolean stopRequested;
@@ -21,14 +23,11 @@ public class PixyCamCenter extends OpMode {
 
     /** Initialization */
     public void init(){
+        super.init();
         stopRequested = false;
         // Timeouts to determine if stuck in loop
-        this.msStuckDetectInit     = 20000;
-        this.msStuckDetectInitLoop = 20000;
         // Initialize motors
-        pixycam = hardwareMap.get(PixyCam.class, "sensor_color");
-
-
+        pixycam = hardwareMap.get(PixyCam.class, "pixy");
 
 
     }
@@ -51,6 +50,14 @@ public class PixyCamCenter extends OpMode {
         telemetry.addData("block", s);
         telemetry.addData("coords", coords);
         telemetry.update();
+        int offset = pixycam.offSetX();
+        if(offset > 20){
+            driveSystem.turn(6, 0.1);
+        }
+
+        if(offset < -20){
+            driveSystem.turn(-6, 0.1);
+        }
     }
 
 
