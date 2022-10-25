@@ -51,6 +51,17 @@ public class Auton {
 
     }
 
+    public void linSlidesLift() {
+        int n = 4;
+        double a = (200 / Math.pow(n, 2));
+        int m = 30;
+
+        double x = 0;
+        double y = 0;
+        double startPosition = 0;//replace with slides.getPosition();
+
+    }
+
     public void placeFirstCone() {
         // places first cone
     }
