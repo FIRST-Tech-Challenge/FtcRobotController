@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.Kinematics;
 
-import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.pid.RotateSwerveModulePID;
 

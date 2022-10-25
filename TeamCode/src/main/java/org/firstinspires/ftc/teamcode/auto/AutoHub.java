@@ -7,10 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Kinematics.AutoKinematics;
-import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 public class AutoHub {

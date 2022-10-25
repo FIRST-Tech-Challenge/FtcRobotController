@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 
 import java.util.HashMap;
 
-import java.io.FileWriter;   // Import the FileWriter class
-import java.io.IOException;  // Import the IOException class to handle errors
 
 public class GlobalPosSystem {
 

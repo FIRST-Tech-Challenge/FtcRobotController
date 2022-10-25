@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.Math;
 
-import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class SplineMath {

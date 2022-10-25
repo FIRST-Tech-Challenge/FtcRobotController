@@ -5,14 +5,11 @@ import android.view.View;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
-import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
-import org.firstinspires.ftc.teamcode.common.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 

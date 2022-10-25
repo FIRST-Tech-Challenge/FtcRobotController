@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto.Math;
 
-import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.pid.SpinPID;
 
 public class LinearMath { //Note: snap() is used in the auto class separately. This class is used assuming that the wheels are already pointing the way we want it to.
