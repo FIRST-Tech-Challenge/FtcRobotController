@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.TeleOp;
 
 public class TowerController {
 
+    //setup variables, motors, and servos
     public ElapsedTime runtime = new ElapsedTime();
     public DcMotor screw;
     public DcMotor uBar;
