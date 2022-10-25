@@ -15,11 +15,13 @@ import java.util.List;
 public class jimbo extends LinearOpMode {
 
     //Define model
-    private static final String TFOD_MODEL_ASSET = "cone_model_1.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
 
     //Define labels
     private static final String[] LABELS = {
-        "cone1"
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
     //Vuforia

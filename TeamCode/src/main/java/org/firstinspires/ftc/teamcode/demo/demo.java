@@ -20,21 +20,22 @@ public class demo extends LinearOpMode {
 
         telemetry.addData("Initialized", "Ready to start");
         waitForStart();
-        frontLeft.setPower(1);
-        sleep(10000);
-        frontLeft.setPower(0);
-        sleep(1000);
-        frontRight.setPower(1);
-        sleep(10000);
-        frontRight.setPower(0);
-        sleep(1000);
-        backLeft.setPower(1);
-        sleep(10000);
-        backLeft.setPower(0);
-        sleep(1000);
-        backRight.setPower(1);
-        sleep(10000);
-        backRight.setPower(0);
+
+//        frontLeft.setPower(1);
+//        sleep(10000);
+//        frontLeft.setPower(0);
+//        sleep(1000);
+//        frontRight.setPower(1);
+//        sleep(10000);
+//        frontRight.setPower(0);
+//        sleep(1000);
+//        backLeft.setPower(1);
+//        sleep(10000);
+//        backLeft.setPower(0);
+//        sleep(1000);
+//        backRight.setPower(1);
+//        sleep(10000);
+//        backRight.setPower(0);
 //
 //        spinLeftRaw(1);
 //        sleep(60000);
