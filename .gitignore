@@ -85,3 +85,4 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+MeepMeepTesting/src/main/java/com/example/meepmeeptesting/MeepMeepTrajectories.java
