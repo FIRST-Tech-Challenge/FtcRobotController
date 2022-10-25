@@ -168,7 +168,7 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void reverseJunction(){
         if(junctionStep == 0){
-            if(driveSystem.driveToPosition(440, DriveSystem.Direction.FORWARD, 0.4)){
+            if(driveSystem.driveToPosition(450, DriveSystem.Direction.FORWARD, 0.4)){
                 newState(State.PARK);
             }
         }
