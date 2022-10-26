@@ -51,7 +51,7 @@ public class TestTeleOp extends LinearOpMode {
                 stateMap.put(robot.LIFT_SYSTEM_NAME,robot.LIFT_POLE_LOW);
             }
             if(gamepad2.x){
-                stateMap.put(ro
+                stateMap.put(robot.LIFT_SYSTEM_NAME, robot.LIFT_SUBHEIGHT);
             }
             if(gamepad2.b){
                 arm.extension.setPosition(0.75);
