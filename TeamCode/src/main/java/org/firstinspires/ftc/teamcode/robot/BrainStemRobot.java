@@ -19,6 +19,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
+import java.util.HashMap;
+
 public class BrainStemRobot {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -32,6 +34,7 @@ public class BrainStemRobot {
     public Lift lift;
     public Extension arm;
     public SampleMecanumDrive drive;
+    private HashMap stateMap;
 
     public final String LIFT_SYSTEM_NAME = "Lift";
     public final String LIFT_POLE_LOW = "POLE_ONE";
@@ -39,7 +42,7 @@ public class BrainStemRobot {
     public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
     public final String LIFT_SUBHEIGHT  = "SUB_HEIGHT";
 
-    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
+    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry, HashMap stateMap) {
         this.telemetry = telemetry;
         this.opMode = opMode;
 
@@ -66,6 +69,9 @@ public class BrainStemRobot {
         lift.moveToMinHeight();
         arm.getToClear();
         turret.moveTurret(targetDegrees);
+    }
+    public void updateSystems() {
+        lift.setState((String) stateMap.get(lift.LIFT_SYSTEM_NAME), (String) stateMap.get(lift.LIFT_SUBHEIGHT));
     }
 
     }

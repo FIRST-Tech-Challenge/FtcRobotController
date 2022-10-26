@@ -18,7 +18,7 @@ public class TestTeleOp extends LinearOpMode {
 
     public void runOpMode(){
 
-        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry);
+        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry,stateMap);
         //Turret turret = new Turret(hardwareMap, telemetry);
         //robot.initializeRobotPosition();
         Lift lift = new Lift(hardwareMap, telemetry);

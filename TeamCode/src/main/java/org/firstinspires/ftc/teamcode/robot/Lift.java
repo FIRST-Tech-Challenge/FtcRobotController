@@ -40,23 +40,28 @@ public class Lift {
     public final double     HARD_STOP_CURRENT_DRAW = 100;
 
     public final String LIFT_SYSTEM_NAME = "Lift";
-    public final String LIFT_POLE_LOW = "POLE_ONE";
+    public final String LIFT_POLE_LOW = "POLE_LOW";
+    public final String LIFT_POLE_MEDIUM = "POlE_MEDIUM";
+    public final String LIFT_POLE_HIGH = "POLE_HIGH";
     public final String DELIVERY_HEIGHT = "DELIVERY_HEIGHT";
     public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
     public final String LIFT_SUBHEIGHT  = "SUB_HEIGHT";
 
-    public final String TRANSATION_STATE = "TRANSITION";
+    public final String TRANSITION_STATE = "TRANSITION";
+    public final int DELIVERY_ADJUSTMENT = -3;
     public final double HEIGHT_TOLERANCE  = 0.25;
 
     public static double currentLiftHeight;
+
+
 
     public Lift(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         liftMotor = hwMap.dcMotor.get("Lift");
 
 //        liftMotor.setPower(LIFT_UP_SPEED);
-//        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -67,19 +72,27 @@ public class Lift {
     public void setState(String level, String subheight){
         switch(level){
             case LIFT_POLE_LOW:{
-
                 raiseHeightTo(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
+                break;
             }
+
         }
     }
-    public  String  getCurrentState(){
-        String state = TRANSATION_STATE;
+    public String getCurrentState() {
+        String state = TRANSITION_STATE;
         double currentPosition = getHeightInInches();
-        if(currentPosition > LIFT_POSITION_LOWPOLE)
+        if (inHeightTolerance(currentPosition, LIFT_POSITION_LOWPOLE)) {
+            state = LIFT_POLE_LOW;
+        } else if (inHeightTolerance(currentPosition, LIFT_POSITION_MIDPOLE)) {
+            state = LIFT_POLE_MEDIUM;
+        } else if (inHeightTolerance(currentPosition, LIFT_POSITION_HIGHPOLE)) {
+            state = LIFT_POLE_HIGH;
+        }
         return state;
     }
     private double getHeightInInches(){
-        return (double)getPosition()/TICK_PER_INCH;
+
+        return ((double) getPosition()/TICK_PER_INCH);
     }
     public int deliveryHeight(String subheight){
         int height = 0;
@@ -89,7 +102,6 @@ public class Lift {
         return height;
     }
 
-
     public void raiseHeightTo (double heightInInches) {
         //raising heights to reach different junctions, so four values
         int ticksNeeded = (int)(heightInInches/TICK_PER_INCH) + 1;
@@ -98,10 +110,13 @@ public class Lift {
         liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public boolean isClear () {
+    public  boolean isClear () {
         //true means turret can turn and lift is raised to minimum clearance; false is the opposite
         double currentLiftHeight = liftMotor.getCurrentPosition() * TICK_PER_INCH;
-        return currentLiftHeight >= MINIMUM_CLEARANCE_HEIGHT;
+        if(currentLiftHeight >= MINIMUM_CLEARANCE_HEIGHT){
+            return true;
+        }
+        return false;
 
     }
     public void moveToMinHeight(){
@@ -118,5 +133,8 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setPower(power);
     }
+    private boolean inHeightTolerance(double heightPosition, double poleHeight) {
+        return (heightPosition > poleHeight - HEIGHT_TOLERANCE) && (heightPosition < poleHeight + HEIGHT_TOLERANCE);
+    }
 
-}
+    }
