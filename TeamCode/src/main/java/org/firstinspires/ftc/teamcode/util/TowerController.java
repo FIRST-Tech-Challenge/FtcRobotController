@@ -18,7 +18,6 @@ public class TowerController {
     public Servo intake;
     public DigitalChannel highSensor;
     public DigitalChannel lowSensor;
-    public DigitalChannel uBarSensor;
     public boolean raiseTower;
     public boolean intakePos;
     public double uBarNum = 1;
@@ -40,11 +39,8 @@ public class TowerController {
         //Setup sensors
         DigitalChannel highSensor = hardwareMap.get(DigitalChannel.class, "highSensor");
         DigitalChannel lowSensor = hardwareMap.get(DigitalChannel.class, "lowSensor");
-        DigitalChannel uBarSensor = hardwareMap.get(DigitalChannel.class, "uBarSensor");
         highSensor.setMode(DigitalChannel.Mode.INPUT);
         lowSensor.setMode(DigitalChannel.Mode.INPUT);
-        uBarSensor.setMode(DigitalChannel.Mode.INPUT);
-
 
         //setup encoder
         uBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
