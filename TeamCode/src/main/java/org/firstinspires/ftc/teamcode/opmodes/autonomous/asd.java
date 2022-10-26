@@ -208,23 +208,23 @@ public class asd extends LinearOpMode {
     }
     public void one() {
 
-            strafeLeft(0.5, 1000);
-            stopRobot();
-            straight(0.5, 1000);
-            stopRobot();
+        strafeLeft(0.5, 1000);
+        stopRobot();
+        straight(0.5, 1000);
+        stopRobot();
 
     }
     public void two() {
-            telemetry.addData("Ashay is cool", "%s (%.0f %% Conf.)", detect);
-            straight(0.5, 1000);
-            stopRobot();
+        telemetry.addData("Ashay is cool", "%s (%.0f %% Conf.)", detect);
+        straight(0.5, 1000);
+        stopRobot();
 
     }
     public void three() {
-            strafeRight(0.5, 1000);
-            stopRobot();
-            straight(0.5, 1000);
-            stopRobot();
+        strafeRight(0.5, 1000);
+        stopRobot();
+        straight(0.5, 1000);
+        stopRobot();
 
     }
 }
