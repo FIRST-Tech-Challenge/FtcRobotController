@@ -10,6 +10,8 @@ public class PID {
 
     private long startTime;
 
+    private double dT = 20;
+
     public PID(double p, double i, double d) {
         Kp = p;
         Ki = i;
@@ -20,11 +22,10 @@ public class PID {
     // error is given by the user so that this class has multiple use cases
     public double getValue(double error) {
 
-        // calculate the rate of change of the error
-        double derivative = (error - lastError) / (System.currentTimeMillis() - startTime);
+        double derivative = (error - lastError) / dT;
 
         // sum all the error over time
-        integralSum = integralSum + (error * (System.currentTimeMillis() - startTime));
+        integralSum += (error * dT);
 
         // returns this value which can differ depending on the use case of the class
         // eg. set motor power
