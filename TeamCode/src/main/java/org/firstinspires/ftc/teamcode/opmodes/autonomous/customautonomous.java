@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobot;
  * is explained below.
  */
 @Autonomous(name = "camera auto basic")
-public class asd extends LinearOpMode {
+public class customautonomous extends LinearOpMode {
     int detect = 0;
     TurtleRobot robot = new TurtleRobot(this);
     /*
