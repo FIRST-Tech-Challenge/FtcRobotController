@@ -73,7 +73,8 @@ abstract public class BaseOpMode extends LinearOpMode {
         imu.initialize(parameters);
         // preset the IMUAngles so it doesn't start on null
         // since it will only later be read when turning
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);;
+
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
 
@@ -98,6 +99,7 @@ abstract public class BaseOpMode extends LinearOpMode {
             }
             telemetry.addData("error=", angleError);//temp
             // apply a constant to turn the angle into a turn speed
+
             t = -correctionConstant * angleError;
         }
 
@@ -115,5 +117,13 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setPower(speedBL);
         motorBR.setPower(speedBR);
 
+    }
+
+    public void openGrabber(boolean open) {
+        if (open) {
+            servoGrabber.setPosition(0.33);
+        } else {
+            servoGrabber.setPosition(0.11);
+        }
     }
 }

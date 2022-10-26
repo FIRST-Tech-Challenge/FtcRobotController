@@ -7,14 +7,14 @@ abstract public class BaseTeleOp extends BaseOpMode{
         return (Math.signum(input)*(Math.pow(input, 2)));
     }
 
-    // servo testing stuff
-    double servoPos = 0.5;
-
     public void teleOpDrive(){
         //Saving the gamepad inputs into variables
         double LeftXPos = stickCurve(gamepad1.left_stick_x);
         double LeftYPos = stickCurve(gamepad1.left_stick_y);
         double TurnPos = stickCurve(gamepad1.right_stick_x);
+
+        boolean GP2_xIsPressed = gamepad2.x;
+        boolean GP2_aIsPressed = gamepad2.a;
 
         //Deadzones, 5 is the deadzone angle. Atan2 determines angle between the two sticks
 
@@ -29,14 +29,10 @@ abstract public class BaseTeleOp extends BaseOpMode{
             driveRobot(LeftXPos, LeftYPos, TurnPos);
         }
 
-        // servo testing stuff
-        if (gamepad2.dpad_up) {
-            servoPos += 0.5;
-        } else if (gamepad2.dpad_down) {
-            servoPos -= 0.5;
+        if (GP2_xIsPressed) {  //press x to close
+            openGrabber(false);
+        } else if (GP2_aIsPressed){  //press a to open
+            openGrabber(true);
         }
-        servoGrabber.setPosition(servoPos);
-        telemetry.addData("servoPos", servoPos);
-        telemetry.update();
     }
 };

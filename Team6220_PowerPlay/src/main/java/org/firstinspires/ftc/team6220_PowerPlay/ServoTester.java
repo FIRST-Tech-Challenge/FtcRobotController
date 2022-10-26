@@ -2,7 +2,7 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "servo")
+/*@TeleOp(name = "servoTester")
 public class ServoTester extends BaseTeleOp{
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,4 +22,4 @@ public class ServoTester extends BaseTeleOp{
             telemetry.update();
         }
     }
-}
+}*/
