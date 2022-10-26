@@ -12,7 +12,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
         double LeftXPos = stickCurve(gamepad1.left_stick_x);
         double LeftYPos = stickCurve(gamepad1.left_stick_y);
         double TurnPos = stickCurve(gamepad1.right_stick_x);
-
+        //bools for if the buttons are pressed (to use grabber)
         boolean GP2_xIsPressed = gamepad2.x;
         boolean GP2_aIsPressed = gamepad2.a;
 
@@ -29,6 +29,7 @@ abstract public class BaseTeleOp extends BaseOpMode{
             driveRobot(LeftXPos, LeftYPos, TurnPos);
         }
 
+        //grabber open/close method attached to controller buttons
         if (GP2_xIsPressed) {  //press x to close
             openGrabber(false);
         } else if (GP2_aIsPressed){  //press a to open

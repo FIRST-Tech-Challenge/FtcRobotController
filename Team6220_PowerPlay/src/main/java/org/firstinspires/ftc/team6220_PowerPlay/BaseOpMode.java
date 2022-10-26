@@ -3,10 +3,10 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-// import servo
+//import servo
 import com.qualcomm.robotcore.hardware.Servo;
 
-// used for reading IMU
+//used for reading IMU
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -21,15 +21,15 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorBL;
     DcMotor motorBR;
 
-    // declare servo
+    //declare servo
     Servo servoGrabber;
 
-    // declare imu sensor
+    //declare imu sensor
     BNO055IMU imu;
-    // original angle reading from imu that will
-    // be used to find unwanted angle offset during drive
+    //original angle reading from imu that will
+    //be used to find unwanted angle offset during drive
     Orientation IMUOriginalAngles;
-    // constant for converting angle error to motor speed
+    //constant for converting angle error to motor speed
     double correctionConstant = 1/45.0;
 
     public void initHardware() {
@@ -55,12 +55,13 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //invert some motors to make programming them more straightforward
         motorFL.setDirection(DcMotor.Direction.FORWARD);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
-        // init servo
+        //init servo
         servoGrabber = hardwareMap.servo.get("servoGrabber");
 
         //create parameters for IMU
@@ -68,12 +69,11 @@ abstract public class BaseOpMode extends LinearOpMode {
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
 
-        // init IMU sensor
+        //init IMU sensor
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        // preset the IMUAngles so it doesn't start on null
-        // since it will only later be read when turning
-
+        //preset the IMUAngles so it doesn't start on null
+        //since it will only later be read when turning
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
@@ -82,36 +82,38 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         telemetry.addData("org: ", IMUOriginalAngles.firstAngle);//temp
         telemetry.addData("t1=", t);//temp
-        // read imu when turning (when t != 0)
+        //read imu when turning (when t != 0)
         if (t != 0) {
             IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        // otherwise read imu for correction
+        //otherwise read imu for correction
         } else {
-            // obtain the current angle's error from the original angle
+            //obtain the current angle's error from the original angle
             Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double angleError = IMUOriginalAngles.firstAngle - currentAngle.firstAngle;
-            // flip to inverse of angles above 180/below -180
-            // to make sure to use the shorter angle
+            //flip to inverse of angles above 180/below -180 (to prevent funny infinirotate bug)
+            //to make sure to use the shorter angle
             if (angleError > 180.0) {
                 angleError -= 360.0;
             } else if (angleError < -180.0) {
                 angleError += 360.0;
             }
             telemetry.addData("error=", angleError);//temp
-            // apply a constant to turn the angle into a turn speed
+            //apply a constant to turn the angle into a turn speed
 
             t = -correctionConstant * angleError;
         }
 
         telemetry.addData("t2=", t);//temp
-        telemetry.addLine("hello, this is cool!");
+        telemetry.addLine("hello, this is cool!");//temp
         telemetry.update();//temp
 
+        //calculate speed and direction of each individual motor
         double speedFL = (-y+x+t);
         double speedFR = (-y-x-t);
         double speedBL = (-y-x+t);
         double speedBR = (-y+x-t);
 
+        //set power of motors to speed
         motorFL.setPower(speedFL);
         motorFR.setPower(speedFR);
         motorBL.setPower(speedBL);
@@ -119,11 +121,13 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     }
 
+    //method to open/close grabber if you set boolean to true or false
+    //this is so that you can use it in Autonomous and TeleOp.
     public void openGrabber(boolean open) {
         if (open) {
-            servoGrabber.setPosition(0.33);
+            servoGrabber.setPosition(0.33); //set servo to open position
         } else {
-            servoGrabber.setPosition(0.11);
+            servoGrabber.setPosition(0.11); //set servo to closed position
         }
     }
 }
