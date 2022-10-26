@@ -18,14 +18,15 @@ import java.util.List;
 public class BaseStateMachine extends BaseAutonomous {
     // List of all states the robot could be in
     Sleeve teamAsset;
-    private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = 6 * mmPerInch;          // the height of the center of the target image above the floor
-    private static final float halfField        = 72 * mmPerInch;
-    private static final float oneAndHalfTile   = 36 * mmPerInch;
+    private static final float mmPerInch = 25.4f;
+    private static final float mmTargetHeight = 6 * mmPerInch;          // the height of the center of the target image above the floor
+    private static final float halfField = 72 * mmPerInch;
+    private static final float oneAndHalfTile = 36 * mmPerInch;
     private static double tile = 500.0;
     private int parkStep = 0;
     private int currentPos = 0;
     private int junctionStep = 0;
+    private PixyCam pixycam;
 
     public enum State {
         IDENTIFY_TARGET,
@@ -49,15 +50,16 @@ public class BaseStateMachine extends BaseAutonomous {
     private State mCurrentState;                         // Current State Machine State.
     private ElapsedTime mStateTime = new ElapsedTime();  // Time into current state
 
-    /** Initializes State Machine
+    /**
+     * Initializes State Machine
      */
     public void init() {
         super.init();
-        this.msStuckDetectInit     = 15000;
+        this.msStuckDetectInit = 15000;
         this.msStuckDetectInitLoop = 15000;
         // Starts state machine
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
-        //pixyCam = hardwareMap.get(PixyCam.class, "pixy");
+        pixycam = hardwareMap.get(PixyCam.class, "pixy");
         newState(State.IDENTIFY_TARGET);
 
 
@@ -65,7 +67,7 @@ public class BaseStateMachine extends BaseAutonomous {
 
     @Override
     public void init_loop() {
-        if(vuforia == null){
+        if (vuforia == null) {
             return;
         }
         telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
@@ -76,7 +78,7 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void identifySleeve() {
         int i = vuforia.identifyTeamAsset();
-        if(i >= 0){
+        if (i >= 0) {
             teamAsset = Sleeve.values()[i];
         }
     }
@@ -112,10 +114,8 @@ public class BaseStateMachine extends BaseAutonomous {
                 mediumJunction();
                 break;
             case ALIGN_WITH_POLE:
-                int offsetX;
-                //PixyCam.Block block = pixyCam.GetBiggestBlock(3);
-                //offsetX = pixyCam.offSetX();
-                //create a function that will decrease speed based on how close offset is from 0
+                align();
+                break;
             case REVERSE_JUNCTION:
                 reverseJunction();
                 break;
@@ -130,7 +130,9 @@ public class BaseStateMachine extends BaseAutonomous {
 
     }
 
-    /** Changes state to given state
+    /**
+     * Changes state to given state
+     *
      * @param newState state to change to
      */
     private void newState(State newState) {
@@ -153,29 +155,47 @@ public class BaseStateMachine extends BaseAutonomous {
         }
     }
 
-    private void mediumJunction(){
-        if(junctionStep == 0){
-            if(driveSystem.driveToPosition(950 - currentPos, DriveSystem.Direction.BACKWARD, 0.4)){
+    private void mediumJunction() {
+        if (junctionStep == 0) {
+            if (driveSystem.driveToPosition(950 - currentPos, DriveSystem.Direction.BACKWARD, 0.4)) {
                 junctionStep++;
             }
         }
-        if(junctionStep == 1){
-            if(driveSystem.turn(-45, 0.2)){
-                newState(State.REVERSE_JUNCTION);
+        if (junctionStep == 1) {
+            if (driveSystem.turn(-45, 0.2)) {
+                newState(State.ALIGN_WITH_POLE);
             }
         }
     }
 
-    private void reverseJunction(){
-        if(junctionStep == 0){
-            if(driveSystem.driveToPosition(450, DriveSystem.Direction.FORWARD, 0.4)){
+    private void reverseJunction() {
+        if (junctionStep == 0) {
+            if (driveSystem.driveToPosition(450, DriveSystem.Direction.FORWARD, 0.4)) {
                 newState(State.PARK);
             }
         }
-        if(junctionStep == 1){
-            if(driveSystem.turn(45, 0.2)){
+        if (junctionStep == 1) {
+            if (driveSystem.turn(45, 0.2)) {
                 junctionStep--;
             }
         }
+    }
+
+    private void align() {
+        int offset = pixycam.offSetX();
+        telemetry.addData("offset", offset);
+        telemetry.update();
+        if (offset > 20) {
+            driveSystem.turn(60, 0.5);
+        }
+
+        else if (offset < -20) {
+            driveSystem.turn(-60, 0.5);
+        }
+        else {
+            driveSystem.setMotorPower(0);
+            newState(State.END_STATE);
+        }
+
     }
 }

@@ -46,17 +46,21 @@ public class PixyCamCenter extends BaseOpMode {
         Log.d("block ", block.toString());
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
-        telemetry.addData("signature", block.signature);
+        int offset = pixycam.offSetX();
+        telemetry.addData("offset", offset);
         telemetry.addData("block", s);
         telemetry.addData("coords", coords);
+        Log.d("offset", offset + " ");
         telemetry.update();
-        int offset = pixycam.offSetX();
         if(offset > 20){
-            driveSystem.turn(6, 0.1);
+            driveSystem.turn(60, 0.5);
         }
 
         if(offset < -20){
-            driveSystem.turn(-6, 0.1);
+            driveSystem.turn(-60, 0.5);
+        }
+        if(offset < 20 || offset > -20){
+            driveSystem.setMotorPower(0);
         }
     }
 
