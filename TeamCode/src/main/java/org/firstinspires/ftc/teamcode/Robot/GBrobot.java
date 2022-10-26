@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
+import android.graphics.Camera;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Mechanisms.LinearSlide;
+import org.firstinspires.ftc.teamcode.Mechanisms.DriveTrain;
+import org.firstinspires.ftc.teamcode.Mechanisms.IntakeClaw;
+import org.firstinspires.ftc.teamcode.Mechanisms.Lift;
 import org.firstinspires.ftc.teamcode.Sensors.distance_sensor;
+import org.firstinspires.ftc.teamcode.Vision.ParkingPositionUtil;
 
 public class GBrobot {
     public OpMode opMode;
@@ -13,7 +18,9 @@ public class GBrobot {
     Telemetry telemetry;
 
     public distance_sensor frontDist;
-    public LinearSlide Slide;
+    public Lift lift;
+    public IntakeClaw claw;
+    public DriveTrain Drive;
 
     public GBrobot( OpMode op ) {
 
@@ -22,7 +29,9 @@ public class GBrobot {
         telemetry = opMode.telemetry;
 
         // initialize objects/classes
-        frontDist = new distance_sensor( hardwareMap, "front", opMode.telemetry );
-        Slide = new LinearSlide(hardwareMap, "Slide", opMode.telemetry);
+        //frontDist = new distance_sensor( hardwareMap, "front", opMode.telemetry );
+        lift = new Lift(hardwareMap, opMode.telemetry);
+        claw = new IntakeClaw(hardwareMap,"ServoClaw1",opMode.telemetry);
+        Drive = new DriveTrain(hardwareMap, opMode.telemetry);
     }
 }

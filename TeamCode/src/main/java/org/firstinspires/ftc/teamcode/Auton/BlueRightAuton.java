@@ -1,15 +1,11 @@
-/*++++
- * Copyright (c) 2021 OpenFTC Team
- * Parking Position Detector
- */
+package org.firstinspires.ftc.teamcode.Auton;
 
-package org.firstinspires.ftc.teamcode.Vision;
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.Robot.GBrobot;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -17,13 +13,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@TeleOp
-public class CameraSenor extends LinearOpMode
-{
+@Autonomous
+public class BlueRightAuton extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
-    static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -43,84 +36,68 @@ public class CameraSenor extends LinearOpMode
 
     AprilTagDetection tagOfInterest = null;
 
+    String park;
+
+    public GBrobot robot;
+
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
+        //Initialize robot hardware
+        robot = new GBrobot(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        //Open Webcam
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
 
         telemetry.setMsTransmissionInterval(50);
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
-        while (!isStarted() && !isStopRequested())
-        {
+        //Tag Detection
+        while (!isStarted() && !isStopRequested()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0)
-            {
+            if (currentDetections.size() != 0) {
                 boolean tagFound = false;
 
-                for(AprilTagDetection tag : currentDetections)
-                {
-                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
-                    {
+                for (AprilTagDetection tag : currentDetections) {
+                    if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
                         tagOfInterest = tag;
                         tagFound = true;
                         break;
                     }
                 }
 
-                if(tagFound)
-                {
+                if (tagFound) {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
-                }
-                else
-                {
+                } else {
                     telemetry.addLine("Don't see tag of interest :(");
 
-                    if(tagOfInterest == null)
-                    {
+                    if (tagOfInterest == null) {
                         telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
+                    } else {
                         telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
                 }
 
-            }
-            else
-            {
+            } else {
                 telemetry.addLine("Don't see tag of interest :(");
 
-                if(tagOfInterest == null)
-                {
+                if (tagOfInterest == null) {
                     telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
+                } else {
                     telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
@@ -131,39 +108,82 @@ public class CameraSenor extends LinearOpMode
             sleep(20);
         }
 
-        /*
-         * The START command just came in: now work off the latest snapshot acquired
-         * during the init loop.
-         */
-
         /* Update the telemetry */
-        if(tagOfInterest != null)
-        {
+        if (tagOfInterest != null) {
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
-            telemetry.update();
-        }
-        else
-        {
+        } else {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-            telemetry.update();
         }
+        telemetry.update();
 
         /* Actually do something useful */
-        if(tagOfInterest == null || tagOfInterest.id == LEFT){
+        if (tagOfInterest.id == LEFT) {
             //Default path is LEFT
+            park = "LEFT";
             telemetry.addLine("Left Parking spot");
-        }else if(tagOfInterest.id == MIDDLE){
+        } else if (tagOfInterest.id == MIDDLE) {
+            park = "MIDDLE";
             telemetry.addLine("Middle Parking spot");
-        }else if(tagOfInterest.id == RIGHT){
+        } else if (tagOfInterest.id == RIGHT) {
+            park = "RIGHT";
             telemetry.addLine("Right Parking spot");
         }
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+
+
+        telemetry.addData("robot", "press play to start");
+        telemetry.update();
+
+        waitForStart();
+
+        if(park .equals("LEFT")){
+            //telemetry.addLine("Park in LEFT parking area");
+            robot.Drive.MoveRobotToPosition(0.5, 5);
+            //Move forward from position
+            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
+            //Strafe towards tower
+            robot.lift.driveLiftToPosition(0.5, 10);
+            //Raise arm
+            robot.Drive.MoveRobotToPositionStrafe(0.5, -3);
+            //Strafe to parking position
+            robot.Drive.MoveRobotToPosition(0.5, 2.5);
+            //Park
+        }
+        else if(park.equals("MIDDLE")){
+            //telemetry.addLine("Park in MIDDLE parking area");
+            robot.Drive.MoveRobotToPosition(0.5, 5);
+            //Move forward from position
+            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
+            //Strafe towards tower
+            robot.lift.driveLiftToPosition(0.5, 10);
+            //Raise arm
+            robot.Drive.MoveRobotToPositionStrafe(0.5, -7);
+            //Strafe to parking position
+            robot.Drive.MoveRobotToPosition(0.5, 2.5);
+            //Park
+        }
+        else if(park.equals("RIGHT")){
+            //telemetry.addLine("Park in RIGHT parking area");
+            robot.Drive.MoveRobotToPosition(0.5, 5);
+            //Move forward from position
+            robot.Drive.MoveRobotToPositionStrafe(0.5, 7);
+            //Strafe towards tower
+            robot.lift.driveLiftToPosition(0.5, 10);
+            //Raise arm
+            robot.Drive.MoveRobotToPositionStrafe(0.5, 10);
+            //Strafe to parking position and park
+        }
+        else{
+            telemetry.addLine("NO Parking position found");
+        }
+
+        telemetry.update();
     }
 
     void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
     }
+
 }
+

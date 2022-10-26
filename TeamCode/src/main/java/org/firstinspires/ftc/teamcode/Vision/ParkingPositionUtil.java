@@ -4,18 +4,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 
 public class ParkingPositionUtil {
     Telemetry telemetry;
-    private OpenCvWebcam webcam;
-    private AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    OpenCvCamera webcam;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -36,26 +38,25 @@ public class ParkingPositionUtil {
 
     AprilTagDetection tagOfInterest = null;
 
+    public String ParkingPosition;
+
     public ParkingPositionUtil(HardwareMap hardwareMap, String webcamName, Telemetry telemetry){
         this.telemetry = telemetry;
         setup(hardwareMap, webcamName);
     }
 
-    public void setup(HardwareMap hardwareMap,String webcamName){
+    public void setup(HardwareMap hardwareMap,String name){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, name), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         webcam.setPipeline(aprilTagDetectionPipeline);
+
+        openCameraDevice();
     }
 
     public void init(){
         openCameraDevice();
-    }
-
-    public void setTimeoutTime( int milliseconds ) {
-        // Timeout for obtaining permission is configurable. Set before opening.
-        webcam.setMillisecondsPermissionTimeout( milliseconds );
     }
 
     public void openCameraDevice( ) {
@@ -78,35 +79,76 @@ public class ParkingPositionUtil {
         webcam.stopStreaming( );
     }
 
-    public AprilTagDetection DetectTag(){
+    public void DetectTag() {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-        if(currentDetections.size() != 0)
-        {
-            for(AprilTagDetection tag : currentDetections) {
-                if(tag.id == 13 || tag.id == 0 || tag.id == 19)
-                {
+
+        if (currentDetections.size() != 0) {
+            boolean tagFound = false;
+
+            for (AprilTagDetection tag : currentDetections) {
+                if (tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT) {
                     tagOfInterest = tag;
-                    return tagOfInterest;
+                    tagFound = true;
+                    break;
                 }
             }
+
+            if (tagFound) {
+                telemetry.addLine("Tag of interest is in sight!");
+                tagToTelemetry(tagOfInterest);
+            } else {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if (tagOfInterest == null) {
+                    telemetry.addLine("(The tag has never been seen)");
+                } else {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    tagToTelemetry(tagOfInterest);
+                }
+            }
+
+        } else {
+            telemetry.addLine("Don't see tag of interest :(");
+
+            if (tagOfInterest == null) {
+                telemetry.addLine("(The tag has never been seen)");
+            } else {
+                telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                tagToTelemetry(tagOfInterest);
+            }
+
         }
-        return tagOfInterest;
+
+        /* Actually do something useful */
+        if (tagOfInterest.id == LEFT) {
+            //Default path is LEFT
+            telemetry.addLine("Left Parking spot");
+        } else if (tagOfInterest.id == MIDDLE) {
+            telemetry.addLine("Middle Parking spot");
+        } else if (tagOfInterest.id == RIGHT) {
+            telemetry.addLine("Right Parking spot");
+        }
     }
 
-    public String getParkingPosition(){
-        AprilTagDetection tag = DetectTag();
-        String parkingPosition = null;
 
-        if(tag.id == 13){
+   /* public String getParkingPosition(){
+        int tag = DetectTag();
+
+        if(tag == 13){
             parkingPosition= "LEFT";
         }
-        else if(tag.id == 0){
+        else if(tag == 0){
             parkingPosition= "MIDDLE";
         }
-        else if(tag.id == 19){
+        else if(tag == 19){
             parkingPosition= "RIGHT";
         }
 
         return parkingPosition;
+    }
+*/
+    void tagToTelemetry(AprilTagDetection detection)
+    {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
     }
 }
