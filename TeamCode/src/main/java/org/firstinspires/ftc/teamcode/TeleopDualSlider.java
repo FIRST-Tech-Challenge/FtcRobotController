@@ -88,7 +88,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class TeleopDualSlider extends LinearOpMode {
 
     // Declare OpMode members.
-    static final double MAX_WAIT_TIME = 30; // in seconds
+    static final double MAX_WAIT_TIME = 20; // in seconds
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor FrontLeftDrive = null;
     private DcMotor FrontRightDrive = null;
@@ -98,29 +98,30 @@ public class TeleopDualSlider extends LinearOpMode {
 
 
     // Driving motor variables
-    static final int RAMP_ON = 1; // ramp on to improve small moving control. On: 1; off: 0
+    static final int RAMP_ON = 0; // ramp on to improve small moving control. On: 1; off: 0
     static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
     static final double AUTO_DRIVE_POWER = 0.3; // used for auto driving
+    static final double AUTO_ROTATE_POWER = 0.3; // used for auto driving
 
     // slider motor variables
     private DcMotor RightSliderMotor = null;
     private DcMotor LeftSliderMotor = null;
     static final double SLIDER_MOTOR_POWER = 0.6; // slider string gets loose with too high speed
-    static final int COUNTS_PER_INCH = 115;
-    static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // Leave 100 counts for buffer.
+    static final int COUNTS_PER_INCH = 120; // verified by testing.
+    static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // with 312 RPM motor.
     static final int SLIDER_MIN_POS = 0;
-    static final int GROUND_JUNCTION_POS = 250;
-    static final int READY_FOR_GRIP_POSITION = 700; // lift a little bit to get ready for unloading
-    static final int coneStack5th = COUNTS_PER_INCH * 1; // the 5th cone position in the cone stack. The lowest cone is the 1th one.
+    static final int GROUND_JUNCTION_POS = COUNTS_PER_INCH * 2; // 2 inch
+    static final int READY_FOR_GRIP_POSITION = COUNTS_PER_INCH * 4;; // lift 4 inch to get ready for unloading
+    static final int coneStack5th = COUNTS_PER_INCH * 10; // the 5th cone position in the cone stack. The lowest cone is the 1th one.
 
     // 10inch for low junction, 20inch for medium, and 30 for high
     static final int LOW_JUNCTION_POS = COUNTS_PER_INCH * 10 + READY_FOR_GRIP_POSITION; // need double check by testing
     static final int MEDIUM_JUNCTION_POS = COUNTS_PER_INCH * 20 + READY_FOR_GRIP_POSITION;
     static final int HIGH_JUNCTION_POS = COUNTS_PER_INCH * 30 + READY_FOR_GRIP_POSITION;
-    static final int SLIDER_MOVE_DOWN_POSITION = 700; // move down a little bit to unload cone
-    static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 512; // Approximate value from testing
-    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION/40; // set value based on testing
-    int sliderMotorTargetPosition = 0;
+    static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 6; // move down 6 inch to unload cone
+    static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 538; // for 312 rpm motor
+    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION / 40; // set value based on testing
+    int sliderTargetPosition = 0;
 
 
     // claw servo motor variables
@@ -159,6 +160,7 @@ public class TeleopDualSlider extends LinearOpMode {
     PIDController pidRotate, pidDrive;
     boolean resetAngleFlag = false;
     static final int INERTIA_WAIT_TIME = 500; // in ms
+    double globalAngleError = 0.0; // the angle error accumulated during auto-rotation.
 
     @Override
     public void runOpMode() {
@@ -197,8 +199,8 @@ public class TeleopDualSlider extends LinearOpMode {
         // based on how Motor installed on robot.
         RightSliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         LeftSliderMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        RightSliderMotor.setTargetPosition(sliderMotorTargetPosition);
-        LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+        RightSliderMotor.setTargetPosition(sliderTargetPosition);
+        LeftSliderMotor.setTargetPosition(sliderTargetPosition);
         // Reset slider motor encoder counts kept by the motor
         RightSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LeftSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -236,9 +238,9 @@ public class TeleopDualSlider extends LinearOpMode {
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
 
         // Set up parameters for driving in a straight line.
-        pidDrive.setSetpoint(0);
-        pidDrive.setOutputRange(0, power);
         pidDrive.setInputRange(-90, 90);
+        pidDrive.setSetpoint(0); // be sure input range has been set before
+        pidDrive.setOutputRange(0, power);
         pidDrive.enable();
 
         // Wait for the game to start (driver presses PLAY)
@@ -290,8 +292,9 @@ public class TeleopDualSlider extends LinearOpMode {
 
             // turn on PID after a duration time to avoid robot inertia after turning.
             if ((runtime.milliseconds() > INERTIA_WAIT_TIME) && resetAngleFlag) {
-                resetAngle(); // Resets the cumulative angle tracking to zero.
                 resetAngleFlag = false;
+                resetAngle(); // Resets the cumulative angle tracking to zero.
+                globalAngleError = 0.0; //reset global angle error after manual turning.
                 pidDrive.enable();
             }
 
@@ -321,33 +324,33 @@ public class TeleopDualSlider extends LinearOpMode {
 
             // use Y button to lift up the slider reaching high junction
             if (sliderHighJunctionPosition) {
-                sliderMotorTargetPosition = HIGH_JUNCTION_POS;
+                sliderTargetPosition = HIGH_JUNCTION_POS;
             }
 
             // use B button to lift up the slider reaching medium junction
             if (sliderMediumJunctionPosition) {
-                sliderMotorTargetPosition = MEDIUM_JUNCTION_POS;
+                sliderTargetPosition = MEDIUM_JUNCTION_POS;
             }
 
             // use A button to lift up the slider reaching low junction
             if (sliderLowJunctionPosition) {
-                sliderMotorTargetPosition = LOW_JUNCTION_POS;
+                sliderTargetPosition = LOW_JUNCTION_POS;
             }
 
             // use X button to move the slider for ground junction position
             if (sliderGroundJunctionPosition) {
-                sliderMotorTargetPosition = GROUND_JUNCTION_POS;
+                sliderTargetPosition = GROUND_JUNCTION_POS;
             }
 
             // use right stick_Y to lift or down slider continuously
-            sliderMotorTargetPosition -= (int)((sliderUpDown) * motorPositionInc);
-            sliderMotorTargetPosition = Range.clip(sliderMotorTargetPosition, SLIDER_MIN_POS,
+            sliderTargetPosition -= (int)((sliderUpDown) * motorPositionInc);
+            sliderTargetPosition = Range.clip(sliderTargetPosition, SLIDER_MIN_POS,
                     FOUR_STAGE_SLIDER_MAX_POS);
             telemetry.addData("Status", "slider motor Target position %d",
-                    sliderMotorTargetPosition);
+                    sliderTargetPosition);
 
-            RightSliderMotor.setTargetPosition(sliderMotorTargetPosition);
-            LeftSliderMotor.setTargetPosition(sliderMotorTargetPosition);
+            RightSliderMotor.setTargetPosition(sliderTargetPosition);
+            LeftSliderMotor.setTargetPosition(sliderTargetPosition);
             RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
             LeftSliderMotor.setPower(SLIDER_MOTOR_POWER);
             telemetry.addData("Status", "Right slider motor current position %d",
@@ -382,9 +385,8 @@ public class TeleopDualSlider extends LinearOpMode {
                 autoLoadCone(SLIDER_MIN_POS); // Always on ground during teleop mode
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
-                clawServoPosition = clawServo.getPosition();
                 // left motor has same position with right one
-                sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
+                sliderTargetPosition = RightSliderMotor.getCurrentPosition();
             }
 
             //  auto driving, unload cone
@@ -393,7 +395,7 @@ public class TeleopDualSlider extends LinearOpMode {
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
                 clawServoPosition = clawServo.getPosition();
-                sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
+                sliderTargetPosition = RightSliderMotor.getCurrentPosition();
             }
 
             // Show the elapsed game time and wheel power, positions.
@@ -431,8 +433,8 @@ public class TeleopDualSlider extends LinearOpMode {
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // moving back in feet
 
         // move down slider a little bit to unload cone
-        sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
-        int moveSlider = sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION;
+        sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+        int moveSlider = sliderTargetPosition - SLIDER_MOVE_DOWN_POSITION;
         moveSlider = Math.max(moveSlider, SLIDER_MIN_POS);
         RightSliderMotor.setTargetPosition(moveSlider);
         LeftSliderMotor.setTargetPosition(moveSlider);
@@ -441,9 +443,9 @@ public class TeleopDualSlider extends LinearOpMode {
 
         clawServo.setPosition(CLAW_OPEN_POS); // unload  cone
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
-
-        sliderMotorTargetPosition = RightSliderMotor.getCurrentPosition();
-        moveSlider = sliderMotorTargetPosition + SLIDER_MOVE_DOWN_POSITION;
+        clawServoPosition = clawServo.getPosition(); // keep claw position
+        sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+        moveSlider = sliderTargetPosition + SLIDER_MOVE_DOWN_POSITION;
         RightSliderMotor.setTargetPosition(moveSlider);
         LeftSliderMotor.setTargetPosition(moveSlider);
         waitMotorActionComplete(RightSliderMotor);
@@ -471,14 +473,13 @@ public class TeleopDualSlider extends LinearOpMode {
         clawServo.setPosition(CLAW_OPEN_POS);
         armServo.setPosition(ARM_LOAD_POSITION);
         robotMovingDistance(-robotAutoLoadMovingDistance, true); // moving to loading position
-        waitMotorActionComplete(RightSliderMotor);
-        waitMotorActionComplete(LeftSliderMotor);
         RightSliderMotor.setTargetPosition(coneLocation);
         LeftSliderMotor.setTargetPosition(coneLocation);
         waitMotorActionComplete(RightSliderMotor);
         waitMotorActionComplete(LeftSliderMotor);
         clawServo.setPosition(CLAW_CLOSE_POS);
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
+        clawServoPosition = clawServo.getPosition(); // keep claw position
         armServo.setPosition(ARM_UNLOAD_POSITION);
         RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
         LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
@@ -498,10 +499,7 @@ public class TeleopDualSlider extends LinearOpMode {
         telemetry.addData("Status", "auto driving target position %d", targetPosition);
         setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
-        //setPowerToWheels(AUTO_DRIVE_POWER); // low speed for more accurate, start moving
-        //waitMotorActionComplete(FrontLeftDrive); // just check one wheel.
         robotDriveWithPIDControl(AUTO_DRIVE_POWER);
-        //setPowerToWheels(0.0); //stop moving
         robotRunWithPositionModeOn(false); // turn off encoder mode
     }
 
@@ -621,6 +619,7 @@ public class TeleopDualSlider extends LinearOpMode {
      */
     private void rotate(int degrees, double power) {
         // restart imu angle tracking.
+        float angleBeforeRotate = lastAngles.firstAngle;
         resetAngle();
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
@@ -637,8 +636,8 @@ public class TeleopDualSlider extends LinearOpMode {
         // turning the robot back toward the setpoint value.
 
         pidRotate.reset();
-        pidRotate.setSetpoint(degrees);
         pidRotate.setInputRange(0, degrees);
+        pidRotate.setSetpoint(degrees); // be sure input range has been set before
         pidRotate.setOutputRange(0, power);
         pidRotate.setTolerance(1);
         pidRotate.enable();
@@ -680,6 +679,10 @@ public class TeleopDualSlider extends LinearOpMode {
 
         // reset angle tracking on new heading.
         resetAngle();
+        globalAngleError += angleBeforeRotate - lastAngles.firstAngle - degrees;
+
+        // update straight driving set point to correct angle error during rotation
+        // pidDrive.setSetpoint(-globalAngleError);
     }
 
     /**
@@ -734,7 +737,7 @@ public class TeleopDualSlider extends LinearOpMode {
      * 6. Move robot to parking area
      */
     private void autonomousCore() {
-        int sleeveSignal = 1; // sleeve signal will be 1 for red, 2 for green, 3 for blue
+        int sleeveSignal = 3; // sleeve signal will be 1 for red, 2 for green, 3 for blue
         double parkingLocation = 1.0; // distance between cone loading area to parking area, in feet
         switch (sleeveSignal) {
             case 1:
@@ -751,9 +754,8 @@ public class TeleopDualSlider extends LinearOpMode {
         }
 
         telemetry.addData("Status", "auto mode - sleeve signal (%d)," +
-                "moving distance (%0.1f) feet", sleeveSignal, parkingLocation);
+                "moving distance (%.1f) feet", sleeveSignal, parkingLocation);
 
-        // only for rotate testing
         /* code for autonomous driving, must starting from right position.    */
         if (gamepad2.a) {
             robotMovingDistance(5.0, true); // drive robot to the center of 3rd mat
@@ -767,6 +769,7 @@ public class TeleopDualSlider extends LinearOpMode {
             LeftSliderMotor.setTargetPosition(HIGH_JUNCTION_POS);
             waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
             waitMotorActionComplete(LeftSliderMotor);
+            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
         }
 
         if (gamepad2.y) {
@@ -774,10 +777,11 @@ public class TeleopDualSlider extends LinearOpMode {
         }
         if (gamepad2.right_bumper) {
             autoUnloadCone();
+            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
         }
 
         if (gamepad2.dpad_right) {
-            rotate(90, AUTO_DRIVE_POWER); // turn robot 90 degree to right
+            rotate(-90, AUTO_ROTATE_POWER); // turn robot 90 degree to right
         }
 
         if (gamepad2.dpad_down) {
@@ -785,16 +789,16 @@ public class TeleopDualSlider extends LinearOpMode {
         }
         if (gamepad2.left_bumper) {
             autoLoadCone(coneStack5th); // need update to input cone height position
-        }
-
-        if (gamepad2.dpad_up) {
-            rotate(180, AUTO_DRIVE_POWER); // turn robot 90 degree to right
-            robotMovingDistance(parkingLocation, true); // drive robot to parking
-            robotMovingDistance(5.0, false); // strafe robot to parking mat
+            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
         }
 
         if (gamepad2.dpad_left) {
-            rotate(-90, AUTO_DRIVE_POWER); // turn robot 90 degree to right
+            rotate(180, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+        }
+
+        if (gamepad2.dpad_up) {
+            robotMovingDistance(parkingLocation, true); // drive robot to parking
+            robotMovingDistance(2.0, false); // strafe robot to parking mat
         }
 
     }

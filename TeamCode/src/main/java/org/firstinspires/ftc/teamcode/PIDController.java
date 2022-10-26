@@ -199,7 +199,7 @@ public class PIDController
     }
 
     /**
-     * Set the setpoint for the PIDController
+     * Set the setpoint for the PIDController after setting input range
      * @param setpoint the desired setpoint
      */
     public void setSetpoint(double setpoint)
