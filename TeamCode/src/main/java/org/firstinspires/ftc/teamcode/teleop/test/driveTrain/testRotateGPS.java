@@ -81,11 +81,6 @@ public class testRotateGPS extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry.addData("X", gamepad1.left_stick_x);
-        telemetry.addData("Y", -gamepad1.left_stick_y);
-        telemetry.addData("R", gamepad1.right_stick_x);
-        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
-
         for(int i = 0; i < 4; i++){
             posData[i] = posSystem.getPositionArr()[i];
         }
@@ -96,11 +91,7 @@ public class testRotateGPS extends OpMode{
         telemetry.addData("DriveType, ", posSystem.getDriveType());
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
-
-        telemetry.addData("TopR Clicks Hash", posSystem.motorClicksPose.get(robot.topR));
-        telemetry.addData("BotR Clicks Pos Hash", posSystem.motorClicksPose.get(robot.botR));
-        telemetry.addData("Good gap", posSystem.goodGapw);
-
+        telemetry.addData("Working?", works());
         telemetry.update();
     }
 
@@ -155,6 +146,10 @@ public class testRotateGPS extends OpMode{
         clicks[0] = (int)translationClicks;
         clicks[1] = (int)rotationClicks;
         return clicks;
+    }
+
+    public boolean works(){
+        return (posSystem.dChange() && !posSystem.rChange() && !posSystem.wChange());
     }
 
     private void reset(){

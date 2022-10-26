@@ -47,7 +47,7 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        int[] clicksArr = getClicks(5, 0);
+        int[] clicksArr = getClicks(constants.WHEEL_CIRCUMFERENCE, 0);
         distanceClicks = clicksArr[0];
         rotClicks = clicksArr[1];
 
@@ -81,11 +81,6 @@ public class testTranslateGPS extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry.addData("X", gamepad1.left_stick_x);
-        telemetry.addData("Y", -gamepad1.left_stick_y);
-        telemetry.addData("R", gamepad1.right_stick_x);
-        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
-
         for(int i = 0; i < 4; i++){
             posData[i] = posSystem.getPositionArr()[i];
         }
@@ -96,6 +91,7 @@ public class testTranslateGPS extends OpMode{
         telemetry.addData("DriveType, ", posSystem.getDriveType());
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
+        telemetry.addData("Working?", works());
         telemetry.update();
     }
 
@@ -150,6 +146,10 @@ public class testTranslateGPS extends OpMode{
         clicks[0] = (int)translationClicks;
         clicks[1] = (int)rotationClicks;
         return clicks;
+    }
+
+    public boolean works(){
+        return (posSystem.dChange() && !posSystem.rChange() && !posSystem.wChange());
     }
 
     private void reset(){

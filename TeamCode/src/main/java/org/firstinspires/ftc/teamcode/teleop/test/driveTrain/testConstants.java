@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -18,9 +19,7 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 public class testConstants extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
-    GlobalPosSystem posSystem;
-    Kinematics kinematics;
-    private double[] posData = new double[4];
+    Constants constants = new Constants();
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -30,6 +29,14 @@ public class testConstants extends OpMode{
         NOT_INITIALIZED
     }
     public State state = State.NOT_INITIALIZED;
+
+
+    public enum TestConstant{
+        SPIN,
+        ROTATE,
+        NOT_INITIALIZED
+    }
+    public TestConstant testConstant = TestConstant.NOT_INITIALIZED;
 
     Button x = new Button();
     Button y = new Button();
@@ -46,9 +53,6 @@ public class testConstants extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
-        posSystem = new GlobalPosSystem(robot);
-        kinematics = new Kinematics(posSystem);
-        posSystem.grabKinematics(kinematics);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -83,19 +87,8 @@ public class testConstants extends OpMode{
     }
 
     void UpdateTelemetry(){
-        telemetry.addData("X", gamepad1.left_stick_x);
-        telemetry.addData("Y", -gamepad1.left_stick_y);
-        telemetry.addData("R", gamepad1.right_stick_x);
-        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
-
-        for(int i = 0; i < 4; i++){
-            posData[i] = posSystem.getPositionArr()[i];
-        }
-
-        telemetry.addData("W", posData[2]);
-        telemetry.addData("R", posData[3]);
-
         telemetry.addData("State", state);
+        telemetry.addData("Test Type", testConstant);
         telemetry.addData("TopR", robot.topR.getCurrentPosition());
         telemetry.addData("TopL", robot.topL.getCurrentPosition());
 
@@ -110,19 +103,32 @@ public class testConstants extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
-        posSystem.calculatePos();
-
         double beta = 0.5;
         double alpha = 1 - beta;
 
-        if (x.getState() == Button.State.TAP) state = State.SAME_DIRECTION;
+        if (a.getState() == Button.State.TAP) state = State.SAME_DIRECTION;
         else if (b.getState() == Button.State.TAP) state = State.SINGLE;
 
-        int distanceTopR = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotR = (int) (-gamepad1.left_stick_y * 100 * beta);
+        if (x.getState() == Button.State.TAP) testConstant = TestConstant.SPIN;
+        else if (y.getState() == Button.State.TAP) testConstant = TestConstant.ROTATE;
 
-        int rotationalTopR = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotR = (int) (gamepad1.left_stick_x * 100 * alpha);
+        int distanceTopR = 0;
+        int distanceBotR = 0;
+
+        int rotationalTopR = 0;
+        int rotationalBotR = 0;
+
+        switch(testConstant){
+            case SPIN:
+                distanceTopR = (int)(constants.CLICKS_PER_INCH * constants.WHEEL_CIRCUMFERENCE);
+                distanceBotR = -1 * (int)(constants.CLICKS_PER_INCH * constants.WHEEL_CIRCUMFERENCE);
+                break;
+
+            case ROTATE:
+                rotationalTopR = (int)(constants.CLICKS_PER_DEGREE * 360);
+                rotationalBotR = (int)(constants.CLICKS_PER_DEGREE * 360);
+                break;
+        }
 
         switch (state){
             case SAME_DIRECTION:
@@ -135,6 +141,7 @@ public class testConstants extends OpMode{
 
             case SINGLE:
                 robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceTopR + rotationalTopR);
+
                 robot.topR.setPower(gamepad1.left_stick_y * 0.2 + gamepad1.left_stick_x * 0.2);
                 break;
         }

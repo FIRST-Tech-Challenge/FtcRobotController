@@ -30,30 +30,13 @@ public class LinearGPS {
             positionArr[i] = 0;
         }
 
-
-        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
-        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
-        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
-        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
-
-        prevMotorClicks.put(robot.topR, robot.topR.getCurrentPosition());
-        prevMotorClicks.put(robot.botR, robot.botR.getCurrentPosition());
-        prevMotorClicks.put(robot.topL, robot.topL.getCurrentPosition());
-        prevMotorClicks.put(robot.botL, robot.botL.getCurrentPosition());
+        updateHash();
     }
 
     public void calculatePos(){
-        if (goodGap()) return;
+//        if (goodGap()) return;
 
-        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
-        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
-        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
-        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
-
-        prevMotorClicks.put(robot.topR, motorClicksPose.get(robot.topR));
-        prevMotorClicks.put(robot.botR, motorClicksPose.get(robot.botR));
-        prevMotorClicks.put(robot.topL, motorClicksPose.get(robot.topL));
-        prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
+        updateHash();
 
         //left
         int topL = motorClicksPose.get(robot.topL) - prevMotorClicks.get(robot.topL); //change in top left
@@ -76,6 +59,7 @@ public class LinearGPS {
         rotationalDegrees = (rotateL + rotateR) / 2;
         translationalInches = (translateL + translateR) / 2;
         double currentAngle = clamp(rotationalDegrees + positionArr[2]);
+        currentAngle = Math.toRadians(currentAngle);
 
         if (Math.abs(translationalInches) <= 0.3){
             update(translationalInches * Math.sin(currentAngle), translationalInches * Math.cos(currentAngle) , rotationalDegrees, 0);
@@ -103,6 +87,10 @@ public class LinearGPS {
         return (Math.abs(positionArr[1]) <= 0.3);
     }
 
+    public boolean dChange(){
+        return (xChange() || yChange());
+    }
+
     public boolean wChange(){
         return (Math.abs(positionArr[2]) <= 1);
     }
@@ -124,6 +112,18 @@ public class LinearGPS {
 //            prevMotorClicks.put(motor, motor.getCurrentPosition());
 //        }
 //    }
+
+    public void updateHash(){
+        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
+        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
+        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
+        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
+
+        prevMotorClicks.put(robot.topR, motorClicksPose.get(robot.topR));
+        prevMotorClicks.put(robot.botR, motorClicksPose.get(robot.botR));
+        prevMotorClicks.put(robot.topL, motorClicksPose.get(robot.topL));
+        prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
+    }
 
     private boolean goodGap(){
         if ( //will need to add the left side later
