@@ -25,6 +25,20 @@ public class basic_controls extends LinearOpMode{
             stopRobot();
         }
     }
+    public void ServoClaw (double power, int time) {
+        robot.ClawMotor.setPower(power);
+        sleep(time);
+    }
+    public void ServoArm(double power, int time) {
+        robot.ArmServo.setPower(power);
+        sleep(time);
+    }
+    public void LinearSlide(double power, int time) {
+        // Negative power = up
+        robot.leftslidemotor.setPower(power);
+        robot.rightslidemotor.setPower(power);
+        sleep(time);
+    }
     public void straight(double power, int time) {
         robot.leftfrontmotor.setPower(power);
         robot.leftbackmotor.setPower(power);

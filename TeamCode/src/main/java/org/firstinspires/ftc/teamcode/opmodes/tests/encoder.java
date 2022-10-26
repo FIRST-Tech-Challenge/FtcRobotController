@@ -109,11 +109,7 @@ public class encoder extends LinearOpMode {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
-    public void encoderDrive(double speed,
-                             double lfinches, double rfinches, double lbinches, double rbinches,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+    public void encoderDrive (double speed, double lfinches, double rfinches, double lbinches, double rbinches, double timeoutS) {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
