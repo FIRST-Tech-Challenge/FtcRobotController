@@ -117,6 +117,32 @@ public class PowerPlayBaseBot {
         telemetry.addData("Motors", "RightBack from %7d", backRight.getCurrentPosition());
     }
 
+    public void strafeLeft(double speed) {
+        double power = Range.clip(speed, -1.0, 1.0);
+        power = power * power * power;
+
+        this.backLeft.setTargetPower(power);
+        this.backRight.setTargetPower(-power);
+        this.frontLeft.setTargetPower(-power);
+        this.frontRight.setTargetPower(power);
+
+        telemetry.addData("Motors", "Front: %.0f", power);
+        telemetry.addData("Motors", "Back: %.0f", power);
+    }
+
+    public void strafeRight(double speed) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
+            double power = Range.clip(speed, -1.0, 1.0);
+            power = power * power * power;
+            this.backLeft.setTargetPower(-power);
+            this.backRight.setTargetPower(power);
+            this.frontLeft.setTargetPower(power);
+            this.frontRight.setTargetPower(-power);
+            telemetry.addData("Motors", "Front: %.0f", power);
+            telemetry.addData("Motors", "Back: %.0f", power);
+        }
+    }
+
     @BotAction(displayName = "Grab Cone", defaultReturn = "", isTerminator = false)
     public void grabCone() {
         telemetry.addData("ConeGrab", "Grabbed");
@@ -134,7 +160,7 @@ public class PowerPlayBaseBot {
     }
 
     public void liftToPosition(int position) {
-
+        telemetry.addData("Lift", "Moved");
     }
 
 }
