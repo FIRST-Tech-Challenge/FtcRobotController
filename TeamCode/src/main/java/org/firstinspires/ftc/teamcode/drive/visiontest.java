@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 public class visiontest extends LinearOpMode {
 
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    OpenCvCamera camera;
+
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -30,9 +33,9 @@ public class visiontest extends LinearOpMode {
     double tagsize = 0.166;
 
     //our three tags
-    int left = 1;
-    int middle = 2;
-    int right = 3;
+    int LEFT = 1;
+    int MIDDLE = 2;
+    int RIGHT = 3;
 
     AprilTagDetection tagOfInterest = null;
 
@@ -40,9 +43,11 @@ public class visiontest extends LinearOpMode {
     public void runOpMode()
     {
         SampleMecanumDrive robot = new SampleMecanumDrive(hardwareMap);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(robot.webcamName);
+        camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
 
         {
@@ -72,7 +77,7 @@ public class visiontest extends LinearOpMode {
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == left || tag.id == right || tag.id == middle)
+                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -82,49 +87,51 @@ public class visiontest extends LinearOpMode {
 
                 if(tagFound)
                 {
-                    telemetry.addLine("tag is spotted:");
-
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    tagToTelemetry(tagOfInterest);
                 }
+
+                else
+                {
+                    telemetry.addLine("no tag boi");
+                }
+
+            }
+            else
+            {
+                telemetry.addLine("Don't see tag of interest :(");
+
+
+
             }
 
             telemetry.update();
-            sleep(15);
+            sleep(20);
         }
 
 
-        /* Update the telemetry */
+
+
+
         if(tagOfInterest != null)
         {
-            telemetry.addLine(String.format("\nDetected tag ID=%d", tagOfInterest.id));
+            telemetry.addLine("Tag snapshot:\n");
+            tagToTelemetry(tagOfInterest);
             telemetry.update();
         }
         else
         {
-            telemetry.addLine("No tag snapshot available");
+            telemetry.addLine("No tag snapshot available, never sighted(");
             telemetry.update();
         }
 
-        //ADD TRAJECTORIES HERE
-        //https://firstinspiresst01.blob.core.windows.net/first-energize-ftc/game-manual-part-2-traditional.pdf
-        //page 46 above has the parking zones
-
-        if(tagOfInterest.id == left )
-        {
-            telemetry.addLine("tag 1 is spotted:");
-        }
-
-        else if(tagOfInterest.id == middle)
-        {
-            telemetry.addLine("tag 2 is spotted:");
-        }
-
-        else if(tagOfInterest.id == right)
-        {
-            telemetry.addLine("tag 3 is spotted:");
-        }
-
+        //PUT AUTON CODE HERE (DRIVER PRESSED THE PLAY BUTTON!)
 
     }
 
+    void tagToTelemetry(AprilTagDetection detection)
+    {
+        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
 
+    }
 }
