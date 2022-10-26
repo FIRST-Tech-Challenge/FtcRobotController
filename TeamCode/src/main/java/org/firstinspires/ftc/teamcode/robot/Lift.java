@@ -40,6 +40,7 @@ public class Lift {
     public final double     HARD_STOP_CURRENT_DRAW = 100;
 
     public final String LIFT_SYSTEM_NAME = "Lift";
+    public final String LIFT_POLE_GROUND = "GROUND";
     public final String LIFT_POLE_LOW = "POLE_LOW";
     public final String LIFT_POLE_MEDIUM = "POlE_MEDIUM";
     public final String LIFT_POLE_HIGH = "POLE_HIGH";
@@ -69,14 +70,38 @@ public class Lift {
 
         return liftMotor.getCurrentPosition();
     }
+
     public void setState(String level, String subheight){
-        switch(level){
+        String currentState = getCurrentState();
+        if(level.equalsIgnoreCase(currentState)){
+            return;
+        }else{
+            selectTransition(level, subheight, currentState);
+        }
+    }
+    private void selectTransition(String desiredLevel, String subheight, String currentState){
+        switch(desiredLevel){
             case LIFT_POLE_LOW:{
-                raiseHeightTo(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
+                transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
                 break;
             }
-
+            case LIFT_POLE_MEDIUM:{
+                transitionToLiftPosition(LIFT_POSITION_MIDPOLE + deliveryHeight(subheight));
+                break;
+            }
+            case LIFT_POLE_HIGH:{
+                transitionToLiftPosition(LIFT_POSITION_HIGHPOLE + deliveryHeight(subheight));
+                break;
+            }
+            case LIFT_POLE_GROUND:{
+                transitionToLiftPosition(LIFT_POSITION_GROUND + deliveryHeight(subheight));
+                break;
+            }
         }
+
+    }
+    private void transitionToLiftPosition(double inches){
+        raiseHeightTo(inches);
     }
     public String getCurrentState() {
         String state = TRANSITION_STATE;

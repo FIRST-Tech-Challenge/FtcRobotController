@@ -18,7 +18,7 @@ public class TestTeleOp extends LinearOpMode {
 
     public void runOpMode(){
 
-        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry,stateMap);
+        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry, stateMap);
         //Turret turret = new Turret(hardwareMap, telemetry);
         //robot.initializeRobotPosition();
         Lift lift = new Lift(hardwareMap, telemetry);
@@ -48,10 +48,10 @@ public class TestTeleOp extends LinearOpMode {
                 lift.setMotor(0);
             }
             if(gamepad2.y){
-                stateMap.put(robot.LIFT_SYSTEM_NAME,robot.LIFT_POLE_LOW);
+                stateMap.put(robot.LIFT_SYSTEM_NAME, robot.LIFT_POLE_LOW);
             }
             if(gamepad2.x){
-                stateMap.put(robot.LIFT_SYSTEM_NAME, robot.LIFT_SUBHEIGHT);
+                stateMap.put(robot.LIFT_SUBHEIGHT, robot.DELIVERY_HEIGHT);
             }
             if(gamepad2.b){
                 arm.extension.setPosition(0.75);
@@ -72,7 +72,7 @@ public class TestTeleOp extends LinearOpMode {
             );
 
             drive.update();
-
+            robot.updateSystems();
         }
 
         // operator controlled turret via right stick x axis
