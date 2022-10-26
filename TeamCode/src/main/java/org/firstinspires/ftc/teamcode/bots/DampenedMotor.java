@@ -15,10 +15,16 @@ public class DampenedMotor {
     protected double currentPower = 0;
     protected double targetPower = 0;
 
+    private static final double ZERO_THRESHOLD = 0.05;
+
     protected void update() {
         double delta = this.targetPower - this.currentPower;
         double newPower = currentPower + (delta * dFactor);
         newPower = Range.clip(newPower, -1.0, +1.0);
+
+        if (Math.abs(newPower) <= ZERO_THRESHOLD) {
+            newPower = 0.0;
+        }
         if (this.theMotor != null) {
             theMotor.setPower(newPower);
         }
@@ -30,6 +36,7 @@ public class DampenedMotor {
             this.theMotor = motor;
             this.dFactor = Range.clip(dampeningFactor, -1.0, 1.0);
             this.theMotor.setDirection(direction);
+            this.theMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             this.theMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             this.theMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {

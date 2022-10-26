@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -15,6 +18,8 @@ public class PowerPlayBaseBot {
     protected DampenedMotor frontRight = null;
     protected DampenedMotor backLeft = null;
     protected DampenedMotor backRight = null;
+
+    private Servo grabberServo = null;
 
     private int MAX_VELOCITY = 2000;
 
@@ -39,6 +44,9 @@ public class PowerPlayBaseBot {
 
     private static final String TAG = "PowerPlayBaseBot";
 
+    private static final double GRABBER_SERVO_POS_GRAB = 0.25;
+    private static final double GRABBER_SERVO_POS_DROP = 0.75;
+
     public PowerPlayBaseBot() {
 
     }
@@ -48,18 +56,34 @@ public class PowerPlayBaseBot {
         this.hwMap = hw;
         this.telemetry = t;
 
-        double dampeningFactor = 0.5;
 
         try {
-            frontLeft = new DampenedMotor(hwMap.get(DcMotorEx.class, LEFT_FRONT), DcMotor.Direction.FORWARD, dampeningFactor);
-            frontRight = new DampenedMotor(hwMap.get(DcMotorEx.class, RIGHT_FRONT), DcMotor.Direction.REVERSE, dampeningFactor);
-            backLeft = new DampenedMotor(hwMap.get(DcMotorEx.class, LEFT_BACK), DcMotor.Direction.FORWARD, dampeningFactor);
-            backRight = new DampenedMotor(hwMap.get(DcMotorEx.class, RIGHT_BACK), DcMotor.Direction.REVERSE, dampeningFactor);
-
-            stop();
+            setupDriveMotors();
+            setupAttachments();
         } catch (Exception ex) {
             //issues accessing drive resources
             throw new Exception("Issues accessing one of drive motors. Check the controller config", ex);
+        }
+    }
+
+    protected void setupDriveMotors() {
+        double dampeningFactor = 0.5;
+
+        frontLeft = new DampenedMotor(hwMap.get(DcMotorEx.class, LEFT_FRONT), DcMotor.Direction.FORWARD, dampeningFactor);
+        frontRight = new DampenedMotor(hwMap.get(DcMotorEx.class, RIGHT_FRONT), DcMotor.Direction.REVERSE, dampeningFactor);
+        backLeft = new DampenedMotor(hwMap.get(DcMotorEx.class, LEFT_BACK), DcMotor.Direction.FORWARD, dampeningFactor);
+        backRight = new DampenedMotor(hwMap.get(DcMotorEx.class, RIGHT_BACK), DcMotor.Direction.REVERSE, dampeningFactor);
+
+        stop();
+    }
+
+    protected void setupAttachments() {
+        try {
+            grabberServo = hwMap.get(Servo.class, "grabber");
+            telemetry.addData("ConeGrab", "Servo Initialized");
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize grabber Servo", ex);
+            telemetry.addData("ConeGrab", "Cannot initialize grabber Servo");
         }
     }
 
@@ -92,4 +116,25 @@ public class PowerPlayBaseBot {
         telemetry.addData("Motors", "RightFront from %7d", frontRight.getCurrentPosition());
         telemetry.addData("Motors", "RightBack from %7d", backRight.getCurrentPosition());
     }
+
+    @BotAction(displayName = "Grab Cone", defaultReturn = "", isTerminator = false)
+    public void grabCone() {
+        telemetry.addData("ConeGrab", "Grabbed");
+        if (grabberServo != null) {
+            grabberServo.setPosition(GRABBER_SERVO_POS_GRAB);
+        }
+    }
+
+    @BotAction(displayName = "Drop Cone", defaultReturn = "", isTerminator = false)
+    public void releaseCone() {
+        telemetry.addData("ConeGrab", "Dropped");
+        if (grabberServo != null) {
+            grabberServo.setPosition(GRABBER_SERVO_POS_DROP);
+        }
+    }
+
+    public void liftToPosition(int position) {
+
+    }
+
 }
