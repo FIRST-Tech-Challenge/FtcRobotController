@@ -103,19 +103,6 @@ public class Robot extends MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-//        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-//        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        leftFront.setDirection(DcMotor.Direction.REVERSE);
-//        leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
-//        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        leftRear.setDirection(DcMotor.Direction.REVERSE);
-//        rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
-//
-//        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
-//
-//        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
         leftFront.setDirection(DcMotor.Direction.REVERSE); //motor direction
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Braking behavior
@@ -193,7 +180,7 @@ public class Robot extends MecanumDrive {
         rightRear.setPower(backRightPower);
     }
 
-    //roadrunner methods
+    /* ---------- ROADRUNNER METHODS ---------- */
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
