@@ -90,12 +90,12 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
 
-        Vision vision = new Vision(this, 'r');
+        /*Vision vision = new Vision(this, 'r');
         try {
             Bitmap bmp = vision.getBitmap();
         } catch (Exception e) {
             //
-        }
+        }*/
 
 
         // Send telemetry message to signify robot waiting;
