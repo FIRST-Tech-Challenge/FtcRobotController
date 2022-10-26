@@ -18,7 +18,7 @@ public class DriveSystem {
 
     /********************************** ENUMS **************************************************/
     public enum MotorNames {
-        FRONTLEFT, FRONTRIGHT, BACKRIGHT, BACKLEFT, INTAKE
+        FRONTLEFT, FRONTRIGHT, BACKRIGHT, BACKLEFT
     }
 
     public enum Direction {
@@ -81,7 +81,6 @@ public class DriveSystem {
             switch(name) {
                 case FRONTLEFT:
                 case BACKLEFT:
-                case INTAKE:
                     motor.setDirection(DcMotorSimple.Direction.REVERSE);
                     break;
                 case FRONTRIGHT:
@@ -176,33 +175,10 @@ public class DriveSystem {
                 case BACKRIGHT:
                     setDriveSpeed(motor, backRightPower);
                     break;
-                case INTAKE:
-                    setDriveSpeed(motor, 1);
-                    break;
             }
         });
         mSlowDrive = false;
     }
-
-
-
-
-    public void intake(float speed) {
-
-        motors.forEach((name, motor) -> {
-            switch(name) {
-                case INTAKE:
-                    setDriveSpeed(motor, speed);
-                    break;
-            }
-        });
-    }
-
-
-
-
-
-
 
     /**
      * Drives a given # of ticks in a given direction

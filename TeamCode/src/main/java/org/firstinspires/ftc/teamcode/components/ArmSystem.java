@@ -18,7 +18,7 @@ public class ArmSystem {
     }
 
 
-    public static class Intake{
+    public static class Intake {
         private final DigitalChannel beamBreaker;
         private final DcMotorSimple coneTake;
         private final ElapsedTime elapsedTime;
@@ -67,6 +67,12 @@ public class ArmSystem {
 
             return state == State.IDLE;
         }
+
+
+        public void manual(float speed) {
+            coneTake.setPower(speed);
+        }
+
 
         public State getState() {
             return state;
