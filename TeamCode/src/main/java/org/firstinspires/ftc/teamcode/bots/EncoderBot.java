@@ -20,10 +20,10 @@ public class EncoderBot {
 
     private int MAX_VELOCITY = 2000;
 
-    protected double FRONT_LEFT_POWER_FACTOR = 1.0;
-    protected double BACK_LEFT_POWER_FACTOR = 1.0;
-    protected double FRONT_RIGHT_POWER_FACTOR = 1.0;
-    protected double BACK_RIGHT_POWER_FACTOR = 1.0;
+    protected double FRONT_LEFT_POWER_FACTOR = 0.5;
+    protected double BACK_LEFT_POWER_FACTOR = 0.5;
+    protected double FRONT_RIGHT_POWER_FACTOR = 0.5;
+    protected double BACK_RIGHT_POWER_FACTOR = 0.5;
 
     protected HardwareMap hwMap = null;
     protected Telemetry telemetry;
