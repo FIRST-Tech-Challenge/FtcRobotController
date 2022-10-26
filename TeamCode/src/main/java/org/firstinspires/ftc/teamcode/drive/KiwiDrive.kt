@@ -94,7 +94,7 @@ abstract class KiwiDrive @JvmOverloads constructor(
     }
 
     override fun setDrivePower(drivePower: Pose2d) {
-        val powers = KiwiKinematics.robotToWheelVelocities(drivePower, trackWidth)
+        val powers = KiwiKinematics.robotToWheelPowers(drivePower)
         setMotorPowers(powers[0], powers[1], powers[2])
     }
 

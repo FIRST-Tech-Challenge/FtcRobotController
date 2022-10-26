@@ -26,7 +26,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
     // Joystick constants
     final double AXIAL_RATE = 0.8;
     final double LATERAL_RATE = 0.8;
-    final double YAW_RATE = 0.2;
+    final double YAW_RATE = 0.1;
 
     private Elevator    elevator;
     private ConeTracker coneTracker;
@@ -47,7 +47,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
         double manualRotate;
 
         headingController.setInputBounds(0.0, 2.0 * Math.PI);
-        headingController.setOutputBounds(-MAX_ANG_VEL, MAX_ANG_VEL);
+        headingController.setOutputBounds(-MAX_ANG_VEL/4.0, MAX_ANG_VEL/4.0);
 
         // Initialize robot hardware classes GFORCE_KiwiDrive
         GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
@@ -74,12 +74,12 @@ public class GFORCE_TELEOP extends LinearOpMode {
             //-----------PILOT-----------
             //check for auto cone tracking
             if (gamepad1.right_bumper && coneTracker.coneDetected) {
-                double turn = coneTracker.coneDirection / 40.0;
+                double turn = coneTracker.coneDirection / 5.0;
                 double speed = 0;
 
                 if (coneTracker.coneRange > 100) {
                     speed = 0.2;
-                }else if (coneTracker.coneRange > 55) {
+                }else if (coneTracker.coneRange > 60) {
                     speed = 0.1;
                 }else if (coneTracker.coneRange < 45) {
                     speed = -0.05;
@@ -122,8 +122,9 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
                 if (headingLock) {
                     // Set desired angular velocity to the heading-controller output
-                    double autoRotate = headingController.update(drive.getExternalHeading())
-                            * DriveConstants.kV;  // note: this scale may need to be tweaked.
+                    double autoRotate = headingController.update(drive.getExternalHeading()) / (MAX_ANG_VEL * 2);
+
+                    telemetry.addData("Auto Powers", "%.2f, %.2f, %.2f", joysticInput.getX(),joysticInput.getY(), autoRotate);
 
                     drive.setWeightedDrivePower(
                             new Pose2d(
@@ -134,6 +135,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
                     );
                 } else {
                     // Pass in the rotated input + right stick value for rotation
+
+                    telemetry.addData("Manual Powers", "%.2f, %.2f, %.2f", joysticInput.getX(),joysticInput.getY(), manualRotate);
                     drive.setWeightedDrivePower(
                             new Pose2d(
                                     joysticInput.getX(),
@@ -187,8 +190,6 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             // Display Telemetry data
             telemetry.addData("GYRO heading", Math.toDegrees(drive.getExternalHeading()));
-            telemetry.addData ("Elevator position", elevator.getPosition());
-            telemetry.addData ("arm position", elevator.getPosition());
             telemetry.update();
         }
     }

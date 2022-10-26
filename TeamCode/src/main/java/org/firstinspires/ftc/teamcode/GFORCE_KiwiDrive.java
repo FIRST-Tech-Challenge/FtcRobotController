@@ -214,7 +214,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
-        Pose2d vel = drivePower;
+        Pose2d pow = drivePower;
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
@@ -223,14 +223,14 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
                     + VY_WEIGHT * Math.abs(drivePower.getY())
                     + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
 
-            vel = new Pose2d(
+            pow = new Pose2d(
                     VX_WEIGHT * drivePower.getX(),
                     VY_WEIGHT * drivePower.getY(),
                     OMEGA_WEIGHT * drivePower.getHeading()
             ).div(denom);
         }
 
-        setDrivePower(vel);
+        setDrivePower(pow);
     }
 
     @NonNull
