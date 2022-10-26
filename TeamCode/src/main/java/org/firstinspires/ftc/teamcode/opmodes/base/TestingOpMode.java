@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.base;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
@@ -20,6 +21,7 @@ public abstract class TestingOpMode extends OpMode {
     protected Vuforia vuforia;
     private boolean stopRequested;
 
+
     /** Initialization */
     public void init(){
         stopRequested = false;
@@ -27,18 +29,6 @@ public abstract class TestingOpMode extends OpMode {
         this.msStuckDetectInit     = 20000;
         this.msStuckDetectInitLoop = 20000;
         // Initialize motors
-        EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
-        for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
-            driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
-        }
-        driveSystem = new DriveSystem(driveMap);
-    }
-
-    /** Initialize Vuforia object with given camera
-     * @param cameraChoice
-     */
-    protected void setCamera(CameraChoice cameraChoice) {
-        vuforia = new Vuforia(hardwareMap, cameraChoice);
     }
 
     /** Returns if a stop has been requested or if execution is

@@ -47,6 +47,7 @@ public class PixyCamCenter extends BaseOpMode {
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
         int offset = pixycam.offSetX();
+        int align = pixycam.alignY();
         telemetry.addData("offset", offset);
         telemetry.addData("block", s);
         telemetry.addData("coords", coords);
@@ -59,9 +60,19 @@ public class PixyCamCenter extends BaseOpMode {
         if(offset < -20){
             driveSystem.turn(-60, 0.5);
         }
-        if(offset < 20 || offset > -20){
+        if(offset < 20 || offset > -20) {
             driveSystem.setMotorPower(0);
         }
+        if(align > 5){
+            driveSystem.driveToPosition(20, DriveSystem.Direction.BACKWARD, 0.3);
+        }
+        else if(align < 5){
+            driveSystem.driveToPosition(20, DriveSystem.Direction.FORWARD, 0.4);
+        }
+        else{
+            driveSystem.setMotorPower(0);
+        }
+
     }
 
 
