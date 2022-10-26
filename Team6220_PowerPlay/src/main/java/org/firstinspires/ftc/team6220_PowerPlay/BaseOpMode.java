@@ -31,8 +31,6 @@ abstract public class BaseOpMode extends LinearOpMode {
     Orientation IMUOriginalAngles;
     // constant for converting angle error to motor speed
     double correctionConstant = 1/45.0;
-    //toggle for IMU inactivity
-    boolean IMUImmunity = false;
 
     public void initHardware() {
         //init drive motors
@@ -75,7 +73,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         imu.initialize(parameters);
         // preset the IMUAngles so it doesn't start on null
         // since it will only later be read when turning
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);;
     }
 
 
@@ -100,12 +98,7 @@ abstract public class BaseOpMode extends LinearOpMode {
             }
             telemetry.addData("error=", angleError);//temp
             // apply a constant to turn the angle into a turn speed
-            if (IMUImmunity) {
-                t = -correctionConstant * angleError;
-            } else if (IMUImmunity = false){
-                t = 0;
-            }
-
+            t = -correctionConstant * angleError;
         }
 
         telemetry.addData("t2=", t);//temp
@@ -122,14 +115,5 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setPower(speedBL);
         motorBR.setPower(speedBR);
 
-        if (t != 0) {
-            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); }
-
-    }
-
-    public void IMUImmunityTimer(int IMUstartDelay) {
-        IMUImmunity = true;
-        sleep(1000 * IMUstartDelay);
-        IMUImmunity = false;
     }
 }
