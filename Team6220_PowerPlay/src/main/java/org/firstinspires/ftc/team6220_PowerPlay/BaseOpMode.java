@@ -90,7 +90,9 @@ abstract public class BaseOpMode extends LinearOpMode {
         telemetry.addData("org: ", IMUOriginalAngles.firstAngle);//temp
         telemetry.addData("t1=", t);//temp
         //read imu when turning (when t != 0)
-        if (t != 0) {
+
+        boolean isTurning = t != 0;
+        if (isTurning) {
             IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //otherwise read imu for correction
         } else {
@@ -125,6 +127,10 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setPower(speedFR);
         motorBL.setPower(speedBL);
         motorBR.setPower(speedBR);
+
+        if(isTurning) {
+            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        }
 
     }
 
