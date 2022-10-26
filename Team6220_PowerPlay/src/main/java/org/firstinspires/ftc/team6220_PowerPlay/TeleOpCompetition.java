@@ -19,7 +19,7 @@ public class TeleOpCompetition extends BaseTeleOp{
         while (opModeIsActive()) {
             //define what controls to use for their respective variables
             //(x movement, y movement, and turning)
-            driveRobot(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            teleOpDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
 
             idle();
 

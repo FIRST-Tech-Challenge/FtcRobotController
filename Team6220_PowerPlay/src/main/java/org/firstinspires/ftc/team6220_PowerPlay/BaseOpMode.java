@@ -21,6 +21,10 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorBL;
     DcMotor motorBR;
 
+    //declare turntable and slide motors
+    DcMotor motorTurnTable;
+
+
     //declare servo
     Servo servoGrabber;
 
@@ -60,6 +64,9 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
+
+        //init turntable and slide motors
+        motorTurnTable = hardwareMap.dcMotor.get("motorTurnTable");
 
         //init servo
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -129,5 +136,9 @@ abstract public class BaseOpMode extends LinearOpMode {
         } else {
             servoGrabber.setPosition(0.11); //set servo to closed position
         }
+    }
+    //this is a general method to turn the turntable
+    public void rotateTurntable(double power){
+        motorTurnTable.setPower(power);
     }
 }

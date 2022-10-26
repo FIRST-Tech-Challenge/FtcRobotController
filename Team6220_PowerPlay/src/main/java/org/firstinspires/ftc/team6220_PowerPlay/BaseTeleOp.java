@@ -7,11 +7,11 @@ abstract public class BaseTeleOp extends BaseOpMode{
         return (Math.signum(input)*(Math.pow(input, 2)));
     }
 
-    public void teleOpDrive(){
+    public void teleOpDrive(float leftXpos, float leftYpos, float turnpos){
         //Saving the gamepad inputs into variables
-        double LeftXPos = stickCurve(gamepad1.left_stick_x);
-        double LeftYPos = stickCurve(gamepad1.left_stick_y);
-        double TurnPos = stickCurve(gamepad1.right_stick_x);
+        double LeftXPos = leftXpos;
+        double LeftYPos = leftYpos;
+        double TurnPos = turnpos;
         //bools for if the buttons are pressed (to use grabber)
         boolean GP2_xIsPressed = gamepad2.x;
         boolean GP2_aIsPressed = gamepad2.a;
