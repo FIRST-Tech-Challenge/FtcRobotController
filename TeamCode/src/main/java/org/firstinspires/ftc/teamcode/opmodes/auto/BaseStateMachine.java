@@ -143,13 +143,14 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void park() {
         if (parkStep == 0) {
-            if (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3)) {
-                newState(State.END_STATE);
+            if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.3)) {
+                parkStep++;
             }
-            if (teamAsset == Sleeve.BRIAN) {
-                newState(State.END_STATE);
-            }
-            if (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) {
+        }
+        if (parkStep == 1) {
+            if (teamAsset == Sleeve.BRIAN ||
+                    (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) ||
+                    (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3))) {
                 newState(State.END_STATE);
             }
         }
