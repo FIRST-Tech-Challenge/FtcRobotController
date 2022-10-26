@@ -32,13 +32,13 @@ public class asd extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "customcone.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
     private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "Bike",
+            "Car",
+            "Turtle"
     };
 
     /*
@@ -113,7 +113,7 @@ public class asd extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-                            if (recognition.getLabel()=="1 Bolt") {
+                            if (recognition.getLabel()=="Bike") {
                                 detect=1;
                                 strafeLeft(0.5, 1000);
                                 stopRobot();
@@ -121,12 +121,12 @@ public class asd extends LinearOpMode {
                                 stopRobot();
                                 stop();
                             }
-                            if (recognition.getLabel()=="2 Bulb") {detect=2;
+                            if (recognition.getLabel()=="Car") {detect=2;
                                 straight(0.5, 1000);
                                 stopRobot();
                                 stop();
                             }
-                            if (recognition.getLabel()=="3 Panel") {detect=3;
+                            if (recognition.getLabel()=="Turtle") {detect=3;
                                 strafeRight(0.5, 1000);
                                 stopRobot();
                                 straight(0.5, 1200);
