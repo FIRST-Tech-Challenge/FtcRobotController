@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Variables {
@@ -20,6 +21,10 @@ public class Variables {
         ROTATE_RIGHT,
         ;
     }
+
+    public static Servo servoGrabberThing;
+
+
     public static ElapsedTime runtime = new ElapsedTime();
     public static BNO055IMU imu;
     public static double previousHeading = 0;

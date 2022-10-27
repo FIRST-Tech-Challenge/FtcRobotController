@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import static org.firstinspires.ftc.teamcode.Variables.*;
@@ -368,6 +369,39 @@ public class DriveMethods extends LinearOpMode{
         motorBR.setPower(0);
     }
 
+    public void GoToHeight(int Clicks) {
+        int target = (Clicks);
+        int dif = (target - Math.abs(motorSlide.getCurrentPosition()));
+        double aggressiveness = 3000;
+        double holdingPower = 0;
+        if (dif < 0) {
+            aggressiveness = 3000;
+            holdingPower = 0;
+        } if (dif > 0) {
+            aggressiveness = 2000;
+            holdingPower = 0.05;
+        }
+        motorSlide.setPower((dif / aggressiveness));
+
+        while (Math.abs(dif) >= 150) { // doesn't work when trying to go down
+            telemetry.addLine(dif + "..difference");
+            telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
+            telemetry.addLine(target + "..target");
+            telemetry.addLine(((dif / aggressiveness) + holdingPower) + "..power");
+            telemetry.update();
+            dif = (target - Math.abs(motorSlide.getCurrentPosition()));
+            motorSlide.setPower(((dif / aggressiveness) + holdingPower));
+        }
+        motorSlide.setPower(holdingPower);
+    }
+
+    public void clawClamp(){
+        servoGrabberThing.setPosition(0.76);
+    }
+    public void clawRelease(){
+        servoGrabberThing.setPosition(0.66);
+    }
+
     public void initMotorsSecondBot() {
         motorFL  = hardwareMap.get(DcMotor.class, "motorFL");
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
@@ -385,6 +419,8 @@ public class DriveMethods extends LinearOpMode{
         motorBL = hardwareMap.get(DcMotor.class, "motorBL");
         motorFR  = hardwareMap.get(DcMotor.class, "motorFR");
         motorBR = hardwareMap.get(DcMotor.class, "motorBR");
+        motorSlide = hardwareMap.get(DcMotor.class,"motorLS");
+        servoGrabberThing = hardwareMap.get(Servo.class, "grabber");
 
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);

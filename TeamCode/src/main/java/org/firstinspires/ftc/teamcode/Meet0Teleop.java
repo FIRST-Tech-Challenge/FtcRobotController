@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.Variables.motorBL;
-import static org.firstinspires.ftc.teamcode.Variables.motorBR;
-import static org.firstinspires.ftc.teamcode.Variables.motorFL;
-import static org.firstinspires.ftc.teamcode.Variables.motorFR;
-import static org.firstinspires.ftc.teamcode.Variables.motorSlide;
+import static org.firstinspires.ftc.teamcode.Variables.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Meet0Teleop extends DriveMethods {
 
    
-    Servo servoGrabberThing;
+
 
     @Override
     public void runOpMode() {
@@ -27,8 +23,7 @@ public class Meet0Teleop extends DriveMethods {
         telemetry.update();
 
         initMotorsBlue();
-        motorSlide = hardwareMap.get(DcMotor.class,"motorLS");
-        servoGrabberThing = hardwareMap.get(Servo.class, "grabber");
+
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -83,13 +78,14 @@ public class Meet0Teleop extends DriveMethods {
                 holdingPower = 0.05;
             }
             if(gamepad2.dpad_down){
-                slideTarget = 50;
-                aggressiveness = 3000;
+                slideTarget = 0;
+                aggressiveness = 2750;
                 holdingPower = 0.0;
             }
 
             if(gamepad2.left_stick_y != 0){
                 slideTarget += (int)-gamepad2.left_stick_y*25;
+                aggressiveness = 2500;
                 sleep(50);
             }
 
@@ -101,8 +97,6 @@ public class Meet0Teleop extends DriveMethods {
             telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
             telemetry.addLine(slideTarget + "..target");
             telemetry.addLine(((slideDifference / aggressiveness) + holdingPower) + "..power");
-            telemetry.update();
-
 
 //            motorSlide.setPower(holdingPower);
 

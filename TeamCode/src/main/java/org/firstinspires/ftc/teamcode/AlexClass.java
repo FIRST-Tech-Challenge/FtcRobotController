@@ -37,16 +37,21 @@ public class AlexClass extends DriveMethods {
     int dif;
 
     public void runOpMode() {
-        motorSlide = hardwareMap.get(DcMotor.class, "motorSlide");
+      initMotorsBlue();
 
+      clawClamp();
         waitForStart();
-
         GoToHeight(1950);
+        driveForDistance(0.75,Direction.FORWARD,0.4,0);
+        sleep(250);
+        clawRelease();
+        sleep(1000);
+        driveForDistance(0.75,Direction.BACKWARD,0.4,0);
+        GoToHeight(0);
 
 
         while (opModeIsActive()) {
-            GoToHeight(100);
-            GoToHeight(1950);
+
 //            GoToHeight(1950);
 //            if (inSlideLoop) {
 //                if ((Math.abs(dif) >= 150)) {
@@ -126,29 +131,29 @@ public class AlexClass extends DriveMethods {
 //        return inteHead;
 //    }
 
-    public void GoToHeight(int Clicks) {
-        int target = (Clicks);
-        int dif = (target - Math.abs(motorSlide.getCurrentPosition()));
-        double aggressiveness = 3000;
-        double holdingPower = 0;
-        if (dif < 0) {
-            aggressiveness = 3000;
-            holdingPower = 0;
-        } if (dif > 0) {
-            aggressiveness = 2000;
-            holdingPower = 0.05;
-        }
-        motorSlide.setPower((dif / aggressiveness));
-
-        while (Math.abs(dif) >= 150) { // doesn't work when trying to go down
-            telemetry.addLine(dif + "..difference");
-            telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
-            telemetry.addLine(target + "..target");
-            telemetry.addLine(((dif / aggressiveness) + holdingPower) + "..power");
-            telemetry.update();
-            dif = (target - Math.abs(motorSlide.getCurrentPosition()));
-            motorSlide.setPower(((dif / aggressiveness) + holdingPower));
-        }
-        motorSlide.setPower(holdingPower);
-    }
+//    public void GoToHeight(int Clicks) {
+//        int target = (Clicks);
+//        int dif = (target - Math.abs(motorSlide.getCurrentPosition()));
+//        double aggressiveness = 3000;
+//        double holdingPower = 0;
+//        if (dif < 0) {
+//            aggressiveness = 3000;
+//            holdingPower = 0;
+//        } if (dif > 0) {
+//            aggressiveness = 2000;
+//            holdingPower = 0.05;
+//        }
+//        motorSlide.setPower((dif / aggressiveness));
+//
+//        while (Math.abs(dif) >= 150) { // doesn't work when trying to go down
+//            telemetry.addLine(dif + "..difference");
+//            telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
+//            telemetry.addLine(target + "..target");
+//            telemetry.addLine(((dif / aggressiveness) + holdingPower) + "..power");
+//            telemetry.update();
+//            dif = (target - Math.abs(motorSlide.getCurrentPosition()));
+//            motorSlide.setPower(((dif / aggressiveness) + holdingPower));
+//        }
+//        motorSlide.setPower(holdingPower);
+//    }
 }
