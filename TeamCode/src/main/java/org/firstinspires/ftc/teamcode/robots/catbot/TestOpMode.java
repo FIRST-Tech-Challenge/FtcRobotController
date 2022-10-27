@@ -40,8 +40,8 @@ public class TestOpMode extends OpMode {
         motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
 //        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
 //        claw = this.hardwareMap.get(Servo.class, "claw");
-        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
