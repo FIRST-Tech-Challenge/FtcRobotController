@@ -38,23 +38,29 @@ public class TestOpMode extends OpMode {
         motorBackLeft = this.hardwareMap.get(DcMotor.class, "motorBackLeft");
         motorFrontRight = this.hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
-        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
-        claw = this.hardwareMap.get(Servo.class, "claw");
+//        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
+//        claw = this.hardwareMap.get(Servo.class, "claw");
         this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     @Override
     public void loop() {
         //tankDrive();
         mechanumDrive();
-        elevatorMove();
-        clawMove();
+//        elevatorMove();
+//        clawMove();
     }
     public void tankDrive()
     {
         powerRight = 0;
         powerLeft = 0;
 
+// tanvi is the bestestestestestest
 
         if(Math.abs(gamepad1.left_stick_y) > DEADZONE)
         {
@@ -83,25 +89,26 @@ public class TestOpMode extends OpMode {
         motorBackLeft.setPower(v3);
         motorBackRight.setPower(v2);
     }
-    public void elevatorMove()
-    {
-        powerElevator = 0;
-        if(gamepad1.right_trigger > DEADZONE)
-        {
-            powerElevator = gamepad1.right_trigger;
-        }
-        if(gamepad1.left_trigger > DEADZONE)
-        {
-            powerElevator = -gamepad1.left_trigger;
-        }
-        elevator.setPower(powerElevator);
-        currElevHeight += powerElevator;
-    }
-    public void clawMove() {
-        telemetry.addData("Claw servo position:", claw.getPosition());
-        if (gamepad1.left_bumper)
-            claw.setPosition(.5);
-        if (gamepad1.right_bumper)
-            claw.setPosition(0);
-    }
+//    public void elevatorMove()
+//    {
+//        telemetry.addData("Elevator Position: ", elevator.getCurrentPosition());
+//        powerElevator = 0;
+//        if(gamepad1.right_trigger > DEADZONE)
+//        {
+//            powerElevator = gamepad1.right_trigger;
+//        }
+//        if(gamepad1.left_trigger > DEADZONE)
+//        {
+//            powerElevator = -gamepad1.left_trigger;
+//        }
+//        elevator.setPower(powerElevator);
+//        currElevHeight += powerElevator;
+//    }
+//    public void clawMove() {
+//        telemetry.addData("Claw servo position:", claw.getPosition());
+//        if (gamepad1.left_bumper)
+//            claw.setPosition(.5);
+//        if (gamepad1.right_bumper)
+//            claw.setPosition(0);
+//    }
 }
