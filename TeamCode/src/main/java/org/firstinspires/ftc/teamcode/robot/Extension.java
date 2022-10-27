@@ -33,6 +33,22 @@ public class Extension {
 
     public final double EXTENSION_MAX_REACH = 10; // TODO: measure actual value in inches and replace this value
 
+    public final String EXTENSION_DEFAULT_VALUE = "EXTENSION_RETRACTED";
+    public final String EXTENSION_FULL_EXTEND = "EXTENSION_EXTENDED";
+
+    public String getCurrentState(){
+        String state = EXTENSION_DEFAULT_VALUE;
+        double currentPosition = extensionGetPosition();
+        if (currentPosition > 0.8){
+            state = EXTENSION_FULL_EXTEND;
+        }
+        return state;
+    }
+
+    public double extensionGetPosition(){
+        return extension.getPosition();
+    }
+
     public Extension(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
@@ -73,8 +89,8 @@ public class Extension {
     // Predefined values can be passed by using class constants (to be defined later)
     // To go as far as it can, pass extension.EXTENSION_MAX_REACH as distance.
     // To go back home, pass 0 as distance.
-    public void extendTo(double distance) {
-        extension.setPosition (Range.clip(distance/EXTENSION_MAX_REACH,0,1));
+    public void extendTo(double position) {
+        extension.setPosition (position);
     }
 
     // Moves the extension arm to its clearing length (if it was not already in clear)
@@ -135,11 +151,5 @@ public class Extension {
     public double getExtensionPosition(){
         return extension.getPosition();
     }
-
-
-
-
-
-
 
 }
