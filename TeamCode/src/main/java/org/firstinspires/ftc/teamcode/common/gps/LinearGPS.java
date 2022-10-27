@@ -21,7 +21,6 @@ public class LinearGPS {
 
     public double rotationalDegrees;
     public double translationalInches;
-    public boolean goodGapw;
 
     public LinearGPS(HardwareDrive robot, Kinematics.DriveType k ){
         this.robot = robot;
@@ -125,17 +124,17 @@ public class LinearGPS {
         prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
     }
 
-    private boolean goodGap(){
-        if ( //will need to add the left side later
-                Math.abs(robot.topR.getCurrentPosition() - prevMotorClicks.get(robot.topR)) <= constants.clickTOLERANCE && Math.abs(robot.botR.getCurrentPosition() - prevMotorClicks.get(robot.botR)) <= constants.clickTOLERANCE
-        ) {
-            goodGapw = false;
-            return false;
-        }
-
-        goodGapw = true;
-        return true;
-    }
+//    private boolean goodGap(){
+//        if ( //will need to add the left side later
+//                Math.abs(robot.topR.getCurrentPosition() - prevMotorClicks.get(robot.topR)) <= constants.clickTOLERANCE && Math.abs(robot.botR.getCurrentPosition() - prevMotorClicks.get(robot.botR)) <= constants.clickTOLERANCE
+//        ) {
+//            goodGapw = false;
+//            return false;
+//        }
+//
+//        goodGapw = true;
+//        return true;
+//    }
 
     public double[] getPositionArr() {
         return positionArr;
