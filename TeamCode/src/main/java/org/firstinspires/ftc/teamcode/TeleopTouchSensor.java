@@ -54,12 +54,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -68,6 +72,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 /**
@@ -83,11 +88,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleopIMU_Driving", group="Concept")
-@Disabled
-public class TeleopIMU_Driving extends LinearOpMode {
+@TeleOp(name="TeleopTouchSensor", group="Concept")
+//@Disabled
+public class TeleopTouchSensor extends LinearOpMode {
 
     // Declare OpMode members.
+    static final double MAX_WAIT_TIME = 20; // in seconds
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor FrontLeftDrive = null;
     private DcMotor FrontRightDrive = null;
@@ -97,33 +103,36 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
 
     // Driving motor variables
-    static final int RAMP_ON = 0; // ramp on to improve small moving control. On: 1; off: 0
-    static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
-    static final double ADJUST_POSITION_POWER = 0.2; // used for auto driving
+    static final double HIGH_SPEED_POWER = 0.6;  // used to adjust driving sensitivity.
+    static final double SLOW_DOWN_POWER = 0.2;
+    static final double AUTO_DRIVE_POWER = 0.3; // used for auto driving
+    static final double AUTO_ROTATE_POWER = 0.3; // used for auto driving
 
     // slider motor variables
-    private DcMotor SliderMotor = null;
-    static final double SLIDER_MOTOR_POWER = 0.4; // slider string gets loose with too high speed
-    static final int COUNTS_PER_INCH = 115;
-    static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // Leave 100 counts for buffer.
+    private DcMotor RightSliderMotor = null;
+    private DcMotor LeftSliderMotor = null;
+    static final double SLIDER_MOTOR_POWER = 0.6; // slider string gets loose with too high speed
+    static final int COUNTS_PER_INCH = 120; // verified by testing.
+    static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // with 312 RPM motor.
     static final int SLIDER_MIN_POS = 0;
-    static final int GROUND_JUNCTION_POS = 400;
-    static final int READY_FOR_GRIP_POSITION = 700; // lift a little bit to get ready for unloading
+    static final int GROUND_JUNCTION_POS = COUNTS_PER_INCH * 2; // 2 inch
+    static final int READY_FOR_GRIP_POSITION = COUNTS_PER_INCH * 4;; // lift 4 inch to get ready for unloading
+    static final int coneStack5th = COUNTS_PER_INCH * 10; // the 5th cone position in the cone stack. The lowest cone is the 1th one.
 
     // 10inch for low junction, 20inch for medium, and 30 for high
     static final int LOW_JUNCTION_POS = COUNTS_PER_INCH * 10 + READY_FOR_GRIP_POSITION; // need double check by testing
     static final int MEDIUM_JUNCTION_POS = COUNTS_PER_INCH * 20 + READY_FOR_GRIP_POSITION;
     static final int HIGH_JUNCTION_POS = COUNTS_PER_INCH * 30 + READY_FOR_GRIP_POSITION;
-    static final int SLIDER_MOVE_DOWN_POSITION = 700; // move down a little bit to unload cone
-    static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 512; // Approximate value from testing
-    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION/40; // set value based on testing
-    int sliderMotorTargetPosition = 0;
+    static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 6; // move down 6 inch to unload cone
+    static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 538; // for 312 rpm motor
+    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION / 40; // set value based on testing
+    int sliderTargetPosition = 0;
 
 
     // claw servo motor variables
     private Servo clawServo = null;
-    static final double CLAW_INCREMENT = -0.004;  // amount to slew servo each CYCLE_MS cycle
-    static final double CLAW_OPEN_POS = 0.25;     // Maximum rotational position
+    static final double CLAW_INCREMENT = -0.24;  // amount to slew servo each CYCLE_MS cycle
+    static final double CLAW_OPEN_POS = 0.32;     // Maximum rotational position
     static final double CLAW_CLOSE_POS = 0.08;
     static final double CLAW_MAX_POS = CLAW_OPEN_POS;
     static final double CLAW_MIN_POS = CLAW_CLOSE_POS;  // Minimum rotational position
@@ -141,18 +150,26 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
 
     // variables for auto load and unload cone
-    static final int COUNTS_PER_FEET_MOTION = 360; // robot moving 1 feet for 360 counts position.
-    double robotAutoLoadMovingDistance = 0.05; // in feet
+    static final int COUNTS_PER_FEET_DRIVE = 360; // robot drive 1 feet. Back-forth moving
+    static final int COUNTS_PER_FEET_STRAFE = 600; // robot strafe 1 feet. Left-right moving.
+    double robotAutoLoadMovingDistance = 0.1; // in feet
     double robotAutoUnloadMovingDistance = 0.25; // in feet
 
 
     // IMU related
     Orientation lastAngles = new Orientation();
     double globalAngle = 0.0;
-    double power = POWER_FACTOR; // 0.30;
+    double power = HIGH_SPEED_POWER; // 0.30;
     double correction = 0.0;
     double rotation = 0.0;
     PIDController pidRotate, pidDrive;
+    boolean resetAngleFlag = false;
+    static final int INERTIA_WAIT_TIME = 500; // in ms
+    double angleError = 0.0; // the angle error accumulated during auto-rotation.
+
+    // distance sensor
+    private DistanceSensor distanceSensor;
+    static final double CLOSE_DISTANCE = 8.0; // INCH
 
     @Override
     public void runOpMode() {
@@ -168,11 +185,14 @@ public class TeleopIMU_Driving extends LinearOpMode {
         FrontRightDrive = hardwareMap.get(DcMotor.class, "FrontRight");
         BackLeftDrive = hardwareMap.get(DcMotor.class,"BackLeft");
         BackRightDrive = hardwareMap.get(DcMotor.class,"BackRight");
-        SliderMotor = hardwareMap.get(DcMotor.class,"RightSlider");
+        RightSliderMotor = hardwareMap.get(DcMotor.class,"RightSlider");
+        LeftSliderMotor = hardwareMap.get(DcMotor.class,"LeftSlider");
         armServo = hardwareMap.get(Servo.class, "ArmServo");
         clawServo = hardwareMap.get(Servo.class, "ClawServo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
+        // you can use this as a regular DistanceSensor.
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "DistanceSensor");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -188,12 +208,16 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
         /* slider motor control */
         // based on how Motor installed on robot.
-        SliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        SliderMotor.setTargetPosition(sliderMotorTargetPosition);
+        RightSliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        LeftSliderMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        RightSliderMotor.setTargetPosition(sliderTargetPosition);
+        LeftSliderMotor.setTargetPosition(sliderTargetPosition);
         // Reset slider motor encoder counts kept by the motor
-        SliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RightSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LeftSliderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Set motor to run to target encoder position and top with brakes on.
-        SliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RightSliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LeftSliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
         // claw servo motor initial
@@ -225,10 +249,10 @@ public class TeleopIMU_Driving extends LinearOpMode {
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
 
         // Set up parameters for driving in a straight line.
-        pidDrive.setSetpoint(0);
-        pidDrive.setOutputRange(0, power);
         pidDrive.setInputRange(-90, 90);
-
+        pidDrive.setSetpoint(0); // be sure input range has been set before
+        pidDrive.setOutputRange(0, power);
+        pidDrive.enable();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -237,86 +261,125 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
         runtime.reset();
 
+
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            // Game pad buttons design
+            float robotMovingBAckForth = gamepad1.left_stick_y;
+            float robotMovingRightLeft = gamepad1.left_stick_x;
+            float robotTurn = gamepad1.right_stick_x;
+            float sliderUpDown = gamepad1.right_stick_y;
+            boolean sliderGroundJunctionPosition = gamepad1.x;
+            boolean sliderLowJunctionPosition = gamepad1.a;
+            boolean sliderMediumJunctionPosition = gamepad1.b;
+            boolean sliderHighJunctionPosition = gamepad1.y;
+            boolean clawClose = gamepad1.dpad_up;
+            boolean clawOpen = gamepad1.dpad_down;
+            boolean armTurnLeft = gamepad1.dpad_left;
+            boolean armTurnRight = gamepad1.dpad_right;
+            boolean autoLoadConeOn = gamepad1.left_bumper;
+            boolean autoUnloadConeOn = gamepad1.right_bumper;
+
 
             // Setup a variable for each drive wheel to save power level for telemetry
             double FrontLeftPower;
             double FrontRightPower;
             double BackLeftPower;
             double BackRightPower;
+            double maxDrivePower = HIGH_SPEED_POWER;
+            if (distanceSensor.getDistance(DistanceUnit.INCH) < CLOSE_DISTANCE) {
+                maxDrivePower = SLOW_DOWN_POWER;
+            }
 
-            double drive = POWER_FACTOR * Math.pow(gamepad1.left_stick_y, 1 + (2 * RAMP_ON));
-            double turn  =  POWER_FACTOR * Math.pow(-gamepad1.right_stick_x, 1 + (2 * RAMP_ON));
-            double strafe = POWER_FACTOR * Math.pow(-gamepad1.left_stick_x, 1 + (2 * RAMP_ON));
+            double drive = maxDrivePower * robotMovingBAckForth;
+            double turn  =  maxDrivePower * (-robotTurn);
+            double strafe = maxDrivePower * (-robotMovingRightLeft);
 
             // only enable correction when the turn button is not pressed.
             if (Math.abs(turn) > Math.ulp(0)) {
                 pidDrive.reset();
+                runtime.reset();
+                resetAngleFlag = true;
                 resetAngle(); // Resets the cumulative angle tracking to zero.
             }
-            else {
+
+            // turn on PID after a duration time to avoid robot inertia after turning.
+            if ((runtime.milliseconds() > INERTIA_WAIT_TIME) && resetAngleFlag) {
+                resetAngleFlag = false;
+                resetAngle(); // Resets the cumulative angle tracking to zero.
+                angleError = 0.0; //reset global angle error after manual turning.
                 pidDrive.enable();
             }
 
             // Use PID with imu input to drive in a straight line.
-            correction = pidDrive.performPID(getAngle());
+            if ((Math.abs(drive) > Math.ulp(0)) || (Math.abs(strafe) > Math.ulp(0))) {
+                correction = pidDrive.performPID(getAngle());
+            }
+            else {
+                correction = 0.0;
+            }
+            telemetry.addData("1 imu heading (%0.2f)", lastAngles.firstAngle);
+            telemetry.addData("2 global heading (%0.2f)", globalAngle);
+            telemetry.addData("3 global angle error (%0.2f)", angleError);
+            telemetry.addData("4 correction  (%0.2f)", correction);
+            telemetry.addData("5 turn rotation", rotation);
+            //telemetry.addData("Distance", String.format("%.01f in", distanceSensor.getDistance(DistanceUnit.INCH)));
+            telemetry.addData("Distance (%.01f in)", distanceSensor.getDistance(DistanceUnit.INCH));
 
-            telemetry.addData("1 imu heading", lastAngles.firstAngle);
-            telemetry.addData("2 global heading", globalAngle);
-            telemetry.addData("3 correction", correction);
-            telemetry.addData("4 turn rotation", rotation);
-
-            FrontLeftPower    = Range.clip(-drive - turn - strafe, -1, 1) ;
-            FrontRightPower   = Range.clip(-drive + turn + strafe, -1, 1) ;
-            BackLeftPower    = Range.clip(-drive - turn + strafe, -1, 1) ;
-            BackRightPower   = Range.clip(-drive + turn - strafe, -1, 1) ;
+            FrontLeftPower  = Range.clip(-drive - turn - strafe - correction, -1, 1);
+            FrontRightPower = Range.clip(-drive + turn + strafe + correction, -1, 1);
+            BackLeftPower   = Range.clip(-drive - turn + strafe - correction, -1, 1);
+            BackRightPower  = Range.clip(-drive + turn - strafe + correction, -1, 1);
 
 
-            telemetry.addData("5 final correction", correction);
             // Send calculated power to wheels
-            FrontLeftDrive.setPower(FrontLeftPower - correction);
-            FrontRightDrive.setPower(FrontRightPower + correction);
-            BackLeftDrive.setPower(BackLeftPower - correction);
-            BackRightDrive.setPower(BackRightPower + correction);
+            FrontLeftDrive.setPower(FrontLeftPower);
+            FrontRightDrive.setPower(FrontRightPower);
+            BackLeftDrive.setPower(BackLeftPower);
+            BackRightDrive.setPower(BackRightPower);
 
             // use Y button to lift up the slider reaching high junction
-            if (gamepad1.y) {
-                sliderMotorTargetPosition = HIGH_JUNCTION_POS;
+            if (sliderHighJunctionPosition) {
+                sliderTargetPosition = HIGH_JUNCTION_POS;
             }
 
             // use B button to lift up the slider reaching medium junction
-            if (gamepad1.b) {
-                sliderMotorTargetPosition = MEDIUM_JUNCTION_POS;
+            if (sliderMediumJunctionPosition) {
+                sliderTargetPosition = MEDIUM_JUNCTION_POS;
             }
 
             // use A button to lift up the slider reaching low junction
-            if (gamepad1.a) {
-                sliderMotorTargetPosition = LOW_JUNCTION_POS;
+            if (sliderLowJunctionPosition) {
+                sliderTargetPosition = LOW_JUNCTION_POS;
             }
 
             // use X button to move the slider for ground junction position
-            if (gamepad1.x) {
-                sliderMotorTargetPosition = GROUND_JUNCTION_POS;
+            if (sliderGroundJunctionPosition) {
+                sliderTargetPosition = GROUND_JUNCTION_POS;
             }
 
             // use right stick_Y to lift or down slider continuously
-            sliderMotorTargetPosition -= (int)((gamepad1.right_stick_y) * motorPositionInc);
-            sliderMotorTargetPosition = Range.clip(sliderMotorTargetPosition, SLIDER_MIN_POS,
+            sliderTargetPosition -= (int)((sliderUpDown) * motorPositionInc);
+            sliderTargetPosition = Range.clip(sliderTargetPosition, SLIDER_MIN_POS,
                     FOUR_STAGE_SLIDER_MAX_POS);
             telemetry.addData("Status", "slider motor Target position %d",
-                    sliderMotorTargetPosition);
+                    sliderTargetPosition);
 
-            SliderMotor.setTargetPosition(sliderMotorTargetPosition);
-            SliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
-            telemetry.addData("Status", "slider motor current position %d",
-                    SliderMotor.getCurrentPosition());
+            RightSliderMotor.setTargetPosition(sliderTargetPosition);
+            LeftSliderMotor.setTargetPosition(sliderTargetPosition);
+            RightSliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor start movement
+            LeftSliderMotor.setPower(SLIDER_MOTOR_POWER);
+            telemetry.addData("Status", "Right slider motor current position %d",
+                    RightSliderMotor.getCurrentPosition());
+            telemetry.addData("Status", "Left slider motor current position %d",
+                    LeftSliderMotor.getCurrentPosition());
 
             // Keep stepping up until we hit the max value.
-            if (gamepad1.dpad_up) {
+            if (clawClose) {
                 clawServoPosition += CLAW_INCREMENT;
             }
-            else if (gamepad1.dpad_down) {
+            else if (clawOpen) {
                 clawServoPosition -= CLAW_INCREMENT;
             }
             clawServoPosition = Range.clip(clawServoPosition, CLAW_MIN_POS, CLAW_MAX_POS);
@@ -324,10 +387,10 @@ public class TeleopIMU_Driving extends LinearOpMode {
             telemetry.addData("Status", "Claw Servo position %.2f", clawServoPosition);
 
             // arm servo motor control. Keep stepping up until we hit the max value.
-            if (gamepad1.dpad_left) {
+            if (armTurnLeft) {
                 armServoPosition += ARM_INCREMENT;
             }
-            else if (gamepad1.dpad_right) {
+            else if (armTurnRight) {
                 armServoPosition -= ARM_INCREMENT;
             }
             armServoPosition = Range.clip(armServoPosition, ARM_MIN_POS, ARM_MAX_POS);
@@ -335,33 +398,43 @@ public class TeleopIMU_Driving extends LinearOpMode {
             telemetry.addData("Status", "Arm Servo position %.2f", armServoPosition);
 
             //  auto driving, grip cone, and lift slider
-            if(gamepad1.left_bumper) {
-                autoLoadCone();
+            if(autoLoadConeOn) {
+                autoLoadCone(SLIDER_MIN_POS); // Always on ground during teleop mode
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
-                clawServoPosition = clawServo.getPosition();
-                sliderMotorTargetPosition = SliderMotor.getCurrentPosition();
+                // left motor has same position with right one
+                sliderTargetPosition = RightSliderMotor.getCurrentPosition();
             }
 
             //  auto driving, unload cone
-            if(gamepad1.right_bumper) {
+            if(autoUnloadConeOn) {
                 autoUnloadCone();
                 // set arm, claw, slider position after grep.
                 armServoPosition = armServo.getPosition();
                 clawServoPosition = clawServo.getPosition();
-                sliderMotorTargetPosition = SliderMotor.getCurrentPosition();
+                sliderTargetPosition = RightSliderMotor.getCurrentPosition();
             }
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
+            // Show the elapsed game time and wheel power, positions.
+            telemetry.addData("Motors power", "Frontleft (%.2f), Frontright (%.2f)," +
                             " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
                     BackLeftPower,BackRightPower);
+
+            telemetry.addData("Motors Positions:",
+                    "Frontleft (%d), Frontright (%d)," + " Backleft (%d), Backright (%d)",
+                    FrontLeftDrive.getCurrentPosition(), FrontRightDrive.getCurrentPosition(),
+                    BackLeftDrive.getCurrentPosition(), BackRightDrive.getCurrentPosition());
+
+            // use gamepad2 to test autonomous code
+            autonomousCore();
+
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update(); // update message at the end of while loop
         }
 
         // The motor stop on their own but power is still applied. Turn off motor.
-        SliderMotor.setPower(0.0);
+        RightSliderMotor.setPower(0.0);
+        LeftSliderMotor.setPower(0.0);
     }
 
     /**
@@ -376,23 +449,34 @@ public class TeleopIMU_Driving extends LinearOpMode {
         armServo.setPosition(ARM_UNLOAD_POSITION);
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // moving back in feet
 
-        // move down slider a little bit (100 count) to unload cone
-        sliderMotorTargetPosition = SliderMotor.getCurrentPosition();
-        SliderMotor.setTargetPosition(sliderMotorTargetPosition - SLIDER_MOVE_DOWN_POSITION);
-        waitMotorActionComplete(SliderMotor);
+        // move down slider a little bit to unload cone
+        sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+        int moveSlider = sliderTargetPosition - SLIDER_MOVE_DOWN_POSITION;
+        moveSlider = Math.max(moveSlider, SLIDER_MIN_POS);
+        RightSliderMotor.setTargetPosition(moveSlider);
+        LeftSliderMotor.setTargetPosition(moveSlider);
+        waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
+        waitMotorActionComplete(LeftSliderMotor);
 
         clawServo.setPosition(CLAW_OPEN_POS); // unload  cone
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
-
-        SliderMotor.setTargetPosition(sliderMotorTargetPosition);
-        waitMotorActionComplete(SliderMotor);
+        clawServoPosition = clawServo.getPosition(); // keep claw position
+        sliderTargetPosition = RightSliderMotor.getCurrentPosition();
+        moveSlider = sliderTargetPosition + SLIDER_MOVE_DOWN_POSITION;
+        RightSliderMotor.setTargetPosition(moveSlider);
+        LeftSliderMotor.setTargetPosition(moveSlider);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // move out from junction
         armServo.setPosition(ARM_LOAD_POSITION);
-        SliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
-        waitMotorActionComplete(SliderMotor);
+        RightSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+        LeftSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
     }
 
     /**
+     * During autonomous, cone may be located with different height position
      * 1. Lift slider and open claw to get read to load a cone
      * 2. Robot moving back to aim at cone for loading
      * 2. Slider moving down to load the cone
@@ -400,36 +484,40 @@ public class TeleopIMU_Driving extends LinearOpMode {
      * 4. Lift slider to low junction position for unloading
      * 5. Robot moving back to leave junction
      * 6. Slider moving down to get ready to grip another cone
+     * @param coneLocation: the target cone high location.
      */
-    private void autoLoadCone() {
-        SliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
+    private void autoLoadCone(int coneLocation) {
         clawServo.setPosition(CLAW_OPEN_POS);
         armServo.setPosition(ARM_LOAD_POSITION);
-        SliderMotor.setPower(SLIDER_MOTOR_POWER); // slider motor starts movement
-        robotMovingDistance(-robotAutoLoadMovingDistance, true); // moving back
-        SliderMotor.setTargetPosition(SLIDER_MIN_POS);
-        waitMotorActionComplete(SliderMotor);
+        robotMovingDistance(-robotAutoLoadMovingDistance, true); // moving to loading position
+        RightSliderMotor.setTargetPosition(coneLocation);
+        LeftSliderMotor.setTargetPosition(coneLocation);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
         clawServo.setPosition(CLAW_CLOSE_POS);
         sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
+        clawServoPosition = clawServo.getPosition(); // keep claw position
         armServo.setPosition(ARM_UNLOAD_POSITION);
-        SliderMotor.setTargetPosition(LOW_JUNCTION_POS);
-        waitMotorActionComplete(SliderMotor);
+        RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+        LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+        waitMotorActionComplete(RightSliderMotor);
+        waitMotorActionComplete(LeftSliderMotor);
     }
 
     /**
      * Set target position for every wheel motor, and set power to motors to move the robot.
      * Turn off encode mode after moving.
-     * @param targetDistance: Input value for the target distance.
-     * @param isBackForward: flag for back-forward (true) moving, or left-right moving (false)
+     * @param targetDistance: Input value for the target distance in feet.
+     * @param isBackForth: flag for back-forth (true) moving, or left-right moving (false)
      */
-    private void robotMovingDistance(double targetDistance, boolean isBackForward) {
-        int targetPosition = (int)(targetDistance * COUNTS_PER_FEET_MOTION);
-        telemetry.addData("Status", "driving target position %d", targetPosition);
-        setTargetPositionsToWheels(targetPosition, isBackForward);
+    private void robotMovingDistance(double targetDistance, boolean isBackForth) {
+        int countsPerFeet = isBackForth? COUNTS_PER_FEET_DRIVE : COUNTS_PER_FEET_STRAFE;
+        int targetPosition = (int)(targetDistance * countsPerFeet);
+        telemetry.addData("Status", "auto driving target position %d", targetPosition);
+        telemetry.update();
+        setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
-        setPowerToWheels(ADJUST_POSITION_POWER); // low speed for more accurate, start moving
-        waitMotorActionComplete(FrontLeftDrive); // just check one wheel.
-        setPowerToWheels(0.0); //stop moving
+        robotDriveWithPIDControl(AUTO_DRIVE_POWER);
         robotRunWithPositionModeOn(false); // turn off encoder mode
     }
 
@@ -497,10 +585,12 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
     /**
      * Wait until the motor complete action.
+     * The MAXIMUM waiting time is MAX_WAIT_TIME to avoid death.
      * @param mot: the motor which be checked if it is in active.
      */
-    private void waitMotorActionComplete(DcMotor mot) {
-        while(mot.isBusy()) {
+    private void waitMotorActionComplete(@NonNull DcMotor mot) {
+        double curTime = runtime.seconds();
+        while((mot.isBusy()) && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
             idle();
         }
     }
@@ -547,10 +637,12 @@ public class TeleopIMU_Driving extends LinearOpMode {
      */
     private void rotate(int degrees, double power) {
         // restart imu angle tracking.
+        float angleBeforeRotate = lastAngles.firstAngle;
         resetAngle();
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
-        if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
+        if (Math.abs(degrees) > 359)
+            degrees = (int) Math.copySign(359, degrees);
 
         // start pid controller. PID controller will monitor the turn angle with respect to the
         // target angle and reduce power as we approach the target angle. This is to prevent the
@@ -562,8 +654,8 @@ public class TeleopIMU_Driving extends LinearOpMode {
         // turning the robot back toward the setpoint value.
 
         pidRotate.reset();
-        pidRotate.setSetpoint(degrees);
         pidRotate.setInputRange(0, degrees);
+        pidRotate.setSetpoint(degrees); // be sure input range has been set before
         pidRotate.setOutputRange(0, power);
         pidRotate.setTolerance(1);
         pidRotate.enable();
@@ -585,6 +677,8 @@ public class TeleopIMU_Driving extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be - on right turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
+                telemetry.addData("rotate power - %.4f", power);
+                telemetry.update();
             } while (opModeIsActive() && !pidRotate.onTarget());
         }
         else    // left turn.
@@ -592,6 +686,8 @@ public class TeleopIMU_Driving extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be + on left turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
+                telemetry.addData("rotate power - %.4f", power);
+                telemetry.update();
             } while (opModeIsActive() && !pidRotate.onTarget());
 
         // turn the motors off.
@@ -605,15 +701,132 @@ public class TeleopIMU_Driving extends LinearOpMode {
 
         // reset angle tracking on new heading.
         resetAngle();
+        angleError += lastAngles.firstAngle - angleBeforeRotate - degrees;
+        if (Math.abs(angleError) > 180)
+        {
+            angleError = angleError - Math.copySign(360, angleError);
+        }
     }
 
+    /**
+     * Set left side motors power.
+     * @param p the power set to front left motor and back left motor
+     */
     private void leftMotorSetPower(double p) {
         FrontLeftDrive.setPower(p);
         BackLeftDrive.setPower(p);
     }
 
+    /**
+     * Set right side motors power.
+     * @param p the power set to front left right motor and back right motor
+     */
     private void rightMotorSetPower(double p) {
         FrontRightDrive.setPower(p);
         BackRightDrive.setPower(p);
+    }
+
+    /**
+     * Set motors power and drive or strafe robot straightly with run_to_position mode by PID control.
+     * @param p the power set to the robot motors
+     */
+    private void robotDriveWithPIDControl(double p) {
+        double curTime = runtime.seconds();
+        correction = 0.0;
+        setPowerToWheels(p);
+        while(robotIsBusy() && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
+            correction = pidDrive.performPID(getAngle());
+            leftMotorSetPower(p - correction);
+            rightMotorSetPower(p + correction);
+            sleep(50);
+        }
+        setPowerToWheels(0.0); //stop moving
+    }
+
+    /**
+     * Check if robot motors are busy. Return ture if yes, false otherwise.
+     */
+    private boolean robotIsBusy() {
+        return (FrontRightDrive.isBusy() || FrontLeftDrive.isBusy() ||
+                BackLeftDrive.isBusy() || BackRightDrive.isBusy());
+    }
+
+    /** code for autonomous
+     * 1. take a picture, recognize the color on sleeve signal
+     * 2. Move robot the high junction
+     * 3. Unload cone on high junction
+     * 4. Move robot to cone loading area
+     * 5. Load cone
+     * 6. Move robot to parking area
+     */
+    private void autonomousCore() {
+        int sleeveSignal = 3; // sleeve signal will be 1 for red, 2 for green, 3 for blue
+        double parkingLocation = 1.0; // distance between cone loading area to parking area, in feet
+        switch (sleeveSignal) {
+            case 1:
+                parkingLocation = 5.0; // parking lot #1 (red), third mat
+                break;
+            case 2:
+                parkingLocation = 3.0; // parking lot #2 (green), third mat
+                break;
+            case 3:
+                parkingLocation = 1.0; // parking lot #3 (blue), third mat
+                break;
+            default:
+                parkingLocation = 0.0;
+        }
+
+        telemetry.addData("Status", "auto mode - sleeve signal (%d)," +
+                "moving distance (%.1f) feet", sleeveSignal, parkingLocation);
+
+        /* code for autonomous driving, must starting from right position.    */
+        if (gamepad2.a) {
+            robotMovingDistance(5.0, true); // drive robot to the center of 3rd mat
+            robotMovingDistance(-1.0, false); // strafe robot half mat to left side
+        }
+
+
+        // move up slider
+        if (gamepad2.b) {
+            RightSliderMotor.setTargetPosition(HIGH_JUNCTION_POS);
+            LeftSliderMotor.setTargetPosition(HIGH_JUNCTION_POS);
+            waitMotorActionComplete(RightSliderMotor); // make sure left and right motor are complete actions
+            waitMotorActionComplete(LeftSliderMotor);
+            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+        }
+
+        if (gamepad2.y) {
+            robotMovingDistance(1.0, true); // drive robot half mat to high junction
+        }
+        if (gamepad2.right_bumper) {
+            autoUnloadCone();
+            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+        }
+
+        if (gamepad2.dpad_right) {
+            rotate(-90, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+        }
+
+        if (gamepad2.dpad_down) {
+            robotMovingDistance(3.5, true); // drive robot to loading area
+        }
+        if (gamepad2.left_bumper) {
+            autoLoadCone(coneStack5th); // need update to input cone height position
+            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+        }
+
+        if (gamepad2.dpad_left) {
+            rotate(180, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+        }
+
+        if (gamepad2.dpad_up) {
+            robotMovingDistance(parkingLocation, true); // drive robot to parking
+            robotMovingDistance(2.0, false); // strafe robot to parking mat
+        }
+
+        if (gamepad2.x) {
+            robotMovingDistance(10, true); // drive robot to parking
+        }
+
     }
 }
