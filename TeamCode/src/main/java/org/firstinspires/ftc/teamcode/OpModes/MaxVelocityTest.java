@@ -7,12 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.bots.EncoderBot;
 import org.firstinspires.ftc.teamcode.bots.FrenzyBot;
 
 @TeleOp
-@Disabled
+//@Disabled
 public class MaxVelocityTest extends LinearOpMode {
-    FrenzyBot bot = new FrenzyBot();
+    EncoderBot bot = new EncoderBot();
 
     private static final String TAG = "MaxVelocityTest";
 

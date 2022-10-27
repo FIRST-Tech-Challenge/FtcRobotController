@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -18,7 +21,9 @@ public class EncoderBot {
     protected DcMotorEx backLeft = null;
     protected DcMotorEx backRight = null;
 
-    private int MAX_VELOCITY = 2000;
+    protected Servo grabberServo = null;
+
+    private int MAX_VELOCITY = 2350;
 
     protected double FRONT_LEFT_POWER_FACTOR = 0.5;
     protected double BACK_LEFT_POWER_FACTOR = 0.5;
@@ -38,8 +43,12 @@ public class EncoderBot {
     public static String RIGHT_FRONT = "frontRight";
     public static String LEFT_BACK = "backLeft";
     public static String RIGHT_BACK = "backRight";
+    public static String GRABBER_SERVO = "grabber";
 
     private static final String TAG = "EncoderBot";
+
+    private static final double GRABBER_SERVO_POS_GRAB = 0.25;
+    private static final double GRABBER_SERVO_POS_DROP = 0.75;
 
     public EncoderBot() {
 
@@ -62,6 +71,14 @@ public class EncoderBot {
         } catch (Exception ex) {
             //issues accessing drive resources
             throw new Exception("Issues accessing one of drive motors. Check the controller config", ex);
+        }
+
+        try {
+            grabberServo = hwMap.get(Servo.class, GRABBER_SERVO);
+            telemetry.addData("ConeGrab", "Servo Initialized");
+        } catch (Exception ex) {
+            Log.e(TAG, "Cannot initialize grabber Servo", ex);
+            telemetry.addData("ConeGrab", "Cannot initialize grabber Servo");
         }
     }
 
@@ -126,16 +143,20 @@ public class EncoderBot {
         }
 
         if (backLeft != null) {
-            this.backLeft.setPower(leftPower * BACK_LEFT_POWER_FACTOR);
+//            this.backLeft.setPower(leftPower * BACK_LEFT_POWER_FACTOR);
+            this.backLeft.setVelocity(leftPower * MAX_VELOCITY);
         }
         if (backRight != null) {
-            this.backRight.setPower(rightPower * BACK_RIGHT_POWER_FACTOR);
+//            this.backRight.setPower(rightPower * BACK_RIGHT_POWER_FACTOR);
+            this.backRight.setVelocity(rightPower * MAX_VELOCITY);
         }
         if (frontLeft != null) {
-            this.frontLeft.setPower(leftPower * FRONT_LEFT_POWER_FACTOR);
+//            this.frontLeft.setPower(leftPower * FRONT_LEFT_POWER_FACTOR);
+            this.frontLeft.setVelocity(leftPower * MAX_VELOCITY);
         }
         if (frontRight != null) {
-            this.frontRight.setPower(rightPower * FRONT_RIGHT_POWER_FACTOR);
+//            this.frontRight.setPower(rightPower * FRONT_RIGHT_POWER_FACTOR);
+            this.frontRight.setVelocity(rightPower * MAX_VELOCITY);
         }
 
         telemetry.addData("RUNNNNNNNNNING W/ ENCODERS", "YESSSSSSSSSS");
@@ -146,5 +167,46 @@ public class EncoderBot {
         telemetry.addData("Motors", "LeftBack from %7d", backLeft.getCurrentPosition());
         telemetry.addData("Motors", "RightFront from %7d", frontRight.getCurrentPosition());
         telemetry.addData("Motors", "RightBack from %7d", backRight.getCurrentPosition());
+    }
+
+    @BotAction(displayName = "Grab Cone", defaultReturn = "", isTerminator = false)
+    public void grabCone() {
+        telemetry.addData("ConeGrab", "Grabbed");
+        if (grabberServo != null) {
+            grabberServo.setPosition(GRABBER_SERVO_POS_GRAB);
+        }
+    }
+
+    @BotAction(displayName = "Drop Cone", defaultReturn = "", isTerminator = false)
+    public void releaseCone() {
+        telemetry.addData("ConeGrab", "Dropped");
+        if (grabberServo != null) {
+            grabberServo.setPosition(GRABBER_SERVO_POS_DROP);
+        }
+    }
+
+    public double getLeftVelocity() {
+        return frontLeft.getVelocity();
+    }
+
+    public double getRightVelocity() {
+        return frontRight.getVelocity();
+    }
+
+    public double getLeftBackVelocity() {
+        return backLeft.getVelocity();
+    }
+
+    public double getRightBackVelocity() {
+        return backRight.getVelocity();
+    }
+
+    public void moveAtMaxSpeed(){
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null){
+            this.frontLeft.setPower(1);
+            this.frontRight.setPower(1);
+            this.backLeft.setPower(1);
+            this.backRight.setPower(1);
+        }
     }
 }

@@ -45,6 +45,12 @@ public class EncoderMode extends LinearOpMode {
                 }
                 robot.move(drive, turn);
 
+                if (gamepad1.dpad_right) {
+                    robot.grabCone();
+                } else if (gamepad1.dpad_left) {
+                    robot.releaseCone();
+                }
+
                 telemetry.update();
             }
         }
