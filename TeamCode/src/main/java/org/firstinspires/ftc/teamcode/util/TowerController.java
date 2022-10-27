@@ -87,7 +87,7 @@ public class TowerController {
 
     public void handleIntake (HardwareMap hardwareMap) {
         if(intakePos){
-            intake.setPosition(1);
+            intake.setPosition(0.5);
         }
         else{
             intake.setPosition(0);
