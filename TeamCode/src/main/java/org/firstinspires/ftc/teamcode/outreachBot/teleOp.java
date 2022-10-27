@@ -51,6 +51,8 @@ public class teleOp extends LinearOpMode {
             //                        backLeft.setPower(speed + turn - strafe);
             //                        backRight.setPower(speed - turn + strafe);
             //
+            double speed = 0.3;
+
             double x = gamepad1.left_stick_x;
             double y = gamepad1.left_stick_y*-1;
             double turn = gamepad1.right_stick_x;
@@ -59,10 +61,10 @@ public class teleOp extends LinearOpMode {
             double sin = Math.sin(theta - Math.PI/4);
             double cos = Math.cos(theta - Math.PI/4);
             double max = Math.max(Math.abs(sin), Math.abs(cos));
-            frontLeft.setPower(power * cos/max + turn);
-            frontRight.setPower(power * sin/max - turn);
-            backLeft.setPower(power * sin/max + turn);
-            backRight.setPower(power * cos/max - turn);
+            frontLeft.setPower((power * cos/max + turn)*speed);
+            frontRight.setPower((power * sin/max - turn)*speed);
+            backLeft.setPower((power * sin/max + turn)*speed);
+            backRight.setPower((power * cos/max - turn)*speed);
             if ((power + Math.abs(turn)) > 1) {
                 frontLeft.setPower((frontLeft.getPower()) / power + turn);
                 frontRight.setPower((frontRight.getPower()) / power + turn);
