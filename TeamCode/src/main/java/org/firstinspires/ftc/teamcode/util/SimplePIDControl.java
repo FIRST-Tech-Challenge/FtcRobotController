@@ -93,11 +93,17 @@ public class SimplePIDControl {
 
         lastError = thisError;
 
-        double powerCalc = p * measuredError(measurement) + i * integratedError + d * averagedDerivative + feedForward;
+        double powerCalc = p * thisError + i * integratedError + d * averagedDerivative + feedForward;
         return powerCalc;
         /** Calculations for our custom PID control **/
-
     }
+
+    /**
+     * Update the measurement with no feedforward input.
+     *
+     * @param measurement
+     * @return drive power value.
+     */
     public double update(double measurement) {
         return update(measurement, 0);
     }

@@ -42,4 +42,5 @@ public interface Localizer {
     public void identifyTarget(int targetIndex, String targetName, float dx, float dy, float dz, float rx, float ry, float rz);
     public void displayTelemetry(Telemetry telemetry);
     public void handleTracking();
+    public double getHeading();
 }

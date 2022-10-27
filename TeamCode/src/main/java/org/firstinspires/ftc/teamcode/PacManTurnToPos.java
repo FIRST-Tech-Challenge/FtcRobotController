@@ -13,14 +13,15 @@ import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 public class PacManTurnToPos {
 private double goalHeading = 0;
 private double turnSpeed   = 0;
-private LocalizerIMU localizer;
+private Localizer localizer;
 private  MecanumDriveBase mecanumDriveBase;
 private AnglePIDControl angleControl;
 CompassSensor                compass;
 
 
 
-    public PacManTurnToPos(LocalizerIMU localizer, MecanumDriveBase mecanumDriveBase) {
+
+    public PacManTurnToPos(Localizer localizer, MecanumDriveBase mecanumDriveBase) {
         this.localizer = localizer;
         this.mecanumDriveBase = mecanumDriveBase;
         this.angleControl = new AnglePIDControl(.05, 0, .003,360);
@@ -28,7 +29,7 @@ CompassSensor                compass;
 
     public void handlePacMan(Gamepad gamepad, Telemetry telemetry) {
         //makes heading easier for me.
-        double heading =  localizer.heading;
+        double heading =  localizer.getHeading();
 
         if(Math.abs(gamepad.right_stick_y) < .1 && Math.abs(gamepad.right_stick_x) < .1 &&
                 Math.abs(gamepad.left_stick_y) < .1 && Math.abs(gamepad.left_stick_x) < .1) {
@@ -62,7 +63,7 @@ CompassSensor                compass;
 
             telemetry.addData("targetValue", angleControl.targetValue);
             telemetry.addData("heading", heading);
-            telemetry.addData("measurement Error", angleControl.measuredError(heading));
+            telemetry.addData("angleError", angleControl.angleError);
         }
     }
 }
