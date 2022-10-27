@@ -13,9 +13,10 @@ import java.util.EnumMap;
  * Drives a pushbot with teleop control.
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum", group="TeleOp")
-public class TeleOp extends BaseOpMode {
+public class TeleOp extends OpMode {
 
     private DriveSystem driveSystem;
+    private ArmSystem armSystem;
 
     /**
      * Initializes a pushbot setup
