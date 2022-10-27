@@ -27,7 +27,12 @@ public class BaseStateMachine extends BaseAutonomous {
         TEAM
     }
     
-    Sleeve teamAsset;
+    public enum From {
+        START, CONE_STACK
+    }
+    
+    private Sleeve teamAsset;
+    private From junctionPath;
     private int step = 0;
     private int currentPos = 0;
     private PixyCam pixycam;
@@ -43,6 +48,7 @@ public class BaseStateMachine extends BaseAutonomous {
         // Starts state machine
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
         pixycam = hardwareMap.get(PixyCam.class, "pixy");
+        junctionPath = From.START;
         newState(State.IDENTIFY_TARGET);
     }
 
@@ -137,16 +143,23 @@ public class BaseStateMachine extends BaseAutonomous {
     }
 
     private void drive_to_junction() {
-        if (step == 0) {
-            if (driveSystem.driveToPosition(950 - currentPos, DriveSystem.Direction.BACKWARD, 0.4)) {
-                step++;
-            }
+        switch (junctionPath) {
+            case START:
+                if (step == 0) {
+                    if (driveSystem.driveToPosition(950 - currentPos, DriveSystem.Direction.BACKWARD, 0.4)) {
+                        step++;
+                    }
+                }
+                if (step == 1) {
+                    if (driveSystem.turn(-45, 0.2)) {
+                        newState(State.ALIGN_WITH_POLE);
+                    }
+                }
+                break;
+            case CONE_STACK:
+
         }
-        if (step == 1) {
-            if (driveSystem.turn(-45, 0.2)) {
-                newState(State.ALIGN_WITH_POLE);
-            }
-        }
+
     }
 
     private void reverseJunction() {
