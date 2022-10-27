@@ -14,8 +14,8 @@ public class LinearGPS {
     private Kinematics.DriveType driveType;
 
     private double[] positionArr = new double[4];
-    public HashMap<DcMotorEx, Integer> motorClicksPose = new HashMap<>();
-    public HashMap<DcMotorEx, Integer> prevMotorClicks = new HashMap<>();
+    public HashMap<String, Integer> motorClicksPose = new HashMap<>();
+    public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 
     HardwareDrive robot;
 
@@ -25,9 +25,6 @@ public class LinearGPS {
     public LinearGPS(HardwareDrive robot, Kinematics.DriveType k ){
         this.robot = robot;
         driveType = k;
-        for (int i = 0; i < 4; i++){
-            positionArr[i] = 0;
-        }
 
         updateHash();
     }
@@ -38,16 +35,16 @@ public class LinearGPS {
         updateHash();
 
         //left
-        int topL = motorClicksPose.get(robot.topL) - prevMotorClicks.get(robot.topL); //change in top left
-        int botL = motorClicksPose.get(robot.botL) - prevMotorClicks.get(robot.botL); //change in bottom left
+        int topL = motorClicksPose.get("topL") - prevMotorClicks.get("topL"); //change in top left
+        int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
         double translateL = (topL - botL) / 2.0;
         double rotateL = topL - translateL;
         translateL *= constants.INCHES_PER_CLICK;
         rotateL *= constants.DEGREES_PER_CLICK;
 
         //right
-        int topR = motorClicksPose.get(robot.topR) - prevMotorClicks.get(robot.topR); //change in top right
-        int botR = motorClicksPose.get(robot.botR) - prevMotorClicks.get(robot.botR); //change in bottom right
+        int topR = motorClicksPose.get("topR") - prevMotorClicks.get("topR"); //change in top right
+        int botR = motorClicksPose.get("botR") - prevMotorClicks.get("botR"); //change in bottom right
         double translateR = (topR - botR) / 2.0;
         double rotateR = topR - translateR;
         translateR *= constants.INCHES_PER_CLICK;
@@ -113,15 +110,15 @@ public class LinearGPS {
 //    }
 
     public void updateHash(){
-        motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
-        motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
-        motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
-        motorClicksPose.put(robot.botL, robot.botL.getCurrentPosition());
+        motorClicksPose.put("topR", robot.topR.getCurrentPosition());
+        motorClicksPose.put("botR", robot.botR.getCurrentPosition());
+        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
+        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
 
-        prevMotorClicks.put(robot.topR, motorClicksPose.get(robot.topR));
-        prevMotorClicks.put(robot.botR, motorClicksPose.get(robot.botR));
-        prevMotorClicks.put(robot.topL, motorClicksPose.get(robot.topL));
-        prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
+        prevMotorClicks.put("topR", motorClicksPose.get("topR"));
+        prevMotorClicks.put("botR", motorClicksPose.get("botR"));
+        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
+        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
     }
 
 //    private boolean goodGap(){
@@ -164,7 +161,7 @@ public class LinearGPS {
         return driveType;
     }
 
-    public HashMap<DcMotorEx, Integer> getMotorClicksPose () {
+    public HashMap<String, Integer> getMotorClicksPose () {
         return motorClicksPose;
     }
 

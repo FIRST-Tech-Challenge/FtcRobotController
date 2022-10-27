@@ -92,10 +92,10 @@ public class testRotateGPS extends OpMode{
         telemetry.addData("Target Rot", rotClicks);
         telemetry.addData("Target Distance", distanceClicks);
         telemetry.addData("Working?", works());
-        telemetry.addData("HashPos TopR", posSystem.motorClicksPose.get(robot.topR));
-        telemetry.addData("HashPosPrev TopR", posSystem.prevMotorClicks.get(robot.topR));
-        telemetry.addData("HashPos BotR", posSystem.motorClicksPose.get(robot.botR));
-        telemetry.addData("HashPosPrev BotR", posSystem.prevMotorClicks.get(robot.botR));
+        telemetry.addData("HashPos TopR", posSystem.motorClicksPose.get("topR"));
+        telemetry.addData("HashPosPrev TopR", posSystem.prevMotorClicks.get("topR"));
+        telemetry.addData("HashPos BotR", posSystem.motorClicksPose.get("botR"));
+        telemetry.addData("HashPosPrev BotR", posSystem.prevMotorClicks.get("botR"));
         telemetry.update();
     }
 
