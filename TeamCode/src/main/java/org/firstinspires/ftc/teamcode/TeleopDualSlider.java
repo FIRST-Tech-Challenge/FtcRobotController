@@ -54,6 +54,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -98,7 +100,6 @@ public class TeleopDualSlider extends LinearOpMode {
 
 
     // Driving motor variables
-    static final int RAMP_ON = 0; // ramp on to improve small moving control. On: 1; off: 0
     static final double POWER_FACTOR = 0.6;  // used to adjust driving sensitivity.
     static final double AUTO_DRIVE_POWER = 0.3; // used for auto driving
     static final double AUTO_ROTATE_POWER = 0.3; // used for auto driving
@@ -126,8 +127,8 @@ public class TeleopDualSlider extends LinearOpMode {
 
     // claw servo motor variables
     private Servo clawServo = null;
-    static final double CLAW_INCREMENT = -0.004;  // amount to slew servo each CYCLE_MS cycle
-    static final double CLAW_OPEN_POS = 0.25;     // Maximum rotational position
+    static final double CLAW_INCREMENT = -0.24;  // amount to slew servo each CYCLE_MS cycle
+    static final double CLAW_OPEN_POS = 0.32;     // Maximum rotational position
     static final double CLAW_CLOSE_POS = 0.08;
     static final double CLAW_MAX_POS = CLAW_OPEN_POS;
     static final double CLAW_MIN_POS = CLAW_CLOSE_POS;  // Minimum rotational position
@@ -160,7 +161,7 @@ public class TeleopDualSlider extends LinearOpMode {
     PIDController pidRotate, pidDrive;
     boolean resetAngleFlag = false;
     static final int INERTIA_WAIT_TIME = 500; // in ms
-    double globalAngleError = 0.0; // the angle error accumulated during auto-rotation.
+    double angleError = 0.0; // the angle error accumulated during auto-rotation.
 
     @Override
     public void runOpMode() {
@@ -278,9 +279,9 @@ public class TeleopDualSlider extends LinearOpMode {
             double BackRightPower;
 
 
-            double drive = POWER_FACTOR * Math.pow(robotMovingBAckForth, 1 + (2 * RAMP_ON));
-            double turn  =  POWER_FACTOR * Math.pow(-robotTurn, 1 + (2 * RAMP_ON));
-            double strafe = POWER_FACTOR * Math.pow(-robotMovingRightLeft, 1 + (2 * RAMP_ON));
+            double drive = POWER_FACTOR * robotMovingBAckForth;
+            double turn  =  POWER_FACTOR * (-robotTurn);
+            double strafe = POWER_FACTOR * (-robotMovingRightLeft);
 
             // only enable correction when the turn button is not pressed.
             if (Math.abs(turn) > Math.ulp(0)) {
@@ -294,7 +295,7 @@ public class TeleopDualSlider extends LinearOpMode {
             if ((runtime.milliseconds() > INERTIA_WAIT_TIME) && resetAngleFlag) {
                 resetAngleFlag = false;
                 resetAngle(); // Resets the cumulative angle tracking to zero.
-                globalAngleError = 0.0; //reset global angle error after manual turning.
+                angleError = 0.0; //reset global angle error after manual turning.
                 pidDrive.enable();
             }
 
@@ -307,8 +308,9 @@ public class TeleopDualSlider extends LinearOpMode {
             }
             telemetry.addData("1 imu heading (%0.2f)", lastAngles.firstAngle);
             telemetry.addData("2 global heading (%0.2f)", globalAngle);
-            telemetry.addData("3 correction  (%0.2f)", correction);
-            telemetry.addData("4 turn rotation", rotation);
+            telemetry.addData("3 global angle error (%0.2f)", angleError);
+            telemetry.addData("4 correction  (%0.2f)", correction);
+            telemetry.addData("5 turn rotation", rotation);
 
             FrontLeftPower  = Range.clip(-drive - turn - strafe - correction, -1, 1);
             FrontRightPower = Range.clip(-drive + turn + strafe + correction, -1, 1);
@@ -399,7 +401,7 @@ public class TeleopDualSlider extends LinearOpMode {
             }
 
             // Show the elapsed game time and wheel power, positions.
-            telemetry.addData("Motors", "Frontleft (%.2f), Frontright (%.2f)," +
+            telemetry.addData("Motors power", "Frontleft (%.2f), Frontright (%.2f)," +
                             " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
                     BackLeftPower,BackRightPower);
 
@@ -497,6 +499,7 @@ public class TeleopDualSlider extends LinearOpMode {
         int countsPerFeet = isBackForth? COUNTS_PER_FEET_DRIVE : COUNTS_PER_FEET_STRAFE;
         int targetPosition = (int)(targetDistance * countsPerFeet);
         telemetry.addData("Status", "auto driving target position %d", targetPosition);
+        telemetry.update();
         setTargetPositionsToWheels(targetPosition, isBackForth);
         robotRunWithPositionModeOn(true); // turn on encoder mode
         robotDriveWithPIDControl(AUTO_DRIVE_POWER);
@@ -570,7 +573,7 @@ public class TeleopDualSlider extends LinearOpMode {
      * The MAXIMUM waiting time is MAX_WAIT_TIME to avoid death.
      * @param mot: the motor which be checked if it is in active.
      */
-    private void waitMotorActionComplete(DcMotor mot) {
+    private void waitMotorActionComplete(@NonNull DcMotor mot) {
         double curTime = runtime.seconds();
         while((mot.isBusy()) && ((runtime.seconds() - curTime) < MAX_WAIT_TIME)) {
             idle();
@@ -659,6 +662,8 @@ public class TeleopDualSlider extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be - on right turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
+                telemetry.addData("rotate power - %.4f", power);
+                telemetry.update();
             } while (opModeIsActive() && !pidRotate.onTarget());
         }
         else    // left turn.
@@ -666,6 +671,8 @@ public class TeleopDualSlider extends LinearOpMode {
                 power = pidRotate.performPID(getAngle()); // power will be + on left turn.
                 leftMotorSetPower(-power);
                 rightMotorSetPower(power);
+                telemetry.addData("rotate power - %.4f", power);
+                telemetry.update();
             } while (opModeIsActive() && !pidRotate.onTarget());
 
         // turn the motors off.
@@ -679,10 +686,11 @@ public class TeleopDualSlider extends LinearOpMode {
 
         // reset angle tracking on new heading.
         resetAngle();
-        globalAngleError += angleBeforeRotate - lastAngles.firstAngle - degrees;
-
-        // update straight driving set point to correct angle error during rotation
-        // pidDrive.setSetpoint(-globalAngleError);
+        angleError += lastAngles.firstAngle - angleBeforeRotate - degrees;
+        if (Math.abs(angleError) > 180)
+        {
+            angleError = angleError - Math.copySign(360, angleError);
+        }
     }
 
     /**
@@ -715,7 +723,7 @@ public class TeleopDualSlider extends LinearOpMode {
             correction = pidDrive.performPID(getAngle());
             leftMotorSetPower(p - correction);
             rightMotorSetPower(p + correction);
-            sleep(100);
+            sleep(50);
         }
         setPowerToWheels(0.0); //stop moving
     }
@@ -799,6 +807,10 @@ public class TeleopDualSlider extends LinearOpMode {
         if (gamepad2.dpad_up) {
             robotMovingDistance(parkingLocation, true); // drive robot to parking
             robotMovingDistance(2.0, false); // strafe robot to parking mat
+        }
+
+        if (gamepad2.x) {
+            robotMovingDistance(10, true); // drive robot to parking
         }
 
     }
