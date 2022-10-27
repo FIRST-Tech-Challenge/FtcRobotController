@@ -63,6 +63,7 @@ public class Lift {
 //        liftMotor.setPower(LIFT_UP_SPEED);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 //        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
@@ -155,7 +156,7 @@ public class Lift {
 
     }
     public void setMotor(double power){
-        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setPower(power);
     }
     private boolean inHeightTolerance(double heightPosition, double poleHeight) {

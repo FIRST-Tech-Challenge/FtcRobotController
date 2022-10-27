@@ -6,25 +6,32 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @TeleOp(name="Robot: Test Scaffold", group="Robot")
 public class TestTeleOp extends LinearOpMode {
 //    public BrainStemRobot robot;
     public final double SLOW = 1.0;
-    public HashMap stateMap;
+
 
     public void runOpMode(){
 
-        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry, stateMap);
+        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry);
         //Turret turret = new Turret(hardwareMap, telemetry);
         //robot.initializeRobotPosition();
         Lift lift = new Lift(hardwareMap, telemetry);
         Extension arm = new Extension(hardwareMap, telemetry);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Map<String, String> stateMap = new HashMap<String, String>() {{
+            put(robot.LIFT_SYSTEM_NAME, robot.LIFT_POLE_LOW);
+            put(robot.LIFT_SUBHEIGHT, robot.DELIVERY_HEIGHT);
+        }};
 
         // Preset positions for turret via buttons x, y, b
         /*if(gamepad1.y){
@@ -72,7 +79,7 @@ public class TestTeleOp extends LinearOpMode {
             );
 
             drive.update();
-            robot.updateSystems();
+            robot.updateSystems(stateMap);
         }
 
         // operator controlled turret via right stick x axis

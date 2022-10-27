@@ -23,9 +23,15 @@ public class Turret {
     public final double     DEFAULT_TURRET_POWER = 0.1;
     public final double     INITIAL_MOVE_LEFT_TURRET_POWER = 0.1;
     public final double     HARD_STOP_CURRENT_DRAW = 100;
-    public final String     TURRET_LEFT_POSITION = "Left";
-    public final String     TURRET_RIGHT_POSITION = "Right";
-    public final String     TURRET_CENTER_POSITION = "Center";
+    public final String     TURRET_LEFT_POSITION = "LEFT_STATE";
+    public final String     TURRET_RIGHT_POSITION = "RIGHT_STATE";
+    public final String     TURRET_CENTER_POSITION = "CENTER_STATE";
+    public final String     TURRET_DEFAULT_STATE = "TRANSITION_STATE";
+    public final int        TURRET_LEFT_POSITION_VALUE = 0;
+    public final int        TURRET_RIGHT_POSITION_VALUE = 180;
+    public final int        TURRET_CENTER_POSITION_VALUE = 90;
+
+
 
     public Telemetry telemetry;
     public DcMotorEx turretMotor;
@@ -56,9 +62,11 @@ public class Turret {
         turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void setMotor(double power){
+
         turretMotor.setPower(power);
     }
     public int getPosition(){
+
         return turretMotor.getCurrentPosition();
     }
 
@@ -96,6 +104,13 @@ public class Turret {
         }
 
     }
+    /*public boolean inPositionTolerance(
+    public String getCurrentState(){
+    String state = TURRET_DEFAULT_STATE;
+    }
+
+     */
+
 
 
 

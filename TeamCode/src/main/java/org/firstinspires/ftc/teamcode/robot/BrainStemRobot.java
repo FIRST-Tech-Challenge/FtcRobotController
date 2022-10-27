@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class BrainStemRobot {
 
@@ -42,7 +43,7 @@ public class BrainStemRobot {
     public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
     public final String LIFT_SUBHEIGHT  = "SUB_HEIGHT";
 
-    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry, HashMap stateMap) {
+    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.opMode = opMode;
 
@@ -70,7 +71,7 @@ public class BrainStemRobot {
         arm.getToClear();
         turret.moveTurret(targetDegrees);
     }
-    public void updateSystems() {
+    public void updateSystems(Map stateMap) {
         lift.setState((String) stateMap.get(lift.LIFT_SYSTEM_NAME), (String) stateMap.get(lift.LIFT_SUBHEIGHT));
     }
 

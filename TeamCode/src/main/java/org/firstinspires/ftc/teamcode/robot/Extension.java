@@ -101,7 +101,7 @@ public class Extension {
     }
 
     // Returns true if the extension arm's current position is beyond the minimum clearance distance in inches
-    Boolean isInClear() {
+    public boolean isInClear() {
         double currentPosition = extension.getPosition();
 
         return (currentPosition * EXTENSION_MAX_REACH) >= MINIMUM_CLEARANCE_DISTANCE;
