@@ -36,7 +36,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
      * if dpad up, linear slides go up
      * if dpad down, linear slides go down
      */
-    /*
+
     public void driveMechanism() {
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
@@ -50,9 +50,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         }
     }
 
-    /**
-     * press the X button, claw opens
-     * press the A button, claw closes
+
+     // press the X button, claw opens
+     // press the A button, claw closes
 
     public void driveClaw() {
         if (gamepad2.x) {
@@ -61,7 +61,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
             servoClaw.setPosition(CLOSED_CLAW);
         }
     }
-    */
+
 }
 
 

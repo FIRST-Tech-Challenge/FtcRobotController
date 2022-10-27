@@ -11,8 +11,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.team8923_PowerPlay.BaseOpMode;
+import org.tensorflow.lite.support.label.TensorLabel;
 
-public abstract class BaseAutonomous extends BaseOpMode {
+public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWebcam {
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -63,11 +64,16 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     public Position detectSignalSleeve() {
+        //sets parking position dependant on label
+        if(LABELS.equals("Orange Leaves")){
+            return Position.ONE;
 
-        return Position.ONE;
+        } else if(LABELS.equals("Blue Bats")){
+            return Position.TWO;
+        } else {
+            return Position.THREE;
+        }
     }
-
-
 
     /**
      * Moves the robot forward, backwards, and strafes right and left in inches.

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class AutoDetectPark extends BaseAutonomous {
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         initAuto();
         waitForStart();
         driveInches(0, 2);

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 @Autonomous(name = "ConceptTensorFlowObjectDetectionWebcam ")
-public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -24,9 +24,9 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
 
-    private static final String[] LABELS = {
+    public static final String[] LABELS = {
+            "Orange Leaves",
             "Blue Bats",
-            "Black Fish",
             "Flowers"
     };
 
