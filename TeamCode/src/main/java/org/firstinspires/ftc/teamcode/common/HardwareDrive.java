@@ -58,10 +58,10 @@ import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 public class HardwareDrive
 {
 
-    public DcMotorEx  topL;
+//    public DcMotorEx  topL;
     public DcMotorEx  botR;
     public DcMotorEx  topR;
-    public DcMotorEx  botL;
+//    public DcMotorEx  botL;
 
 
 //    public DcMotorEx[] dtMotors;
@@ -94,8 +94,8 @@ public class HardwareDrive
 
         // Define and Initialize Motors
 
-        topL = hwMap.get(DcMotorEx.class, "top_left");
-        botL = hwMap.get(DcMotorEx.class, "bottom_left");
+//        topL = hwMap.get(DcMotorEx.class, "top_left");
+//        botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
 
@@ -113,8 +113,8 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorSimple.Direction.REVERSE);
-        topL.setDirection(DcMotorSimple.Direction.REVERSE);
+//        botL.setDirection(DcMotorSimple.Direction.REVERSE);
+//        topL.setDirection(DcMotorSimple.Direction.REVERSE);
         botR.setDirection(DcMotorSimple.Direction.REVERSE);
         topR.setDirection(DcMotorSimple.Direction.REVERSE);
        // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
@@ -133,22 +133,22 @@ public class HardwareDrive
     public void setMotorPower(double power){
         if (power == 0.0){
             // Grady Conwell Was Here
-            botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         } else {
-            botL.setPower(0);
-            topL.setPower(0);
+//            botL.setPower(0);
+//            topL.setPower(0);
             botR.setPower(0);
             topR.setPower(0);
         }
     }
 
     public void setRunMode(DcMotor.RunMode runState){
-        botL.setMode(runState);
-        topL.setMode(runState);
+//        botL.setMode(runState);
+//        topL.setMode(runState);
         topR.setMode(runState);
         botR.setMode(runState);
         //make sure to not add arm here
