@@ -288,7 +288,8 @@ public class TeleopTouchSensor extends LinearOpMode {
             double BackLeftPower;
             double BackRightPower;
             double maxDrivePower = HIGH_SPEED_POWER;
-            if (distanceSensor.getDistance(DistanceUnit.INCH) < CLOSE_DISTANCE) {
+            if ((distanceSensor.getDistance(DistanceUnit.INCH) < CLOSE_DISTANCE) &&
+                    (robotMovingBAckForth > 0)) {
                 maxDrivePower = SLOW_DOWN_POWER;
             }
 
