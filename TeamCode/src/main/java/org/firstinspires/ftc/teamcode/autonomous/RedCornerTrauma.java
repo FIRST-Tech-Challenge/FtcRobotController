@@ -22,7 +22,7 @@ public class RedCornerTrauma extends DriveDirections {
 
         //Pushes cone onto junction
         DriveForDistance(moveSpeed, .52, "LEFT");
-        DriveForDistance(moveSpeed, .08, "BACKWARD");
+        DriveForDistance(moveSpeed, .07, "BACKWARD");
         DriveForDistance(moveSpeed, .29, "FORWARD");
         DriveForDistance(moveSpeed, .3, "BACKWARD");
         DriveForDistance(moveSpeed, .36, "RIGHT");
