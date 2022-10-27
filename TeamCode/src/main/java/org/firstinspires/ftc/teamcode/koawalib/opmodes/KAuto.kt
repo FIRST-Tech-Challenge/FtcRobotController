@@ -39,12 +39,12 @@ class KAuto(startPose : Pose) : KOpMode() {
 
     override fun mInit() {
         val intakePath = CubicPath(
-            Pose(-3.0, -28.0, 210.0.radians),
+            Pose(-3.0, -36.0, 210.0.radians),
             Pose(-12.0, -66.0, 270.0.radians)
         )
         val depositPath = ReversedCubicPath(
             Pose(-12.0, -66.0, 90.0.radians),
-            Pose(-3.0, -28.0, 30.0.radians)
+            Pose(-3.0, -36.0, 30.0.radians)
         )
         val checkpoint = Vector(-12.0, -43.0)
         val intakeP = Pair(IntakeSequence(robot.claw), checkpoint)
@@ -58,7 +58,7 @@ class KAuto(startPose : Pose) : KOpMode() {
             defaultGVFCmd(
                 ReversedCubicPath(
                     Pose(-66.0, -36.0, 0.0),
-                    Pose(-3.0, -28.0, 30.0.radians)
+                    Pose(-3.0, -36.0, 30.0.radians)
                 ),
                 Pair(ReadySequence(robot), Vector(-24.0, -36.0)),
                 depositP

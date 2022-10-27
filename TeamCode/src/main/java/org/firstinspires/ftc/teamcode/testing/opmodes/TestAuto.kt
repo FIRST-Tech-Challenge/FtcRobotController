@@ -37,8 +37,8 @@ class TestAuto : KOpMode() {
     )
 
     private val intakePath = CubicPath(
-        Pose(-3.0, -36.0, 210.0.radians),
-        Pose(-12.0, -66.0, 270.0.radians)
+        Pose(-24.0, -32.0, 150.0.radians),
+        Pose(-12.0, -62.0, 270.0.radians)
     )
 
     private val depositPath = ReversedCubicPath(
@@ -70,10 +70,10 @@ class TestAuto : KOpMode() {
                robot.drive,
                SimpleGVFController(intakePath, 0.6, 1.0/22.5, 4.0, 0.95, 2.0)
            ),
-           GVFCmd(
-               robot.drive,
-               SimpleGVFController(depositPath, 0.6, 1.0/22.5, 4.0, 0.95, 2.0)
-           )
+//           GVFCmd(
+//               robot.drive,
+//               SimpleGVFController(depositPath, 0.6, 1.0/22.5, 4.0, 0.95, 2.0)
+//           )
         )
         mainCommand.schedule()
     }
