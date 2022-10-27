@@ -130,7 +130,7 @@ public class TurnGPS {
         prevMotorClicks.put(robot.botR, motorClicksPose.get(robot.botR));
         prevMotorClicks.put(robot.topL, motorClicksPose.get(robot.topL));
         prevMotorClicks.put(robot.botL, motorClicksPose.get(robot.botL));
-        
+
         motorClicksPose.put(robot.topR, robot.topR.getCurrentPosition());
         motorClicksPose.put(robot.botR, robot.botR.getCurrentPosition());
         motorClicksPose.put(robot.topL, robot.topL.getCurrentPosition());
