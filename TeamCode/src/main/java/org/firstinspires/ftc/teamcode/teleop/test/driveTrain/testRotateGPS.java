@@ -47,7 +47,7 @@ public class testRotateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        int[] clicksArr = getClicks(0, 90);
+        int[] clicksArr = getClicks(0, 360);
         distanceClicks = clicksArr[0];
         rotClicks = clicksArr[1];
 
@@ -124,10 +124,10 @@ public class testRotateGPS extends OpMode{
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
 
-        robot.botL.setPower(0.5);
-        robot.topL.setPower(0.5);
-        robot.botR.setPower(0.5);
-        robot.topR.setPower(0.5);
+        robot.botL.setPower(0.2);
+        robot.topL.setPower(0.2);
+        robot.botR.setPower(0.2);
+        robot.topR.setPower(0.2);
     }
 
     public void drive(int distanceClicks, int rotClicks){
