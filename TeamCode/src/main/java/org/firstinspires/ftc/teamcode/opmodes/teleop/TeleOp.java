@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -17,12 +12,11 @@ import java.util.EnumMap;
 /**
  * Drives a pushbot with teleop control.
  */
-@TeleOp(name = "Mecanum", group="TeleOp")
-public class DrivePushBot extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum", group="TeleOp")
+public class TeleOp extends OpMode {
 
     private DriveSystem driveSystem;
     private ArmSystem armSystem;
-    private ArmSystem.Intake intake;
 
     /**
      * Initializes a pushbot setup
@@ -49,8 +43,12 @@ public class DrivePushBot extends OpMode {
         driveSystem.slowDrive(gamepad1.left_trigger > 0.3f);
         driveSystem.drive(rx, lx, ly);
 
+        if (gamepad1.left_trigger > 0) {
+            ArmSystem.Intake.intake();
+        }
+
         if (gamepad1.right_trigger > 0) {
-            intake.manual(gamepad1.right_trigger);
+            ArmSystem.Intake.outtake();
         }
 
         if (gamepad1.a) {
@@ -76,14 +74,6 @@ public class DrivePushBot extends OpMode {
 
         if (gamepad1.dpad_up) {
             // Move Bar Up Based on Time Pressed
-        }
-
-        if (gamepad1.right_bumper) {
-            // Intake Rotate Out
-        }
-
-        if (gamepad1.left_bumper) {
-            // Intake Rotate In
         }
     }
 }
