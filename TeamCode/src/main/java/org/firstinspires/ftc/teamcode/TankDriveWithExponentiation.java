@@ -15,12 +15,13 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
 @Disabled
-public class TankDrive_From_Class extends LinearOpMode {
+public class TankDriveWithExponentiation extends LinearOpMode {
 
     private DcMotor Motor1 = null;
     private DcMotor Motor2 = null;
     private DcMotor Motor3 = null;
     private DcMotor Motor4 = null;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,6 +37,12 @@ public class TankDrive_From_Class extends LinearOpMode {
         Motor2.setDirection(DcMotor.Direction.FORWARD);
         Motor3.setDirection(DcMotor.Direction.REVERSE);
         Motor4.setDirection(DcMotor.Direction.REVERSE);
+
+//        Motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        Motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        Motor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        Motor4.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         double Motor1Power = 0.0;
         double Motor2Power = 0.0;
         double Motor3Power = 0.0;
@@ -43,18 +50,49 @@ public class TankDrive_From_Class extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()){
-//            double Motor1Power = 0.0;
-//            double Motor2Power = 0.0;
-//            double Motor3Power = 0.0;
-//            double Motor4Power = 0.0;
-
-            double leftJoystick = -gamepad1.left_stick_y;
-            double rightJoystick = -gamepad1.right_stick_y;
+            double leftJoystick = gamepad1.left_stick_y;
+            double rightJoystick = gamepad1.right_stick_y;
 
             Motor1Power = Range.clip(leftJoystick, -1.0, 1.0);
             Motor2Power = Range.clip(leftJoystick, -1.0, 1.0);
             Motor3Power = Range.clip(rightJoystick, -1.0, 1.0);
             Motor4Power = Range.clip(rightJoystick, -1.0, 1.0);
+
+            // Exponentiation for Motor1
+            if(Motor1Power < 0.0){
+                Motor1Power = Motor1Power * Motor1Power;
+                Motor1Power = Motor1Power * -1;
+            }
+            else{
+                Motor1Power = Motor1Power * Motor1Power;
+            }
+
+            // Exponentiation for Motor2
+            if(Motor2Power < 0.0){
+                Motor2Power = Motor2Power * Motor2Power;
+                Motor2Power = Motor2Power * -1;
+            }
+            else{
+                Motor2Power = Motor2Power * Motor2Power;
+            }
+
+            // Exponentiation for Motor3
+            if(Motor3Power < 0.0){
+                Motor3Power = Motor3Power * Motor3Power;
+                Motor3Power = Motor3Power * -1;
+            }
+            else{
+                Motor3Power = Motor3Power * Motor3Power;
+            }
+
+            // Exponentiation for Motor4
+            if(Motor4Power < 0.0){
+                Motor4Power = Motor4Power * Motor4Power;
+                Motor4Power = Motor4Power * -1;
+            }
+            else{
+                Motor4Power = Motor4Power * Motor4Power;
+            }
 
             Motor1.setPower(Motor1Power);
             Motor2.setPower(Motor2Power);

@@ -63,6 +63,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Quanis_Drive_By_Encoder", group="Robot")
+@Disabled
 public class RobotAutoDriveByEncoder_Linear_Test extends LinearOpMode {
 
     /* Declare OpMode members. */
