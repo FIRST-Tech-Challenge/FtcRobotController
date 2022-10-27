@@ -43,7 +43,8 @@ public class EncoderMode extends LinearOpMode {
                 else if (rtrigger > 0){
                     turn = rtrigger;
                 }
-                robot.move(drive, turn);
+
+//                robot.move(drive, turn);
 
                 if (gamepad1.dpad_right) {
                     robot.grabCone();

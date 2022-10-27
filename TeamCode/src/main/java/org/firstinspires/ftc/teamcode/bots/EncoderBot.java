@@ -20,6 +20,7 @@ public class EncoderBot {
     protected DcMotorEx frontRight = null;
     protected DcMotorEx backLeft = null;
     protected DcMotorEx backRight = null;
+    protected DcMotorEx liftMotor = null;
 
     protected Servo grabberServo = null;
 
@@ -34,7 +35,7 @@ public class EncoderBot {
     protected Telemetry telemetry;
     protected LinearOpMode owner = null;
 
-    private ElapsedTime period  = new ElapsedTime();
+    private ElapsedTime period = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
 
     private BotCalibConfig botConfig;
@@ -44,6 +45,7 @@ public class EncoderBot {
     public static String LEFT_BACK = "backLeft";
     public static String RIGHT_BACK = "backRight";
     public static String GRABBER_SERVO = "grabber";
+    public static String LIFT_MOTOR = "liftMotor";
 
     private static final String TAG = "EncoderBot";
 
@@ -64,6 +66,7 @@ public class EncoderBot {
             frontRight = hwMap.get(DcMotorEx.class, RIGHT_FRONT);
             backLeft = hwMap.get(DcMotorEx.class, LEFT_BACK);
             backRight = hwMap.get(DcMotorEx.class, RIGHT_BACK);
+            liftMotor = hwMap.get(DcMotorEx.class, LIFT_MOTOR);
 
             resetEncoders();
             setUpMotors();
@@ -95,6 +98,10 @@ public class EncoderBot {
         if (backRight != null) {
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+
+        if (liftMotor != null) {
+            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 
     public void stop() {
@@ -109,6 +116,9 @@ public class EncoderBot {
         }
         if (backRight != null) {
             backRight.setPower(0);
+        }
+        if (liftMotor != null) {
+            liftMotor.setPower(0);
         }
     }
 
@@ -132,12 +142,17 @@ public class EncoderBot {
             frontRight.setDirection(DcMotor.Direction.REVERSE);
             frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+
+        if (liftMotor != null) {
+            liftMotor.setDirection(DcMotor.Direction.REVERSE);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
-    public void move(double drive, double turn){
+    public void move(double drive, double turn) {
         double rightPower = Range.clip(drive + (turn * 0.85), -1.0, 1.0);
         double leftPower = Range.clip(drive - (turn * 0.85), -1.0, 1.0);
-        if ((drive > 0 && drive <= 4 )|| (turn > 0 && turn <= 4)){
+        if ((drive > 0 && drive <= 4) || (turn > 0 && turn <= 4)) {
             rightPower = rightPower * rightPower * rightPower;
             leftPower = leftPower * leftPower * leftPower;
         }
@@ -159,7 +174,7 @@ public class EncoderBot {
             this.frontRight.setVelocity(rightPower * MAX_VELOCITY);
         }
 
-        telemetry.addData("RUNNNNNNNNNING W/ ENCODERS", "YESSSSSSSSSS");
+        telemetry.addData("RUNNING W/ ENCODERS", "YES");
         telemetry.addData("Motors", "Left: %.0f", leftPower);
         telemetry.addData("Motors", "Right: %.0f", rightPower);
         telemetry.addData("Motors", "Turn: %.0f", turn);
@@ -167,6 +182,7 @@ public class EncoderBot {
         telemetry.addData("Motors", "LeftBack from %7d", backLeft.getCurrentPosition());
         telemetry.addData("Motors", "RightFront from %7d", frontRight.getCurrentPosition());
         telemetry.addData("Motors", "RightBack from %7d", backRight.getCurrentPosition());
+        telemetry.addData("Motors", "Lift %7d", liftMotor.getCurrentPosition());
     }
 
     @BotAction(displayName = "Grab Cone", defaultReturn = "", isTerminator = false)
@@ -201,12 +217,53 @@ public class EncoderBot {
         return backRight.getVelocity();
     }
 
-    public void moveAtMaxSpeed(){
-        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null){
+    public void moveAtMaxSpeed() {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             this.frontLeft.setPower(1);
             this.frontRight.setPower(1);
             this.backLeft.setPower(1);
             this.backRight.setPower(1);
         }
     }
+
+    public void retractLiftToZero() {
+
+    }
+
+    public void extendLiftJunctionGround() {
+
+    }
+
+    public void extendLiftJunctionOne() {
+
+    }
+
+    public void extendLiftJunctionTwo() {
+
+    }
+    public void moveLift(int delta) {
+        int currentPos = liftMotor.getCurrentPosition();
+        int newPos = currentPos + delta;
+        newPos = Range.clip(newPos, 0, 3000);
+        liftMotor.setTargetPosition(newPos);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setVelocity(500);
+        while(this.isLiftBusy()) {
+            // just wait
+        }
+        stopLift();
+    }
+
+    public boolean isLiftBusy(){
+        return this.liftMotor.isBusy();
+    }
+
+    private void stopLift(){
+        this.liftMotor.setPower(0);
+        this.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
 }
+
+
+
