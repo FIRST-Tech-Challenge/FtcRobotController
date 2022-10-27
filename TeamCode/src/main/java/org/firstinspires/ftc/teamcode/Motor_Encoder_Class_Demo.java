@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Motor Encoder Class Demo", group="Robot")
-@Disabled
 public class Motor_Encoder_Class_Demo extends LinearOpMode{
     // Declare Motor Objects
     private DcMotor Motor0 = null;
