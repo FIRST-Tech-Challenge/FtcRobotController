@@ -14,18 +14,16 @@ public abstract class BaseTeleOp extends BaseOpMode {
         boolean xIsPressed = gamepad2.x;
         boolean aIsPressed = gamepad2.a;
 
-        // 5 degrees is the deadzone angle
         // atan2 determines angle between the two sticks
-
-        if (Math.abs(Math.atan2(leftYPosition, leftXPosition)) > 10) {
+        if (Math.abs(Math.atan2(leftYPosition, leftXPosition)) > Constants.DEADZONE_ANGLE) {
             // case for driving the robot left and right
-            driveRobot(leftXPosition, 0, turnPosition);
-        } else if (Math.abs(Math.atan2(leftXPosition, leftYPosition)) > 10) {
+            driveWithIMU(leftXPosition, 0, turnPosition);
+        } else if (Math.abs(Math.atan2(leftXPosition, leftYPosition)) > Constants.DEADZONE_ANGLE) {
             // case for driving the robot up and down
-            driveRobot(0, leftYPosition, turnPosition);
+            driveWithIMU(0, leftYPosition, turnPosition);
         } else {
             // case for if the deadzone limits are passed, the robot drives normally
-            driveRobot(leftXPosition, leftYPosition, turnPosition);
+            driveWithIMU(leftXPosition, leftYPosition, turnPosition);
         }
 
         // grabber open/close method attached to controller buttons

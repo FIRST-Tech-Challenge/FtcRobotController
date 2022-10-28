@@ -13,8 +13,6 @@ public abstract class AprilTagDetect extends BaseAutonomous {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
-    final double INCHES_PER_METER = 39.37;
-
     // units are pixels
     // calibration is for Logitech C920 webcam at 1920 x 1080
     final double fx = 1387.853; // focal length x
@@ -114,9 +112,9 @@ public abstract class AprilTagDetect extends BaseAutonomous {
     // displays tag details
     public void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format(Locale.US, "Detected tag ID: %d", detection.id));
-        telemetry.addLine(String.format(Locale.US, "X distance: %d inches", (int) (detection.pose.x * INCHES_PER_METER)));
-        telemetry.addLine(String.format(Locale.US, "Y Distance: %d inches", (int) (detection.pose.y * INCHES_PER_METER)));
-        telemetry.addLine(String.format(Locale.US, "Z Distance: %d inches", (int) (detection.pose.z * INCHES_PER_METER)));
+        telemetry.addLine(String.format(Locale.US, "X distance: %d inches", (int) (detection.pose.x * Constants.INCHES_PER_METER)));
+        telemetry.addLine(String.format(Locale.US, "Y Distance: %d inches", (int) (detection.pose.y * Constants.INCHES_PER_METER)));
+        telemetry.addLine(String.format(Locale.US, "Z Distance: %d inches", (int) (detection.pose.z * Constants.INCHES_PER_METER)));
         telemetry.addLine(String.format(Locale.US, "Yaw Rotation: %d degrees", (int) (Math.toDegrees(detection.pose.yaw))));
         telemetry.addLine(String.format(Locale.US, "Pitch Rotation: %d degrees", (int) (Math.toDegrees(detection.pose.pitch))));
         telemetry.addLine(String.format(Locale.US, "Roll Rotation: %d degrees", (int) (Math.toDegrees(detection.pose.roll))));
