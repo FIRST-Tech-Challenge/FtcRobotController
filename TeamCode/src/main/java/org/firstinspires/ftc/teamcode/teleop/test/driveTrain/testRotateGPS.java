@@ -47,11 +47,10 @@ public class testRotateGPS extends OpMode{
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
-        int[] clicksArr = getClicks(0, 360);
+        int[] clicksArr = getClicks(0, 180);
         distanceClicks = clicksArr[0];
         rotClicks = clicksArr[1];
 
-        posSystem.setGoodGapw(false);
         drive(distanceClicks, rotClicks);
     }
 
@@ -97,6 +96,8 @@ public class testRotateGPS extends OpMode{
         telemetry.addData("HashPosPrev TopR", posSystem.prevMotorClicks.get("topR"));
         telemetry.addData("HashPos BotR", posSystem.motorClicksPose.get("botR"));
         telemetry.addData("HashPosPrev BotR", posSystem.prevMotorClicks.get("botR"));
+        telemetry.addData("topR isBusy", robot.topR.isBusy());
+        telemetry.addData("botR isBusy", robot.botR.isBusy());
         telemetry.update();
     }
 
@@ -123,29 +124,22 @@ public class testRotateGPS extends OpMode{
     }
 
     void DriveTrainPowerEncoder(){
-        if (posSystem.goodGapw){
-            posSystem.calculatePos();
-        } else{
-            if (!robot.botR.isBusy() && robot.topR.isBusy()){
-                posSystem.calculatePos();
-            }
-        }
-
-
-//        robot.botL.setPower(0.2);
-//        robot.topL.setPower(0.2);
+        robot.botL.setPower(0.2);
+        robot.topL.setPower(0.2);
         robot.botR.setPower(0.2);
         robot.topR.setPower(0.2);
+
+        posSystem.calculatePos();
     }
 
     public void drive(int distanceClicks, int rotClicks){
-//        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
-//        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - distanceClicks + rotClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + distanceClicks + rotClicks);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - distanceClicks + rotClicks);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + distanceClicks + rotClicks);
 
-//        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
