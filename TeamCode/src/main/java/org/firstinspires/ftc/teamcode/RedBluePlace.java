@@ -22,14 +22,14 @@ public class RedBluePlace extends DriveMethods {
         clawClamp();
         waitForStart();
 
-//        GoToHeight(1950);
+        GoToHeight(1950);
         driveForDistance(0.3, Direction.FORWARD, 0.3, 0);
         sleep(500);
         clawRelease();
         sleep(1000);
         driveForDistance(0.3, Direction.BACKWARD, 0.5, 0);
 
-        //GoToHeight(0);
+        GoToHeight(0);
 
         driveForDistance(0.5, Direction.LEFT, 0.5, 0);
 

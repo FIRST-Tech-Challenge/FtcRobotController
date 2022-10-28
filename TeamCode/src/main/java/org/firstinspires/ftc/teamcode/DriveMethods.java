@@ -312,12 +312,7 @@ public class DriveMethods extends LinearOpMode{
                 // targetZ = getCurrentZ();
 
                 break;
-            default:
-                motorFL.setPower(power);
-                motorBL.setPower(power);
-                motorFR.setPower(power);
-                motorBR.setPower(power);
-                break;
+
         }
         /*
         if(rotateToTargetRotation) {

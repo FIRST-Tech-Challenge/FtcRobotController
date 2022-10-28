@@ -23,6 +23,8 @@ public class Meet0Teleop extends DriveMethods {
         telemetry.update();
 
         initMotorsBlue();
+        motorSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
@@ -84,10 +86,15 @@ public class Meet0Teleop extends DriveMethods {
             }
 
             if(gamepad2.left_stick_y != 0){
-                slideTarget += (int)-gamepad2.left_stick_y*25;
-                aggressiveness = 2500;
-                sleep(50);
+                if(slideTarget < 100){
+
+                }else {
+                    slideTarget += (int) -gamepad2.left_stick_y * 25;
+                    aggressiveness = 2500;
+                    sleep(50);
+                }
             }
+
 
             slideDifference = (slideTarget - Math.abs(motorSlide.getCurrentPosition()));
 
