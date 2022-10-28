@@ -70,7 +70,7 @@ public class AutoOpMode extends LinearOpMode{
             }
              */
             //driveTrain.getLocalizer().setPoseEstimate(startPose);
-
+            //buildAuto();
 
            //autonomousController.runAutoControl();
 
@@ -137,6 +137,9 @@ public class AutoOpMode extends LinearOpMode{
             //GameField.currentPose = driveTrain.getPoseEstimate();
             //GameField.poseSetInAutonomous = true;
         }
+
+        TrajectorySequence trajOffWallCone;
+
         /**
          * Safe method to wait so that stop button is also not missed
          * @param time time in ms to wait
