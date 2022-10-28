@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 
@@ -12,13 +12,14 @@ import java.util.EnumMap;
 /**
  * Drives a pushbot with teleop control.
  */
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum", group="TeleOp")
+
+@TeleOp(name = "Mecanum", group="TeleOp")
 public class TeleOp extends BaseOpMode {
 
     private DriveSystem driveSystem;
 
     /**
-     * Initializes a pushbot setup
+     *
      */
     public void init() {
         // Set up drive system
@@ -51,14 +52,17 @@ public class TeleOp extends BaseOpMode {
 
         if (gamepad1.a) {
             // Move Bar to Low Position
+
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
+
         }
 
         if (gamepad1.y) {
             // Move Bar to High Position
+
         }
 
         if (gamepad1.x) {
