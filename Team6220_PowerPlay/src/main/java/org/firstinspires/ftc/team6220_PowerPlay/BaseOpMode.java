@@ -66,7 +66,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
         //init turntable and slide motors
-        motorTurnTable = hardwareMap.dcMotor.get("motorTurnTable");
+        //motorTurnTable = hardwareMap.dcMotor.get("motorTurnTable");
 
         //init servo
         servoGrabber = hardwareMap.servo.get("servoGrabber");
@@ -84,6 +84,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
+    boolean turnFlag = false; // Flag to say whether we should disable the correction system
 
     public void driveRobot(double x, double y, double t)  {
 
@@ -91,9 +92,12 @@ abstract public class BaseOpMode extends LinearOpMode {
         telemetry.addData("t1=", t);//temp
         //read imu when turning (when t != 0)
 
-        boolean isTurning = t != 0;
-        if (isTurning) {
-            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        boolean isTurning = t != 0; // Should we disable the correction based on whether the robot is turning because of user input
+        if (isTurning || turnFlag) {
+            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // Set original angle
+            if(!turnFlag) { // If the robot is turning because of user input and the disable flag is false
+                turnFlag = true; // Set to true
+            }
         //otherwise read imu for correction
         } else {
             //obtain the current angle's error from the original angle
@@ -112,6 +116,11 @@ abstract public class BaseOpMode extends LinearOpMode {
             t = -correctionConstant * angleError;
         }
 
+        if(Math.abs(imu.getAngularVelocity().zRotationRate) < 5) { // If the rotation rate is low,
+            // then that means all the momentum has left the robot's turning and can therefore turn the correction back on
+            turnFlag = false;
+        }
+
         telemetry.addData("t2=", t);//temp
         telemetry.addLine("hello, this is cool!");//temp
         telemetry.update();//temp
@@ -128,9 +137,8 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setPower(speedBL);
         motorBR.setPower(speedBR);
 
-        if(isTurning) {
-            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        }
+        telemetry.addData("IMU disabled flag", turnFlag);
+        telemetry.addData("z rot vel", imu.getAngularVelocity().zRotationRate);
 
     }
 
