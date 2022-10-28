@@ -18,6 +18,13 @@ import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 @TeleOp(name="Linear Base Drive Test", group="Drive")
 //@Disabled
 public class LinearBaseDrive extends OpMode{
+    public enum ControllerType{
+        CONTOLLER,
+        BUTTON,
+        NOT_INITIALIZED
+    }
+    ControllerType controllerType = ControllerType.NOT_INITIALIZED;
+
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
@@ -127,13 +134,30 @@ public class LinearBaseDrive extends OpMode{
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
 
-        kinematics.getGamepad(left_stick_x, left_stick_y, right_stick_x, right_stick_y);
+        if (x.getState() == Button.State.TAP) controllerType = ControllerType.CONTOLLER;
+        else if (y.getState() == Button.State.TAP) controllerType = ControllerType.BUTTON;
 
-        kinematics.setPos();
+        switch(controllerType){
+            case CONTOLLER:
+                kinematics.getGamepad(left_stick_x, left_stick_y, right_stick_x, right_stick_y);
 
-        kinematics.logic();
+                kinematics.setPos();
 
-        reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
+                kinematics.logic();
+                break;
+
+            case BUTTON:
+                kinematics.getGamepad(0.5, 0.5, 0, 0);
+
+                kinematics.setPos();
+
+                kinematics.logic();
+                break;
+        }
+
+
+
+//        reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
     }
 
 
