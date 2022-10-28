@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
@@ -52,7 +53,7 @@ public class BaseStateMachine extends BaseAutonomous {
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
         pixycam = hardwareMap.get(PixyCam.class, "pixy");
         junctionPath = From.START;
-        newState(State.REVERSE_JUNCTION);
+        newState(State.GO_GET_CONE);
     }
 
     @Override
@@ -137,11 +138,6 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void park() {
         if (step == 0) {
-            if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.3)) {
-                step++;
-            }
-        }
-        if (step == 1) {
             if (teamAsset == Sleeve.BRIAN ||
                     (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) ||
                     (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3))) {
@@ -160,7 +156,6 @@ public class BaseStateMachine extends BaseAutonomous {
                 }
                 if (step == 1) {
                     if (driveSystem.turn(-45, 0.2)) {
-                        step = 0;
                         newState(State.ALIGN_WITH_POLE);
                     }
                 }
@@ -173,17 +168,12 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void reverseJunction() {
         if(step == 0){
-            if (driveSystem.driveToPosition(40, DriveSystem.Direction.FORWARD, 0.4)){
+            if (driveSystem.driveToPosition(80, DriveSystem.Direction.FORWARD, 0.4)){
                 step++;
             }
         }
         if (step == 1) {
             if (driveSystem.turn(45, 0.2)) {
-                step++;
-            }
-        }
-        if (step == 2) {
-            if (driveSystem.driveToPosition(450, DriveSystem.Direction.FORWARD, 0.4)) {
                 newState(State.PARK);
             }
         }
@@ -200,10 +190,12 @@ public class BaseStateMachine extends BaseAutonomous {
             driveSystem.setMotorPower(0);
             return true;
         }
+        encode = driveSystem.getCurrentPosition();
         return false;
     }
 
     private boolean alignY(int desiredWidth){
+        driveSystem.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int align = pixycam.alignY(desiredWidth);// find actual desired width
         if (align > 5) {
             driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3);
@@ -211,6 +203,7 @@ public class BaseStateMachine extends BaseAutonomous {
             driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.3);
         } else {
             driveSystem.setMotorPower(0);
+            encode = driveSystem.getCurrentPosition() - encode;
             return true;
             }
         return false;
@@ -218,20 +211,19 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void getCone(){
         if(step == 0){
-            if(driveSystem.driveToPosition(60, DriveSystem.Direction.FORWARD, 0.3)){
+            if(driveSystem.driveToPosition(encode, DriveSystem.Direction.FORWARD, 0.3)){
                 step++;
             }
         }
         if(step == 1){
-            if(driveSystem.turn(135, 0.5)){
+            if(driveSystem.turn(135, 0.3)){
                 step++;
             }
 
         }
         if(step == 2) {
-            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.5)) {
-                step = 0;
-                newState(State.END_STATE);
+            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.3)) {
+                newState(State.ALIGN_WITH_CONE);
             }
         }
     }
@@ -244,10 +236,8 @@ public class BaseStateMachine extends BaseAutonomous {
         }
         if(step == 1){
             if(alignY(desiredWidth)){
-                step = 0;
                 newState(nextState);
             }
         }
     }
-
 }
