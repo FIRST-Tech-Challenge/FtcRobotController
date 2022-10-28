@@ -20,7 +20,10 @@ public class DriveConstants {
     public static final double TICKS_PER_REV = 537.7;
     public static final double MAX_RPM = 300;
 
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(10, 2, 0,
+//    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(10, 2, 0,
+//            getMotorVelocityF((MAX_RPM / 60) * TICKS_PER_REV));
+
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(5, 0.5, 0,
             getMotorVelocityF((MAX_RPM / 60) * TICKS_PER_REV));
 
     public static double WHEEL_RADIUS = 1.89; // in
@@ -52,8 +55,12 @@ public class DriveConstants {
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
      * the constraints should never exceed ~80% of the robot's actual capabilities.
      */
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 3, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 2, 0);
+    // public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 3, 0);
+    //public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 2, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(.01, .001, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(.01, .001, 0);
+
+    public static PIDCoefficients HEADING_PID_TELEOP = new PIDCoefficients(2, .2, 0);
 
     public static double MAX_VEL   = 45;  // in/s  100% = 58 IPS
     public static double MAX_ACCEL = 40; // in/s/s

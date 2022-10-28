@@ -25,7 +25,11 @@ public class GFORCE_AUTO extends LinearOpMode {
         HubPerformance.enable(hardwareMap);
 
         // Initialize GFORCE_KiwiDrive
-        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
+        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(this);
+
+        // We want to turn off velocity control for teleop
+        // Velocity control per wheel is not necessary outside of motion profiled auto
+        // drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
@@ -35,6 +39,8 @@ public class GFORCE_AUTO extends LinearOpMode {
 
         telemetry.addData("Trajectory", "press X or B button to select.");
         telemetry.update();
+
+        telemetry.setMsTransmissionInterval(50);
 
         while (opModeInInit()) {
             // Select the desired trajectory

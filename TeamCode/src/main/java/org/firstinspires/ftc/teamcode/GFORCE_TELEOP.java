@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID_TELEOP;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
 
 import com.acmerobotics.roadrunner.control.PIDFController;
@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 
 /**
@@ -24,9 +23,9 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 public class GFORCE_TELEOP extends LinearOpMode {
 
     // Joystick constants
-    final double AXIAL_RATE = 0.8;
-    final double LATERAL_RATE = 0.8;
-    final double YAW_RATE = 0.1;
+    final double AXIAL_RATE = 0.9;
+    final double LATERAL_RATE = 0.9;
+    final double YAW_RATE = 0.25;
 
     private Elevator    elevator;
     private ConeTracker coneTracker;
@@ -36,7 +35,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
-    private PIDFController headingController = new PIDFController(HEADING_PID);
+    private PIDFController headingController = new PIDFController(HEADING_PID_TELEOP);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,10 +46,10 @@ public class GFORCE_TELEOP extends LinearOpMode {
         double manualRotate;
 
         headingController.setInputBounds(0.0, 2.0 * Math.PI);
-        headingController.setOutputBounds(-MAX_ANG_VEL/4.0, MAX_ANG_VEL/4.0);
+        headingController.setOutputBounds(-MAX_ANG_VEL, MAX_ANG_VEL);
 
         // Initialize robot hardware classes GFORCE_KiwiDrive
-        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
+        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(this);
         elevator = new Elevator(this);
         coneTracker = new ConeTracker(this);
 
@@ -85,7 +84,9 @@ public class GFORCE_TELEOP extends LinearOpMode {
                     speed = -0.05;
                 }
 
+                lockNewHeading(drive.getExternalHeading());
                 drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
+
             } else {
                 // Read pose and use it to convery joystick inputs to Field Centric.
                 Pose2d poseEstimate = drive.getPoseEstimate();
@@ -112,6 +113,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 }
 
                 // are we turning or should heading be locked.
+                drive.notTurning();
                 if (Math.abs(manualRotate) < 0.01) {
                     if (!headingLock && drive.notTurning()) {
                         lockNewHeading(drive.getExternalHeading());

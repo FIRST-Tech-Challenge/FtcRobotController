@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.GYRO_SYNC_GAIN;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.GYRO_SYNC_INTERVAL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID_TELEOP;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
@@ -32,9 +33,9 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.acmerobotics.roadrunner.util.Angle;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
@@ -62,9 +63,10 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     public static double OMEGA_WEIGHT = 1.0;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
+    private LinearOpMode myOpMode;
 
-    final private double TURN_RATE_TC = 0.6;
-    final private double STOP_TURNRATE = 0.020;
+    final private double TURN_RATE_TC = 0.9;
+    final private double STOP_TURNRATE = 0.010;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
@@ -83,23 +85,24 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
     private NanoClock gyroClock = NanoClock.system();
     private double  nextGyroSync = 0;
 
-    public GFORCE_KiwiDrive(HardwareMap hardwareMap) throws InterruptedException{
+    public GFORCE_KiwiDrive(LinearOpMode opMode) throws InterruptedException{
         super(kV, kA, kStatic, TRACK_WIDTH);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+        myOpMode = opMode;
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID_TELEOP,
                 new Pose2d(0.5, 0.5, Math.toRadians(0.5)), 0.5);
 
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        LynxModuleUtil.ensureMinimumFirmwareVersion(myOpMode.hardwareMap);
+        batteryVoltageSensor = myOpMode.hardwareMap.voltageSensor.iterator().next();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = myOpMode.hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        left  = hardwareMap.get(DcMotorEx.class, "left");
-        rear  = hardwareMap.get(DcMotorEx.class, "back");
-        right = hardwareMap.get(DcMotorEx.class, "right");
+        left  = myOpMode.hardwareMap.get(DcMotorEx.class, "left");
+        rear  = myOpMode.hardwareMap.get(DcMotorEx.class, "back");
+        right = myOpMode.hardwareMap.get(DcMotorEx.class, "right");
 
         motors = Arrays.asList(left, rear, right);
 
@@ -124,7 +127,7 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
         }
 
         // Set Localizer
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(new StandardTrackingWheelLocalizer(myOpMode.hardwareMap));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
@@ -284,10 +287,10 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
         AngularVelocity velocities;
         velocities = imu.getAngularVelocity();
-        double rate = velocities.xRotationRate;
+        double rate = velocities.zRotationRate;
 
         filteredTurnRate += ((rate - filteredTurnRate) * TURN_RATE_TC);
-        // myOpMode.telemetry.addData("Turn Rate", "%6.3f", filteredTurnRate);
+        myOpMode.telemetry.addData("TurnRate", "%6.4f", filteredTurnRate);
 
         return (Math.abs(filteredTurnRate) < STOP_TURNRATE);
     }
