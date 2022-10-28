@@ -25,7 +25,6 @@ public class LinearGPS {
         this.robot = robot;
         driveType = k;
 
-
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
         motorClicksPose.put("botR", robot.botR.getCurrentPosition());
         motorClicksPose.put("topL", robot.topL.getCurrentPosition());
