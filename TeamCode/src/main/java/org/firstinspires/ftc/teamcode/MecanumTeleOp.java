@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="DriveOfficial")
 public class MecanumTeleOp extends LinearOpMode {
@@ -11,6 +12,17 @@ public class MecanumTeleOp extends LinearOpMode {
     private boolean rounded = true;//toggle to make it more exact
     private final double round_coefficient = 10;//round to the nearest []th
 
+    public double eerp(double t, double degree, double a, double b){
+        return a + (b - a) * Math.pow(t, degree);
+    }
+    public double deadband(double deadzone, double minval, double input, double degree){
+        int sign =  input >= 0 ? 1 : -1;
+        if(Math.abs(input) <= deadzone){
+            return 0;
+        } else {
+            return sign * eerp(Math.abs(input), degree, minval, 1);
+        }
+    }
     @Override
     public void runOpMode() throws InterruptedException {
         //Figure out if we're left or right
@@ -65,64 +77,41 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.mecanum(power, strafe, turn);
             }
 
-            //Lift Stuff
-            if(gamepad2.back)//turn off liftAuton
-            {
-                liftAuton = false;
+            if(gamepad1.square){
+                robot.claw(true);
             }
-            if(gamepad2.x)//mid
-            {
-                // motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                targetLiftPosition = 1;
-                liftAuton = true;
-                // motorLift.setTargetPosition(targetLiftPosition);
+            if(gamepad1.triangle){
+                robot.claw(false);
             }
-            if(gamepad2.y)//low
-            {
-                // motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                targetLiftPosition = 2;
-                liftAuton = true;
-                // motorLift.setTargetPosition(targetLiftPosition);
-            }
-            /**
-             double sigma = 1;
-             if(liftAuton && Math.abs(motorLift.getCurrentPosition() - targetLiftPosition) <= sigma)
-             {
-             liftAuton = false;
-             }
-             **/
-            if(Math.abs(gamepad2.right_stick_y) > 0.1)
-            {
-                liftAuton = false;
-                // motorLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                // motorLift.setPower(-gamepad2.right_stick_y*0.40);
-            }
-            else if(liftAuton)
-            {
-                // motorLift.setPower(0.75);
-            }
-            else if(liftToggled)
-            {
-                // motorLift.setTargetPosition(motorLift.getCurrentPosition());
-                // motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            if(gamepad1.dpad_up){
+                if(robot.motorLiftRight.getCurrentPosition()<100000){
+                    robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.motorLiftRight.setPower(0.5);
+                    robot.motorLiftLeft.setPower(0.5);
+                }
+            }
+            else if(gamepad1.dpad_down){
+                if(robot.motorLiftRight.getCurrentPosition()>-100000){
+                    robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    robot.motorLiftRight.setPower(-0.2);
+                    robot.motorLiftLeft.setPower(-0.2);
+                }
+            }
+            else{
+                robot.motorLiftRight.setPower(0);
+                robot.motorLiftLeft.setPower(0);
+                robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                robot.motorLiftLeft.setTargetPosition(robot.motorLiftLeft.getCurrentPosition());
+
+                //robot.motorLiftRight.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
 
             }
-            // servoIntake.setPower(gamepad2.right_trigger > 0.80 ? 0.79 : gamepad2.right_trigger);
-            // servoIntake.setPower(gamepad2.left_trigger>0.80 ? -0.79 : -gamepad2.left_trigger);
+            //robot.moveLift(gamepad1.dpad_up);
 
-//            if(gamepad1.b) {
-//                motorFrontLeft.setPower(200);
-//            }
-//            if(gamepad1.a) {
-//                motorBackLeft.setPower(200);
-//            }
-//            if(gamepad1.x) {
-//                motorFrontRight.setPower(200);
-//            }
-//            if(gamepad1.y) {
-//                motorBackRight.setPower(200);
-//            }
 
             telemetry.addData("gamepad trigger", gamepad2.right_trigger);
             telemetry.addData("Power: ", power);
@@ -133,6 +122,7 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Lift Brake Toggled: ", liftToggled);
             //telemetry.addData("LiftAuton On?: ", liftAuton);
             //telemetry.addData("LiftAuton: ", targetLiftPosition);
+            telemetry.addData("Lift Position", robot.motorLiftRight.getCurrentPosition());
             telemetry.update();
         }
     }

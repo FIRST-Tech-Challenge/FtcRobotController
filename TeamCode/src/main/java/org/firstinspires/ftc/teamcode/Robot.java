@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -63,6 +64,7 @@ public class Robot extends MecanumDrive {
     public DcMotorEx leftRear;
     public DcMotorEx rightFront;
     public DcMotorEx rightRear;
+    public Servo intake;
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
@@ -103,7 +105,8 @@ public class Robot extends MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft" +
+                "");
         leftFront.setDirection(DcMotor.Direction.REVERSE); //motor direction
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Braking behavior
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //We don't want to use PID for the motors using the encoders
@@ -122,6 +125,18 @@ public class Robot extends MecanumDrive {
         rightRear.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
+        motorLiftRight.setDirection(DcMotor.Direction.FORWARD);
+        motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
+        motorLiftLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        intake = hardwareMap.get(Servo.class, "intake");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -178,6 +193,15 @@ public class Robot extends MecanumDrive {
         leftRear.setPower(backLeftPower);
         rightFront.setPower(frontRightPower);
         rightRear.setPower(backRightPower);
+    }
+
+    public void claw(boolean open){
+        if(open){
+            intake.setPosition(0.4);
+        }
+        else{
+            intake.setPosition(0.78);
+        }
     }
 
     /* ---------- ROADRUNNER METHODS ---------- */

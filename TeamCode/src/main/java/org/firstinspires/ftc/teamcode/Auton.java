@@ -21,7 +21,7 @@ public class Auton {
 
     }
 
-    public void runAuton(SampleMecanumDrive drive)
+    public void runAuton(Robot drive)
     {
 
         int angle = -45;
