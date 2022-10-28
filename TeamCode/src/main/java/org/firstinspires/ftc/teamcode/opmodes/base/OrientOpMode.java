@@ -34,7 +34,7 @@ public abstract class OrientOpMode extends BaseOpMode {
 
     public void loop(){
         block = pixyCam.GetBiggestBlock();
-        offset = pixyCam.offSetX();
+        offset = pixyCam.offSetX(3);
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
         telemetry.addData("block", s);

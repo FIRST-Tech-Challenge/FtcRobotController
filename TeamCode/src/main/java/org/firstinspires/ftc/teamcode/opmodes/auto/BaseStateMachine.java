@@ -18,6 +18,8 @@ public class BaseStateMachine extends BaseAutonomous {
         PARK,
         ALIGN_WITH_POLE,
         END_STATE,
+        GO_GET_CONE,
+        ALIGN_WITH_CONE,
         REVERSE_JUNCTION
     }
 
@@ -35,6 +37,7 @@ public class BaseStateMachine extends BaseAutonomous {
     private From junctionPath;
     private int step = 0;
     private int currentPos = 0;
+    private int encode;
     private PixyCam pixycam;
 
     private final static String TAG = "BaseStateMachine";// Logging tag
@@ -49,7 +52,7 @@ public class BaseStateMachine extends BaseAutonomous {
         vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
         pixycam = hardwareMap.get(PixyCam.class, "pixy");
         junctionPath = From.START;
-        newState(State.IDENTIFY_TARGET);
+        newState(State.REVERSE_JUNCTION);
     }
 
     @Override
@@ -101,16 +104,21 @@ public class BaseStateMachine extends BaseAutonomous {
                 drive_to_junction();
                 break;
             case ALIGN_WITH_POLE:
-                align();
+                align(3, 45, State.REVERSE_JUNCTION);
                 break;
             case REVERSE_JUNCTION:
                 reverseJunction();
                 break;
+            case GO_GET_CONE:
+                getCone(); //dependent on team color
+                break;
+            case ALIGN_WITH_CONE:
+                align(1, 80, State.END_STATE);
             case PARK:
                 park();
                 break;
             case END_STATE:
-                Log.d("parked", teamAsset.toString());
+                //Log.d("parked", teamAsset.toString());
                 //"david" left two squares, "brain" center two, "7330" right two squares
 
         }
@@ -152,6 +160,7 @@ public class BaseStateMachine extends BaseAutonomous {
                 }
                 if (step == 1) {
                     if (driveSystem.turn(-45, 0.2)) {
+                        step = 0;
                         newState(State.ALIGN_WITH_POLE);
                     }
                 }
@@ -163,20 +172,25 @@ public class BaseStateMachine extends BaseAutonomous {
     }
 
     private void reverseJunction() {
-        if (step == 0) {
-            if (driveSystem.turn(45, 0.2)) {
-                step--;
+        if(step == 0){
+            if (driveSystem.driveToPosition(40, DriveSystem.Direction.FORWARD, 0.4)){
+                step++;
             }
         }
         if (step == 1) {
+            if (driveSystem.turn(45, 0.2)) {
+                step++;
+            }
+        }
+        if (step == 2) {
             if (driveSystem.driveToPosition(450, DriveSystem.Direction.FORWARD, 0.4)) {
                 newState(State.PARK);
             }
         }
     }
 
-    private void align() {
-        int offset = pixycam.offSetX();
+    private boolean alignX(int sign) {
+        int offset = pixycam.offSetX(sign);
         telemetry.addData("offset", offset);
         if (offset > 20) {
             driveSystem.turn(60, 0.5);
@@ -184,8 +198,56 @@ public class BaseStateMachine extends BaseAutonomous {
             driveSystem.turn(-60, 0.5);
         } else {
             driveSystem.setMotorPower(0);
-            newState(State.END_STATE);
+            return true;
         }
-
+        return false;
     }
+
+    private boolean alignY(int desiredWidth){
+        int align = pixycam.alignY(desiredWidth);// find actual desired width
+        if (align > 5) {
+            driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3);
+        } else if (align < -5) {
+            driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.3);
+        } else {
+            driveSystem.setMotorPower(0);
+            return true;
+            }
+        return false;
+    }
+
+    private void getCone(){
+        if(step == 0){
+            if(driveSystem.driveToPosition(60, DriveSystem.Direction.FORWARD, 0.3)){
+                step++;
+            }
+        }
+        if(step == 1){
+            if(driveSystem.turn(135, 0.5)){
+                step++;
+            }
+
+        }
+        if(step == 2) {
+            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.5)) {
+                step = 0;
+                newState(State.END_STATE);
+            }
+        }
+    }
+
+    public void align(int sign, int desiredWidth, State nextState){
+        if(step == 0){
+            if(alignX(sign)){
+                step++;
+            }
+        }
+        if(step == 1){
+            if(alignY(desiredWidth)){
+                step = 0;
+                newState(nextState);
+            }
+        }
+    }
+
 }
