@@ -19,8 +19,6 @@ public class GlobalPosSystem {
 
     HardwareDrive robot;
 
-    public boolean goodGapw = true;
-
     public GlobalPosSystem(HardwareDrive robot){
         this.robot = robot;
 
@@ -63,8 +61,10 @@ public class GlobalPosSystem {
         rotateL *= constants.DEGREES_PER_CLICK;
 
 
-        double rotationalDegrees = (rotateL + rotateR) / 2.0;
-        double translationalInches = (translateL + translateR) / 2.0;
+//        double rotationalDegrees = (rotateL + rotateR) / 2.0;
+//        double translationalInches = (translateL + translateR) / 2.0;
+        double rotationalDegrees = rotateL; //right module has lots of slip currently, so we're just going to test the left module.
+        double translationalInches = translateL;
         double currentAngle = clamp(rotationalDegrees + positionArr[2]);
         currentAngle = Math.toRadians(currentAngle);
 
@@ -125,9 +125,6 @@ public class GlobalPosSystem {
         return (Math.abs(positionArr[3]) <= 1);
     }
 
-    public void setGoodGapw(boolean t){
-        goodGapw = t;
-    }
 //    public void hardResetGPS(){
 //        //Reset GPS
 //        for (int i = 0; i < 4; i++){

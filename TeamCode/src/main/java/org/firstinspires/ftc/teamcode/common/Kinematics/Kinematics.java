@@ -28,8 +28,8 @@ public class Kinematics {
     protected int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
 
     //target clicks
-    protected int rotClicks = 0;
-    protected int spinClicks = 0;
+    public int rotClicks = 0;
+    public int spinClicks = 0; //make protected later
 
     //current orientation
     protected GlobalPosSystem posSystem;

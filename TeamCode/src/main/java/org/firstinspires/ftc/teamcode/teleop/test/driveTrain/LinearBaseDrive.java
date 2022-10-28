@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.base;
+package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
 
 import android.view.View;
 
@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTest;
 import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -14,14 +15,14 @@ import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Base Drive", group="Drive")
+@TeleOp(name="Linear Base Drive Test", group="Drive")
 //@Disabled
-public class BaseDrive extends OpMode{
+public class LinearBaseDrive extends OpMode{
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
     GlobalPosSystem posSystem;
-    TeleopKinematics kinematics;
+    LinearKinematicsTest kinematics;
 
     private ElapsedTime runtime = new ElapsedTime();
     private double[] posData = new double[4];
@@ -40,20 +41,22 @@ public class BaseDrive extends OpMode{
 
     @Override
     public void init() { //When "init" is clicked
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         robot.init(hardwareMap);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
 
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new TeleopKinematics(posSystem);
+        kinematics = new LinearKinematicsTest(posSystem);
         posSystem.grabKinematics(kinematics);
     }
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
@@ -77,15 +80,21 @@ public class BaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-        //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
         for(int i = 0; i < 4; i++){
             posData[i] = posSystem.getPositionArr()[i];
         }
-        telemetry.addData("Xpos", posData[0]);
-        telemetry.addData("Ypos", posData[1]);
+        telemetry.addData("X", posData[0]);
+        telemetry.addData("Y", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
-        telemetry.addData("Drive Type", kinematics.getDriveType());
+        telemetry.addData("Power Top", kinematics.getPower()[0]);
+        telemetry.addData("Power Bottom", kinematics.getPower()[1]);
+        telemetry.addData("TargetW", kinematics.getTargetW());
+        telemetry.addData("Direction", kinematics.getDirectionW());
+        telemetry.addData("Turn Amount", kinematics.getTurnAmount());
+        telemetry.addData("Optimized Target", kinematics.getOptimizedTargetW());
+        telemetry.addData("Rot Clicks", kinematics.rotClicks);
+        telemetry.addData("Spin clicks", kinematics.spinClicks);
         telemetry.update();
     }
 
@@ -163,7 +172,7 @@ public class BaseDrive extends OpMode{
 
     private void reset(){
 
-     }
+    }
 
     /*
      * Code to run ONCE after the driver hits STOP

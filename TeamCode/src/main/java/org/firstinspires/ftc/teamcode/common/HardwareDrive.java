@@ -140,7 +140,7 @@ public class HardwareDrive
 
         } else {
             botL.setPower(0);
-           topL.setPower(0);
+            topL.setPower(0);
             botR.setPower(0);
             topR.setPower(0);
         }
