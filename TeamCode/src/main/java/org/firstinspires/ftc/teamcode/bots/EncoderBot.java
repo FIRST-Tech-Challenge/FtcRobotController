@@ -31,6 +31,11 @@ public class EncoderBot {
     protected double FRONT_RIGHT_POWER_FACTOR = 0.5;
     protected double BACK_RIGHT_POWER_FACTOR = 0.5;
 
+    private static final int LIFT_POSITION_LOW_JUNCTION = 1530;
+    private static final int LIFT_POSITION_MED_JUNCTION = 2780;
+    private static final int LIFT_POSITION_GROUND_JUNCTION = 200;
+    private static final int LIFT_POSITION_DOWN = 0;
+
     protected HardwareMap hwMap = null;
     protected Telemetry telemetry;
     protected LinearOpMode owner = null;
@@ -62,11 +67,19 @@ public class EncoderBot {
         this.telemetry = t;
 
         try {
+            liftMotor = hwMap.get(DcMotorEx.class, LIFT_MOTOR);
+            telemetry.addData("LiftMotor", "LiftMotor Initialized");
+        } catch (Exception ex) {
+            //issues accessing drive resources
+            telemetry.addData("LiftMotor", "LiftMotor culd not be initialized");
+            throw new Exception("Issues accessing lift Motor. Check the controller config", ex);
+        }
+
+        try {
             frontLeft = hwMap.get(DcMotorEx.class, LEFT_FRONT);
             frontRight = hwMap.get(DcMotorEx.class, RIGHT_FRONT);
             backLeft = hwMap.get(DcMotorEx.class, LEFT_BACK);
             backRight = hwMap.get(DcMotorEx.class, RIGHT_BACK);
-            liftMotor = hwMap.get(DcMotorEx.class, LIFT_MOTOR);
 
             resetEncoders();
             setUpMotors();
@@ -145,7 +158,7 @@ public class EncoderBot {
 
         if (liftMotor != null) {
             liftMotor.setDirection(DcMotor.Direction.REVERSE);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -182,7 +195,7 @@ public class EncoderBot {
         telemetry.addData("Motors", "LeftBack from %7d", backLeft.getCurrentPosition());
         telemetry.addData("Motors", "RightFront from %7d", frontRight.getCurrentPosition());
         telemetry.addData("Motors", "RightBack from %7d", backRight.getCurrentPosition());
-        telemetry.addData("Motors", "Lift %7d", liftMotor.getCurrentPosition());
+        telemetry.addData("Motors", "Lift %7d", this.liftMotor.getCurrentPosition());
     }
 
     @BotAction(displayName = "Grab Cone", defaultReturn = "", isTerminator = false)
@@ -227,27 +240,39 @@ public class EncoderBot {
     }
 
     public void retractLiftToZero() {
-
+        moveLiftToPosition(LIFT_POSITION_DOWN);
     }
 
     public void extendLiftJunctionGround() {
-
+        moveLiftToPosition(LIFT_POSITION_GROUND_JUNCTION);
     }
 
     public void extendLiftJunctionOne() {
-
+        moveLiftToPosition(LIFT_POSITION_LOW_JUNCTION);
     }
 
     public void extendLiftJunctionTwo() {
-
+        moveLiftToPosition(LIFT_POSITION_MED_JUNCTION);
     }
     public void moveLift(int delta) {
-        int currentPos = liftMotor.getCurrentPosition();
+        int currentPos = this.liftMotor.getCurrentPosition();
         int newPos = currentPos + delta;
         newPos = Range.clip(newPos, 0, 3000);
-        liftMotor.setTargetPosition(newPos);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setVelocity(500);
+        this.liftMotor.setTargetPosition(newPos);
+        this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.liftMotor.setVelocity(2000);
+        while(this.isLiftBusy()) {
+            // just wait
+        }
+        stopLift();
+    }
+
+    public void moveLiftToPosition(int position) {
+        telemetry.addData("Lift", "Moving to position %d", position);
+        int newPos = Range.clip(position, 0, 3000);
+        this.liftMotor.setTargetPosition(newPos);
+        this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.liftMotor.setVelocity(1000);
         while(this.isLiftBusy()) {
             // just wait
         }
