@@ -38,6 +38,7 @@ public class GlobalPosSystem {
     }
 
     public void calculatePos(){
+
         updateHash();
 
         //right
