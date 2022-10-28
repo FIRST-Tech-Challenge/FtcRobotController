@@ -67,7 +67,7 @@ public class Crane implements Subsystem {
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1500;
-    public static double BULB_CLOSED_POS = 1250;
+    public static double BULB_CLOSED_POS = 1750;
 
     public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
     public static final double GRIPPER_HEIGHT = 0.23;
@@ -289,7 +289,7 @@ public class Crane implements Subsystem {
 
         Articulation(double shoulderPos, boolean elbowPos) {
             this.shoulderPos = shoulderPos;
-            this.bulbGripped = elbowPos;
+            //this.bulbGripped = elbowPos;
         }
     }
 
@@ -338,6 +338,8 @@ public class Crane implements Subsystem {
              */
 
         }
+        //update the turret's target
+        robot.turret.setTargetHeading(targetTurretAngle);
         if(shoulderActivePID)
             movePIDShoulder(kpShoulder, kiShoulder, kdShoulder, shoulderDirectAnglePos, shoulderTargetPos);
         else
@@ -357,6 +359,7 @@ public class Crane implements Subsystem {
 
     public void adjustTurretAngle(double speed){
         targetTurretAngle = robot.turret.getHeading() + (10 * speed);
+
     }
 
     public void adjustDistance(double speed){
@@ -382,8 +385,6 @@ public class Crane implements Subsystem {
     public double getDistance(){
         return INCHES_PER_METER * getExtendMeters()*Math.cos(Math.toRadians(getShoulderAngle()));
     }
-
-
 
     public boolean setTargets(double x, double y, double z){
         Pose2d robotPos = robot.driveTrain.getPoseEstimate();

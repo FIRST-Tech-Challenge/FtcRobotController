@@ -44,16 +44,14 @@ public class DriverControls {
 
     void joystickDrive() {
 
-        robot.crane.adjustExtend(gamepad1.right_stick_x);
-        robot.crane.adjustShoulder(-gamepad1.right_stick_y);
+        if (notJoystickDeadZone(gamepad1.right_stick_x)) robot.crane.adjustTurretAngle(-gamepad1.right_stick_x);
+        if (notJoystickDeadZone(gamepad1.right_stick_y)) robot.crane.adjustShoulder(-gamepad1.right_stick_y);
 
-        robot.crane.adjustTurretAngle(gamepad1.right_trigger);
-        robot.crane.adjustTurretAngle(-gamepad1.left_trigger);
+        if (gamepad1.right_trigger>.05) robot.crane.adjustExtend(gamepad1.right_trigger);
+        if (gamepad1.left_trigger>.05) robot.crane.adjustExtend(-gamepad1.left_trigger);
 
         if(stickyGamepad1.x)
             robot.crane.toggleGripper();
-
-
 
         //manual override of drivetrain
         if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x))
