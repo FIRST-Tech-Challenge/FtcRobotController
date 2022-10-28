@@ -183,4 +183,9 @@ public class LocalizerCompass implements Localizer {
             heading = (compass.getDirection() + headingOffSet)%360;
         }
     }
+
+    @Override
+    public double getHeading() {
+        return heading;
+    }
 }
