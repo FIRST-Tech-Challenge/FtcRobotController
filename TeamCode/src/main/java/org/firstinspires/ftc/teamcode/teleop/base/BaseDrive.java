@@ -136,101 +136,29 @@ public class BaseDrive extends OpMode{
 
 
     private void setPower(){
-        double[] motorPower = new double[4];
-
-        motorPower[0] = kinematics.getPower()[0];
-        motorPower[1] = kinematics.getPower()[1];
-        motorPower[2] = kinematics.getPower()[2];
-        motorPower[3] = kinematics.getPower()[3];
+        double[] motorPower = kinematics.getPower();
 
         if (motorPower[0] == 0 && motorPower[1] == 0 && motorPower[2] == 0 && motorPower[3] == 0){
             robot.setMotorPower(0);
             return;
         }
 
+        int[] targetClicks = kinematics.getClicks();
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks[2]);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks[3]);
+
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         robot.topL.setPower(motorPower[0]);
         robot.botL.setPower(motorPower[1]);
         robot.topR.setPower(motorPower[2]);
         robot.botR.setPower(motorPower[3]);
     }
-
-
-
-    //!!!!!!!!MOVE THIS STUFF TO TELEOPKINEMATICS AFTER TESTING THAT GPS POS SYSTEM WORKS!!!!!!!!
-    public void setRotateTargetClicks(){
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
-        int posTopR = robot.topR.getCurrentPosition();
-        int posBotR = robot.botR.getCurrentPosition();
-
-        double alpha = 0.5;
-        double beta = 1 - alpha;
-
-        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
-        int distanceTopR =  distanceTopL;
-        int distanceBotR = distanceBotL;
-
-        robot.topL.setTargetPosition(posTopL + distanceTopL);
-        robot.botL.setTargetPosition(posBotL + distanceBotL);
-//        robot.topR.setTargetPosition(posTopR + distanceTopR);
-//        robot.botR.setTargetPosition(posBotR + distanceBotR);
-
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void setSpinTargetClicks(){
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
-        int posTopR = robot.topR.getCurrentPosition();
-        int posBotR = robot.botR.getCurrentPosition();
-
-        double alpha = 0.5;
-        double beta = 1 - alpha;
-
-        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalTopR = rotationalTopL;
-        int rotationalBotR = rotationalBotL;
-
-        robot.topL.setTargetPosition(posTopL + rotationalTopL);
-        robot.botL.setTargetPosition(posBotL + rotationalBotL);
-//        robot.topR.setTargetPosition(posTopR + rotationalTopR);
-//        robot.botR.setTargetPosition(posBotR + rotationalBotR);
-
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void setTargetClicks(){
-        int posBotL = robot.botL.getCurrentPosition();
-        int posTopL = robot.topL.getCurrentPosition();
-
-        double alpha = 0.7;
-        double beta = 1 - alpha;
-
-        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
-
-        int rotationalTopL = (int) (gamepad1.left_stick_x * 100 * alpha);
-        int rotationalBotL = (int) (gamepad1.left_stick_x * 100 * alpha);
-
-        robot.botL.setTargetPosition(posBotL + distanceBotL + rotationalBotL);
-        robot.topL.setTargetPosition(posTopL + distanceTopL + rotationalTopL);
-
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-    }
-
-
 
     private void reset(){
 

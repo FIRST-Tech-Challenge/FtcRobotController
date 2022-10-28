@@ -15,8 +15,10 @@ public class TeleopKinematics extends Kinematics{
 
     private double joystickL = 0.0;
     private double prevJoystickL = 0.0;
+    private int joystickCount = 0;
 
     private boolean firstMovement = true; //true when robot is stopped.  False while it is moving.
+    private boolean setClicksCycle = false;
 
     public TeleopKinematics(GlobalPosSystem posSystem) {
         super(posSystem); //runs Kinematics constructor
@@ -28,7 +30,7 @@ public class TeleopKinematics extends Kinematics{
             else if (shouldSnap()) type = Kinematics.DriveType.SNAP;
             else type = Kinematics.DriveType.LINEAR;
 
-            setSplineReference(); //this is 1 loop off each time?
+//            setSplineReference(); //this is 1 loop off each time?
         } else { //otherwise, spline
             type = Kinematics.DriveType.SPLINE;
         }
@@ -44,6 +46,7 @@ public class TeleopKinematics extends Kinematics{
                 break;
 
             case SNAP:
+                getRotTargetClicks(turnAmountW, turnDirectionW);
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
@@ -69,9 +72,9 @@ public class TeleopKinematics extends Kinematics{
                     leftThrottle = (rotationSwitchMotors == 1 ? 1 : throttle);
                     translateSwitchMotors = 1; //robot is always going to spline forward I think
                     rotationSwitchMotors = 1; //header optimization is not a thing
-                    if (Math.abs(splineReference - posSystem.getPositionArr()[3]) <= constants.degreeTOLERANCE){
-                        rotatePower = counteractSplinePID.update(posSystem.getPositionArr()[3]);
-                    }
+//                    if (Math.abs(splineReference - posSystem.getPositionArr()[3]) <= constants.degreeTOLERANCE){
+//                        rotatePower = counteractSplinePID.update(posSystem.getPositionArr()[3]);
+//                    }
                     if (shouldTableSpin) setTableSpin();
                 } else{
                     type = DriveType.LINEAR;
@@ -99,7 +102,6 @@ public class TeleopKinematics extends Kinematics{
                 break;
         }
 
-        prevJoystickL = joystickL; //if driver doesn't move the joystick quickly enough, this thing will not work
         firstMovement = noMovementRequests();
     }
 
@@ -126,15 +128,17 @@ public class TeleopKinematics extends Kinematics{
         } else return false;
     }
 
-
-
     public void setPos(){
         //setting targets
-        joystickL = Math.toDegrees(Math.atan2(lx, ly));
-        targetW = wheelOptimization(lx, ly)[1]; //target orientation for wheel
-        double turnAmountW = wheelOptimization(lx, ly)[0]; //optimized turn amount
-        double robotTurnAmount = (lx == 0 && ly == 0? 0 : robotHeaderOptimization(rx, ry)[0]); //how much the robot should table-spin
-        //get rid of ternary operator after implementing "turn()"
+        trackJoystickL();
+        double[] wheelTargets = wheelOptimization(lx, ly);
+        double[] robotTargets = robotHeaderOptimization(rx, ry);
+
+        turnAmountW = wheelTargets[0]; //optimized turn amount
+        targetW = wheelTargets[1]; //target orientation for wheel
+        turnDirectionW = (int)wheelTargets[2];
+
+        double robotTurnAmount = (lx == 0 && rx == 0 ? 0 : robotTargets[0]); //how much the robot header should turn
 
         optimizedTargetW = clamp(currentW + turnAmountW); //optimized target orientation
         targetR = clamp(currentR + robotTurnAmount); //the target orientation is on a circle of (-179, 180]
@@ -153,6 +157,8 @@ public class TeleopKinematics extends Kinematics{
         leftThrottle = 1;
         translationPowerPercentage = 1;
         rotationPowerPercentage = 0;
+
+        getSpinTargetClicks();
     }
 
     public void setTableSpin(){
@@ -167,9 +173,31 @@ public class TeleopKinematics extends Kinematics{
             translationPowerPercentage = 1.0;
             rotationPowerPercentage = 1 - translationPowerPercentage;
         }
-        setSplineReference();
+//        setSplineReference();
     }
 
+    public void getRotTargetClicks(double turnAmount, int direction){
+        if (setClicksCycle == false){
+            setClicksCycle = true;
+            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE * direction);
+        } else if (!shouldSnap()){
+            setClicksCycle = false;
+        }
+        spinClicks = 0;
+    }
+
+    public void getSpinTargetClicks(){
+        spinClicks = (int)(300 * spinPower * translationPowerPercentage);
+    }
+
+    private void trackJoystickL(){
+        joystickCount++;
+        if(joystickCount > 4){
+            joystickCount = 0;
+            prevJoystickL = joystickL;
+            joystickL = Math.toDegrees(Math.atan2(lx, ly));
+        }
+    }
 
     public void getGamepad(double lx, double ly, double rx, double ry){
         this.lx = lx;
@@ -182,11 +210,20 @@ public class TeleopKinematics extends Kinematics{
         double[] motorPower = new double[4];
 
         motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
-        motorPower[1] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
+        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
         motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
-        motorPower[3] = -1 * spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
+        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
 
         return motorPower;
+    }
+
+    public int[] getClicks(){
+        int[] clicks = new int[4];
+        clicks[0] = spinClicks + rotClicks;
+        clicks[1] = -spinClicks + rotClicks;
+        clicks[2] = spinClicks + rotClicks;
+        clicks[3] = -spinClicks  + rotClicks;
+        return clicks;
     }
 
     // volatile boolean joystickStill;

@@ -27,6 +27,10 @@ public class Kinematics {
     protected int rotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
     protected int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
 
+    //target clicks
+    protected int rotClicks = 0;
+    protected int spinClicks = 0;
+
     //current orientation
     protected GlobalPosSystem posSystem;
     protected double currentW; //current wheel orientation
@@ -36,19 +40,21 @@ public class Kinematics {
     protected RotateSwerveModulePID snapWheelPID;
     protected RotateSwerveModulePID tableSpinWheelPID;
     protected RotateSwerveModulePID resetWheelPID;
-    protected RotateSwerveModulePID counteractSplinePID;
+//    protected RotateSwerveModulePID counteractSplinePID;
 
     //targets
     protected double targetW = 0.0;
     protected double optimizedTargetW = 0.0;
+    protected double turnAmountW = 0.0;
+    protected int turnDirectionW = 0;
     protected double targetR = 0.0;
-    protected double splineReference = 0.0;
+//    protected double splineReference = 0.0;
 
     public Kinematics(GlobalPosSystem posSystem){
         snapWheelPID = new RotateSwerveModulePID();
         tableSpinWheelPID = new RotateSwerveModulePID();
         resetWheelPID = new RotateSwerveModulePID();
-        counteractSplinePID = new RotateSwerveModulePID();
+//        counteractSplinePID = new RotateSwerveModulePID();
         this.posSystem = posSystem;
     }
 
@@ -57,10 +63,10 @@ public class Kinematics {
         currentR = posSystem.getPositionArr()[3];
     }
 
-    public void setSplineReference(){
-        splineReference = posSystem.getPositionArr()[3];
-        counteractSplinePID.setTargets(splineReference, 0.05, 0, 0.02);
-    }
+//    public void setSplineReference(){
+//        splineReference = posSystem.getPositionArr()[3];
+//        counteractSplinePID.setTargets(splineReference, 0.05, 0, 0.02);
+//    }
 
     public double[] wheelOptimization(double x, double y){ //returns how much the wheels should rotate in which direction
         double[] directionArr = new double[3];
