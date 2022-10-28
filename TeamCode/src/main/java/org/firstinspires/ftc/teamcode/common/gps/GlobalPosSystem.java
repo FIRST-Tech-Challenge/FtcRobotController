@@ -26,13 +26,13 @@ public class GlobalPosSystem {
 
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
         motorClicksPose.put("botR", robot.botR.getCurrentPosition());
-//        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
-//        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
+        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
+        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
 
         prevMotorClicks.put("topR", motorClicksPose.get("topR"));
         prevMotorClicks.put("botR", motorClicksPose.get("botR"));
-//        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
-//        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
+        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
+        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
     }
 
     public void grabKinematics(Kinematics k){
@@ -40,7 +40,6 @@ public class GlobalPosSystem {
     }
 
     public void calculatePos(){
-        if (!goodGap()) return;
 
         updateHash();
 
@@ -56,14 +55,12 @@ public class GlobalPosSystem {
 
 
         //left
-//        int topL = motorClicksPose.get("topL") - prevMotorClicks.get("topL"); //change in top left
-//        int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
-//        double translateL = (topL - botL) / 2.0;
-//        double rotateL = topL - translateL;
-//        translateL *= constants.INCHES_PER_CLICK;
-//        rotateL *= constants.DEGREES_PER_CLICK;
-        double translateL = translateR;
-        double rotateL = rotateR;
+        int topL = motorClicksPose.get("topL") - prevMotorClicks.get("topL"); //change in top left
+        int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
+        double translateL = (topL - botL) / 2.0;
+        double rotateL = topL - translateL;
+        translateL *= constants.INCHES_PER_CLICK;
+        rotateL *= constants.DEGREES_PER_CLICK;
 
 
         double rotationalDegrees = (rotateL + rotateR) / 2.0;
@@ -148,13 +145,13 @@ public class GlobalPosSystem {
     public void updateHash(){
         prevMotorClicks.put("topR", motorClicksPose.get("topR"));
         prevMotorClicks.put("botR", motorClicksPose.get("botR"));
-//        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
-//        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
+        prevMotorClicks.put("topL", motorClicksPose.get("topL"));
+        prevMotorClicks.put("botL", motorClicksPose.get("botL"));
 
         motorClicksPose.put("topR", robot.topR.getCurrentPosition());
         motorClicksPose.put("botR", robot.botR.getCurrentPosition());
-//        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
-//        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
+        motorClicksPose.put("topL", robot.topL.getCurrentPosition());
+        motorClicksPose.put("botL", robot.botL.getCurrentPosition());
     }
 
     private boolean goodGap(){
@@ -167,8 +164,8 @@ public class GlobalPosSystem {
 
     public int[] getMotorClicks(){
         int[] clicks = new int[4];
-//        clicks[0] = robot.topL.getCurrentPosition();
-//        clicks[1] = robot.botL.getCurrentPosition();
+        clicks[0] = robot.topL.getCurrentPosition();
+        clicks[1] = robot.botL.getCurrentPosition();
         clicks[2] = robot.topR.getCurrentPosition();
         clicks[3] = robot.botR.getCurrentPosition();
 
