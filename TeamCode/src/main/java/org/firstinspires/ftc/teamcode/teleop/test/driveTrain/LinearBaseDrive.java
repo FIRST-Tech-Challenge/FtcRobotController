@@ -92,6 +92,7 @@ public class LinearBaseDrive extends OpMode{
         telemetry.addData("Y", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
+        telemetry.addData("Drive Type", kinematics.getdDriveType());
         telemetry.addData("Power Top", kinematics.getPower()[0]);
         telemetry.addData("Power Bottom", kinematics.getPower()[1]);
         telemetry.addData("TargetW", kinematics.getTargetW());

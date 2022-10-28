@@ -26,7 +26,7 @@ public class LinearKinematicsTest extends Kinematics{
         STOP,
         NOT_INITIALIZED
     }
-    public LinearKinematicsTest.dType dtype = LinearKinematicsTest.dType.NOT_INITIALIZED;
+    public dType dtype = LinearKinematicsTest.dType.NOT_INITIALIZED;
 
     public LinearKinematicsTest(GlobalPosSystem posSystem) {
         super(posSystem); //runs Kinematics constructor
@@ -141,6 +141,7 @@ public class LinearKinematicsTest extends Kinematics{
 
     public void getSpinTargetClicks(){
         spinClicks = (int)(100 * spinPower * translationPowerPercentage);
+        rotClicks = 0;;
     }
 
     private void trackJoystickL(){
@@ -177,6 +178,10 @@ public class LinearKinematicsTest extends Kinematics{
         clicks[2] = spinClicks + rotClicks;
         clicks[3] = -spinClicks  + rotClicks;
         return clicks;
+    }
+
+    public dType getdDriveType(){
+        return dtype;
     }
 
     public boolean noMovementRequests(){
