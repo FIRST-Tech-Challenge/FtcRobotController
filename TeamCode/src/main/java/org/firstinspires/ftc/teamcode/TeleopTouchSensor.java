@@ -115,15 +115,15 @@ public class TeleopTouchSensor extends LinearOpMode {
     static final int COUNTS_PER_INCH = 120; // verified by testing.
     static final int FOUR_STAGE_SLIDER_MAX_POS = 4200;  // with 312 RPM motor.
     static final int SLIDER_MIN_POS = 0;
-    static final int GROUND_JUNCTION_POS = COUNTS_PER_INCH * 2; // 2 inch
+    static final int GROUND_JUNCTION_POS = COUNTS_PER_INCH; // 1 inch
     static final int READY_FOR_GRIP_POSITION = COUNTS_PER_INCH * 4;; // lift 4 inch to get ready for unloading
-    static final int coneStack5th = COUNTS_PER_INCH * 10; // the 5th cone position in the cone stack. The lowest cone is the 1th one.
+    static final int coneStack5th = (int)(COUNTS_PER_INCH * 5.2); // the 5th cone position in the cone stack. The lowest cone is the 1th one.
 
     // 10inch for low junction, 20inch for medium, and 30 for high
-    static final int LOW_JUNCTION_POS = COUNTS_PER_INCH * 10 + READY_FOR_GRIP_POSITION; // need double check by testing
-    static final int MEDIUM_JUNCTION_POS = COUNTS_PER_INCH * 20 + READY_FOR_GRIP_POSITION;
-    static final int HIGH_JUNCTION_POS = COUNTS_PER_INCH * 30 + READY_FOR_GRIP_POSITION;
-    static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 6; // move down 6 inch to unload cone
+    static final int LOW_JUNCTION_POS = (int)(COUNTS_PER_INCH * 13.5); // 13.5 inch
+    static final int MEDIUM_JUNCTION_POS = (int)(COUNTS_PER_INCH * 23.5);
+    static final int HIGH_JUNCTION_POS = (int)(COUNTS_PER_INCH * 33.5);
+    static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 3; // move down 6 inch to unload cone
     static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 538; // for 312 rpm motor
     int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION / 40; // set value based on testing
     int sliderTargetPosition = 0;
@@ -139,7 +139,7 @@ public class TeleopTouchSensor extends LinearOpMode {
     double clawServoPosition = CLAW_OPEN_POS;
 
 
-    // arm servo variables
+    // arm servo variables, not used in first prototype.
     private Servo armServo = null;
     static final double ARM_INCREMENT = 0.0015;     // amount to slew servo each CYCLE_MS cycle
     static final double ARM_MAX_POS = 0.6;     // Maximum rotational position
@@ -150,16 +150,15 @@ public class TeleopTouchSensor extends LinearOpMode {
 
 
     // variables for auto load and unload cone
-    static final int COUNTS_PER_FEET_DRIVE = 360; // robot drive 1 feet. Back-forth moving
-    static final int COUNTS_PER_FEET_STRAFE = 600; // robot strafe 1 feet. Left-right moving.
+    static final int COUNTS_PER_FEET_DRIVE = 540; // robot drive 1 feet. Back-forth moving
+    static final int COUNTS_PER_FEET_STRAFE = 720; // robot strafe 1 feet. Left-right moving. need test
     double robotAutoLoadMovingDistance = 0.1; // in feet
-    double robotAutoUnloadMovingDistance = 0.25; // in feet
+    double robotAutoUnloadMovingDistance = 0.32; // in feet
 
 
     // IMU related
     Orientation lastAngles = new Orientation();
     double globalAngle = 0.0;
-    double power = HIGH_SPEED_POWER; // 0.30;
     double correction = 0.0;
     double rotation = 0.0;
     PIDController pidRotate, pidDrive;
@@ -167,7 +166,7 @@ public class TeleopTouchSensor extends LinearOpMode {
     static final int INERTIA_WAIT_TIME = 500; // in ms
     double angleError = 0.0; // the angle error accumulated during auto-rotation.
 
-    // distance sensor
+    // sensors
     private DistanceSensor distanceSensor;
     static final double CLOSE_DISTANCE = 8.0; // INCH
 
@@ -190,8 +189,6 @@ public class TeleopTouchSensor extends LinearOpMode {
         armServo = hardwareMap.get(Servo.class, "ArmServo");
         clawServo = hardwareMap.get(Servo.class, "ClawServo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        // you can use this as a regular DistanceSensor.
         distanceSensor = hardwareMap.get(DistanceSensor.class, "DistanceSensor");
 
         // Most robots need the motor on one side to be reversed to drive forward
@@ -207,7 +204,6 @@ public class TeleopTouchSensor extends LinearOpMode {
         BackRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /* slider motor control */
-        // based on how Motor installed on robot.
         RightSliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         LeftSliderMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         RightSliderMotor.setTargetPosition(sliderTargetPosition);
@@ -251,7 +247,7 @@ public class TeleopTouchSensor extends LinearOpMode {
         // Set up parameters for driving in a straight line.
         pidDrive.setInputRange(-90, 90);
         pidDrive.setSetpoint(0); // be sure input range has been set before
-        pidDrive.setOutputRange(0, power);
+        pidDrive.setOutputRange(0, HIGH_SPEED_POWER);
         pidDrive.enable();
 
         // Wait for the game to start (driver presses PLAY)
@@ -470,10 +466,8 @@ public class TeleopTouchSensor extends LinearOpMode {
         waitMotorActionComplete(LeftSliderMotor);
         robotMovingDistance(-robotAutoUnloadMovingDistance, true); // move out from junction
         armServo.setPosition(ARM_LOAD_POSITION);
-        RightSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
-        LeftSliderMotor.setTargetPosition(READY_FOR_GRIP_POSITION);
-        waitMotorActionComplete(RightSliderMotor);
-        waitMotorActionComplete(LeftSliderMotor);
+        waitMotorActionComplete(FrontLeftDrive);
+        sleep(100);
     }
 
     /**
@@ -575,13 +569,13 @@ public class TeleopTouchSensor extends LinearOpMode {
 
     /**
      * Set wheels motors power
-     * @param power: the power value set to motors (0.0 ~ 1.0)
+     * @param p: the power value set to motors (0.0 ~ 1.0)
      */
-    private void setPowerToWheels(double power) {
-        FrontLeftDrive.setPower(power);
-        FrontRightDrive.setPower(power);
-        BackLeftDrive.setPower(power);
-        BackRightDrive.setPower(power);
+    private void setPowerToWheels(double p) {
+        FrontLeftDrive.setPower(p);
+        FrontRightDrive.setPower(p);
+        BackLeftDrive.setPower(p);
+        BackRightDrive.setPower(p);
     }
 
     /**
@@ -782,7 +776,9 @@ public class TeleopTouchSensor extends LinearOpMode {
 
         /* code for autonomous driving, must starting from right position.    */
         if (gamepad2.a) {
-            robotMovingDistance(5.0, true); // drive robot to the center of 3rd mat
+            autoLoadCone(0); // need update to input cone height position
+            sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
+            robotMovingDistance(4.33, true); // drive robot to the center of 3rd mat
             robotMovingDistance(-1.0, false); // strafe robot half mat to left side
         }
 
@@ -797,7 +793,7 @@ public class TeleopTouchSensor extends LinearOpMode {
         }
 
         if (gamepad2.y) {
-            robotMovingDistance(1.0, true); // drive robot half mat to high junction
+            robotMovingDistance(0.33, true); // drive robot half mat to high junction
         }
         if (gamepad2.right_bumper) {
             autoUnloadCone();
