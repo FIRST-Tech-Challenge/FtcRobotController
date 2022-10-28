@@ -10,8 +10,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.team8923_PowerPlay.BaseOpMode;
 import org.tensorflow.lite.support.label.TensorLabel;
+
+import java.util.List;
 
 public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWebcam {
 
@@ -58,21 +63,66 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
         //set IMU heading offset
         headingOffset = imu.getAngularOrientation().firstAngle - robotAngle;
 
+        initVuforia();
+        initTfod();
+
+        /**
+         * Activate TensorFlow Object Detection before we wait for the start command.
+         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+         **/
+        if (tfod != null) {
+            tfod.activate();
+
+            // The TensorFlow software will scale the input images from the camera to a lower resolution.
+            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+            // If your target is at distance greater than 50 cm (20") you can increase the magnification value
+            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+            // should be set to the value of the images used to create the TensorFlow Object Detection model
+            // (typically 16/9).
+            tfod.setZoom(1.0, 16.0/9.0);
+        }
+
         telemetry.clear();
-        telemetry.update();
         telemetry.addLine("Initialized. Ready to start!");
+        telemetry.update();
     }
 
     public Position detectSignalSleeve() {
+        Position position = Position.ONE;
         //sets parking position dependant on label
-        if(LABELS.equals("Orange Leaves")){
-            return Position.ONE;
+        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
-        } else if(LABELS.equals("Blue Bats")){
-            return Position.TWO;
-        } else {
-            return Position.THREE;
+                // step through the list of recognitions and display image position/size information for each one
+                // Note: "Image number" refers to the randomized image orientation/number
+                for (Recognition recognition : updatedRecognitions) {
+                    double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                    double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                    double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                    double height = Math.abs(recognition.getTop() - recognition.getBottom());
+
+                    if (recognition.getLabel().equals("Orange Leaves")) {
+                        position = Position.ONE;
+
+                    } else if (recognition.getLabel().equals("Blue Bats")) {
+                        position =  Position.TWO;
+                    } else {
+                        position = Position.THREE;
+                    }
+
+                    telemetry.addData("", " ");
+                    telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                    telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                    telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
+                }
+                telemetry.update();
+            }
         }
+        return position;
     }
 
     /**

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team8923_PowerPlay;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,10 +23,10 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
 
-    public static final String[] LABELS = {
-            "Orange Leaves",
+    private static final String[] LABELS = {
             "Blue Bats",
-            "Flowers"
+            "Orange Leaves",
+            "Pink Flowers"
     };
 
     /*
@@ -59,7 +58,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */
-    private TFObjectDetector tfod;
+    protected TFObjectDetector tfod;
 
     @Override
     public void runOpMode() {
@@ -121,7 +120,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
     /**
      * Initialize the Vuforia localization engine.
      */
-    private void initVuforia() {
+    protected void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
@@ -137,7 +136,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    private void initTfod() {
+    protected void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -149,7 +148,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        //tfod.loadModelFromFile(TFOD_MODEL_ASSET, LABELS);
     }
 }
 
