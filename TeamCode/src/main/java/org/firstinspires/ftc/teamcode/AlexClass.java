@@ -25,7 +25,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous     (name="AlexClass", group = "A")
-@Disabled
 public class AlexClass extends DriveMethods {
 
 //    boolean imuIsCali = false;
@@ -39,40 +38,13 @@ public class AlexClass extends DriveMethods {
     public void runOpMode() {
       initMotorsBlue();
 
-      clawClamp();
+      CalibrateIMU();
         waitForStart();
-        GoToHeight(1950);
-        driveForDistance(0.75,Direction.FORWARD,0.4,0);
-        sleep(250);
-        clawRelease();
-        sleep(1000);
-        driveForDistance(0.75,Direction.BACKWARD,0.4,0);
-        GoToHeight(0);
 
 
         while (opModeIsActive()) {
-
-//            GoToHeight(1950);
-//            if (inSlideLoop) {
-//                if ((Math.abs(dif) >= 150)) {
-//                    telemetry.addLine(dif + "..difference");
-//                    telemetry.addLine(Math.abs(motorSlide.getCurrentPosition()) + "..position");
-//                    telemetry.addLine(target + "..target");
-//                    telemetry.addLine(((dif / 3000.0) + 0.05) + "..power");
-//                    telemetry.update();
-//                    dif = (target - Math.abs(motorSlide.getCurrentPosition()));
-//                    motorSlide.setPower(((dif / 3000.0) + 0.05));
-//                } else {
-//                    motorSlide.setPower(0.05);
-//                    inSlideLoop = false;
-//                }
-//            }
-//            double leftY = -gamepad1.left_stick_y;
-//            motorSlide = hardwareMap.get(DcMotor.class, "motorSlide");
-//
-//            while (true) {
-//                motorSlide.setPower(leftY/3);
-//            }
+            telemetry.addLine("CurrentZ: " + getCurrentZ());
+            telemetry.update();
         }
 
     }

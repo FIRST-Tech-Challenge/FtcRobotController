@@ -75,7 +75,7 @@ JamesAuto extends DriveMethods {
 
             currentZ = currentAngle.firstAngle;
           telemetry.addLine("heading: " + currentZ);
-          telemetry.addLine("CumulativeZ: " + getCumulativeZ());
+//          telemetry.addLine("CumulativeZ: " + getCumulativeZ());
           telemetry.addLine("formatAngleThing: " + formatAngle(currentAngle.angleUnit, currentAngle.firstAngle));
           telemetry.update();
         }

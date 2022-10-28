@@ -99,7 +99,7 @@ public class DamienAutonomous extends DriveMethods {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)");
-            telemetry.addData("Cumulative Z", "" + getCumulativeZ());
+//            telemetry.addData("Cumulative Z", "" + getCumulativeZ());
             telemetry.addData("Current Z", "" + getCurrentZ());
             telemetry.addData("Error","" + (0 - getCurrentZ()));
             telemetry.update();

@@ -208,33 +208,34 @@ public class DriveMethods extends LinearOpMode{
     }
 
     public double getCurrentZ() {
-        if(!isImuCalibrated){
-            CalibrateIMU();
-        }
+//        if(!isImuCalibrated){
+//            CalibrateIMU();
+//        }
 
         Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
         double currentZ = currentAngle.firstAngle;
         return currentZ;
     }
-    public double getCumulativeZ(){
-        if(!isImuCalibrated){
-            CalibrateIMU();
 
-        }
-        double currentHeading = getCurrentZ();
-        double deltaHeading = currentHeading - previousHeading;
-        if(deltaHeading <= -180) {
-            deltaHeading += 360;
-        } else if(deltaHeading >= 180) {
-            deltaHeading -=360;
-        }
-
-        intergratedHeading += deltaHeading;
-        previousHeading = currentHeading;
-
-        return intergratedHeading;
-
-    }
+//    public double getCumulativeZ(){
+////        if(!isImuCalibrated){
+////            CalibrateIMU();
+////
+////        }
+//        double currentHeading = getCurrentZ();
+//        double deltaHeading = currentHeading - previousHeading;
+//        if(deltaHeading <= -180) {
+//            deltaHeading += 360;
+//        } else if(deltaHeading >= 180) {
+//            deltaHeading -=360;
+//        }
+//
+//        intergratedHeading += deltaHeading;
+//        previousHeading = currentHeading;
+//
+//        return intergratedHeading;
+//
+//    }
     //double targetZ = getCurrentZ();
     public void recenterRobotZRotation(double targetRotationZ) {
         double FLPower = motorFL.getPower();
