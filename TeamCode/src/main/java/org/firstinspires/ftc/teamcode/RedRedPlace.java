@@ -19,12 +19,21 @@ public class RedRedPlace extends DriveMethods {
     public void runOpMode() {
         initMotorsBlue();
 
+
+        clawClamp();
         waitForStart();
 
-        driveForDistance(0.24, Direction.RIGHT, 0.5, 0);
+//        GoToHeight(1950);
         driveForDistance(0.3, Direction.FORWARD, 0.3, 0);
+        sleep(500);
+        clawRelease();
+        sleep(1000);
         driveForDistance(0.3, Direction.BACKWARD, 0.5, 0);
+
+        //GoToHeight(0);
+
         driveForDistance(1.4, Direction.LEFT, 0.5, 0);
+
 
         while(opModeIsActive()) {
 
