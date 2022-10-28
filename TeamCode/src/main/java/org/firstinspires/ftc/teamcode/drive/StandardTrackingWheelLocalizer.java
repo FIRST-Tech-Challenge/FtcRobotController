@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACKER_FORWARD_OFFSET;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACKER_INCHES_PER_TICK;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACKER_LATERAL_DISTANCE;
+import static org.firstinspires.ftc.teamcode.DriveConstants.TRACKER_FORWARD_OFFSET;
+import static org.firstinspires.ftc.teamcode.DriveConstants.TRACKER_INCHES_PER_TICK;
+import static org.firstinspires.ftc.teamcode.DriveConstants.TRACKER_LATERAL_DISTANCE;
 
 import androidx.annotation.NonNull;
 

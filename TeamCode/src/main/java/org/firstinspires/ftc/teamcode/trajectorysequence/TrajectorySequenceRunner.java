@@ -184,7 +184,6 @@ public class TrajectorySequenceRunner {
             poseHistory.removeFirst();
         }
 
-        /*
         packet.put("x", poseEstimate.getX());
         packet.put("y", poseEstimate.getY());
         packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
@@ -196,7 +195,6 @@ public class TrajectorySequenceRunner {
         draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
 
         dashboard.sendTelemetryPacket(packet);
-        */
 
         return driveSignal;
     }

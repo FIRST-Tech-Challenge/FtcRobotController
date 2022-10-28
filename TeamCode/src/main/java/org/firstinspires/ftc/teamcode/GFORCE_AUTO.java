@@ -18,14 +18,15 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @TeleOp(name="G-FORCE AUTO", group = "advanced")
 public class GFORCE_AUTO extends LinearOpMode {
 
+    boolean headingLock = false;
+    double  headingSetpoint = 0;
+
     @Override
     public void runOpMode() throws InterruptedException{
 
-        // apply hub performance
-        HubPerformance.enable(hardwareMap);
 
         // Initialize GFORCE_KiwiDrive
-        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(this);
+        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -39,8 +40,6 @@ public class GFORCE_AUTO extends LinearOpMode {
 
         telemetry.addData("Trajectory", "press X or B button to select.");
         telemetry.update();
-
-        telemetry.setMsTransmissionInterval(50);
 
         while (opModeInInit()) {
             // Select the desired trajectory
@@ -58,27 +57,24 @@ public class GFORCE_AUTO extends LinearOpMode {
             if (gamepad1.b) {
                 telemetry.addData("Trajectory", "Cross Near Mid");
                 telemetry.update();
-                drive.setExternalHeading(Math.toRadians(90));
-                drive.setPoseEstimate(new Pose2d(new Vector2d(35,-62), Math.toRadians(90)));
                 ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineTo(new Vector2d(35, -36))
-                        .strafeTo(new Vector2d(48, -36))
+                        .forward(25)
+                        .strafeTo(new Vector2d(-12, 0))
                         .build();
             }
 
             if (gamepad1.y) {
                 telemetry.addData("Trajectory", "Other Corner Spline ");
                 telemetry.update();
-                drive.setExternalHeading(Math.toRadians(90));
-                drive.setPoseEstimate(new Pose2d(new Vector2d(35,-62), Math.toRadians(90)));
                 ourTrajectory = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                        .lineTo(new Vector2d(35, -48))
-                        .splineTo(new Vector2d(24,-36), Math.toRadians(180))
-                        .lineTo(new Vector2d(0,-36))
-                        .splineTo(new Vector2d(-12,-24), Math.toRadians(90))
-                        .lineTo(new Vector2d(-12, 24))
-                        .splineTo(new Vector2d(-24,36), Math.toRadians(180))
-                        .lineTo(new Vector2d(-36, 36))
+                        .forward(14)
+                        .splineTo(new Vector2d(-36,-24), Math.toRadians(90))
+                        .forward(24)
+                        .splineTo(new Vector2d(-24,12), Math.toRadians(0))
+                        .forward(24)
+                        .forward(24)
+                        .splineTo(new Vector2d(36,24), Math.toRadians(90))
+                        .forward(12)
                         .build();
             }
 
@@ -96,7 +92,7 @@ public class GFORCE_AUTO extends LinearOpMode {
                         .setReversed(false)
                         .lineTo(new Vector2d(24,12))
                         .splineTo(new Vector2d(35,0), Math.toRadians(-90))
-                        .lineTo(new Vector2d(35,-56))
+                        .lineTo(new Vector2d(35,-62))
                         .setReversed(true)
                         .lineTo(new Vector2d(35,35))
                         .build();

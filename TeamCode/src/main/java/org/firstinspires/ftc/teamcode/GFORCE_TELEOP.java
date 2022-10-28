@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID_TELEOP;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_VEL;
-
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -23,9 +21,9 @@ import org.firstinspires.ftc.teamcode.drive.PoseStorage;
 public class GFORCE_TELEOP extends LinearOpMode {
 
     // Joystick constants
-    final double AXIAL_RATE = 0.9;
-    final double LATERAL_RATE = 0.9;
-    final double YAW_RATE = 0.25;
+    final double AXIAL_RATE = 0.7;
+    final double LATERAL_RATE = 0.7;
+    final double YAW_RATE = 0.5;
 
     private Elevator    elevator;
     private ConeTracker coneTracker;
@@ -35,7 +33,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
-    private PIDFController headingController = new PIDFController(HEADING_PID_TELEOP);
+    private PIDFController headingController = new PIDFController(new PIDCoefficients(1.25, 0, 0));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,15 +44,19 @@ public class GFORCE_TELEOP extends LinearOpMode {
         double manualRotate;
 
         headingController.setInputBounds(0.0, 2.0 * Math.PI);
-        headingController.setOutputBounds(-MAX_ANG_VEL, MAX_ANG_VEL);
+        headingController.setOutputBounds(-YAW_RATE, YAW_RATE);
 
         // Initialize robot hardware classes GFORCE_KiwiDrive
-        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(this);
+        GFORCE_KiwiDrive drive = new GFORCE_KiwiDrive(hardwareMap);
         elevator = new Elevator(this);
         coneTracker = new ConeTracker(this);
 
         // Home the elevator....  This may need to be changed once we have an Auto.
+        telemetry.addData("Elevator", "Homing");
+        telemetry.update();
         elevator.recalibrateHomePosition();
+        telemetry.addData("Elevator", "Homed !");
+        telemetry.update();
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
@@ -72,6 +74,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             //-----------PILOT-----------
             //check for auto cone tracking
+
             if (gamepad1.right_bumper && coneTracker.coneDetected) {
                 double turn = coneTracker.coneDirection / 5.0;
                 double speed = 0;
@@ -87,7 +90,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 lockNewHeading(drive.getExternalHeading());
                 drive.setWeightedDrivePower(new Pose2d(speed, 0, turn));
 
-            } else {
+            } else  {
                 // Read pose and use it to convery joystick inputs to Field Centric.
                 Pose2d poseEstimate = drive.getPoseEstimate();
 
@@ -124,7 +127,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
                 if (headingLock) {
                     // Set desired angular velocity to the heading-controller output
-                    double autoRotate = headingController.update(drive.getExternalHeading()) / (MAX_ANG_VEL * 2);
+                    double autoRotate = headingController.update(drive.getExternalHeading())  ;
 
                     telemetry.addData("Auto Powers", "%.2f, %.2f, %.2f", joysticInput.getX(),joysticInput.getY(), autoRotate);
 
@@ -158,6 +161,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             //-----------CO-PILOT--------------
             // Lower the elevator to the base
+
             if (gamepad2.left_bumper) {
                 elevator.setHandPosition(elevator.HAND_CLOSE);
                 elevator.setTarget(elevator.ELEVATOR_HOME);

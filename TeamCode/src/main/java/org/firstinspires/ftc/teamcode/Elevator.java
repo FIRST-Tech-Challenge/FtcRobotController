@@ -24,8 +24,8 @@ public class Elevator {
     final int    DEAD_BAND = 5;
     final double FAST_LIFT = 0.5;
     final double SLOW_LIFT = 0.2;
-    final double SLOW_LOWER = 0;
-    final double FAST_LOWER = -0.05;
+    final double SLOW_LOWER = 0.05;
+    final double FAST_LOWER = -0.1;
     final double HOLD_POWER = 0.02;
 
     final double ENCODER_TO_ANGLEM = 0.0992;

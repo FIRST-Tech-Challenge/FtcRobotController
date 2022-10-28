@@ -93,8 +93,10 @@ abstract class KiwiDrive @JvmOverloads constructor(
         setMotorPowers(powers[0], powers[1], powers[2])
     }
 
+    // BIG Assumption
+    // I am assuming this should ONLY be used when power requests are being mad (not velocity) so no rotational scaling is required.
     override fun setDrivePower(drivePower: Pose2d) {
-        val powers = KiwiKinematics.robotToWheelPowers(drivePower)
+        val powers = KiwiKinematics.robotToWheelVelocities(drivePower, 1.0)
         setMotorPowers(powers[0], powers[1], powers[2])
     }
 
