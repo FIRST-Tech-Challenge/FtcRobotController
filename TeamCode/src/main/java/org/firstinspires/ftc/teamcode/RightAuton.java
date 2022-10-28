@@ -23,7 +23,7 @@ public class RightAuton extends LinearOpMode
         }
         int finalID = init.stopAndSave();
         Auton auton = new Auton(false, finalID);
-        auton.runAuton(new Robot(hardwareMap));
+        auton.runAutonParkOnly(new Robot(hardwareMap));
     }
 
 }

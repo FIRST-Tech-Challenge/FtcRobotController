@@ -21,7 +21,7 @@ public class Auton {
 
     }
 
-    public void runAuton(Robot drive)
+    public void runAutonParkOnly(Robot drive)
     {
 
         int angle = -45;
@@ -49,6 +49,30 @@ public class Auton {
             drive.followTrajectory(park);
         }
 
+    }
+
+    public void runAutonWithCone(Robot drive) {
+        int angle = -45;
+        if (direction) { angle = 45; }
+
+        drive.setMotorPowers(0.1,0.1,0.1,0.1);
+        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(24)
+                .build();
+
+        drive.followTrajectorySequence(trajSeq);
+
+        if (parkingZone == 1) { // red
+            Trajectory park = drive.trajectoryBuilder(new Pose2d())
+                    .strafeLeft(24)
+                    .build();
+            drive.followTrajectory(park);
+        } else if (parkingZone == 3) { // blue
+            Trajectory park = drive.trajectoryBuilder(new Pose2d())
+                    .strafeRight(24)
+                    .build();
+            drive.followTrajectory(park);
+        }
     }
 
     public void linSlidesLift() {

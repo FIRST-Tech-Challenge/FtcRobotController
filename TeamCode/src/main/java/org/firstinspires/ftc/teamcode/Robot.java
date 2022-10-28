@@ -128,12 +128,12 @@ public class Robot extends MecanumDrive {
 
         motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
         motorLiftRight.setDirection(DcMotor.Direction.FORWARD);
-        motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
         motorLiftLeft.setDirection(DcMotor.Direction.FORWARD);
-        motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intake = hardwareMap.get(Servo.class, "intake");

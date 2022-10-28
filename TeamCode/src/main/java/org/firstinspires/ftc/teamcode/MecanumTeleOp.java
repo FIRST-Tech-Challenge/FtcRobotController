@@ -45,6 +45,8 @@ public class MecanumTeleOp extends LinearOpMode {
         int targetLiftPosition = 0;
         boolean liftAuton = false;
         boolean liftToggled = true;
+        robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         while (opModeIsActive()) {
 
             double power = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -62,6 +64,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 }
                 fieldCentricTrigger++;
             }
+
 
             if(gamepad2.left_bumper)
             {
@@ -85,27 +88,27 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
             if(gamepad1.dpad_up){
-                if(robot.motorLiftRight.getCurrentPosition()<100000){
+                if(robot.motorLiftLeft.getCurrentPosition()<570){
                     robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    robot.motorLiftRight.setPower(0.5);
-                    robot.motorLiftLeft.setPower(0.5);
+                    robot.motorLiftRight.setPower(0.2);
+                    robot.motorLiftLeft.setPower(0.2);
                 }
             }
             else if(gamepad1.dpad_down){
-                if(robot.motorLiftRight.getCurrentPosition()>-100000){
+                if(robot.motorLiftRight.getCurrentPosition()>30){
                     robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    robot.motorLiftRight.setPower(-0.2);
-                    robot.motorLiftLeft.setPower(-0.2);
+                    robot.motorLiftRight.setPower(-0.1);
+                    robot.motorLiftLeft.setPower(-0.1);
                 }
             }
             else{
                 robot.motorLiftRight.setPower(0);
                 robot.motorLiftLeft.setPower(0);
-                robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                robot.motorLiftLeft.setTargetPosition(robot.motorLiftLeft.getCurrentPosition());
+                robot.motorLiftRight.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
 
                 //robot.motorLiftRight.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
 
@@ -122,7 +125,7 @@ public class MecanumTeleOp extends LinearOpMode {
             telemetry.addData("Lift Brake Toggled: ", liftToggled);
             //telemetry.addData("LiftAuton On?: ", liftAuton);
             //telemetry.addData("LiftAuton: ", targetLiftPosition);
-            telemetry.addData("Lift Position", robot.motorLiftRight.getCurrentPosition());
+            telemetry.addLine("Lift Position" + Double.toString(robot.motorLiftRight.getCurrentPosition()));
             telemetry.update();
         }
     }
