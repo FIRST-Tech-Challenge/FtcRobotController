@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous(name ="BlueBluePlace", group = "A")
 public class BlueBluePlace extends DriveMethods {
     public void runOpMode() {
-        initMotorsSecondBot();
+        initMotorsBlue();
 
         waitForStart();
 

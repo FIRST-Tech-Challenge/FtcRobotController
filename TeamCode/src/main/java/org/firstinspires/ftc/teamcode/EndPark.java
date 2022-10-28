@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous(name ="EndPark", group = "A")
 public class EndPark extends DriveMethods {
     public void runOpMode() {
-        initMotorsSecondBot();
+        initMotorsBlue();
 
         waitForStart();
 

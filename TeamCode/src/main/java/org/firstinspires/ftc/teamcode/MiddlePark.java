@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @Autonomous(name ="MiddlePark", group = "A")
 public class MiddlePark extends DriveMethods {
     public void runOpMode() {
-        initMotorsSecondBot();
+        initMotorsBlue();
 
         waitForStart();
 
