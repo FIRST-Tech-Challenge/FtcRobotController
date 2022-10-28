@@ -3,23 +3,29 @@ package org.firstinspires.ftc.team8923_PowerPlay;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 abstract public class BaseOpMode extends LinearOpMode {
 
-    //Declared drive motors
+    // Declared drive motors
     DcMotor motorFL;
     DcMotor motorFR;
     DcMotor motorBL;
     DcMotor motorBR;
 
+    // declare linear slide motors and servo
+    DcMotor motorSlideLeft;
+    DcMotor motorSlideRight;
+    Servo servoClaw;
+
     public void initHardware() {
-        //init drive motors
+        // init drive motors
         motorFL = hardwareMap.dcMotor.get("motorFL");
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
 
-        //reset encoder
+        // reset encoder
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -39,6 +45,23 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
+
+        // init linear slide motors and claw servo
+        motorSlideLeft = hardwareMap.dcMotor.get("motorSlideLeft");
+        motorSlideRight = hardwareMap.dcMotor.get("motorSlideRight");
+        servoClaw = hardwareMap.servo.get("servoClaw");
+
+        // reset encoder
+        motorSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorSlideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorSlideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        motorSlideLeft.setDirection(DcMotor.Direction.FORWARD);
+        motorSlideRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void driveMecanum(double driveAngle, double drivePower, double turnPower){
