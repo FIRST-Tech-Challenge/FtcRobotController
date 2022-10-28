@@ -70,7 +70,7 @@ public class GlobalPosSystem {
 
         double splineOrientation = 0;
 
-        if (Math.abs(translationalInches) == 0){
+        if (Math.abs(translationalInches) <= 0.2){
             update(translationalInches * Math.sin(currentAngle), translationalInches * Math.cos(currentAngle) , rotationalDegrees, 0);
         }
         else{

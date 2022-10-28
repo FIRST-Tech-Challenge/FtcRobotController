@@ -48,9 +48,6 @@ public class LinearBaseDrive extends OpMode{
 
     @Override
     public void init() { //When "init" is clicked
-        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         robot.init(hardwareMap);
 
         telemetry.addData("Say", "Hello Driver");
@@ -63,7 +60,8 @@ public class LinearBaseDrive extends OpMode{
 
     @Override
     public void init_loop() { //Loop between "init" and "start"
-
+        robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
@@ -94,6 +92,7 @@ public class LinearBaseDrive extends OpMode{
         telemetry.addData("Y", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
+        telemetry.addData("Drive Type", kinematics.getdDriveType());
         telemetry.addData("Power Top", kinematics.getPower()[0]);
         telemetry.addData("Power Bottom", kinematics.getPower()[1]);
         telemetry.addData("TargetW", kinematics.getTargetW());

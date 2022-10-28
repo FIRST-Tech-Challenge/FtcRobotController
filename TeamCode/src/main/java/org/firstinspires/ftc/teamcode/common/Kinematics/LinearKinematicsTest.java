@@ -180,6 +180,10 @@ public class LinearKinematicsTest extends Kinematics{
         return clicks;
     }
 
+    public dType getdDriveType(){
+        return dtype;
+    }
+
     public boolean noMovementRequests(){
         return (lx==0 && ly==0 && rx==0 && ry==0);
     }
