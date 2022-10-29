@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class TeamDetection {
     public boolean redTeam;
     public boolean blueTeam;
+    public boolean side;
 
     /**
      * Returns what team you are on from the switch.
@@ -22,9 +23,13 @@ public class TeamDetection {
         DigitalChannel blueSwitch = hardwareMap.get(DigitalChannel.class, "blueSwitch");
         blueSwitch.setMode(DigitalChannel.Mode.INPUT);
 
-        //set two values according to the switch
+        DigitalChannel sideSwitch = hardwareMap.get(DigitalChannel.class, "side");
+        blueSwitch.setMode(DigitalChannel.Mode.INPUT);
+
+        //set values according to the switches
         blueTeam = blueSwitch.getState();
         redTeam = !blueTeam;
+        side = sideSwitch.getState();
     }
 
     /**
