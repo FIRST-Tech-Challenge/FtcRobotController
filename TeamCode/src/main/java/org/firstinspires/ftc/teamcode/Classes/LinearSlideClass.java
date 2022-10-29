@@ -50,17 +50,36 @@ public class LinearSlideClass {
 
   }
 
+<<<<<<< Updated upstream
   public void down(double power) {
+=======
+  public void linearSlideUp(double power, int time) throws InterruptedException {
+>>>>>>> Stashed changes
 
     //Moves linear slide all the way down with set power.
     Drive.setPower(-power);
 
+    Thread.sleep(time);
+
+    leftDrive.setPower(0);
+    rightDrive.setPower(0);
+
   }
 
+<<<<<<< Updated upstream
   public void down(double power, double distance) {
+=======
+  public void linearSlideDown(double power, int time) throws InterruptedException {
+>>>>>>> Stashed changes
 
     //Moves linear slide down set distance and speed.
     Drive.setPower(-power);
+
+    Thread.sleep(time);
+
+    leftDrive.setPower(0);
+    rightDrive.setPower(0);
+
 
   }
 
