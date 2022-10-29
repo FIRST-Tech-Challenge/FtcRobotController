@@ -46,7 +46,7 @@ public class TeleopKinematics extends Kinematics{
                 break;
 
             case SNAP:
-                getRotTargetClicks(turnAmountW, turnDirectionW);
+                getRotTargetClicks(turnAmountW);
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
@@ -136,7 +136,6 @@ public class TeleopKinematics extends Kinematics{
 
         turnAmountW = wheelTargets[0]; //optimized turn amount
         targetW = wheelTargets[1]; //target orientation for wheel
-        turnDirectionW = (int)wheelTargets[2];
 
         double robotTurnAmount = (lx == 0 && rx == 0 ? 0 : robotTargets[0]); //how much the robot header should turn
 
@@ -176,10 +175,10 @@ public class TeleopKinematics extends Kinematics{
 //        setSplineReference();
     }
 
-    public void getRotTargetClicks(double turnAmount, int direction){
+    public void getRotTargetClicks(double turnAmount){
         if (setClicksCycle == false){
             setClicksCycle = true;
-            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE * direction);
+            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE);
         } else if (!shouldSnap()){
             setClicksCycle = false;
         }

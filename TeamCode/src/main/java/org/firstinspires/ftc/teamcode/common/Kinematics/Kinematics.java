@@ -46,7 +46,6 @@ public class Kinematics {
     protected double targetW = 0.0;
     protected double optimizedTargetW = 0.0;
     protected double turnAmountW = 0.0;
-    protected int turnDirectionW = 0;
     protected double targetR = 0.0;
 //    protected double splineReference = 0.0;
 
@@ -69,7 +68,7 @@ public class Kinematics {
 //    }
 
     public double[] wheelOptimization(double x, double y){ //returns how much the wheels should rotate in which direction
-        double[] directionArr = new double[3];
+        double[] directionArr = new double[2];
 
         //determine targets
         double target = (y==0 ? (90 * Math.signum(x)) : Math.toDegrees(Math.atan2(x, y)));
@@ -93,8 +92,7 @@ public class Kinematics {
                 turnAmount = 360 - Math.abs(turnAmount);
             }
         }
-        directionArr[0] = Math.abs(turnAmount);
-        directionArr[2] = turnDirection;
+        directionArr[0] = turnAmount * turnDirection;
 
         return directionArr;
     }

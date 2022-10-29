@@ -55,7 +55,7 @@ public class LinearKinematicsTest extends Kinematics{
                 break;
 
             case SNAP:
-                getRotTargetClicks(turnAmountW, turnDirectionW);
+                getRotTargetClicks(turnAmountW);
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
@@ -78,6 +78,7 @@ public class LinearKinematicsTest extends Kinematics{
                 rotationPowerPercentage = 0;
                 rotClicks = 0;
                 spinClicks = 0;
+                setClicksCycle = false;
 
                 // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
                 break;
@@ -102,7 +103,6 @@ public class LinearKinematicsTest extends Kinematics{
 
         turnAmountW = wheelTargets[0]; //optimized turn amount
         targetW = wheelTargets[1]; //target orientation for wheel
-        turnDirectionW = (int)wheelTargets[2];
 
         optimizedTargetW = clamp(currentW + turnAmountW); //optimized target orientation
 
@@ -114,9 +114,6 @@ public class LinearKinematicsTest extends Kinematics{
     public double getTargetW(){
         return targetW;
     }
-    public int getDirectionW(){
-        return turnDirectionW;
-    }
     public double getTurnAmount(){
         return turnAmountW;
     }
@@ -126,10 +123,10 @@ public class LinearKinematicsTest extends Kinematics{
 
 
 
-    public void getRotTargetClicks(double turnAmount, int direction){
+    public void getRotTargetClicks(double turnAmount){
         if (setClicksCycle == false){
             setClicksCycle = true;
-            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE * direction);
+            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE);
         } else if (!shouldSnap()){
             setClicksCycle = false;
         }
