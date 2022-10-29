@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,12 +10,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TowerController {
 
     //setup variables, motors, and servos
-    public ElapsedTime runtime = new ElapsedTime();
-    public DcMotor screw;
-    public DcMotor uBar;
-    public Servo intake;
-    public DigitalChannel highSensor;
-    public DigitalChannel lowSensor;
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor screw;
+    private DcMotor uBar;
+    private Servo intake;
+    private DigitalChannel highSensor;
+    private DigitalChannel lowSensor;
     public boolean raiseTower;
     public boolean intakePos;
     public double uBarNum = 1;
@@ -85,12 +84,43 @@ public class TowerController {
         uBar.setTargetPosition(uBarLevel);
     }
 
-    public void handleIntake (HardwareMap hardwareMap) {
+    public void handleIntake () {
         if(intakePos){
             intake.setPosition(0.5);
         }
         else{
             intake.setPosition(0);
+        }
+    }
+    public void handleGamepad(Gamepad gamepad) {
+
+        //Screw
+        /* if(gamepad.dpad_up) {
+            raiseTower = true;
+        }
+        if(gamepad.dpad_down) {
+            raiseTower = false;
+        }*/
+
+        //U Bar
+        if(gamepad.b) {
+            uBarLevel = 1;
+        }
+        if(gamepad.a) {
+            uBarLevel = 2;
+        }
+        if(gamepad.x) {
+            uBarLevel = 3;
+        }if(gamepad.y) {
+            uBarLevel = 4;
+        }
+
+        //Intake
+        if(gamepad.right_bumper) {
+            intakePos = true;
+        }
+        if(gamepad.left_bumper) {
+            intakePos = false;
         }
     }
 }
