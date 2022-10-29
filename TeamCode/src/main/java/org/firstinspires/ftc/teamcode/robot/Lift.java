@@ -30,7 +30,7 @@ public class Lift {
     public final double     MINIMUM_CLEARANCE_HEIGHT    = 43 * MM_TO_INCHES;    // inches to lift to clear side panels
 
     public final double     LIFT_POSITION_RESET = 0;
-    public final double     LIFT_POSITION_GROUND = 12;
+    public final double     LIFT_POSITION_GROUND = 0;
     public final double     LIFT_POSITION_LOWPOLE= 14;
     public final double     LIFT_POSITION_MIDPOLE= 30;
     public final double     LIFT_POSITION_HIGHPOLE = 40;
@@ -60,11 +60,9 @@ public class Lift {
         this.telemetry = telemetry;
         liftMotor = hwMap.dcMotor.get("Lift");
 
-//        liftMotor.setPower(LIFT_UP_SPEED);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-//        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public int getPosition () {
@@ -73,7 +71,10 @@ public class Lift {
     }
 
     public void setState(String level, String subheight){
+        telemetry.addData("liftLevel" , level);
+        telemetry.addData("liftSubHeight" , subheight);
         String currentState = getCurrentState();
+        telemetry.addData("liftCurrentState" , currentState);
         if(level.equalsIgnoreCase(currentState)){
             return;
         }else{
@@ -81,29 +82,31 @@ public class Lift {
         }
     }
     private void selectTransition(String desiredLevel, String subheight, String currentState){
-        switch(desiredLevel){
-            case LIFT_POLE_LOW:{
-                transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
-                break;
-            }
-            case LIFT_POLE_MEDIUM:{
-                transitionToLiftPosition(LIFT_POSITION_MIDPOLE + deliveryHeight(subheight));
-                break;
-            }
-            case LIFT_POLE_HIGH:{
-                transitionToLiftPosition(LIFT_POSITION_HIGHPOLE + deliveryHeight(subheight));
-                break;
-            }
-            case LIFT_POLE_GROUND:{
-                transitionToLiftPosition(LIFT_POSITION_GROUND + deliveryHeight(subheight));
-                break;
-            }
-        }
+        transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
+//        switch(desiredLevel){
+//            case LIFT_POLE_LOW:{
+//                transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
+//                break;
+//            }
+//            case LIFT_POLE_MEDIUM:{
+//                transitionToLiftPosition(LIFT_POSITION_MIDPOLE + deliveryHeight(subheight));
+//                break;
+//            }
+//            case LIFT_POLE_HIGH:{
+//                transitionToLiftPosition(LIFT_POSITION_HIGHPOLE + deliveryHeight(subheight));
+//                break;
+//            }
+//            case LIFT_POLE_GROUND:{
+//                transitionToLiftPosition(LIFT_POSITION_GROUND + deliveryHeight(subheight));
+//                break;
+//            }
+//        }
 
     }
     private void transitionToLiftPosition(double inches){
         raiseHeightTo(inches);
     }
+
     public String getCurrentState() {
         String state = TRANSITION_STATE;
         double currentPosition = getHeightInInches();
@@ -130,10 +133,12 @@ public class Lift {
 
     public void raiseHeightTo (double heightInInches) {
         //raising heights to reach different junctions, so four values
-        int ticksNeeded = (int)(heightInInches/TICK_PER_INCH) + 1;
+        telemetry.addData("raiseHeightCalled" , true);
+        int ticksNeeded = (int)(TICK_PER_INCH * heightInInches) ;
+        telemetry.addData("liftTicks" , ticksNeeded);
         liftMotor.setTargetPosition(ticksNeeded);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor.setPower(1.0);
     }
 
     public  boolean isClear () {

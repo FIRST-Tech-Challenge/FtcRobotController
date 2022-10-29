@@ -37,12 +37,6 @@ public class BrainStemRobot {
     public SampleMecanumDrive drive;
     private HashMap stateMap;
 
-    public final String LIFT_SYSTEM_NAME = "Lift";
-    public final String LIFT_POLE_LOW = "POLE_ONE";
-    public final String DELIVERY_HEIGHT = "DELIVERY_HEIGHT";
-    public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
-    public final String LIFT_SUBHEIGHT  = "SUB_HEIGHT";
-
     public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.opMode = opMode;
@@ -72,6 +66,7 @@ public class BrainStemRobot {
         turret.moveTurret(targetDegrees);
     }
     public void updateSystems(Map stateMap) {
+        telemetry.addData("robotStateMap" , stateMap);
         lift.setState((String) stateMap.get(lift.LIFT_SYSTEM_NAME), (String) stateMap.get(lift.LIFT_SUBHEIGHT));
     }
 
