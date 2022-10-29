@@ -1,15 +1,11 @@
-package org.firstinspires.ftc.teamcode.robots.catbot;
+package org.firstinspires.ftc.teamcode.robots.marvin;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//<<<<<<< Updated upstream:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/catbot/TestOpMode.java
-//=======
-import com.qualcomm.robotcore.hardware.HardwareMap;
-//>>>>>>> Stashed changes:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/idk/TestOpMode.java
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Iron Giant OpMode", group="Challenge")
+@TeleOp(name="Iron Core OpMode", group="Challenge")
 public class TestOpMode extends OpMode {
     //variable setup
     private DcMotor motorFrontRight = null;
@@ -26,9 +22,9 @@ public class TestOpMode extends OpMode {
     private double powerClaw = 0;
     //number variables
     private static final float DEADZONE = .1f;
-    private static final int MAXELEVTICS = Integer.MAX_VALUE;
-    private static final int MINELEVTICS = 0;
-    private int currElevTics = 0;
+    private static final int MAXELEVHEIGHT = Integer.MAX_VALUE;
+    private static final int MINELEVHEIGHT = 0;
+    private int currElevHeight = 0;
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass()+"...");
@@ -40,8 +36,8 @@ public class TestOpMode extends OpMode {
         motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
 //        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
 //        claw = this.hardwareMap.get(Servo.class, "claw");
-        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -85,17 +81,24 @@ public class TestOpMode extends OpMode {
         final double v3 = r * Math.sin(robotAngle) + rightX;
         final double v4 = r * Math.cos(robotAngle) - rightX;
         motorFrontLeft.setPower(v1);
-        motorFrontRight.setPower(v4);
+        motorFrontRight.setPower(v2);
         motorBackLeft.setPower(v3);
-        motorBackRight.setPower(v2);
+        motorBackRight.setPower(v4);
     }
 //    public void elevatorMove()
 //    {
-//        if(currElevTics < MAXELEVTICS-50)
-//          elevator.runToPosition(currElevTics+50);
-//        else
-//          elevator.runToPosition(MAXELEVTICS);
-//        currElevTics += 50;
+//        telemetry.addData("Elevator Position: ", elevator.getCurrentPosition());
+//        powerElevator = 0;
+//        if(gamepad1.right_trigger > DEADZONE)
+//        {
+//            powerElevator = gamepad1.right_trigger;
+//        }
+//        if(gamepad1.left_trigger > DEADZONE)
+//        {
+//            powerElevator = -gamepad1.left_trigger;
+//        }
+//        elevator.setPower(powerElevator);
+//        currElevHeight += powerElevator;
 //    }
 //    public void clawMove() {
 //        telemetry.addData("Claw servo position:", claw.getPosition());
