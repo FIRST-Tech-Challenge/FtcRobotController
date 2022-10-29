@@ -34,7 +34,7 @@ public class LinearKinematicsTest extends Kinematics{
 
     public void logic(){
         boolean inCycle = (Math.abs(joystickL - prevJoystickL) <= 10);
-        if (!inCycle) dtype = dType.STOP;
+        if (!inCycle || noMovementRequests()) dtype = dType.STOP;
         else if (shouldSnap()) dtype = dType.SNAP;
         else dtype = dType.LINEAR;
 
@@ -69,24 +69,20 @@ public class LinearKinematicsTest extends Kinematics{
                 break;
 
             case STOP: //this is NOT reset
-                rightThrottle = 0;
-                leftThrottle = 0;
+                rightThrottle = 1;
+                leftThrottle = 1;
                 spinPower = 0;
                 rotatePower = 0;
                 translationPowerPercentage = 0;
                 rotationPowerPercentage = 0;
+                rotClicks = 0;
+                spinClicks = 0;
 
                 // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
                 break;
 
             default:
                 type = DriveType.STOP;
-                rightThrottle = 0;
-                leftThrottle = 0;
-                spinPower = 0;
-                rotatePower = 0;
-                translationPowerPercentage = 0;
-                rotationPowerPercentage = 0;
                 break;
         }
 
