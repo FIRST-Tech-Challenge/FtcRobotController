@@ -22,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  @Autonomous(name="Duck(IMU)", group="A")
 public class DriveMethodCopy extends LinearOpMode{
     BNO055IMU imu;
+    Orientation angles;
     public void runOpMode() {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -36,8 +37,10 @@ public class DriveMethodCopy extends LinearOpMode{
         waitForStart();
 
         while(opModeIsActive()){
-            Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
-            telemetry.addLine("Current Z: " + currentAngle.firstAngle);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+            telemetry.addLine("Heading: " + angles.firstAngle);
+            telemetry.addLine("Roll: " + angles.secondAngle);
+            telemetry.addLine("Pitch: " + angles.thirdAngle);
             telemetry.update();
         }
 
