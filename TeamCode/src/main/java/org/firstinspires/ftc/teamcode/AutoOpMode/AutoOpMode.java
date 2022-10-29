@@ -22,25 +22,23 @@ public class AutoOpMode extends LinearOpMode{
         public boolean DEBUG_FLAG = true;
 
         public DriveTrain driveTrain;
-        //public Vision vision;
+        public Vision vision;
 
-        //public Pose2d startPose = GameField.BLUE_ALLIANCE_BLUE_TERMINAL;
+        //public Pose2d startPose = vision.BLUE_ALLIANCE_BLUE_TERMINAL;
 
-        //need to fix gamefield parking positions
-        //public GameField.PARKING_LOCATION parkingLocation = GameField.PARKING_LOCATION.WAREHOUSE;
-        //public GameField.AUTONOMOUS_ROUTE autonomousRoute = GameField.AUTONOMOUS_ROUTE.THROUGH_BARRIER;
-        public int loopsFromWarehouseToAlShippingHub = 0;
-        public boolean whLoopParkThroughBarrier = false;
-        public boolean pickShippingElement = false;
+        //need to fix vision parking positions
+        public Vision.PARKING_LOCATION parkingLocation = Vision.PARKING_LOCATION.ENDPOS1;
+        public int loopPickConetoDrop = 0;
+        public boolean pickCone = false;
 
         boolean parked = false ;
         public ElapsedTime gameTimer = new ElapsedTime(MILLISECONDS);;
 
-        //public Vision.ACTIVE_WEBCAM activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
-        //public GameField.VISION_IDENTIFIED_TARGET targetZone = GameField.VISION_IDENTIFIED_TARGET.LEVEL1;
+        public Vision.ACTIVE_WEBCAM activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
+        public Vision.VISION_IDENTIFIED_TARGET targetZone = Vision.VISION_IDENTIFIED_TARGET.RED;//Set a default vision value
         int targetZoneLevel = 0;
 
-        //double af = GameField.ALLIANCE_FACTOR;
+        double af = Vision.ALLIANCE_FACTOR;
 
         Trajectory traj;
         TrajectorySequence trajSeq;
@@ -51,17 +49,17 @@ public class AutoOpMode extends LinearOpMode{
             driveTrain = new DriveTrain(hardwareMap);
 
 
-
             /* Create Controllers */
 
             //Key Pay inputs to select Game Plan;
             selectGamePlan();
-            //vision = new Vision(hardwareMap, activeWebcam);
-            //af = GameField.ALLIANCE_FACTOR;
+            vision = new Vision(hardwareMap, activeWebcam);
+            af = Vision.ALLIANCE_FACTOR;
 
             // Initiate Camera on Init.
-            //vision.activateVuforiaTensorFlow();
+            vision.activateVuforiaTensorFlow();
 
+            //buildAuto();
             /*
             if (GameField.startPosition == GameField.START_POSITION.WAREHOUSE) {
                 buildAutoWarehouse();
@@ -82,8 +80,8 @@ public class AutoOpMode extends LinearOpMode{
             while (!isStopRequested()) {
 
                 //Run Vuforia Tensor Flow
-                //targetZone = vision.runVuforiaTensorFlow();
-                //targetZoneLevel = targetZone.ordinal();
+                targetZone = vision.runVuforiaTensorFlow();
+                targetZoneLevel = targetZone.ordinal();
 
                 if (!parked) {
                     //autonomousController.runAutoControl();
@@ -98,32 +96,21 @@ public class AutoOpMode extends LinearOpMode{
                 while (opModeIsActive() && !isStopRequested() && !parked) {
                     gameTimer.reset();
 
-                    //vision.deactivateVuforiaTensorFlow();
-
-                    /*
-                    autonomousController.moveAutoElevatorLevel1();
-                    autonomousController.moveAutoMagazineToTransport();
-                     */
+                    vision.deactivateVuforiaTensorFlow();
 
 
-                    // Logic to determine and run defined Autonomous mode
-                    /*
-                    if (GameField.startPosition == GameField.START_POSITION.BLUE_TERMINAL) {
-                       // runAutoWarehouse();
-                    } else {
-                       // runAutoStorage();
-                    }
-                     */
+
+                    //buildAuto();
 
 
                     //Move to Launching Position
                     parked = true;
 
                     //Write last position to static class to be used as initial position in TeleOp
-                    /*
-                    GameField.currentPose = driveTrain.getPoseEstimate();
-                    GameField.poseSetInAutonomous = true;
-                     */
+
+                    vision.currentPose = driveTrain.getPoseEstimate();
+                    vision.poseSetInAutonomous = true;
+
 
                     if (DEBUG_FLAG) {
                         printDebugMessages();
@@ -132,10 +119,9 @@ public class AutoOpMode extends LinearOpMode{
                 }
 
             }
-            //autonomousController.moveAutoElevatorLevel0();
             safeWait(100);
-            //GameField.currentPose = driveTrain.getPoseEstimate();
-            //GameField.poseSetInAutonomous = true;
+            vision.currentPose = driveTrain.getPoseEstimate();
+            vision.poseSetInAutonomous = true;
         }
 
         TrajectorySequence[] trajOffWallTurnToCone = new TrajectorySequence[3];
@@ -202,30 +188,25 @@ public class AutoOpMode extends LinearOpMode{
             telemetry.setAutoClear(true);
             telemetry.addData("DEBUG_FLAG is : ", DEBUG_FLAG);
 
-            /*
-            telemetry.addData("Playing Alliance Selected : ", GameField.playingAlliance);
-            telemetry.addData("Start Position : ", GameField.startPosition);
-            telemetry.addData("Autonomous route : ", autonomousRoute);
-             */
-            //telemetry.addData("Parking Location : ", parkingLocation);
-            telemetry.addData("Pick Shipping Element : ", pickShippingElement);
 
-            /*
-            telemetry.addData("GameField.playingAlliance : ", GameField.playingAlliance);
-            telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
-            telemetry.addData("GameField.currentPose : ", GameField.currentPose);
-            telemetry.addData("startPose : ", startPose);
-             */
+            telemetry.addData("Playing Alliance Selected : ", vision.playingAlliance);
+            telemetry.addData("Start Position : ", vision.startPosition);
+            telemetry.addData("Parking Location : ", parkingLocation);
+
+
+            telemetry.addData("GameField.playingAlliance : ", vision.playingAlliance);
+            telemetry.addData("GameField.poseSetInAutonomous : ", vision.poseSetInAutonomous);
+            telemetry.addData("GameField.currentPose : ", vision.currentPose);
 
             //****** Drive debug ******
             telemetry.addData("Drive Mode : ", driveTrain.driveMode);
             telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
             //telemetry.addData("Battery Power", driveTrain.getBatteryVoltage(hardwareMap));
 
-            //telemetry.addData("Vision targetLevelDetected : ", vision.targetLevelDetected);
-            //telemetry.addData("Vision detectedLabel", vision.detectedLabel);
-            //telemetry.addData("Vision detectedLabelLeft :", vision.detectedLabelLeft);
-            //telemetry.addData("Vision targetZone :", targetZone);
+            telemetry.addData("Vision targetLevelDetected : ", vision.targetLevelDetected);
+            telemetry.addData("Vision detectedLabel", vision.detectedLabel);
+            telemetry.addData("Vision detectedLabelLeft :", vision.detectedLabelLeft);
+            telemetry.addData("Vision targetZone :", targetZone);
             telemetry.addData("Vision targetZoneLevel :", targetZoneLevel);
 
             telemetry.addData("Game Timer : ", gameTimer.time());
