@@ -94,7 +94,7 @@ public class LinearKinematicsTestJR extends Kinematics{
         optimizedTargetW = clamp(currentW + turnAmountW); //optimized target orientation
 
         //setting PIDs for rotation of wheels & robot
-        snapWheelPID.setTargets(optimizedTargetW, 0.03, 0, 0);
+        snapWheelPID.setTargets(optimizedTargetW, 0.03, 0, 0.01);
 //        tableSpinWheelPID.setTargets(targetR, 0.03, 0, 0);
     }
 
