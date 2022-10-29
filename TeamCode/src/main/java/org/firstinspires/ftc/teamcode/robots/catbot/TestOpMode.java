@@ -35,9 +35,10 @@ public class TestOpMode extends OpMode {
     private static final int MAXELEVTICS = Integer.MAX_VALUE;
     private static final int MINELEVTICS = 0;
     private int currElevTics = 0;
+
     @Override
     public void init() {
-        telemetry.addData("Status", "Initializing " + this.getClass()+"...");
+        telemetry.addData("Status", "Initializing " + this.getClass() + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
         motorFrontLeft = this.hardwareMap.get(DcMotor.class, "motorFrontLeft");
@@ -61,6 +62,7 @@ public class TestOpMode extends OpMode {
         this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
     }
+
     @Override
     public void loop() {
         //tankDrive();
@@ -68,19 +70,17 @@ public class TestOpMode extends OpMode {
 //        elevatorMove();
 //        clawMove();
     }
-    public void tankDrive()
-    {
+
+    public void tankDrive() {
         powerRight = 0;
         powerLeft = 0;
 
 // tanvi is the bestestestestestest
 
-        if(Math.abs(gamepad1.left_stick_y) > DEADZONE)
-        {
+        if (Math.abs(gamepad1.left_stick_y) > DEADZONE) {
             powerLeft = gamepad1.left_stick_y;
         }
-        if(Math.abs(gamepad1.right_stick_y) > DEADZONE)
-        {
+        if (Math.abs(gamepad1.right_stick_y) > DEADZONE) {
             powerRight = gamepad1.right_stick_y;
         }
         motorFrontRight.setPower(powerRight);
@@ -88,8 +88,8 @@ public class TestOpMode extends OpMode {
         motorBackRight.setPower(powerRight);
         motorBackLeft.setPower(powerLeft);
     }
-    public void mechanumDrive()
-    {
+
+    public void mechanumDrive() {
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
         double rightX = gamepad1.right_stick_x;
@@ -104,11 +104,22 @@ public class TestOpMode extends OpMode {
     }
 //    public void elevatorMove()
 //    {
-//        if(currElevTics < MAXELEVTICS-50)
-//          elevator.runToPosition(currElevTics+50);
-//        else
-//          elevator.runToPosition(MAXELEVTICS);
-//        currElevTics += 50;
+//        if(Gamepad1.right_trigger)
+//        {
+    //        if(currElevTics < MAXELEVTICS-50)
+    //          elevator.runToPosition(currElevTics+50);
+    //        else
+    //          elevator.runToPosition(MAXELEVTICS);
+    //        currElevTics += 50;
+//         }
+//        if(Gamepad1.left_trigger)
+//        {
+    //        if(currElevTics > MINELEVTICS+50)
+    //          elevator.runToPosition(currElevTics-50);
+    //        else
+    //          elevator.runToPosition(MINELEVTICS);
+    //        currElevTics -= 50;
+//         }
 //    }
 //    public void clawMove() {
 //        telemetry.addData("Claw servo position:", claw.getPosition());
