@@ -139,7 +139,7 @@ public class AutoOpMode extends LinearOpMode{
         }
 
         TrajectorySequence[] trajOffWallTurnToCone = new TrajectorySequence[3];
-        //TrajectorySequence[] pickToTurnToDropCone = new TrajectorySequence[];
+        TrajectorySequence[] pickToTurnToDropCone = new TrajectorySequence[];
 
         /**
          * Safe method to wait so that stop button is also not missed
