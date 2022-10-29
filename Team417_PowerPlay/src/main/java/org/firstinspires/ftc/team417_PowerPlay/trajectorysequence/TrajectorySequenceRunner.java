@@ -200,9 +200,9 @@ public class TrajectorySequenceRunner {
     }
 
     private void draw(
-            Canvas fieldOverlay,
-            TrajectorySequence sequence, SequenceSegment currentSegment,
-            Pose2d targetPose, Pose2d poseEstimate
+        Canvas fieldOverlay,
+        TrajectorySequence sequence, SequenceSegment currentSegment,
+        Pose2d targetPose, Pose2d poseEstimate
     ) {
         if (sequence != null) {
             for (int i = 0; i < sequence.size(); i++) {
