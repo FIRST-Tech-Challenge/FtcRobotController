@@ -19,6 +19,7 @@ public class LinearKinematicsTest extends Kinematics{
 
     private boolean firstMovement = false; //true when robot is stopped.  False while it is moving.
     private boolean setClicksCycle = false;
+    public boolean inCycle = false;
 
     public enum dType{
         LINEAR,
@@ -33,7 +34,7 @@ public class LinearKinematicsTest extends Kinematics{
     }
 
     public void logic(){
-        boolean inCycle = (Math.abs(joystickL - prevJoystickL) <= 10);
+        inCycle = (Math.abs(joystickL - prevJoystickL) <= 10);
         if (!inCycle || noMovementRequests()) dtype = dType.STOP;
         else if (shouldSnap()) dtype = dType.SNAP;
         else dtype = dType.LINEAR;

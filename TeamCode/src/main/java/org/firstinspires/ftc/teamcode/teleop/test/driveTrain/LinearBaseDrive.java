@@ -101,6 +101,7 @@ public class LinearBaseDrive extends OpMode{
         telemetry.addData("Optimized Target", kinematics.getOptimizedTargetW());
         telemetry.addData("Rot Clicks", kinematics.rotClicks);
         telemetry.addData("Spin clicks", kinematics.spinClicks);
+        telemetry.addData("In cycle?", kinematics.inCycle);
         telemetry.update();
     }
 
