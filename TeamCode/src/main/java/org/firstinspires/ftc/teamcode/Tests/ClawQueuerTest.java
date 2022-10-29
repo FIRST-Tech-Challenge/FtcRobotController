@@ -20,39 +20,15 @@ import java.util.ArrayList;
 public class ClawQueuerTest extends LinearOpMode{
 
     public void runOpMode() {
-
-        telemetry.addData("Status", "Before new Robot");
-        telemetry.update();
-
         PwPRobot robot = new PwPRobot(this, true);
-
-        telemetry.addData("Status", "Ready to go");
-        telemetry.update();
-
-        FtcDashboard dashboard = FtcDashboard.getInstance();
         waitForStart();
-
-        logger.log("/RobotLogs/GeneralRobot", "Running: ClawQueuerTest\n");
-
-
-
-        TelemetryPacket packet = new TelemetryPacket();
-        double x = xpos - 8.75;
-        double y = ypos - 6.25;
-
-
-
-        packet.fieldOverlay().setFill("blue").fillRect(x, y, 15, 15);
-        telemetry.addData("status", "waiting for start command...");
-        telemetry.addData("xpos",x);
-        telemetry.addData("ypos",y);
-        dashboard.sendTelemetryPacket(packet);
-        telemetry.update();
 
         while (opModeIsActive() && !isStopRequested()) {
             logger.loopcounter++;
 
             robot.toggleClawPosition(false);
+            robot.closeClaw(false);
+            robot.openClaw(false);
             robot.setFirstLoop(false);
         }
 
