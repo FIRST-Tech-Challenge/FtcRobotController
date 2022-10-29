@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunne
 
 import java.util.List;
 
-//roadrunner imports
+// roadrunner imports
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -105,11 +105,10 @@ public class Robot extends MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft" +
-                "");
-        leftFront.setDirection(DcMotor.Direction.REVERSE); //motor direction
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Braking behavior
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //We don't want to use PID for the motors using the encoders
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        leftFront.setDirection(DcMotor.Direction.REVERSE); // motor direction
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); // Braking behavior
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // We don't want to use PID for the motors using the encoders
 
         leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
         leftRear.setDirection(DcMotor.Direction.REVERSE);
@@ -128,12 +127,10 @@ public class Robot extends MecanumDrive {
 
         motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
         motorLiftRight.setDirection(DcMotor.Direction.FORWARD);
-        //motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
         motorLiftLeft.setDirection(DcMotor.Direction.FORWARD);
-        //motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intake = hardwareMap.get(Servo.class, "intake");
@@ -155,10 +152,6 @@ public class Robot extends MecanumDrive {
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
-
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-
-//        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 
@@ -195,11 +188,10 @@ public class Robot extends MecanumDrive {
         rightRear.setPower(backRightPower);
     }
 
-    public void claw(boolean open){
-        if(open){
+    public void claw(boolean open) {
+        if (open) {
             intake.setPosition(0.4);
-        }
-        else{
+        } else {
             intake.setPosition(0.78);
         }
     }

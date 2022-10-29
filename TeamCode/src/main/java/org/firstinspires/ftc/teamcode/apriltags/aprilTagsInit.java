@@ -19,8 +19,8 @@ public class aprilTagsInit {
     double cy = 540;
     double tagsize = 0.0406;//meters
 
-    final int ID_LEFT = 0;
-    final int ID_MIDDLE = 1;
+    final int ID_LEFT = 1;
+    final int ID_MIDDLE = 0;
     final int ID_RIGHT = 2;
 
     AprilTagDetection tagOfInterest = null;
@@ -69,6 +69,7 @@ public class aprilTagsInit {
             for(AprilTagDetection tag : currentDetections)
             {
                 if(tag.id == ID_LEFT || tag.id == ID_MIDDLE || tag.id == ID_RIGHT) {
+
                     tagOfInterest = tag;
                     tm.addData("Tag of interest is in sight!\n\nID:", tag.id+1);
                     tagFound = true;

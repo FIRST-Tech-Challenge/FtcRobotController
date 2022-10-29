@@ -2,49 +2,72 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
 
-// PSEUDOCODE
 public class Auton {
     private boolean direction;
     private int parkingZone;
     public Auton(boolean left, int tag_id) {
         this.direction = left;
-        this.parkingZone = tag_id + 1;//0-->1, 1-->2, 2-->3
+        tag_id++;
+        if(tag_id == 2){
+            parkingZone = 1;
+        }
+        if(tag_id == 1)
+        {
+            parkingZone = 2;
+        }
+        if(tag_id == 3)
+        {
+            parkingZone = 3;
+        }
+        ;//0-->1, 1-->2, 2-// ->3
 
     }
 
-    public void runAutonParkOnly(Robot drive)
+    public void runAutonParkOnly(SampleMecanumDrive drive, HardwareMap hardwareMap)
     {
+        Servo intake = hardwareMap.get(Servo.class, "intake");
 
-        int angle = -45;
+
+        int angle = -70;
         if(direction)
         {
-            angle = 45;
+            angle = 70;
         }
 
         drive.setMotorPowers(0.1,0.1,0.1,0.1);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(24)
+                .forward(6)
+                .turn(Math.toRadians(angle))
+                .forward(8.5)
                 .build();
-
         drive.followTrajectorySequence(trajSeq);
+
+        //do cone stuff
+
+        intake.setPosition(0.40);
+        trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+                .back(1)
+                .turn(Math.toRadians(-angle))
+                .forward(19)
+                .build();
+        drive.followTrajectorySequence(trajSeq);
+
 
         if (parkingZone == 1) { // red
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeLeft(24)
+                    .strafeLeft(36)
                     .build();
             drive.followTrajectory(park);
         } else if (parkingZone == 3) { // blue
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(24)
+                    .strafeRight(36)
                     .build();
             drive.followTrajectory(park);
         }
@@ -57,7 +80,7 @@ public class Auton {
 
         drive.setMotorPowers(0.1,0.1,0.1,0.1);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(24)
+                .forward(25)
                 .build();
 
         drive.followTrajectorySequence(trajSeq);

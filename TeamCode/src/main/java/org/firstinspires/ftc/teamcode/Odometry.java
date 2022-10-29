@@ -49,21 +49,16 @@ public class Odometry {
         double delta_perp_pos = delta_perpendicular_encoder_pos - forwardOffset * phi;
         double delta_x;
         double delta_y;
-        if(phi!=0)
-        {
+        if (phi != 0) {
             delta_x = Math.cos(heading) * ((Math.sin(phi)/phi)*delta_middle_pos + (Math.cos(phi)-1)/phi * delta_perp_pos) -
                     Math.sin(heading)*((1-Math.cos(phi))/phi * delta_middle_pos + (Math.sin(phi)/phi)*delta_perp_pos);
 
             delta_y = Math.sin(heading)*((Math.sin(phi)/phi)*delta_middle_pos + (Math.cos(phi)-1)/phi * delta_perp_pos) +
                     Math.cos(heading)*((1-Math.cos(phi))/phi * delta_middle_pos + (Math.sin(phi)/phi)*delta_perp_pos);
-        }
-        else
-        {
+        } else {
             delta_x = delta_middle_pos * Math.cos(heading) - delta_perp_pos * Math.sin(heading);
             delta_y = delta_middle_pos * Math.sin(heading) + delta_perp_pos * Math.cos(heading);
         }
-
-
 
         x_pos += delta_x;
         y_pos += delta_y;

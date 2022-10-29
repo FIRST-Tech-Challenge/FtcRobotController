@@ -29,25 +29,10 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.apriltags.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.ArrayList;
-
 
 @TeleOp(name="AutonTest")
 //@Disabled
@@ -57,7 +42,6 @@ public class AutonTest extends LinearOpMode {
     public void runOpMode() {
         ServoImplEx s = hardwareMap.get(ServoImplEx.class, "Servo");
         s.setDirection(Servo.Direction.FORWARD);
-        //s.setDirection(Servo.Direction.REVERSE);
 
         waitForStart();
         s.setPosition(0.78);
@@ -66,7 +50,5 @@ public class AutonTest extends LinearOpMode {
             telemetry.addLine(Double.toString(s.getPosition()));
             telemetry.update();
         }
-
-
     }
 }
