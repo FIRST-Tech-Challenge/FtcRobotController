@@ -15,10 +15,10 @@ public class Elevator {
     // Elevator Constants
     final double HOME_POWER = -0.1;
 
-    final int ELEVATOR_GROUND = 320;
-    final int ELEVATOR_LOW = 520;
-    final int ELEVATOR_MID = 720;
-    final int ELEVATOR_HIGH = 920;
+    final int ELEVATOR_GROUND = 156;
+    final int ELEVATOR_LOW = 461;
+    final int ELEVATOR_MID = 710;
+    final int ELEVATOR_HIGH = 998;
     final int ELEVATOR_HOME = 50;
 
     final int    DEAD_BAND = 5;
@@ -27,6 +27,7 @@ public class Elevator {
     final double SLOW_LOWER = 0.05;
     final double FAST_LOWER = -0.1;
     final double HOLD_POWER = 0.02;
+    final double SAFE_WRIST_ANGLE = 90;
 
     final double ENCODER_TO_ANGLEM = 0.0992;
     final double ENCODER_TO_ANGLEC = -37.2;
@@ -34,8 +35,8 @@ public class Elevator {
     // Wrist & Hand Constants
     final double WRIST_HOME_POSITION = 0.6;
     final double HAND_HOME_POSITION = 0.8;
-    final double HAND_OPEN = 0.7;
-    final double HAND_CLOSE = 1;
+    final double HAND_OPEN = 0.45; //was 0.4
+    final double HAND_CLOSE = 0.85;
 
     final double WRIST_TO_SERVOM = 0.00374;
     final double WRIST_TO_SERVOC = 0.472;
@@ -176,13 +177,13 @@ public class Elevator {
     }
 
     // ----- Wrist controls
-    public void setWristOffset(double angle){
-        wristOffset = angle;
-    }
+    public void setWristOffset(double angle){wristOffset = angle;}
 
     public void setWristPosition(double angle) {
         wrist.setPosition(angle);
     }
+
+    public double getWristOffset () {return wristOffset;}
 
     public void setHandPosition(double angle) {
         hand.setPosition(angle);

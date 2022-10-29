@@ -30,6 +30,8 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
     boolean headingLock = false;
     double  headingSetpoint = 0;
+    boolean lastFlip = false;
+    boolean flip = false;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as GFORCE_KiwiDrive's heading controller
@@ -75,15 +77,15 @@ public class GFORCE_TELEOP extends LinearOpMode {
             //-----------PILOT-----------
             //check for auto cone tracking
 
-            if (gamepad1.right_bumper && coneTracker.coneDetected) {
+            if (gamepad1.left_bumper && coneTracker.coneDetected) {
                 double turn = coneTracker.coneDirection / 5.0;
                 double speed = 0;
 
                 if (coneTracker.coneRange > 100) {
                     speed = 0.2;
-                }else if (coneTracker.coneRange > 60) {
+                }else if (coneTracker.coneRange >85) {
                     speed = 0.1;
-                }else if (coneTracker.coneRange < 45) {
+                }else if (coneTracker.coneRange < 65) {
                     speed = -0.05;
                 }
 
@@ -163,7 +165,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
             // Lower the elevator to the base
 
             if (gamepad2.left_bumper) {
-                elevator.setHandPosition(elevator.HAND_CLOSE);
+                //elevator.setHandPosition(elevator.HAND_CLOSE);//
                 elevator.setTarget(elevator.ELEVATOR_HOME);
             }
 
@@ -187,9 +189,15 @@ public class GFORCE_TELEOP extends LinearOpMode {
             }
 
             // Put the hand in safe position
-            if (gamepad1.right_bumper || gamepad2.right_bumper) {
-                elevator.setWristOffset(90);
+            flip = (gamepad1.right_bumper || gamepad2.right_bumper);
+            if (flip && !lastFlip) {
+                if (elevator.getWristOffset() == elevator.SAFE_WRIST_ANGLE) {
+                   elevator.setWristOffset(0);
+                } else {
+                    elevator.setWristOffset(elevator.SAFE_WRIST_ANGLE);
+                }
             }
+            lastFlip = flip;
 
             // Manually jog the elevator.
             elevator.jogElevator(-gamepad2.left_stick_y);
