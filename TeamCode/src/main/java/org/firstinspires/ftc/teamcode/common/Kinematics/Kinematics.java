@@ -18,49 +18,59 @@ public class Kinematics {
     public DriveType type = DriveType.NOT_INITIALIZED;
 
     //robot's power
-    protected double rotatePower = 0.0;
+    protected double leftRotatePower = 0.0;
+    protected double rightRotatePower = 0.0;
     protected double spinPower = 0.0;
     protected double translationPowerPercentage = 0.0;
     protected double rotationPowerPercentage = 0.0;
     protected double leftThrottle = 1.0;
     protected double rightThrottle = 1.0;
-    protected int rotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
+    protected int leftRotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
+    protected int rightRotationSwitchMotors = 1;
     protected int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
 
     //target clicks
-    public int rotClicks = 0;
+    public int rightRotClicks = 0;
+    public int leftRotClicks = 0;
     public int spinClicks = 0; //make protected later
 
     //current orientation
     protected GlobalPosSystem posSystem;
-    protected double currentW; //current wheel orientation
+    protected double leftCurrentW; //current wheel orientation
+    protected double rightCurrentW;
     protected double currentR; //current robot header orientation
 
     //PIDs
-    protected RotateSwerveModulePID snapWheelPID;
+    protected RotateSwerveModulePID snapLeftWheelPID;
+    protected RotateSwerveModulePID snapRightWheelPID;
     protected RotateSwerveModulePID tableSpinWheelPID;
-    protected RotateSwerveModulePID resetWheelPID;
 //    protected RotateSwerveModulePID counteractSplinePID;
 
     //targets
-    protected double targetW = 0.0;
-    protected double optimizedTargetW = 0.0;
-    protected double turnAmountW = 0.0;
-    protected int turnDirectionW = 0;
+    protected double leftTargetW = 0.0;
+    protected double rightTargetW = 0.0;
+    protected double leftOptimizedTargetW = 0.0;
+    protected double rightOptimizedTargetW = 0.0;
+    protected double rightTurnAmountW = 0.0;
+    protected double leftTurnAmountW = 0.0;
+    protected int leftTurnDirectionW = 1;
+    protected int rightTurnDirectionW = 1;
     protected double targetR = 0.0;
 //    protected double splineReference = 0.0;
 
     public Kinematics(GlobalPosSystem posSystem){
-        snapWheelPID = new RotateSwerveModulePID();
+        snapLeftWheelPID = new RotateSwerveModulePID();
+        snapLeftWheelPID = new RotateSwerveModulePID();
+
         tableSpinWheelPID = new RotateSwerveModulePID();
-        resetWheelPID = new RotateSwerveModulePID();
 //        counteractSplinePID = new RotateSwerveModulePID();
         this.posSystem = posSystem;
     }
 
     public void setCurrents(){
-        currentW = posSystem.getPositionArr()[2];
-        currentR = posSystem.getPositionArr()[3];
+        leftCurrentW = posSystem.getLeftWheelW();
+        rightCurrentW = posSystem.getRightWheelW();
+        currentR = posSystem.getPositionArr()[4];
     }
 
 //    public void setSplineReference(){
@@ -68,7 +78,7 @@ public class Kinematics {
 //        counteractSplinePID.setTargets(splineReference, 0.05, 0, 0.02);
 //    }
 
-    public double[] wheelOptimization(double x, double y){ //returns how much the wheels should rotate in which direction
+    public double[] wheelOptimization(double x, double y, double currentW){ //returns how much the wheels should rotate in which direction
         double[] directionArr = new double[3];
 
         //determine targets
@@ -92,6 +102,7 @@ public class Kinematics {
             if(Math.abs(turnAmount) > 180){
                 turnAmount = 360 - Math.abs(turnAmount);
             }
+            translateSwitchMotors *= -1;
         }
         directionArr[0] = Math.abs(turnAmount);
         directionArr[2] = turnDirection;
@@ -143,30 +154,6 @@ public class Kinematics {
 
     public DriveType getDriveType(){
         return type;
-    }
-
-    public boolean resetStuff(){
-        if (currentW != 0){
-            rotationSwitchMotors = (currentW > 0 ? -1 : 1); //1 = right, -1 = left
-
-            resetWheelPID.setTargets(0, 0.03, 0, 0);
-            rotatePower = resetWheelPID.update(currentW);
-
-            translationPowerPercentage = 0.0;
-            rotationPowerPercentage = 1.0;
-            leftThrottle = 1.0;
-            rightThrottle = 1.0;
-            spinPower = 0.0;
-            translateSwitchMotors = 1;
-        } else{
-            translationPowerPercentage = 0.0;
-            rotationPowerPercentage = 0.0;
-            rotatePower = 0.0;
-            rotationSwitchMotors = 1;
-        }
-        // firstMovement = true;
-
-        return (currentW == 0);
     }
 }
 

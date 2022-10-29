@@ -66,7 +66,7 @@ public class LinearGPS {
         double currentAngle = clamp(rotationalDegrees + positionArr[2]);
         currentAngle = Math.toRadians(currentAngle);
 
-        if (Math.abs(translationalInches) == 0.20){
+        if (Math.abs(translationalInches) <= 0.20){
             update(translationalInches * Math.sin(currentAngle), translationalInches * Math.cos(currentAngle) , rotationalDegrees, 0);
         }
         else{
