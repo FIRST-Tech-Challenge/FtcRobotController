@@ -138,7 +138,8 @@ public class AutoOpMode extends LinearOpMode{
             //GameField.poseSetInAutonomous = true;
         }
 
-        TrajectorySequence trajOffWallCone;
+        TrajectorySequence[] trajOffWallTurnToCone = new TrajectorySequence[3];
+        //TrajectorySequence[] pickToTurnToDropCone = new TrajectorySequence[];
 
         /**
          * Safe method to wait so that stop button is also not missed

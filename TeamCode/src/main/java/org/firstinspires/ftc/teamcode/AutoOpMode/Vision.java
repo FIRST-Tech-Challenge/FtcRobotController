@@ -266,6 +266,7 @@ public class Vision {
      * @return
      */
 
+    /*
 
     public GameField.VISION_IDENTIFIED_TARGET runVuforiaTensorFlow() {
         visionState = VISION_STATE.TFOD_RUNNING;
@@ -279,7 +280,7 @@ public class Vision {
                 if (recognitions.size() == 0 ) {
                     // empty list.  no objects recognized.
                     detectedLabel = "None";
-                    /*
+
                     if(GameField.startPosition != GameField.START_POSITION.MIDDLE){
                         if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                             targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL3;
@@ -293,12 +294,12 @@ public class Vision {
                             targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL3;
                         }
                     }
-                     */
+
                 } else {
                     // list is not empty.
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
-                    /* step through the list of recognitions and display boundary info.
+                     step through the list of recognitions and display boundary info.
                     for (Recognition recognition : recognitions) {
                         telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                         telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
@@ -306,7 +307,7 @@ public class Vision {
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
                         i++;
-                    }*/
+                    }
 
                     for (Recognition recognition : recognitions) {
                         // check label to see which target zone to go after.
@@ -314,12 +315,12 @@ public class Vision {
                         detectedLabelLeft = recognition.getLeft();
                         detectedLabelRight = recognition.getRight();
                         detectedLabelTop = recognition.getTop();
-                        detectedLabelBottom = recognition.getBottom();*/
+                        detectedLabelBottom = recognition.getBottom();
                         if (recognition.getLabel().equals(LABELS[0]) || recognition.getLabel().equals(LABELS[1]) ||
                                 recognition.getLabel().equals(LABELS[2])) {
 
 
-                            /*
+
                             if (recognition.getLeft() < targetPosition[0]) {
                                 if(GameField.startPosition != GameField.START_POSITION.MIDDLE){
                                     if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
@@ -349,7 +350,7 @@ public class Vision {
                                     }
                                 }
                             }
-                            */
+
                         }
                     }
                 }
@@ -357,6 +358,7 @@ public class Vision {
         }
         return targetLevelDetected;
     }
+    */
 
     /**
      * Stop Tensor Flow algorithm
