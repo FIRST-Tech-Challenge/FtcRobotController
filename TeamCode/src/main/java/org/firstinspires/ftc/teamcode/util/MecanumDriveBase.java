@@ -16,11 +16,11 @@ public class MecanumDriveBase {
     public DcMotor lb= null;
     public DcMotor rb= null;
     public DcMotor rf= null;
-    public double leftPowerFront  = 1.0;
-    public double rightPowerFront = 1.0;
-    public double rightPowerBack  = 1.0;
-    public double leftPowerBack   = 1.0;
-    public double speedFactor     = 1.0;
+    public double leftPowerFront  = .5;
+    public double rightPowerFront = .5;
+    public double rightPowerBack  = .5;
+    public double leftPowerBack   = .5;
+    public double speedFactor     = .5;
 
     public MecanumDriveBase(HardwareMap hardwareMap){
         rb = hardwareMap.get(DcMotor.class, "rb");
