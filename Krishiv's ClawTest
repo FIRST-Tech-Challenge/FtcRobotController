@@ -1,0 +1,71 @@
+package org.firstinspires.ftc.teamcode;
+
+
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
+
+@TeleOp(name = "ClawTest", group = "TeleOp")
+
+public class ClawTest extends OpMode {
+
+
+
+    DcMotor Slide;
+    Servo ClawX;
+    Servo ClawY;
+    double SlidePower;
+
+
+
+
+    @Override
+    public void init() {
+
+        Slide = hardwareMap.dcMotor.get("Slide");
+        ClawX = hardwareMap.servo.get("ClawX");
+        ClawY = hardwareMap.servo.get("ClawY");
+
+        //Intake = hardwareMap.dcMotor.get("Intake");
+    }
+
+    public void loop() {
+
+
+        if (gamepad1.left_bumper)  {
+            ClawY.setPosition(0.9);
+        }
+        else {
+            ClawY.setPosition(0.6);
+        }
+
+        if (gamepad1.x) {
+            ClawX.setPosition(0.95);
+        }
+        if (gamepad1.y) {
+            ClawX.setPosition(0.87);
+        }
+
+        if (gamepad1.a){
+           Slide.setPower(-0.2);;
+        } else if (gamepad1.b){
+           Slide.setPower(0.7);
+        } else {
+          Slide.setPower(0.2);
+        }
+
+
+        telemetry.addData("ClawX Pos", ClawX.getPosition());
+        telemetry.addData("ClawY Pos", ClawY.getPosition());
+        telemetry.update();
+
+
+
+
+
+    }
+}
