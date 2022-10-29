@@ -62,7 +62,7 @@ public class LinearKinematicsTestJR extends Kinematics{
                 rotationPowerPercentage = 0;
                 rotClicks = 0;
                 spinClicks = 0;
-                setClicksCycle = true;
+                setClicksCycle = false;
                 rotationSwitchMotors = 1;
                 translateSwitchMotors = 1;
 

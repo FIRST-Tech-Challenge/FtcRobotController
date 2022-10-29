@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTest;
+import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTestJR;
 import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -29,7 +30,7 @@ public class LinearBaseDrive extends OpMode{
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
     GlobalPosSystem posSystem;
-    LinearKinematicsTest kinematics;
+    LinearKinematicsTestJR kinematics;
 
     private ElapsedTime runtime = new ElapsedTime();
     private double[] posData = new double[4];
@@ -54,7 +55,7 @@ public class LinearBaseDrive extends OpMode{
         runtime.reset();
 
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new LinearKinematicsTest(posSystem);
+        kinematics = new LinearKinematicsTestJR(posSystem);
         posSystem.grabKinematics(kinematics);
     }
 
@@ -88,8 +89,8 @@ public class LinearBaseDrive extends OpMode{
         for(int i = 0; i < 4; i++){
             posData[i] = posSystem.getPositionArr()[i];
         }
-        telemetry.addData("X", posData[0]);
-        telemetry.addData("Y", posData[1]);
+        telemetry.addData("X gamepad", gamepad1.left_stick_x);
+        telemetry.addData("Y gamepad", gamepad1.left_stick_y);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
         telemetry.addData("Drive Type", kinematics.getdDriveType());
@@ -98,6 +99,7 @@ public class LinearBaseDrive extends OpMode{
         telemetry.addData("TargetW", kinematics.getTargetW());
         telemetry.addData("Turn Amount", kinematics.getTurnAmount());
         telemetry.addData("Optimized Target", kinematics.getOptimizedTargetW());
+        telemetry.addData("Direction", kinematics.getDirectionW());
         telemetry.addData("Rot Clicks", kinematics.rotClicks);
         telemetry.addData("Spin clicks", kinematics.spinClicks);
         telemetry.addData("In cycle?", kinematics.inCycle);
