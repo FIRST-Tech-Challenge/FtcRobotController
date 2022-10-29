@@ -9,13 +9,11 @@ public class OdometryPod {
     public static final double circumference = 6.283;
     public static final double inchesPerTick = circumference/ticksPerRev;
     public DcMotor pod;
-    private ElapsedTime runtime = new ElapsedTime();
     private int lastPos;
 
 
     public OdometryPod(HardwareMap hardwareMap, String podName) {
         pod = hardwareMap.get(DcMotor.class, podName);
-        runtime.reset();
         lastPos = pod.getCurrentPosition();
     }
     public double getDistanceChangeInches() {
