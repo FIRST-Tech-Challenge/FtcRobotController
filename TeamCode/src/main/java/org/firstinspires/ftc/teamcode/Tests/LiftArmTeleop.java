@@ -1,29 +1,30 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
+import org.firstinspires.ftc.teamcode.Components.LiftArm;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 @TeleOp
-public class ClawTeleop extends LinearOpMode {
-    PwPRobot robot;
+public class LiftArmTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new PwPRobot(this,true);
+       BasicRobot robot = new BasicRobot(this,true);
+        LiftArm lfitArm = new LiftArm();
         waitForStart();
         while(opModeIsActive()){
             logger.loopcounter++;
             if (gamepad1.a) {
-                robot.openClaw();
+                lfitArm.raiseLiftArmToOuttake();
             }
             if (gamepad1.b) {
-                robot.closeClaw();
+                lfitArm.lowerLiftArmToIntake();
             }
         }
-        robot.stop();
+    stop();
     }
 }

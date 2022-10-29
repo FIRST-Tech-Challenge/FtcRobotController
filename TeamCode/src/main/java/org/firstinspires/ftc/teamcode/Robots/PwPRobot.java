@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -199,7 +196,9 @@ public class PwPRobot extends BasicRobot {
 //            aligner.reverseAlignerIntake();
 //        }
 //    }
-
+    public void setLiftVelocity(double velocity){
+        lift.setLiftVelocity(velocity);
+    }
     public void teleOp() {
         //omnidirectional movement + turning
 

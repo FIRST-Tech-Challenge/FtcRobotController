@@ -84,7 +84,7 @@ public class RFDualServo implements Servo {
     }
 
     public void flipServosInterval (double servo1lowerpos, double servo1upperpos){
-        if (op.getRuntime() - lasttime > 0.2) {
+        if(op.getRuntime() - lasttime > 0.2) {
             if (!flipped) {
                 setPositions(servo1upperpos);
                 flipped = true;
@@ -92,16 +92,15 @@ public class RFDualServo implements Servo {
                 setPositions(servo1lowerpos);
                 flipped = false;
             }
-            lasttime = op.getRuntime();
         }
     }
 
     public void setPositions(double position) {
         if (position <= servolimit) {
             if (dualServo1.getPosition() != position) {
-                logger.log("/DualServoLogs/RFDualServo", rfDualServoName + ",setPositions()," +
-                        "Setting Positions: servo 1: " + df.format(position) + "; servo 2: " +
-                        df.format(servolimit - position), true);
+//                logger.log("/DualServoLogs/RFDualServo", rfDualServoName + ",setPositions()," +
+//                        "Setting Positions: servo 1: " + df.format(position) + "; servo 2: " +
+//                        df.format(servolimit - position), true);
 //                inputlogs.add(rfDualServoName);
 //                inputlogs.add("setPositions()");
 //                inputlogs.add("Setting Positions: servo 1: " + position + ", servo 2: " + (servolimit - position));
@@ -111,10 +110,12 @@ public class RFDualServo implements Servo {
 //                logger.log("/DualServoLogs/RFDualServo", " Setting Positions: " + position + ", " + servolimit + position);
 //                logger.log("/RobotLogs/GeneralRobot", rfDualServoName + "\nsetPositions():\nSetting Positions:\nservo 1: " + position + "\nservo 2: " + (servolimit - position));
 
+                if (op.getRuntime() - lasttime > 0.2) {
+                    dualServo1.setPosition(position);
+                    dualServo2.setPosition(servolimit - position);
+                    lasttime = op.getRuntime();
+                }
             }
-            dualServo1.setPosition(position);
-            dualServo2.setPosition(servolimit - position);
-            lasttime = op.getRuntime();
         }
 
     }
@@ -152,11 +153,11 @@ public class RFDualServo implements Servo {
 
     @Override
     public void setPosition(double position) {
-        logger.log("RFServoLog", "error: function body empty, check rf dual servo code");
+        logger.log("RFDualServoLog", "error: function body empty, check rf dual servo code");
     }
 
     public void scaleRange(double min, double max) {
-        logger.log("RFServoLog", "error: function body empty, check rf dual servo code");
+        logger.log("RFDualServoLog", "error: function body empty, check rf dual servo code");
     }
 
     @Override

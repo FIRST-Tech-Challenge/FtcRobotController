@@ -2,23 +2,15 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_GROUND;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_GROUND_JUNCTION;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_HIGH;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_LOW;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftStates.LIFT_MID;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
-import org.firstinspires.ftc.teamcode.Old.Components.Misc.StateMachine;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
 
 public class LiftArm {
 
-    private RFServo liftArmServo;
+    private RFDualServo liftArmServo;
 
     private final double LIFT_ARM_INTAKE_POS = 0.1;
 
@@ -64,12 +56,12 @@ public class LiftArm {
     //constructor
     public LiftArm() {
         //init RFServo
-        liftArmServo = new RFServo("liftArmServo", 0.5);
+        liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 0.5);
 
     }
 
     public void toggleArmPosition() {
-        liftArmServo.flipServoInterval(LIFT_ARM_INTAKE_POS, LIFT_ARM_OUTTAKE_POS);
+        liftArmServo.flipServosInterval(LIFT_ARM_INTAKE_POS, LIFT_ARM_OUTTAKE_POS);
         logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",toggleArmPosition()"
                 + ",Lift Arm Toggled", true);
     }
@@ -84,7 +76,7 @@ public class LiftArm {
         if (CLAW_OPEN.status && ARM_OUTTAKE.status) {
 
             //set servo position
-            liftArmServo.setPosition(LIFT_ARM_INTAKE_POS);
+            liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);
 
             //set state of claw open to true
             ARM_INTAKE.setStatus(true);
@@ -104,7 +96,7 @@ public class LiftArm {
         if (CLAW_CLOSED.status && ARM_INTAKE.status) {
 
             //set servo position
-            liftArmServo.setPosition(LIFT_ARM_OUTTAKE_POS);
+            liftArmServo.setPositions(LIFT_ARM_OUTTAKE_POS);
 
             //set state of claw open to true
             ARM_OUTTAKE.setStatus(true);

@@ -68,18 +68,18 @@ public class RFServo implements Servo {
     }
 
     public boolean flipServoInterval(double lowerpos, double upperpos) {
-
-        if (flipped) {
-            RFServo.setPosition(lowerpos);
-            logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                    + df.format(lowerpos), true);
-            flipped = false;
-        }
-        else {
-            RFServo.setPosition(upperpos);
-            logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                    + df.format(upperpos), true);
-            flipped = true;
+        if(op.getRuntime() - lasttime > 0.2) {
+            if (flipped) {
+                RFServo.setPosition(lowerpos);
+                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
+                        + df.format(lowerpos), true);
+                flipped = false;
+            } else {
+                RFServo.setPosition(upperpos);
+                logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
+                        + df.format(upperpos), true);
+                flipped = true;
+            }
         }
         return op.getRuntime() - lasttime > 0.2;
     }

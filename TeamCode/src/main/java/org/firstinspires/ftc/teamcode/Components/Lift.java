@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
-import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 import java.util.ArrayList;
 
@@ -205,6 +200,20 @@ public class Lift {
         //}
         //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
         logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
+    }
+    public void setLiftVelocity(double p_velocity){
+        //liftTarget=liftMotor.getCurrentPosition();
+        //if(liftTarget<MAX_LIFT_TICKS&&power>0) {
+        //    liftMotor.setPower(power);
+        //}
+        //else if(liftTarget>10&&power<0) {
+        liftMotor.setVelocity(p_velocity);
+        //}
+        //else{
+        //    liftMotor.setPower(0);
+        //}
+        //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
+        logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + p_velocity, true, true, true);
     }
     public void liftToTarget(){
         liftMotor.setPosition(liftTarget);

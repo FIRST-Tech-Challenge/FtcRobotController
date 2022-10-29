@@ -6,17 +6,15 @@ import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPE
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
-import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Old.Components.Misc.ColorDistanceRevV3;
 
 public class Claw {
 
     private RFServo claw;
 
-    private RevColorSensorV3 coneObserver;
+    private Rev2mDistanceSensor coneObserver;
 
     //temporary
     private final double CLAW_CONE_DISTANCE = 0.75;
@@ -75,7 +73,7 @@ public class Claw {
         //init RFServo & Distance sensor
         claw = new RFServo("clawServo", CLAW_SERVO_MAX_TICK);
 
-        coneObserver = op.hardwareMap.get(RevColorSensorV3.class, "coneObserver");
+        coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
     }
 
     public void logClawStates() {
@@ -123,7 +121,7 @@ public class Claw {
             //TODO: need separate CLAW_OPEN_POS constant?
 
             //set state of claw open to true
-            CLAW_OPEN.setStatus(true);
+            ClawStates.CLAW_OPEN.setStatus(true);
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
@@ -140,7 +138,7 @@ public class Claw {
         //no setting state
         //log to general robot log that the cone has been observed through function closeClaw()
         logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance()"
-                + ",Cone in Claw Observed", true);
+                + coneObserver.getDistance(INCH), true);
 
         return coneObserver.getDistance(INCH) < CLAW_CONE_DISTANCE;
     }
