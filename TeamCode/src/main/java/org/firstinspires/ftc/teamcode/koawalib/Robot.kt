@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lights
-import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
 
 class Robot(startPose: Pose) {
