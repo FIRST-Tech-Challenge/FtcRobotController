@@ -198,7 +198,7 @@ public class Autonomous {
             case START_RIGHT:
                 rightNoRR = Utils.getStateMachine(new Stage())
 
-                        //start moving the arm so subsequent movenments aren't as large
+                        //start moving the arm so subsequent movements aren't as large
                         .addTimedState(1, () -> {
                         }, () -> {
                         }) //wait so arm movement doesn't build on kinetic energy of chassis
