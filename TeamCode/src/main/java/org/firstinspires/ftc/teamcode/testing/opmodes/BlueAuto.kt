@@ -13,15 +13,10 @@ class BlueAuto : KOpMode() {
     private val robot by lazy { Robot(startPose) }
 
     override fun mInit() {
-        robot.webcam.device.startStreaming()
+        robot.webcam.startStreaming()
     }
 
     override fun mInitLoop() {
-        robot.webcam.update()
-        robot.webcam.start()
-    }
-
-    override fun mStart() {
 
     }
 }

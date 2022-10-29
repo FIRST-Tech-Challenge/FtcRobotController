@@ -13,8 +13,6 @@ import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
-import org.firstinspires.ftc.teamcode.koawalib.vision.AprilTagDetectionPipeline
-import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
 
 class Hardware(startPose: Pose) {
     val fl = MotorFactory("fl")
@@ -70,8 +68,6 @@ class Hardware(startPose: Pose) {
     val distanceSensor = KDistanceSensor("distanceSensor")
 
     val lights = KServo("Lights")
-
-    val webcam = Webcam("Webcam", AprilTagDetectionPipeline(0.166, 578.272, 578.272, 402.145, 221.506))
 
     private val leftEncoder = KEncoder(fr, ticksPerUnit, true).reverse.zero()
     private val rightEncoder = KEncoder(fl, ticksPerUnit, true).zero()
