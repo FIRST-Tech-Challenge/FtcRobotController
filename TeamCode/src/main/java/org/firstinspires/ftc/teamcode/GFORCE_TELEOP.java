@@ -166,18 +166,18 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             if (gamepad2.left_bumper) {
                 //elevator.setHandPosition(elevator.HAND_CLOSE);//
-                elevator.setTarget(elevator.ELEVATOR_HOME);
+                elevator.setLiftTargetPosition(elevator.ELEVATOR_HOME);
             }
 
             // Select one of the 4 preset heights
             if (gamepad2.dpad_down) {
-                elevator.setTarget(elevator.ELEVATOR_LOW);
+                elevator.setLiftTargetPosition(elevator.ELEVATOR_LOW);
             } else if (gamepad2.dpad_left) {
-                elevator.setTarget(elevator.ELEVATOR_MID);
+                elevator.setLiftTargetPosition(elevator.ELEVATOR_MID);
             } else if (gamepad2.dpad_up) {
-                elevator.setTarget(elevator.ELEVATOR_HIGH);
+                elevator.setLiftTargetPosition(elevator.ELEVATOR_HIGH);
             } else if (gamepad2.dpad_right) {
-                elevator.setTarget(elevator.ELEVATOR_GROUND);
+                elevator.setLiftTargetPosition(elevator.ELEVATOR_GROUND);
             }
 
             // Open or close the hand (gripper)
@@ -191,10 +191,10 @@ public class GFORCE_TELEOP extends LinearOpMode {
             // Put the hand in safe position
             flip = (gamepad1.right_bumper || gamepad2.right_bumper);
             if (flip && !lastFlip) {
-                if (elevator.getWristOffset() == elevator.SAFE_WRIST_ANGLE) {
+                if (elevator.getWristOffset() == elevator.SAFE_WRIST_OFFSET) {
                    elevator.setWristOffset(0);
                 } else {
-                    elevator.setWristOffset(elevator.SAFE_WRIST_ANGLE);
+                    elevator.setWristOffset(elevator.SAFE_WRIST_OFFSET);
                 }
             }
             lastFlip = flip;

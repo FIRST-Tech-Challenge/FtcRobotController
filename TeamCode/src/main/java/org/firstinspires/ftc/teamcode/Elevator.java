@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,47 +16,60 @@ public class Elevator {
     // Elevator Constants
     final double HOME_POWER = -0.1;
 
-    final int ELEVATOR_GROUND = 156;
-    final int ELEVATOR_LOW = 461;
-    final int ELEVATOR_MID = 710;
-    final int ELEVATOR_HIGH = 998;
-    final int ELEVATOR_HOME = 50;
+    final int ELEVATOR_MIN    = 0;
+    final int ELEVATOR_HOME   = 20;
+    final int ELEVATOR_GROUND = 160;
+    final int ELEVATOR_LOW    = 460;
+    final int ELEVATOR_MID    = 710;
+    final int ELEVATOR_HIGH   = 1000;
+    final int ELEVATOR_MAX    = 1100;
 
-    final int    DEAD_BAND = 5;
-    final double FAST_LIFT = 0.5;
-    final double SLOW_LIFT = 0.2;
-    final double SLOW_LOWER = 0.05;
-    final double FAST_LOWER = -0.1;
-    final double HOLD_POWER = 0.02;
-    final double SAFE_WRIST_ANGLE = 90;
-
-    final double ENCODER_TO_ANGLEM = 0.0992;
-    final double ENCODER_TO_ANGLEC = -37.2;
+    final int    DEAD_BAND    = 5;
+    final double FAST_LIFT    =  0.5;
+    final double SLOW_LIFT    =  0.2;
+    final double SLOW_LOWER   =  0.0;
+    final double FAST_LOWER   = -0.1;
+    final double HOLD_POWER   =  0.05;
 
     // Wrist & Hand Constants
+    final double SAFE_WRIST_OFFSET = 90;
+
     final double WRIST_HOME_POSITION = 0.6;
     final double HAND_HOME_POSITION = 0.8;
+
     final double HAND_OPEN = 0.45; //was 0.4
     final double HAND_CLOSE = 0.85;
 
-    final double WRIST_TO_SERVOM = 0.00374;
-    final double WRIST_TO_SERVOC = 0.472;
+    // Angle (A) to/from Position (P) conversion factors Y = Mx + C
+    final double LIFT_P2A_M = 0.0992;
+    final double LIFT_P2A_C = -37.2;
+
+    final double WRIST_A2P_M = 0.00374;
+    final double WRIST_A2P_C = 0.472;
 
     // class members (devices)
-    private DcMotorEx   liftMaster;
-    private DcMotorEx   liftSlave;
+    private DcMotorEx       liftMaster;
+    private DcMotorEx       liftSlave;
     private List<DcMotorEx> motors;
-    private Servo       wrist; //smaller values tilt the wrist down
-    private Servo       hand;//smaller values open the hand more
+    private Servo           wrist;  //smaller values tilt the wrist down
+    private Servo           hand;   //smaller values open the hand more
 
     // class members (objects)
     private LinearOpMode myOpMode = null;
-    private int     target = 0;
-    private int     lastPosition = 0;
-    private double  power    = 0;
+
+    // elevator state variables
     private boolean liftActive = false;
+    private int     liftPosition = 0;
+    private double  liftAngle = 0;
+    private int     liftTargetPosition = 0;
+    private int     liftLastPosition = 0;
+    private boolean liftInPosition = false;
+
     private double  wristOffset = 0;
-    private int     currentPosition = 0;
+    private double  wristPosition = 0;
+    private double  wristAngle = 0;
+
+    private double  handPosition = 0;
 
     // Elevator Constructor.  Call once opmode is running.
     public Elevator(LinearOpMode opMode) {
@@ -78,15 +92,15 @@ public class Elevator {
 
     /**
      * Perform closed loop control on elevator and wrist
-     * @return
+     * @return true if lift is In Position
      */
     public boolean update() {
-        currentPosition = liftMaster.getCurrentPosition();
-        boolean inPosition = false;
+        liftPosition = liftMaster.getCurrentPosition();
+        liftInPosition = false;
 
         // Run the elevator motor with 4 different speed zones.  Two up and two down.
         if (liftActive) {
-            double error = target - getPosition();
+            double error = liftTargetPosition - getLiftPosition();
             if (error > DEAD_BAND * 4) {
                 // elevator is way too low
                 setPower(FAST_LIFT);
@@ -101,29 +115,28 @@ public class Elevator {
                 setPower(SLOW_LOWER);
             } else {
                 // We are in position, so apply a little hold power unless we are at rest on support
-                if (target < 10)
+                if (liftTargetPosition <= ELEVATOR_HOME)
                     setPower(0);
                 else
                     setPower(HOLD_POWER);
 
-                inPosition = true;
+                liftInPosition = true;
             }
 
             // Adjust the angle of the servo.
             // first calculate arm angle and negate it for level wrist
             // Then add desired wrist offset angle and send to servo.
-            double armAngle = elevatorEncoderToAngle(currentPosition);
-            double servoAngle = -armAngle;
-            servoAngle += wristOffset;
-            double servoPosition = wristAngleToServo(servoAngle);
-            setWristPosition(servoPosition);
+            liftAngle = elevatorEncoderToAngle(liftPosition);
+            wristAngle = wristOffset - liftAngle;
+            wristPosition = wristAngleToServo(wristAngle);
+            setWristPosition(wristPosition);
 
             // Display key arm data
-            myOpMode.telemetry.addData("arm encoder", currentPosition);
-            myOpMode.telemetry.addData("arm angle", armAngle);
-            myOpMode.telemetry.addData("servo position", servoPosition);
+            myOpMode.telemetry.addData("arm position", liftPosition);
+            myOpMode.telemetry.addData("arm angle", liftAngle);
+            myOpMode.telemetry.addData("servo position", wristPosition);
         }
-        return inPosition;
+        return liftInPosition;
     }
 
     /***
@@ -132,12 +145,12 @@ public class Elevator {
      */
     public void recalibrateHomePosition() {
         disableLift();  // Stop any closed loop control
-        lastPosition = liftMaster.getCurrentPosition();
+        liftLastPosition = liftMaster.getCurrentPosition();
         setPower(HOME_POWER);
         myOpMode.sleep(250);
 
-        while (!myOpMode.isStopRequested() && (liftMaster.getCurrentPosition() != lastPosition)){
-            lastPosition = liftMaster.getCurrentPosition();
+        while (!myOpMode.isStopRequested() && (liftMaster.getCurrentPosition() != liftLastPosition)){
+            liftLastPosition = liftMaster.getCurrentPosition();
             myOpMode.sleep(100);
         }
 
@@ -145,7 +158,7 @@ public class Elevator {
         setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         myOpMode.sleep(50);
         setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setTarget(0);
+        setLiftTargetPosition(0);
         setHandPosition(HAND_OPEN);
         enableLift();  // Start closed loop control
     }
@@ -159,47 +172,49 @@ public class Elevator {
         liftActive = false;
     }
 
-    public void setTarget(int   target){
-        // ToDo:  Make sure the target is a safe value.
-        this.target = target;
+    public void setLiftTargetPosition(int Position){
+        liftTargetPosition = Range.clip(Position, ELEVATOR_MIN, ELEVATOR_MAX);
     }
 
-    public int getTarget(){
-        return target;
+    public int getLiftTargetPosition(){
+        return liftTargetPosition;
     }
 
-    public int getPosition() {
-        return currentPosition;
+    public int getLiftPosition() {
+        return liftPosition;
     }
 
     public void jogElevator(double speed) {
-        target = target + (int)(speed * 6);
+        setLiftTargetPosition(liftTargetPosition + (int)(speed * 6));
     }
 
     // ----- Wrist controls
     public void setWristOffset(double angle){wristOffset = angle;}
 
-    public void setWristPosition(double angle) {
-        wrist.setPosition(angle);
-    }
-
     public double getWristOffset () {return wristOffset;}
 
-    public void setHandPosition(double angle) {
-        hand.setPosition(angle);
+    public void setWristPosition(double position) {
+
+        wristPosition = position;
+        wrist.setPosition(position);
+    }
+
+    public void setHandPosition(double position) {
+        handPosition = position;
+        hand.setPosition(position);
     }
 
     // ------ Angle/reading conversions
     public double elevatorEncoderToAngle (int position) {
-        return(((position * ENCODER_TO_ANGLEM) + ENCODER_TO_ANGLEC));
+        return(((position * LIFT_P2A_M) + LIFT_P2A_C));
     }
 
     public int elevatorAngleToEncoder (double angle) {
-        return((int)((angle-ENCODER_TO_ANGLEC)/ENCODER_TO_ANGLEM));
+        return((int)((angle- LIFT_P2A_C)/ LIFT_P2A_M));
     }
 
     public double wristAngleToServo (double angle) {
-        return(((angle * WRIST_TO_SERVOM ) + WRIST_TO_SERVOC));
+        return(((angle * WRIST_A2P_M) + WRIST_A2P_C));
     }
 
     // ------- Bulk motor control methods
