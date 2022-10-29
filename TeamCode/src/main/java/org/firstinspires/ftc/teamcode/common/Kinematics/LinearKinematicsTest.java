@@ -55,7 +55,7 @@ public class LinearKinematicsTest extends Kinematics{
                 break;
 
             case SNAP:
-                getRotTargetClicks(turnAmountW, turnDirectionW);
+                getRotTargetClicks();
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
@@ -127,10 +127,10 @@ public class LinearKinematicsTest extends Kinematics{
 
 
 
-    public void getRotTargetClicks(double turnAmount, int direction){
+    public void getRotTargetClicks(){
         if (setClicksCycle == false){
             setClicksCycle = true;
-            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE * direction);
+            rotClicks = (int)(turnAmountW * constants.CLICKS_PER_DEGREE * turnDirectionW);
         } else if (!shouldSnap()){
             setClicksCycle = false;
         }
