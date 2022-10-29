@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.ElevatorState.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.Arrays;
 import java.util.List;
-
 
 public class Elevator {
 
@@ -53,17 +55,23 @@ public class Elevator {
     private List<DcMotorEx> motors;
     private Servo           wrist;  //smaller values tilt the wrist down
     private Servo           hand;   //smaller values open the hand more
+    private ElapsedTime     elevatorStateTimer = new ElapsedTime();
 
     // class members (objects)
     private LinearOpMode myOpMode = null;
 
     // elevator state variables
-    private boolean liftActive = false;
-    private int     liftPosition = 0;
-    private double  liftAngle = 0;
-    private int     liftTargetPosition = 0;
-    private int     liftLastPosition = 0;
-    private boolean liftInPosition = false;
+    private ElevatorState elevatorState = IDLE;
+    private boolean liftActive          = false;
+    private boolean liftInPosition      = false;
+    private int     liftPosition        = 0;
+    private double  liftAngle           = 0;
+    private int     liftTargetPosition  = 0;
+    private int     liftLastPosition    = 0;
+
+    double pendingDelay;
+    int    pendingLiftPosition;
+    ElevatorState pendingState;
 
     private double  wristOffset = 0;
     private double  wristPosition = 0;
@@ -88,6 +96,97 @@ public class Elevator {
         liftSlave.setDirection(DcMotorSimple.Direction.REVERSE);
         setWristPosition(WRIST_HOME_POSITION);
         setHandPosition(HAND_HOME_POSITION);
+    }
+
+    // ======  Elevator State Machine
+    public ElevatorState runStateMachine(ElevatorState newState) {
+        setState(newState);
+        switch (elevatorState) {
+            case IDLE: {
+                setState(HOMING);
+                break;
+            }
+
+            case HOMING: {
+                myOpMode.telemetry.addData("Elevator", "Homing");
+                myOpMode.telemetry.update();
+                recalibrateHomePosition();
+                myOpMode.telemetry.addData("Elevator", "Home Done.");
+                myOpMode.telemetry.update();
+                setState(HOME_OPEN);
+                break;
+            }
+
+            case HOME_OPEN: {
+                break;
+            }
+
+            case HOME_CLOSED: {
+                break;
+            }
+
+            case WAITING_TO_MOVE:{
+                // wait for timer to elapse then go to new position and state.
+                // Get here by calling setWristDelayMove()
+                if (elevatorStateTimer.time() >= pendingDelay) {
+                    setLiftTargetPosition(pendingLiftPosition);
+                    setState(pendingState);
+                }
+                break;
+            }
+
+            case MOVING_OPEN: {
+                if (liftInPosition) {
+                    setState(IN_POSITION_OPEN);
+                }
+                break;
+            }
+
+            case IN_POSITION_OPEN: {
+                break;
+            }
+
+            case MOVING_CLOSED: {
+                if (liftInPosition) {
+                    setState(IN_POSITION_CLOSED);
+                }
+                break;
+            }
+
+            case IN_POSITION_CLOSED: {
+                break;
+            }
+        }
+        return elevatorState;
+    }
+
+    /***
+     * This is the normal way to run the Elevator state machine.
+     * Only use the parameter form if you want to force a state change
+     * @return current state.
+     */
+    public ElevatorState runStateMachine() {
+        return runStateMachine(elevatorState);
+    }
+
+    public void setState(ElevatorState newState) {
+        if (newState != elevatorState) {
+            elevatorState = newState;
+            elevatorStateTimer.reset();
+            SharedStates.elevatorState = newState;
+        }
+    }
+
+    public String getStateText() {
+        return elevatorState.toString();
+    }
+
+    private void setWristDelayMove(double wristOffset, double delaySec,  int elevatorPosition, ElevatorState nextState) {
+        setWristOffset(wristOffset);
+        double pendingDelay = delaySec;
+        double pendingLiftPosition = elevatorPosition;
+        ElevatorState pendingState = nextState;
+        setState(WAITING_TO_MOVE);
     }
 
     /**
@@ -163,6 +262,7 @@ public class Elevator {
         enableLift();  // Start closed loop control
     }
 
+
     // ----- Elevator controls
     public void enableLift() {
         liftActive = true;
@@ -174,6 +274,7 @@ public class Elevator {
 
     public void setLiftTargetPosition(int Position){
         liftTargetPosition = Range.clip(Position, ELEVATOR_MIN, ELEVATOR_MAX);
+        liftInPosition = false;  // set this now to prevent the state machine from skipping
     }
 
     public int getLiftTargetPosition(){

@@ -7,8 +7,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.PoseStorage;
-
 /**
  * This opmode demonstrates how one would implement field centric control using
  * `SampleMecanumDrive.java`. This file is essentially just `TeleOpDrive.java` with the addition of
@@ -62,17 +60,23 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(PoseStorage.currentPose);
+        drive.setPoseEstimate(SharedStates.currentPose);
+        elevator.setState(SharedStates.elevatorState);
 
-        waitForStart();
+        while (opModeInInit()) {
+
+        }
 
         while (opModeIsActive()) {
 
             // Update everything.
             drive.update();
             elevator.update();
+            elevator.runStateMachine();
             coneTracker.update();
             coneTracker.showRanges();
+
+            telemetry.addData("Elevator", elevator.getStateText());
 
             //-----------PILOT-----------
             //check for auto cone tracking

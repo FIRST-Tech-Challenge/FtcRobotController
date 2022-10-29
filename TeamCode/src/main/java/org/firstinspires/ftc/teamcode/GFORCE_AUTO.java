@@ -120,5 +120,8 @@ public class GFORCE_AUTO extends LinearOpMode {
                 sleep(10);
             }
         }
+
+        // save the last field position in shared states class for teleop to use.
+        SharedStates.currentPose = drive.getPoseEstimate();
     }
 }
