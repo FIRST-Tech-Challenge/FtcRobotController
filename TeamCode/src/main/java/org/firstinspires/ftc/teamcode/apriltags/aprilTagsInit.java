@@ -70,8 +70,15 @@ public class aprilTagsInit {
             {
                 if(tag.id == ID_LEFT || tag.id == ID_MIDDLE || tag.id == ID_RIGHT) {
 
+
                     tagOfInterest = tag;
-                    tm.addData("Tag of interest is in sight!\n\nID:", tag.id+1);
+                    int temp = tag.id+1;
+                    if(temp == 1)
+                    {
+                        temp = 2;
+                    }
+                    else if(temp==2){temp=1;}
+                    tm.addData("Tag of interest is in sight!\n\nparking:", temp);
                     tagFound = true;
                     break;
                 }

@@ -43,7 +43,6 @@ public class MecanumTeleOp extends LinearOpMode {
         int fieldCentricTrigger = 0;
         boolean liftToggled = true;
         robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double speedMultiplier = 0.5;
         robot.motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorLiftRight.setDirection(DcMotor.Direction.REVERSE);
@@ -58,13 +57,16 @@ public class MecanumTeleOp extends LinearOpMode {
                 double temp_strafe = (strafe + 0.05) * round_coefficient; // rounds strafing to the nearest []th, which means the driver doesn't have to be as exact when moving straight
                 strafe = (int) temp_strafe / round_coefficient;
             }
+
+
             double turn = gamepad1.right_stick_x;
             if (gamepad1.right_bumper) {
                 robot.isFieldCentric = !robot.isFieldCentric;
             }
+            double speedMultiplier = 0.5;
 
             if (gamepad1.left_bumper && robot.speedMultiplier != speedMultiplier) {
-                robot.setSpeedMultipler(speedMultiplier);
+                robot.setSpeedMultipler(speedMultiplier); // reset it back to slow mode
             } else if (gamepad1.left_bumper) {
                 robot.setSpeedMultipler(1);
             }
@@ -75,7 +77,6 @@ public class MecanumTeleOp extends LinearOpMode {
             } else {
                 robot.mecanum(power, strafe, turn);
             }
-
             if (gamepad1.square) {
                 robot.claw(true);
             }
@@ -85,15 +86,16 @@ public class MecanumTeleOp extends LinearOpMode {
             }
 
 
-            if (gamepad1.right_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() < 600) {
+            if (gamepad1.right_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() < 650) {
                 robot.motorLiftRight.setPower(0.55);
                 robot.motorLiftLeft.setPower(0.55);
             } else if (gamepad1.left_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() > 0) {
-                robot.motorLiftRight.setPower(-0.3);
-                robot.motorLiftLeft.setPower(-0.3);
+                telemetry.addData("down",gamepad1.left_trigger);
+                robot.motorLiftRight.setPower(-0.33);
+                robot.motorLiftLeft.setPower(-0.33);
             } else {
                 // hold if pos is within range, otherwise set to 0 - but will this cause a situation where you can never move the lift?
-                if(robot.motorLiftRight.getCurrentPosition()>10 && robot.motorLiftRight.getCurrentPosition()<600){
+                if(robot.motorLiftRight.getCurrentPosition()>10 && robot.motorLiftRight.getCurrentPosition()<650){
                     robot.motorLiftRight.setPower(0.05);
                     robot.motorLiftLeft.setPower(0.05);
                 }

@@ -75,7 +75,7 @@ public class Robot extends MecanumDrive {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    public static double speedMultiplier = 1;
+    public static double speedMultiplier = 0.5;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
@@ -90,17 +90,18 @@ public class Robot extends MecanumDrive {
 
     public Robot(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
+/**
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+        //LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+**/
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -188,17 +189,17 @@ public class Robot extends MecanumDrive {
         double frontRightPower = (rotationY - rotationX - turn) / denominator;
         double backRightPower = (rotationY + rotationX - turn) / denominator;
 
-        leftFront.setPower(frontLeftPower);
-        leftRear.setPower(backLeftPower);
-        rightFront.setPower(frontRightPower);
-        rightRear.setPower(backRightPower);
+        leftFront.setPower(frontLeftPower*speedMultiplier);
+        leftRear.setPower(backLeftPower*speedMultiplier);
+        rightFront.setPower(frontRightPower*speedMultiplier);
+        rightRear.setPower(backRightPower*speedMultiplier);
     }
 
     public void claw(boolean open) {
         if (open) {
-            intake.setPosition(0.4);
+            intake.setPosition(0);
         } else {
-            intake.setPosition(0.82);
+            intake.setPosition(0.4);
         }
     }
 

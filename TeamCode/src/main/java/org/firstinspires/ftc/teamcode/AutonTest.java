@@ -34,21 +34,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.apriltags.aprilTagsInit;
+
 @TeleOp(name="AutonTest")
 //@Disabled
 public class AutonTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        ServoImplEx s = hardwareMap.get(ServoImplEx.class, "Servo");
-        s.setDirection(Servo.Direction.FORWARD);
+        aprilTagsInit init = new aprilTagsInit(hardwareMap,telemetry);
+        init.initialize();
 
-        waitForStart();
-        s.setPosition(0.78);
-        while(opModeIsActive())
+        while(!isStarted() && !isStopRequested())
         {
-            telemetry.addLine(Double.toString(s.getPosition()));
-            telemetry.update();
+            init.search();
+            sleep(20);
         }
     }
 }

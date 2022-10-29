@@ -33,31 +33,21 @@ public class Auton {
     public void runAutonParkOnly(SampleMecanumDrive drive, HardwareMap hardwareMap)
     {
         Servo intake = hardwareMap.get(Servo.class, "intake");
-
-
-        int angle = -70;
-        if(direction)
-        {
-            angle = 70;
-        }
+//
+//
+//        int angle = -70;
+//        if(direction)
+//        {
+//            angle = 70;
+//        }
 
         drive.setMotorPowers(0.1,0.1,0.1,0.1);
+        intake.setPosition(0.4);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(6)
-                .turn(Math.toRadians(angle))
-                .forward(8.5)
+                .forward(25)
                 .build();
         drive.followTrajectorySequence(trajSeq);
 
-        //do cone stuff
-
-        intake.setPosition(0.40);
-        trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .back(1)
-                .turn(Math.toRadians(-angle))
-                .forward(19)
-                .build();
-        drive.followTrajectorySequence(trajSeq);
 
 
         if (parkingZone == 1) { // red
@@ -77,6 +67,7 @@ public class Auton {
     public void runAutonWithCone(Robot drive) {
         int angle = -45;
         if (direction) { angle = 45; }
+
 
         drive.setMotorPowers(0.1,0.1,0.1,0.1);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
