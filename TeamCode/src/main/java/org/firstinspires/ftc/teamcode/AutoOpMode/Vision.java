@@ -121,7 +121,8 @@ public class Vision {
     //Define and declare Robot parking locations
     public enum PARKING_LOCATION{
         ENDPOS1,
-        ENDPOS2
+        ENDPOS2,
+        ENDPOS3
     }
 
     //Select the different colors on the signal sleeve, and define them here

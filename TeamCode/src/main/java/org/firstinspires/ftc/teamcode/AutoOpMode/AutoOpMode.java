@@ -124,9 +124,16 @@ public class AutoOpMode extends LinearOpMode{
             vision.poseSetInAutonomous = true;
         }
 
+        TrajectorySequence trajInitMoveAndTurnToConePosition;
+        TrajectorySequence trajConeToPark;
         TrajectorySequence[] trajOffWallTurnToCone = new TrajectorySequence[3];
-        //TrajectorySequence[] pickToTurnToDropCone = new TrajectorySequence[];
+        TrajectorySequence[] pickToTurnToDropCone = new TrajectorySequence[5];
 
+        public void buildAuto(){
+            if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
+
+            }
+        }
         /**
          * Safe method to wait so that stop button is also not missed
          * @param time time in ms to wait
