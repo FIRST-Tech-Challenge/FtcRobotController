@@ -60,11 +60,10 @@ public class GlobalPosSystem {
         translateL *= constants.INCHES_PER_CLICK;
         rotateL *= constants.DEGREES_PER_CLICK;
 
+        double rotationalDegrees = (rotateL + rotateR) / 2.0;
+        double translationalInches = (translateL + translateR) / 2.0;
 
-//        double rotationalDegrees = (rotateL + rotateR) / 2.0;
-//        double translationalInches = (translateL + translateR) / 2.0;
-        double rotationalDegrees = rotateL; //right module has lots of slip currently, so we're just going to test the left module.
-        double translationalInches = translateL;
+
         double currentAngle = clamp(rotationalDegrees + positionArr[2]);
         currentAngle = Math.toRadians(currentAngle);
 

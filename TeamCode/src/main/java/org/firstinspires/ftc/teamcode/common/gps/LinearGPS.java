@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.gps;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;

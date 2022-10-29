@@ -34,6 +34,7 @@ public class SwerveCode extends OpMode{
         RESET
     }
     State driveState = State.DRIVE;
+    boolean isResetCycle = false;
 
     //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
@@ -172,18 +173,20 @@ public class SwerveCode extends OpMode{
     }
 
     private void reset(){
-        int topR = robot.topR.getCurrentPosition();
-        int botR = robot.botR.getCurrentPosition();
-        int topL = robot.topL.getCurrentPosition();
-        int botL = robot.botL.getCurrentPosition();
+        if (!isResetCycle){
+            int topR = robot.topR.getCurrentPosition();
+            int botR = robot.botR.getCurrentPosition();
+            int topL = robot.topL.getCurrentPosition();
+            int botL = robot.botL.getCurrentPosition();
 
-        int rotateR = (topR + botR) / 2;
-        int rotateL = (topL + botL) / 2;
+            int rotateR = (topR + botR) / 2;
+            int rotateL = (topL + botL) / 2;
 
-        robot.botL.setTargetPosition(rotateL);
-        robot.topL.setTargetPosition(rotateL);
-        robot.botR.setTargetPosition(rotateR);
-        robot.topR.setTargetPosition(rotateR);
+            robot.botL.setTargetPosition(rotateL);
+            robot.topL.setTargetPosition(rotateL);
+            robot.botR.setTargetPosition(rotateR);
+            robot.topR.setTargetPosition(rotateR);
+        }
 
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
