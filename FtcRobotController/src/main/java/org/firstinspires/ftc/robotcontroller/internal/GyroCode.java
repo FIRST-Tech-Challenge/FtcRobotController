@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.robotcontroller.internal;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -18,7 +18,7 @@ public class GyroCode {
     Acceleration gravity;
     BNO055IMU.Parameters parameters;
 
-    public GyroCode(LinearOpMode opMode) throws InterruptedException{
+   /* public GyroCode(LinearOpMode opMode) throws InterruptedException{
 
        // public double getCurrentGyro(){
 
@@ -27,5 +27,5 @@ public class GyroCode {
         public double getTrueDiff(double goalTurn){
 
         }
-    }
+    }*/
 }
