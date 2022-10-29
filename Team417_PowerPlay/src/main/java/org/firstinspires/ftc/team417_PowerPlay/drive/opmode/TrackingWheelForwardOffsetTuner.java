@@ -21,7 +21,7 @@ import org.firstinspires.ftc.team417_PowerPlay.drive.StandardTrackingWheelLocali
  * along with a specified delay in milliseconds. The purpose of this is to track the
  * change in the y position during the turn. The offset, or distance, of the lateral tracking
  * wheel from the center or rotation allows the wheel to spin during a point turn, leading
- * to an incorrect measurement for the y position. This creates an arc around around
+ * to an incorrect measurement for the y position. This creates an arc around
  * the center of rotation with an arc length of change in y and a radius equal to the forward
  * offset. We can compute this offset by calculating (change in y position) / (change in heading)
  * which returns the radius if the angle (change in heading) is in radians. This is based
