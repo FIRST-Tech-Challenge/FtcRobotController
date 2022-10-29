@@ -99,32 +99,71 @@ public class Hardware2022 {
     }
 
     /**
-     * This operation move robot foward/backwork according to the input
-     * @param distance   Pososive value, moving foard ,  Nagtive value, moving backward
+     * This operation move robot forward/backward according to the input
+     * @param distance
+     * @param power Positive value move forward, sign has to match distance or it is undefined
      */
-    public void moveXAxis( int distance ) {
+    public void moveXAxis( int distance, double power ) {
 
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        wheelFrontRight.setPower(0.3);
-        wheelFrontLeft.setPower(0.3);
-        wheelBackRight.setPower(-0.3);
-        wheelBackLeft.setPower(-0.3);
+        wheelFrontRight.setPower(power);
+        wheelFrontLeft.setPower(power);
+        wheelBackRight.setPower(-power);
+        wheelBackLeft.setPower(-power);
 
         telemetry.addLine().addData("[FL Position >]  ", ""+wheelFrontLeft.getCurrentPosition() );
         telemetry.update();
 
-        while ( (-wheelFrontLeft.getCurrentPosition()) < distance ) {
+        while ( Math.abs(wheelFrontLeft.getCurrentPosition()) < distance ) {
 
             telemetry.addLine().addData("[FL Position >]  ", ""+wheelFrontLeft.getCurrentPosition() );
+            telemetry.update();
+            try {
+                sleep(50);
+            } catch (InterruptedException e) {
+                telemetry.addLine().addData("[Error  >]  ", e.getMessage() );
+                telemetry.update();
+            }
+
+        }
+
+        wheelFrontRight.setPower(0);
+        wheelFrontLeft.setPower(0);
+        wheelBackRight.setPower(0);
+        wheelBackLeft.setPower(0);
+
+    }
+
+    /**
+     * This operation move robot lef/right according to the input
+     * @param distance   Positive value, moving left ,  Negative value, moving right
+     * @param power Positive value move forward, sign has to match distance or it is undefined
+     */
+
+    public void moveYAxis( int distance, double power ) {
+
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        wheelFrontRight.setPower(-power);
+        wheelFrontLeft.setPower(power);
+        wheelBackRight.setPower(-power);
+        wheelBackLeft.setPower(power);
+
+        telemetry.addLine().addData("[FL Position >]  ", ""+wheelFrontLeft.getCurrentPosition() );
+        telemetry.update();
+
+        while ( Math.abs(-wheelFrontRight.getCurrentPosition()) < distance ) {
+
+            telemetry.addLine().addData("[FR Position >]  ", ""+wheelFrontRight.getCurrentPosition() );
             telemetry.update();
             try {
                 sleep(50);

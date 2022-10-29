@@ -56,7 +56,7 @@ public class GeneralDriver extends BaseTele {
                 sleep(100);
             }
             if (gamepad1.y) {
-                hdw.raiseVerticalSlide();
+               hdw.moveYAxis(2160, -0.5);
 
             }
             if (gamepad1.b) {
@@ -68,8 +68,8 @@ public class GeneralDriver extends BaseTele {
             }
 
             if (gamepad1.x) {
-                hdw.moveXAxis( 720 );
-                //sleep(6000);
+                hdw.moveXAxis( 2160, -0.5 );
+                sleep(6000);
             }
 
             //Wheel takes input of gampad 1  ,  turbo is the power factor. Range 0-1 , 1 is 100%
