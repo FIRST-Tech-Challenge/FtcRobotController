@@ -67,7 +67,7 @@ public class Crane implements Subsystem {
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1500;
-    public static double BULB_CLOSED_POS = 1250;
+    public static double BULB_CLOSED_POS = 1750;
 
     public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
     public static final double GRIPPER_HEIGHT = 0.23;
@@ -289,7 +289,7 @@ public class Crane implements Subsystem {
 
         Articulation(double shoulderPos, boolean elbowPos) {
             this.shoulderPos = shoulderPos;
-            this.bulbGripped = elbowPos;
+            //this.bulbGripped = elbowPos;
         }
     }
 
@@ -300,7 +300,7 @@ public class Crane implements Subsystem {
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
 
-    private double craneLengthOffset = 0.4;
+    private double craneLengthOffset = 0.2;
 
     double shoulderHeight = 0;
 
@@ -319,7 +319,7 @@ public class Crane implements Subsystem {
         shoulderDirectAnglePos = shoulderAngleEncoder.getCurrentPosition();
         extendPosition = extenderMotor.getCurrentPosition();
 
-        shoulderAngle = shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
+        shoulderAngle = 90 + shoulderPosition / SHOULDER_TICKS_PER_DEGREE;
         extendMeters = extendPosition / EXTEND_TICKS_PER_METER;
 
         shoulderAmps = shoulderMotor.getCurrent(CurrentUnit.AMPS);
@@ -328,14 +328,18 @@ public class Crane implements Subsystem {
         currentStateMachine.execute();
 
         if(calibrated) {
-
+            /*
             angle = Math.toDegrees(Math.atan(targetHeight / targetDistance));
-            length = Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2))/INCHES_PER_METER-craneLengthOffset;
+            length = Math.sqrt(Math.pow(targetHeight, 2) + Math.pow(targetDistance, 2))/INCHES_PER_METER - craneLengthOffset;
             setShoulderTargetDeg(angle);
             setExtendTargetDistance(length);
             robot.turret.setTargetHeading(targetTurretAngle);
 
+             */
+
         }
+        //update the turret's target
+        robot.turret.setTargetHeading(targetTurretAngle);
         if(shoulderActivePID)
             movePIDShoulder(kpShoulder, kiShoulder, kdShoulder, shoulderDirectAnglePos, shoulderTargetPos);
         else
@@ -353,15 +357,25 @@ public class Crane implements Subsystem {
         }
     }
 
-    public void adjustHeight(double speed){
-        setHeight(getHeight() + (10 * speed));
-    }
-    public void adjustDistance(double speed){
-        setDistance(getDistance() + (10 * speed));
-    }
-
     public void adjustTurretAngle(double speed){
         targetTurretAngle = robot.turret.getHeading() + (10 * speed);
+
+    }
+
+    public void adjustDistance(double speed){
+        setDistance(getDistance() + (0.1 * speed));
+    }
+
+    public void adjustHeight(double speed){
+        setHeight(getHeight() + (0.1 * speed));
+    }
+
+    public void adjustExtend(double speed){
+        setExtendTargetPos((int)(getextenderPos() + 200 * speed));
+    }
+
+    public void adjustShoulder(double speed){
+        setShoulderTargetPos((int)(getShoulderPos() + 200* speed));
     }
 
     public double getHeight(){
@@ -371,8 +385,6 @@ public class Crane implements Subsystem {
     public double getDistance(){
         return INCHES_PER_METER * getExtendMeters()*Math.cos(Math.toRadians(getShoulderAngle()));
     }
-
-
 
     public boolean setTargets(double x, double y, double z){
         Pose2d robotPos = robot.driveTrain.getPoseEstimate();
@@ -480,9 +492,9 @@ public class Crane implements Subsystem {
         setExtendTargetPos((int)(dis*EXTEND_TICKS_PER_METER));
     }
     public void setShoulderPwr(double pwr){ shoulderPwr = pwr; }
-    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),0)); }
+    public  void setShoulderTargetPos(int t){ shoulderTargetPos = (int)(Math.max(Math.min(t,SHOULDER_TICK_MAX),-100)); }
     public  int getShoulderTargetPos(){ return shoulderTargetPos; }
-    public  void setExtendTargetPos(int t){ extenderTargetPos = t; }
+    public  void setExtendTargetPos(int t){ extenderTargetPos = Math.min(3075,Math.max(t, 0)); }
     public boolean nearTargetShoulder(){
         if ((Math.abs( getShoulderPos()-getShoulderTargetPos()))<55) return true;
         else return false;
@@ -509,7 +521,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Target Turret Angle", targetTurretAngle);
             telemetryMap.put("Target Shoulder Angle", shoulderTargetPos/SHOULDER_TICKS_PER_DEGREE);
             telemetryMap.put("Target Extension", extenderTargetPos/EXTEND_TICKS_PER_METER);
-            telemetryMap.put("Angle", angle);
+            telemetryMap.put("Target Angle", angle);
             telemetryMap.put("Length", length);
             telemetryMap.put("Distance", getDistance());
             telemetryMap.put("Height", getHeight());

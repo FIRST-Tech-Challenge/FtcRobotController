@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.catbot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//<<<<<<< Updated upstream:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/catbot/TestOpMode.java
-//=======
 import com.qualcomm.robotcore.hardware.HardwareMap;
-//>>>>>>> Stashed changes:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robots/idk/TestOpMode.java
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="Iron Giant OpMode", group="Challenge")
@@ -23,6 +20,15 @@ public class TestOpMode extends OpMode {
     private double powerRight = 0;
     // motor power
     private double powerElevator = 0;
+    private DcMotor motorElevator = null;
+    private Servo clawServo = null;
+    // regular drive
+    // mecanum types
+    private double powerFrontLeft = 0;
+    private double powerFrontRight = 0;
+    private double powerBackLeft = 0;
+    private double powerBackRight = 0;
+
     private double powerClaw = 0;
     //number variables
     private static final float DEADZONE = .1f;
@@ -47,6 +53,13 @@ public class TestOpMode extends OpMode {
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
+        claw = this.hardwareMap.get(Servo.class, "claw");
+
+        motorElevator = this.hardwareMap.get(DcMotor.class, "motorElevator");
+        clawServo = this.hardwareMap.get(Servo.class, "motorElevator");
+        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
     }
     @Override
     public void loop() {
