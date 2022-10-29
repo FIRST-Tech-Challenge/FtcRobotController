@@ -40,6 +40,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import java.util.List;
 
@@ -86,6 +88,57 @@ import java.util.List;
 
 
 public class Vision {
+    // Declare a target vector you'd like your bot to align with
+    // Can be any x/y coordinate of your choosing
+    public static final Vector2d ORIGIN = new Vector2d(0,0);
+    public static final Pose2d ORIGINPOSE = new Pose2d(0,0,Math.toRadians(0));
+
+    // Declare and assign starting pose of robot
+    public static final Pose2d STARTPOS_1 =  new Pose2d(-61,7,Math.toRadians(180));
+    public static final Pose2d STARTPOS_2 =  new Pose2d(-61,-40,Math.toRadians(180));
+    public static final Pose2d STARTPOS_3 =  new Pose2d(61,7,Math.toRadians(0));
+    public static final Pose2d STARTPOS_4 =  new Pose2d(61,-40,Math.toRadians(0));
+
+    //Define and declare Playing Alliance
+    public enum PLAYING_ALLIANCE{
+        RED_ALLIANCE,
+        BLUE_ALLIANCE,
+    }
+    public static PLAYING_ALLIANCE playingAlliance = PLAYING_ALLIANCE.BLUE_ALLIANCE;
+    public static double ALLIANCE_FACTOR = 1;
+
+
+    //Define and declare Robot Starting Locations
+    public enum START_POSITION{
+        POS1,
+        POS2,
+        POS3
+    }
+
+    //Set a default start position
+    public static START_POSITION startPosition = START_POSITION.POS1;
+
+    //Define and declare Robot parking locations
+    public enum PARKING_LOCATION{
+        ENDPOS1,
+        ENDPOS2
+    }
+
+    //Select the different colors on the signal sleeve, and define them here
+    public enum VISION_IDENTIFIED_TARGET {
+        RED,
+        BLUE,
+        GREEN,
+    };
+
+    public enum VISION_IDENTIFIER{
+        MARKER
+    };
+    public static VISION_IDENTIFIER visionIdentifier = VISION_IDENTIFIER.MARKER;
+
+    //Static fields to pass Pos from Autonomous to TeleOp
+    public static boolean poseSetInAutonomous = false;
+    public static Pose2d currentPose = new Pose2d();
 
     public enum VISION_STATE {
         TFOD_INIT,
@@ -149,19 +202,17 @@ public class Vision {
      *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
      *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
      */
-    //private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
     private static final String TFOD_MODEL_ASSET = "Hazmat1.tflite";
-    //private static final String TFOD_MODEL_ASSET = "Hazmat2.tflite";
     public static final String[] LABELS = {
-            "GREEN",
-            "YELLOW",
-            "PURPLE"
+            "RED",
+            "BLUE",
+            "GREEN"
     };
 
 
-    public String targetLabel1 = LABELS[0]; //GREEN
-    public String targetLabel2 = LABELS[1]; // YELLOW
-    public String targetLabel3 = LABELS[2]; // PURPLE
+    public String targetLabel1 = LABELS[0]; //RED
+    public String targetLabel2 = LABELS[1]; // BLUE
+    public String targetLabel3 = LABELS[2]; // GREEN
     public String detectedLabel = "None";
     public float detectedLabelLeft, detectedLabelRight, detectedLabelTop, detectedLabelBottom;
     public static float[] targetPosition = {
@@ -173,7 +224,7 @@ public class Vision {
 
     private TFObjectDetector tfod;
     private List<Recognition> recognitions;
-    //public GameField.VISION_IDENTIFIED_TARGET targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.UNKNOWN;
+    public VISION_IDENTIFIED_TARGET targetLevelDetected = VISION_IDENTIFIED_TARGET.RED;
 
     /**
      * Initialize the Vuforia localization engine.
@@ -266,9 +317,9 @@ public class Vision {
      * @return
      */
 
-    /*
 
-    public GameField.VISION_IDENTIFIED_TARGET runVuforiaTensorFlow() {
+
+    public VISION_IDENTIFIED_TARGET runVuforiaTensorFlow() {
         visionState = VISION_STATE.TFOD_RUNNING;
 
         if (tfod != null) {
@@ -281,24 +332,30 @@ public class Vision {
                     // empty list.  no objects recognized.
                     detectedLabel = "None";
 
-                    if(GameField.startPosition != GameField.START_POSITION.MIDDLE){
-                        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                            targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL3;
-                        } else { //GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE
-                            targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL1;
+                    if(startPosition != START_POSITION.POS1){
+                        if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                            //Depending on the startPos and alliance, what is the camera going to detect
+                        } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                            //Depending on the startPos and alliance, what is the camera going to detect
                         }
-                    } else {
-                        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                            targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL1;
-                        } else { //GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE
-                            targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL3;
+                    } else if(startPosition != START_POSITION.POS2) {
+                        if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                            //Depending on the startPos and alliance, what is the camera going to detect
+                        } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                            //Depending on the startPos and alliance, what is the camera going to detect
+                        }
+                    } else { //startPosition != START_POSITION.POS3
+                        if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                            //Depending on the startPos and alliance, what is the camera going to detect
+                        } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                            //Depending on the startPos and alliance, what is the camera going to detect
                         }
                     }
-
                 } else {
                     // list is not empty.
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
+                    /*
                      step through the list of recognitions and display boundary info.
                     for (Recognition recognition : recognitions) {
                         telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
@@ -308,10 +365,11 @@ public class Vision {
                                 recognition.getRight(), recognition.getBottom());
                         i++;
                     }
+                     */
 
                     for (Recognition recognition : recognitions) {
                         // check label to see which target zone to go after.
-                        /*detectedLabel = recognition.getLabel();
+                        detectedLabel = recognition.getLabel();
                         detectedLabelLeft = recognition.getLeft();
                         detectedLabelRight = recognition.getRight();
                         detectedLabelTop = recognition.getTop();
@@ -319,38 +377,47 @@ public class Vision {
                         if (recognition.getLabel().equals(LABELS[0]) || recognition.getLabel().equals(LABELS[1]) ||
                                 recognition.getLabel().equals(LABELS[2])) {
 
-
-
                             if (recognition.getLeft() < targetPosition[0]) {
-                                if(GameField.startPosition != GameField.START_POSITION.MIDDLE){
-                                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL1;
-                                    } else { //GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL2;
+                                if(startPosition != START_POSITION.POS1){
+                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                                        //Depending on the startPos and alliance, what is the camera going to detect
                                     }
-                                } else {
-                                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL2;
-                                    } else { //GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL1;
+                                } else if(startPosition != START_POSITION.POS2) {
+                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    }
+                                } else { //startPosition != START_POSITION.POS3
+                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                                        //Depending on the startPos and alliance, what is the camera going to detect
                                     }
                                 }
                             } else if (recognition.getLeft() < targetPosition[1]) {
-                                if(GameField.startPosition != GameField.START_POSITION.MIDDLE){
-                                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL2;
-                                    } else { //GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL3;
+                                if(startPosition != START_POSITION.POS1){
+                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                                        //Depending on the startPos and alliance, what is the camera going to detect
                                     }
-                                } else {
-                                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL3;
-                                    } else { //GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE
-                                        targetLevelDetected = GameField.VISION_IDENTIFIED_TARGET.LEVEL2;
+                                } else if(startPosition != START_POSITION.POS2) {
+                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    }
+                                } else { //startPosition != START_POSITION.POS3
+                                    if (playingAlliance == PLAYING_ALLIANCE.RED_ALLIANCE) {
+                                        //Depending on the startPos and alliance, what is the camera going to detect
+                                    } else { //playingAlliance == PLAYING_ALLIANCE.BLUE_ALLIANCE
+                                        //Depending on the startPos and alliance, what is the camera going to detect
                                     }
                                 }
                             }
-
                         }
                     }
                 }
@@ -358,7 +425,7 @@ public class Vision {
         }
         return targetLevelDetected;
     }
-    */
+
 
     /**
      * Stop Tensor Flow algorithm
