@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,45 +14,57 @@ import org.opencv.imgproc.Imgproc;
 
 public class ConeImageProcessor {
 
+	File fileProcessing;
+
 	boolean debug = true;
 	Double  meanVal =new Double(0);
 
 	//Blue Range for the blue cone
-	Scalar blueConeL = new Scalar(105, 150, 20 );
-	Scalar blueConeH = new Scalar(115, 255, 255 );
+	Scalar blueConeL = new Scalar(105, 120, 00 );
+	Scalar blueConeH = new Scalar(119, 255, 255 );
 
 	//Red Range for red cone
-	Scalar redConeL1 = new Scalar(0, 150, 20 );
+	Scalar redConeL1 = new Scalar(0, 120, 00 );
 	Scalar redConeH1 = new Scalar(15, 255, 255 );
-	Scalar redConeL2 = new Scalar(170, 150, 20 );
+	Scalar redConeL2 = new Scalar(165, 120, 00 );
 	Scalar redConeH2 = new Scalar(179, 255, 255 );
 
 	//Range for background, mat is grey
 	Scalar backgroundL = new Scalar(0, 0, 0 );
-	Scalar backgroundH = new Scalar(255, 70, 255 );
+	Scalar backgroundH = new Scalar(255, 120, 255 );
 
     //Range for yellow pol
-	Scalar yellowPoleL = new Scalar(15, 150, 20 );
+	Scalar yellowPoleL = new Scalar(15, 150, 0 );
 	Scalar yellowPoleH = new Scalar(25, 255, 255 );
 
+	//Range for too dark part of pic
+	Scalar darkL = new Scalar(0, 0, 0 );
+	Scalar darkH = new Scalar(179, 255, 80 );
+
+	public File getFileProcessing() {
+		return fileProcessing;
+	}
+
+	public void setFileProcessing(File fileProcessing) {
+		this.fileProcessing = fileProcessing;
+	}
 
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-
-		Mat test01 = Imgcodecs.imread("C:\\FTC Code\\TestPIcs\\S1.jpg");
-
 		ConeImageProcessor proc = new ConeImageProcessor();
-		proc.processFrame(test01);
-		System.out.println("This is value1: " +  proc.meanVal);
 
-		test01 = Imgcodecs.imread("C:\\FTC Code\\TestPIcs\\S2.jpg");
-		proc.processFrame(test01);
-		System.out.println("This is value2: " +  proc.meanVal);
+		File imageDir = new File("C:\\FTC Code\\TestPIcs" );
+		File resultDir = new File("C:\\FTC Code\\TestPIcs\\result" );
 
-		test01 = Imgcodecs.imread("C:\\FTC Code\\TestPIcs\\S2.jpg");
-		proc.processFrame(test01);
-		System.out.println("This is value3: " +  proc.meanVal);
-
+		File[] files = imageDir.listFiles();
+		for ( int i =0; i < files.length; i++) {
+			if ( files[i].isFile()) {
+				Mat test01 = Imgcodecs.imread(files[i].getAbsolutePath());
+				proc.setFileProcessing(files[i]);
+				proc.processFrame(test01);
+				System.out.println("File: " + files[i].getName() + " value:" + proc.meanVal);
+			}
+		}
 	}
 
 
@@ -76,12 +89,16 @@ public class ConeImageProcessor {
 		Mat backgroundTrd = new Mat();
 		Core.inRange(hsvImg, backgroundL, backgroundH, backgroundTrd);
 
+		Mat darkTrd = new Mat();
+		Core.inRange(hsvImg, darkL, darkH, darkTrd);
+
 
 		Mat tobeRemoveRev = new Mat();
 		Core.bitwise_or(blueConeTrd,redConeTrd1,tobeRemoveRev);
 		Core.bitwise_or(redConeTrd2,tobeRemoveRev,tobeRemoveRev);
 		Core.bitwise_or(yellowPolTrd,tobeRemoveRev,tobeRemoveRev);
 		Core.bitwise_or(backgroundTrd,tobeRemoveRev,tobeRemoveRev);
+		Core.bitwise_or(darkTrd,tobeRemoveRev,tobeRemoveRev);
 
 		Mat tobeRemove = new Mat();
 		Core.bitwise_not(tobeRemoveRev,tobeRemove);
@@ -89,28 +106,27 @@ public class ConeImageProcessor {
 		///Apply mask to input image, and copy to new image. 
 		Mat result  = new Mat(input.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
 		input.copyTo(result, tobeRemove);
-		
+
+		Mat hsvResult = new Mat();
+		Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_BGR2HSV);
+
 		List<Mat> hsvResultPlane = new ArrayList<>();
-		Core.split(result, hsvResultPlane);
+		Core.split(hsvResult , hsvResultPlane);
 
-		Mat hueResult = hsvResultPlane.get(0);
-
-		meanVal = this.calHueAvg(result);
-
-
+		meanVal = calHueAvg(hsvResult);
 
 		if (debug) {
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\thresh.jpg", tobeRemoveRev);
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\result.jpg", result);
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\bgThread.jpg", backgroundTrd);
-			//System.out.println("Result = " + hsvResultPlane.get(0).dump());
+			//Imgcodecs.imwrite( fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-thresh.jpg", tobeRemoveRev);
+			Imgcodecs.imwrite(fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-result.jpg", result);
+			//Imgcodecs.imwrite(fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-bgTrd.jpg", backgroundTrd);
+
 		}
 
 		return result;
 	}
 
 	private double  calHueAvg ( Mat input ) {
-		double  total = 0;
+		double  total = 0.0;
 		int count = 0;
 
 		for ( int h = 0; h < input.size().height; h ++ ) {
@@ -123,7 +139,8 @@ public class ConeImageProcessor {
 				if ( debug) {
 					//System.out.println("data is: " + hue );
 				}
-				if ( hue > 1 &&  hue < 180) {
+				if ( hue> 0 && hue < 180 ) {
+					//System.out.println("hue : " + hue + " Posiiton: " + h + "," + w  );
 					total += hue;
 					count ++;
 				}
@@ -132,10 +149,10 @@ public class ConeImageProcessor {
 		}
 
 		if ( debug) {
-			System.out.println("Count is: " + count );
+			//System.out.println("Count is: " + count );
 
 		}
-		return total/(count );
+		return total/count;
 
 	}
 	
