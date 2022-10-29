@@ -7,7 +7,6 @@ import com.asiankoala.koawalib.command.commands.MecanumCmd
 import com.asiankoala.koawalib.logger.Logger
 import com.asiankoala.koawalib.math.radians
 import com.asiankoala.koawalib.subsystem.odometry.Odometry
-import com.asiankoala.koawalib.util.Alliance
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.koawalib.Robot
 import org.firstinspires.ftc.teamcode.koawalib.RobotState
@@ -43,11 +42,11 @@ class KTeleOp : KOpMode(photonEnabled = true) {
                 60.0.radians
             )
 
-            driver.a.onToggle(
+            driver.leftTrigger.onToggle(
                 InstantCmd({robot.driveHack.aimbot(driver.leftStick::vector)})
             )
 
-            driver.leftTrigger.onToggle(
+            driver.a.onToggle(
             InstantCmd({robot.driveHack.spaceglide(driver.leftStick::vector)})
         )
     }
