@@ -478,7 +478,7 @@ public class PowerPlay_6832 extends OpMode {
         );
 
 
-        //handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
+        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
 

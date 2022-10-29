@@ -22,6 +22,10 @@ package org.firstinspires.ftc.teamcode.robots.taubot.vision.pipeline;
  */
 
 
+import android.graphics.Bitmap;
+
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
+import org.opencv.android.Utils;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -42,10 +46,14 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 {
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
+    private Mat dashboardMat = new Mat();
+    private volatile Bitmap dashboardBitmap;
+
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
     private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
     private final Object detectionsUpdateSync = new Object();
+    private volatile Position lastPosition;
 
     Mat cameraMatrix;
 
@@ -77,6 +85,7 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
         this.fy = fy;
         this.cx = cx;
         this.cy = cy;
+        lastPosition = Position.HOLD;
 
         constructMatrix();
 
@@ -127,12 +136,37 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
         for(AprilTagDetection detection : detections)
         {
+            //set the position from the ID
+            //todo - this lets the most recent detection win - should probably check for a number of consistent detections
+            switch (detection.id) {
+            case 1:
+                lastPosition=Position.LEFT;
+                break;
+            case 2:
+                lastPosition=Position.MIDDLE;
+                break;
+            case 3:
+                lastPosition=Position.RIGHT;
+                break;
+
+            default:
+                lastPosition=Position.NONE_FOUND;
+        }
+
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
             drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
-
+        dashboardMat = input;
+        if (dashboardMat != null && !dashboardMat.empty()) {
+            dashboardBitmap = Bitmap.createBitmap(dashboardMat.width(), dashboardMat.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(dashboardMat, dashboardBitmap);
+        }
         return input;
+    }
+
+    public Bitmap getDashboardImage() {
+        return dashboardBitmap;
     }
 
     public void setDecimation(float decimation)
@@ -157,6 +191,10 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
             detectionsUpdate = null;
             return ret;
         }
+    }
+
+    public Position getLastPosition() {
+        return lastPosition;
     }
 
     void constructMatrix()

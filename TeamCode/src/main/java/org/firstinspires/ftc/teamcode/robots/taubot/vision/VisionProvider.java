@@ -101,9 +101,10 @@ public abstract class VisionProvider implements TelemetryProvider {
 
         Position position = getPosition();
         if(position != Position.HOLD && position != Position.NONE_FOUND)
+        {
             positions.add(0, position);
-        updateMostFrequentPosition();
-
+            updateMostFrequentPosition();
+        }
         if(canSendDashboardImage())
             sendDashboardImage();
     }
