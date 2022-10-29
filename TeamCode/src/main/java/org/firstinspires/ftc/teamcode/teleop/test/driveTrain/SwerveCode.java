@@ -99,6 +99,11 @@ public class SwerveCode extends OpMode{
         telemetry.addData("Ypos", posData[1]);
         telemetry.addData("W", posData[2]);
         telemetry.addData("R", posData[3]);
+
+        telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
+        telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
+        telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
         telemetry.update();
     }
 
@@ -183,6 +188,11 @@ public class SwerveCode extends OpMode{
         robot.topL.setPower(0.5);
         robot.botR.setPower(0.5);
         robot.topR.setPower(0.5);
+
+        if (!robot.wheelsAreBusy()){
+            robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     /*

@@ -171,11 +171,11 @@ public class HardwareDrive
         //make sure to not add arm here
     }
 
-    /*
+
     public boolean wheelsAreBusy(){
-        return (dtMotors[0].isBusy() && dtMotors[1].isBusy()/* && dtMotors[2].isBusy() && dtMotors[3].isBusy());
+        return (topL.isBusy() && botL.isBusy() && topR.isBusy() && botR.isBusy());
     }
-    */
+
 
 }
 
