@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Reno.HardwareRobot;
+import org.firstinspires.ftc.teamcode.Reno.RobotLocation;
 
 @Autonomous(name="POC: Auto Drive Calibration", group="Concept")
 //@Disabled
@@ -79,6 +80,26 @@ public class ConceptAutoDriveCalibration extends LinearOpMode {
         turnHeading( -90);
 
         sleep(1000);  // Pause to display last telemetry message.
+    }
+
+    public void navigate(double destX, double destY)
+    {
+        RobotLocation robotLocation;
+
+       do {
+           robotLocation = robot.getRobotLocationOnField();
+           this.turnHeading(45);
+       }while (robotLocation == null);
+
+        if(robotLocation != null) {
+            double distanceX = destX - robotLocation.x;
+            double distanceY = destY - robotLocation.y;
+
+            this.driveStraight(DRIVE_SPEED, distanceX);
+            this.turnHeading(90);
+            this.driveStraight(DRIVE_SPEED, distanceY);
+        }
+
     }
 
 

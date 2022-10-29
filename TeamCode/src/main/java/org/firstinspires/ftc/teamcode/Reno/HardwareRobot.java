@@ -179,6 +179,8 @@ public class HardwareRobot
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
+        this.setupVuforia();
+
     }
 
     public void turn(double power)
@@ -498,6 +500,28 @@ public class HardwareRobot
         return OpenGLMatrix.translation(x, y, z).
                 multiplied(Orientation.getRotationMatrix(
                         AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, u, v, w));
+    }
+
+    public RobotLocation getRobotLocationOnField()
+    {
+        if (((VuforiaTrackableDefaultListener)target.getListener()).isVisible()) {
+            listener = ((VuforiaTrackableDefaultListener)target.getListener());
+            OpenGLMatrix robotLocationTransform = listener.getUpdatedRobotLocation();
+            OpenGLMatrix targetLocationTransform = listener.getVuforiaCameraFromTarget();
+            OpenGLMatrix robotLocationOnField = listener.getFtcFieldFromRobot();
+            OpenGLMatrix cameraLocationOnRobot = listener.getCameraLocationOnRobot(webcamName);
+            OpenGLMatrix targetLocationOnField = target.getFtcFieldFromTarget();
+
+            float[] coordinates = lastLocation.getTranslation().getData();
+
+            robotX = coordinates[0] *1000;
+            robotY = coordinates[1] * 1000;
+            robotAngle = Orientation.getOrientation(lastLocation, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+            RobotLocation robotLocation = new RobotLocation(robotX / mmPerInch, robotY / mmPerInch, 0, robotAngle);
+
+            return robotLocation;
+        }
+        return null;
     }
 
 }
