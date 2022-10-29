@@ -78,6 +78,7 @@ public class LinearKinematicsTest extends Kinematics{
                 rotationPowerPercentage = 0;
                 rotClicks = 0;
                 spinClicks = 0;
+                setClicksCycle = false;
 
                 // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
                 break;
@@ -170,10 +171,10 @@ public class LinearKinematicsTest extends Kinematics{
 
     public int[] getClicks(){
         int[] clicks = new int[4];
-        clicks[0] = spinClicks + rotClicks;
-        clicks[1] = -spinClicks + rotClicks;
-        clicks[2] = spinClicks + rotClicks;
-        clicks[3] = -spinClicks  + rotClicks;
+        clicks[0] = -spinClicks + rotClicks;
+        clicks[1] = spinClicks + rotClicks;
+        clicks[2] = -spinClicks + rotClicks;
+        clicks[3] = spinClicks  + rotClicks;
         return clicks;
     }
 
