@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+// initializes a new sensor, whether it be distance or color
 public class SensorClass {
 
     DistanceSensor Distance;
@@ -38,7 +39,7 @@ public class SensorClass {
     }
 
 
-    //values
+    // get values
     public void getDistanceValue() {
 
         telemetry.addData("deviceName",Distance.getDeviceName() );

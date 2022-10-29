@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.threeten.bp.DayOfWeek;
 
-//uttej
+// creates a new mecanum drivetrain that is extending off of the drivetrain class
 public class MecanumClass extends DrivetrainClass {
 
     public DcMotorEx frontLeft;
@@ -15,13 +15,9 @@ public class MecanumClass extends DrivetrainClass {
     public DcMotorEx backRight;
 
     HardwareMap hardwareMap;
-    // all of these methods are extended from the abstract drivetrain class, this class
 
 
     // all of these methods are extended from the abstract drivetrain class
-
-    // need four motors(parameters) and all initialization
-
     @Override
     void initialize() {
         frontLeft = hardwareMap.get(DcMotorEx.class, "FrontLeft");

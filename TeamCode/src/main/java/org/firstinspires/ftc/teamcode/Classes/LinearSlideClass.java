@@ -19,21 +19,21 @@ public class LinearSlideClass {
   }
 
   //Move linear Slides Up (Value has to be postive 0.0-1.0)
-  public void up() {
+  public void linearSlideUp() {
 
     //Move linear slide all the way up with max power
-    up(1, 1);
+    linearSlideUp();
 
   }
 
-  public void up(double power) {
+  public void linearSlideUp(double power) {
 
     //Moves linear slide all the way up with set power.
-    up(power,1);
+    linearSlideUp();
 
   }
 
-  public void up(double power, double distance) {
+  public void linearSlideUp(double power, double distance) {
 
     //Moves linear slide up set distance and speed.
     Drive.setPower(power);
@@ -43,21 +43,21 @@ public class LinearSlideClass {
   
   
   //Moves linear slide down (Value has to be postive 0.0-1.0)
-  public void down() {
+  public void linearSlideDown() {
 
     //Move linear slide all the way down with max power
     Drive.setPower(-1);
 
   }
 
-  public void down(double power) {
+  public void linearSlideDown(double power) {
 
     //Moves linear slide all the way down with set power.
     Drive.setPower(-power);
 
   }
 
-  public void down(double power, double distance) {
+  public void linearSlideDown(double power, double distance) {
 
     //Moves linear slide down set distance and speed.
     Drive.setPower(-power);
