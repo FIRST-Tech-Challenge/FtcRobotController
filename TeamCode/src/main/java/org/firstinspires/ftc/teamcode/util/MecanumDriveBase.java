@@ -12,15 +12,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class MecanumDriveBase {
     private ElapsedTime runtime = new ElapsedTime();
     private static DcMotor.RunMode runmode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-    public DcMotor lf= null;
-    public DcMotor lb= null;
-    public DcMotor rb= null;
-    public DcMotor rf= null;
-    public double leftPowerFront  = .5;
-    public double rightPowerFront = .5;
-    public double rightPowerBack  = .5;
-    public double leftPowerBack   = .5;
-    public double speedFactor     = .5;
+
+    public DcMotor lf;
+    public DcMotor lb;
+    public DcMotor rb;
+    public DcMotor rf;
+    public double leftPowerFront  = 1.0;
+    public double rightPowerFront = 1.0;
+    public double rightPowerBack  = 1.0;
+    public double leftPowerBack   = 1.0;
+    public double speedFactor     = 1.0;
 
     public MecanumDriveBase(HardwareMap hardwareMap){
         rb = hardwareMap.get(DcMotor.class, "rb");
@@ -54,10 +55,10 @@ public class MecanumDriveBase {
       }
       public void driveMotors(double drive,double turn,double strafe,double speedFactor){
 
-          leftPowerFront = (drive + turn + strafe) * speedFactor;
+          leftPowerFront  = (drive + turn + strafe) * speedFactor;
           rightPowerFront = (drive - turn - strafe) * speedFactor;
-          leftPowerBack = (drive + turn - strafe) * speedFactor;
-          rightPowerBack = (drive - turn + strafe) * speedFactor;
+          leftPowerBack   = (drive + turn - strafe) * speedFactor;
+          rightPowerBack  = (drive - turn + strafe) * speedFactor;
 
           lf.setPower(leftPowerFront);
           rf.setPower(rightPowerFront);

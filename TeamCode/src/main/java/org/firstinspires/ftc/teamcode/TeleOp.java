@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.util.IntegratedLocalizerIMU;
 import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 
@@ -14,12 +15,16 @@ import org.firstinspires.ftc.teamcode.util.MecanumDriveBase;
 public class TeleOp extends OpMode
 
 {
-    private Localizer localizer        = null;
+    private IntegratedLocalizerIMU localizer        = null;
     private MecanumDriveBase mecanumDriveBase = null;
+    private PacManTurnToPos pacMan;
+
     public void init() {
         telemetry.addData("Status", "Initialized");
-        localizer = new Localizer(hardwareMap);
+        localizer = new IntegratedLocalizerIMU(hardwareMap);
         mecanumDriveBase = new MecanumDriveBase(hardwareMap);
+//        localizer = new LocalizerIMU(hardwareMap);
+        pacMan = new PacManTurnToPos(localizer, mecanumDriveBase);
         double max;
     }
     @Override
@@ -28,6 +33,8 @@ public class TeleOp extends OpMode
         localizer.handleTracking();
         mecanumDriveBase.gamepadController(gamepad1);
         mecanumDriveBase.driveBaseTelemetry(telemetry);
+        telemetry.addData("TeleOp heading", localizer.getHeading() );
+        pacMan.handlePacMan(gamepad1, telemetry);
         telemetry.update();
     }
 }

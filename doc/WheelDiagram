@@ -1,0 +1,31 @@
+<mxfile host="app.diagrams.net" modified="2022-10-15T17:36:34.657Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36" etag="HPmKYB0vpCP5r6sbp6ae" version="20.4.0" type="github">
+  <diagram id="zmkDvn243D7gALXEXFXQ" name="Page-1">
+    <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="AdgE19KjICtTeteZ4ssc-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;" vertex="1" parent="1">
+          <mxGeometry x="180" y="305" width="490" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-2" value="Front Pod" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=6;" vertex="1" parent="1">
+          <mxGeometry x="385" y="320" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-3" value="Right Pod" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=6;rotation=-90;" vertex="1" parent="1">
+          <mxGeometry x="600" y="535" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-4" value="Left Pod" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=6;rotation=-90;" vertex="1" parent="1">
+          <mxGeometry x="180" y="535" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-5" value="center" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#a20025;fontColor=#ffffff;strokeColor=#6F0000;" vertex="1" parent="1">
+          <mxGeometry x="410" y="535" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AdgE19KjICtTeteZ4ssc-6" value="radius&lt;br&gt;" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="AdgE19KjICtTeteZ4ssc-5" target="AdgE19KjICtTeteZ4ssc-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="440" as="sourcePoint" />
+            <mxPoint x="450" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
