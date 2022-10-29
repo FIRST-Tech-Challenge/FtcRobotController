@@ -19,6 +19,10 @@ public class Constants {
     public double clickTOLERANCE = 10; //number of clicks or degrees the robot can be off by
     public double degreeTOLERANCE = 5;
 
+    //Arm Constants
+    public double CLICKS_PER_BASE_REV = 5281.1; //clicks per rev of base arm motor
+    public double CLICKS_PER_TOP_REV =  288; //clicks per rev of top arm motor
+
     //Swerve constants
         //module translation
     public double BLUE_REV_PER_GREEN = 17.0 / 16.0; //assuming other gear isn't messing stuff up, 17 revolutions of the input shaft = 16 revolutions of the wheel
