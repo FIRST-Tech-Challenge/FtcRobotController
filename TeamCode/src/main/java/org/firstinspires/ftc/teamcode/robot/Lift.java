@@ -19,7 +19,7 @@ public class Lift {
 
     static final double     MM_TO_INCHES = 0.0393700787;
 
-    static final double     COUNTS_PER_MOTOR_REV    = 8192;     // ticks at the motor shaft
+    static final double     COUNTS_PER_MOTOR_REV    = 28;     // ticks at the motor shaft
     static final double     DRIVE_GEAR_REDUCTION    = 5.23;     // TODO: Fix to 3:1 gear reduction (slowing down)
     static final double     PULLEY_WHEEL_DIAMETER_INCHES   = 24.25 * MM_TO_INCHES ;     // convert mm to inches
     static final double     TICK_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (PULLEY_WHEEL_DIAMETER_INCHES * 3.1415);
@@ -27,15 +27,15 @@ public class Lift {
     static final double     LIFT_UP_SPEED           = 0.5;
     static final double     LIFT_DOWN_SPEED         = 0.5;
 
-    public final double     MINIMUM_CLEARANCE_HEIGHT    = 43 * MM_TO_INCHES;    // inches to lift to clear side panels
+    public final int     MINIMUM_CLEARANCE_HEIGHT    = 43 ;    // inches to lift to clear side panels
 
-    public final double     LIFT_POSITION_RESET = 0;
-    public final double     LIFT_POSITION_GROUND = 0;
-    public final double     LIFT_POSITION_LOWPOLE= 14;
-    public final double     LIFT_POSITION_MIDPOLE= 30;
-    public final double     LIFT_POSITION_HIGHPOLE = 40;
-    public final double     LIFT_POSITION_PICKUP = 8;
-    public final double     LIFT_ADJUSTMENT = -2;
+    public final int     LIFT_POSITION_RESET = 0;
+    public final int     LIFT_POSITION_GROUND = 97;
+    public final int     LIFT_POSITION_LOWPOLE= 380;
+    public final int     LIFT_POSITION_MIDPOLE= 590;
+    public final int     LIFT_POSITION_HIGHPOLE = 860;
+    public final int     LIFT_POSITION_PICKUP = 8;
+    public final int     LIFT_ADJUSTMENT = -70;
 
     public final double     HARD_STOP_CURRENT_DRAW = 100;
 
@@ -50,7 +50,7 @@ public class Lift {
 
     public final String TRANSITION_STATE = "TRANSITION";
     public final int DELIVERY_ADJUSTMENT = -3;
-    public final double HEIGHT_TOLERANCE  = 0.25;
+    public final double HEIGHT_TOLERANCE  = 15;
 
     public static double currentLiftHeight;
 
@@ -82,7 +82,7 @@ public class Lift {
         }
     }
     private void selectTransition(String desiredLevel, String subheight, String currentState){
-        transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
+//        transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
 //        switch(desiredLevel){
 //            case LIFT_POLE_LOW:{
 //                transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
@@ -103,14 +103,18 @@ public class Lift {
 //        }
 
     }
-    private void transitionToLiftPosition(double inches){
-        raiseHeightTo(inches);
+    private void transitionToLiftPosition(int ticks){
+        raiseHeightTo(ticks);
     }
 
     public String getCurrentState() {
         String state = TRANSITION_STATE;
         double currentPosition = getHeightInInches();
-        if (inHeightTolerance(currentPosition, LIFT_POSITION_LOWPOLE)) {
+        telemetry.addData("CurrentMotorEncoderTicks", liftMotor.getCurrentPosition());
+        telemetry.addData("CurrentPosition", currentPosition);
+        if(inHeightTolerance(currentPosition, LIFT_POSITION_GROUND)){
+            state = LIFT_POLE_GROUND;
+        } else if (inHeightTolerance(currentPosition, LIFT_POSITION_LOWPOLE)) {
             state = LIFT_POLE_LOW;
         } else if (inHeightTolerance(currentPosition, LIFT_POSITION_MIDPOLE)) {
             state = LIFT_POLE_MEDIUM;
@@ -121,7 +125,7 @@ public class Lift {
     }
     private double getHeightInInches(){
 
-        return ((double) getPosition()/TICK_PER_INCH);
+        return ((double) getPosition()/ TICK_PER_INCH);
     }
     public int deliveryHeight(String subheight){
         int height = 0;
@@ -131,14 +135,14 @@ public class Lift {
         return height;
     }
 
-    public void raiseHeightTo (double heightInInches) {
+    public void raiseHeightTo (int heightInTicks) {
         //raising heights to reach different junctions, so four values
         telemetry.addData("raiseHeightCalled" , true);
-        int ticksNeeded = (int)(TICK_PER_INCH * heightInInches) ;
-        telemetry.addData("liftTicks" , ticksNeeded);
-        liftMotor.setTargetPosition(ticksNeeded);
+        liftMotor.setTargetPosition(heightInTicks);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setPower(1.0);
+        telemetry.addData("MotorPosition", liftMotor.getCurrentPosition());
+
     }
 
     public  boolean isClear () {
