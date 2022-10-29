@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.common;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -62,7 +63,11 @@ public class HardwareDrive
     public DcMotorEx  botR;
     public DcMotorEx  topR;
     public DcMotorEx  botL;
+    public DcMotorEx  armBase;
+    public DcMotorEx armTop;
 
+    public Servo armServo;
+    public Servo claw;
 
 //    public DcMotorEx[] dtMotors;
 
@@ -98,6 +103,12 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
+        armBase = hwMap.get(DcMotorEx.class, "arm_base");
+        armTop = hwMap.get(DcMotorEx.class, "arm_top");
+
+        armServo = hwMap.get(Servo.class, "arm_servo");
+        claw = hwMap.get(Servo.class, "claw");
+
 
         //IMU initiation
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -113,10 +124,12 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorSimple.Direction.REVERSE);
-        topL.setDirection(DcMotorSimple.Direction.REVERSE);
-        botR.setDirection(DcMotorSimple.Direction.REVERSE);
-        topR.setDirection(DcMotorSimple.Direction.REVERSE);
+        botL.setDirection(DcMotorEx.Direction.FORWARD);
+        topL.setDirection(DcMotorEx.Direction.FORWARD);
+        botR.setDirection(DcMotorEx.Direction.REVERSE);
+        topR.setDirection(DcMotorEx.Direction.REVERSE);
+        armBase.setDirection(DcMotorEx.Direction.FORWARD);
+
        // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -125,28 +138,32 @@ public class HardwareDrive
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setRunMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
     }
 
     public void setMotorPower(double power){
         if (power == 0.0){
             // Grady Conwell Was Here
-            botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            botL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            topL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            botR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            topR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            armBase.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            armTop.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         } else {
             botL.setPower(0);
             topL.setPower(0);
             botR.setPower(0);
             topR.setPower(0);
+            armBase.setPower(0);
+            armTop.setPower(0);
         }
     }
 
-    public void setRunMode(DcMotor.RunMode runState){
+    public void setRunMode(DcMotorEx.RunMode runState){
         botL.setMode(runState);
         topL.setMode(runState);
         topR.setMode(runState);
