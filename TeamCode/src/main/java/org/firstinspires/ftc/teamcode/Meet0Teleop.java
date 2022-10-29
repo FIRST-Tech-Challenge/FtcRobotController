@@ -86,13 +86,12 @@ public class Meet0Teleop extends DriveMethods {
             }
 
             if(gamepad2.left_stick_y != 0){
-                if(slideTarget < 100){
-
-                }else {
                     slideTarget += (int) -gamepad2.left_stick_y * 25;
                     aggressiveness = 2500;
                     sleep(50);
-                }
+            }
+            if(slideTarget<0){
+                slideTarget=0;
             }
 
 
