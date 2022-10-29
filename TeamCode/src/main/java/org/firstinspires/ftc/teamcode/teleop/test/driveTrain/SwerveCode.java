@@ -112,6 +112,12 @@ public class SwerveCode extends OpMode{
         y.update(gamepad1.y);
         a.update(gamepad1.a);
         b.update(gamepad1.b);
+
+        if (x.getState() == Button.State.TAP){
+            driveState = State.RESET;
+        } else if (y.getState() == Button.State.TAP){
+            driveState = State.DRIVE;
+        }
     }
 
     void DriveTrainBasePower(){
