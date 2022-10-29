@@ -38,10 +38,10 @@ public class OdometryTracker extends Tracker {
         super();
         touch = limitSwitch;
         ultras = ultra;
-        encoderLeft = (DcMotorEx) op.hardwareMap.dcMotor.get("leftEncoder");
-        encoderRight = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
-        encoderBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
-        encoderBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        encoderLeft = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
+        encoderRight = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
+        encoderBack = (DcMotorEx) op.hardwareMap.dcMotor.get("leftEncoder");
+        encoderLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         encoderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         encoderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         encoderBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -122,8 +122,8 @@ public class OdometryTracker extends Tracker {
         op.telemetry.addData("ypos",ypos);
         op.telemetry.addData("angle",angle);
         op.telemetry.addData("left",encoderLeft.getCurrentPosition());
-        op.telemetry.addData("right",encoderRight.getCurrentPosition());
-        op.telemetry.addData("front",encoderBack.getCurrentPosition());
+        op.telemetry.addData("right",encoderRight.getCurrentPosition()); //left
+        op.telemetry.addData("front",encoderBack.getCurrentPosition()); //right
         op.telemetry.update();
     }
     public double getAngle() {

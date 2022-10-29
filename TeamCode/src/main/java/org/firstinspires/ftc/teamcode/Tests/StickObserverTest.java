@@ -21,20 +21,20 @@ public class StickObserverTest extends LinearOpMode {
         while(opModeIsActive()) {
 //                if(robot.field.lookingAtPole()){
 //                    double[] pole = robot.field.lookedAtPole();
-////                    telemetry.addData("poleTheta", pole[3]);
-////                    telemetry.addData("poleDistance", pole[2]);
-////                    robot.autoAim();
+//                    telemetry.addData("poleTheta", pole[3]);
+//                    telemetry.addData("poleDistance", pole[2]);
+//                    robot.autoAim();
 //                }
-//                telemetry.addData("centerOffset", robot.cv.centerOfPole());
-//                telemetry.addData("centerSize", robot.cv.poleSize());
-//                telemetry.addData("cvtheta",robot.cv.rotatedPolarCoordDelta()[0]);
-//                telemetry.addData("cvdistance",robot.cv.rotatedPolarCoordDelta()[1]);
-//                telemetry.addData("aimTo",robot.roadrun.getPoseEstimate().getHeading() + robot.cv.rotatedPolarCoordDelta()[0]);
-//                telemetry.update();
+                telemetry.addData("centerOffset", robot.cv.centerOfPole());
+                telemetry.addData("centerSize", robot.cv.poleSize());
+                telemetry.addData("cvtheta",robot.cv.rotatedPolarCoordDelta()[0]);
+                telemetry.addData("cvdistance",robot.cv.rotatedPolarCoordDelta()[1]);
+                telemetry.addData("aimTo",robot.roadrun.getPoseEstimate().getHeading() + robot.cv.rotatedPolarCoordDelta()[0]);
+                telemetry.update();
                 loopStart[0] = getRuntime();
-//                robot.roadrun.update();
-//                robot.autoAim();
-//                robot.setFirstLoop(false);
+                robot.roadrun.update();
+                robot.autoAim();
+                robot.setFirstLoop(false);
         }
         robot.stop();
     }

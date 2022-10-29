@@ -41,21 +41,22 @@ public class BlueRightAuto extends LinearOpMode {
                 .build();
 
         Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-6,35, Math.toRadians(45)))
-                .lineToSplineHeading(new Pose2d(-12, 0,Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(-12, 12,Math.toRadians(0)))
                 .build();
 
-        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-6,35, Math.toRadians(45)))
-                .lineToSplineHeading(new Pose2d(-36, 0,Math.toRadians(0)))
+        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-12,12, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(-36, 12,Math.toRadians(0)))
                 .build();
 
-        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-6,35, Math.toRadians(45)))
-                .lineToSplineHeading(new Pose2d(-60, 0,Math.toRadians(0)))
+        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,12, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(-60, 12,Math.toRadians(0)))
                 .build();
 
         while (opModeIsActive()) {
             robot.followTrajectoryAsync(initialtrajectory);
             robot.followTrajectoryAsync(preloadtrajectory);
-            //if signal variable is 1:
+            robot.openClaw(false);
+
             robot.followTrajectoryAsync(park1trajectory);
 
             //if signal variable is 2:

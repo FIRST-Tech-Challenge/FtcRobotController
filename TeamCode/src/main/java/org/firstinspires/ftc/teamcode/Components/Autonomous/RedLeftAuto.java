@@ -23,7 +23,7 @@ public class RedLeftAuto extends LinearOpMode {
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
 
-        Pose2d startPose = new Pose2d(-36, -72, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(36, -72, Math.toRadians(180));
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.setPoseEstimate(startPose);
 
@@ -34,28 +34,28 @@ public class RedLeftAuto extends LinearOpMode {
 
         if (isStopRequested()) return;
         Trajectory initialtrajectory = robot.roadrun.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(-15, -60))
+                .lineToConstantHeading(new Vector2d(15, -60))
                 .build();
-        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-12,-72, Math.toRadians(180)))
-                .lineToSplineHeading(new Pose2d(-6, -35,Math.toRadians(225)))
-                .build();
-
-        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-6,-35, Math.toRadians(225)))
-                .lineToSplineHeading(new Pose2d(-12, 0,Math.toRadians(180)))
+        Trajectory preloadtrajectory = robot.roadrun.trajectoryBuilder(new Pose2d(12,-72, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(6, -35,Math.toRadians(225)))
                 .build();
 
-        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-6,-35, Math.toRadians(225)))
-                .lineToSplineHeading(new Pose2d(-36, 0,Math.toRadians(180)))
+        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(6,-35, Math.toRadians(225)))
+                .lineToSplineHeading(new Pose2d(12, -12,Math.toRadians(180)))
                 .build();
 
-        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-6,-35, Math.toRadians(225)))
-                .lineToSplineHeading(new Pose2d(-60, 0,Math.toRadians(180)))
+        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(12,-12, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(36, -12,Math.toRadians(180)))
+                .build();
+
+        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(12,-12, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(60, -12,Math.toRadians(180)))
                 .build();
 
         while (opModeIsActive()) {
             robot.followTrajectoryAsync(initialtrajectory);
             robot.followTrajectoryAsync(preloadtrajectory);
-            //if signal variable is 1:
+
             robot.followTrajectoryAsync(park1trajectory);
 
             //if signal variable is 2:

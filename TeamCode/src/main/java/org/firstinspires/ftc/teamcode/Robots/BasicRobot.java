@@ -24,6 +24,6 @@ public class BasicRobot{
 
     }
     public void resetQueuer() {
-        queuer.resetQueuer();
+        queuer.reset();
     }
 }

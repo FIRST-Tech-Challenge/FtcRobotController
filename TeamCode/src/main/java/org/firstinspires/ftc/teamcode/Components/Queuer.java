@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+
 import java.util.ArrayList;
 
 public class Queuer {
@@ -20,44 +22,12 @@ public class Queuer {
     * updates which element is currently being queued and which element is currently being executed
     * determines if currently queued element should run */
     public boolean queue(boolean p_asynchronous, boolean done_condition) {
-        //create new queue element if it is first loop
-        if (firstLoop) {
-            createQueueElement(p_asynchronous);
-        }
-
-        //update which element is currently being queued & which event is currently being executed
-        updateQueuer(done_condition);
-
-        //determine if currently queued element should be executed
-        boolean isReady = queueElements.get(currentlyQueueing).isReady(currentEvent);
-
-        //set queueElement internal value
-        if (isReady) {
-            queueElements.get(currentlyQueueing).setStarted(true);
-        }
-
-        return isReady;
+        return queue(p_asynchronous, done_condition, true);
     }
 
     /** same as regular queue, but will wait inputted delay time before running */
     public boolean queue(boolean p_asyncrhonous, boolean done_condition, double p_delay) {
-        //create new queue element if it is first loop, with delay instead of asynchronous
-        if (firstLoop) {
-            createQueueElement(p_asyncrhonous,p_delay);
-        }
-
-        //update which element is currently being queued & which event is currently being executed
-        updateQueuer(done_condition);
-
-        //determine if currently queued element should be executed
-        boolean isReady = queueElements.get(currentlyQueueing).isReady(currentEvent);
-
-        //set queueElement internal value
-        if (isReady) {
-            queueElements.get(currentlyQueueing).setStarted(true);
-        }
-
-        return isReady;
+        return queue(p_asyncrhonous, done_condition, op.getRuntime()-queueElements.get(currentlyQueueing+1).getReadyTime()>p_delay);
     }
 
     /** same as regular queue, but will wait for extra_condition to be true before running */
@@ -84,20 +54,7 @@ public class Queuer {
         queueElements.clear();
     }
     /** create new queueElement*/
-    private void createQueueElement(boolean p_asynchronous) {
-        if (firstLoop) {
-            int startCondition = -1;
-            for (int i = 0; i < queueElements.size(); i++) {
-                if (!queueElements.get(queueElements.size() - i - 1).isAsynchronous()) {
-                    startCondition = queueElements.size() - i - 1;
-                    break;
-                }
-            }
-            queueElements.add(new QueueElement(queueElements.size(), p_asynchronous, startCondition));
-        }
-    }
-    /** create new queueElement with extra delay*/
-    private void createQueueElement(boolean p_asynchrnous, double p_delay) {
+    private void createQueueElement(boolean p_asynchrnous) {
         int startCondition = -1;
         for (int i = 0; i < queueElements.size(); i++) {
             if (!queueElements.get(queueElements.size() - i - 1).isAsynchronous()) {
@@ -105,7 +62,7 @@ public class Queuer {
                 break;
             }
         }
-        queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, p_delay));
+        queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition));
     }
     /** update which element is currently being queued(processed) and which element is currently being executed*/
     private void updateQueuer(boolean done_condition) {

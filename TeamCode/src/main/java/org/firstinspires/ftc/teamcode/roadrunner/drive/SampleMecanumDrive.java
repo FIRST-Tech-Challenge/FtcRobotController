@@ -131,13 +131,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //right 600
-        //left 200
-        //back 10200
+
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -158,10 +152,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        rightFront.setDirection(DcMotor.Direction.FORWARD); // on left back
-        leftFront.setDirection(DcMotor.Direction.REVERSE); // rightFront
-        leftRear.setDirection(DcMotor.Direction.REVERSE);// left front
-        rightRear.setDirection(DcMotor.Direction.REVERSE); //
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 //        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
