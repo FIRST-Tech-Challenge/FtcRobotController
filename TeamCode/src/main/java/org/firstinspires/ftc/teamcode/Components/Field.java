@@ -6,8 +6,6 @@ import static java.lang.Math.cos;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
 import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
@@ -61,13 +59,13 @@ public class Field {
     public boolean lookingAtPole() {
         double[] minDistPole = minDistPole();
         if (minDistPole[0] != 10) {
-            double[] coords = cv.rotatedPolarCoordDelta();
+            double[] coords = null/*cv.rotatedPolarCoordDelta()*/;
             dropPosition[0] = roadrun.getPoseEstimate().getX() + (coords[1] - dropDistance) * cos(roadrun.getPoseEstimate().getHeading() + coords[0]);
             dropPosition[1] = roadrun.getPoseEstimate().getY() + (coords[1] - dropDistance) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]);
             dropPosition[2] = roadrun.getPoseEstimate().getHeading() + coords[0];
-            roadrun.setPoseEstimate(new Pose2d(2 * roadrun.getPoseEstimate().getX() + (coords[1]) * cos(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][0],
-                    2 * roadrun.getPoseEstimate().getY() + (coords[1]) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][1],
-                    2 * roadrun.getPoseEstimate().getHeading() + coords[0] - poleValues[3]));
+//            roadrun.setPoseEstimate(new Pose2d(2 * roadrun.getPoseEstimate().getX() + (coords[1]) * cos(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][0],
+//                    2 * roadrun.getPoseEstimate().getY() + (coords[1]) * sin(roadrun.getPoseEstimate().getHeading() + coords[0]) - poleCoords[(int) poleValues[0]][(int) poleValues[1]][1],
+//                    2 * roadrun.getPoseEstimate().getHeading() + coords[0] - poleValues[3]));
             return true;
         }
         return false;

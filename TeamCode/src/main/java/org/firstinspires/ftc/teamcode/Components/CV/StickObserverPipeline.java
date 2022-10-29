@@ -53,8 +53,8 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //scale the average saturation to 150
         masked.convertTo(scaledMask,-1,150/average.val[1],0);
 
-        Scalar strictLowHSV = new Scalar(0, 150, 100); //strict lower bound HSV for yellow
-        Scalar strictHighHSV = new Scalar(255, 255, 255); //strict higher bound HSV for yellow
+        Scalar strictLowHSV = new Scalar(0, 149, 100); //strict lower bound HSV for yellow
+        Scalar strictHighHSV = new Scalar(255, 200, 255); //strict higher bound HSV for yellow
 
         Mat scaledThresh = new Mat();
 
@@ -63,7 +63,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
 
         Mat finalMask = new Mat();
         //color in scaledThresh with HSV(for showing result)
-        Core.bitwise_and(thresh, thresh, finalMask, scaledThresh);
+        Core.bitwise_and(mat, mat, finalMask, scaledThresh);
 
         Mat edges = new Mat();
         //detect edges of finalMask
@@ -104,20 +104,23 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(frameList.size()>5) {
             frameList.remove(0);
         }
+
+        //release all the data
+
         input.release();
-        edges.copyTo(input);
+        scaledThresh.copyTo(input);
         scaledThresh.release();
         scaledMask.release();
         mat.release();
         masked.release();
         edges.release();
         thresh.release();
-        hierarchy.release();
+//        hierarchy.release();
         finalMask.release();
         return input;
     }
 
-    public double centerOfPole() {
+   public double centerOfPole() {
         //256.227,257.307,252.9,253.414: 4,11.75|| 18.8 .073
         //2.5,12.75: 162.7,161.6, 161.7,162.5||  11.09 .068
         //2,9.5 : 187.45, 187.26|| 11.88  .0648
