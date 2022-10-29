@@ -24,10 +24,9 @@ public class TestAutonomous extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(41, -28), Math.toRadians(0))
                 .build();
 
-
         waitForStart();
 
-        if(isStopRequested()) return;
+        if (isStopRequested()) return;
 
         drive.followTrajectory(traject1);
         drive.turn(Math.toRadians(90));
