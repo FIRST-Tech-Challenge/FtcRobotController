@@ -13,12 +13,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-public class InternalIMUSensor {
+public class InternalIMUSensor implements PositionChangeSensor {
     private BNO055IMU        imu;
     private Orientation   angles;
     private Acceleration gravity;
 
     private ElapsedTime runtime = new ElapsedTime();
+    private Position lastPosition;
 
     double lastT = 0;
     double lastHeading  = 0;
@@ -39,6 +40,8 @@ public class InternalIMUSensor {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        lastPosition = new Position();
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), pollInterval);
     }
@@ -63,6 +66,11 @@ public class InternalIMUSensor {
         return -  angles.firstAngle;
     }
 
+    /** gets the Angle Change rate in degrees.
+     *
+     *
+     * @return heading change rate in degrees
+     */
     public double angleRate(){
         double lastH = lastHeading;
         double timeChange = runtime.seconds()-lastT;
@@ -71,10 +79,33 @@ public class InternalIMUSensor {
         return (heading - lastH)/timeChange;
     }
 
+    /** gets the Angle Change since you last asked in degrees.
+     *
+     *
+     * @return heading change in degrees
+     */
     public double angleChange() {
         double lastH = lastHeading;
         double heading = getHeading();
 
         return (heading - lastH);
+    }
+
+    @Override
+    public double[] getStateChange() {
+        double[] retVal = getStateChangeDegrees();
+        retVal[2] *= Math.PI / 180.0;
+        return retVal;
+    }
+
+    @Override
+    public double[] getStateChangeDegrees() {
+        Position thisPosition = imu.getPosition();
+
+        double [] retVal = {thisPosition.x - lastPosition.x,
+                thisPosition.y - lastPosition.y,
+                angleChange() };
+        lastPosition = thisPosition;
+        return retVal;
     }
 }
