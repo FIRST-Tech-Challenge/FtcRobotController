@@ -56,9 +56,9 @@ public abstract class BaseOpMode extends OpMode {
 
     protected boolean alignDistance(int desiredWidth){
         int distanceOffset = pixycam.distanceOffset(desiredWidth);// find actual desired width
-        if (distanceOffset > 5) {
+        if (distanceOffset > 10) {
             driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3);
-        } else if (distanceOffset < -5) {
+        } else if (distanceOffset < -10) {
             driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.3);
         } else {
             driveSystem.setMotorPower(0);
