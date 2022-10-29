@@ -440,8 +440,4 @@ public class DriveSystem {
         return (int) Math.round(millimeters * TICKS_IN_MM);
     }
 
-    public int getCurrentPosition(){
-        return motors.get(MotorNames.FRONTLEFT).getCurrentPosition();
-    }
-
 }

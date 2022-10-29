@@ -45,5 +45,9 @@ public class DrivePushBot extends OpMode{
         float ly = (float) Math.pow(gamepad1.left_stick_y, 3);
         driveSystem.slowDrive(gamepad1.left_trigger > 0.3f);
         driveSystem.drive(rx, lx, ly);
+
+        telemetry.addData("Motor 0 ticks", driveSystem.motors.get(0).getCurrentPosition());
+        telemetry.addData("Motor 1 ticks", driveSystem.motors.get(0).getCurrentPosition());
+
     }
 }
