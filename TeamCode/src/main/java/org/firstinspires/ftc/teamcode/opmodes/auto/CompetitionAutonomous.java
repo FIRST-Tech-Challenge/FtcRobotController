@@ -15,11 +15,13 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
     private enum State {
         IDENTIFY_TARGET,
         DRIVE_TO_JUNCTION,
-        PARK,
         ALIGN_WITH_POLE,
-        END_STATE,
-        GO_GET_CONE,
+        PLACE_CONE,
+        DRIVE_TO_CONE,
         ALIGN_WITH_CONE,
+        INTAKE_CONE,
+        PARK,
+        END_STATE,
         REVERSE_JUNCTION
     }
 
@@ -66,25 +68,39 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 }
                 break;
             case DRIVE_TO_JUNCTION:
-                drive_to_junction();
+                if (drive_to_junction()) {
+                    newState(State.ALIGN_WITH_POLE);                }
                 break;
             case ALIGN_WITH_POLE:
                 if (align(PixyCam.YELLOW, POLE_WIDTH)) {
-                    newState(State.REVERSE_JUNCTION);
+                    newState(State.PLACE_CONE);
                 }
                 break;
-            case REVERSE_JUNCTION:
-                reverseJunction();
+            case PLACE_CONE:
+                if (true) { // TODO: either get another or park
+                    newState(State.DRIVE_TO_CONE);
+                }
                 break;
-            case GO_GET_CONE:
-                getCone(); //dependent on team color
+            case DRIVE_TO_CONE:
+                if(drive_to_cone()) { //dependent on team color
+                    newState(State.ALIGN_WITH_CONE);
+                };
                 break;
             case ALIGN_WITH_CONE:
                 if (align(PixyCam.BLUE, CONE_WIDTH)) {
-                    newState(State.END_STATE);
-                 }
+                    newState(State.INTAKE_CONE);
+                }
+                break;
+            case INTAKE_CONE:
+                if (intake_cone()) {
+                    newState(State.DRIVE_TO_JUNCTION);
+                }
+                break;
+
             case PARK:
-                park();
+                if (park()) {
+                    newState(State.END_STATE);
+                }
                 break;
             case END_STATE:
                 //Log.d("parked", teamAsset.toString());
@@ -94,7 +110,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
         telemetry.update();
     }
 
-    private void park() {
+    private boolean park() {
         if (step == 0) {
             if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.3)) {
                 step++;
@@ -104,12 +120,13 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
             if (teamAsset == Sleeve.BRIAN ||
                     (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) ||
                     (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3))) {
-                newState(State.END_STATE);
+                return true;
             }
         }
+        return false;
     }
 
-    private void drive_to_junction() {
+    private boolean drive_to_junction() {
         switch (startPosition) {
             case START:
                 if (step == 0) {
@@ -119,14 +136,14 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 }
                 if (step == 1) {
                     if (driveSystem.turn(-45, 0.2)) {
-                        step = 0;
-                        newState(State.ALIGN_WITH_POLE);
+                        return true;
                     }
                 }
                 break;
             case CONE_STACK:
 
         }
+        return false;
 
     }
 
@@ -150,24 +167,34 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
 
 
-    private void getCone(){
+    private boolean drive_to_cone(){
+
+        // Back up
         if(step == 0){
             if(driveSystem.driveToPosition(60, DriveSystem.Direction.FORWARD, 0.3)){
                 step++;
             }
         }
+
+        // Rotate
         if(step == 1){
             if(driveSystem.turn(135, 0.5)){
                 step++;
             }
 
         }
+
+        // Drive to cone
         if(step == 2) {
             if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.5)) {
-                step = 0;
-                newState(State.END_STATE);
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean intake_cone() {
+        return false;
     }
 
     /**
