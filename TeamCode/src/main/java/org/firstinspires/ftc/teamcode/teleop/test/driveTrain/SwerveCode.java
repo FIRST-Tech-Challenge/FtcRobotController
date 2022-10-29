@@ -29,6 +29,12 @@ public class SwerveCode extends OpMode{
     Button a = new Button();
     Button b = new Button();
 
+    public enum State{
+        DRIVE,
+        RESET
+    }
+    State driveState = State.DRIVE;
+
     //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
     /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -69,7 +75,12 @@ public class SwerveCode extends OpMode{
 
     void UpdatePlayer1(){
        // DriveTrainBasePower();
-        DriveTrainPowerEncoder();
+        if (driveState == State.DRIVE){
+            DriveTrainPowerEncoder();
+        } else if (driveState == State.RESET){
+            reset();
+        }
+
     }
 
     void UpdatePlayer2(){
@@ -150,7 +161,28 @@ public class SwerveCode extends OpMode{
     }
 
     private void reset(){
+        int topR = robot.topR.getCurrentPosition();
+        int botR = robot.botR.getCurrentPosition();
+        int topL = robot.topL.getCurrentPosition();
+        int botL = robot.botL.getCurrentPosition();
 
+        int rotateR = (topR + botR) / 2;
+        int rotateL = (topL + botL) / 2;
+
+        robot.botL.setTargetPosition(rotateL);
+        robot.topL.setTargetPosition(rotateL);
+        robot.botR.setTargetPosition(rotateR);
+        robot.topR.setTargetPosition(rotateR);
+
+        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.botL.setPower(0.5);
+        robot.topL.setPower(0.5);
+        robot.botR.setPower(0.5);
+        robot.topR.setPower(0.5);
     }
 
     /*
