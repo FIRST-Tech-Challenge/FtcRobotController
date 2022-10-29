@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
-public class LinearKinematicsTest extends Kinematics{
+public class LinearKinematicsTestJR extends Kinematics{
     ElapsedTime timer = new ElapsedTime();
 
     private double lx;
@@ -27,9 +27,9 @@ public class LinearKinematicsTest extends Kinematics{
         STOP,
         NOT_INITIALIZED
     }
-    public dType dtype = LinearKinematicsTest.dType.NOT_INITIALIZED;
+    public dType dtype = dType.NOT_INITIALIZED;
 
-    public LinearKinematicsTest(GlobalPosSystem posSystem) {
+    public LinearKinematicsTestJR(GlobalPosSystem posSystem) {
         super(posSystem); //runs Kinematics constructor
     }
 
@@ -55,12 +55,11 @@ public class LinearKinematicsTest extends Kinematics{
                 break;
 
             case SNAP:
-                getRotTargetClicks(turnAmountW, turnDirectionW);
+                getRotTargetClicks(turnAmountW);
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
-                translateSwitchMotors = (int)wheelOptimization(lx, ly)[2];
-                rotationSwitchMotors = translateSwitchMotors;
+                translateSwitchMotors = (int)Math.signum(turnAmountW);
                 translationPowerPercentage = 0.0;
                 rotationPowerPercentage = 1.0;
                 rotatePower = snapWheelPID.update(currentW);
@@ -78,7 +77,7 @@ public class LinearKinematicsTest extends Kinematics{
                 rotationPowerPercentage = 0;
                 rotClicks = 0;
                 spinClicks = 0;
-                setClicksCycle = true;
+                setClicksCycle = false;
 
                 // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
                 break;
@@ -103,7 +102,6 @@ public class LinearKinematicsTest extends Kinematics{
 
         turnAmountW = wheelTargets[0]; //optimized turn amount
         targetW = wheelTargets[1]; //target orientation for wheel
-        turnDirectionW = (int)wheelTargets[2];
 
         optimizedTargetW = clamp(currentW + turnAmountW); //optimized target orientation
 
@@ -115,9 +113,6 @@ public class LinearKinematicsTest extends Kinematics{
     public double getTargetW(){
         return targetW;
     }
-    public int getDirectionW(){
-        return turnDirectionW;
-    }
     public double getTurnAmount(){
         return turnAmountW;
     }
@@ -127,10 +122,10 @@ public class LinearKinematicsTest extends Kinematics{
 
 
 
-    public void getRotTargetClicks(double turnAmount, int direction){
+    public void getRotTargetClicks(double turnAmount){
         if (setClicksCycle == false){
             setClicksCycle = true;
-            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE * direction);
+            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE);
         } else if (!shouldSnap()){
             setClicksCycle = false;
         }
@@ -161,10 +156,10 @@ public class LinearKinematicsTest extends Kinematics{
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
-        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
-        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
-        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
+        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage; //top left
+        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage; //bottom left
+        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage; //top right
+        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage; //bottom right
 
         return motorPower;
     }
