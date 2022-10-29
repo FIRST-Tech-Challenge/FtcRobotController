@@ -22,7 +22,6 @@ public class LinearKinematicsTestJR extends Kinematics{
     public boolean inCycle = false;
 
     public enum dType{
-        LINEAR,
         SNAP,
         STOP,
         NOT_INITIALIZED
@@ -34,32 +33,18 @@ public class LinearKinematicsTestJR extends Kinematics{
     }
 
     public void logic(){
-        inCycle = (Math.abs(joystickL - prevJoystickL) <= 10);
+        inCycle = (Math.abs(joystickL - prevJoystickL) <= 5);
         if (!inCycle || noMovementRequests()) dtype = dType.STOP;
-        else if (shouldSnap()) dtype = dType.SNAP;
-        else dtype = dType.LINEAR;
+        else dtype = dType.SNAP;
 
         switch(dtype){
-            case LINEAR:
-                spinPower = Math.sqrt(Math.pow(lx,2) + Math.pow(ly, 2));
-                rotatePower = 0;
-                if (Math.abs(spinPower) >= 1) spinPower = 1;
-                rightThrottle = 1;
-                leftThrottle = 1;
-                translationPowerPercentage = 1;
-                rotationPowerPercentage = 0;
-
-                getSpinTargetClicks();
-
-                // 7 / 8 items (missing translationPowerPercentage, but we don't set that here)
-                break;
-
             case SNAP:
-                getRotTargetClicks(turnAmountW);
+                getRotTargetClicks();
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
-                translateSwitchMotors = (int)Math.signum(turnAmountW);
+                translateSwitchMotors = turnDirectionW; //this is wrong
+                rotationSwitchMotors = turnDirectionW;
                 translationPowerPercentage = 0.0;
                 rotationPowerPercentage = 1.0;
                 rotatePower = snapWheelPID.update(currentW);
@@ -77,7 +62,9 @@ public class LinearKinematicsTestJR extends Kinematics{
                 rotationPowerPercentage = 0;
                 rotClicks = 0;
                 spinClicks = 0;
-                setClicksCycle = false;
+                setClicksCycle = true;
+                rotationSwitchMotors = 1;
+                translateSwitchMotors = 1;
 
                 // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
                 break;
@@ -102,16 +89,20 @@ public class LinearKinematicsTestJR extends Kinematics{
 
         turnAmountW = wheelTargets[0]; //optimized turn amount
         targetW = wheelTargets[1]; //target orientation for wheel
+        turnDirectionW = (int)wheelTargets[2];
 
         optimizedTargetW = clamp(currentW + turnAmountW); //optimized target orientation
 
         //setting PIDs for rotation of wheels & robot
-        snapWheelPID.setTargets(optimizedTargetW, 0.01, 0, 0);
-        tableSpinWheelPID.setTargets(targetR, 0.025, 0, 0);
+        snapWheelPID.setTargets(optimizedTargetW, 0.03, 0, 0);
+//        tableSpinWheelPID.setTargets(targetR, 0.03, 0, 0);
     }
 
     public double getTargetW(){
         return targetW;
+    }
+    public int getDirectionW(){
+        return turnDirectionW;
     }
     public double getTurnAmount(){
         return turnAmountW;
@@ -122,19 +113,14 @@ public class LinearKinematicsTestJR extends Kinematics{
 
 
 
-    public void getRotTargetClicks(double turnAmount){
+    public void getRotTargetClicks(){
         if (setClicksCycle == false){
             setClicksCycle = true;
-            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE);
+            rotClicks = (int)(turnAmountW * constants.CLICKS_PER_DEGREE * turnDirectionW);
         } else if (!shouldSnap()){
             setClicksCycle = false;
         }
         spinClicks = 0;
-    }
-
-    public void getSpinTargetClicks(){
-        spinClicks = (int)(100 * spinPower * translationPowerPercentage);
-        rotClicks = 0;
     }
 
     private void trackJoystickL(){
@@ -156,20 +142,20 @@ public class LinearKinematicsTestJR extends Kinematics{
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage; //top left
-        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage; //bottom left
-        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage; //top right
-        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage; //bottom right
+        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
+        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
+        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
+        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
 
         return motorPower;
     }
 
     public int[] getClicks(){
         int[] clicks = new int[4];
-        clicks[0] = spinClicks + rotClicks;
-        clicks[1] = -spinClicks + rotClicks;
-        clicks[2] = spinClicks + rotClicks;
-        clicks[3] = -spinClicks  + rotClicks;
+        clicks[0] = -spinClicks + rotClicks;
+        clicks[1] = spinClicks + rotClicks;
+        clicks[2] = -spinClicks + rotClicks;
+        clicks[3] = spinClicks  + rotClicks;
         return clicks;
     }
 
