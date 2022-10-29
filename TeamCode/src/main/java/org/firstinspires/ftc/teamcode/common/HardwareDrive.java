@@ -124,8 +124,8 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorEx.Direction.FORWARD);
-        topL.setDirection(DcMotorEx.Direction.FORWARD);
+        botL.setDirection(DcMotorEx.Direction.REVERSE); //no clue if these 2 are supposed to be FORWARD
+        topL.setDirection(DcMotorEx.Direction.REVERSE);
         botR.setDirection(DcMotorEx.Direction.REVERSE);
         topR.setDirection(DcMotorEx.Direction.REVERSE);
 //        armBase.setDirection(DcMotorEx.Direction.FORWARD);

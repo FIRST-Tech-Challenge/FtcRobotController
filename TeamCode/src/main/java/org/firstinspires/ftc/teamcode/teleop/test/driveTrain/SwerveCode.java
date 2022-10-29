@@ -29,6 +29,9 @@ public class SwerveCode extends OpMode{
     Button a = new Button();
     Button b = new Button();
 
+    private int rotateR;
+    private int rotateL;
+
     public enum State{
         DRIVE,
         RESET
@@ -78,6 +81,7 @@ public class SwerveCode extends OpMode{
        // DriveTrainBasePower();
         if (driveState == State.DRIVE){
             DriveTrainPowerEncoder();
+//            isResetCycle = false;
         } else if (driveState == State.RESET){
             reset();
         }
@@ -105,6 +109,10 @@ public class SwerveCode extends OpMode{
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
         telemetry.addData("topR clicks", robot.topR.getCurrentPosition());
         telemetry.addData("botR clicks", robot.botR.getCurrentPosition());
+
+        telemetry.addData("rotateR target", rotateR);
+        telemetry.addData("rotateL target", rotateL);
+        telemetry.addData("isBusy", robot.wheelsAreBusy());
         telemetry.update();
     }
 
@@ -174,34 +182,35 @@ public class SwerveCode extends OpMode{
 
     private void reset(){
         if (!isResetCycle){
+            isResetCycle = true;
             int topR = robot.topR.getCurrentPosition();
             int botR = robot.botR.getCurrentPosition();
             int topL = robot.topL.getCurrentPosition();
             int botL = robot.botL.getCurrentPosition();
 
-            int rotateR = (topR + botR) / 2;
-            int rotateL = (topL + botL) / 2;
+            rotateR = (topR + botR) / 2;
+            rotateL = (topL + botL) / 2;
 
-            robot.botL.setTargetPosition(rotateL);
-            robot.topL.setTargetPosition(rotateL);
-            robot.botR.setTargetPosition(rotateR);
-            robot.topR.setTargetPosition(rotateR);
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() -rotateL);
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() -rotateL);
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() -rotateR);
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() -rotateR);
+
+            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        robot.botL.setPower(0.5);
-        robot.topL.setPower(0.5);
-        robot.botR.setPower(0.5);
-        robot.topR.setPower(0.5);
-
-        if (!robot.wheelsAreBusy()){
-            robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        else{
+            robot.botL.setPower(0.2);
+            robot.topL.setPower(0.2);
+            robot.botR.setPower(0.2);
+            robot.topR.setPower(0.2);
         }
+
+        //make sure to reset the encoder position afterwards without messing stuff up like before.
+
     }
 
     /*
