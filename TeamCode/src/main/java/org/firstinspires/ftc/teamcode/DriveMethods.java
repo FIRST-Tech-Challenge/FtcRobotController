@@ -391,11 +391,17 @@ public class DriveMethods extends LinearOpMode{
         motorSlide.setPower(holdingPower);
     }
 
+//    public void clawClamp(){
+//        servoGrabberThing.setPosition(0.76);
+//    }
+//    public void clawRelease(){
+//        servoGrabberThing.setPosition(0.66);
+//    }
     public void clawClamp(){
-        servoGrabberThing.setPosition(0.76);
+        servoGrabberThing.setPosition(0.19);
     }
     public void clawRelease(){
-        servoGrabberThing.setPosition(0.66);
+        servoGrabberThing.setPosition(0.08);
     }
 
     public void initMotorsSecondBot() {

@@ -34,8 +34,10 @@ public class Meet0Teleop extends DriveMethods {
         double leftX;
         double rightX;
         double speedDiv = 2;
-        double clampPosition = 0.76;
-        double releasePosition =0.66;
+        double clampPosition = 0.19;
+        //double clampPosition = 0.76;
+        double releasePosition = 0.08;
+        //double releasePosition = 0.66;
         double aggressiveness = 3000;
         double holdingPower = 0.05;
         int slideTarget = 0;
