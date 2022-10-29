@@ -9,6 +9,11 @@ import com.qualcomm.robotcore.util.TypeConversion;
 @I2cSensor(name = "PixyCam", description = "PixyCam", xmlTag = "PixyCam")
 public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
 {
+
+    public static final int YELLOW = 3;
+    public static final int BLUE = 1;
+    public static final int RED = 2;
+
     /**
      * Block describes the signature, location, and size of a detected block.
      */
@@ -114,12 +119,12 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
         return new Block(signature, buffer[1], buffer[2], buffer[3], buffer[4]);
     }
     //returns the offset from the x direction
-    public int offSetX(int sign){
+    public int headingOffset(int sign){
         return GetBiggestBlock(sign).x - 128;
         //a negative value means rotate left a positive value means rotate right
     }
     //aligns the robot with the pole using pixycam and distances
-    public int alignY(int desiredWidth){
+    public int distanceOffset(int desiredWidth){
         return desiredWidth - GetBiggestBlock().width; //positive means move closer
 
     }

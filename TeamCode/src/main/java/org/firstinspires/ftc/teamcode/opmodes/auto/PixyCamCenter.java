@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
-import org.firstinspires.ftc.teamcode.components.Vuforia;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 @Autonomous (name = "pixycam testing", group = "Autonomous")
@@ -42,31 +37,31 @@ public class PixyCamCenter extends BaseOpMode {
         return this.stopRequested || Thread.currentThread().isInterrupted();
     }
     public void loop(){
-        block = pixycam.GetBiggestBlock(3);
+        block = pixycam.GetBiggestBlock(PixyCam.BLUE);
         Log.d("block ", block.toString());
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
-        int offset = pixycam.offSetX(1);
-        int align = pixycam.alignY(100);
-        telemetry.addData("offset", offset);
+        int rotationOffset = pixycam.headingOffset(PixyCam.BLUE);
+        int distanceOffset = pixycam.distanceOffset(20);
+        telemetry.addData("rotationOffset", rotationOffset);
         telemetry.addData("block", s);
         telemetry.addData("coords", coords);
-        Log.d("offset", offset + " ");
+        Log.d("rotationOffset", rotationOffset + " ");
         telemetry.update();
-        if(offset > 20){
-            driveSystem.turn(60, 0.3);
+        if(rotationOffset > 20){
+            driveSystem.turn(60, 0.5);
         }
 
-        if(offset < -20){
-            driveSystem.turn(-60, 0.3);
+        if(rotationOffset < -20){
+            driveSystem.turn(-60, 0.5);
         }
-        if(offset < 20 || offset > -20) {
+        if(rotationOffset < 20 || rotationOffset > -20) {
             driveSystem.setMotorPower(0);
         }
-        if(align > 5){
+        if(distanceOffset > 5){
             driveSystem.driveToPosition(20, DriveSystem.Direction.BACKWARD, 0.3);
         }
-        else if(align < 5){
+        else if(distanceOffset < 5){
             driveSystem.driveToPosition(20, DriveSystem.Direction.FORWARD, 0.4);
         }
         else{

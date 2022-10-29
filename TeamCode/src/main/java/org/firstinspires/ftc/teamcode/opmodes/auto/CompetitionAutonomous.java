@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
-import org.firstinspires.ftc.teamcode.components.Vuforia;
 
-@Autonomous(name = "BaseStateMachine", group = "Autonomous")
-public class BaseStateMachine extends BaseAutonomous {
+@Autonomous(name = "Competition Autonomous", group = "Autonomous")
+public class CompetitionAutonomous extends BaseCompetitionAutonomous {
+
+    public static final int POLE_WIDTH = 45;
+    public static final int CONE_WIDTH = 80;
 
     // List of all states the robot could be in
-    public enum State {
+    private enum State {
         IDENTIFY_TARGET,
         DRIVE_TO_JUNCTION,
         PARK,
@@ -24,54 +23,21 @@ public class BaseStateMachine extends BaseAutonomous {
         REVERSE_JUNCTION
     }
 
-    public enum Sleeve {
-        DAVID,
-        BRIAN,
-        TEAM
-    }
-    
     public enum From {
         START, CONE_STACK
     }
-    
-    private Sleeve teamAsset;
-    private From junctionPath;
-    private int step = 0;
-    private int currentPos = 0;
-    private int encode;
-    private PixyCam pixycam;
 
-    private final static String TAG = "BaseStateMachine";// Logging tag
+    private From startPosition;
     private State mCurrentState;                         // Current State Machine State.
+
 
     /**
      * Initializes State Machine
      */
     public void init() {
         super.init();
-        // Starts state machine
-        vuforia = new Vuforia(hardwareMap, Vuforia.CameraChoice.WEBCAM1);
-        pixycam = hardwareMap.get(PixyCam.class, "pixy");
-        junctionPath = From.START;
-        newState(State.GO_GET_CONE);
-    }
-
-    @Override
-    public void init_loop() {
-        if (vuforia == null) {
-            return;
-        }
-        telemetry.addData("signal sleeve?: ", vuforia.identifyTeamAsset());
-        telemetry.update();
-
-        identifySleeve();
-    }
-
-    private void identifySleeve() {
-        int i = vuforia.identifyTeamAsset();
-        if (i >= 0) {
-            teamAsset = Sleeve.values()[i];
-        }
+        startPosition = From.START;
+        newState(State.REVERSE_JUNCTION);
     }
 
     /**
@@ -88,10 +54,8 @@ public class BaseStateMachine extends BaseAutonomous {
                 if (teamAsset == null) {
                     //drive forward slowly/10 inches and identify again
                     //backwards is forwards
-
                     if (driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.2)) {
                         currentPos += 100;
-                        identifySleeve();
                         teamAsset = Sleeve.BRIAN;
                     }
                     identifySleeve();
@@ -105,7 +69,9 @@ public class BaseStateMachine extends BaseAutonomous {
                 drive_to_junction();
                 break;
             case ALIGN_WITH_POLE:
-                align(3, 45, State.REVERSE_JUNCTION);
+                if (align(PixyCam.YELLOW, POLE_WIDTH)) {
+                    newState(State.REVERSE_JUNCTION);
+                }
                 break;
             case REVERSE_JUNCTION:
                 reverseJunction();
@@ -114,7 +80,9 @@ public class BaseStateMachine extends BaseAutonomous {
                 getCone(); //dependent on team color
                 break;
             case ALIGN_WITH_CONE:
-                align(1, 80, State.END_STATE);
+                if (align(PixyCam.BLUE, CONE_WIDTH)) {
+                    newState(State.END_STATE);
+                 }
             case PARK:
                 park();
                 break;
@@ -126,18 +94,13 @@ public class BaseStateMachine extends BaseAutonomous {
         telemetry.update();
     }
 
-    /**
-     * Changes state to given state
-     *
-     * @param newState state to change to
-     */
-    private void newState(State newState) {
-        mCurrentState = newState;
-        step = 0;
-    }
-
     private void park() {
         if (step == 0) {
+            if (driveSystem.driveToPosition(440-currentPos, DriveSystem.Direction.BACKWARD, 0.3)) {
+                step++;
+            }
+        }
+        if (step == 1) {
             if (teamAsset == Sleeve.BRIAN ||
                     (teamAsset == Sleeve.TEAM && driveSystem.driveToPosition(500, DriveSystem.Direction.LEFT, 0.3)) ||
                     (teamAsset == Sleeve.DAVID && driveSystem.driveToPosition(500, DriveSystem.Direction.RIGHT, 0.3))) {
@@ -147,7 +110,7 @@ public class BaseStateMachine extends BaseAutonomous {
     }
 
     private void drive_to_junction() {
-        switch (junctionPath) {
+        switch (startPosition) {
             case START:
                 if (step == 0) {
                     if (driveSystem.driveToPosition(950 - currentPos, DriveSystem.Direction.BACKWARD, 0.4)) {
@@ -156,6 +119,7 @@ public class BaseStateMachine extends BaseAutonomous {
                 }
                 if (step == 1) {
                     if (driveSystem.turn(-45, 0.2)) {
+                        step = 0;
                         newState(State.ALIGN_WITH_POLE);
                     }
                 }
@@ -168,76 +132,51 @@ public class BaseStateMachine extends BaseAutonomous {
 
     private void reverseJunction() {
         if(step == 0){
-            if (driveSystem.driveToPosition(80, DriveSystem.Direction.FORWARD, 0.4)){
+            if (driveSystem.driveToPosition(40, DriveSystem.Direction.FORWARD, 0.4)){
                 step++;
             }
         }
         if (step == 1) {
             if (driveSystem.turn(45, 0.2)) {
+                step++;
+            }
+        }
+        if (step == 2) {
+            if (driveSystem.driveToPosition(450, DriveSystem.Direction.FORWARD, 0.4)) {
                 newState(State.PARK);
             }
         }
     }
 
-    private boolean alignX(int sign) {
-        int offset = pixycam.offSetX(sign);
-        telemetry.addData("offset", offset);
-        if (offset > 20) {
-            driveSystem.turn(60, 0.5);
-        } else if (offset < -20) {
-            driveSystem.turn(-60, 0.5);
-        } else {
-            driveSystem.setMotorPower(0);
-            return true;
-        }
-        encode = driveSystem.getCurrentPosition();
-        return false;
-    }
 
-    private boolean alignY(int desiredWidth){
-        driveSystem.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        int align = pixycam.alignY(desiredWidth);// find actual desired width
-        if (align > 5) {
-            driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3);
-        } else if (align < -5) {
-            driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.3);
-        } else {
-            driveSystem.setMotorPower(0);
-            encode = driveSystem.getCurrentPosition() - encode;
-            return true;
-            }
-        return false;
-    }
 
     private void getCone(){
         if(step == 0){
-            if(driveSystem.driveToPosition(encode, DriveSystem.Direction.FORWARD, 0.3)){
+            if(driveSystem.driveToPosition(60, DriveSystem.Direction.FORWARD, 0.3)){
                 step++;
             }
         }
         if(step == 1){
-            if(driveSystem.turn(135, 0.3)){
+            if(driveSystem.turn(135, 0.5)){
                 step++;
             }
 
         }
         if(step == 2) {
-            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.3)) {
-                newState(State.ALIGN_WITH_CONE);
+            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.5)) {
+                step = 0;
+                newState(State.END_STATE);
             }
         }
     }
 
-    public void align(int sign, int desiredWidth, State nextState){
-        if(step == 0){
-            if(alignX(sign)){
-                step++;
-            }
-        }
-        if(step == 1){
-            if(alignY(desiredWidth)){
-                newState(nextState);
-            }
-        }
+    /**
+     * Changes state to given state
+     *
+     * @param newState state to change to
+     */
+    protected void newState(State newState) {
+        mCurrentState = newState;
+        step = 0;
     }
 }
