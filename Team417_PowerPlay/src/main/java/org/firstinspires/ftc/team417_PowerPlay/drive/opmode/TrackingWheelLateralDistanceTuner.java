@@ -21,7 +21,7 @@ import org.firstinspires.ftc.team417_PowerPlay.drive.StandardTrackingWheelLocali
  * 1. Set the LATERAL_DISTANCE value in StandardTrackingWheelLocalizer.java to the physical
  * measured value. This need only be an estimated value as you will be tuning it anyways.
  *
- * 2. Make a mark on the bot (with a piece of tape or sharpie or however you wish) and make an
+ * 2. Make a mark on the bot (with a piece of tape or sharpie or however you wish) and make a
  * similar mark right below the indicator on your bot. This will be your reference point to
  * ensure you've turned exactly 360°.
  *
