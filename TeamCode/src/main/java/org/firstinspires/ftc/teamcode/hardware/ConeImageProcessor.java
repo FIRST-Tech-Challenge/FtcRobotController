@@ -14,34 +14,43 @@ import org.opencv.imgproc.Imgproc;
 public class ConeImageProcessor {
 
 	boolean debug = true;
+	Double  meanVal =new Double(0);
+
 	//Blue Range for the blue cone
-	Scalar blueConeL = new Scalar(105, 60, 20 );
+	Scalar blueConeL = new Scalar(105, 150, 20 );
 	Scalar blueConeH = new Scalar(115, 255, 255 );
 
 	//Red Range for red cone
-	Scalar redConeL1 = new Scalar(0, 60, 20 );
+	Scalar redConeL1 = new Scalar(0, 150, 20 );
 	Scalar redConeH1 = new Scalar(15, 255, 255 );
-	Scalar redConeL2 = new Scalar(170, 60, 20 );
+	Scalar redConeL2 = new Scalar(170, 150, 20 );
 	Scalar redConeH2 = new Scalar(179, 255, 255 );
 
 	//Range for background, mat is grey
-	Scalar backgroundL = new Scalar(0, 0, 20 );
-	Scalar backgroundH = new Scalar(179, 27, 255 );
+	Scalar backgroundL = new Scalar(0, 0, 0 );
+	Scalar backgroundH = new Scalar(255, 70, 255 );
 
     //Range for yellow pol
-	Scalar yellowPoleL = new Scalar(15, 60, 20 );
+	Scalar yellowPoleL = new Scalar(15, 150, 20 );
 	Scalar yellowPoleH = new Scalar(25, 255, 255 );
 
 
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-		Mat test01 = Imgcodecs.imread("C:\\FTC Code\\TestPIcs\\20221029_095209.jpg");
+		Mat test01 = Imgcodecs.imread("C:\\FTC Code\\TestPIcs\\S1.jpg");
 
 		ConeImageProcessor proc = new ConeImageProcessor();
 		proc.processFrame(test01);
+		System.out.println("This is value1: " +  proc.meanVal);
 
-		// System.out.println("mat = " + test01.dump());
+		test01 = Imgcodecs.imread("C:\\FTC Code\\TestPIcs\\S2.jpg");
+		proc.processFrame(test01);
+		System.out.println("This is value2: " +  proc.meanVal);
+
+		test01 = Imgcodecs.imread("C:\\FTC Code\\TestPIcs\\S2.jpg");
+		proc.processFrame(test01);
+		System.out.println("This is value3: " +  proc.meanVal);
 
 	}
 
@@ -64,15 +73,15 @@ public class ConeImageProcessor {
 		Mat yellowPolTrd = new Mat ();
 		Core.inRange(hsvImg, yellowPoleL, yellowPoleH, yellowPolTrd);
 
-		Mat backroundTrd = new Mat();
-		Core.inRange(hsvImg, backgroundL, backgroundH, backroundTrd);
+		Mat backgroundTrd = new Mat();
+		Core.inRange(hsvImg, backgroundL, backgroundH, backgroundTrd);
 
 
 		Mat tobeRemoveRev = new Mat();
 		Core.bitwise_or(blueConeTrd,redConeTrd1,tobeRemoveRev);
 		Core.bitwise_or(redConeTrd2,tobeRemoveRev,tobeRemoveRev);
 		Core.bitwise_or(yellowPolTrd,tobeRemoveRev,tobeRemoveRev);
-		Core.bitwise_or(backroundTrd,tobeRemoveRev,tobeRemoveRev);
+		Core.bitwise_or(backgroundTrd,tobeRemoveRev,tobeRemoveRev);
 
 		Mat tobeRemove = new Mat();
 		Core.bitwise_not(tobeRemoveRev,tobeRemove);
@@ -81,19 +90,54 @@ public class ConeImageProcessor {
 		Mat result  = new Mat(input.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
 		input.copyTo(result, tobeRemove);
 		
-		List<Mat> hsvThreholdPlane = new ArrayList<>();
-		Core.split(result, hsvThreholdPlane);
-		
+		List<Mat> hsvResultPlane = new ArrayList<>();
+		Core.split(result, hsvResultPlane);
+
+		Mat hueResult = hsvResultPlane.get(0);
+
+		meanVal = this.calHueAvg(result);
+
+
+
 		if (debug) {
 			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\thresh.jpg", tobeRemoveRev);
 			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\result.jpg", result);
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\foreGroundH.jpg", hsvThreholdPlane.get(0));
-			System.out.println("Result = " + hsvThreholdPlane.get(0).dump());
+			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\bgThread.jpg", backgroundTrd);
+			//System.out.println("Result = " + hsvResultPlane.get(0).dump());
 		}
 
 		return result;
 	}
 
+	private double  calHueAvg ( Mat input ) {
+		double  total = 0;
+		int count = 0;
+
+		for ( int h = 0; h < input.size().height; h ++ ) {
+			for ( int w = 0; w < input.size().width; w ++ ) {
+				byte[]  data = {0,0,0} ;
+				input.get(h,w,data);
+
+				int hue = Byte.toUnsignedInt( data[0]);
+
+				if ( debug) {
+					//System.out.println("data is: " + hue );
+				}
+				if ( hue > 1 &&  hue < 180) {
+					total += hue;
+					count ++;
+				}
+
+			}
+		}
+
+		if ( debug) {
+			System.out.println("Count is: " + count );
+
+		}
+		return total/(count );
+
+	}
 	
 	
 	/**
