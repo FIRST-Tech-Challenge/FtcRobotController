@@ -75,6 +75,8 @@ public class Robot extends MecanumDrive {
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
+    public static double speedMultiplier = 1;
+
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
@@ -158,6 +160,10 @@ public class Robot extends MecanumDrive {
         isFieldCentric = false;
     }
 
+    public void setSpeedMultipler(double x) {
+        speedMultiplier = x;
+    }
+
     public void mecanum(double power, double strafe, double turn) {
         // denominator is largest motor power
         double denominator = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
@@ -166,10 +172,10 @@ public class Robot extends MecanumDrive {
         double frontRightPower = (power - strafe - turn) / denominator;
         double backRightPower = (power + strafe - turn) / denominator;
 
-        leftFront.setPower(frontLeftPower);
-        leftRear.setPower(backLeftPower);
-        rightFront.setPower(frontRightPower);
-        rightRear.setPower(backRightPower);
+        leftFront.setPower(frontLeftPower * speedMultiplier);
+        leftRear.setPower(backLeftPower * speedMultiplier);
+        rightFront.setPower(frontRightPower * speedMultiplier);
+        rightRear.setPower(backRightPower * speedMultiplier);
     }
 
     public void fieldCentric(double power, double strafe, double turn) {
@@ -192,7 +198,7 @@ public class Robot extends MecanumDrive {
         if (open) {
             intake.setPosition(0.4);
         } else {
-            intake.setPosition(0.78);
+            intake.setPosition(0.82);
         }
     }
 

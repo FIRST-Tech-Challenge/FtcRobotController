@@ -42,7 +42,12 @@ public class MecanumTeleOp extends LinearOpMode {
         //temporary variables
         int fieldCentricTrigger = 0;
         boolean liftToggled = true;
+        robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double speedMultiplier = 0.5;
+        robot.motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorLiftRight.setDirection(DcMotor.Direction.REVERSE);
+        robot.motorLiftLeft.setDirection(DcMotor.Direction.REVERSE);
 
         while (opModeIsActive()) {
 
@@ -55,17 +60,13 @@ public class MecanumTeleOp extends LinearOpMode {
             }
             double turn = gamepad1.right_stick_x;
             if (gamepad1.right_bumper) {
-                if (fieldCentricTrigger >= 20) {
-                    robot.isFieldCentric = !robot.isFieldCentric;
-                }
-                fieldCentricTrigger++;
+                robot.isFieldCentric = !robot.isFieldCentric;
             }
 
-
-            if (gamepad2.left_bumper) {
-                liftToggled = !liftToggled;
-            } else {
-                fieldCentricTrigger = 0;
+            if (gamepad1.left_bumper && robot.speedMultiplier != speedMultiplier) {
+                robot.setSpeedMultipler(speedMultiplier);
+            } else if (gamepad1.left_bumper) {
+                robot.setSpeedMultipler(1);
             }
 
 
@@ -85,22 +86,29 @@ public class MecanumTeleOp extends LinearOpMode {
 
 
             if (gamepad1.right_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() < 600) {
-                robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.motorLiftRight.setDirection(DcMotorSimple.Direction.REVERSE);
-                robot.motorLiftLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-                robot.motorLiftRight.setPower(0.4);
-                robot.motorLiftLeft.setPower(0.4);
-
-            } else if (gamepad1.left_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() > 30) {
-                robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.motorLiftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.motorLiftRight.setPower(0);
-                robot.motorLiftLeft.setPower(0);
-
+                robot.motorLiftRight.setPower(0.55);
+                robot.motorLiftLeft.setPower(0.55);
+            } else if (gamepad1.left_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() > 0) {
+                robot.motorLiftRight.setPower(-0.3);
+                robot.motorLiftLeft.setPower(-0.3);
             } else {
-                robot.motorLiftRight.setPower(0.01);
-                robot.motorLiftLeft.setPower(0.01);
+                // hold if pos is within range, otherwise set to 0 - but will this cause a situation where you can never move the lift?
+                if(robot.motorLiftRight.getCurrentPosition()>10 && robot.motorLiftRight.getCurrentPosition()<600){
+                    robot.motorLiftRight.setPower(0.05);
+                    robot.motorLiftLeft.setPower(0.05);
+                }
+                else{
+                    robot.motorLiftRight.setPower(0);
+                    robot.motorLiftLeft.setPower(0);
+                }
+
+
+                /*
+                * robot.motorLiftRight.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
+                robot.motorLiftLeft.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
+
+                 * */
+
 
 
 //
@@ -110,12 +118,12 @@ public class MecanumTeleOp extends LinearOpMode {
 //                }
             }
 
-            telemetry.addData("gamepad trigger", gamepad2.right_trigger);
+
             //telemetry.addData("Power: ", power);
             //telemetry.addData("Strafe: ", strafe); //0 is straight forward, 1 is straight to the side
             telemetry.addData("IMU Heading: ", -robot.imu.getAngularOrientation().firstAngle);
             telemetry.addData("Field Centric: ", robot.isFieldCentric);
-            telemetry.addData("Lift Brake Toggled: ", liftToggled);
+            telemetry.addData("speed multiplier: ", robot.speedMultiplier);
             telemetry.addLine("Right Lift Position" + Double.toString(robot.motorLiftRight.getCurrentPosition()));
             telemetry.addLine("Left Lift Position" + Double.toString(robot.motorLiftLeft.getCurrentPosition()));
             telemetry.update();
