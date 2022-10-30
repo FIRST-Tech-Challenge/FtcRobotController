@@ -35,7 +35,9 @@ public class BrainStemRobot {
     public Lift lift;
     public Extension arm;
     public SampleMecanumDrive drive;
+    public Grabber grabber;
     private HashMap stateMap;
+
 
     public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -46,6 +48,7 @@ public class BrainStemRobot {
         lift    = new Lift(hwMap, telemetry);
         arm     = new Extension(hwMap, telemetry);
         drive   = new SampleMecanumDrive(hwMap);
+        grabber   = new Grabber(hwMap, telemetry);
 
         telemetry.addData("Robot", " Is Ready");
         telemetry.update();
@@ -68,6 +71,7 @@ public class BrainStemRobot {
     public void updateSystems(Map stateMap) {
         telemetry.addData("robotStateMap" , stateMap);
         lift.setState((String) stateMap.get(lift.LIFT_SYSTEM_NAME), (String) stateMap.get(lift.LIFT_SUBHEIGHT));
+        grabber.setState((String) stateMap.get(grabber.SYSTEM_NAME));
     }
 
     }

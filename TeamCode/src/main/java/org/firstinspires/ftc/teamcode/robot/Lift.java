@@ -44,7 +44,7 @@ public class Lift {
     public final String LIFT_POLE_LOW = "POLE_LOW";
     public final String LIFT_POLE_MEDIUM = "POlE_MEDIUM";
     public final String LIFT_POLE_HIGH = "POLE_HIGH";
-    public final String DELIVERY_HEIGHT = "DELIVERY_HEIGHT";
+    public final String APPROACH_HEIGHT = "APPROACH_HEIGHT";
     public final String PLACEMENT_HEIGHT = "PLACEMENT_HEIGHT";
     public final String LIFT_SUBHEIGHT  = "SUB_HEIGHT";
 
@@ -60,6 +60,7 @@ public class Lift {
         this.telemetry = telemetry;
         liftMotor = hwMap.dcMotor.get("Lift");
 
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -83,24 +84,24 @@ public class Lift {
     }
     private void selectTransition(String desiredLevel, String subheight, String currentState){
 //        transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
-//        switch(desiredLevel){
-//            case LIFT_POLE_LOW:{
-//                transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
-//                break;
-//            }
-//            case LIFT_POLE_MEDIUM:{
-//                transitionToLiftPosition(LIFT_POSITION_MIDPOLE + deliveryHeight(subheight));
-//                break;
-//            }
-//            case LIFT_POLE_HIGH:{
-//                transitionToLiftPosition(LIFT_POSITION_HIGHPOLE + deliveryHeight(subheight));
-//                break;
-//            }
-//            case LIFT_POLE_GROUND:{
-//                transitionToLiftPosition(LIFT_POSITION_GROUND + deliveryHeight(subheight));
-//                break;
-//            }
-//        }
+        switch(desiredLevel){
+            case LIFT_POLE_LOW:{
+                transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
+                break;
+            }
+            case LIFT_POLE_MEDIUM:{
+                transitionToLiftPosition(LIFT_POSITION_MIDPOLE + deliveryHeight(subheight));
+                break;
+            }
+            case LIFT_POLE_HIGH:{
+                transitionToLiftPosition(LIFT_POSITION_HIGHPOLE + deliveryHeight(subheight));
+                break;
+            }
+            case LIFT_POLE_GROUND:{
+                transitionToLiftPosition(LIFT_POSITION_GROUND + deliveryHeight(subheight));
+                break;
+            }
+        }
 
     }
     private void transitionToLiftPosition(int ticks){
@@ -129,8 +130,8 @@ public class Lift {
     }
     public int deliveryHeight(String subheight){
         int height = 0;
-        if(subheight.equalsIgnoreCase(DELIVERY_HEIGHT)){
-            height -= LIFT_ADJUSTMENT;
+        if(subheight.equalsIgnoreCase(PLACEMENT_HEIGHT)){
+            height += LIFT_ADJUSTMENT;
         }
         return height;
     }

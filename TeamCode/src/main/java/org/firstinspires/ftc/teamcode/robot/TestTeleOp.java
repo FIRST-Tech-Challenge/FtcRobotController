@@ -18,12 +18,18 @@ public class TestTeleOp extends LinearOpMode {
     private final String GAMEPAD_1_A_IS_PRESSED = "GAMEPAD_1_A_IS_PRESSED";
     private final String GAMEPAD_1_B_STATE = "GAMEPAD_1_B_STATE";
     private final String GAMEPAD_1_B_IS_PRESSED = "GAMEPAD_1_B_IS_PRESSED";
+    private final String GAMEPAD_1_X_STATE = "GAMEPAD_1_X_STATE";
+    private final String GAMEPAD_1_X_IS_PRESSED = "GAMEPAD_1_X_IS_PRESSED";
+
+
 
     Map<String, Boolean> toggleMap = new HashMap<String, Boolean>() {{
         put(GAMEPAD_1_A_STATE, false);
         put(GAMEPAD_1_A_IS_PRESSED, false);
         put(GAMEPAD_1_B_STATE, false);
         put(GAMEPAD_1_B_IS_PRESSED, false);
+        put(GAMEPAD_1_X_STATE, false);
+        put(GAMEPAD_1_X_IS_PRESSED, false);
     }};
 
     public void runOpMode(){
@@ -35,18 +41,33 @@ public class TestTeleOp extends LinearOpMode {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         Map<String, String> stateMap = new HashMap<String, String>() {{
+            put(robot.grabber.SYSTEM_NAME, robot.grabber.OPEN_STATE);
             put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_GROUND);
-            put(robot.lift.LIFT_SUBHEIGHT, robot.lift.DELIVERY_HEIGHT);
+            put(robot.lift.LIFT_SUBHEIGHT, robot.lift.APPROACH_HEIGHT);
         }};
+
+
 
         waitForStart();
         while(!isStopRequested()) {
             setButtons();
 
             if (toggleMap.get(GAMEPAD_1_A_STATE)) {
-                stateMap.put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_LOW);
-            } else {
+                stateMap.put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_HIGH);
+            }  else {
                 stateMap.put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_GROUND);
+            }
+
+            if (toggleMap.get(GAMEPAD_1_B_STATE)) {
+                stateMap.put(robot.grabber.SYSTEM_NAME, robot.grabber.CLOSED_STATE);
+            }  else {
+                stateMap.put(robot.grabber.SYSTEM_NAME, robot.grabber.OPEN_STATE);
+            }
+
+            if (toggleMap.get(GAMEPAD_1_X_STATE)) {
+                stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.PLACEMENT_HEIGHT);
+            }  else {
+                stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.APPROACH_HEIGHT);
             }
 
             drive.setWeightedDrivePower(
@@ -71,6 +92,7 @@ public class TestTeleOp extends LinearOpMode {
     private void setButtons() {
         toggleButton(GAMEPAD_1_A_STATE, GAMEPAD_1_A_IS_PRESSED, gamepad1.a);
         toggleButton(GAMEPAD_1_B_STATE, GAMEPAD_1_B_IS_PRESSED, gamepad1.b);
+        toggleButton(GAMEPAD_1_X_STATE, GAMEPAD_1_X_IS_PRESSED, gamepad1.x);
     }
 
     private boolean toggleButton(String buttonStateName, String buttonPressName, boolean buttonState) {
