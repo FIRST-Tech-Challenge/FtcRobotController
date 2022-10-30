@@ -190,8 +190,10 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("Rear ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
                     rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
             telemetry.addData("Odometry (L/R)", "%d %d cts",  robot.leftOdometerCount, robot.rightOdometerCount );
-            telemetry.addData("Turret", "%d cts  %.2f mA",  robot.turretMotorPos, robot.turretMotorAmps );
-            telemetry.addData("Lift",   "%d cts  %.2f mA",  robot.liftMotorPos,   robot.liftMotorAmps );
+            telemetry.addData("Turret", "%d cts  %.1f deg  %.2f mA",
+                    robot.turretMotorPos, robot.turretAngle, robot.turretMotorAmps );
+            telemetry.addData("Lift",   "%d cts  %.1f deg  %.2f mA",
+                    robot.liftMotorPos,   robot.liftAngle,   robot.liftMotorAmps );
             if( rangeSensorsEnabled ) {
                telemetry.addData("Sonar Range (L/R)", "%.1f  %.1f in", sonarRangeL/2.54, sonarRangeR/2.54 );
                telemetry.addData("Sonar Range (F/B)", "%.1f  %.1f in", sonarRangeF/2.54, sonarRangeB/2.54 );
@@ -558,12 +560,12 @@ public abstract class Teleop extends LinearOpMode {
         if( manual_turret_control || turretTweaked ) {
             // Does user want to rotate turret LEFT (negative joystick input)
             if( safeToManuallyLeft && (gamepad2_left_stick < -0.05) ) {
-                robot.turretMotor.setPower( 0.50 * gamepad2_left_stick );   // 0% to 50%
+                robot.turretMotor.setPower( 0.50 * gamepad2_left_stick );   // 0% to -50%
                 turretTweaked = true;
             }
             // Does user want to rotate turret RIGHT (positive joystick input)
             else if( safeToManuallyRight && (gamepad2_left_stick > 0.05) ) {
-                robot.turretMotor.setPower( 0.50 * gamepad2_left_stick );   // 0% to 50%
+                robot.turretMotor.setPower( 0.50 * gamepad2_left_stick );   // 0% to +50%
                 turretTweaked = true;
             }
             // No more input?  Time to stop turret movement!
@@ -603,12 +605,12 @@ public abstract class Teleop extends LinearOpMode {
         if( manual_lift_control || liftTweaked ) {
             // Does user want to rotate lift toward more NEGATIVE counts (negative joystick input)
             if( safeToManuallyRaise && (gamepad2_right_stick > 0.05) ) {
-                robot.liftMotor.setPower( 0.10 );
+                robot.liftMotor.setPower( 0.75 * gamepad2_right_stick );   // 0% to +75%
                 liftTweaked = true;
             }
             // Does user want to rotate lift toward more POSITIVE counts (positive joystick input)
             else if( safeToManuallyLower && (gamepad2_right_stick < -0.05) ) {
-                robot.liftMotor.setPower( -0.10 );
+                robot.liftMotor.setPower( 0.75 * gamepad2_right_stick );   // 0% to -75%
                 liftTweaked = true;
             }
             // No more input?  Time to stop lift movement!

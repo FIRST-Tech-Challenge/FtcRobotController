@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -93,8 +94,12 @@ public class HardwareSlimbot
     public double       turretMotorVel     = 0.0;     // encoder counts per second
     public double       turretMotorAmps    = 0.0;     // current power draw (Amps)
 
-    public int          TURRET_LIMIT_LEFT  = -450;    // encoder count at maximum rotation LEFT
-    public int          TURRET_LIMIT_RIGHT = +450;    // encoder count at maximum rotation RIGHT
+    protected AnalogInput turretEncoder    = null;    // US Digital absolute magnetic encoder (MA3)
+    public double       turretAngle        = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
+    public double       turretAngleOffset  = 299.0;   // allows us to adjust the 0-360 deg range
+
+    public int          TURRET_LIMIT_LEFT  = -999;    // encoder count at maximum rotation LEFT
+    public int          TURRET_LIMIT_RIGHT = +999;    // encoder count at maximum rotation RIGHT
 
     protected DcMotorEx liftMotor          = null;
     public int          liftMotorTgt       = 0;       // RUN_TO_POSITION target encoder count
@@ -102,8 +107,12 @@ public class HardwareSlimbot
     public double       liftMotorVel       = 0.0;     // encoder counts per second
     public double       liftMotorAmps      = 0.0;     // current power draw (Amps)
 
-    public int          LIFT_LIMIT_LO      = -750;    // encoder count at maximum rotation LO
-    public int          LIFT_LIMIT_HI      = +750;    // encoder count at maximum rotation HI
+    protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
+    public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
+    public double       liftAngleOffset    = 300.0;   // allows us to adjust the 0-360 deg range
+
+    public int          LIFT_LIMIT_LO      = -9999;   // encoder count at maximum rotation LO
+    public int          LIFT_LIMIT_HI      = +9999;   // encoder count at maximum rotation HI
     // NOTE: the motor doesn't stop immediately, so a limit of 750 halts motion around 900 counts
 
     //====== ENCODER RESET FLAG ======
@@ -227,6 +236,7 @@ public class HardwareSlimbot
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turretEncoder = hwMap.get(AnalogInput.class, "turretMA3");
 
         liftMotor = hwMap.get(DcMotorEx.class,"Lift");       // Expansion Hub port 2
         liftMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -234,6 +244,7 @@ public class HardwareSlimbot
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftEncoder = hwMap.get(AnalogInput.class, "liftMA3");
 
         // Initialize REV Expansion Hub IMU
         initIMU();
@@ -292,6 +303,25 @@ public class HardwareSlimbot
     } // isPwrRampingDown
 
     /*--------------------------------------------------------------------------------------------*/
+    /* NOTE: The absolute magnetic encoders may not be installed with 0deg rotated to the "right" */
+    /* rotational angle to put ZERO DEGREES where we want it.  By defining a starting offset, and */
+    /* using this function to account for that offset, we can place zero where we want it in s/w. */
+    /* Having DEGREES_PER_ROTATION as a variable lets us adjust for the 3.3V vs. 5.0V difference. */
+    /*--------------------------------------------------------------------------------------------*/
+    public double computeAbsoluteAngle( double measuredVoltage, double zeroAngleOffset )
+    {
+        final double DEGREES_PER_ROTATION = 360.0;  // One full rotation measures 360 degrees
+        final double MAX_MA3_ANALOG_VOLTAGE = 3.3;  // 3.3V maximum analog output
+        double measuredAngle = (measuredVoltage / MAX_MA3_ANALOG_VOLTAGE) * DEGREES_PER_ROTATION;
+        // Correct for the offset angle (see note above)
+        double correctedAngle = measuredAngle - zeroAngleOffset;
+        // Enforce that any wrap-around remains in the range of -180 to +180 degrees
+        while( correctedAngle < -180.0 ) correctedAngle += 360.0;
+        while( correctedAngle > +180.0 ) correctedAngle -= 360.0;
+        return correctedAngle;
+    } // computeAbsoluteAngle
+
+    /*--------------------------------------------------------------------------------------------*/
     public void readBulkData() {
         // For MANUAL mode, we must clear the BulkCache once per control cycle
         expansionHub.clearBulkCache();
@@ -312,11 +342,13 @@ public class HardwareSlimbot
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
         rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
+        turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
+        liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
-        liftMotorPos       = -liftMotor.getCurrentPosition();
+        liftMotorPos       = liftMotor.getCurrentPosition();
         liftMotorVel       = liftMotor.getVelocity();
         liftMotorAmps      = liftMotor.getCurrent(MILLIAMPS);
         // Parse right odometry encoder
