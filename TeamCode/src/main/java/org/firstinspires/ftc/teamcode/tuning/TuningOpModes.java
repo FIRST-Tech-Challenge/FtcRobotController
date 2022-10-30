@@ -25,7 +25,6 @@ public final class TuningOpModes {
         if (DISABLED) return;
 
         List<Class<? extends OpMode>> opModes = Arrays.asList(
-                AccelLogger.class,
                 AngularRampLogger.class,
                 ForwardPushTest.class,
                 ForwardRampLogger.class,
