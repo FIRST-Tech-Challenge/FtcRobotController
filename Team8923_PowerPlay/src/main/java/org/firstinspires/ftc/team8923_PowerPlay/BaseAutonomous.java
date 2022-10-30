@@ -106,6 +106,7 @@ public abstract class BaseAutonomous extends ConceptTensorFlowObjectDetectionWeb
                     double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
                     if (recognition.getLabel().equals("Orange Leaves")) {
+                       // telemetry.addData("Detected Orange Leaves", de); do on tuesday!
                         position = Position.ONE;
 
                     } else if (recognition.getLabel().equals("Blue Bats")) {
