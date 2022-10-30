@@ -29,6 +29,8 @@ public class ArmMotorTester extends OpMode{
     ElapsedTime resetTimer = new ElapsedTime();
     View relativeLayout;
 
+    private double power = 0.5;
+
     @Override
     public void init(){
         robot.init(hardwareMap);
@@ -64,6 +66,7 @@ public class ArmMotorTester extends OpMode{
     private void UpdateTelemetry() {
         telemetry.addData("Top", robot.armTop.getCurrentPosition());
         telemetry.addData("Bottom", robot.armBase.getCurrentPosition());
+        telemetry.addData("Power", power);
         telemetry.update();
     }
 
@@ -85,7 +88,7 @@ public class ArmMotorTester extends OpMode{
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
       //  robot.armBase.setPower(0.3);
-        robot.armTop.setPower(1);
+        robot.armTop.setPower(power);
     }
 
     public void setTargetNegative(){
@@ -99,7 +102,7 @@ public class ArmMotorTester extends OpMode{
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
     //    robot.armBase.setPower(0.3);
-        robot.armTop.setPower(1);
+        robot.armTop.setPower(power);
     }
 
     void setArmPower(){
@@ -112,6 +115,13 @@ public class ArmMotorTester extends OpMode{
             robot.armBase.setPower(0);
         }
 
+        if (gamepad1.a){
+            power += 0.1;
+        } else if (gamepad1.b){
+            power -= 0.1;
+        }
+        if (power < 0) power = 0;
+        else if (power > 1) power = 1;
 
     }
 
