@@ -73,7 +73,7 @@ public class GlobalPosSystem {
 //            splineOrientation = Math.toDegrees(theta);
 //            baseAngle = (Math.PI - theta) / 2.0; //unit: radians
 //            baseAngle = (Math.PI / 2.0) - baseAngle;
-//        }
+//        } //problem: this assumes that the modules are parallel.
 
         if (Math.abs(hypotenuse) <= 0.20){
             update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
