@@ -18,7 +18,6 @@ public class SplineKinematicsTest extends Kinematics{
     private double prevJoystickL = 0.0;
     private int joystickCount = 0;
 
-    private boolean setClicksCycle = false;
     public boolean inCycle = false;
 
     public enum dType{
@@ -39,7 +38,27 @@ public class SplineKinematicsTest extends Kinematics{
 
         switch(dtype){
             case SPLINE:
+                spinPower = Math.sqrt(Math.pow(lx,2) + Math.pow(ly, 2));
+                if ((rightCurrentW + leftCurrentW)/2.0 >= constants.degreeTOLERANCE){
 
+                    double throttle;
+                    double t = lx / 2.0;
+                    if (lx == 0) throttle = 1;
+                    else {
+                        throttle = (lx > ly ? Math.abs(ly/lx) : Math.abs(lx/ly));
+                        throttle = Math.abs((throttle - t)/(throttle + t));
+                    }
+
+                    int direction = (leftTurnDirectionW == rightTurnDirectionW ? leftTurnDirectionW : 1);
+                    rightThrottle = (direction == 1 ? throttle : 1);
+                    leftThrottle = (direction == 1 ? 1 : throttle);
+//                    if (Math.abs(splineReference - posSystem.getPositionArr()[3]) <= constants.degreeTOLERANCE){
+//                        rotatePower = counteractSplinePID.update(posSystem.getPositionArr()[3]);
+//                    }
+                } else{
+                    leftThrottle = 1;
+                    rightThrottle = 1;
+                }
                 break;
 
             case STOP: //this is NOT reset
@@ -55,7 +74,6 @@ public class SplineKinematicsTest extends Kinematics{
                 leftRotClicks = 0;
                 spinClicks = 0;
 
-                setClicksCycle = false;
                 isAccelerateCycle = false;
 
                 translateSwitchMotors = 1;

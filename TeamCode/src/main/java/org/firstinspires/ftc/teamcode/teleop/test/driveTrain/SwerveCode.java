@@ -26,6 +26,9 @@ public class SwerveCode extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
     Constants constants = new Constants();
 
+    ElapsedTime accelerationTimer = new ElapsedTime();
+    boolean isAccelerateCycle = false;
+
     Button x = new Button();
     Button y = new Button();
     Button a = new Button();
@@ -148,6 +151,9 @@ public class SwerveCode extends OpMode{
 
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
+        if (noMovementRequests()){
+            isAccelerateCycle = false;
+        }
 
         int posBotL = robot.botL.getCurrentPosition();
         int posTopL = robot.topL.getCurrentPosition();
@@ -181,6 +187,22 @@ public class SwerveCode extends OpMode{
         robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
         robot.botR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
         robot.topR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+    }
+
+    public double accelerator(double power){
+        if (power == 0) return 0.0;
+
+        if (!isAccelerateCycle){
+            accelerationTimer.reset();
+            isAccelerateCycle = true;
+        }
+        double accelerationFactor = (Math.tanh(accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
+        power *= accelerationFactor;
+
+        if (power > 1) power = 1;
+        else if (power < -1) power = -1;
+
+        return power;
     }
 
     private void reset(){
@@ -244,6 +266,9 @@ public class SwerveCode extends OpMode{
     }
 
 
+    public boolean noMovementRequests(){
+        return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0);
+    }
 
     /*
      * Code to run ONCE after the driver hits STOP
