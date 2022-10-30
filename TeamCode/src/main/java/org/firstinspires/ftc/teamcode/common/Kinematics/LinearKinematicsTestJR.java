@@ -19,8 +19,6 @@ public class LinearKinematicsTestJR extends Kinematics{
     private int joystickCount = 0;
 
     private boolean firstMovement = false; //true when robot is stopped.  False while it is moving.
-    private boolean setClicksCycle = false;
-    public boolean inCycle = false;
 
     public enum dType{
         SNAP,
@@ -35,8 +33,7 @@ public class LinearKinematicsTestJR extends Kinematics{
     }
 
     public void logic(){
-        inCycle = (Math.abs(joystickL - prevJoystickL) <= 5);
-        if (!inCycle || noMovementRequests()) dtype = dType.STOP;
+        if (noMovementRequests()) dtype = dType.STOP;
         else dtype = dType.SNAP;
 
         switch(dtype){
@@ -47,6 +44,7 @@ public class LinearKinematicsTestJR extends Kinematics{
                 leftThrottle = 1;
                 translationPowerPercentage = 0.0;
                 rotationPowerPercentage = 1.0;
+
                 leftRotatePower = snapLeftWheelPID.update(rightCurrentW);
                 rightRotatePower = snapRightWheelPID.update(leftCurrentW);
                 spinPower = 0;
@@ -62,10 +60,11 @@ public class LinearKinematicsTestJR extends Kinematics{
                 rightRotatePower = 0;
                 translationPowerPercentage = 0;
                 rotationPowerPercentage = 0;
+                
                 rightRotClicks = 0;
                 leftRotClicks = 0;
                 spinClicks = 0;
-                setClicksCycle = false;
+
                 isAccelerateCycle = false;
                 translateSwitchMotors = 1;
 
@@ -134,13 +133,9 @@ public class LinearKinematicsTestJR extends Kinematics{
     }
 
     public void getRotTargetClicks(){
-        if (setClicksCycle == false){
-            setClicksCycle = true;
-            leftRotClicks = (int)(leftTurnAmountW * constants.CLICKS_PER_DEGREE * leftTurnDirectionW);
-            rightRotClicks = (int)(rightTurnAmountW * constants.CLICKS_PER_DEGREE * rightTurnDirectionW);
-        } else if (!shouldSnap()){
-            setClicksCycle = false;
-        }
+        leftRotClicks = (int)(leftTurnAmountW * constants.CLICKS_PER_DEGREE * leftTurnDirectionW);
+        rightRotClicks = (int)(rightTurnAmountW * constants.CLICKS_PER_DEGREE * rightTurnDirectionW);
+
         spinClicks = 0;
     }
 
