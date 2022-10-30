@@ -1,42 +1,20 @@
-/*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+package org.firstinspires.ftc.teamcode.auto.opmodes.testing;
 
-package org.firstinspires.ftc.teamcode.teleop.test;
-
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.common.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
+import org.firstinspires.ftc.teamcode.auto.AutoHub;
 
 import java.util.ArrayList;
 
-@TeleOp
-public class AprilTagDemo extends LinearOpMode
-{
+@Autonomous(name = "autoTemplateThingy", group = "Routes")
+abstract public class autoTemplateThingy extends LinearOpMode{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -52,7 +30,7 @@ public class AprilTagDemo extends LinearOpMode
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize = 0.0145;
+    double tagsize = 0.045;
 
     int numFramesWithoutDetection = 0;
 
@@ -60,10 +38,14 @@ public class AprilTagDemo extends LinearOpMode
     final float DECIMATION_LOW = 2;
     final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
+    int aprilTagId;
+
+    AutoHub dispatch;
 
     @Override
     public void runOpMode()
     {
+        dispatch = new AutoHub(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraMonitorViewId"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -85,10 +67,8 @@ public class AprilTagDemo extends LinearOpMode
         });
 
         waitForStart();
-
-        telemetry.setMsTransmissionInterval(50);
-
-        while (opModeIsActive())
+        //telemetry.setMsTransmissionInterval(50);
+        while (!opModeIsActive())
         {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
@@ -129,6 +109,8 @@ public class AprilTagDemo extends LinearOpMode
 
                     for(AprilTagDetection detection : detections)
                     {
+                        aprilTagId = detection.id;
+                        /*
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
                         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
                         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
@@ -136,7 +118,10 @@ public class AprilTagDemo extends LinearOpMode
                         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
                         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
                         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+                        */
                     }
+
+
                 }
 
                 telemetry.update();
@@ -144,5 +129,20 @@ public class AprilTagDemo extends LinearOpMode
 
             sleep(20);
         }
+        switch (aprilTagId) {
+            case 0: {
+                //stick code for one dot here
+                break;
+            }
+            case 1: {
+                //stick code for two dots here
+                break;
+            }
+            case 2: {
+                //stick code for three dots here
+                break;
+            }
+        }
     }
+
 }
