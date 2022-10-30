@@ -183,23 +183,6 @@ public class SwerveCode extends OpMode{
     }
 
     private void reset(){
-        if (isResetCycle && !robot.wheelsAreBusy()){
-            robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            robot.botL.setPower(0);
-            robot.topL.setPower(0);
-            robot.botR.setPower(0);
-            robot.topR.setPower(0);
-        }
-
         if (!isResetCycle){
             isResetCycle = true;
             int topR = robot.topR.getCurrentPosition();
@@ -227,10 +210,27 @@ public class SwerveCode extends OpMode{
         }
 
         else{
-            robot.botL.setPower(0.2);
-            robot.topL.setPower(0.2);
-            robot.botR.setPower(0.2);
-            robot.topR.setPower(0.2);
+            robot.botL.setPower(0.3);
+            robot.topL.setPower(0.3);
+            robot.botR.setPower(0.3);
+            robot.topR.setPower(0.3);
+
+            if (!robot.wheelsAreBusy()){
+                robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                robot.botL.setPower(0);
+                robot.topL.setPower(0);
+                robot.botR.setPower(0);
+                robot.topR.setPower(0);
+            }
         }
 
         //make sure to reset the encoder position afterwards without messing stuff up like before.
