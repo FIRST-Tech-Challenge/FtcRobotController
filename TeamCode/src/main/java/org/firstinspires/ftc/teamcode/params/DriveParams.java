@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.params;
 
 public class DriveParams {
-    /*********************** HARDWARE CONSTANTS **************************************************/
+
+    /*********************** HARDWARE NAMES *******************************************************/
+    public static final String IMU = "imu";
+
+    /*********************** HARDWARE CONSTANTS ***************************************************/
     // 12.6 inches circumference of a wheel
     public static final double CIRCUMFERENCE = 12.6;
     // 1120 ticks in a revolution
@@ -9,10 +13,10 @@ public class DriveParams {
     // Is the IMU unit vertical?
     public static final boolean IMU_VERT     = false;
 
-    /*********************** TUNABLE GAME CONSTANTS **************************************************/
+    /*********************** TUNABLE GAME CONSTANTS ***********************************************/
     public static final double SLOW_DRIVE_COEFF = 0.4;
 
-    /*********************** TUNABLE DRIVE CONSTANTS **************************************************/
+    /*********************** TUNABLE DRIVE CONSTANTS **********************************************/
     // Gives the point at which to switch to less than full power in a turn
     public static final double FULL_POWER_UNTIL  = 160;
     // Minimum speed to complete the turn

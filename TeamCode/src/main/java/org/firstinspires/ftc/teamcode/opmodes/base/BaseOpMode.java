@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.base;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
-import org.firstinspires.ftc.teamcode.components.IMUSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
-import org.firstinspires.ftc.teamcode.components.Vuforia;
-import org.firstinspires.ftc.teamcode.components.Vuforia.CameraChoice;
+import org.firstinspires.ftc.teamcode.params.DriveParams;
 
 import java.util.EnumMap;
 
@@ -20,34 +16,68 @@ import java.util.EnumMap;
 public abstract class BaseOpMode extends OpMode {
 
     protected DriveSystem driveSystem;
-    protected Vuforia vuforia;
-    private boolean stopRequested;
-    protected PixyCam pixyCam;
+    protected PixyCam pixycam;
+    protected int step = 0;
 
-    /** Initialization */
+
+    @Override
     public void init(){
-        stopRequested = false;
-        // Timeouts to determine if stuck in loop
-        this.msStuckDetectInit     = 20000;
-        this.msStuckDetectInitLoop = 20000;
-        // Initialize motors
+        setDriveSystem();
+        pixycam = hardwareMap.get(PixyCam.class, "pixy");
+    }
+
+    private void setDriveSystem() {
+        // Instantiate Drive System motor map
         EnumMap<DriveSystem.MotorNames, DcMotor> driveMap = new EnumMap<>(DriveSystem.MotorNames.class);
         for(DriveSystem.MotorNames name : DriveSystem.MotorNames.values()){
             driveMap.put(name,hardwareMap.get(DcMotor.class, name.toString()));
         }
-        driveSystem = new DriveSystem(driveMap, hardwareMap.get(BNO055IMU.class, "imu"));
 
+        // Instantiate IMU
+        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, DriveParams.IMU);
+
+        // Instantiate DriveSystem
+        driveSystem = new DriveSystem(driveMap, imu);
     }
 
-    /** Returns if a stop has been requested or if execution is
-     */
-    public final boolean isStopRequested() {
-        return this.stopRequested || Thread.currentThread().isInterrupted();
+    protected boolean alignHeading(int sign) {
+        int headingOffset = pixycam.headingOffset(sign);
+        telemetry.addData("offset", headingOffset);
+        if (headingOffset > 20) {
+            driveSystem.turn(60, 0.5);
+        } else if (headingOffset < -20) {
+            driveSystem.turn(-60, 0.5);
+        } else {
+            driveSystem.setMotorPower(0);
+            return true;
+        }
+        return false;
     }
 
-    @Override
-    public void stop() {
-        stopRequested = true;
-        super.stop();
+    protected boolean alignDistance(int desiredWidth){
+        int distanceOffset = pixycam.distanceOffset(desiredWidth);// find actual desired width
+        if (distanceOffset > 10) {
+            driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3);
+        } else if (distanceOffset < -10) {
+            driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.3);
+        } else {
+            driveSystem.setMotorPower(0);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean align(int colorSignature, int desiredWidth){
+        if(step == 0){
+            if(alignHeading(colorSignature)){
+                step++;
+            }
+        }
+        if(step == 1){
+            if(alignDistance(desiredWidth)){
+                return true;
+            }
+        }
+        return false;
     }
 }
