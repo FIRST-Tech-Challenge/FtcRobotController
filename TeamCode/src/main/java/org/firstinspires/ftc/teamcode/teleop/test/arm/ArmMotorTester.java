@@ -32,6 +32,12 @@ abstract public class ArmMotorTester extends OpMode{
     }
 
     @Override
+    public void init_loop() { //Loop between "init" and "start"
+        //  robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    @Override
     public void start(){
     }
 
