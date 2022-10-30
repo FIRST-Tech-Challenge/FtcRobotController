@@ -14,13 +14,11 @@ public class LinearKinematicsTest extends Kinematics {
     private double rx;
     private double ry;
 
-    private double joystickL = 0.0;
-    private double prevJoystickL = 0.0;
-    private int joystickCount = 0;
+//    private double joystickL = 0.0;
+//    private double prevJoystickL = 0.0;
+//    private int joystickCount = 0;
 
     private boolean firstMovement = false; //true when robot is stopped.  False while it is moving.
-    private boolean setClicksCycle = false;
-    public boolean inCycle = false;
 
     public enum dType{
         LINEAR,
@@ -36,8 +34,7 @@ public class LinearKinematicsTest extends Kinematics {
     }
 
     public void logic(){
-        inCycle = (Math.abs(joystickL - prevJoystickL) <= 5);
-        if (!inCycle || noMovementRequests()) dtype = dType.STOP;
+        if (noMovementRequests()) dtype = dType.STOP;
         else if (shouldSnap()) dtype = dType.SNAP;
         else dtype = dType.LINEAR;
 
@@ -83,7 +80,6 @@ public class LinearKinematicsTest extends Kinematics {
                 leftRotClicks = 0;
                 spinClicks = 0;
 
-                setClicksCycle = false;
                 isAccelerateCycle = false;
                 // 6/8 items (missing switchMotors for translation, but we should not change that)
                 break;
@@ -102,7 +98,7 @@ public class LinearKinematicsTest extends Kinematics {
 
     public void setPos(){
         //setting targets
-        trackJoystickL();
+//        trackJoystickL();
         double[] leftWheelTargets = wheelOptimization(lx, ly, leftCurrentW);
         double[] rightWheelTargets =  wheelOptimization(lx, ly, rightCurrentW);
         double[] robotTargets = robotHeaderOptimization(rx, ry);
@@ -150,13 +146,9 @@ public class LinearKinematicsTest extends Kinematics {
     }
 
     public void getRotTargetClicks(){
-        if (setClicksCycle == false){
-            setClicksCycle = true;
-            leftRotClicks = (int)(leftTurnAmountW * constants.CLICKS_PER_DEGREE * leftTurnDirectionW);
-            rightRotClicks = (int)(rightTurnAmountW * constants.CLICKS_PER_DEGREE * rightTurnDirectionW);
-        } else if (!shouldSnap()){
-            setClicksCycle = false;
-        }
+        leftRotClicks = (int)(leftTurnAmountW * constants.CLICKS_PER_DEGREE * leftTurnDirectionW);
+        rightRotClicks = (int)(rightTurnAmountW * constants.CLICKS_PER_DEGREE * rightTurnDirectionW);
+
         spinClicks = 0;
     }
 
@@ -165,15 +157,15 @@ public class LinearKinematicsTest extends Kinematics {
         rightRotClicks = 0;
         leftRotClicks = 0;
     }
-
-    private void trackJoystickL(){
-        joystickCount++;
-        if(joystickCount >= 3){
-            joystickCount = 0;
-            prevJoystickL = joystickL;
-            joystickL = Math.toDegrees(Math.atan2(lx, ly));
-        }
-    }
+//
+//    private void trackJoystickL(){
+//        joystickCount++;
+//        if(joystickCount >= 3){
+//            joystickCount = 0;
+//            prevJoystickL = joystickL;
+//            joystickL = Math.toDegrees(Math.atan2(lx, ly));
+//        }
+//    }
 
     public void getGamepad(double lx, double ly, double rx, double ry){
         this.lx = lx;

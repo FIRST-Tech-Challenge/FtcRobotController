@@ -118,8 +118,8 @@ public class LinearBaseDrive extends OpMode{
             telemetry.addData("Right Turn Amount", kinematics.getRTurnAmount());
             telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
 
-            telemetry.addData("Right Optimized Target", kinematics.getROptimizedTargetW());
-            telemetry.addData("Left Optimized Target", kinematics.getLOptimizedTargetW());
+//            telemetry.addData("Right Optimized Target", kinematics.getROptimizedTargetW());
+//            telemetry.addData("Left Optimized Target", kinematics.getLOptimizedTargetW());
 
             telemetry.addData("Right Direction", kinematics.getRightDirectionW());
             telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
@@ -135,7 +135,8 @@ public class LinearBaseDrive extends OpMode{
             telemetry.addData("Drive Type", kinematics.getdDriveType());
             telemetry.addData("Power Top", kinematics.getPower()[0]);
             telemetry.addData("Power Bottom", kinematics.getPower()[1]);
-            telemetry.addData("Rot Clicks", kinematics.rightRotClicks);
+            telemetry.addData("Right Rot Clicks", kinematics.rightRotClicks);
+            telemetry.addData("Left Rot Clicks", kinematics.leftRotClicks);
             telemetry.addData("Spin clicks", kinematics.spinClicks);
             telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
             telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
