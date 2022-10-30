@@ -21,12 +21,12 @@ public class ClawQueuerTest extends LinearOpMode{
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, true);
+        robot.toggleArmPosition();
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
             logger.loopcounter++;
-
-            robot.toggleClawPosition(false);
+//            robot.toggleClawPosition(false);
             robot.closeClaw(false);
             robot.openClaw(false);
             robot.setFirstLoop(false);

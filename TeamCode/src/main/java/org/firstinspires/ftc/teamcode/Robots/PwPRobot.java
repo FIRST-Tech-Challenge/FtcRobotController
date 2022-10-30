@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -81,11 +84,9 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void openClaw(boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, op.getRuntime() > claw.clawServoLastSwitchTime +
-                claw.CLAW_SERVO_SWITCH_TIME)) {
-
-            claw.clawServoLastSwitchTime = op.getRuntime();
+        if (queuer.queue(p_asynchronous, CLAW_OPEN.getStatus())) {
             claw.openClaw();
+            claw.updateClawStates();
         }
     }
 
@@ -93,11 +94,9 @@ public class PwPRobot extends BasicRobot {
         closeClaw(true);
     }
     public void closeClaw(boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, op.getRuntime() > claw.clawServoLastSwitchTime +
-                claw.CLAW_SERVO_SWITCH_TIME)) {
-
-            claw.clawServoLastSwitchTime = op.getRuntime();
+        if (queuer.queue(p_asynchronous, CLAW_CLOSED.getStatus())) {
             claw.closeClaw();
+            claw.updateClawStates();
         }
     }
 
@@ -114,6 +113,10 @@ public class PwPRobot extends BasicRobot {
 
     public boolean isConeReady() {
         return claw.isConeReady();
+    }
+
+    public void updateClawStates() {
+        claw.updateClawStates();
     }
 
     public void liftToPosition(Lift.LiftConstants targetJunction){
@@ -262,5 +265,6 @@ public class PwPRobot extends BasicRobot {
             claw.closeClaw();
         }
         claw.logClawStates();
+        claw.updateClawStates();
     }
 }

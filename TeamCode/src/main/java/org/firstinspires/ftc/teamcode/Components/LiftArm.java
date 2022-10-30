@@ -62,7 +62,7 @@ public class LiftArm {
 
     public void toggleArmPosition() {
         liftArmServo.flipServosInterval(LIFT_ARM_INTAKE_POS, LIFT_ARM_OUTTAKE_POS);
-        logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",toggleArmPosition()"
+        logger.log("/RobotLogs/GeneralRobot", "liftArmDualServo,toggleArmPosition()"
                 + ",Lift Arm Toggled", true);
     }
 

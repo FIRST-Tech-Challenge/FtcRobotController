@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.INCH;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPENING;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
@@ -17,16 +19,16 @@ public class Claw {
     private Rev2mDistanceSensor coneObserver;
 
     //temporary
-    private final double CLAW_CONE_DISTANCE = 0.75;
+    private final double CLAW_CONE_DISTANCE = 5;
 
     //temporary
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.3;
+    private final double CLAW_CLOSED_POS = 1.0;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.4;
+    private final double CLAW_OPEN_POS = 0.5;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -66,6 +68,10 @@ public class Claw {
                 }
             }
         }
+
+        public boolean getStatus() {
+            return this.status;
+        }
     }
 
     //constructor
@@ -76,6 +82,15 @@ public class Claw {
         coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
     }
 
+    public void updateClawStates() {
+        if (CLAW_CLOSING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
+            CLAW_CLOSED.setStatus(true);
+        }
+        if (CLAW_OPENING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
+            CLAW_OPENING.setStatus(true);
+        }
+    }
+
     public void logClawStates() {
         logger.log("/RobotLogs/GeneralRobot", CLAW_CLOSED.status + " " + CLAW_OPEN.status, false,
                 false, true);
@@ -83,7 +98,7 @@ public class Claw {
 
     public void toggleClawPosition() {
         if (claw.flipServoInterval(CLAW_OPEN_POS, CLAW_CLOSED_POS)) {
-            clawServoLastSwitchTime = claw.getlasttime();
+            clawServoLastSwitchTime = claw.getLastTime();
         }
         logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",toggleClawPosition()"
                 + ",Claw Toggled", true);
@@ -102,11 +117,13 @@ public class Claw {
             claw.setPosition(CLAW_CLOSED_POS);
 
             //set state of claw closed to true
-            CLAW_CLOSED.setStatus(true);
+            CLAW_CLOSING.setStatus(true);
 
             //log to general robot log that the claw has been closed through function closeClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
                     + ",Claw Closed", true, true);
+            logger.log("/RobotLogs/GeneralRobot", clawServoLastSwitchTime + " " +
+                    CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
         }
     }
     //open the claw
@@ -121,11 +138,13 @@ public class Claw {
             //TODO: need separate CLAW_OPEN_POS constant?
 
             //set state of claw open to true
-            ClawStates.CLAW_OPEN.setStatus(true);
+            CLAW_OPENING.setStatus(true);
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + ",Claw Opened", true, true);
+            logger.log("/RobotLogs/GeneralRobot", clawServoLastSwitchTime + " " +
+                    CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
         }
     }
 
@@ -166,6 +185,9 @@ public class Claw {
 
     public double getPosition() {
         return claw.getPosition();
+    }
+    public double getClawServoLastSwitchTime() {
+        return claw.getLastTime();
     }
 }
 

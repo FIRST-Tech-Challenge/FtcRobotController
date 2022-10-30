@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class RFServo implements Servo {
     //all servo regular stuff
 
-    private final Servo RFServo;
+    private final Servo rfServo;
 
     private double lasttime = 0;
 
@@ -28,9 +28,9 @@ public class RFServo implements Servo {
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public RFServo (String deviceName, Servo.Direction direction, double limit) {
-        RFServo = op.hardwareMap.get(Servo.class, deviceName);
+        rfServo = op.hardwareMap.get(Servo.class, deviceName);
         rfServoName = deviceName;
-        RFServo.setDirection(direction);
+        rfServo.setDirection(direction);
 
         logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
                 "Function               Action");
@@ -39,7 +39,7 @@ public class RFServo implements Servo {
     }
 
     public RFServo (String deviceName, double limit) {
-        RFServo = op.hardwareMap.get(Servo.class, deviceName);
+        rfServo = op.hardwareMap.get(Servo.class, deviceName);
         rfServoName = deviceName;
 
         logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
@@ -50,11 +50,11 @@ public class RFServo implements Servo {
 
     public void setPosition(double position) {
         if (op.getRuntime() - lasttime > 0.2) {
-//            if (RFServo.getPosition() != position) {
+//            if (rfServo.getPosition() != position) {
 //                inputlogs.clear();
 //                inputlogs.add(rfServoName);
 //                inputlogs.add("setPosition()");
-//                inputlogs.add("Setting Position: " + RFServo.getPosition());
+//                inputlogs.add("Setting Position: " + rfServo.getPosition());
                 logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
                         + df.format(position), true);
 //                inputlogs.clear();
@@ -62,7 +62,7 @@ public class RFServo implements Servo {
 //                logger.logRegulated("/ServoLogs/RFServo", "Setting Position:" + position);
 //                logger.logRegulated("/RobotLogs/GeneralRobot", rfServoName + "\nsetPosition():\nSetting Position:" + position);
 
-            RFServo.setPosition(position);
+            rfServo.setPosition(position);
             lasttime = op.getRuntime();
         }
     }
@@ -70,12 +70,12 @@ public class RFServo implements Servo {
     public boolean flipServoInterval(double lowerpos, double upperpos) {
         if(op.getRuntime() - lasttime > 0.2) {
             if (flipped) {
-                RFServo.setPosition(lowerpos);
+                rfServo.setPosition(lowerpos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
                         + df.format(lowerpos), true);
                 flipped = false;
             } else {
-                RFServo.setPosition(upperpos);
+                rfServo.setPosition(upperpos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
                         + df.format(upperpos), true);
                 flipped = true;
@@ -87,12 +87,12 @@ public class RFServo implements Servo {
     public void flipServoMax() {
         if (op.getRuntime() - lasttime > 0.2) {
             if (flipped) {
-                RFServo.setPosition(0);
+                rfServo.setPosition(0);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
                         + df.format(0), true);
                 flipped = false;
             } else {
-                RFServo.setPosition(servolimit);
+                rfServo.setPosition(servolimit);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
                         + df.format(servolimit), true);
                 flipped = true;
@@ -104,13 +104,13 @@ public class RFServo implements Servo {
     public double getPosition() {
 //        inputlogs.add(rfServoName);
 //        inputlogs.add("getPosition()");
-//        inputlogs.add("Getting Position: " + RFServo.getPosition());
+//        inputlogs.add("Getting Position: " + rfServo.getPosition());
 //        logger.log("/RobotLogs/GeneralRobot", inputlogs);
-//        logger.log("RFServoLog", "Current Position:" + RFServo.getPosition());
-        return RFServo.getPosition();
+//        logger.log("RFServoLog", "Current Position:" + rfServo.getPosition());
+        return rfServo.getPosition();
     }
 
-    public double getlasttime() {
+    public double getLastTime() {
         return lasttime;
     }
 
@@ -129,7 +129,7 @@ public class RFServo implements Servo {
     }
 
     public void setDirection (Servo.Direction direction) {
-        RFServo.setDirection(direction);
+        rfServo.setDirection(direction);
     }
 
     @Override
