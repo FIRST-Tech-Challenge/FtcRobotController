@@ -34,15 +34,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.DriveDirections;
+
 @TeleOp(name="Hazard TeleOp", group="Hazard")
 
 
-public class HazardTeleOp extends LinearOpMode {
+public class HazardTeleOp extends DriveDirections {
     DcMotor frontRightMotor;
     DcMotor frontLeftMotor;
     DcMotor backRightMotor;
     DcMotor backLeftMotor;
     double powerLevel = 0.8;
+
+
 
     @Override
     public void runOpMode() {
@@ -60,10 +64,13 @@ public class HazardTeleOp extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            /**GAMEPAD 1**/
             //slow down power if bumper is pressed
             if(gamepad1.left_bumper){
                 powerLevel = 0.3;
-            }else{
+            } else if (gamepad1.right_bumper) {
+                powerLevel = 0.6;
+            } else{
                 powerLevel = 0.8;
             }
 
@@ -96,6 +103,29 @@ public class HazardTeleOp extends LinearOpMode {
                 frontLeftMotor.setPower(0);
                 backRightMotor.setPower(0);
                 backLeftMotor.setPower(0);
+            }
+
+            /**GAMEPAD 2**/
+            double armPower = 0;
+            if (Math.abs(gamepad2.left_stick_y) > 0.1){
+                armPower = gamepad2.left_stick_y*0.8;
+            } else {
+                armPower = 0;
+            }
+            if (Math.abs(gamepad2.right_stick_y) > 0.1){
+                armPower = gamepad2.right_stick_y*0.2;
+            }
+            armMotor.setPower(armPower);
+
+            //Distances have not been learned yet
+            if (gamepad2.a) { //Ground Junction
+                armToHeight(0.7, 20);
+            } else if (gamepad2.x) { //Low Junction
+                armToHeight(0.7, 20);
+            } else if (gamepad2.b) { //Medium  Junction
+                armToHeight(0.7, 20);
+            } else if (gamepad2.y) { //High  Junction
+                armToHeight(0.7, 20);
             }
 
         }

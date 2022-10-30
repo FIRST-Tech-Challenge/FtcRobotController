@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
@@ -12,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-abstract class DriveDirections extends LinearOpMode {
+public abstract class DriveDirections extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor rightFrontDrive = null;
@@ -20,6 +19,8 @@ abstract class DriveDirections extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor leftBackDrive = null;
     private double moveSpeed = 0.3;
+
+    public DcMotor armMotor = null;
 
     IntegratingGyroscope gyro;
     NavxMicroNavigationSensor navxMicro;
@@ -39,10 +40,14 @@ abstract class DriveDirections extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontRight");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backRight");
 
+        armMotor = hardwareMap.get(DcMotor.class, "nonExistentArm");
+
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        armMotor.setDirection(DcMotor.Direction.FORWARD);
 
         //Calibrate NavX
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
@@ -264,7 +269,7 @@ abstract class DriveDirections extends LinearOpMode {
             telemetry.update();
         }
 
-        while () {
+        while (localAngle > targetAngle) {
 
             //rotate counter-clock/left
             rightFrontDrive.setPower(power);
@@ -314,6 +319,29 @@ abstract class DriveDirections extends LinearOpMode {
         previousHeading = currentHeading;
 
         return  intergratedHeading;
+    }
+
+    //Test code for arm
+    //Gets height in millimeters
+    public double getArmHeight() {
+        return armMotor.getCurrentPosition()/3.433;
+    }
+    //distance is in millimeters
+    public void armToHeight (double power, double height){
+        double currentHeight = getArmHeight();
+
+        if (height>currentHeight) {
+            armMotor.setPower(power);
+            while (currentHeight < height) {
+                currentHeight = getArmHeight();
+            }
+        } else if (height<currentHeight) {
+            armMotor.setPower(-power);
+            while (currentHeight > height) {
+                currentHeight = getArmHeight();
+            }
+        }
+        armMotor.setPower(0);
     }
 
 
