@@ -13,7 +13,7 @@ public class GlobalPosSystem {
     Constants constants = new Constants();
     Kinematics kinematics;
 
-    private double[] positionArr = new double[4];
+    private double[] positionArr = new double[6];
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
     public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 
@@ -38,70 +38,71 @@ public class GlobalPosSystem {
     }
 
     public void calculatePos(){
-
         updateHash();
 
         //right
         int topR = motorClicksPose.get("topR") - prevMotorClicks.get("topR"); //change in top right
         int botR = motorClicksPose.get("botR") - prevMotorClicks.get("botR"); //change in bottom right
-        double translateR = (topR - botR) / 2.0;
-        double rotateR = topR - translateR;
-        translateR *= constants.INCHES_PER_CLICK;
-        rotateR *= constants.DEGREES_PER_CLICK;
-//        double rotateR = rotateL;
-//        double translateR = translateL;
+        double translationalInchesR = (topR - botR) / 2.0;
+        double rotationalDegreesR = topR - translationalInchesR;
+        translationalInchesR *= constants.INCHES_PER_CLICK;
+        rotationalDegreesR *= constants.DEGREES_PER_CLICK;
 
-
+        double currentAngleR = clamp(rotationalDegreesR + positionArr[3]);
         //left
         int topL = motorClicksPose.get("topL") - prevMotorClicks.get("topL"); //change in top left
         int botL = motorClicksPose.get("botL") - prevMotorClicks.get("botL"); //change in bottom left
-        double translateL = (topL - botL) / 2.0;
-        double rotateL = topL - translateL;
-        translateL *= constants.INCHES_PER_CLICK;
-        rotateL *= constants.DEGREES_PER_CLICK;
+        double translationalInchesL = (topL - botL) / 2.0;
+        double rotationalDegreesL = topL - translationalInchesL;
+        translationalInchesL *= constants.INCHES_PER_CLICK;
+        rotationalDegreesL *= constants.DEGREES_PER_CLICK;
 
-        double rotationalDegrees = (rotateL + rotateR) / 2.0;
-        double translationalInches = (translateL + translateR) / 2.0;
+        double currentAngleL = clamp(rotationalDegreesL + positionArr[2]);
 
+        double splineOrientation = 0.0;
+        double baseAngle = (currentAngleL + currentAngleR) / 2.0;
+        baseAngle = Math.toRadians(baseAngle);
+        double hypotenuse = (translationalInchesL + translationalInchesR) / 2.0;
 
-        double currentAngle = clamp(rotationalDegrees + positionArr[2]);
-        currentAngle = Math.toRadians(currentAngle);
+//        double bigArc = Math.max(translationalInchesL, translationalInchesR); //unit: inches
+//        double smallArc = Math.min(translationalInchesL, translationalInchesR); //unit: inches
+//        if (Math.abs(bigArc - smallArc) <= 0.1){
+//            double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: inches
+//            double theta = (bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER); //unit: radians
+//            hypotenuse = Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta)));
+//            splineOrientation = Math.toDegrees(theta);
+//            baseAngle = (Math.PI - theta) / 2.0; //unit: radians
+//            baseAngle = (Math.PI / 2.0) - baseAngle;
+//        }
 
-        double splineOrientation = 0;
-
-        if (Math.abs(translationalInches) <= 0.2){
-            update(translationalInches * Math.sin(currentAngle), translationalInches * Math.cos(currentAngle) , rotationalDegrees, 0);
+        if (Math.abs(hypotenuse) <= 0.20){
+            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), rotationalDegreesL, rotationalDegreesR, 0);
         }
         else{
-            update(translationalInches * Math.cos(currentAngle), translationalInches * Math.sin(currentAngle), splineOrientation, rotationalDegrees + splineOrientation);
+            double tableSpin = (rotationalDegreesL + rotationalDegreesR) / 2.0;
+            update(hypotenuse * Math.sin(baseAngle), hypotenuse * Math.cos(baseAngle), splineOrientation, splineOrientation, splineOrientation + tableSpin);
         }
     }
 
-//    public void tempCalculateSpline(){
-//        double splineOrientation = 0.0;
-//        double otherAngle = rotationalDegrees;
-//
-//        if (kinematics.getDriveType() == Kinematics.DriveType.SPLINE){
-//            double bigArc = Math.max(translateL, translateR); //unit: inches
-//            double smallArc = Math.min(translateL, translateR); //unit: inches
-//            double radius = ((bigArc + smallArc) * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER) / (bigArc - smallArc); //unit: inches
-//            double theta = (bigArc - smallArc) / (2 * constants.DISTANCE_BETWEEN_MODULE_AND_CENTER); //unit: radians
-//            translationalInches = Math.sqrt((2 * radius * radius) * (1 - Math.cos(theta))); //value of hypotenuse, not arc. Ask Josh for more info.
-//            splineOrientation = Math.toDegrees(theta);
-//
-//            otherAngle = (Math.PI - theta) / 2.0; //unit: radians
-//            otherAngle = (Math.PI / 2.0) - otherAngle;
-//        }
-//    }
-
-    public void update ( double x, double y, double wheelR, double robotR){
+    public void update ( double x, double y, double leftWheelW, double rightWheelW, double robotR){
         //update
         positionArr[0] += x;
         positionArr[1] += y;
-        positionArr[2] += wheelR;
-        positionArr[3] += robotR;
+        positionArr[2] += leftWheelW;
+        positionArr[3] += rightWheelW;
+        positionArr[4] += robotR;
+
         positionArr[2] = clamp(positionArr[2]);
         positionArr[3] = clamp(positionArr[3]);
+        positionArr[4] = clamp(positionArr[4]);
+    }
+
+    public double getLeftWheelW(){
+        return positionArr[2];
+    }
+
+    public double getRightWheelW(){
+        return positionArr[3];
     }
 
     public boolean xChange(){

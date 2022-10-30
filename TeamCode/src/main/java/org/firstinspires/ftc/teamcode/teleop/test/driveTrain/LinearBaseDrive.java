@@ -7,9 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTest;
 import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTestJR;
-import org.firstinspires.ftc.teamcode.common.Kinematics.TeleopKinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
@@ -24,6 +22,12 @@ public class LinearBaseDrive extends OpMode{
         BUTTON,
         NOT_INITIALIZED
     }
+
+    public enum telemetryType{
+        GPS,
+        TARGETS
+    }
+    telemetryType tType = telemetryType.GPS;
     ControllerType controllerType = ControllerType.NOT_INITIALIZED;
 
     /* Declare OpMode members. */
@@ -34,6 +38,8 @@ public class LinearBaseDrive extends OpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
     private double[] posData = new double[4];
+
+    boolean isResetCycle = false;
 
     Button x = new Button();
     Button y = new Button();
@@ -79,7 +85,20 @@ public class LinearBaseDrive extends OpMode{
     }
 
     void UpdatePlayer1(){
-        DriveTrainBase();
+        if (a.getState() == Button.State.TAP){
+            tType = telemetryType.GPS;
+        } else if (b.getState() == Button.State.TAP){
+            tType = telemetryType.TARGETS;
+        }
+
+        if (x.getState() == Button.State.TAP) controllerType = ControllerType.CONTOLLER;
+        else if (y.getState() == Button.State.TAP) controllerType = ControllerType.BUTTON;
+
+        if (x.getState() == Button.State.DOUBLE_TAP){
+            reset();
+        } else{
+            DriveTrainBase();
+        }
     }
 
     void UpdatePlayer2(){
@@ -89,20 +108,33 @@ public class LinearBaseDrive extends OpMode{
         for(int i = 0; i < 4; i++){
             posData[i] = posSystem.getPositionArr()[i];
         }
-        telemetry.addData("X gamepad", gamepad1.left_stick_x);
-        telemetry.addData("Y gamepad", gamepad1.left_stick_y);
-        telemetry.addData("W", posData[2]);
-        telemetry.addData("R", posData[3]);
-        telemetry.addData("Drive Type", kinematics.getdDriveType());
-        telemetry.addData("Power Top", kinematics.getPower()[0]);
-        telemetry.addData("Power Bottom", kinematics.getPower()[1]);
-        telemetry.addData("TargetW", kinematics.getTargetW());
-        telemetry.addData("Turn Amount", kinematics.getTurnAmount());
-        telemetry.addData("Optimized Target", kinematics.getOptimizedTargetW());
-        telemetry.addData("Direction", kinematics.getDirectionW());
-        telemetry.addData("Rot Clicks", kinematics.rotClicks);
-        telemetry.addData("Spin clicks", kinematics.spinClicks);
-        telemetry.addData("In cycle?", kinematics.inCycle);
+        if (tType == telemetryType.TARGETS){
+            telemetry.addData("X gamepad", gamepad1.left_stick_x);
+            telemetry.addData("Y gamepad", gamepad1.left_stick_y);
+            telemetry.addData("Right TargetW", kinematics.getRTargetW());
+            telemetry.addData("Left TargetW", kinematics.getLTargetW());
+
+            telemetry.addData("Right Turn Amount", kinematics.getRTurnAmount());
+            telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
+
+            telemetry.addData("Right Optimized Target", kinematics.getROptimizedTargetW());
+            telemetry.addData("Left Optimized Target", kinematics.getLOptimizedTargetW());
+
+            telemetry.addData("Right Direction", kinematics.getRightDirectionW());
+            telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
+
+        } else if (tType == telemetryType.GPS){
+            telemetry.addData("Left W", posData[2]);
+            telemetry.addData("Right W", posData[3]);
+            telemetry.addData("R", posData[4]);
+            telemetry.addData("Drive Type", kinematics.getdDriveType());
+            telemetry.addData("Power Top", kinematics.getPower()[0]);
+            telemetry.addData("Power Bottom", kinematics.getPower()[1]);
+            telemetry.addData("Rot Clicks", kinematics.rightRotClicks);
+            telemetry.addData("Spin clicks", kinematics.spinClicks);
+            telemetry.addData("In cycle?", kinematics.inCycle);
+        }
+
         telemetry.update();
     }
 
@@ -137,9 +169,6 @@ public class LinearBaseDrive extends OpMode{
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
 
-        if (x.getState() == Button.State.TAP) controllerType = ControllerType.CONTOLLER;
-        else if (y.getState() == Button.State.TAP) controllerType = ControllerType.BUTTON;
-
         switch(controllerType){
             case CONTOLLER:
                 kinematics.getGamepad(left_stick_x, left_stick_y, right_stick_x, right_stick_y);
@@ -157,12 +186,7 @@ public class LinearBaseDrive extends OpMode{
                 kinematics.logic();
                 break;
         }
-
-
-
-//        reset(); //snaps wheels back to 0 degrees if the robot has stopped moving
     }
-
 
 
     private void setPower(){
@@ -196,7 +220,35 @@ public class LinearBaseDrive extends OpMode{
     }
 
     private void reset(){
+        if (!isResetCycle){
+            isResetCycle = true;
+            int topR = robot.topR.getCurrentPosition();
+            int botR = robot.botR.getCurrentPosition();
+            int topL = robot.topL.getCurrentPosition();
+            int botL = robot.botL.getCurrentPosition();
 
+            int rotateR = (topR + botR) / 2;
+            int rotateL = (topL + botL) / 2;
+
+            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() -rotateL);
+            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() -rotateL);
+            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() -rotateR);
+            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() -rotateR);
+
+            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        else{
+            robot.botL.setPower(0.2);
+            robot.topL.setPower(0.2);
+            robot.botR.setPower(0.2);
+            robot.topR.setPower(0.2);
+        }
+
+        //make sure to reset the encoder position afterwards without messing stuff up like before.
     }
 
     /*
