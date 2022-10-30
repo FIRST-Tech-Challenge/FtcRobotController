@@ -85,7 +85,7 @@ public class ArmMotorTester extends OpMode{
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
       //  robot.armBase.setPower(0.3);
-        robot.armTop.setPower(0.6);
+        robot.armTop.setPower(1);
     }
 
     public void setTargetNegative(){
@@ -99,7 +99,7 @@ public class ArmMotorTester extends OpMode{
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
     //    robot.armBase.setPower(0.3);
-        robot.armTop.setPower(0.6);
+        robot.armTop.setPower(1);
     }
 
     void setArmPower(){
