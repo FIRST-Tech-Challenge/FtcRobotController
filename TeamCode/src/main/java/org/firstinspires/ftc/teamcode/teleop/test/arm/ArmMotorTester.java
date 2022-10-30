@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.teleop.test.arm;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+
+import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
@@ -13,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.Kinematics.ArmKinematics;
 
 @TeleOp(name = "Arm Test Move", group = "Drive")
 
-abstract public class ArmMotorTester extends OpMode{
+public class ArmMotorTester extends OpMode{
     //local class objects
     HardwareDrive robot = new HardwareDrive();
     ArmKinematics armKinematics = new ArmKinematics();
@@ -23,6 +25,9 @@ abstract public class ArmMotorTester extends OpMode{
     Button y = new Button();
     Button a = new Button();
     Button b = new Button();
+
+    ElapsedTime resetTimer = new ElapsedTime();
+    View relativeLayout;
 
     @Override
     public void init(){
@@ -41,6 +46,7 @@ abstract public class ArmMotorTester extends OpMode{
     public void start(){
     }
 
+    @Override
     public void loop() { //Loop between "start" and "stop"
         UpdatePlayer1();
         UpdateButton();
@@ -48,6 +54,9 @@ abstract public class ArmMotorTester extends OpMode{
     }
 
     private void UpdateTelemetry() {
+        telemetry.addData("Top", robot.armTop.getCurrentPosition());
+        telemetry.addData("Bottom", robot.armBase.getCurrentPosition());
+        telemetry.update();
     }
 
     private void UpdateButton() {
