@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.test.arm;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+
+import android.view.View;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -34,6 +36,14 @@ public class ArmMotorTester extends OpMode{
     public void init_loop() { //Loop between "init" and "start"
         //  robot.setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // robot.setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.armBase.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.armTop.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        robot.armBase.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.armTop.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
     }
 
     @Override
@@ -54,7 +64,6 @@ public class ArmMotorTester extends OpMode{
     }
 
     void UpdatePlayer1(){
-        // DriveTrainBasePower();
         setArmPower();
     }
 
