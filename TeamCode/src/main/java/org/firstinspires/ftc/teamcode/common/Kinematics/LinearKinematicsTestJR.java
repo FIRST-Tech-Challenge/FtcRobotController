@@ -184,8 +184,9 @@ public class LinearKinematicsTestJR extends Kinematics{
 
         if (!isAccelerateCycle){
             accelerationTimer.reset();
+            isAccelerateCycle = true;
         }
-        double accelerationFactor = (Math.tanh(2 * accelerationTimer.milliseconds() - 2) / 2) + 0.5;
+        double accelerationFactor = (Math.tanh(3 * accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.599;
         power *= accelerationFactor;
         return power;
     }

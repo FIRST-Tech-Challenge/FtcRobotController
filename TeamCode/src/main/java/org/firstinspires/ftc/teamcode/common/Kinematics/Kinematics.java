@@ -60,7 +60,7 @@ public class Kinematics {
 
     public Kinematics(GlobalPosSystem posSystem){
         snapLeftWheelPID = new RotateSwerveModulePID();
-        snapLeftWheelPID = new RotateSwerveModulePID();
+        snapRightWheelPID = new RotateSwerveModulePID();
 
         tableSpinWheelPID = new RotateSwerveModulePID();
 //        counteractSplinePID = new RotateSwerveModulePID();

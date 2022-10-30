@@ -13,7 +13,7 @@ public class GlobalPosSystem {
     Constants constants = new Constants();
     Kinematics kinematics;
 
-    private double[] positionArr = new double[6];
+    private double[] positionArr = new double[5];
     public HashMap<String, Integer> motorClicksPose = new HashMap<>();
     public HashMap<String, Integer> prevMotorClicks = new HashMap<>();
 

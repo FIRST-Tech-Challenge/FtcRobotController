@@ -37,7 +37,6 @@ public class LinearBaseDrive extends OpMode{
     LinearKinematicsTestJR kinematics;
 
     private ElapsedTime runtime = new ElapsedTime();
-    private double[] posData = new double[4];
 
     boolean isResetCycle = false;
 
@@ -105,9 +104,8 @@ public class LinearBaseDrive extends OpMode{
     }
 
     void UpdateTelemetry(){
-        for(int i = 0; i < 4; i++){
-            posData[i] = posSystem.getPositionArr()[i];
-        }
+        double[] posData = posSystem.getPositionArr();
+
         if (tType == telemetryType.TARGETS){
             telemetry.addData("X gamepad", gamepad1.left_stick_x);
             telemetry.addData("Y gamepad", gamepad1.left_stick_y);
@@ -165,9 +163,9 @@ public class LinearBaseDrive extends OpMode{
     private void setVariables(){
         //outputs of joysticks
         double left_stick_x = gamepad1.left_stick_x; //returns a value between [-1, 1]
-        double left_stick_y = gamepad1.left_stick_y; //returns a value between [-1, 1]
+        double left_stick_y = -gamepad1.left_stick_y; //returns a value between [-1, 1]
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
-        double right_stick_y = gamepad1.right_stick_y; //returns a value between [-1, 1]
+        double right_stick_y = -gamepad1.right_stick_y; //returns a value between [-1, 1]
 
         switch(controllerType){
             case CONTOLLER:
