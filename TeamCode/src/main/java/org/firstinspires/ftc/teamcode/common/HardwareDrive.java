@@ -63,8 +63,8 @@ public class HardwareDrive
     public DcMotorEx  botR;
     public DcMotorEx  topR;
     public DcMotorEx  botL;
-//    public DcMotorEx  armBase;
-//    public DcMotorEx armTop;
+    public DcMotorEx  armBase;
+    public DcMotorEx armTop;
 
 //    public Servo armServo;
 //    public Servo claw;
@@ -103,8 +103,8 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-//        armBase = hwMap.get(DcMotorEx.class, "arm_base");
-//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
+        armBase = hwMap.get(DcMotorEx.class, "arm_base");
+        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
 //        armServo = hwMap.get(Servo.class, "arm_servo");
 //        claw = hwMap.get(Servo.class, "claw");
