@@ -214,10 +214,10 @@ public class LinearBaseDrive extends OpMode{
         robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
         robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
 
-        if (motorPower[0] == 0) robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        if (motorPower[1] == 0) robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        if (motorPower[2] == 0) robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        if (motorPower[3] == 0) robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        if (motorPower[0] == 0) robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        if (motorPower[1] == 0) robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        if (motorPower[2] == 0) robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        if (motorPower[3] == 0) robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     private void reset(){

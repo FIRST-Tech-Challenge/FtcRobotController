@@ -40,7 +40,7 @@ public class SplineKinematicsTest extends Kinematics{
 
         switch(dtype){
             case SPLINE:
-                
+
                 break;
 
             case STOP: //this is NOT reset
@@ -51,8 +51,6 @@ public class SplineKinematicsTest extends Kinematics{
                 rightRotatePower = 0;
                 translationPowerPercentage = 0;
                 rotationPowerPercentage = 0;
-                leftRotationSwitchMotors = 1;
-                rightRotationSwitchMotors = 1;
 
                 rightRotClicks = 0;
                 leftRotClicks = 0;
@@ -85,7 +83,7 @@ public class SplineKinematicsTest extends Kinematics{
     }
 
     public void setSplineClicks(){
-        double spinClicks = 100 * spinPower * translationPowerPercentage;
+        double spinClicks = 100 * spinPower * translationPowerPercentage * translateSwitchMotors;
 
     }
 
@@ -108,10 +106,10 @@ public class SplineKinematicsTest extends Kinematics{
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + leftRotatePower * rotationPowerPercentage * leftRotationSwitchMotors; //top left
-        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + leftRotatePower * rotationPowerPercentage * leftRotationSwitchMotors; //bottom left
-        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //top right
-        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //bottom right
+        motorPower[0] = spinPower * translationPowerPercentage * leftThrottle + leftRotatePower * rotationPowerPercentage; //top left
+        motorPower[1] = spinPower * translationPowerPercentage * leftThrottle + leftRotatePower * rotationPowerPercentage; //bottom left
+        motorPower[2] = spinPower * translationPowerPercentage * rightThrottle + rightRotatePower * rotationPowerPercentage; //top right
+        motorPower[3] = spinPower * translationPowerPercentage * rightThrottle + rightRotatePower * rotationPowerPercentage; //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator(motorPower[i]);

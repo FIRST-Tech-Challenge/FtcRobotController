@@ -45,8 +45,6 @@ public class LinearKinematicsTestJR extends Kinematics{
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
-                leftRotationSwitchMotors = leftTurnDirectionW;
-                rightRotationSwitchMotors = rightTurnDirectionW;
                 translationPowerPercentage = 0.0;
                 rotationPowerPercentage = 1.0;
                 leftRotatePower = snapLeftWheelPID.update(rightCurrentW);
@@ -69,8 +67,6 @@ public class LinearKinematicsTestJR extends Kinematics{
                 spinClicks = 0;
                 setClicksCycle = false;
                 isAccelerateCycle = false;
-                leftRotationSwitchMotors = 1;
-                rightRotationSwitchMotors = 1;
                 translateSwitchMotors = 1;
 
                 // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
@@ -167,10 +163,10 @@ public class LinearKinematicsTestJR extends Kinematics{
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + leftRotatePower * rotationPowerPercentage * leftRotationSwitchMotors; //top left
-        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + leftRotatePower * rotationPowerPercentage * leftRotationSwitchMotors; //bottom left
-        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //top right
-        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //bottom right
+        motorPower[0] = spinPower * translationPowerPercentage * leftThrottle + leftRotatePower * rotationPowerPercentage; //top left
+        motorPower[1] = spinPower * translationPowerPercentage * leftThrottle + leftRotatePower * rotationPowerPercentage; //bottom left
+        motorPower[2] = spinPower * translationPowerPercentage * rightThrottle + rightRotatePower * rotationPowerPercentage; //top right
+        motorPower[3] = spinPower * translationPowerPercentage * rightThrottle + rightRotatePower * rotationPowerPercentage; //bottom right
 
         for (int i = 0; i < 4; i++){
             motorPower[i] = accelerator(motorPower[i]);
@@ -186,8 +182,12 @@ public class LinearKinematicsTestJR extends Kinematics{
             accelerationTimer.reset();
             isAccelerateCycle = true;
         }
-        double accelerationFactor = (Math.tanh(3 * accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.599;
+        double accelerationFactor = (Math.tanh(accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
         power *= accelerationFactor;
+
+        if (power > 1) power = 1;
+        else if (power < -1) power = -1;
+
         return power;
     }
 

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -23,6 +24,7 @@ public class SwerveCode extends OpMode{
     private double[] posData = new double[4];
 
     private ElapsedTime runtime = new ElapsedTime();
+    Constants constants = new Constants();
 
     Button x = new Button();
     Button y = new Button();
@@ -191,10 +193,15 @@ public class SwerveCode extends OpMode{
             rotateR = (topR + botR) / 2;
             rotateL = (topL + botL) / 2;
 
-            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() -rotateL);
-            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() -rotateL);
-            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() -rotateR);
-            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() -rotateR);
+            int topLTarget = (int)((topL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
+            int botLTarget = (int)((botL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
+            int topRTarget = (int)((topR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
+            int botRTarget = (int)((botR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
+
+            robot.topL.setTargetPosition(topLTarget);
+            robot.botL.setTargetPosition(botLTarget);
+            robot.topR.setTargetPosition(topRTarget);
+            robot.botR.setTargetPosition(botRTarget);
 
             robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);

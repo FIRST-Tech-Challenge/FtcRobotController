@@ -25,8 +25,9 @@ public class RotateSwerveModulePID {
     public double update(double currentOrientation){
         //proportion
         double error = targetAngle - currentOrientation;
+        error = clamp(error);
         pError = error;
-        if (error < -179 || error > 180) error %= (-1 * Math.signum(error) * 360);
+
         //keeps error in (-179, 180]
 
         //how some random dude on the internet did it:
@@ -61,6 +62,16 @@ public class RotateSwerveModulePID {
         this.ki = ki;
         this.kd = kd;
         this.targetAngle = targetAngle;
+    }
+
+    public double clamp(double degrees){
+        if (Math.abs(degrees) >= 360) degrees %= 360;
+
+        if (degrees < -179 || degrees > 180) {
+            int modulo = (int)Math.signum(degrees) * -180;
+            degrees = Math.floorMod((int)degrees, modulo);
+        }
+        return degrees;
     }
 
     public void makeSomeLog() {

@@ -25,9 +25,9 @@ public class Kinematics {
     protected double rotationPowerPercentage = 0.0;
     protected double leftThrottle = 1.0;
     protected double rightThrottle = 1.0;
-    protected int leftRotationSwitchMotors = 1; //1 if rotating wheels right, -1 if rotating wheels left
-    protected int rightRotationSwitchMotors = 1;
     protected int translateSwitchMotors = 1; //1 if going forward, -1 if going backward
+    protected int leftTurnDirectionW = 1;
+    protected int rightTurnDirectionW = 1;
 
     //target clicks
     public int rightRotClicks = 0;
@@ -56,8 +56,6 @@ public class Kinematics {
     protected double rightOptimizedTargetW = 0.0;
     protected double rightTurnAmountW = 0.0;
     protected double leftTurnAmountW = 0.0;
-    protected int leftTurnDirectionW = 1;
-    protected int rightTurnDirectionW = 1;
     protected double targetR = 0.0;
 //    protected double splineReference = 0.0;
 
