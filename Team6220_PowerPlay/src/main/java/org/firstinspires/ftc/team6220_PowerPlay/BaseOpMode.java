@@ -81,17 +81,20 @@ public abstract class BaseOpMode extends LinearOpMode {
         IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
-    public void driveWithIMU(double xPower, double yPower, double tPower)  {
+    // flag to say whether we should disable the correction system
+    boolean turnFlag = false;
 
-        // flag to say whether we should disable the correction system
-        boolean turnFlag = false;
+    public void driveWithIMU(double xPower, double yPower, double tPower)  {
 
         // read imu when turning (when t != 0)
         boolean isTurning = (tPower != 0);
 
-        if (isTurning) {
+        if (isTurning || turnFlag) {
             IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // set original angle
-            turnFlag = true;
+
+            if (!turnFlag) {
+                turnFlag = true;
+            }
 
         // otherwise read imu for correction
         } else {
