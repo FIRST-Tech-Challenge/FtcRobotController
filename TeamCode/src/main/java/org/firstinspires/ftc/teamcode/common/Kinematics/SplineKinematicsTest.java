@@ -18,7 +18,6 @@ public class SplineKinematicsTest extends Kinematics{
     private double prevJoystickL = 0.0;
     private int joystickCount = 0;
 
-    private boolean firstMovement = false; //true when robot is stopped.  False while it is moving.
     private boolean setClicksCycle = false;
     public boolean inCycle = false;
 
@@ -69,7 +68,6 @@ public class SplineKinematicsTest extends Kinematics{
                 break;
         }
 
-        firstMovement = noMovementRequests();
     }
 
     public boolean shouldSnap(){
