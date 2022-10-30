@@ -115,6 +115,7 @@ public class SwerveCode extends OpMode{
         telemetry.addData("rotateR target", rotateR);
         telemetry.addData("rotateL target", rotateL);
         telemetry.addData("isBusy", robot.wheelsAreBusy());
+        telemetry.addData("reset cycle?", isResetCycle);
         telemetry.update();
     }
 
@@ -183,20 +184,21 @@ public class SwerveCode extends OpMode{
     }
 
     private void reset(){
+        int topR = robot.topR.getCurrentPosition();
+        int botR = robot.botR.getCurrentPosition();
+        int topL = robot.topL.getCurrentPosition();
+        int botL = robot.botL.getCurrentPosition();
+
+        rotateR = (topR + botR) / 2;
+        rotateL = (topL + botL) / 2;
+
+        int topLTarget = (int)((topL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
+        int botLTarget = (int)((botL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
+        int topRTarget = (int)((topR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
+        int botRTarget = (int)((botR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
+
         if (!isResetCycle){
             isResetCycle = true;
-            int topR = robot.topR.getCurrentPosition();
-            int botR = robot.botR.getCurrentPosition();
-            int topL = robot.topL.getCurrentPosition();
-            int botL = robot.botL.getCurrentPosition();
-
-            rotateR = (topR + botR) / 2;
-            rotateL = (topL + botL) / 2;
-
-            int topLTarget = (int)((topL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-            int botLTarget = (int)((botL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-            int topRTarget = (int)((topR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
-            int botRTarget = (int)((botR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
 
             robot.topL.setTargetPosition(topLTarget);
             robot.botL.setTargetPosition(botLTarget);
@@ -220,7 +222,7 @@ public class SwerveCode extends OpMode{
             robot.botR.setPower(0.3);
             robot.topR.setPower(0.3);
 
-            if (!robot.wheelsAreBusy()){
+            if (robot.topL.getCurrentPosition() == topLTarget && robot.botL.getCurrentPosition() == botLTarget && robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget){
                 robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
