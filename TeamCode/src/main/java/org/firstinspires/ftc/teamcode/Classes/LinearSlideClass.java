@@ -18,49 +18,30 @@ public class LinearSlideClass {
     Drive.setDirection(DcMotor.Direction.FORWARD);
   }
 
-  //Move linear Slides Up (Value has to be postive 0.0-1.0)
-  public void linearSlideUp() {
-
-    //Move linear slide all the way up with max power
-    linearSlideUp();
-
-  }
-
-  public void linearSlideUp(double power) {
+  //Move linear Slides Up for a certain amount of milliseconds (Value has to be positive 0.0-1.0)
+  public void linearSlideUp(double power, int time) throws InterruptedException {
 
     //Moves linear slide all the way up with set power.
-    linearSlideUp();
-
-  }
-
-  public void linearSlideUp(double power, double distance) {
-
-    //Moves linear slide up set distance and speed.
     Drive.setPower(power);
 
+    Thread.sleep(time);
 
-  }
-  
-  
-  //Moves linear slide down (Value has to be postive 0.0-1.0)
-  public void linearSlideDown() {
-
-    //Move linear slide all the way down with max power
-    Drive.setPower(-1);
+    Drive.setPower(0);
 
   }
 
-  public void linearSlideDown(double power) {
 
-    //Moves linear slide all the way down with set power.
-    Drive.setPower(-power);
 
-  }
 
-  public void linearSlideDown(double power, double distance) {
+  //Move linear Slides Up for a certain amount of milliseconds (Value has to be negative -1.0-0.0)
+  public void linearSlideDown(double power, int time) throws InterruptedException {
 
-    //Moves linear slide down set distance and speed.
-    Drive.setPower(-power);
+    //Moves linear slide all the way up with set power.
+    Drive.setPower(power);
+
+    Thread.sleep(time);
+
+    Drive.setPower(0);
 
   }
 

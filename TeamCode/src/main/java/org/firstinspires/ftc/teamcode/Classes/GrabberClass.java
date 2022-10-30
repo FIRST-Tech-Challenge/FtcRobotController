@@ -42,7 +42,6 @@ public class GrabberClass extends LinearSlideClass {
 
         linearSlideUp(power, time);
 
-
     }
 
 
