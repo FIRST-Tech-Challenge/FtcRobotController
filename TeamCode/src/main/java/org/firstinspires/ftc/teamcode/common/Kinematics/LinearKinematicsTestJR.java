@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 public class LinearKinematicsTestJR extends Kinematics{
-    ElapsedTime timer = new ElapsedTime();
+    ElapsedTime accelerationTimer = new ElapsedTime();
+    boolean isAccelerateCycle = false;
 
     private double lx;
     private double ly;
@@ -30,6 +31,7 @@ public class LinearKinematicsTestJR extends Kinematics{
 
     public LinearKinematicsTestJR(GlobalPosSystem posSystem) {
         super(posSystem); //runs Kinematics constructor
+        accelerationTimer.reset();
     }
 
     public void logic(){
@@ -66,6 +68,7 @@ public class LinearKinematicsTestJR extends Kinematics{
                 leftRotClicks = 0;
                 spinClicks = 0;
                 setClicksCycle = false;
+                isAccelerateCycle = false;
                 leftRotationSwitchMotors = 1;
                 rightRotationSwitchMotors = 1;
                 translateSwitchMotors = 1;
@@ -169,7 +172,22 @@ public class LinearKinematicsTestJR extends Kinematics{
         motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //top right
         motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //bottom right
 
+        for (int i = 0; i < 4; i++){
+            motorPower[i] = accelerator(motorPower[i]);
+        }
+
         return motorPower;
+    }
+
+    public double accelerator(double power){
+        if (power == 0) return 0.0;
+
+        if (!isAccelerateCycle){
+            accelerationTimer.reset();
+        }
+        double accelerationFactor = (Math.tanh(2 * accelerationTimer.milliseconds() - 2) / 2) + 0.5;
+        power *= accelerationFactor;
+        return power;
     }
 
     public int[] getClicks(){
