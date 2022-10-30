@@ -109,6 +109,8 @@ public class LinearBaseDrive extends OpMode{
         if (tType == telemetryType.TARGETS){
             telemetry.addData("X gamepad", gamepad1.left_stick_x);
             telemetry.addData("Y gamepad", gamepad1.left_stick_y);
+            telemetry.addData("Left W", posData[2]);
+            telemetry.addData("Right W", posData[3]);
             telemetry.addData("Right TargetW", kinematics.getRTargetW());
             telemetry.addData("Left TargetW", kinematics.getLTargetW());
 
@@ -221,6 +223,18 @@ public class LinearBaseDrive extends OpMode{
     }
 
     private void reset(){
+        if (isResetCycle && !robot.wheelsAreBusy()){
+            robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
         if (!isResetCycle){
             isResetCycle = true;
             int topR = robot.topR.getCurrentPosition();
@@ -231,24 +245,26 @@ public class LinearBaseDrive extends OpMode{
             int rotateR = (topR + botR) / 2;
             int rotateL = (topL + botL) / 2;
 
-            robot.botL.setTargetPosition(robot.botL.getCurrentPosition() -rotateL);
-            robot.topL.setTargetPosition(robot.topL.getCurrentPosition() -rotateL);
-            robot.botR.setTargetPosition(robot.botR.getCurrentPosition() -rotateR);
-            robot.topR.setTargetPosition(robot.topR.getCurrentPosition() -rotateR);
+            int topLTarget = (int)((topL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
+            int botLTarget = (int)((botL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
+            int topRTarget = (int)((topR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
+            int botRTarget = (int)((botR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
+
+            robot.topL.setTargetPosition(topLTarget);
+            robot.botL.setTargetPosition(botLTarget);
+            robot.topR.setTargetPosition(topRTarget);
+            robot.botR.setTargetPosition(botRTarget);
 
             robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        else{
+        } else{
             robot.botL.setPower(0.2);
             robot.topL.setPower(0.2);
             robot.botR.setPower(0.2);
             robot.topR.setPower(0.2);
         }
-
         //make sure to reset the encoder position afterwards without messing stuff up like before.
     }
 

@@ -128,8 +128,13 @@ public class HardwareDrive
         topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
+<<<<<<< Updated upstream
         armBase.setDirection(DcMotorEx.Direction.FORWARD);
         armTop.setDirection(DcMotor.Direction.REVERSE);
+=======
+        armBase.setDirection(DcMotorEx.Direction.REVERSE);
+        armTop.setDirection(DcMotor.Direction.FORWARD);
+>>>>>>> Stashed changes
 
         // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
