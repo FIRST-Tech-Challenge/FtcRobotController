@@ -78,28 +78,28 @@ public class ArmMotorTester extends OpMode{
         int baseCurrent = robot.armBase.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
-        robot.armBase.setTargetPosition(baseCurrent + 100);
+      //  robot.armBase.setTargetPosition(baseCurrent + 100);
         robot.armTop.setTargetPosition(topCurrent + 10);
 
-        robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+     //   robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.armBase.setPower(0.3);
-        robot.armTop.setPower(0.6);
+      //  robot.armBase.setPower(0.3);
+        robot.armTop.setPower(1);
     }
 
     public void setTargetNegative(){
         int baseCurrent = robot.armBase.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
-        robot.armBase.setTargetPosition(baseCurrent - 100);
+       // robot.armBase.setTargetPosition(baseCurrent - 100);
         robot.armTop.setTargetPosition(topCurrent - 10);
 
-        robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+      //  robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        robot.armBase.setPower(0.3);
-        robot.armTop.setPower(0.6);
+    //    robot.armBase.setPower(0.3);
+        robot.armTop.setPower(1);
     }
 
     void setArmPower(){
@@ -111,6 +111,8 @@ public class ArmMotorTester extends OpMode{
             robot.armTop.setPower(0);
             robot.armBase.setPower(0);
         }
+
+
     }
 
     @Override
