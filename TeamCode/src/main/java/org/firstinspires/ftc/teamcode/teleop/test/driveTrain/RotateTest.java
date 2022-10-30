@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTest;
 import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTestJR;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -15,9 +14,9 @@ import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 
-@TeleOp(name="Linear Base Drive Test", group="Drive")
+@TeleOp(name="Rotation Test", group="Drive")
 //@Disabled
-public class LinearBaseDrive extends OpMode{
+public class RotateTest extends OpMode{
     public enum ControllerType{
         CONTOLLER,
         BUTTON,
@@ -35,7 +34,7 @@ public class LinearBaseDrive extends OpMode{
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
     GlobalPosSystem posSystem;
-    LinearKinematicsTest kinematics;
+    LinearKinematicsTestJR kinematics;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -61,7 +60,7 @@ public class LinearBaseDrive extends OpMode{
         runtime.reset();
 
         posSystem = new GlobalPosSystem(robot);
-        kinematics = new LinearKinematicsTest(posSystem);
+        kinematics = new LinearKinematicsTestJR(posSystem);
         posSystem.grabKinematics(kinematics);
     }
 

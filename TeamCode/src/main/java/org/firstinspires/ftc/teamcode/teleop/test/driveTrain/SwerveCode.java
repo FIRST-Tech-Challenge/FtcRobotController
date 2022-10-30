@@ -183,10 +183,10 @@ public class SwerveCode extends OpMode{
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.botR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.botL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha));
+        robot.topL.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha));
+        robot.botR.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha));
+        robot.topR.setPower(accelerator(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha));
     }
 
     public double accelerator(double power){
