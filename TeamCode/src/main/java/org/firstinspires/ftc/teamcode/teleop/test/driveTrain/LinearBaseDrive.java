@@ -121,7 +121,11 @@ public class LinearBaseDrive extends OpMode{
             telemetry.addData("Right Direction", kinematics.getRightDirectionW());
             telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
 
+            telemetry.addData("Should Snap?", kinematics.shouldSnap());
+
         } else if (tType == telemetryType.GPS){
+            telemetry.addData("X", posData[0]);
+            telemetry.addData("Y", posData[0]);
             telemetry.addData("Left W", posData[2]);
             telemetry.addData("Right W", posData[3]);
             telemetry.addData("R", posData[4]);
@@ -130,7 +134,6 @@ public class LinearBaseDrive extends OpMode{
             telemetry.addData("Power Bottom", kinematics.getPower()[1]);
             telemetry.addData("Rot Clicks", kinematics.rightRotClicks);
             telemetry.addData("Spin clicks", kinematics.spinClicks);
-            telemetry.addData("In cycle?", kinematics.inCycle);
         }
 
         telemetry.update();
@@ -177,7 +180,7 @@ public class LinearBaseDrive extends OpMode{
                 break;
 
             case BUTTON:
-                kinematics.getGamepad(0.5, 0.5, 0, 0);
+                kinematics.getGamepad(-1, 0, 0, 0);
 
                 kinematics.setPos();
 

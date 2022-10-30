@@ -136,6 +136,7 @@
 //
 //        turnAmountW = wheelTargets[0]; //optimized turn amount
 //        targetW = wheelTargets[1]; //target orientation for wheel
+//        turnDirectionW = wheelTargets[2];
 //
 //        double robotTurnAmount = (lx == 0 && rx == 0 ? 0 : robotTargets[0]); //how much the robot header should turn
 //
@@ -178,7 +179,7 @@
 //    public void getRotTargetClicks(double turnAmount){
 //        if (setClicksCycle == false){
 //            setClicksCycle = true;
-//            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE);
+//            rotClicks = (int)(turnAmount * constants.CLICKS_PER_DEGREE * turnDirectionW);
 //        } else if (!shouldSnap()){
 //            setClicksCycle = false;
 //        }

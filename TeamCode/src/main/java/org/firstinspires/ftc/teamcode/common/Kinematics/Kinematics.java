@@ -34,6 +34,9 @@ public class Kinematics {
     public int leftRotClicks = 0;
     public int spinClicks = 0; //make protected later
 
+    public int splineSpinClicksL = 0; //can combine with spinClicks later (spinClicksR and spinClicksL)
+    public int splineSpinClicksR = 0;
+
     //current orientation
     protected GlobalPosSystem posSystem;
     protected double leftCurrentW; //current wheel orientation
@@ -151,6 +154,7 @@ public class Kinematics {
         }
         return degrees;
     }
+
 
     public DriveType getDriveType(){
         return type;
