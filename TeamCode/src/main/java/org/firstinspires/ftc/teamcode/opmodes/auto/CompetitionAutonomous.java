@@ -4,12 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
 import org.firstinspires.ftc.teamcode.components.PixyCam;
+import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 @Autonomous(name = "Competition Autonomous", group = "Autonomous")
 public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     public static final int POLE_WIDTH = 45;
-    public static final int CONE_WIDTH = 80;
+    public static final int CONE_WIDTH = 100;
 
     // List of all states the robot could be in
     private enum State {
@@ -39,7 +40,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
     public void init() {
         super.init();
         startPosition = From.START;
-        newState(State.REVERSE_JUNCTION);
+        newState(State.ALIGN_WITH_CONE);
     }
 
     /**
@@ -72,7 +73,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     newState(State.ALIGN_WITH_POLE);                }
                 break;
             case ALIGN_WITH_POLE:
-                if (align(PixyCam.YELLOW, POLE_WIDTH)) {
+                if (align(PixyCam.YELLOW, POLE_WIDTH, false)){
                     newState(State.PLACE_CONE);
                 }
                 break;
@@ -87,8 +88,8 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 };
                 break;
             case ALIGN_WITH_CONE:
-                if (align(PixyCam.BLUE, CONE_WIDTH)) {
-                    newState(State.INTAKE_CONE);
+                if (align(PixyCam.BLUE, CONE_WIDTH, true)) {
+                    newState(State.END_STATE);
                 }
                 break;
             case INTAKE_CONE:
@@ -186,7 +187,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
         // Drive to cone
         if(step == 2) {
-            if (driveSystem.driveToPosition(240, DriveSystem.Direction.BACKWARD, 0.5)) {
+            if (driveSystem.driveToPosition(360, DriveSystem.Direction.BACKWARD, 0.5)) {
                 return true;
             }
         }
