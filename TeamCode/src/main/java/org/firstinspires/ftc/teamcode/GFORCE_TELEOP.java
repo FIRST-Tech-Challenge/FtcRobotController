@@ -19,9 +19,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class GFORCE_TELEOP extends LinearOpMode {
 
     // Joystick constants
-    final double AXIAL_RATE = 0.7;
-    final double LATERAL_RATE = 0.7;
+    final double AXIAL_RATE = 0.5;
+    final double LATERAL_RATE = 0.5;
     final double YAW_RATE = 0.5;
+    final double SLOW_TRANSLATE = 0.2;
 
     private Elevator    elevator;
     private ConeTracker coneTracker;
@@ -64,7 +65,7 @@ public class GFORCE_TELEOP extends LinearOpMode {
         elevator.setState(SharedStates.elevatorState);
 
         while (opModeInInit()) {
-
+            elevator.runStateMachine();
         }
 
         while (opModeIsActive()) {
@@ -100,12 +101,20 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 // Read pose and use it to convery joystick inputs to Field Centric.
                 Pose2d poseEstimate = drive.getPoseEstimate();
 
-                // Create a vector from the gamepad x/y inputs
-                // Then, rotate that vector by the inverse of the heading
-                Vector2d joysticInput = new Vector2d(
-                        -gamepad1.left_stick_y * LATERAL_RATE,
-                        -gamepad1.right_stick_x * AXIAL_RATE
-                ).rotated(-poseEstimate.getHeading());
+                Vector2d joysticInput;
+
+                if (gamepad1.dpad_up) {
+                    joysticInput = new Vector2d(SLOW_TRANSLATE, 0);
+                } else if (gamepad1.dpad_down) {
+                    joysticInput = new Vector2d(-SLOW_TRANSLATE,0 );
+                } else {
+                    // Create a vector from the gamepad x/y inputs
+                    // Then, rotate that vector by the inverse of the heading
+                    joysticInput = new Vector2d(
+                            -gamepad1.left_stick_y * LATERAL_RATE,
+                            -gamepad1.right_stick_x * AXIAL_RATE
+                    ).rotated(-poseEstimate.getHeading());
+                }
 
                 // Determine the rotate rate being requested by pilot.
                 manualRotate = (gamepad1.left_trigger - gamepad1.right_trigger) * YAW_RATE;
@@ -167,31 +176,6 @@ public class GFORCE_TELEOP extends LinearOpMode {
 
             //-----------CO-PILOT--------------
             // Lower the elevator to the base
-
-            if (gamepad2.left_bumper) {
-                //elevator.setHandPosition(elevator.HAND_CLOSE);//
-                elevator.setLiftTargetPosition(elevator.ELEVATOR_HOME);
-            }
-
-            // Select one of the 4 preset heights
-            if (gamepad2.dpad_down) {
-                elevator.setLiftTargetPosition(elevator.ELEVATOR_LOW);
-            } else if (gamepad2.dpad_left) {
-                elevator.setLiftTargetPosition(elevator.ELEVATOR_MID);
-            } else if (gamepad2.dpad_up) {
-                elevator.setLiftTargetPosition(elevator.ELEVATOR_HIGH);
-            } else if (gamepad2.dpad_right) {
-                elevator.setLiftTargetPosition(elevator.ELEVATOR_GROUND);
-            }
-
-            // Open or close the hand (gripper)
-            if (gamepad2.circle) {
-                elevator.setHandPosition(elevator.HAND_OPEN);
-                elevator.setWristOffset(0);
-            } else if(gamepad2.square) {
-                elevator.setHandPosition(elevator.HAND_CLOSE);
-            }
-
             // Put the hand in safe position
             flip = (gamepad1.right_bumper || gamepad2.right_bumper);
             if (flip && !lastFlip) {

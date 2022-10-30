@@ -19,7 +19,7 @@ public class Elevator {
     final double HOME_POWER = -0.1;
 
     final int ELEVATOR_MIN    = 0;
-    final int ELEVATOR_HOME   = 20;
+    final int ELEVATOR_HOME   = 40;
     final int ELEVATOR_GROUND = 160;
     final int ELEVATOR_LOW    = 460;
     final int ELEVATOR_MID    = 710;
@@ -32,6 +32,7 @@ public class Elevator {
     final double SLOW_LOWER   =  0.0;
     final double FAST_LOWER   = -0.1;
     final double HOLD_POWER   =  0.05;
+    final double IN_POSITION_LIMIT = 10;
 
     // Wrist & Hand Constants
     final double SAFE_WRIST_OFFSET = 90;
@@ -39,7 +40,8 @@ public class Elevator {
     final double WRIST_HOME_POSITION = 0.6;
     final double HAND_HOME_POSITION = 0.8;
 
-    final double HAND_OPEN = 0.45; //was 0.4
+    final double HAND_OPEN  = 0.5; //was 0.47
+    final double HAND_READY = 0.6 ;
     final double HAND_CLOSE = 0.85;
 
     // Angle (A) to/from Position (P) conversion factors Y = Mx + C
@@ -72,6 +74,7 @@ public class Elevator {
     double pendingDelay;
     int    pendingLiftPosition;
     ElevatorState pendingState;
+    int requestedPosition;
 
     private double  wristOffset = 0;
     private double  wristPosition = 0;
@@ -118,10 +121,30 @@ public class Elevator {
             }
 
             case HOME_OPEN: {
-                break;
+               if  (newLiftPosition()) {
+                   setHandDelayMove(HAND_CLOSE, 0.3, requestedPosition, MOVING_CLOSED);
+               } else if (myOpMode.gamepad2.square) {
+                   setHandDelayMove(HAND_CLOSE, 0.3, (liftPosition + 50), HOME_CLOSED);
+               }
+               break;
             }
 
             case HOME_CLOSED: {
+                if  (newLiftPosition()) {
+                    setLiftTargetPosition(requestedPosition);
+                    setState(MOVING_CLOSED);
+                } else if (myOpMode.gamepad2.circle) {
+                    setHandPosition(HAND_OPEN);
+                    setState(HOME_OPEN);
+                }
+                break;
+            }
+
+            case GOING_HOME_OPEN: {
+                if (liftInPosition) {
+                    setHandPosition(HAND_OPEN);
+                    setState(HOME_OPEN);
+                }
                 break;
             }
 
@@ -143,6 +166,13 @@ public class Elevator {
             }
 
             case IN_POSITION_OPEN: {
+                 if (myOpMode.gamepad2.left_bumper) {
+                     setHandDelayMove(HAND_READY, 0.1, ELEVATOR_HOME, GOING_HOME_OPEN);
+                 } else if (myOpMode.gamepad2.square) {
+                     setHandPosition(HAND_CLOSE);
+                     setState(IN_POSITION_CLOSED);
+                 }
+
                 break;
             }
 
@@ -154,12 +184,45 @@ public class Elevator {
             }
 
             case IN_POSITION_CLOSED: {
-                break;
+                 if (myOpMode.gamepad2.circle) {
+                     setHandPosition(HAND_OPEN);
+                     setState(IN_POSITION_OPEN);
+                 } else if (newLiftPosition()) {
+                     setLiftTargetPosition(requestedPosition);
+                     setState(MOVING_CLOSED);
+                 } else if (myOpMode.gamepad2.left_bumper) {
+                     setLiftTargetPosition(ELEVATOR_HOME);
+                     setState(HOME_CLOSED);
+                 }
+                 break;
             }
         }
         return elevatorState;
     }
 
+    /*
+    ----------PILOT/CO-PILOT-------------
+    ----------ELEVATOR CONTROLS----------
+     */
+    public boolean newLiftPosition () {
+        int newPosition = 0;
+        // Select one of the 4 preset heights
+        if (myOpMode.gamepad2.dpad_down) {
+            newPosition = ELEVATOR_LOW;
+        } else if (myOpMode.gamepad2.dpad_left) {
+           newPosition = ELEVATOR_MID;
+        } else if (myOpMode.gamepad2.dpad_up) {
+            newPosition = ELEVATOR_HIGH;
+        } else if (myOpMode.gamepad2.dpad_right) {
+            newPosition = ELEVATOR_GROUND;
+        }
+        if(newPosition != 0) {
+            requestedPosition = newPosition;
+            return true;
+        } else {
+            return false;
+        }
+    }
     /***
      * This is the normal way to run the Elevator state machine.
      * Only use the parameter form if you want to force a state change
@@ -181,11 +244,13 @@ public class Elevator {
         return elevatorState.toString();
     }
 
-    private void setWristDelayMove(double wristOffset, double delaySec,  int elevatorPosition, ElevatorState nextState) {
-        setWristOffset(wristOffset);
-        double pendingDelay = delaySec;
-        double pendingLiftPosition = elevatorPosition;
-        ElevatorState pendingState = nextState;
+
+    private void setHandDelayMove(double handPosition, double delaySec,  int elevatorPosition, ElevatorState nextState) {
+        setHandPosition(handPosition);
+        pendingDelay = delaySec;
+        pendingLiftPosition = elevatorPosition;
+        pendingState = nextState;
+
         setState(WAITING_TO_MOVE);
     }
 
@@ -195,20 +260,19 @@ public class Elevator {
      */
     public boolean update() {
         liftPosition = liftMaster.getCurrentPosition();
-        liftInPosition = false;
 
         // Run the elevator motor with 4 different speed zones.  Two up and two down.
         if (liftActive) {
             double error = liftTargetPosition - getLiftPosition();
             if (error > DEAD_BAND * 4) {
                 // elevator is way too low
-                setPower(FAST_LIFT);
+                rampPower(FAST_LIFT);
             } else if (error > DEAD_BAND) {
                 // elevator is little too low
                 setPower(SLOW_LIFT);
             } else if (error < -DEAD_BAND * 4) {
                 // elevator is way too High
-                setPower(FAST_LOWER);
+                rampPower(FAST_LOWER);
             } else if (error < -DEAD_BAND) {
                 // elevator is little too High
                 setPower(SLOW_LOWER);
@@ -219,8 +283,9 @@ public class Elevator {
                 else
                     setPower(HOLD_POWER);
 
-                liftInPosition = true;
             }
+
+            liftInPosition = (Math.abs(error) <= IN_POSITION_LIMIT);
 
             // Adjust the angle of the servo.
             // first calculate arm angle and negate it for level wrist
@@ -236,6 +301,15 @@ public class Elevator {
             myOpMode.telemetry.addData("servo position", wristPosition);
         }
         return liftInPosition;
+    }
+
+    /***
+     * Start the power off sloly when moving a long way
+     * @param power
+     */
+    private void rampPower(double power) {
+        power += (power - liftMaster.getPower()) * 0.4;
+        setPower(power);
     }
 
     /***

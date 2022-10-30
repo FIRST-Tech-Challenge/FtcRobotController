@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ConeTracker {
 
-    final private double MAX_RANGE = 300;
+    final private double MAX_RANGE = 350;
     final private double MIN_RANGE = 50;
     final private double DEAD_BAND = 15;
 

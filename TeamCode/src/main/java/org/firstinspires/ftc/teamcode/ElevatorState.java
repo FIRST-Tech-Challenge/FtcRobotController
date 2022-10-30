@@ -6,6 +6,7 @@ public enum ElevatorState {
     HOMING,
     HOME_OPEN,
     HOME_CLOSED,
+    GOING_HOME_OPEN,
     MOVING_OPEN,
     IN_POSITION_OPEN,
     MOVING_CLOSED,
