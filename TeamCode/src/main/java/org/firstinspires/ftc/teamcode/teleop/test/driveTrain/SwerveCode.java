@@ -207,6 +207,11 @@ public class SwerveCode extends OpMode{
             robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.botL.setPower(0.3);
+            robot.topL.setPower(0.3);
+            robot.botR.setPower(0.3);
+            robot.topR.setPower(0.3);
         }
 
         else{
