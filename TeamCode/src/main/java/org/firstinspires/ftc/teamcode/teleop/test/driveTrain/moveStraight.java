@@ -151,8 +151,8 @@ public class moveStraight extends OpMode{
         int posTopR = robot.topR.getCurrentPosition();
 
         if (a.getState() == Button.State.TAP){
-            int distanceTopL = (int) (100);
-            int distanceBotL = (int) (-100);
+            int distanceTopL = (int) (300);
+            int distanceBotL = (int) (-300);
             int distanceTopR = distanceTopL;
             int distanceBotR = distanceBotL;
 
@@ -166,10 +166,10 @@ public class moveStraight extends OpMode{
             robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            robot.botL.setPower(0.3);
-            robot.topL.setPower(0.3);
-            robot.botR.setPower(0.3);
-            robot.topR.setPower(0.3);
+            robot.botL.setPower(0.5);
+            robot.topL.setPower(0.5);
+            robot.botR.setPower(0.5);
+            robot.topR.setPower(0.5);
         } else if (b.getState() == Button.State.TAP){
             int distanceTop = 0;
             int distanceBot = 0;
