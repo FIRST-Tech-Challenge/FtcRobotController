@@ -136,6 +136,8 @@ public class LinearBaseDrive extends OpMode{
             telemetry.addData("Power Bottom", kinematics.getPower()[1]);
             telemetry.addData("Rot Clicks", kinematics.rightRotClicks);
             telemetry.addData("Spin clicks", kinematics.spinClicks);
+            telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
+            telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
         }
 
         telemetry.update();
@@ -233,6 +235,11 @@ public class LinearBaseDrive extends OpMode{
             robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            robot.botL.setPower(0);
+            robot.topL.setPower(0);
+            robot.botR.setPower(0);
+            robot.topR.setPower(0);
         }
 
         if (!isResetCycle){

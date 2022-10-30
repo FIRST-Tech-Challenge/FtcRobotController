@@ -83,7 +83,7 @@ public class SwerveCode extends OpMode{
        // DriveTrainBasePower();
         if (driveState == State.DRIVE){
             DriveTrainPowerEncoder();
-//            isResetCycle = false;
+            isResetCycle = false;
         } else if (driveState == State.RESET){
             reset();
         }
@@ -183,6 +183,23 @@ public class SwerveCode extends OpMode{
     }
 
     private void reset(){
+        if (isResetCycle && !robot.wheelsAreBusy()){
+            robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            robot.botL.setPower(0);
+            robot.topL.setPower(0);
+            robot.botR.setPower(0);
+            robot.topR.setPower(0);
+        }
+
         if (!isResetCycle){
             isResetCycle = true;
             int topR = robot.topR.getCurrentPosition();
