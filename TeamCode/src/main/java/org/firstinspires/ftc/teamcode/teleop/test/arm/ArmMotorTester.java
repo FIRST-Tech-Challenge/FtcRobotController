@@ -12,8 +12,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.Kinematics.ArmKinematics;
 
 @TeleOp(name = "Arm Test Move", group = "Drive")
-
-abstract public class ArmMotorTester extends OpMode{
+public class ArmMotorTester extends OpMode{
     //local class objects
     HardwareDrive robot = new HardwareDrive();
     ArmKinematics armKinematics = new ArmKinematics();
@@ -41,6 +40,7 @@ abstract public class ArmMotorTester extends OpMode{
     public void start(){
     }
 
+    @Override
     public void loop() { //Loop between "start" and "stop"
         UpdatePlayer1();
         UpdateButton();
