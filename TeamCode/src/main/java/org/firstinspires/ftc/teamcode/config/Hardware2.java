@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.config;
 
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,6 +14,7 @@ public class Hardware2 {
     public DcMotor backLeftMotor = null;
     public DcMotor backRightMotor = null;
     public DcMotor verticalLiftMotor = null;
+    public CRServo intakeServo = null;
 
     public boolean runThisWithEncoder = true;
 
@@ -45,7 +48,7 @@ public class Hardware2 {
         backLeftMotor = hwMap.dcMotor.get("back_left");
         backRightMotor = hwMap.dcMotor.get("back_right");
         verticalLiftMotor = hwMap.dcMotor.get("vertical_lift");
-
+        intakeServo = hwMap.crservo.get("intake_servo");
 
 
         // Initialize Motors
@@ -56,6 +59,7 @@ public class Hardware2 {
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
         verticalLiftMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeServo.resetDeviceConfigurationForOpMode();
 
 
 
