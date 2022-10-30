@@ -138,7 +138,7 @@
 //    }
 //
 //    public void getSpinTargetClicks(){
-//        spinClicks = (int)(100 * spinPower * translationPowerPercentage);
+//        spinClicks = (int)(100 * spinPower * translationPowerPercentage * translateSwitchMotors);
 //        rotClicks = 0;
 //    }
 //
