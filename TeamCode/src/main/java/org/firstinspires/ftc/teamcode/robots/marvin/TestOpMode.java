@@ -12,19 +12,17 @@ public class TestOpMode extends OpMode {
     private DcMotor motorBackLeft = null;
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
-    private DcMotor elevator = null;
+    private DcMotor arm = null;
+    private DcMotor elbow = null;
     private Servo claw = null;
     // regular drive
     private double powerLeft = 0;
     private double powerRight = 0;
     // motor power
-    private double powerElevator = 0;
-    private double powerClaw = 0;
+    private int armPosition = 0;
+    private int elbowPositon = 0;
     //number variables
     private static final float DEADZONE = .1f;
-    private static final int MAXELEVHEIGHT = Integer.MAX_VALUE;
-    private static final int MINELEVHEIGHT = 0;
-    private int currElevHeight = 0;
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing " + this.getClass()+"...");
@@ -34,22 +32,34 @@ public class TestOpMode extends OpMode {
         motorBackLeft = this.hardwareMap.get(DcMotor.class, "motorBackLeft");
         motorFrontRight = this.hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
-//        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
-//        claw = this.hardwareMap.get(Servo.class, "claw");
-        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        arm = this.hardwareMap.get(DcMotor.class, "arm");
+        elbow = this.hardwareMap.get(DcMotor.class, "elbow");
+        claw = this.hardwareMap.get(Servo.class, "claw");
         this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elbow.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setTargetPosition(0);
+        elbow.setTargetPosition(0);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(1);
+        elbow.setPower(1);
+//        elbow.setTargetPosition(-505);
+//        elbowPositon = elbow.getCurrentPosition();
     }
     @Override
     public void loop() {
         //tankDrive();
         mechanumDrive();
-//        elevatorMove();
-//        clawMove();
+        armMove();
+        clawMove();
     }
     public void tankDrive()
     {
@@ -85,26 +95,23 @@ public class TestOpMode extends OpMode {
         motorBackLeft.setPower(v3);
         motorBackRight.setPower(v4);
     }
-//    public void elevatorMove()
-//    {
-//        telemetry.addData("Elevator Position: ", elevator.getCurrentPosition());
-//        powerElevator = 0;
-//        if(gamepad1.right_trigger > DEADZONE)
-//        {
-//            powerElevator = gamepad1.right_trigger;
-//        }
-//        if(gamepad1.left_trigger > DEADZONE)
-//        {
-//            powerElevator = -gamepad1.left_trigger;
-//        }
-//        elevator.setPower(powerElevator);
-//        currElevHeight += powerElevator;
-//    }
-//    public void clawMove() {
-//        telemetry.addData("Claw servo position:", claw.getPosition());
-//        if (gamepad1.left_bumper)
-//            claw.setPosition(.5);
-//        if (gamepad1.right_bumper)
-//            claw.setPosition(0);
-//    }
+    public void armMove()
+    {
+        telemetry.addData("arm position: ", arm.getCurrentPosition());
+        telemetry.addData("elbow position: ", elbow.getCurrentPosition());
+        if(gamepad1.dpad_down)
+        {
+            armPosition = 0;
+            elbowPositon = 0;
+            arm.setTargetPosition(armPosition);
+            elbow.setTargetPosition(elbowPositon);
+        }
+    }
+    public void clawMove() {
+        telemetry.addData("Claw servo position:", claw.getPosition());
+        if (gamepad1.left_bumper)
+            claw.setPosition(.5);
+        if (gamepad1.right_bumper)
+            claw.setPosition(0);
+    }
 }
