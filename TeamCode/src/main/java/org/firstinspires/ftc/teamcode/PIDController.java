@@ -261,6 +261,15 @@ public class PIDController
     }
 
     /**
+     * Return true if the error is within absolute tolerance value,
+     * @return true if the error is less than the tolerance
+     */
+    public boolean onAbsTarget()
+    {
+        return (Math.abs(m_error) < Math.abs(m_tolerance));
+    }
+
+    /**
      * Begin running the PIDController
      */
     public void enable()

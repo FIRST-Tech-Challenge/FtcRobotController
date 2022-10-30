@@ -721,7 +721,7 @@ public class TeleopColorSensor extends LinearOpMode {
                 rightMotorSetPower(power);
                 telemetry.addData("rotate power - %.4f", power);
                 telemetry.update();
-            } while (opModeIsActive() && !pidRotate.onTarget());
+            } while (opModeIsActive() && !pidRotate.onAbsTarget());
         }
         else    // left turn.
             do {
@@ -730,7 +730,7 @@ public class TeleopColorSensor extends LinearOpMode {
                 rightMotorSetPower(power);
                 telemetry.addData("rotate power - %.4f", power);
                 telemetry.update();
-            } while (opModeIsActive() && !pidRotate.onTarget());
+            } while (opModeIsActive() && !pidRotate.onAbsTarget());
 
         // turn the motors off.
         rightMotorSetPower(0);
