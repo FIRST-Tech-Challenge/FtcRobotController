@@ -368,10 +368,10 @@ public class DriveMethods extends LinearOpMode{
     public void GoToHeight(int Clicks) {
         int target = (Clicks);
         int dif = (target - Math.abs(motorSlide.getCurrentPosition()));
-        double aggressiveness = 3000;
+        double aggressiveness = 2700;
         double holdingPower = 0;
         if (dif < 0) {
-            aggressiveness = 3000;
+            aggressiveness = 2700;
             holdingPower = 0;
         } if (dif > 0) {
             aggressiveness = 2000;
