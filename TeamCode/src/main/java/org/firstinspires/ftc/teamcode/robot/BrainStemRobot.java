@@ -63,16 +63,13 @@ public class BrainStemRobot {
 
 
     }
-    public void moveTurret(int targetDegrees){
-        lift.moveToMinHeight();
-        arm.getToClear();
-        turret.moveTurret(targetDegrees);
-    }
+
     public void updateSystems(Map stateMap) {
         telemetry.addData("robotStateMap" , stateMap);
         lift.setState((String) stateMap.get(lift.LIFT_SYSTEM_NAME), (String) stateMap.get(lift.LIFT_SUBHEIGHT));
         grabber.setState((String) stateMap.get(grabber.SYSTEM_NAME));
+        turret.setState((String) stateMap.get(turret.SYSTEM_NAME), lift);
     }
 
-    }
+}
 

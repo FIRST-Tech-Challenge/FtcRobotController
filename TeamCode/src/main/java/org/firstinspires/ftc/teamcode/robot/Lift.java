@@ -50,7 +50,7 @@ public class Lift {
 
     public final String TRANSITION_STATE = "TRANSITION";
     public final int DELIVERY_ADJUSTMENT = -3;
-    public final double HEIGHT_TOLERANCE  = 15;
+    public final double HEIGHT_TOLERANCE  = 5;
 
     public static double currentLiftHeight;
 
@@ -62,12 +62,10 @@ public class Lift {
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public int getPosition () {
-
         return liftMotor.getCurrentPosition();
     }
 
@@ -77,13 +75,14 @@ public class Lift {
         String currentState = getCurrentState();
         telemetry.addData("liftCurrentState" , currentState);
         if(level.equalsIgnoreCase(currentState)){
+            liftMotor.setPower(0);
             return;
         }else{
             selectTransition(level, subheight, currentState);
         }
     }
+
     private void selectTransition(String desiredLevel, String subheight, String currentState){
-//        transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
         switch(desiredLevel){
             case LIFT_POLE_LOW:{
                 transitionToLiftPosition(LIFT_POSITION_LOWPOLE + deliveryHeight(subheight));
@@ -110,7 +109,7 @@ public class Lift {
 
     public String getCurrentState() {
         String state = TRANSITION_STATE;
-        double currentPosition = getHeightInInches();
+        double currentPosition = getPosition();
         telemetry.addData("CurrentMotorEncoderTicks", liftMotor.getCurrentPosition());
         telemetry.addData("CurrentPosition", currentPosition);
         if(inHeightTolerance(currentPosition, LIFT_POSITION_GROUND)){
@@ -124,10 +123,7 @@ public class Lift {
         }
         return state;
     }
-    private double getHeightInInches(){
 
-        return ((double) getPosition()/ TICK_PER_INCH);
-    }
     public int deliveryHeight(String subheight){
         int height = 0;
         if(subheight.equalsIgnoreCase(PLACEMENT_HEIGHT)){
@@ -169,8 +165,9 @@ public class Lift {
 //        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setPower(power);
     }
+
     private boolean inHeightTolerance(double heightPosition, double poleHeight) {
         return (heightPosition > poleHeight - HEIGHT_TOLERANCE) && (heightPosition < poleHeight + HEIGHT_TOLERANCE);
     }
 
-    }
+}

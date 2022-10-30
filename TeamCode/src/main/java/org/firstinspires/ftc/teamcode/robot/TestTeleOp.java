@@ -44,6 +44,7 @@ public class TestTeleOp extends LinearOpMode {
             put(robot.grabber.SYSTEM_NAME, robot.grabber.OPEN_STATE);
             put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_GROUND);
             put(robot.lift.LIFT_SUBHEIGHT, robot.lift.APPROACH_HEIGHT);
+            put(robot.turret.SYSTEM_NAME, robot.turret.CENTER_POSITION);
         }};
 
 
@@ -68,6 +69,14 @@ public class TestTeleOp extends LinearOpMode {
                 stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.PLACEMENT_HEIGHT);
             }  else {
                 stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.APPROACH_HEIGHT);
+            }
+
+            if (gamepad2.x) {
+                stateMap.put(robot.turret.SYSTEM_NAME, robot.turret.LEFT_POSITION);
+            } else if (gamepad2.y) {
+                stateMap.put(robot.turret.SYSTEM_NAME, robot.turret.CENTER_POSITION);
+            } else if (gamepad2.b) {
+                stateMap.put(robot.turret.SYSTEM_NAME, robot.turret.RIGHT_POSITION);
             }
 
             drive.setWeightedDrivePower(
