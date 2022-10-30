@@ -154,8 +154,8 @@ public class SwerveCode extends OpMode{
         double alpha = 0.5;
         double beta = 1 - alpha;
 
-        int distanceTopL = (int) (gamepad1.left_stick_y * 100 * beta);
-        int distanceBotL = (int) (-gamepad1.left_stick_y * 100 * beta);
+        int distanceTopL = (int) (-gamepad1.left_stick_y * 100 * beta);
+        int distanceBotL = (int) (gamepad1.left_stick_y * 100 * beta);
         int distanceTopR = distanceTopL;
         int distanceBotR = distanceBotL;
 
@@ -174,10 +174,10 @@ public class SwerveCode extends OpMode{
         robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.botL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topL.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.botR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
-        robot.topR.setPower(gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.botL.setPower(-gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.topL.setPower(-gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.botR.setPower(-gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
+        robot.topR.setPower(-gamepad1.left_stick_y * beta + gamepad1.left_stick_x * alpha);
     }
 
     private void reset(){
@@ -210,8 +210,9 @@ public class SwerveCode extends OpMode{
         }
 
         //make sure to reset the encoder position afterwards without messing stuff up like before.
-
     }
+
+
 
     /*
      * Code to run ONCE after the driver hits STOP

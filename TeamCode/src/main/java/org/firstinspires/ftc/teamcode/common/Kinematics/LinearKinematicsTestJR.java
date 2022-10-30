@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 public class LinearKinematicsTestJR extends Kinematics{
-    ElapsedTime timer = new ElapsedTime();
+    ElapsedTime accelerationTimer = new ElapsedTime();
+    boolean isAccelerateCycle = false;
 
     private double lx;
     private double ly;
@@ -30,6 +31,7 @@ public class LinearKinematicsTestJR extends Kinematics{
 
     public LinearKinematicsTestJR(GlobalPosSystem posSystem) {
         super(posSystem); //runs Kinematics constructor
+        accelerationTimer.reset();
     }
 
     public void logic(){
@@ -43,11 +45,12 @@ public class LinearKinematicsTestJR extends Kinematics{
                 //rotate modules until target is hit
                 rightThrottle = 1;
                 leftThrottle = 1;
-                translateSwitchMotors = turnDirectionW; //this is wrong
-                rotationSwitchMotors = turnDirectionW;
+                leftRotationSwitchMotors = leftTurnDirectionW;
+                rightRotationSwitchMotors = rightTurnDirectionW;
                 translationPowerPercentage = 0.0;
                 rotationPowerPercentage = 1.0;
-                rotatePower = snapWheelPID.update(currentW);
+                leftRotatePower = snapLeftWheelPID.update(rightCurrentW);
+                rightRotatePower = snapRightWheelPID.update(leftCurrentW);
                 spinPower = 0;
 
                 // 8/8 items
@@ -57,13 +60,17 @@ public class LinearKinematicsTestJR extends Kinematics{
                 rightThrottle = 1;
                 leftThrottle = 1;
                 spinPower = 0;
-                rotatePower = 0;
+                leftRotatePower = 0;
+                rightRotatePower = 0;
                 translationPowerPercentage = 0;
                 rotationPowerPercentage = 0;
-                rotClicks = 0;
+                rightRotClicks = 0;
+                leftRotClicks = 0;
                 spinClicks = 0;
                 setClicksCycle = false;
-                rotationSwitchMotors = 1;
+                isAccelerateCycle = false;
+                leftRotationSwitchMotors = 1;
+                rightRotationSwitchMotors = 1;
                 translateSwitchMotors = 1;
 
                 // 6/8 items (missing switchMotors for rotation and translation, but we don't really need to change that)
@@ -78,45 +85,63 @@ public class LinearKinematicsTestJR extends Kinematics{
     }
 
     public boolean shouldSnap(){
-        return (Math.abs(currentW - optimizedTargetW) >= constants.degreeTOLERANCE);
+        return (Math.abs(leftCurrentW - leftOptimizedTargetW) >= constants.degreeTOLERANCE || Math.abs(rightCurrentW - rightOptimizedTargetW) >= constants.degreeTOLERANCE);
     }
 
     public void setPos(){
         //setting targets
         trackJoystickL();
-        double[] wheelTargets = wheelOptimization(lx, ly);
+        double[] leftWheelTargets = wheelOptimization(lx, ly, leftCurrentW);
+        double[] rightWheelTargets =  wheelOptimization(lx, ly, rightCurrentW);
         double[] robotTargets = robotHeaderOptimization(rx, ry);
 
-        turnAmountW = wheelTargets[0]; //optimized turn amount
-        targetW = wheelTargets[1]; //target orientation for wheel
-        turnDirectionW = (int)wheelTargets[2];
+        leftTurnAmountW = leftWheelTargets[0]; //optimized turn amount
+        rightTurnAmountW = rightWheelTargets[0];
+        leftTargetW = leftWheelTargets[1]; //target orientation for wheel
+        rightTargetW = rightWheelTargets[1];
 
-        optimizedTargetW = clamp(currentW + turnAmountW); //optimized target orientation
+        leftTurnDirectionW = (int)leftWheelTargets[2];
+        rightTurnDirectionW = (int)rightWheelTargets[2];
+
+        leftOptimizedTargetW = clamp(leftCurrentW + leftTurnAmountW); //optimized target orientation
+        rightOptimizedTargetW = clamp(rightCurrentW + rightTurnAmountW);
 
         //setting PIDs for rotation of wheels & robot
-        snapWheelPID.setTargets(optimizedTargetW, 0.03, 0, 0.01);
+        snapLeftWheelPID.setTargets(leftOptimizedTargetW, 0.03, 0, 0.01);
+        snapRightWheelPID.setTargets(rightOptimizedTargetW, 0.03, 0, 0.01);
 //        tableSpinWheelPID.setTargets(targetR, 0.03, 0, 0);
     }
 
-    public double getTargetW(){
-        return targetW;
+    public double getRTargetW(){
+        return rightTargetW;
     }
-    public int getDirectionW(){
-        return turnDirectionW;
+    public double getLTargetW(){
+        return leftTargetW;
     }
-    public double getTurnAmount(){
-        return turnAmountW;
+    public int getRightDirectionW(){
+        return rightTurnDirectionW;
     }
-    public double getOptimizedTargetW(){
-        return optimizedTargetW;
+    public int getLeftDirectionW(){
+        return leftTurnDirectionW;
     }
-
-
+    public double getLTurnAmount(){
+        return leftTurnAmountW;
+    }
+    public double getRTurnAmount(){
+        return rightTurnAmountW;
+    }
+    public double getLOptimizedTargetW(){
+        return leftOptimizedTargetW;
+    }
+    public double getROptimizedTargetW(){
+        return rightOptimizedTargetW;
+    }
 
     public void getRotTargetClicks(){
         if (setClicksCycle == false){
             setClicksCycle = true;
-            rotClicks = (int)(turnAmountW * constants.CLICKS_PER_DEGREE * turnDirectionW);
+            leftRotClicks = (int)(leftTurnAmountW * constants.CLICKS_PER_DEGREE * leftTurnDirectionW);
+            rightRotClicks = (int)(rightTurnAmountW * constants.CLICKS_PER_DEGREE * rightTurnDirectionW);
         } else if (!shouldSnap()){
             setClicksCycle = false;
         }
@@ -142,20 +167,36 @@ public class LinearKinematicsTestJR extends Kinematics{
     public double[] getPower(){
         double[] motorPower = new double[4];
 
-        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top left
-        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom left
-        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //top right
-        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rotatePower * rotationPowerPercentage * rotationSwitchMotors; //bottom right
+        motorPower[0] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + leftRotatePower * rotationPowerPercentage * leftRotationSwitchMotors; //top left
+        motorPower[1] = spinPower * translationPowerPercentage * translateSwitchMotors * leftThrottle + leftRotatePower * rotationPowerPercentage * leftRotationSwitchMotors; //bottom left
+        motorPower[2] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //top right
+        motorPower[3] = spinPower * translationPowerPercentage * translateSwitchMotors * rightThrottle + rightRotatePower * rotationPowerPercentage * rightRotationSwitchMotors; //bottom right
+
+        for (int i = 0; i < 4; i++){
+            motorPower[i] = accelerator(motorPower[i]);
+        }
 
         return motorPower;
     }
 
+    public double accelerator(double power){
+        if (power == 0) return 0.0;
+
+        if (!isAccelerateCycle){
+            accelerationTimer.reset();
+            isAccelerateCycle = true;
+        }
+        double accelerationFactor = (Math.tanh(3 * accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.599;
+        power *= accelerationFactor;
+        return power;
+    }
+
     public int[] getClicks(){
         int[] clicks = new int[4];
-        clicks[0] = -spinClicks + rotClicks;
-        clicks[1] = spinClicks + rotClicks;
-        clicks[2] = -spinClicks + rotClicks;
-        clicks[3] = spinClicks  + rotClicks;
+        clicks[0] = -spinClicks + leftRotClicks; //left
+        clicks[1] = spinClicks + leftRotClicks; //left
+        clicks[2] = -spinClicks + rightRotClicks; //right
+        clicks[3] = spinClicks  + rightRotClicks; //right
         return clicks;
     }
 
