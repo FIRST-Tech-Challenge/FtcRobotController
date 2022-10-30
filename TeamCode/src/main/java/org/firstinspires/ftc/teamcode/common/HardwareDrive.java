@@ -63,8 +63,8 @@ public class HardwareDrive
     public DcMotorEx  botR;
     public DcMotorEx  topR;
     public DcMotorEx  botL;
-//    public DcMotorEx  armBase;
-//    public DcMotorEx armTop;
+    public DcMotorEx  armBase;
+    public DcMotorEx armTop;
 
 //    public Servo armServo;
 //    public Servo claw;
@@ -103,8 +103,8 @@ public class HardwareDrive
         botL = hwMap.get(DcMotorEx.class, "bottom_left");
         topR = hwMap.get(DcMotorEx.class, "top_right");
         botR = hwMap.get(DcMotorEx.class, "bottom_right");
-//        armBase = hwMap.get(DcMotorEx.class, "arm_base");
-//        armTop = hwMap.get(DcMotorEx.class, "arm_top");
+        armBase = hwMap.get(DcMotorEx.class, "arm_base");
+        armTop = hwMap.get(DcMotorEx.class, "arm_top");
 
 //        armServo = hwMap.get(Servo.class, "arm_servo");
 //        claw = hwMap.get(Servo.class, "claw");
@@ -128,9 +128,10 @@ public class HardwareDrive
         topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
-//        armBase.setDirection(DcMotorEx.Direction.FORWARD);
+        armBase.setDirection(DcMotorEx.Direction.FORWARD);
+        armTop.setDirection(DcMotorEx.Direction.FORWARD);
 
-       // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
+        // dtMotors[2].setDirection(DcMotorSimple.Direction.FORWARD);
         //dtMotors[3].setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all motors to zero power
@@ -150,16 +151,16 @@ public class HardwareDrive
             topL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             botR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             topR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//            armBase.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//            armTop.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            armBase.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            armTop.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         } else {
             botL.setPower(0);
             topL.setPower(0);
             botR.setPower(0);
             topR.setPower(0);
-//            armBase.setPower(0);
-//            armTop.setPower(0);
+            armBase.setPower(0);
+            armTop.setPower(0);
         }
     }
 
