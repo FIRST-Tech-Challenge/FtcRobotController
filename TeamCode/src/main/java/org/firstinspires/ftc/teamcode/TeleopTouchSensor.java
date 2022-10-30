@@ -89,7 +89,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 
 @TeleOp(name="TeleopTouchSensor", group="Concept")
-//@Disabled
+@Disabled
 public class TeleopTouchSensor extends LinearOpMode {
 
     // Declare OpMode members.

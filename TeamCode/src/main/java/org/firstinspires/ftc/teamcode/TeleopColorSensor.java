@@ -54,6 +54,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
@@ -110,8 +111,10 @@ public class TeleopColorSensor extends LinearOpMode {
     // Driving motor variables
     static final double HIGH_SPEED_POWER = 0.6;  // used to adjust driving sensitivity.
     static final double SLOW_DOWN_POWER = 0.2;
-    static final double AUTO_DRIVE_POWER = 0.3; // used for auto driving
-    static final double AUTO_ROTATE_POWER = 0.3; // used for auto driving
+    static final double CORRECTION_POWER = 0.1;
+    static final double MIN_ROTATE_POWER = 0.06;
+    static final double AUTO_DRIVE_POWER = 0.4; // used for auto driving
+    static final double AUTO_ROTATE_POWER = 0.4; // used for auto driving
 
     // slider motor variables
     private DcMotor RightSliderMotor = null;
@@ -129,7 +132,7 @@ public class TeleopColorSensor extends LinearOpMode {
     static final int HIGH_JUNCTION_POS = (int)(COUNTS_PER_INCH * 33.5);
     static final int SLIDER_MOVE_DOWN_POSITION = COUNTS_PER_INCH * 3; // move down 6 inch to unload cone
     static final int POSITION_COUNTS_FOR_ONE_REVOLUTION = 538; // for 312 rpm motor
-    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION / 20; // set value based on testing
+    int motorPositionInc = POSITION_COUNTS_FOR_ONE_REVOLUTION / 3; // set value based on testing
     int sliderTargetPosition = 0;
 
 
@@ -155,9 +158,9 @@ public class TeleopColorSensor extends LinearOpMode {
 
     // variables for auto load and unload cone
     static final int COUNTS_PER_FEET_DRIVE = 540; // robot drive 1 feet. Back-forth moving
-    static final int COUNTS_PER_FEET_STRAFE = 720; // robot strafe 1 feet. Left-right moving. need test
+    static final int COUNTS_PER_FEET_STRAFE = 640; // robot strafe 1 feet. Left-right moving. need test
     double robotAutoLoadMovingDistance = 0.1; // in feet
-    double robotAutoUnloadMovingDistance = 0.32; // in feet
+    double robotAutoUnloadMovingDistance = 0.33; // in feet
 
 
     // IMU related
@@ -172,7 +175,8 @@ public class TeleopColorSensor extends LinearOpMode {
 
     // sensors
     private DistanceSensor distanceSensor;
-    static final double CLOSE_DISTANCE = 8.0; // INCH
+    static final double CLOSE_DISTANCE = 8.0; // Inch
+    static final double FAR_DISTANCE = 12.0; // Inch
     private NormalizedColorSensor colorSensor;// best collected within 2cm of the target
     private View relativeLayout;
 
@@ -210,6 +214,14 @@ public class TeleopColorSensor extends LinearOpMode {
         BackLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BackRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //reset encode number to zero
+        FrontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robotRunWithPositionModeOn(false); // turn off encoder mode as default
+
         /* slider motor control */
         RightSliderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         LeftSliderMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -227,6 +239,13 @@ public class TeleopColorSensor extends LinearOpMode {
         clawServoPosition = CLAW_OPEN_POS;
         clawServo.setPosition(clawServoPosition);
 
+        // sensors
+        boolean sensorBreakAllowed = true;
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+        relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+
+        relativeLayout.post(() -> relativeLayout.setBackgroundColor(Color.WHITE));
+
         // IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -234,19 +253,20 @@ public class TeleopColorSensor extends LinearOpMode {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
         imu.initialize(parameters);
+        double timeMS = 0.0;
 
         // Set PID proportional value to start reducing power at about 50 degrees of rotation.
         // P by itself may stall before turn completed so we add a bit of I (integral) which
         // causes the PID controller to gently increase power if the turn is not completed.
-        pidRotate = new PIDController(.003, .00003, 0);
+        pidRotate = new PIDController(.015, .0, 0);
 
         // Set PID proportional value to produce non-zero correction value when robot veers off
         // straight line. P value controls how sensitive the correction is.
-        pidDrive = new PIDController(.05, 0, 0);
+        pidDrive = new PIDController(.03, 0, 0);
 
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !imu.isGyroCalibrated()) {
-            sleep(50);
+            sleep(500);
             idle();
         }
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
@@ -254,22 +274,19 @@ public class TeleopColorSensor extends LinearOpMode {
         // Set up parameters for driving in a straight line.
         pidDrive.setInputRange(-90, 90);
         pidDrive.setSetpoint(0); // be sure input range has been set before
-        pidDrive.setOutputRange(0, HIGH_SPEED_POWER);
+        pidDrive.setOutputRange(0, CORRECTION_POWER);
         pidDrive.enable();
 
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
         telemetry.addData("Mode", "waiting for start");
         telemetry.update();
-
+        waitForStart();
         runtime.reset();
-
-
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             // Game pad buttons design
-            float robotMovingBAckForth = gamepad1.left_stick_y;
+            float robotMovingBackForth = gamepad1.left_stick_y;
             float robotMovingRightLeft = gamepad1.left_stick_x;
             float robotTurn = gamepad1.right_stick_x;
             float sliderUpDown = gamepad1.right_stick_y;
@@ -283,6 +300,7 @@ public class TeleopColorSensor extends LinearOpMode {
             boolean armTurnRight = gamepad1.dpad_right;
             boolean autoLoadConeOn = gamepad1.left_bumper;
             boolean autoUnloadConeOn = gamepad1.right_bumper;
+            final float[] hsvValues = new float[3];
 
 
             // Setup a variable for each drive wheel to save power level for telemetry
@@ -292,31 +310,40 @@ public class TeleopColorSensor extends LinearOpMode {
             double BackRightPower;
             double maxDrivePower = HIGH_SPEED_POWER;
             if ((distanceSensor.getDistance(DistanceUnit.INCH) < CLOSE_DISTANCE) &&
-                    (robotMovingBAckForth > 0)) {
-                maxDrivePower = SLOW_DOWN_POWER;
+                    (robotMovingBackForth > 0) &&
+                    sensorBreakAllowed) {
+                sensorBreakAllowed = false;
             }
 
+            if((distanceSensor.getDistance(DistanceUnit.INCH) > FAR_DISTANCE)) {
+                sensorBreakAllowed = true;
+            }
+
+            colorSensor.setGain( (float)10.0 );
             // Get the normalized colors from the sensor
             NormalizedRGBA colorValues = colorSensor.getNormalizedColors();
+            Color.colorToHSV(colorValues.toColor(), hsvValues);
             telemetry.addLine()
                     .addData("Red", "%.3f", colorValues.red)
                     .addData("Green", "%.3f", colorValues.green)
                     .addData("Blue", "%.3f", colorValues.blue);
+            // Change the Robot Controller's background color to match the color detected by the color sensor.
+            relativeLayout.post(() -> relativeLayout.setBackgroundColor(Color.HSVToColor(hsvValues)));
 
-            double drive = maxDrivePower * robotMovingBAckForth;
+            double drive = maxDrivePower * robotMovingBackForth;
             double turn  =  maxDrivePower * (-robotTurn);
             double strafe = maxDrivePower * (-robotMovingRightLeft);
 
             // only enable correction when the turn button is not pressed.
             if (Math.abs(turn) > Math.ulp(0)) {
                 pidDrive.reset();
-                runtime.reset();
+                timeMS = runtime.milliseconds();
                 resetAngleFlag = true;
                 resetAngle(); // Resets the cumulative angle tracking to zero.
             }
 
             // turn on PID after a duration time to avoid robot inertia after turning.
-            if ((runtime.milliseconds() > INERTIA_WAIT_TIME) && resetAngleFlag) {
+            if (((runtime.milliseconds() - timeMS) > INERTIA_WAIT_TIME) && resetAngleFlag) {
                 resetAngleFlag = false;
                 resetAngle(); // Resets the cumulative angle tracking to zero.
                 angleError = 0.0; //reset global angle error after manual turning.
@@ -335,8 +362,7 @@ public class TeleopColorSensor extends LinearOpMode {
             telemetry.addData("3 global angle error (%0.2f)", angleError);
             telemetry.addData("4 correction  (%0.2f)", correction);
             telemetry.addData("5 turn rotation", rotation);
-            //telemetry.addData("Distance", String.format("%.01f in", distanceSensor.getDistance(DistanceUnit.INCH)));
-            telemetry.addData("Distance (%.01f in)", distanceSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Distance - ", distanceSensor.getDistance(DistanceUnit.INCH));
 
             FrontLeftPower  = Range.clip(-drive - turn - strafe - correction, -1, 1);
             FrontRightPower = Range.clip(-drive + turn + strafe + correction, -1, 1);
@@ -390,7 +416,7 @@ public class TeleopColorSensor extends LinearOpMode {
             if (clawClose) {
                 clawServoPosition += CLAW_INCREMENT;
             }
-            else if (clawOpen) {
+            if (clawOpen) {
                 clawServoPosition -= CLAW_INCREMENT;
             }
             clawServoPosition = Range.clip(clawServoPosition, CLAW_MIN_POS, CLAW_MAX_POS);
@@ -401,7 +427,7 @@ public class TeleopColorSensor extends LinearOpMode {
             if (armTurnLeft) {
                 armServoPosition += ARM_INCREMENT;
             }
-            else if (armTurnRight) {
+            if (armTurnRight) {
                 armServoPosition -= ARM_INCREMENT;
             }
             armServoPosition = Range.clip(armServoPosition, ARM_MIN_POS, ARM_MAX_POS);
@@ -427,6 +453,7 @@ public class TeleopColorSensor extends LinearOpMode {
             }
 
             // Show the elapsed game time and wheel power, positions.
+
             telemetry.addData("Motors power", "Frontleft (%.2f), Frontright (%.2f)," +
                             " Backleft (%.2f), Backright (%.2f)", FrontLeftPower, FrontRightPower,
                     BackLeftPower,BackRightPower);
@@ -446,6 +473,13 @@ public class TeleopColorSensor extends LinearOpMode {
         // The motor stop on their own but power is still applied. Turn off motor.
         RightSliderMotor.setPower(0.0);
         LeftSliderMotor.setPower(0.0);
+        setPowerToWheels(0.0);
+        FrontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        FrontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BackLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BackRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        RightSliderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        LeftSliderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     /**
@@ -610,7 +644,6 @@ public class TeleopColorSensor extends LinearOpMode {
      */
     private void resetAngle() {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
         globalAngle = 0;
     }
 
@@ -644,14 +677,14 @@ public class TeleopColorSensor extends LinearOpMode {
      * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
      * @param degrees Degrees to turn, + is left - is right
      */
-    private void rotate(int degrees, double power) {
+    private void rotate(double degrees, double power) {
         // restart imu angle tracking.
         float angleBeforeRotate = lastAngles.firstAngle;
         resetAngle();
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
-        if (Math.abs(degrees) > 359)
-            degrees = (int) Math.copySign(359, degrees);
+        if (Math.abs(degrees) > 359.99)
+            degrees = Math.copySign(359.99, degrees);
 
         // start pid controller. PID controller will monitor the turn angle with respect to the
         // target angle and reduce power as we approach the target angle. This is to prevent the
@@ -665,7 +698,7 @@ public class TeleopColorSensor extends LinearOpMode {
         pidRotate.reset();
         pidRotate.setInputRange(0, degrees);
         pidRotate.setSetpoint(degrees); // be sure input range has been set before
-        pidRotate.setOutputRange(0, power);
+        pidRotate.setOutputRange(MIN_ROTATE_POWER, power);
         pidRotate.setTolerance(1);
         pidRotate.enable();
 
@@ -777,9 +810,19 @@ public class TeleopColorSensor extends LinearOpMode {
 
         /* code for autonomous driving, must starting from right position.    */
         if (gamepad2.a) {
-            autoLoadCone(0); // need update to input cone height position
+
+            //preload cone
+            clawServo.setPosition(CLAW_CLOSE_POS);
+            sleep(400); // wait 0.4 sec to make sure clawServo is at grep position
+            RightSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+            LeftSliderMotor.setTargetPosition(LOW_JUNCTION_POS);
+            waitMotorActionComplete(RightSliderMotor);
+            waitMotorActionComplete(LeftSliderMotor);
             sliderTargetPosition = RightSliderMotor.getCurrentPosition(); // set target position to current position
-            robotMovingDistance(1.66, true); // drive robot to sleeve cone
+            clawServoPosition = clawServo.getPosition(); // keep claw position
+
+            // drive robot to sleeve cone
+            robotMovingDistance(1.66, true);
 
             NormalizedRGBA colorValues = colorSensor.getNormalizedColors();
             telemetry.addLine()
@@ -812,6 +855,7 @@ public class TeleopColorSensor extends LinearOpMode {
             telemetry.addData("Status", "auto mode - sleeve signal (%d)," +
                     "moving distance (%.1f) feet", sleeveSignal, parkingLocation);
             telemetry.update();
+            sleep(3000); // 3sec for log reading
 
             robotMovingDistance(2.66, true); // drive robot to the center of 3rd mat
 
@@ -829,7 +873,7 @@ public class TeleopColorSensor extends LinearOpMode {
         }
 
         if (gamepad2.y) {
-            robotMovingDistance(0.33, true); // drive robot half mat to high junction
+            robotMovingDistance(0.66, true); // drive robot half mat to high junction
         }
         if (gamepad2.right_bumper) {
             autoUnloadCone();
@@ -837,11 +881,12 @@ public class TeleopColorSensor extends LinearOpMode {
         }
 
         if (gamepad2.dpad_right) {
-            rotate(-90, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            rotate(-angles.firstAngle - 90, AUTO_ROTATE_POWER); // turn robot 90 degree to right
         }
 
         if (gamepad2.dpad_down) {
-            robotMovingDistance(3.5, true); // drive robot to loading area
+            robotMovingDistance(3.0, true); // drive robot to loading area
         }
         if (gamepad2.left_bumper) {
             autoLoadCone(coneStack5th); // need update to input cone height position
@@ -849,7 +894,8 @@ public class TeleopColorSensor extends LinearOpMode {
         }
 
         if (gamepad2.dpad_left) {
-            rotate(180, AUTO_ROTATE_POWER); // turn robot 90 degree to right
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            rotate(-angles.firstAngle + 90, AUTO_ROTATE_POWER); // turn robot 180 degree to right
         }
 
         if (gamepad2.dpad_up) {
