@@ -50,7 +50,8 @@ public class Lift {
 
     public final String TRANSITION_STATE = "TRANSITION";
     public final int DELIVERY_ADJUSTMENT = -3;
-    public final double HEIGHT_TOLERANCE  = 5;
+    public final int HEIGHT_TOLERANCE  = 5;
+    public final int CYCLE_TOLERANCE = 25;
 
     public static double currentLiftHeight;
 
@@ -63,6 +64,10 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public boolean isCollectionHeight() {
+        return getPosition() < (LIFT_POSITION_GROUND + CYCLE_TOLERANCE);
     }
 
     public int getPosition () {

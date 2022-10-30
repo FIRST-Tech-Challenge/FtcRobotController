@@ -36,11 +36,15 @@ public class BrainStemRobot {
     public Extension arm;
     public SampleMecanumDrive drive;
     public Grabber grabber;
-    private HashMap stateMap;
+    private Map stateMap;
 
+    private final String CONE_CYCLE_IN_PROGRESS = "IN PROGRESS";
+    private final String CONE_CYCLE_COMPLETE = "COMPLETE";
+    private final String CONE_CYCLE = "CONE CYCLE";
 
-    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry) {
+    public BrainStemRobot(HardwareMap hwMap, Telemetry telemetry, Map stateMap) {
         this.telemetry = telemetry;
+        this.stateMap = stateMap;
         this.opMode = opMode;
 
         // instantiate components turret, lift, arm, grabber
@@ -49,6 +53,8 @@ public class BrainStemRobot {
         arm     = new Extension(hwMap, telemetry);
         drive   = new SampleMecanumDrive(hwMap);
         grabber   = new Grabber(hwMap, telemetry);
+
+        stateMap.put(CONE_CYCLE, CONE_CYCLE_COMPLETE);
 
         telemetry.addData("Robot", " Is Ready");
         telemetry.update();
@@ -64,12 +70,27 @@ public class BrainStemRobot {
 
     }
 
-    public void updateSystems(Map stateMap) {
+    public void updateSystems() {
         telemetry.addData("robotStateMap" , stateMap);
         lift.setState((String) stateMap.get(lift.LIFT_SYSTEM_NAME), (String) stateMap.get(lift.LIFT_SUBHEIGHT));
         grabber.setState((String) stateMap.get(grabber.SYSTEM_NAME));
         turret.setState((String) stateMap.get(turret.SYSTEM_NAME), lift);
     }
 
+    public void coneCycle() {
+        String grabberDesiredState =  null;
+        if (lift.isCollectionHeight()) {
+            grabberDesiredState = grabber.CLOSED_STATE;
+        } else {
+            grabberDesiredState = grabber.OPEN_STATE;
+        }
+
+        stateMap.put(lift.LIFT_SUBHEIGHT, lift.PLACEMENT_HEIGHT);
+
+
+        stateMap.put(lift.LIFT_SUBHEIGHT, lift.PLACEMENT_HEIGHT);
+        stateMap.put(grabber.SYSTEM_NAME, grabberDesiredState);
+        stateMap.put(lift.LIFT_SUBHEIGHT, lift.APPROACH_HEIGHT);
+    }
 }
 

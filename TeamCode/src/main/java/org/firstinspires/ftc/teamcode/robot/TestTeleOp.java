@@ -32,42 +32,38 @@ public class TestTeleOp extends LinearOpMode {
         put(GAMEPAD_1_X_IS_PRESSED, false);
     }};
 
-    public void runOpMode(){
+    public void runOpMode() {
 
-        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry);
+        Map<String, String> stateMap = new HashMap<String, String>() {{}};
+        BrainStemRobot robot = new BrainStemRobot(hardwareMap, telemetry, stateMap);
         //robot.initializeRobotPosition();
-        Extension arm = new Extension(hardwareMap, telemetry);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Map<String, String> stateMap = new HashMap<String, String>() {{
-            put(robot.grabber.SYSTEM_NAME, robot.grabber.OPEN_STATE);
-            put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_GROUND);
-            put(robot.lift.LIFT_SUBHEIGHT, robot.lift.APPROACH_HEIGHT);
-            put(robot.turret.SYSTEM_NAME, robot.turret.CENTER_POSITION);
-        }};
-
-
+        stateMap.put(robot.grabber.SYSTEM_NAME, robot.grabber.OPEN_STATE);
+        stateMap.put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_GROUND);
+        stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.APPROACH_HEIGHT);
+        stateMap.put(robot.turret.SYSTEM_NAME, robot.turret.CENTER_POSITION);
 
         waitForStart();
-        while(!isStopRequested()) {
+        while (!isStopRequested()) {
             setButtons();
 
             if (toggleMap.get(GAMEPAD_1_A_STATE)) {
                 stateMap.put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_HIGH);
-            }  else {
+            } else {
                 stateMap.put(robot.lift.LIFT_SYSTEM_NAME, robot.lift.LIFT_POLE_GROUND);
             }
 
             if (toggleMap.get(GAMEPAD_1_B_STATE)) {
                 stateMap.put(robot.grabber.SYSTEM_NAME, robot.grabber.CLOSED_STATE);
-            }  else {
+            } else {
                 stateMap.put(robot.grabber.SYSTEM_NAME, robot.grabber.OPEN_STATE);
             }
 
             if (toggleMap.get(GAMEPAD_1_X_STATE)) {
                 stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.PLACEMENT_HEIGHT);
-            }  else {
+            } else {
                 stateMap.put(robot.lift.LIFT_SUBHEIGHT, robot.lift.APPROACH_HEIGHT);
             }
 
@@ -80,19 +76,19 @@ public class TestTeleOp extends LinearOpMode {
             }
 
             drive.setWeightedDrivePower(
-                new Pose2d(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x
-                )
+                    new Pose2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x,
+                            -gamepad1.right_stick_x
+                    )
             );
 
             drive.update();
 
-            robot.updateSystems(stateMap);
+            robot.updateSystems();
 
-            telemetry.addData("stateMap" , stateMap);
-            telemetry.addData("toggleMap" , toggleMap);
+            telemetry.addData("stateMap", stateMap);
+            telemetry.addData("toggleMap", toggleMap);
 
             telemetry.update();
         }
