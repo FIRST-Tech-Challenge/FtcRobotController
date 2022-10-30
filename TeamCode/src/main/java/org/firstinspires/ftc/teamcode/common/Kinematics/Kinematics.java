@@ -85,7 +85,7 @@ public class Kinematics {
         double[] directionArr = new double[3];
 
         //determine targets
-        double target = (y==0 ? (90 * Math.signum(x)) : Math.toDegrees(Math.atan2(x, y)));
+        double target = Math.toDegrees(Math.atan2(x, y));
         directionArr[1] = target;
 
         //determine how much modules must turn in which direction (optimization)
@@ -117,7 +117,7 @@ public class Kinematics {
         double[] directionArr = new double[2];
 
         //determine targets
-        double target = (y==0 ? (45 * Math.signum(x)) : Math.toDegrees(Math.atan2(x, y)));
+        double target = Math.toDegrees(Math.atan2(x, y));
         directionArr[1] = target;
 
         //determine how much robot header must turn in which direction
