@@ -114,4 +114,5 @@ public class TestOpMode extends OpMode {
         if (gamepad1.right_bumper)
             claw.setPosition(0);
     }
+
 }

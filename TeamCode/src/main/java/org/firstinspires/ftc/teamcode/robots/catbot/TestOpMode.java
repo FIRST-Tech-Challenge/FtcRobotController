@@ -41,25 +41,8 @@ public class TestOpMode extends OpMode {
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
-        motorFrontLeft = this.hardwareMap.get(DcMotor.class, "motorFrontLeft");
-        motorBackLeft = this.hardwareMap.get(DcMotor.class, "motorBackLeft");
-        motorFrontRight = this.hardwareMap.get(DcMotor.class, "motorFrontRight");
-        motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
-        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
-        claw = this.hardwareMap.get(Servo.class, "claw");
-        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-       this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
-        this.elevator.setDirection(DcMotor.Direction.REVERSE);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        elevator.setTargetPosition(0);
-        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-  //      this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        elevator.setPower(1);
+        motorInit();
+        calib();
 
     }
 
@@ -136,5 +119,36 @@ public class TestOpMode extends OpMode {
             claw.setPosition(.5);
         if (gamepad1.right_bumper)
             claw.setPosition(.05);
+    }
+    public void calib(){
+        telemetry.addData("elevator calibrating...", elevator.getposition());
+        //get elevator amperage, probably with a method in dcmotorex instead of the dcmotor class
+        //might have to switch to dcmotorex for all of the motors
+        //while amperage < stallValue (checks for stall)
+        //elevator.setPower(-0.1); or something
+        //telemetry.addData("done calibrating");
+
+    }
+    public void motorInit(){
+        motorFrontLeft = this.hardwareMap.get(DcMotor.class, "motorFrontLeft");
+        motorBackLeft = this.hardwareMap.get(DcMotor.class, "motorBackLeft");
+        motorFrontRight = this.hardwareMap.get(DcMotor.class, "motorFrontRight");
+        motorBackRight = this.hardwareMap.get(DcMotor.class, "motorBackRight");
+        elevator = this.hardwareMap.get(DcMotor.class, "elevator");
+        claw = this.hardwareMap.get(Servo.class, "claw");
+        elevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        this.motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        this.elevator.setDirection(DcMotor.Direction.REVERSE);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        elevator.setTargetPosition(0);
+        elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //this.motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        //this.motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        elevator.setPower(1);
+
     }
 }
