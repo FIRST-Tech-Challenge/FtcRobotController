@@ -124,15 +124,183 @@ public class AutoOpMode extends LinearOpMode{
             vision.poseSetInAutonomous = true;
         }
 
+        //Initialize any other TrajectorySequences as desired
         TrajectorySequence trajInitMoveAndTurnToConePosition;
         TrajectorySequence trajConeToPark;
-        TrajectorySequence[] trajOffWallTurnToCone = new TrajectorySequence[3];
         TrajectorySequence[] pickToTurnToDropCone = new TrajectorySequence[5];
+
+        //Initialize any other Pose2d's as desired
+        Pose2d initPose; //4 different poses
+        Pose2d offWallPose; //4 different poses
+        Pose2d conePose; //4 different poses
+        Pose2d parkPose; //4 different poses
 
         public void buildAuto(){
             if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
-
+                initPose = Vision.STARTPOS_1; //Starting pos when on blue alliance
+                offWallPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards signal cone
+                conePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                //Initialize any other Pose2ds needed for maneuvering through the field in auto
+            } else {
+                initPose = Vision.STARTPOS_2; //Starting pos when on red alliance
+                offWallPose = new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move forward towards cone
+                conePose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                parkPose =  new Pose2d(0,0,Math.toRadians(0)); //Choose the pose to move to the stack of cones
+                //Initialize any other Pose2ds needed for maneuvering through the field in auto
             }
+
+            //Sequence to move from initPose to
+            trajInitMoveAndTurnToConePosition = driveTrain.trajectorySequenceBuilder(initPose)
+                    .lineToLinearHeading(offWallPose)
+                    //Add any subsystems actions here as well
+                    //Add any other steps to take in order to move from init pose to cone detection pose
+                    .build();
+
+            //Loops to pick and drop cones
+            if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
+                if(initPose == Vision.STARTPOS_1){
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                } else if(initPose == Vision.STARTPOS_2){
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                } else if(initPose == Vision.STARTPOS_3){
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                } else {//Pose -> STARTPOS_4
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                }
+
+            } else {//red alliance start
+                if(initPose == Vision.STARTPOS_1){
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                } else if(initPose == Vision.STARTPOS_2){
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                } else if(initPose == Vision.STARTPOS_3){
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                } else {//Pose -> STARTPOS_4
+                    for (int i = 0; i < 5; i++) {
+                        pickToTurnToDropCone[i] = driveTrain.trajectorySequenceBuilder(offWallPose)
+                                .lineToLinearHeading(conePose)
+                                //Add any subsystems actions here as well
+                                //Add any other steps to take in order to move from offWallPose->pickConePose->dropPose->pickConePose
+                                .build();
+                    }
+                }
+            }
+
+            if(Vision.playingAlliance == Vision.PLAYING_ALLIANCE.BLUE_ALLIANCE){
+                if(Vision.startPosition == Vision.START_POSITION.POS1){
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            //Add any subsystems actions here as well
+                            //Add any other steps to take in order to move
+                            .build();
+                } else if(Vision.startPosition == Vision.START_POSITION.POS2){
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            //Add any subsystems actions here as well
+                            //Add any other steps to take in order to move
+                            .build();
+                } else if(Vision.startPosition == Vision.START_POSITION.POS3){
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            //Add any subsystems actions here as well
+                            //Add any other steps to take in order to move to drop
+                            .build();
+                } else { //POS4
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            //Add any subsystems actions here as well
+                            //Add any other steps to take in order to move
+                            .build();
+                }
+            } else {//Red Alliance
+                if(Vision.startPosition == Vision.START_POSITION.POS1){
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            .build();
+                } else if(Vision.startPosition == Vision.START_POSITION.POS2){
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            .build();
+                } else if(Vision.startPosition == Vision.START_POSITION.POS3){
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            .build();
+                } else { //POS4
+                    trajConeToPark = driveTrain.trajectorySequenceBuilder(conePose)
+                            .lineToLinearHeading(parkPose)
+                            .build();
+                }
+            }
+
+        }
+
+        public void runAuto(){
+            //Write any other actions to take during auto, or any other conditions for maneuvering
+            driveTrain.followTrajectorySequence(trajInitMoveAndTurnToConePosition);
+            pickCone();
+            for (int loop = 0; loop < 5; loop++) {
+                driveTrain.followTrajectorySequence(pickToTurnToDropCone[loop]);
+                safeWait(100);
+            }
+            return;
+        }
+
+        //Write a method which is able to pick the cone depending on your subsystems
+        public void pickCone(){
+
+        }
+
+        //Write a method which is able to turn to the pole depending on your subsystems
+        public void turnToPole(){
+
+        }
+
+        //Write a method which is able to drop the cone depending on your subsystems
+        public void dropCone(){
+
         }
         /**
          * Safe method to wait so that stop button is also not missed

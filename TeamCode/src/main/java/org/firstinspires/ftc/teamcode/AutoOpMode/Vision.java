@@ -112,7 +112,8 @@ public class Vision {
     public enum START_POSITION{
         POS1,
         POS2,
-        POS3
+        POS3,
+        POS4
     }
 
     //Set a default start position
@@ -122,7 +123,8 @@ public class Vision {
     public enum PARKING_LOCATION{
         ENDPOS1,
         ENDPOS2,
-        ENDPOS3
+        ENDPOS3,
+        ENDPOS4
     }
 
     //Select the different colors on the signal sleeve, and define them here
