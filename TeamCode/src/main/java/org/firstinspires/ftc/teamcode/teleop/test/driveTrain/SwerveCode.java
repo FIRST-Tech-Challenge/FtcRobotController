@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
+import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
 
@@ -42,9 +43,7 @@ public class SwerveCode extends OpMode{
         RESET
     }
     State driveState = State.DRIVE;
-    boolean isResetCycle = false;
-    boolean STOP_RESET_L = false;
-    boolean STOP_RESET_R = false;
+    Reset reset;
 
     //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
@@ -59,6 +58,7 @@ public class SwerveCode extends OpMode{
         posSystem = new GlobalPosSystem(robot);
         kinematics = new Kinematics(posSystem);
         posSystem.grabKinematics(kinematics);
+        reset = new Reset(robot);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -88,11 +88,10 @@ public class SwerveCode extends OpMode{
        // DriveTrainBasePower();
         if (driveState == State.DRIVE){
             DriveTrainPowerEncoder();
-            isResetCycle = false;
+            reset.reset(false);
         } else if (driveState == State.RESET){
-            reset();
+            reset.reset(true);
         }
-
     }
 
     void UpdatePlayer2(){
@@ -120,7 +119,7 @@ public class SwerveCode extends OpMode{
         telemetry.addData("rotateR target", rotateR);
         telemetry.addData("rotateL target", rotateL);
         telemetry.addData("isBusy", robot.wheelsAreBusy());
-        telemetry.addData("reset cycle?", isResetCycle);
+
         telemetry.update();
     }
 
@@ -138,27 +137,9 @@ public class SwerveCode extends OpMode{
         }
     }
 
-    void DriveTrainBasePower(){
-        int powerBotL = 1;
-        int powerTopL = 1;
-
-        if (gamepad1.dpad_up){
-            robot.botL.setPower(powerBotL);
-            robot.topL.setPower(powerTopL);
-        }
-        else{
-            robot.botL.setPower(0);
-            robot.topL.setPower(0);
-        }
-    }
 
     void DriveTrainPowerEncoder(){
         posSystem.calculatePos();
-        if (noMovementRequests()){
-            isAccelerateCycle = false;
-            STOP_RESET_L = false;
-            STOP_RESET_R = false;
-        }
 
         int posBotL = robot.botL.getCurrentPosition();
         int posTopL = robot.topL.getCurrentPosition();
@@ -209,75 +190,6 @@ public class SwerveCode extends OpMode{
 
         return power;
     }
-
-    private void reset(){
-        int topR = robot.topR.getCurrentPosition();
-        int botR = robot.botR.getCurrentPosition();
-        int topL = robot.topL.getCurrentPosition();
-        int botL = robot.botL.getCurrentPosition();
-
-        rotateR = (topR + botR) / 2;
-        rotateL = (topL + botL) / 2;
-
-        int topLTarget = (int)((topL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-        int botLTarget = (int)((botL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-        int topRTarget = (int)((topR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
-        int botRTarget = (int)((botR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
-
-        if (!isResetCycle){
-            isResetCycle = true;
-
-            robot.topL.setTargetPosition(topLTarget);
-            robot.botL.setTargetPosition(botLTarget);
-            robot.topR.setTargetPosition(topRTarget);
-            robot.botR.setTargetPosition(botRTarget);
-
-            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.botL.setPower(0.3);
-            robot.topL.setPower(0.3);
-            robot.botR.setPower(0.3);
-            robot.topR.setPower(0.3);
-        }
-
-        else{
-            if (robot.topL.getCurrentPosition() == topLTarget && robot.botL.getCurrentPosition() == botLTarget){
-                robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-                robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                robot.botL.setPower(0);
-                robot.topL.setPower(0);
-                STOP_RESET_L = true;
-            } else if (!STOP_RESET_L){
-                robot.botL.setPower(0.3);
-                robot.topL.setPower(0.3);
-            }
-
-            if (robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget){
-                robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-                robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                robot.botR.setPower(0);
-                robot.topR.setPower(0);
-                STOP_RESET_R = true;
-            } else if (!STOP_RESET_R){
-                robot.botR.setPower(0.3);
-                robot.topR.setPower(0.3);
-            }
-        }
-
-        //make sure to reset the encoder position afterwards without messing stuff up like before.
-    }
-
 
     public boolean noMovementRequests(){
         return (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0 && gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0);
