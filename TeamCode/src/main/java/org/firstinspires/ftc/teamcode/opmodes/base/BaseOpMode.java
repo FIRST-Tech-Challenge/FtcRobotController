@@ -54,7 +54,7 @@ public abstract class BaseOpMode extends OpMode {
         return false;
     }
 
-    protected boolean alignDistance(int desiredWidth, boolean cone){
+    protected boolean alignDistance(int desiredWidth){
         int distanceOffset = pixycam.distanceOffset(desiredWidth);// find actual desired width
         if (distanceOffset > 10) {
             driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3);
@@ -67,14 +67,14 @@ public abstract class BaseOpMode extends OpMode {
         return false;
     }
 
-    protected boolean align(int colorSignature, int desiredWidth, boolean cone){
+    protected boolean align(int colorSignature, int desiredWidth){
         if(step == 0){
             if(alignHeading(colorSignature)){
                 step++;
             }
         }
         if(step == 1){
-            if(alignDistance(desiredWidth, cone)){
+            if(alignDistance(desiredWidth)){
                 return true;
             }
         }
