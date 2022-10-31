@@ -7,6 +7,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ArmSystem {
 
+    private int currentPos;
+    private final DcMotor armLeft;
+    private final DcMotor armRight;
+
+    public ArmSystem(DcMotor motor1, DcMotor motor2){
+        armLeft = motor1;
+        armRight = motor2;
+
+    }
+
 
     public static class Intake{
         private final DigitalChannel beamBreaker;
