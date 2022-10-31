@@ -124,8 +124,8 @@ public class HardwareDrive
 
 
         //Set Motor Directions
-        botL.setDirection(DcMotorEx.Direction.REVERSE); //no clue if these 2 are supposed to be FORWARD
-        topL.setDirection(DcMotorEx.Direction.REVERSE);
+        botL.setDirection(DcMotorEx.Direction.FORWARD); //no clue if these 2 are supposed to be FORWARD
+        topL.setDirection(DcMotorEx.Direction.FORWARD);
         botR.setDirection(DcMotorEx.Direction.FORWARD);
         topR.setDirection(DcMotorEx.Direction.FORWARD);
 
@@ -152,16 +152,16 @@ public class HardwareDrive
             topL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             botR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             topR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            armBase.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            armTop.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+            topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } else {
             botL.setPower(0);
             topL.setPower(0);
             botR.setPower(0);
             topR.setPower(0);
-            armBase.setPower(0);
-            armTop.setPower(0);
         }
     }
 

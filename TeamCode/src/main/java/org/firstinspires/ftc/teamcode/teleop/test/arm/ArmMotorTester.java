@@ -71,6 +71,10 @@ public class ArmMotorTester extends OpMode{
     }
 
     private void UpdateButton() {
+        x.update(gamepad1.x);
+        y.update(gamepad1.y);
+        a.update(gamepad1.a);
+        b.update(gamepad1.b);
     }
 
     void UpdatePlayer1(){
@@ -106,18 +110,18 @@ public class ArmMotorTester extends OpMode{
     }
 
     void setArmPower(){
-        if(gamepad1.x){
+        if(x.getState() == Button.State.TAP){
             setTargetPositive();
-        } else if (gamepad1.y){
+        } else if (y.getState() == Button.State.TAP){
             setTargetNegative();
-        } else {
+        } else if (x.getState() == Button.State.DOUBLE_TAP){
             robot.armTop.setPower(0);
             robot.armBase.setPower(0);
         }
 
-        if (gamepad1.a){
+        if (a.getState() == Button.State.TAP){
             power += 0.1;
-        } else if (gamepad1.b){
+        } else if (b.getState() == Button.State.TAP){
             power -= 0.1;
         }
         if (power < 0) power = 0;

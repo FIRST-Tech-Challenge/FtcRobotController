@@ -5,6 +5,7 @@ import android.view.View;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTest;
@@ -220,10 +221,23 @@ public class LinearBaseDrive extends OpMode{
         robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
         robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
 
-//        if (motorPower[0] == 0) robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        if (motorPower[1] == 0) robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        if (motorPower[2] == 0) robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        if (motorPower[3] == 0) robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        if (motorPower[0] == 0) {
+            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if (motorPower[1] == 0) {
+            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        if (motorPower[2] == 0) {
+            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
+        if (motorPower[3] == 0) {
+            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 
     private void reset(){

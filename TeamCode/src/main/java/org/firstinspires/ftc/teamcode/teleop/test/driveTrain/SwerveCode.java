@@ -43,6 +43,8 @@ public class SwerveCode extends OpMode{
     }
     State driveState = State.DRIVE;
     boolean isResetCycle = false;
+    boolean STOP_RESET_L = false;
+    boolean STOP_RESET_R = false;
 
     //for resetting the robot's wheels' orientation
     ElapsedTime resetTimer = new ElapsedTime();
@@ -102,13 +104,13 @@ public class SwerveCode extends OpMode{
         telemetry.addData("R", gamepad1.right_stick_x);
         //  telemetry.addData("Touch Sensor", robot.digitalTouch.getState());
 
-        for(int i = 0; i < 4; i++){
-            posData[i] = posSystem.getPositionArr()[i];
-        }
+        double[] posData = posSystem.getPositionArr();
+
         telemetry.addData("Xpos", posData[0]);
         telemetry.addData("Ypos", posData[1]);
-        telemetry.addData("W", posData[2]);
-        telemetry.addData("R", posData[3]);
+        telemetry.addData("Left W", posData[2]);
+        telemetry.addData("Right W", posData[3]);
+        telemetry.addData("R", posData[4]);
 
         telemetry.addData("topL clicks", robot.topL.getCurrentPosition());
         telemetry.addData("botL clicks", robot.botL.getCurrentPosition());
@@ -130,6 +132,8 @@ public class SwerveCode extends OpMode{
 
         if (x.getState() == Button.State.TAP){
             driveState = State.RESET;
+            STOP_RESET_L = false;
+            STOP_RESET_R = false;
         } else if (y.getState() == Button.State.TAP){
             driveState = State.DRIVE;
         }
@@ -239,11 +243,6 @@ public class SwerveCode extends OpMode{
         }
 
         else{
-            robot.botL.setPower(0.3);
-            robot.topL.setPower(0.3);
-            robot.botR.setPower(0.3);
-            robot.topR.setPower(0.3);
-
             if (robot.topL.getCurrentPosition() == topLTarget && robot.botL.getCurrentPosition() == botLTarget){
                 robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -253,8 +252,12 @@ public class SwerveCode extends OpMode{
 
                 robot.botL.setPower(0);
                 robot.topL.setPower(0);
-
+                STOP_RESET_L = true;
+            } else if (!STOP_RESET_L){
+                robot.botL.setPower(0.3);
+                robot.topL.setPower(0.3);
             }
+
             if (robot.topR.getCurrentPosition() == topRTarget && robot.botR.getCurrentPosition() == botRTarget){
                 robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -264,8 +267,11 @@ public class SwerveCode extends OpMode{
 
                 robot.botR.setPower(0);
                 robot.topR.setPower(0);
+                STOP_RESET_R = true;
+            } else if (!STOP_RESET_R){
+                robot.botR.setPower(0.3);
+                robot.topR.setPower(0.3);
             }
-
         }
 
         //make sure to reset the encoder position afterwards without messing stuff up like before.
