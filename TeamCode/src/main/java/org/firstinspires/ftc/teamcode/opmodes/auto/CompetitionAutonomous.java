@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 public class CompetitionAutonomous extends BaseCompetitionAutonomous {
 
     public static final int POLE_WIDTH = 45;
-    public static final int CONE_WIDTH = 100;
+    public static final int CONE_WIDTH = 150;
 
     // List of all states the robot could be in
     private enum State {
@@ -73,7 +73,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                     newState(State.ALIGN_WITH_POLE);                }
                 break;
             case ALIGN_WITH_POLE:
-                if (align(PixyCam.YELLOW, POLE_WIDTH, false)){
+                if (align(PixyCam.YELLOW, POLE_WIDTH)){
                     newState(State.PLACE_CONE);
                 }
                 break;
@@ -88,7 +88,7 @@ public class CompetitionAutonomous extends BaseCompetitionAutonomous {
                 };
                 break;
             case ALIGN_WITH_CONE:
-                if (align(PixyCam.BLUE, CONE_WIDTH, true)) {
+                if (align(PixyCam.BLUE, CONE_WIDTH)) {
                     newState(State.END_STATE);
                 }
                 break;
