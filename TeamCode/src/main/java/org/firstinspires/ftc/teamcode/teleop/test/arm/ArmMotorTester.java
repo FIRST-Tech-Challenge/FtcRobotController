@@ -110,11 +110,11 @@ public class ArmMotorTester extends OpMode{
     }
 
     void setArmPower(){
-        if(x.getState() == Button.State.TAP){
+        if(x.getState() == Button.State.HELD){
             setTargetPositive();
-        } else if (y.getState() == Button.State.TAP){
+        } else if (y.getState() == Button.State.HELD){
             setTargetNegative();
-        } else if (x.getState() == Button.State.DOUBLE_TAP){
+        } else if (x.getState() == Button.State.TAP){
             robot.armTop.setPower(0);
             robot.armBase.setPower(0);
         }
