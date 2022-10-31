@@ -25,10 +25,10 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 1.0;
+    private final double CLAW_CLOSED_POS = 0.35;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.5;
+    private final double CLAW_OPEN_POS = 0.55;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -80,6 +80,8 @@ public class Claw {
         claw = new RFServo("clawServo", CLAW_SERVO_MAX_TICK);
 
         coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
+
+        CLAW_OPEN.setStatus(true);
     }
 
     public void updateClawStates() {
@@ -87,7 +89,7 @@ public class Claw {
             CLAW_CLOSED.setStatus(true);
         }
         if (CLAW_OPENING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
-            CLAW_OPENING.setStatus(true);
+            CLAW_OPEN.setStatus(true);
         }
     }
 
@@ -121,9 +123,7 @@ public class Claw {
 
             //log to general robot log that the claw has been closed through function closeClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
-                    + ",Claw Closed", true, true);
-            logger.log("/RobotLogs/GeneralRobot", clawServoLastSwitchTime + " " +
-                    CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
+                    + ",Claw Closed", true);
         }
     }
     //open the claw
@@ -142,9 +142,7 @@ public class Claw {
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
-                    + ",Claw Opened", true, true);
-            logger.log("/RobotLogs/GeneralRobot", clawServoLastSwitchTime + " " +
-                    CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
+                    + ",Claw Opened", true);
         }
     }
 
@@ -185,9 +183,6 @@ public class Claw {
 
     public double getPosition() {
         return claw.getPosition();
-    }
-    public double getClawServoLastSwitchTime() {
-        return claw.getLastTime();
     }
 }
 

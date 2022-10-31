@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPENING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
+import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_LOWERING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
+import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_RAISING;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
 
@@ -18,7 +23,7 @@ public class LiftArm {
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
-    public final double LIFT_ARM_SERVO_SWITCH_TIME = 0.2;
+    public final double LIFT_ARM_SERVO_SWITCH_TIME = 0.4;
 
     //States:
     //ARM_INTAKE
@@ -51,6 +56,10 @@ public class LiftArm {
                 }
             }
         }
+
+        public boolean getStatus() {
+            return this.status;
+        }
     }
 
     //constructor
@@ -58,6 +67,15 @@ public class LiftArm {
         //init RFServo
         liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 0.5);
 
+    }
+
+    public void updateLiftArmStates() {
+        if (ARM_LOWERING.status && op.getRuntime() - liftArmServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
+            ARM_INTAKE.setStatus(true);
+        }
+        if (ARM_RAISING.status && op.getRuntime() - liftArmServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
+            ARM_OUTTAKE.setStatus(true);
+        }
     }
 
     public void toggleArmPosition() {
@@ -79,11 +97,11 @@ public class LiftArm {
             liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);
 
             //set state of claw open to true
-            ARM_INTAKE.setStatus(true);
+            ARM_LOWERING.setStatus(true);
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",lowerLiftArmToIntake()"
-                    + ",Lift Arm Lowered to Intake Position", true, true);
+                    + ",Lift Arm Lowered to Intake Position", true);
         }
     }
 
@@ -99,11 +117,11 @@ public class LiftArm {
             liftArmServo.setPositions(LIFT_ARM_OUTTAKE_POS);
 
             //set state of claw open to true
-            ARM_OUTTAKE.setStatus(true);
+            ARM_RAISING.setStatus(true);
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", liftArmServo.getDeviceName() + ",raiseLiftArmToOuttake()"
-                    + ",Lift Arm Raised to Outtake Position", true, true);
+                    + ",Lift Arm Raised to Outtake Position", true);
         }
     }
 

@@ -44,7 +44,8 @@ public class RFDualServo implements Servo {
 
         rfDualServoName = deviceName1;
 
-        logger.createFile("/DualServoLogs/RFDualServo", "sigh");
+        logger.createFile("/DualServoLogs/RFDualServo", "Runtime    Component               " +
+                "Function               Action");
     }
 
     public RFDualServo(Servo.Direction servoDirection, String deviceName1, String deviceName2, double limit) {
@@ -113,11 +114,18 @@ public class RFDualServo implements Servo {
                 if (op.getRuntime() - lasttime > 0.2) {
                     dualServo1.setPosition(position);
                     dualServo2.setPosition(servolimit - position);
+                    logger.log("/DualServoLogs/RFDualServo", rfDualServoName +
+                            ",setPositions(),Setting Positions: " + df.format(position) + " " +
+                            df.format(servolimit - position), true);
                     lasttime = op.getRuntime();
                 }
             }
         }
 
+    }
+
+    public double getLastTime() {
+        return lasttime;
     }
 
 

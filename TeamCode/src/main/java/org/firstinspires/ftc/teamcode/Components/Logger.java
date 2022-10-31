@@ -266,7 +266,6 @@ public class Logger {
         else if (!p_isFormatted && !p_isRegulated && p_isTelemetry) {
             log(fileName, input);
             op.telemetry.addData("Log Telemetry: ", input);
-            op.telemetry.update();
         }
 
         else {

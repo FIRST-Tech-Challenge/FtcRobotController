@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
+import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -85,8 +87,8 @@ public class PwPRobot extends BasicRobot {
 
     public void openClaw(boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, CLAW_OPEN.getStatus())) {
-            claw.openClaw();
             claw.updateClawStates();
+            claw.openClaw();
         }
     }
 
@@ -95,8 +97,8 @@ public class PwPRobot extends BasicRobot {
     }
     public void closeClaw(boolean p_asynchronous) {
         if (queuer.queue(p_asynchronous, CLAW_CLOSED.getStatus())) {
-            claw.closeClaw();
             claw.updateClawStates();
+            claw.closeClaw();
         }
     }
 
@@ -140,10 +142,9 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void lowerLiftArmToIntake(boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
-                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
+        if (queuer.queue(p_asynchronous, ARM_INTAKE.getStatus())) {
 
-            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.updateLiftArmStates();
             liftArm.lowerLiftArmToIntake();
         }
     }
@@ -153,10 +154,9 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void raiseLiftArmToOuttake(boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, op.getRuntime() > liftArm.liftArmServoLastSwitchTime +
-                liftArm.LIFT_ARM_SERVO_SWITCH_TIME)) {
+        if (queuer.queue(p_asynchronous, ARM_OUTTAKE.getStatus())) {
 
-            liftArm.liftArmServoLastSwitchTime = op.getRuntime();
+            liftArm.updateLiftArmStates();
             liftArm.raiseLiftArmToOuttake();
         }
     }
@@ -258,12 +258,14 @@ public class PwPRobot extends BasicRobot {
         if (op.gamepad1.x) {
             claw.openClaw();
         }
-        roadrun.update();
         //will only close when detect cone
         //claw.closeClaw
         if (op.gamepad1.y) {
             claw.closeClaw();
         }
+
+        roadrun.update();
+
         claw.logClawStates();
         claw.updateClawStates();
     }
