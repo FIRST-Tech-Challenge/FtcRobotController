@@ -42,31 +42,14 @@ public class PixyCamCenter extends BaseOpMode {
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
         int rotationOffset = pixycam.headingOffset(PixyCam.BLUE);
-        int distanceOffset = pixycam.distanceOffset(20);
+        int distanceOffset = pixycam.distanceOffset(100);
         telemetry.addData("rotationOffset", rotationOffset);
         telemetry.addData("block", s);
         telemetry.addData("coords", coords);
+        telemetry.addData("avg", pixycam.getAvgOffset(100));
         Log.d("rotationOffset", rotationOffset + " ");
+        Log.d("distanceOfset", pixycam.getAvgOffset(100) + " ");
         telemetry.update();
-        if(rotationOffset > 20){
-            driveSystem.turn(60, 0.5);
-        }
-
-        if(rotationOffset < -20){
-            driveSystem.turn(-60, 0.5);
-        }
-        if(rotationOffset < 20 || rotationOffset > -20) {
-            driveSystem.setMotorPower(0);
-        }
-        if(distanceOffset > 5){
-            driveSystem.driveToPosition(20, DriveSystem.Direction.BACKWARD, 0.3);
-        }
-        else if(distanceOffset < 5){
-            driveSystem.driveToPosition(20, DriveSystem.Direction.FORWARD, 0.4);
-        }
-        else{
-            driveSystem.setMotorPower(0);
-        }
 
     }
 

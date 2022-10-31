@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
 import com.qualcomm.robotcore.util.TypeConversion;
 
+import java.util.ArrayList;
+import java.util.TreeSet;
+
 @I2cSensor(name = "PixyCam", description = "PixyCam", xmlTag = "PixyCam")
 public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
 {
@@ -13,6 +16,8 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     public static final int YELLOW = 3;
     public static final int BLUE = 1;
     public static final int RED = 2;
+    public ArrayList<Integer> arr;
+    public int avg;
 
     /**
      * Block describes the signature, location, and size of a detected block.
@@ -79,6 +84,7 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
         super.registerArmingStateCallback(false);
         this.deviceClient.setI2cAddress(I2cAddr.create7bit(1));
         this.deviceClient.engage();
+        arr = new ArrayList<>();
     }
 
     private I2cDeviceSynch.ReadWindow NewLegoProtocolSignatureQueryReadWindow(int signature)
@@ -127,6 +133,26 @@ public class PixyCam extends I2cDeviceSynchDevice<I2cDeviceSynch>
     public int distanceOffset(int desiredWidth){
         return desiredWidth - GetBiggestBlock().width; //positive means move closer
 
+    }
+
+    public int getAvgOffset(int desiredWidth){
+        avg = 0;
+        int ret = 0;
+        int count = 0;
+        int width = GetBiggestBlock().width;
+        arr.add(width);
+        avg += width;
+        if(arr.size() == 50){
+            avg /= 50;
+            for(int i: arr){
+                if(i > avg){
+                    count++;
+                    ret += i;
+                }
+            }
+            return desiredWidth - (ret/count);
+        }
+        return -1;
     }
 
 

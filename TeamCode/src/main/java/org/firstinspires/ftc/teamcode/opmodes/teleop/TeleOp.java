@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
 
@@ -33,8 +34,7 @@ public class TeleOp extends BaseOpMode {
      * Drives the motors based on the joystick sticks
      * Left trigger engages slow-drive
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    float x;
+
     public void loop() {
         float rx = (float) Math.pow(gamepad1.right_stick_x, 3);
         float lx = (float) Math.pow(gamepad1.left_stick_x, 3);
@@ -65,7 +65,6 @@ public class TeleOp extends BaseOpMode {
         if (gamepad1.x) {
             // Move Bar to Center Position
         }
-
 
         if (gamepad1.dpad_down) {
             // Move Bar Down Based on Time Pressed
