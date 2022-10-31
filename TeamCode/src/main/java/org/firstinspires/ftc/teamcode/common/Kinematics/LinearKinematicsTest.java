@@ -18,7 +18,7 @@ public class LinearKinematicsTest extends Kinematics {
 //    private double prevJoystickL = 0.0;
 //    private int joystickCount = 0;
 
-    private boolean firstMovement = false; //true when robot is stopped.  False while it is moving.
+    private boolean firstSnap = false; //true when robot is stopped.  False while it is moving.
 
     public enum dType{
         LINEAR,
@@ -55,6 +55,9 @@ public class LinearKinematicsTest extends Kinematics {
                 // 7 / 8 items (missing translationPowerPercentage, but we don't set that here)
                 break;
             case SNAP:
+                if (firstSnap){
+                    firstSnap = false;
+                }
                 getRotTargetClicks();
                 //rotate modules until target is hit
                 rightThrottle = 1;
@@ -69,31 +72,39 @@ public class LinearKinematicsTest extends Kinematics {
                 break;
 
             case STOP: //this is NOT reset
-                rightThrottle = 1;
-                leftThrottle = 1;
-                spinPower = 0;
-                leftRotatePower = 0;
-                rightRotatePower = 0;
-                translationPowerPercentage = 0;
-                rotationPowerPercentage = 0;
-                rightRotClicks = 0;
-                leftRotClicks = 0;
-                spinClicks = 0;
-
-                isAccelerateCycle = false;
-                // 6/8 items (missing switchMotors for translation, but we should not change that)
+                stop();
                 break;
 
             default:
                 type = DriveType.STOP;
                 break;
         }
-
-        firstMovement = noMovementRequests();
     }
 
     public boolean shouldSnap(){
         return (Math.abs(leftCurrentW - leftOptimizedTargetW) >= constants.degreeTOLERANCE || Math.abs(rightCurrentW - rightOptimizedTargetW) >= constants.degreeTOLERANCE);
+    }
+
+    public void stop(){
+        rightThrottle = 1;
+        leftThrottle = 1;
+
+        spinPower = 0;
+        leftRotatePower = 0;
+        rightRotatePower = 0;
+
+        translationPowerPercentage = 0;
+        rotationPowerPercentage = 0;
+
+        rightRotClicks = 0;
+        leftRotClicks = 0;
+        spinClicks = 0;
+
+        leftTurnAmountW = 0;
+        rightTurnAmountW = 0;
+
+        isAccelerateCycle = false;
+        // 6/8 items (missing switchMotors for translation, but we should not change that)
     }
 
     public void setPos(){

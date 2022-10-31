@@ -132,8 +132,7 @@ public class SwerveCode extends OpMode{
 
         if (x.getState() == Button.State.TAP){
             driveState = State.RESET;
-            STOP_RESET_L = false;
-            STOP_RESET_R = false;
+
         } else if (y.getState() == Button.State.TAP){
             driveState = State.DRIVE;
         }
@@ -157,6 +156,8 @@ public class SwerveCode extends OpMode{
         posSystem.calculatePos();
         if (noMovementRequests()){
             isAccelerateCycle = false;
+            STOP_RESET_L = false;
+            STOP_RESET_R = false;
         }
 
         int posBotL = robot.botL.getCurrentPosition();
