@@ -37,7 +37,7 @@ public class ArmSystem {
             return !beamBreaker.getState();
         }
 
-        public boolean intake(){
+        public static boolean intake(){
             if (state != State.INTAKING) {
                 state = State.INTAKING;
                 coneTake.setDirection(DcMotor.Direction.REVERSE);
@@ -52,7 +52,7 @@ public class ArmSystem {
             return state == State.IDLE;
         }
 
-        public boolean outtake(){
+        public static boolean outtake(){
             if (state != State.OUTTAKING) {
                 state = State.OUTTAKING;
                 coneTake.setDirection(DcMotorSimple.Direction.FORWARD);

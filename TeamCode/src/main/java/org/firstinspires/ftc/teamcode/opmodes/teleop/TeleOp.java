@@ -62,11 +62,11 @@ public class TeleOp extends BaseOpMode {
         driveSystem.drive(rx, lx, ly);
 
         if (gamepad1.left_trigger > 0) {
-            //ArmSystem.Intake.intake();
+            ArmSystem.Intake.intake();
         }
 
         if (gamepad1.right_trigger > 0) {
-            //ArmSystem.Intake.outtake();
+            ArmSystem.Intake.outtake();
         }
 
         if (gamepad1.a) {
