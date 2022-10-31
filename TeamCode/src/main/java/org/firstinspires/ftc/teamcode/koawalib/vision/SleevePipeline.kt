@@ -65,7 +65,7 @@ class SleevePipeline : OpenCvPipeline() {
         magPercent = Core.countNonZero(magMat).toDouble()
 
         // Calculates the highest amount of pixels being covered on each side
-        val maxPercent = Math.max(yelPercent, Math.max(cyaPercent, magPercent))
+        val maxPercent = yelPercent.coerceAtLeast(cyaPercent.coerceAtLeast(magPercent))
 
         // Checks all percentages, will highlight bounding box in camera preview
         // based on what color is being detected

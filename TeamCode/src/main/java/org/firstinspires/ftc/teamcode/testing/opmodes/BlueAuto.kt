@@ -29,10 +29,10 @@ class BlueAuto : KOpMode() {
 
     override fun mLoop() {
         Logger.addTelemetryData("ROTATION: ", pipeline.position)
-        when (pipeline.position) {
-            SleevePipeline.ParkingPosition.LEFT -> TODO()
-            SleevePipeline.ParkingPosition.CENTER -> TODO()
-            SleevePipeline.ParkingPosition.RIGHT -> TODO()
-        }
+//        when (pipeline.position) {
+//            SleevePipeline.ParkingPosition.LEFT -> TODO()
+//            SleevePipeline.ParkingPosition.CENTER -> TODO()
+//            SleevePipeline.ParkingPosition.RIGHT -> TODO()
+//        }
     }
 }

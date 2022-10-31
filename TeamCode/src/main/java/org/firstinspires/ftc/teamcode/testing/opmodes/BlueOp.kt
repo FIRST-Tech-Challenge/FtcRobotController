@@ -9,31 +9,23 @@ import org.firstinspires.ftc.teamcode.testing.Robot
 import com.acmerobotics.dashboard.config.Config
 import com.asiankoala.koawalib.command.commands.*
 import com.asiankoala.koawalib.logger.LoggerConfig
+import org.firstinspires.ftc.teamcode.koawalib.commands.subsystems.DriveHackCmd
 
 @TeleOp
 @Config
 class BlueOp : KOpMode(photonEnabled = false) {
-    private val startPose = Pose(-36.0, -60.0, 90.0.radians)
+    private val startPose = Pose(-48.0, -48.0, 90.0.radians)
     lateinit var robot : Robot
 
     override fun mInit() {
         robot = Robot(startPose)
-        robot.drive.defaultCommand = MecanumCmd(
-                robot.drive,
-                driver.leftStick,
-                driver.rightStick,
-                0.9,
-                0.9,
-                0.9,
-                1.0,
-                1.0,
-                1.0,
-//                alliance,
-//                true,
-//                true,
-//                { robot.drive.pose.heading },
-//                60.0.radians
-            )
+        robot.drive.defaultCommand = DriveHackCmd(
+            robot.drive,
+            driver.leftStick,
+            driver.rightStick,
+            driver.leftTrigger::isToggled,
+            driver.a::isToggled
+        )
 
         Logger.config = LoggerConfig.DASHBOARD_CONFIG
 
@@ -63,5 +55,7 @@ class BlueOp : KOpMode(photonEnabled = false) {
 //        Logger.addTelemetryData("is at target", robot.arm.motor.isAtTarget())
 //        Logger.addVar("target vel", robot.arm.motor.setpoint.v)
 //        Logger.addVar("curr vel", robot.arm.motor.currState.v)
+        Logger.addTelemetryData("toggled space", driver.leftTrigger.isToggled)
+        Logger.addTelemetryData("toggled aimbot", driver.a.isToggled)
     }
 }

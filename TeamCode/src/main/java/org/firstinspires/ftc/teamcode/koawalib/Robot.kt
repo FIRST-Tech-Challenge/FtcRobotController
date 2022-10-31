@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.koawalib.subsystems.Arm
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Claw
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lift
 import org.firstinspires.ftc.teamcode.koawalib.subsystems.Lights
+import org.firstinspires.ftc.teamcode.koawalib.vision.SleevePipeline
 import org.firstinspires.ftc.teamcode.koawalib.vision.Webcam
 
 class Robot(startPose: Pose) {
@@ -26,10 +27,4 @@ class Robot(startPose: Pose) {
     val lift = Lift(hardware.liftMotor)
     val lightsDevice = Lights(hardware.lights)
     val webcam = Webcam("Webcam", SleevePipeline())
-    val driveHack = DriveHack(
-        drive::pose,
-        3.0,
-        2.0,
-        60.0.radians
-    )
 }
