@@ -35,6 +35,8 @@ public class moveStraight extends OpMode{
     Accelerator accelerator = new Accelerator();
 
     int targetClicks;
+    int errorCorrectionClicksL;
+    int errorCorrectionClicksR;
     double power;
 
     Button x = new Button();
@@ -128,12 +130,15 @@ public class moveStraight extends OpMode{
         double right_stick_x = gamepad1.right_stick_x; //returns a value between [-1, 1]
         double right_stick_y = -gamepad1.right_stick_y; //returns a value between [-1, 1]
 
+        errorCorrectionClicksL = correctError()[0];
+        errorCorrectionClicksR = correctError()[1];
+
         targetClicks = (int) left_stick_y * 100;
 
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks);
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks);
-        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks);
-        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() + targetClicks);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks + errorCorrectionClicksL);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - targetClicks + errorCorrectionClicksL);
+        robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks + errorCorrectionClicksR);
+        robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - targetClicks + errorCorrectionClicksR);
 
         robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -153,11 +158,9 @@ public class moveStraight extends OpMode{
         if (power == 0) {
             robot.setMotorPower(0);
         }
-
-        getError();
     }
 
-    public void getError(){
+    public int[] correctError(){
         int topR = robot.topR.getCurrentPosition();
         int botR = robot.botR.getCurrentPosition();
         int topL = robot.topL.getCurrentPosition();
@@ -171,6 +174,10 @@ public class moveStraight extends OpMode{
 
         telemetry.addData("Right error", 0-rotateR);
         telemetry.addData("Left error", 0-rotateL);
+
+        int[] error = {-rotateL, -rotateL};
+
+        return error;
     }
 
     public boolean noMovementRequests(){
