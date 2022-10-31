@@ -60,7 +60,7 @@ public class LinearKinematicsTestJR extends Kinematics{
                 rightRotatePower = 0;
                 translationPowerPercentage = 0;
                 rotationPowerPercentage = 0;
-                
+
                 rightRotClicks = 0;
                 leftRotClicks = 0;
                 spinClicks = 0;
@@ -177,7 +177,7 @@ public class LinearKinematicsTestJR extends Kinematics{
             accelerationTimer.reset();
             isAccelerateCycle = true;
         }
-        double accelerationFactor = (Math.tanh(accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
+        double accelerationFactor = (Math.tanh(0.5 * accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;

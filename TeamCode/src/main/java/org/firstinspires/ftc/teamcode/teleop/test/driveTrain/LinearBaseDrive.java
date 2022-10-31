@@ -110,7 +110,7 @@ public class LinearBaseDrive extends OpMode{
 
         if (tType == telemetryType.TARGETS){
             telemetry.addData("X gamepad", gamepad1.left_stick_x);
-            telemetry.addData("Y gamepad", gamepad1.left_stick_y);
+            telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
             telemetry.addData("Left W", posData[2]);
             telemetry.addData("Right W", posData[3]);
             telemetry.addData("Right TargetW", kinematics.getRTargetW());

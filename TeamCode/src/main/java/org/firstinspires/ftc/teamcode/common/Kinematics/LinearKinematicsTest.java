@@ -98,7 +98,7 @@ public class LinearKinematicsTest extends Kinematics {
 
     public void setPos(){
         //setting targets
-//        trackJoystickL();
+        //trackJoystickL();
         double[] leftWheelTargets = wheelOptimization(lx, ly, leftCurrentW);
         double[] rightWheelTargets =  wheelOptimization(lx, ly, rightCurrentW);
         double[] robotTargets = robotHeaderOptimization(rx, ry);
@@ -196,7 +196,7 @@ public class LinearKinematicsTest extends Kinematics {
             accelerationTimer.reset();
             isAccelerateCycle = true;
         }
-        double accelerationFactor = (Math.tanh(accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
+        double accelerationFactor = (Math.tanh(0.5 * accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;
