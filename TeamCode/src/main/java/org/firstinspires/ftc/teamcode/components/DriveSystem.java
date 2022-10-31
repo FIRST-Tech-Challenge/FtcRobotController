@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
+
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -50,7 +50,7 @@ public class DriveSystem {
     /**
      * Handles the data for the abstract creation of a drive system with four wheels
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public DriveSystem(EnumMap<MotorNames, DcMotor> motors, BNO055IMU imu) {
         this.motors = motors;
         mTargetTicks = 0;
@@ -61,7 +61,7 @@ public class DriveSystem {
     /**
      * Handles the data for the abstract creation of a drive system with four wheels without IMU
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public DriveSystem(EnumMap<MotorNames, DcMotor> motors) {
         this.motors = motors;
         mTargetTicks = 0;
@@ -70,7 +70,7 @@ public class DriveSystem {
 
     /** Initializes motors
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public void initMotors() {
         motors.forEach((name, motor) -> {
             // Reset encoders
