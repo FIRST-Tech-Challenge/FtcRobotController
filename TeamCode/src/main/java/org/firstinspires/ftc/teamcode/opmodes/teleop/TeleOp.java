@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.components.ArmSystem;
 import org.firstinspires.ftc.teamcode.components.DriveSystem;
+import org.firstinspires.ftc.teamcode.opmodes.auto.CompetitionAutonomous;
 import org.firstinspires.ftc.teamcode.opmodes.base.BaseOpMode;
 
 import java.util.EnumMap;
@@ -17,6 +18,24 @@ import java.util.EnumMap;
 public class TeleOp extends BaseOpMode {
 
     private DriveSystem driveSystem;
+
+
+    public void placeCone(int level) {
+        // Levels:
+        // 1 = Low Goal
+        // 2 = Mid Goal
+        // 3 = High Goal
+
+        level --; // Subtract 1 from level to make it usable in an array
+
+        double[] liftLevels = {1 /* Low Goal */, 2 /* Mid Goal */, 3 /* High Goal */};
+
+        // Lift 4Bar variable amount while aligning then drop disk
+        align(pixycam.YELLOW, CompetitionAutonomous.POLE_WIDTH);
+        //ArmSystem.fourbar.lift(liftLevels[level];
+        //ArmSystem.outtake();
+    }
+
 
     /**
      * Initializes a pushbot setup
@@ -43,11 +62,11 @@ public class TeleOp extends BaseOpMode {
         driveSystem.drive(rx, lx, ly);
 
         if (gamepad1.left_trigger > 0) {
-            ArmSystem.Intake.intake();
+            //ArmSystem.Intake.intake();
         }
 
         if (gamepad1.right_trigger > 0) {
-            ArmSystem.Intake.outtake();
+            //ArmSystem.Intake.outtake();
         }
 
         if (gamepad1.a) {
