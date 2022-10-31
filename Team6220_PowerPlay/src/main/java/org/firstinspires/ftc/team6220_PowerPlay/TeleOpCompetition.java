@@ -2,27 +2,30 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "TeleOpTest", group = "Test")
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-public class TeleOpCompetition extends BaseTeleOp{
+@TeleOp(name = "TeleOpCompetition", group = "Competition")
+public class TeleOpCompetition extends BaseTeleOp {
 
-    @Override public void runOpMode() {
-        initHardware();
+    @Override
+    public void runOpMode() {
+        initialize();
+
+        telemetry.addLine("START A FEW SECONDS AFTER INITIALIZING TO PREVENT START ROTATING");
+        telemetry.update();
+
         waitForStart();
 
+        // get angle after startup to prevent jitter on startup
+        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        openGrabber(true);
+
         while (opModeIsActive()) {
-
-            driveRobot(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-
-            /* telemetry.addData("motFL", "%.1f ", motorFL.getCurrentPosition());
-            telemetry.addData("motFR", "%.1f ", motorFR.getCurrentPosition());
-            telemetry.addData("motBL", "%.1f ", motorBL.getCurrentPosition());
-            telemetry.addData("motBR", "%.1f ", motorBR.getCurrentPosition());
-            telemetry.update();
-             */
-
+            teleOpDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
             idle();
-
         }
     }
 }
