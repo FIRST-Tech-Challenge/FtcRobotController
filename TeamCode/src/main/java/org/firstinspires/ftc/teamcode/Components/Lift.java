@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -11,7 +13,8 @@ import java.util.ArrayList;
 
 
 public class Lift {
-    private final int MAX_LIFT_TICKS = 2000;
+    private final int MAX_LIFT_TICKS = 1800;
+    private final double LIFT_GRAVITY_CONSTANT = 0.06;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
 //        LIFT_MED_JUNCTION(false),
@@ -105,7 +108,7 @@ public class Lift {
         logger.createFile("LiftLog", "Time Component Function Action");
         coefficients.add(dfco1);
         coefficients.add(dfco2);
-        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.FORWARD, DcMotorEx.RunMode.RUN_USING_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
+        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, true, coefficients, MAX_LIFT_TICKS, 0);
         liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         liftMotor.setTICK_BOUNDARY_PADDING(10);
         liftMotor.setTICK_STOP_PADDING(10);
@@ -188,18 +191,18 @@ public class Lift {
         updateLiftStates();
     }
     public void setLiftPower(double power){
-        //liftTarget=liftMotor.getCurrentPosition();
-        //if(liftTarget<MAX_LIFT_TICKS&&power>0) {
-        //    liftMotor.setPower(power);
-        //}
-        //else if(liftTarget>10&&power<0) {
-            liftMotor.setPower(power);
-        //}
-        //else{
-        //    liftMotor.setPower(0);
-        //}
-        //logger.log("LiftLog", "Claw motor power to " + liftMotor.)
+        liftTarget=liftMotor.getCurrentPosition();
+        if(liftTarget<MAX_LIFT_TICKS&&power>0) {
+            liftMotor.setPower(power + LIFT_GRAVITY_CONSTANT);
+        }
+        else if(liftTarget>10&&power<0) {
+            liftMotor.setPower(power + LIFT_GRAVITY_CONSTANT);
+        }
+        else{
+            liftMotor.setPower(LIFT_GRAVITY_CONSTANT);
+        }
         logger.log("LiftLog", "Lift," + "setPower()," + "Lift power set to " + power, true, true, true);
+        op.telemetry.addData("ticks", liftMotor.getCurrentPosition());
     }
     public void setLiftVelocity(double p_velocity){
         //liftTarget=liftMotor.getCurrentPosition();

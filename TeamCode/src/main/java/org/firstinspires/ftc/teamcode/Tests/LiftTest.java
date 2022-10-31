@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 @Config
 @TeleOp(name = "LiftTest")
 
-public class    LiftTest extends LinearOpMode {
+public class LiftTest extends LinearOpMode {
     public void runOpMode(){
         PwPRobot robot = new PwPRobot(this, true);
         RFGamepad liftGp = new RFGamepad(this);
@@ -73,7 +74,7 @@ public class    LiftTest extends LinearOpMode {
                 robot.liftToPosition(2000);
             }
             if(gamepad1.right_trigger!=0||gamepad1.left_trigger!=0){
-                robot.setLiftVelocity((gamepad1.right_trigger-gamepad1.left_trigger)*50);
+                robot.setLiftPower((gamepad1.right_trigger-gamepad1.left_trigger)*0.4);
             }else{
                 robot.setLiftPower(0);
             }
