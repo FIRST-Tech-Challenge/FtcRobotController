@@ -90,17 +90,17 @@ public class Robot extends MecanumDrive {
 
     public Robot(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-/**
+
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
-        //LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-**/
+
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -199,7 +199,7 @@ public class Robot extends MecanumDrive {
         if (open) {
             intake.setPosition(0);
         } else {
-            intake.setPosition(0.4);
+            intake.setPosition(0.6);
         }
     }
 

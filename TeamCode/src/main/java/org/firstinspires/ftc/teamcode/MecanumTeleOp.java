@@ -85,39 +85,27 @@ public class MecanumTeleOp extends LinearOpMode {
                 robot.claw(false);
             }
 
-
-            if (gamepad1.right_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() < 650) {
+            robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            double currentPos = robot.motorLiftRight.getCurrentPosition();
+            robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            if (gamepad1.right_trigger>0.3 && currentPos < 650) {
                 robot.motorLiftRight.setPower(0.55);
                 robot.motorLiftLeft.setPower(0.55);
-            } else if (gamepad1.left_trigger>0.3 && robot.motorLiftRight.getCurrentPosition() > 0) {
+            } else if (gamepad1.left_trigger>0.3 && currentPos > 0) {
                 telemetry.addData("down",gamepad1.left_trigger);
-                robot.motorLiftRight.setPower(-0.33);
-                robot.motorLiftLeft.setPower(-0.33);
+                robot.motorLiftRight.setPower(-0.2);
+                robot.motorLiftLeft.setPower(-0.2);
             } else {
                 // hold if pos is within range, otherwise set to 0 - but will this cause a situation where you can never move the lift?
-                if(robot.motorLiftRight.getCurrentPosition()>10 && robot.motorLiftRight.getCurrentPosition()<650){
-                    robot.motorLiftRight.setPower(0.05);
-                    robot.motorLiftLeft.setPower(0.05);
+                if(currentPos>10 && currentPos<650){
+                    robot.motorLiftRight.setPower(0.12);
+                    robot.motorLiftLeft.setPower(0.12);
                 }
                 else{
                     robot.motorLiftRight.setPower(0);
                     robot.motorLiftLeft.setPower(0);
                 }
 
-
-                /*
-                * robot.motorLiftRight.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
-                robot.motorLiftLeft.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
-
-                 * */
-
-
-
-//
-//                if(robot.motorLiftRight.getCurrentPosition()>50){
-//                  robot.motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                  robot.motorLiftRight.setTargetPosition(robot.motorLiftRight.getCurrentPosition());
-//                }
             }
 
 
