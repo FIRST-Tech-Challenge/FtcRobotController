@@ -38,6 +38,14 @@ public class gearRotTestLopmode extends LinearOpMode {
         b.update(gamepad1.b);
     }
 
+    void UpdateTelemetry(){
+        telemetry.addData("X gamepad", gamepad1.left_stick_x);
+        telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
+
+        telemetry.addData("Type", dtype);
+        telemetry.update();
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -50,6 +58,7 @@ public class gearRotTestLopmode extends LinearOpMode {
             } else if (a.getState() == Button.State.TAP){
                 dtype = gearRotTest.DriveType.BOTH;
             }
+            UpdateTelemetry();
         }
 
         waitForStart();
