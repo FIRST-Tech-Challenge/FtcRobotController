@@ -20,13 +20,13 @@ public class ConeImageProcessor {
 	Double  meanVal =new Double(0);
 
 	//Blue Range for the blue cone
-	Scalar blueConeL = new Scalar(105, 120, 00 );
+	Scalar blueConeL = new Scalar(105, 100, 00 );
 	Scalar blueConeH = new Scalar(119, 255, 255 );
 
 	//Red Range for red cone
-	Scalar redConeL1 = new Scalar(0, 120, 00 );
+	Scalar redConeL1 = new Scalar(0, 100, 00 );
 	Scalar redConeH1 = new Scalar(15, 255, 255 );
-	Scalar redConeL2 = new Scalar(165, 120, 00 );
+	Scalar redConeL2 = new Scalar(165, 100, 00 );
 	Scalar redConeH2 = new Scalar(179, 255, 255 );
 
 	//Range for background, mat is grey
@@ -34,12 +34,12 @@ public class ConeImageProcessor {
 	Scalar backgroundH = new Scalar(255, 120, 255 );
 
     //Range for yellow pol
-	Scalar yellowPoleL = new Scalar(15, 150, 0 );
+	Scalar yellowPoleL = new Scalar(15, 100, 0 );
 	Scalar yellowPoleH = new Scalar(25, 255, 255 );
 
 	//Range for too dark part of pic
 	Scalar darkL = new Scalar(0, 0, 0 );
-	Scalar darkH = new Scalar(179, 255, 80 );
+	Scalar darkH = new Scalar(179, 255, 50 );
 
 	public File getFileProcessing() {
 		return fileProcessing;
