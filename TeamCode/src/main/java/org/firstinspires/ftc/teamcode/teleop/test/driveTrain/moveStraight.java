@@ -78,10 +78,10 @@ public class moveStraight extends OpMode{
 
     void UpdatePlayer1(){
         if (x.getState() == Button.State.TAP){
+            reset.reset(true);
+        } else {
             DriveTrainMove();
             reset.reset(false);
-        } else if (y.getState() == Button.State.TAP){
-            reset.reset(true);
         }
 
         if (a.getState() == Button.State.TAP){

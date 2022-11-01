@@ -30,10 +30,14 @@ public class Reset {
         int rotateL = (robot.topL.getCurrentPosition() + robot.botL.getCurrentPosition()) / 2; //total rotation of left module
         int rotateR = (robot.topR.getCurrentPosition() + robot.botR.getCurrentPosition()) / 2; //total rotation of right module
 
-        int topLTarget = (int)((robot.topL.getCurrentPosition() - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-        int botLTarget = (int)((robot.botL.getCurrentPosition() - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-        int topRTarget = (int)((robot.topR.getCurrentPosition() - rotateR) % constants.CLICKS_PER_PURPLE_REV);
-        int botRTarget = (int)((robot.botR.getCurrentPosition() - rotateR) % constants.CLICKS_PER_PURPLE_REV);
+        rotateL %= constants.CLICKS_PER_PURPLE_REV;
+        rotateR %= constants.CLICKS_PER_PURPLE_REV;
+
+        int topLTarget = (int)((robot.topL.getCurrentPosition() - rotateL));
+        int botLTarget = (int)((robot.botL.getCurrentPosition() - rotateL));
+        int topRTarget = (int)((robot.topR.getCurrentPosition() - rotateR));
+        int botRTarget = (int)((robot.botR.getCurrentPosition() - rotateR));
+
 
         if (!isResetCycle){
             isResetCycle = true;
