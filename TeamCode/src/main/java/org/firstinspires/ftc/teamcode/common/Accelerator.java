@@ -21,7 +21,7 @@ public class Accelerator {
             isAccelerateCycle = true;
         }
 
-        double accelerationFactor = (Math.tanh(0.5 * accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
+        double accelerationFactor = (Math.tanh(0.5 * accelerationTimer.seconds() - 1.5) / 2.5) + 0.6;
         power *= accelerationFactor;
 
         if (power > 1) power = 1;
