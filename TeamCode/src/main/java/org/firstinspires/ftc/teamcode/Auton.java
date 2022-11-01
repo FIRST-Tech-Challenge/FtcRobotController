@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -33,13 +35,6 @@ public class Auton {
     public void runAutonParkOnly(SampleMecanumDrive drive, HardwareMap hardwareMap)
     {
         Servo intake = hardwareMap.get(Servo.class, "intake");
-//
-//
-//        int angle = -70;
-//        if(direction)
-//        {
-//            angle = 70;
-//        }
 
         drive.setMotorPowers(0.1,0.1,0.1,0.1);
         intake.setPosition(0.4);
@@ -64,29 +59,55 @@ public class Auton {
 
     }
 
-    public void runAutonWithCone(Robot drive) {
-        int angle = -45;
-        if (direction) { angle = 45; }
+    public void runAutonWithCone(SampleMecanumDrive drive, HardwareMap hardwareMap)
+    {
+        Servo intake = hardwareMap.get(Servo.class, "intake");
+        DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
+        DcMotor motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
 
+        int angle = -70;
+        if(direction)
+        {
+            angle = 70;
+        }
 
         drive.setMotorPowers(0.1,0.1,0.1,0.1);
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
+        intake.setPosition(0.6);
+        TrajectorySequence trajSeq1 = drive.trajectorySequenceBuilder(new Pose2d())
                 .forward(25)
+                .turn(angle)
                 .build();
+        drive.followTrajectorySequence(trajSeq1);
 
-        drive.followTrajectorySequence(trajSeq);
+        // lift go up
+
+        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(13)
+                .build();
+        drive.followTrajectorySequence(trajSeq2);
+
+        intake.setPosition(0);
+
+        // lift go down
+
+        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(new Pose2d())
+                .back(13)
+                .turn(-angle)
+                .build();
+        drive.followTrajectorySequence(trajSeq2);
 
         if (parkingZone == 1) { // red
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeLeft(24)
+                    .strafeLeft(36)
                     .build();
             drive.followTrajectory(park);
         } else if (parkingZone == 3) { // blue
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(24)
+                    .strafeRight(36)
                     .build();
             drive.followTrajectory(park);
         }
+
     }
 
     public void linSlidesLift() {
