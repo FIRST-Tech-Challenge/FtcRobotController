@@ -11,12 +11,14 @@ public class ArmSystem {
     public enum ArmLevel {
         LOW,
         MEDIUM,
-        HIGH
+        HIGH,
+        FLOOR
     }
     //fill in constants
-    private final int POSITION_LOW = 0;
-    private final int POSITION_MEDIUM = 0;
-    private final int POSITION_HIGH = 0;
+    private final int POSITION_LOW = 500;
+    private final int POSITION_MEDIUM = 800;
+    private final int POSITION_HIGH = 1100;
+    private final int FLOORCONE = 0;
     private final DcMotor armLeft; //arm left is motor1
     private final DcMotor armRight;
     private Intake intake;
@@ -51,6 +53,9 @@ public class ArmSystem {
                 break;
             case LOW:
                 targetPosition = POSITION_LOW;
+                break;
+            case FLOOR:
+                targetPosition = FLOORCONE;
         }
         armLeft.setTargetPosition(targetPosition);
         armLeft.setPower(power);

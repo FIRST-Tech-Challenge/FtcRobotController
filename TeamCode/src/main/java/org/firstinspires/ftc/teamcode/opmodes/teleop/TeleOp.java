@@ -87,7 +87,8 @@ public class TeleOp extends BaseOpMode {
         }
 
         if (gamepad1.x) {
-            // Auto-Align
+            //
+            armSystem.driveToLevel(ArmSystem.ArmLevel.FLOOR, 0.2);
         }
 
         if (gamepad1.dpad_down) {
