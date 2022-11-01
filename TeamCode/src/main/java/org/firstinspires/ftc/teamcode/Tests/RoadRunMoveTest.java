@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "RoadRunMoveTest")
@@ -38,14 +37,10 @@ public class RoadRunMoveTest extends LinearOpMode {
 //                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
 //                .build();
         TrajectorySequence trajSeq2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
-                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(800,25,51.564/5),
-                        SampleMecanumDrive.getAccelerationConstraint(5))
-                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(800,25,51.564/5),
-                        SampleMecanumDrive.getAccelerationConstraint(5))
-                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(800,25,51.564/5),
-                        SampleMecanumDrive.getAccelerationConstraint(5))
-                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(800,25,51.564/5),
-                        SampleMecanumDrive.getAccelerationConstraint(5))
+                .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(270)))
+                .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
                 .build();
 
         while (opModeIsActive()) {

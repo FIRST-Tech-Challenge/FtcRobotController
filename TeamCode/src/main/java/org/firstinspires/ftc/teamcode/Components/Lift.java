@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -13,8 +12,8 @@ import java.util.ArrayList;
 
 
 public class Lift {
-    private final int MAX_LIFT_TICKS = 1800;
-    private final double LIFT_GRAVITY_CONSTANT = 0.06;
+    private final int MAX_LIFT_TICKS = 1740;
+    private final double LIFT_GRAVITY_CONSTANT = 0.07;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
 //        LIFT_MED_JUNCTION(false),

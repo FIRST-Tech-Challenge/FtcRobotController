@@ -208,7 +208,7 @@ public class PwPRobot extends BasicRobot {
 
         //manual lift up/down
         if (op.gamepad2.right_trigger != 0 || op.gamepad2.left_trigger != 0) {
-            lift.setLiftPower(op.gamepad2.right_trigger - op.gamepad2.left_trigger);
+            lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger)*0.4);
         }
         //when not manual lifting, automate lifting
         else {
@@ -233,9 +233,9 @@ public class PwPRobot extends BasicRobot {
 //            queuer.reset();
             roadrun.setWeightedDrivePower(
                     new Pose2d(
-                            -op.gamepad1.left_stick_y,
-                            op.gamepad1.left_stick_x,
-                            op.gamepad1.right_stick_x
+                            -op.gamepad1.left_stick_y*0.7,
+                            -op.gamepad1.left_stick_x,
+                            -op.gamepad1.right_stick_x*0.8
                     )
             );
 //        }
@@ -260,12 +260,11 @@ public class PwPRobot extends BasicRobot {
         }
         //will only close when detect cone
         //claw.closeClaw
-        if (op.gamepad1.y) {
+
             claw.closeClaw();
-        }
 
         roadrun.update();
-
+        liftArm.updateLiftArmStates();
         claw.logClawStates();
         claw.updateClawStates();
     }

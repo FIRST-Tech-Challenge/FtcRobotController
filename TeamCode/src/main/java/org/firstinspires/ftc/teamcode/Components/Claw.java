@@ -19,16 +19,16 @@ public class Claw {
     private Rev2mDistanceSensor coneObserver;
 
     //temporary
-    private final double CLAW_CONE_DISTANCE = 5;
+    private final double CLAW_CONE_DISTANCE = 2;
 
     //temporary
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.35;
+    private final double CLAW_CLOSED_POS = 0.3;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.55;
+    private final double CLAW_OPEN_POS = 0.5;
 
     //temporary
     private final double CLAW_STICK_DISTANCE = 1;
@@ -91,6 +91,7 @@ public class Claw {
         if (CLAW_OPENING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
             CLAW_OPEN.setStatus(true);
         }
+        op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
     }
 
     public void logClawStates() {
@@ -156,6 +157,7 @@ public class Claw {
         //log to general robot log that the cone has been observed through function closeClaw()
         logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance()"
                 + coneObserver.getDistance(INCH), true);
+        op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
 
         return coneObserver.getDistance(INCH) < CLAW_CONE_DISTANCE;
     }

@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -13,17 +20,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.Old.Components.SummerMec.SummerMecRobot;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.util.Objects;
-
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -64,6 +64,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        BasicRobot robot = new BasicRobot(this,false);
         if (RUN_USING_ENCODER) {
             RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
                     "when using the built-in drive motor velocity PID.");
