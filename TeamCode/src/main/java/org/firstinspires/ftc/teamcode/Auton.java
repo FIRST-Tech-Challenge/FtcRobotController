@@ -65,11 +65,68 @@ public class Auton {
 
     }
 
+    public void runAutonWithConeNew(SampleMecanumDrive drive, HardwareMap hardwareMap)
+    {
+        Servo intake = hardwareMap.get(Servo.class, "intake");
+//        DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
+//        DcMotor motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
+
+        int multiplier = 1;
+        if(direction) { multiplier = -1; }
+
+        drive.setMotorPowers(0.1,0.1,0.1,0.1);
+        intake.setPosition(0.4);
+        // claw close
+        // lift go up
+
+        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(27)
+                .turn(Math.toRadians(60 * multiplier))
+                .forward(10)
+                .addDisplacementMarker(() -> {
+                    // claw open
+                    // lift go down to height of top cone on stack
+                })
+                .back(5)
+                .turn(Math.toRadians(-60 * multiplier))
+                .forward(24)
+                .turn(Math.toRadians(-110 * multiplier))
+                .forward(27)
+                .addDisplacementMarker(() -> {
+                    // claw close
+                    // lift go up
+                })
+                .back(5)
+                .turn(Math.toRadians(multiplier * -130))
+                .forward(8.5)
+                .addDisplacementMarker(() -> {
+                    // claw open
+                    // lift go down
+                })
+                .back(8.5)
+                .turn(Math.toRadians(multiplier * 160))
+                .build();
+        drive.followTrajectorySequence(trajectorySequence);
+
+        if (parkingZone == 2) { // red
+            Trajectory park = drive.trajectoryBuilder(new Pose2d())
+                    .back(24)
+                    .build();
+            drive.followTrajectory(park);
+        } else if (parkingZone == 3) { // blue
+            Trajectory park = drive.trajectoryBuilder(new Pose2d())
+                    .back(48)
+                    .build();
+            drive.followTrajectory(park);
+        }
+    }
+
+    /**
     public void runAutonWithConeOld(SampleMecanumDrive drive, HardwareMap hardwareMap)
     {
         Servo intake = hardwareMap.get(Servo.class, "intake");
-        DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
-        DcMotor motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
+//        DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
+//        DcMotor motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
 
         int multiplier = 1;
         if(direction) { multiplier = -1; }
@@ -128,61 +185,8 @@ public class Auton {
             drive.followTrajectory(park);
         }
     }
+    */
 
-    public void runAutonWithConeNew(SampleMecanumDrive drive, HardwareMap hardwareMap)
-    {
-        Servo intake = hardwareMap.get(Servo.class, "intake");
-        DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
-        DcMotor motorLiftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
-
-        int multiplier = 1;
-        if(direction) { multiplier = -1; }
-
-        drive.setMotorPowers(0.1,0.1,0.1,0.1);
-        // claw close
-        // lift go up
-
-        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(27)
-                .turn(Math.toRadians(70 * multiplier))
-                .forward(13)
-                .addDisplacementMarker(() -> {
-                    // claw open
-                    // lift go down to height of top cone on stack
-                })
-                .back(13)
-                .turn(Math.toRadians(-70 * multiplier))
-                .forward(24)
-                .turn(Math.toRadians(-110 * multiplier))
-                .forward(29)
-                .addDisplacementMarker(() -> {
-                    // claw close
-                    // lift go up
-                })
-                .back(5)
-                .turn(Math.toRadians(multiplier * -135))
-                .forward(8.5)
-                .addDisplacementMarker(() -> {
-                    // claw open
-                    // lift go down
-                })
-                .back(8.5)
-                .turn(Math.toRadians(multiplier * 135))
-                .build();
-        drive.followTrajectorySequence(trajectorySequence);
-
-        if (parkingZone == 2) { // red
-            Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(36)
-                    .build();
-            drive.followTrajectory(park);
-        } else if (parkingZone == 3) { // blue
-            Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(60)
-                    .build();
-            drive.followTrajectory(park);
-        }
-    }
 
     public void linSlidesLift() {
         int n = 4;
@@ -192,7 +196,6 @@ public class Auton {
         double x = 0;
         double y = 0;
         double startPosition = 0;//replace with slides.getPosition();
-
     }
 
     public void placeFirstCone() {
