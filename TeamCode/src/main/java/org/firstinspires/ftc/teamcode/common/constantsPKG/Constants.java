@@ -25,6 +25,10 @@ public class Constants {
     public double RATIO_CLICKS = 5281.1 / 288.0; //ratio of clicks between rev clicks to gobilda clicks
     public double ARM_BASE_RADIUS = 440; //radius of first stage of arm(base powered by 5204 motor)
     public double ARM_TOP_RADIUS = 400; //radius of top stage of arm(powered by rev motor)
+    public double ARM_TOP_GEAR_REDUCTION = 16.0 / 40; //motor is geared down for more torque(40% increase of torque)
+    public double  DEGS_PER_TOP_RADIUS_CLICK = DEGS_PER_TOP_CLICK * ARM_TOP_GEAR_REDUCTION;
+    
+
 
     //Swerve constants
         //module translation
