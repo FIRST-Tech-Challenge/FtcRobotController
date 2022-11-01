@@ -168,6 +168,18 @@ public class ArmMotorTester extends OpMode{
         else if (power > 1) power = 1;
     }
 
+    public void linearExtensionControl(){
+        //angles for arm bottomg and top linkages
+        double psi = armKinematics.getPsi(robot.armBase.getCurrentPosition());
+        double theta = armKinematics.getTheta(robot.armTop.getCurrentPosition());
+
+        double baseCurrent = robot.armBase.getCurrentPosition();
+        double topCurrent = robot.armTop.getCurrentPosition();
+
+        int baseTarget = 0;
+        int topTarget = 0;
+    }
+
     @Override
     public void stop() {
     }
