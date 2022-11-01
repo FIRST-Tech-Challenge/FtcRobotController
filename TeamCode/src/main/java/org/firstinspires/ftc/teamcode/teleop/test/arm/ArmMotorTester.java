@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.kinematics.ArmKinematics;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 @TeleOp(name = "Arm Test Move", group = "Drive")
 
@@ -18,6 +19,7 @@ public class ArmMotorTester extends OpMode{
     //local class objects
     HardwareDrive robot = new HardwareDrive();
     ArmKinematics armKinematics = new ArmKinematics();
+    Constants constants = new Constants();
 
     //buttons
     Button x = new Button();
@@ -95,7 +97,7 @@ public class ArmMotorTester extends OpMode{
     }
 
     public void setTargetNegative(){
-        int baseCurrent = robot.armBase.getCurrentPosition();
+        int baseDegree = robot.armBase.getCurrentPosition();
         int topCurrent = robot.armTop.getCurrentPosition();
 
        // robot.armBase.setTargetPosition(baseCurrent - 100);
@@ -108,11 +110,49 @@ public class ArmMotorTester extends OpMode{
         robot.armTop.setPower(power);
     }
 
+    public void maintainHeightToGroundPositive(){
+        double baseDegree = robot.armBase.getCurrentPosition() * constants.CLICKS_PER_BASE_REV;
+        double topDegree = robot.armTop.getCurrentPosition() * constants.CLICKS_PER_TOP_REV;
+
+
+            robot.armBase.setTargetPosition((int)((baseDegree * constants.DEGS_PER_BASE_CLICK) + (10 / constants.RATIO_CLICKS)));
+            robot.armTop.setTargetPosition((int)(topDegree * constants.DEGS_PER_TOP_CLICK) - 10);
+
+            robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.armBase.setPower(power);
+
+            robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            robot.armTop.setPower(power);
+    }
+
+    public void maintainHeightToGroundNegative(){
+        double baseDegree = robot.armBase.getCurrentPosition() * constants.CLICKS_PER_BASE_REV;
+        double topDegree = robot.armTop.getCurrentPosition() * constants.CLICKS_PER_TOP_REV;
+
+        robot.armBase.setTargetPosition((int)((baseDegree * constants.DEGS_PER_BASE_CLICK) - (10 / constants.RATIO_CLICKS)));
+        robot.armTop.setTargetPosition((int)(topDegree * constants.DEGS_PER_TOP_CLICK) + 10);
+
+        robot.armBase.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armBase.setPower(power);
+
+        robot.armTop.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        robot.armTop.setPower(power);
+    }
+
     void setArmPower(){
-        if(x.getState() == Button.State.HELD){
+        if (x.getState() == Button.State.HELD){
             setTargetPositive();
         } else if (y.getState() == Button.State.HELD){
             setTargetNegative();
+        } else if (x.getState() == Button.State.TAP){
+            robot.armTop.setPower(0);
+            robot.armBase.setPower(0);
+        }
+
+        if (a.getState() == Button.State.HELD){
+            maintainHeightToGroundPositive();
+        } else if (b.getState() == Button.State.HELD){
+            maintainHeightToGroundNegative();
         } else if (x.getState() == Button.State.TAP){
             robot.armTop.setPower(0);
             robot.armBase.setPower(0);
@@ -125,7 +165,6 @@ public class ArmMotorTester extends OpMode{
         }
         if (power < 0) power = 0;
         else if (power > 1) power = 1;
-
     }
 
     @Override
