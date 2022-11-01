@@ -35,7 +35,7 @@ public class Constants {
     //module rotation
     public double BLUE_REVS_PER_PURPLE = 85.0 / 24.0; //~3.54 Blue revs per 1 Purple rev
     public double CLICKS_PER_PURPLE_REV = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV;
-    public double CLICKS_PER_DEGREE = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV * (1/360.0);
+    public double CLICKS_PER_DEGREE = BLUE_REVS_PER_PURPLE * CLICKS_PER_BLUE_REV * (1/360.0); //1.427 clicks per degree
     public double DEGREES_PER_CLICK = 1.0 / CLICKS_PER_DEGREE;
 
     public double DEGREES_PER_INCH = CLICKS_PER_INCH * DEGREES_PER_CLICK;

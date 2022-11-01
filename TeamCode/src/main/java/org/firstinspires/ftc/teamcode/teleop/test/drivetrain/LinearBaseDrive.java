@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.kinematics.LinearKinematicsTest;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
@@ -38,7 +39,7 @@ public class LinearBaseDrive extends OpMode{
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    boolean isResetCycle = false;
+    Reset reset;
 
     Button x = new Button();
     Button y = new Button();
@@ -55,6 +56,7 @@ public class LinearBaseDrive extends OpMode{
     @Override
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
+        reset = new Reset(robot);
 
         telemetry.addData("Say", "Hello Driver");
         runtime.reset();
@@ -94,8 +96,9 @@ public class LinearBaseDrive extends OpMode{
         else if (y.getState() == Button.State.TAP) controllerType = ControllerType.BUTTON;
 
         if (x.getState() == Button.State.DOUBLE_TAP){
-            reset();
+           reset.reset(true);
         } else{
+            reset.reset(false);
             DriveTrainBase();
         }
     }
@@ -185,7 +188,7 @@ public class LinearBaseDrive extends OpMode{
                 break;
 
             case BUTTON:
-                kinematics.getGamepad(-1, 0, 0, 0);
+                kinematics.getGamepad(-0.5, 0, 0, 0);
 
                 kinematics.setPos();
 
@@ -235,58 +238,7 @@ public class LinearBaseDrive extends OpMode{
         if (motorPower[3] == 0) {
             robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-    }
-
-    private void reset(){
-        if (isResetCycle && !robot.wheelsAreBusy()){
-            robot.topL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.botL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.topR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.botR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            robot.botL.setPower(0);
-            robot.topL.setPower(0);
-            robot.botR.setPower(0);
-            robot.topR.setPower(0);
-        }
-
-        if (!isResetCycle){
-            isResetCycle = true;
-            int topR = robot.topR.getCurrentPosition();
-            int botR = robot.botR.getCurrentPosition();
-            int topL = robot.topL.getCurrentPosition();
-            int botL = robot.botL.getCurrentPosition();
-
-            int rotateR = (topR + botR) / 2;
-            int rotateL = (topL + botL) / 2;
-
-            int topLTarget = (int)((topL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-            int botLTarget = (int)((botL - rotateL) % constants.CLICKS_PER_PURPLE_REV);
-            int topRTarget = (int)((topR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
-            int botRTarget = (int)((botR - rotateR) % constants.CLICKS_PER_PURPLE_REV);
-
-            robot.topL.setTargetPosition(topLTarget);
-            robot.botL.setTargetPosition(botLTarget);
-            robot.topR.setTargetPosition(topRTarget);
-            robot.botR.setTargetPosition(botRTarget);
-
-            robot.botL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.botR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.topR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else{
-            robot.botL.setPower(0.2);
-            robot.topL.setPower(0.2);
-            robot.botR.setPower(0.2);
-            robot.topR.setPower(0.2);
-        }
-        //make sure to reset the encoder position afterwards without messing stuff up like before.
+        } //may or may not need BRAKE.
     }
 
     /*
