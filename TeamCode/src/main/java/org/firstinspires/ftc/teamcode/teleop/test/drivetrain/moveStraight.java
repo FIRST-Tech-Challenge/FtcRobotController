@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.common.pid.LinearCorrectionPID;
 
 @TeleOp(name="Move Straight", group="Drive")
 //@Disabled
@@ -28,6 +29,8 @@ public class moveStraight extends OpMode{
 
     Reset reset;
     Accelerator accelerator = new Accelerator();
+    LinearCorrectionPID linearCorrectionPIDRight;
+    LinearCorrectionPID linearCorrectionPIDLeft;
 
     int targetClicks;
     int errorCorrectionClicksL;
@@ -48,6 +51,11 @@ public class moveStraight extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         reset = new Reset(robot);
+
+        linearCorrectionPIDRight = new LinearCorrectionPID();
+        linearCorrectionPIDLeft = new LinearCorrectionPID();
+        linearCorrectionPIDRight.setValues(0, 0.03, 0, 0.01);
+        linearCorrectionPIDLeft.setValues(0, 0.03, 0, 0.01);
 
         telemetry.addData("Say", "Hello Driver");
     }
@@ -130,8 +138,8 @@ public class moveStraight extends OpMode{
 
         targetClicks = (int) left_stick_y * 100;
 
-        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks + errorCorrectionClicksL);
-        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - targetClicks + errorCorrectionClicksL);
+        robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks - errorCorrectionClicksL);
+        robot.botL.setTargetPosition(robot.botL.getCurrentPosition() - targetClicks - errorCorrectionClicksL);
         robot.topR.setTargetPosition(robot.topR.getCurrentPosition() + targetClicks + errorCorrectionClicksR);
         robot.botR.setTargetPosition(robot.botR.getCurrentPosition() - targetClicks + errorCorrectionClicksR);
 
@@ -164,8 +172,13 @@ public class moveStraight extends OpMode{
         int rotateR = (topR + botR) / 2;
         int rotateL = (topL + botL) / 2;
 
+
+
         rotateR %= (constants.CLICKS_PER_PURPLE_REV);
         rotateL %= constants.CLICKS_PER_PURPLE_REV;
+
+//        rotateR = (int)(20 * linearCorrectionPIDRight.update(rotateR));
+//        rotateL = (int)(20 * linearCorrectionPIDLeft.update(rotateL)); //can try both this and the two lines above.
 
         int[] error = {-rotateL, -rotateL};
 
