@@ -5,20 +5,68 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.params.DriveParams;
+
 public class ArmSystem {
-
-    private int currentPos;
-    private final DcMotor armLeft;
+    public enum ArmLevel {
+        LOW,
+        MEDIUM,
+        HIGH
+    }
+    //fill in constants
+    private final int POSITION_LOW = 0;
+    private final int POSITION_MEDIUM = 0;
+    private final int POSITION_HIGH = 0;
+    private final DcMotor armLeft; //arm left is motor1
     private final DcMotor armRight;
+    private Intake intake;
 
-    public ArmSystem(DcMotor motor1, DcMotor motor2){
+
+    public ArmSystem(DcMotor motor1, DcMotor motor2, DcMotor intakeMotor, DigitalChannel beam){
         armLeft = motor1;
         armRight = motor2;
+        initMotors();
+        intake = new Intake(intakeMotor, beam);
+    }
 
+    public boolean intake(){
+        return intake.intake();
+    }
+
+    public boolean outtake(){
+        return intake.outtake();
+    }
+    public void initMotors() {
+        armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armLeft.setPower(0);
+    }
+    public boolean driveToLevel(ArmLevel level, double power){
+        int targetPosition = POSITION_LOW;
+        switch (level){
+            case MEDIUM:
+                targetPosition = POSITION_MEDIUM;
+                break;
+            case HIGH:
+                targetPosition = POSITION_HIGH;
+                break;
+            case LOW:
+                targetPosition = POSITION_LOW;
+        }
+        armLeft.setTargetPosition(targetPosition);
+        armLeft.setPower(power);
+        armRight.setTargetPosition(targetPosition);
+        armRight.setPower(power);
+        //add code for second motor (armRight)
+        if(armLeft.getCurrentPosition() == targetPosition){
+            armLeft.setPower(0);
+            armRight.setPower(0);
+            return true;
+        }
+        return false;
     }
 
 
-    public static class Intake{
+    public static class Intake {
         private final DigitalChannel beamBreaker;
         private final DcMotorSimple coneTake;
         private final ElapsedTime elapsedTime;
@@ -67,6 +115,7 @@ public class ArmSystem {
 
             return state == State.IDLE;
         }
+
 
         public State getState() {
             return state;
