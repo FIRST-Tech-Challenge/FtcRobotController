@@ -86,12 +86,12 @@ public class GFORCE_TELEOP extends LinearOpMode {
                 double turn = coneTracker.coneDirection / 5.0;
                 double speed = 0;
 
-                if (coneTracker.coneRange > 100) {
+                if (coneTracker.coneRange > 110) {
                     speed = 0.2;
-                }else if (coneTracker.coneRange >85) {
+                }else if (coneTracker.coneRange > 95) {
                     speed = 0.1;
-                }else if (coneTracker.coneRange < 65) {
-                    speed = -0.05;
+                }else if (coneTracker.coneRange < 75) {
+                    speed = -0.1;
                 }
 
                 lockNewHeading(drive.getExternalHeading());

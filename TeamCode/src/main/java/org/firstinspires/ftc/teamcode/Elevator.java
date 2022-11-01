@@ -21,6 +21,7 @@ public class Elevator {
     final int ELEVATOR_MIN    = 0;
     final int ELEVATOR_HOME   = 40;
     final int ELEVATOR_GROUND = 160;
+    final int ELEVATOR_STACK_TOP = 200;
     final int ELEVATOR_LOW    = 460;
     final int ELEVATOR_MID    = 710;
     final int ELEVATOR_HIGH   = 1000;
@@ -124,7 +125,7 @@ public class Elevator {
                if  (newLiftPosition()) {
                    setHandDelayMove(HAND_CLOSE, 0.3, requestedPosition, MOVING_CLOSED);
                } else if (myOpMode.gamepad2.square) {
-                   setHandDelayMove(HAND_CLOSE, 0.3, (liftPosition + 50), HOME_CLOSED);
+                   setHandDelayMove(HAND_CLOSE, 0.3, (liftPosition + 100), HOME_CLOSED);
                }
                break;
             }
@@ -215,7 +216,10 @@ public class Elevator {
             newPosition = ELEVATOR_HIGH;
         } else if (myOpMode.gamepad2.dpad_right) {
             newPosition = ELEVATOR_GROUND;
+        } else if (myOpMode.gamepad2.triangle) {
+            newPosition = ELEVATOR_STACK_TOP;
         }
+
         if(newPosition != 0) {
             requestedPosition = newPosition;
             return true;
@@ -360,7 +364,7 @@ public class Elevator {
     }
 
     public void jogElevator(double speed) {
-        setLiftTargetPosition(liftTargetPosition + (int)(speed * 6));
+        setLiftTargetPosition(liftTargetPosition + (int)(speed * 7));
     }
 
     // ----- Wrist controls
