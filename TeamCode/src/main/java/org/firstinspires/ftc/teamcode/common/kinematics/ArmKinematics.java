@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.common.Kinematics;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
-import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 public class ArmKinematics {
     protected Constants constants = new Constants();

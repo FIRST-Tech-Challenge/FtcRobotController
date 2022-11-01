@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.test.driveTrain;
+package org.firstinspires.ftc.teamcode.teleop.test.drivetrain;
 
 import android.view.View;
 
@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.Kinematics.LinearKinematicsTestJR;
+import org.firstinspires.ftc.teamcode.common.kinematics.LinearKinematicsTestJR;
 import org.firstinspires.ftc.teamcode.common.Reset;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 import org.firstinspires.ftc.teamcode.common.Button;
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
+import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 

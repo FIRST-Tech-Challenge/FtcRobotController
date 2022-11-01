@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.Kinematics;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+package org.firstinspires.ftc.teamcode.common.kinematics;
 
 import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;

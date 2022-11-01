@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.ConstantsPKG;
-
-import org.checkerframework.checker.units.qual.C;
+package org.firstinspires.ftc.teamcode.common.constantsPKG;
 
 public class Constants {
     public double LOOP_ITERATION_TIME = 0.025; //must test later on

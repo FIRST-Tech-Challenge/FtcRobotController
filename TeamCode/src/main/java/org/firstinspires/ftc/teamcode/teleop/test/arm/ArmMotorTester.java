@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.common.ConstantsPKG.Constants;
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
 import org.firstinspires.ftc.teamcode.common.Button;
-import org.firstinspires.ftc.teamcode.common.Kinematics.ArmKinematics;
+import org.firstinspires.ftc.teamcode.common.kinematics.ArmKinematics;
 
 @TeleOp(name = "Arm Test Move", group = "Drive")
 
