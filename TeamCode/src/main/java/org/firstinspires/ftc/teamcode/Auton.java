@@ -44,7 +44,13 @@ public class Auton {
         drive.setMotorPowers(0.1,0.1,0.1,0.1);
         intake.setPosition(0.4);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(25)
+                .forward(2)
+                .turn(1)
+                .forward(1)
+                .waitSeconds(2)
+                .back(1)
+                .turn(-1)
+                .forward(23)
                 .build();
         drive.followTrajectorySequence(trajSeq);
 
