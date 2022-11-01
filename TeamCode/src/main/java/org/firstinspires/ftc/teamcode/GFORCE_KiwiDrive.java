@@ -68,6 +68,9 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
     final private double TURN_RATE_TC = 0.9;
     final private double STOP_TURNRATE = 0.010;
+    final private double FWD_DECEL_LIMIT = -0.075;  // Maximum deceleration.  Must be negative
+    final private double AXIAL_ACCEL_LIMIT = 0.2;  // Maximum acceleration
+    final private double LATERAL_ACCEL_LIMIT = 0.1;  // Maximum acceleration
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
@@ -85,6 +88,8 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
 
     private NanoClock gyroClock = NanoClock.system();
     private double  nextGyroSync = 0;
+    private double  lastAxialPower = 0;
+    private double  lastLateralPower = 0;
 
     public GFORCE_KiwiDrive(HardwareMap hardwareMap) throws InterruptedException{
         super(kV, kA, kStatic, TRACK_WIDTH);
@@ -261,7 +266,33 @@ public class GFORCE_KiwiDrive extends KiwiDrive {
             ).div(denom);
         }
 
+        double axialPower   = pow.getX();
+        double lateralPower = pow.getY();
+
+        // protect against sudden reverse direction.
+        if ((axialPower - lastAxialPower) < FWD_DECEL_LIMIT){
+            axialPower = lastAxialPower + FWD_DECEL_LIMIT;
+        }
+
+        // Now just check both axes...
+        double error = axialPower - lastAxialPower;
+        if (Math.abs(error) > AXIAL_ACCEL_LIMIT) {
+            axialPower = lastAxialPower + (AXIAL_ACCEL_LIMIT * Math.signum(error));
+        }
+
+        error = lateralPower - lastLateralPower;
+        if (Math.abs(error) > LATERAL_ACCEL_LIMIT) {
+            lateralPower = lastLateralPower + (LATERAL_ACCEL_LIMIT * Math.signum(error));
+        }
+
+        pow = new Pose2d(
+                axialPower,
+                lateralPower,
+                pow.getHeading());
+
         setDrivePower(pow);
+        lastAxialPower = axialPower;
+        lastLateralPower = lateralPower;
     }
 
     @NonNull

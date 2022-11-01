@@ -19,8 +19,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class GFORCE_TELEOP extends LinearOpMode {
 
     // Joystick constants
-    final double AXIAL_RATE = 0.5;
-    final double LATERAL_RATE = 0.5;
+    final double AXIAL_RATE = 0.7;
+    final double LATERAL_RATE = 0.7;
     final double YAW_RATE = 0.5;
     final double SLOW_TRANSLATE = 0.2;
 
