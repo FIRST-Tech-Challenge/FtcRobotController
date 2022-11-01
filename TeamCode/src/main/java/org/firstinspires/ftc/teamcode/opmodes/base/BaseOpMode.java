@@ -58,19 +58,18 @@ public abstract class BaseOpMode extends OpMode {
     protected boolean alignDistance(int colorSignature, int desiredWidth){
         distanceOffset = pixycam.distanceOffset(colorSignature, desiredWidth);// find actual desired width
         telemetry.addData("offset", distanceOffset);
-        if (distanceOffset > 50) {
+        if (distanceOffset > 20) {
             telemetry.addData("driving backwards", 0);
-            driveSystem.drive(0, 0, 0.3f);
-            return false;
-        } else if (distanceOffset < -50) {
+            driveSystem.drive(0, 0, 0.2f);
+        } else if (distanceOffset < -20) {
             telemetry.addData("driving forward", 0);
-            driveSystem.drive(0, 0, 0.3f);
-            return false;
+            driveSystem.drive(0, 0, -0.2f);
         } else {
             telemetry.addData("stopping", 0);
             driveSystem.setMotorPower(0);
             return true;
         }
+        return false;
     }
 
     protected boolean align(int colorSignature, int desiredWidth){
