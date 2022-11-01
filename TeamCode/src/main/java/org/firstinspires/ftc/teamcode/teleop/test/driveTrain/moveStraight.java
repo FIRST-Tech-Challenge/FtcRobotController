@@ -150,8 +150,8 @@ public class moveStraight extends OpMode{
         telemetry.addData("Limited power", power);
         power = accelerator.update(power);
 
-        robot.topL.setPower(power);
-        robot.botL.setPower(power);
+        robot.topL.setPower(-power);
+        robot.botL.setPower(-power);
         robot.topR.setPower(power);
         robot.botR.setPower(power);
 

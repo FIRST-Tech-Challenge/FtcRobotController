@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.common.Kinematics;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.common.Accelerator;
 import org.firstinspires.ftc.teamcode.common.Kinematics.Kinematics;
 import org.firstinspires.ftc.teamcode.common.gps.GlobalPosSystem;
 
 public class LinearKinematicsTest extends Kinematics {
-    ElapsedTime accelerationTimer = new ElapsedTime();
-    boolean isAccelerateCycle = false;
-
     private double lx;
     private double ly;
     private double rx;
@@ -28,9 +26,10 @@ public class LinearKinematicsTest extends Kinematics {
     }
     dType dtype = dType.NOT_INITIALIZED;
 
+    Accelerator accelerator = new Accelerator();
+
     public LinearKinematicsTest(GlobalPosSystem posSystem) {
         super(posSystem); //runs Kinematics constructor
-        accelerationTimer.reset();
     }
 
     public void logic(){
@@ -103,7 +102,6 @@ public class LinearKinematicsTest extends Kinematics {
         leftTurnAmountW = 0;
         rightTurnAmountW = 0;
 
-        isAccelerateCycle = false;
         // 6/8 items (missing switchMotors for translation, but we should not change that)
     }
 
@@ -194,27 +192,12 @@ public class LinearKinematicsTest extends Kinematics {
         motorPower[3] = spinPower * translationPowerPercentage * rightThrottle + rightRotatePower * rotationPowerPercentage; //bottom right
 
         for (int i = 0; i < 4; i++){
-            motorPower[i] = accelerator(motorPower[i]);
+            motorPower[i] = accelerator.update(motorPower[i]);
         }
 
         return motorPower;
     }
 
-    public double accelerator(double power){
-        if (power == 0) return 0.0;
-
-        if (!isAccelerateCycle){
-            accelerationTimer.reset();
-            isAccelerateCycle = true;
-        }
-        double accelerationFactor = (Math.tanh(0.5 * accelerationTimer.milliseconds() - 1.5) / 2.5) + 0.6;
-        power *= accelerationFactor;
-
-        if (power > 1) power = 1;
-        else if (power < -1) power = -1;
-
-        return power;
-    }
 
     public int[] getClicks(){
         int[] clicks = new int[4];
