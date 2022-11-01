@@ -14,49 +14,55 @@ public class ArmSystem {
         HIGH
     }
     //fill in constants
-    private final int POSITION_LOW_MM = 0;
-    private final int POSITION_MEDIUM_MM = 0;
-    private final int POSITION_HIGH_MM = 0;
-    private final double MAX_POWER = 0;
-    private final double  TICKS_IN_MM = ticksInMm();
-    private final DcMotor armLeft;
+    private final int POSITION_LOW = 0;
+    private final int POSITION_MEDIUM = 0;
+    private final int POSITION_HIGH = 0;
+    private final DcMotor armLeft; //arm left is motor1
     private final DcMotor armRight;
+    private Intake intake;
 
 
-    public ArmSystem(DcMotor motor1, DcMotor motor2){
+    public ArmSystem(DcMotor motor1, DcMotor motor2, DcMotor intakeMotor, DigitalChannel beam){
         armLeft = motor1;
         armRight = motor2;
         initMotors();
+        intake = new Intake(intakeMotor, beam);
+    }
+
+    public boolean intake(){
+        return intake.intake();
+    }
+
+    public boolean outtake(){
+        return intake.outtake();
     }
     public void initMotors() {
         armLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armLeft.setPower(0);
     }
-    public void driveToLevel(ArmLevel level){
-        int targetPosition = millimetersToTicks(POSITION_LOW_MM);
+    public boolean driveToLevel(ArmLevel level, double power){
+        int targetPosition = POSITION_LOW;
         switch (level){
             case MEDIUM:
-                targetPosition = millimetersToTicks(POSITION_MEDIUM_MM);
+                targetPosition = POSITION_MEDIUM;
                 break;
             case HIGH:
-                targetPosition = millimetersToTicks(POSITION_HIGH_MM);
+                targetPosition = POSITION_HIGH;
                 break;
+            case LOW:
+                targetPosition = POSITION_LOW;
         }
-        //add code for second motor (armRight)
         armLeft.setTargetPosition(targetPosition);
-        armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armLeft.setPower(MAX_POWER);
-    }
-
-    //Conversions
-    private int millimetersToTicks(int millimeters) {
-        return (int) Math.round(millimeters * TICKS_IN_MM);
-    }
-    private double ticksInMm() {
-        return DriveParams.TICKS_PER_REV / inchesToMm(DriveParams.CIRCUMFERENCE);
-    }
-    private double inchesToMm(double inch) {
-        return inch * 25.4;
+        armLeft.setPower(power);
+        armRight.setTargetPosition(targetPosition);
+        armRight.setPower(power);
+        //add code for second motor (armRight)
+        if(armLeft.getCurrentPosition() == targetPosition){
+            armLeft.setPower(0);
+            armRight.setPower(0);
+            return true;
+        }
+        return false;
     }
 
 
@@ -79,7 +85,7 @@ public class ArmSystem {
             return !beamBreaker.getState();
         }
 
-        public static boolean intake(){
+        public boolean intake(){
             if (state != State.INTAKING) {
                 state = State.INTAKING;
                 coneTake.setDirection(DcMotor.Direction.REVERSE);
@@ -94,7 +100,7 @@ public class ArmSystem {
             return state == State.IDLE;
         }
 
-        public static boolean outtake(){
+        public boolean outtake(){
             if (state != State.OUTTAKING) {
                 state = State.OUTTAKING;
                 coneTake.setDirection(DcMotorSimple.Direction.FORWARD);

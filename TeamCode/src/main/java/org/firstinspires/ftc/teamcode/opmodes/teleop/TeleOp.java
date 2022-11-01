@@ -62,28 +62,28 @@ public class TeleOp extends BaseOpMode {
         driveSystem.slowDrive(gamepad1.left_trigger > 0.3f);
         driveSystem.drive(rx, lx, ly);
 
-        if (gamepad1.left_trigger > 0) {
-            ArmSystem.Intake.intake();
+        if (gamepad1.left_trigger > 0.1f) {
+            armSystem.intake();
         }
 
         if (gamepad1.right_trigger > 0) {
-            ArmSystem.Intake.outtake();
+            armSystem.outtake();
         }
 
         if (gamepad1.a) {
             // Move Bar to Low Position
-            armSystem.driveToLevel(ArmSystem.ArmLevel.LOW);
+            armSystem.driveToLevel(ArmSystem.ArmLevel.LOW, 0.2);
 
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
-            armSystem.driveToLevel(ArmSystem.ArmLevel.MEDIUM);
+            armSystem.driveToLevel(ArmSystem.ArmLevel.MEDIUM, 0.2);
         }
 
         if (gamepad1.y) {
             // Move Bar to High Position
-            armSystem.driveToLevel(ArmSystem.ArmLevel.HIGH);
+            armSystem.driveToLevel(ArmSystem.ArmLevel.HIGH, 0.2);
         }
 
         if (gamepad1.x) {
