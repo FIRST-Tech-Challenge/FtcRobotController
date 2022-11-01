@@ -65,7 +65,7 @@ public class Auton {
 
     }
 
-    public void runAutonWithConeRitvik(SampleMecanumDrive drive, HardwareMap hardwareMap)
+    public void runAutonWithConeOld(SampleMecanumDrive drive, HardwareMap hardwareMap)
     {
         Servo intake = hardwareMap.get(Servo.class, "intake");
         DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
@@ -79,7 +79,7 @@ public class Auton {
         // lift go up
 
         TrajectorySequence trajSeq1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(25)
+                .forward(27)
                 .turn(Math.toRadians(70 * multiplier))
                 .forward(13)
                 .build();
@@ -92,15 +92,15 @@ public class Auton {
                 .back(13)
                 .turn(Math.toRadians(-70 * multiplier))
                 .forward(24)
-                .turn(Math.toRadians(-90 * multiplier))
-                .forward(29)
+                .turn(Math.toRadians(90 * multiplier))
+                .forward(28)
                 .build();
         drive.followTrajectorySequence(trajSeq2);
 
         // claw close
         // lift go up
 
-        TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder((new Pose2d()))
+        TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(new Pose2d())
                 .back(5)
                 .turn(Math.toRadians(multiplier * -135))
                 .forward(8.5)
@@ -110,7 +110,7 @@ public class Auton {
         // claw open
         // lift go down
 
-        TrajectorySequence trajSeq4 = drive.trajectorySequenceBuilder((new Pose2d()))
+        TrajectorySequence trajSeq4 = drive.trajectorySequenceBuilder(new Pose2d())
                 .back(8.5)
                 .turn(Math.toRadians(multiplier * 135))
                 .build();
@@ -118,18 +118,18 @@ public class Auton {
 
         if (parkingZone == 2) { // red
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(36)
+                    .strafeRight(24)
                     .build();
             drive.followTrajectory(park);
         } else if (parkingZone == 3) { // blue
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(60)
+                    .strafeRight(48)
                     .build();
             drive.followTrajectory(park);
         }
     }
 
-    public void runAutonWithConeKedaar(SampleMecanumDrive drive, HardwareMap hardwareMap)
+    public void runAutonWithConeNew(SampleMecanumDrive drive, HardwareMap hardwareMap)
     {
         Servo intake = hardwareMap.get(Servo.class, "intake");
         DcMotor motorLiftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
@@ -142,43 +142,34 @@ public class Auton {
         // claw close
         // lift go up
 
-        TrajectorySequence trajSeq1 = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(25)
+        TrajectorySequence trajectorySequence = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(27)
                 .turn(Math.toRadians(70 * multiplier))
                 .forward(13)
-                .build();
-        drive.followTrajectorySequence(trajSeq1);
-
-        // claw open
-        // lift go down to height of top cone on stack
-
-        TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(new Pose2d())
+                .addDisplacementMarker(() -> {
+                    // claw open
+                    // lift go down to height of top cone on stack
+                })
                 .back(13)
                 .turn(Math.toRadians(-70 * multiplier))
                 .forward(24)
-                .turn(Math.toRadians(-90 * multiplier))
+                .turn(Math.toRadians(-110 * multiplier))
                 .forward(29)
-                .build();
-        drive.followTrajectorySequence(trajSeq2);
-
-        // claw close
-        // lift go up
-
-        TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder((new Pose2d()))
+                .addDisplacementMarker(() -> {
+                    // claw close
+                    // lift go up
+                })
                 .back(5)
                 .turn(Math.toRadians(multiplier * -135))
                 .forward(8.5)
-                .build();
-        drive.followTrajectorySequence(trajSeq3);
-
-        // claw open
-        // lift go down
-
-        TrajectorySequence trajSeq4 = drive.trajectorySequenceBuilder((new Pose2d()))
+                .addDisplacementMarker(() -> {
+                    // claw open
+                    // lift go down
+                })
                 .back(8.5)
                 .turn(Math.toRadians(multiplier * 135))
                 .build();
-        drive.followTrajectorySequence(trajSeq4);
+        drive.followTrajectorySequence(trajectorySequence);
 
         if (parkingZone == 2) { // red
             Trajectory park = drive.trajectoryBuilder(new Pose2d())
