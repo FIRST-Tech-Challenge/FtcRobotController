@@ -18,6 +18,7 @@ public abstract class BaseOpMode extends OpMode {
     protected DriveSystem driveSystem;
     protected PixyCam pixycam;
     protected int step = 0;
+    int distanceOffset;
 
 
     @Override
@@ -54,17 +55,22 @@ public abstract class BaseOpMode extends OpMode {
         return false;
     }
 
-    protected boolean alignDistance(int desiredWidth){
-        int distanceOffset = pixycam.distanceOffset(desiredWidth);// find actual desired width
-        if (distanceOffset > 10) {
-            driveSystem.driveToPosition(100, DriveSystem.Direction.BACKWARD, 0.3);
-        } else if (distanceOffset < -10) {
-            driveSystem.driveToPosition(100, DriveSystem.Direction.FORWARD, 0.3);
+    protected boolean alignDistance(int colorSignature, int desiredWidth){
+        distanceOffset = pixycam.distanceOffset(colorSignature, desiredWidth);// find actual desired width
+        telemetry.addData("offset", distanceOffset);
+        if (distanceOffset > 50) {
+            telemetry.addData("driving backwards", 0);
+            driveSystem.drive(0, 0, 0.3f);
+            return false;
+        } else if (distanceOffset < -50) {
+            telemetry.addData("driving forward", 0);
+            driveSystem.drive(0, 0, 0.3f);
+            return false;
         } else {
+            telemetry.addData("stopping", 0);
             driveSystem.setMotorPower(0);
             return true;
         }
-        return false;
     }
 
     protected boolean align(int colorSignature, int desiredWidth){
@@ -74,7 +80,8 @@ public abstract class BaseOpMode extends OpMode {
             }
         }
         if(step == 1){
-            if(alignDistance(desiredWidth)){
+            if(alignDistance(colorSignature, desiredWidth)){
+                step = 0;
                 return true;
             }
         }

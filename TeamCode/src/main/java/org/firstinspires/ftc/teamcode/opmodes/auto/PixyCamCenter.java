@@ -42,7 +42,7 @@ public class PixyCamCenter extends BaseOpMode {
         String s = block.width + " " + block.height;
         String coords = block.x + ", " + block.y;
         int rotationOffset = pixycam.headingOffset(PixyCam.BLUE);
-        int distanceOffset = pixycam.distanceOffset(100);
+        int distanceOffset = pixycam.distanceOffset(PixyCam.BLUE, 100);
         telemetry.addData("rotationOffset", rotationOffset);
         telemetry.addData("block", s);
         telemetry.addData("coords", coords);
