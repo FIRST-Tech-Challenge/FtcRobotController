@@ -27,7 +27,7 @@ public class Constants {
     public double ARM_TOP_RADIUS = 400; //radius of top stage of arm(powered by rev motor)
     public double ARM_TOP_GEAR_REDUCTION = 16.0 / 40; //motor is geared down for more torque(40% increase of torque)
     public double  DEGS_PER_TOP_RADIUS_CLICK = DEGS_PER_TOP_CLICK * ARM_TOP_GEAR_REDUCTION;
-    
+
 
 
     //Swerve constants
