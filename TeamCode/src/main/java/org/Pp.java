@@ -89,40 +89,45 @@ public class Pp extends LinearOpMode{
                 robot.FRight.setPower(rx);
             }
             // if we want to go foward/back do a little motor powering
-            else if (Math.abs(y2) >= Math.abs(x2)){
+            else if (Math.abs(y2) >= Math.abs(x2) && Math.abs(x2) > 0.2){
                 robot.BLeft.setPower(y2);
                 robot.BRight.setPower(y2);
                 robot.FLeft.setPower(y2);
                 robot.FRight.setPower(y2);
 
             }
-            else if (Math.abs(x2) > (Math.abs(y2))){
+            //if we want to go strafing, set a little moter powerfing for strafing
+            else if (Math.abs(x2) > (Math.abs(y2)) && Math.abs(y2) > 0.2){
                 robot.BLeft.setPower(x2);
                 robot.BRight.setPower(x2);
                 robot.FLeft.setPower(x2);
                 robot.FRight.setPower(x2);
-
+            //if we dont want to move make sure we dont move
             } else {
                 robot.BLeft.setPower(0);
                 robot.BRight.setPower(0);
                 robot.FLeft.setPower(0);
                 robot.FRight.setPower(0);
             }
+            //uppy downy.
             Slidepos = 0.0;
             if (gamepad1.right_bumper)
                 Slidepos += Slidespeed;
             if (Math.abs(gamepad1.right_trigger) > 0.0)
                 Slidepos -= Slidespeed;
-            else if (gamepad1.x)
+            //open close :)
+            if (gamepad1.x)
                 Armpos -= Armspeed;
-            else if (gamepad1.b)
+            if (gamepad1.b)
                 Armpos += Armspeed;
 
+            //set power and position for grabby and shit
             robot.Slider.setPower(Slidepos);
 
             Armpos = Range.clip(Armpos, 0.0, 1.0);
             robot.Take.setPosition(Armpos);
 
+            //telemetry :nerd_emoji:
             telemetry.addData("x","%.2f", x);
             telemetry.addData("y","%.2f", y);
             telemetry.update();
