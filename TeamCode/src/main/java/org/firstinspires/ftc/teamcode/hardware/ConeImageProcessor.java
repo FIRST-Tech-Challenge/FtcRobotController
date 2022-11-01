@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.firstinspires.ftc.teamcode.BarcodeDeterminationBlue;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -11,8 +17,13 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
+import org.openftc.easyopencv.OpenCvPipeline;
 
-public class ConeImageProcessor {
+public class ConeImageProcessor extends OpenCvPipeline {
 
 	File fileProcessing;
 
@@ -67,7 +78,11 @@ public class ConeImageProcessor {
 		}
 	}
 
+	public Double getMeanVal() {
+		return meanVal;
+	}
 
+	@Override
 	public Mat processFrame (Mat input) {
 		//Convert to HSV color space. 		
 		Mat hsvImg = new Mat();
@@ -117,7 +132,7 @@ public class ConeImageProcessor {
 
 		if (debug) {
 			//Imgcodecs.imwrite( fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-thresh.jpg", tobeRemoveRev);
-			Imgcodecs.imwrite(fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-result.jpg", result);
+			//Imgcodecs.imwrite(fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-result.jpg", result);
 			//Imgcodecs.imwrite(fileProcessing.getParent() + "\\result\\" + fileProcessing.getName() + "-bgTrd.jpg", backgroundTrd);
 
 		}
@@ -155,64 +170,8 @@ public class ConeImageProcessor {
 		return total/count;
 
 	}
-	
-	
-	/**
-	 * This is used by pipeline
-	 * 
-	 * @param input
-	 * @return
 
-	public Mat processFrame(Mat input) {
-		Mat hsvImg = new Mat();
-		hsvImg.create(input.size(), CvType.CV_8U);
-		Imgproc.cvtColor(input, hsvImg, Imgproc.COLOR_BGR2HSV);
 
-		// Now split Hue, Saturation, and Value.
-		List<Mat> hsvPlanes = new ArrayList<>();
-		Core.split(hsvImg, hsvPlanes);
 
-		//Threshold by Saturation 
-		Mat sThresholdImg = new Mat();
-		int staturationThreshold = 25;
-		Imgproc.threshold(hsvPlanes.get(1), sThresholdImg, staturationThreshold, 255, Imgproc.THRESH_BINARY);
-		
-		//Threshold by Hue 
-		Mat hThresholdImg = new Mat();
-		int hueThreshold = 40;
-		Imgproc.threshold(hsvPlanes.get(0), hThresholdImg, hueThreshold, 180, Imgproc.THRESH_BINARY);
 
-		//combine 2 mask 
-		Mat thresholdImg = new Mat(); 
-		Core.bitwise_and(sThresholdImg, sThresholdImg, thresholdImg); 	
-
-		
-		// dilate to fill gaps, erode to smooth edges
-		Imgproc.dilate(thresholdImg, thresholdImg, new Mat(), new Point(-1, -1), 1);
-		Imgproc.erode(thresholdImg, thresholdImg, new Mat(), new Point(-1, -1), 3);
-		
-		//Imgproc.threshold(thresholdImg, thresholdImg, staturationThreshold, 255, Imgproc.THRESH_BINARY);		
-		
-		Mat foreground = new Mat(input.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
-		input.copyTo(foreground, thresholdImg);
-		
-		//Calculate Hue average
-		List<Mat> hsvThreholdPlane = new ArrayList<>();
-		Core.split(foreground, hsvThreholdPlane);
-		
-		if (debug) {
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\H.jpg", hsvPlanes.get(0));
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\S.jpg", hsvPlanes.get(1));
-			//Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\V.jpg", hsvPlanes.get(2));
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\threshold.jpg", thresholdImg);
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\thresholdh.jpg", hThresholdImg);
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\thresholds.jpg", sThresholdImg);
-			Imgcodecs.imwrite("C:\\FTC Code\\TestPIcs\\foreGround.jpg", foreground);
-			System.out.println("Result = " + hsvThreholdPlane.get(0).dump());
-		}
-
-		return foreground;
-	}
-
-	 */
 }
