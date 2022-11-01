@@ -17,6 +17,7 @@ import java.util.EnumMap;
 public class TeleOp extends BaseOpMode {
 
     private DriveSystem driveSystem;
+    private ArmSystem armSystem;
 
     /**
      * Initializes a pushbot setup
@@ -52,18 +53,22 @@ public class TeleOp extends BaseOpMode {
 
         if (gamepad1.a) {
             // Move Bar to Low Position
+            armSystem.driveToLevel(ArmSystem.ArmLevel.LOW);
+
         }
 
         if (gamepad1.b) {
             // Move Bar to Middle Position
+            armSystem.driveToLevel(ArmSystem.ArmLevel.MEDIUM);
         }
 
         if (gamepad1.y) {
             // Move Bar to High Position
+            armSystem.driveToLevel(ArmSystem.ArmLevel.HIGH);
         }
 
         if (gamepad1.x) {
-            // Move Bar to Center Position
+            // Auto-Align
         }
 
         if (gamepad1.dpad_down) {
