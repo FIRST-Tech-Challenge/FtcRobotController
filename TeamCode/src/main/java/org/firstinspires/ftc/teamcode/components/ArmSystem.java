@@ -5,14 +5,26 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class ArmSystem {
+import org.firstinspires.ftc.teamcode.params.DriveParams;
 
-    private int currentPos;
-    private final DcMotor armLeft;
+public class ArmSystem {
+    public enum ArmLevel {
+        LOW,
+        MEDIUM,
+        HIGH,
+        FLOOR
+    }
+    //fill in constants
+    private final int POSITION_LOW = 500;
+    private final int POSITION_MEDIUM = 800;
+    private final int POSITION_HIGH = 1100;
+    private final int FLOORCONE = 0;
+    private final DcMotor armLeft; //arm left is motor1
     private final DcMotor armRight;
     private Intake intake;
 
-    public ArmSystem(DcMotor motor1, DcMotor motor2){
+
+    public ArmSystem(DcMotor motor1, DcMotor motor2, DcMotor intakeMotor, DigitalChannel beam){
         armLeft = motor1;
         armRight = motor2;
         initMotors();
