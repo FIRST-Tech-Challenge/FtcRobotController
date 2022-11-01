@@ -169,13 +169,16 @@ public class moveStraight extends OpMode{
         int rotateR = (topR + botR) / 2;
         int rotateL = (topL + botL) / 2;
 
+        rotateR %= (constants.CLICKS_PER_PURPLE_REV);
+        rotateL %= constants.CLICKS_PER_PURPLE_REV;
+
+        int[] error = {-rotateL, -rotateL};
+
         rotateR *= constants.DEGREES_PER_CLICK;
         rotateL *= constants.DEGREES_PER_CLICK;
 
-        telemetry.addData("Right error", 0-rotateR);
-        telemetry.addData("Left error", 0-rotateL);
-
-        int[] error = {-rotateL, -rotateL};
+        telemetry.addData("Right error", -rotateR);
+        telemetry.addData("Left error", -rotateL);
 
         return error;
     }
