@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "ten point auto")
+@Autonomous(name = "10 point auto")
 public class tenpointauto extends LinearOpMode {
     int detect = 0;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);

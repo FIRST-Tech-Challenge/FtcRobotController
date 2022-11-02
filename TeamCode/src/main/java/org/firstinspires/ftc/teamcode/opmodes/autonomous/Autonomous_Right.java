@@ -12,17 +12,17 @@ import org.firstinspires.ftc.teamcode.robot.TurtleRobotAuto;
 
 import java.util.List;
 
-@Autonomous(name = "Autonomous_Right")
+@Autonomous(name = "Autoromous Right")
 public class Autonomous_Right extends LinearOpMode {
     int detect = 0;
     TurtleRobotAuto robot = new TurtleRobotAuto(this);
-    private static final String TFOD_MODEL_ASSET = "customcone.tflite";
+    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
     private static final String[] LABELS = {
-            "Bike",
-            "Car",
-            "Turtle"
+            "1 Bolt",
+            "2 Bulb",
+            "3 Panel"
     };
 
     private static final String VUFORIA_KEY =
@@ -35,11 +35,14 @@ public class Autonomous_Right extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot.init(hardwareMap);
+        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
+        // first.
         initVuforia();
         initTfod();
 
         if (tfod != null) {
             tfod.activate();
+
             tfod.setZoom(1.0, 16.0/9.0);
         }
 
@@ -64,40 +67,37 @@ public class Autonomous_Right extends LinearOpMode {
                             double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
                             double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
                             double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-                            if (recognition.getLabel()=="Bike") {detect=1;
-                                right(0.25, 500);
+                            if (recognition.getLabel()=="1 Bolt") {detect=1;
+                                left(0.25, 500);
                                 straight(0.5, 200);
                                 LinearSlide(1, 500);
-                                ServoClaw(0.25, 400);
+                                //ServoClaw(0.25, 400);
                                 straight(-0.5, 200);
-                                left(0.25, 500);
-
+                                right(0.25, 500);
                                 strafeLeft(0.5, 1000);
                                 stopRobot();
                                 straight(0.5, 1200);
                                 stopRobot();
                                 stop();
                             }
-                            if (recognition.getLabel()=="Car") {detect=2;
-                                right(0.25, 500);
+                            if (recognition.getLabel()=="2 Bulb") {detect=2;
+                                left(0.25, 500);
                                 straight(0.5, 200);
                                 LinearSlide(1, 500);
-                                ServoClaw(0.25, 400);
+                                //ServoClaw(0.25, 400);
                                 straight(-0.5, 200);
-                                left(0.25, 500);
-
+                                right(0.25, 500);
                                 straight(0.5, 1000);
                                 stopRobot();
                                 stop();
                             }
-                            if (recognition.getLabel()=="Turtle") {detect=3;
-                                right(0.25, 500);
-                                straight(0.5, 200);
-                                LinearSlide(1, 500);
-                                ServoClaw(0.25, 400);
-                                straight(-0.5, 200);
+                            if (recognition.getLabel()=="3 Panel") {detect=3;
                                 left(0.25, 500);
-
+                                straight(0.5, 200);
+                                 LinearSlide(1, 500);
+                                //ServoClaw(0.25, 400);
+                                straight(-0.5, 200);
+                                right(0.25, 500);
                                 strafeRight(0.5, 1000);
                                 stopRobot();
                                 straight(0.5, 1200);
@@ -189,19 +189,11 @@ public class Autonomous_Right extends LinearOpMode {
         robot.leftbackmotor.setPower(-power);
         robot. rightfrontmotor.setPower(power);
         robot.rightbackmotor.setPower(power);
-        sleep(time);
-    }
+        sleep(time); }
     public void LinearSlide(double power, int time) {
-        robot.leftslidemotor.setPower(-power);
-        robot.rightslidemotor.setPower(-power);
-        sleep(time);
-    }
-    public void ServoClaw(double power, int time) {
-        robot.ClawMotor.setPower(power);
-        sleep(time);
-    }
-    public void ServoArm(double power, int time) {
-        robot.ArmServo.setPower(power);
+        // Negative power = up
+        robot.leftslidemotor.setPower(power);
+        robot.rightslidemotor.setPower(power);
         sleep(time);
     }
 }
