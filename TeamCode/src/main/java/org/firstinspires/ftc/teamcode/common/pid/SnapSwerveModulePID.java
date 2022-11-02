@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RotateSwerveModulePID {
+public class SnapSwerveModulePID {
     private double kp, ki, kd;
     private double pError;
 
     private ElapsedTime timer = new ElapsedTime();
-    private double targetAngle;
+    private double target = 0;
     private double prevError = 0;
     private double prevTime = 0;
     private double accumulatedError = 0;
@@ -18,14 +18,13 @@ public class RotateSwerveModulePID {
     private final static Logger LOGGER =
             Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public RotateSwerveModulePID(){
+    public SnapSwerveModulePID(){
         timer.reset();
     }
 
-    public double update(double currentOrientation){
+    public double update(double turnAmountLeft){
         //proportion
-        double error = targetAngle - currentOrientation;
-        error = clamp(error);
+        double error = target - turnAmountLeft;
         pError = error;
 
         //integral
@@ -45,21 +44,10 @@ public class RotateSwerveModulePID {
         return motorPower;
     }
 
-    public void setTargets(double targetAngle, double kp, double ki, double kd){
+    public void setTargets(double kp, double ki, double kd){
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
-        this.targetAngle = targetAngle;
-    }
-
-    public double clamp(double degrees){
-        if (Math.abs(degrees) >= 360) degrees %= 360;
-
-        if (degrees < -179 || degrees > 180) {
-            int modulo = (int)Math.signum(degrees) * -180;
-            degrees = Math.floorMod((int)degrees, modulo);
-        }
-        return degrees;
     }
 
     public void makeSomeLog() {

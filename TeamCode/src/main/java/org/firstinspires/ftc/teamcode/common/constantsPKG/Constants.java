@@ -33,7 +33,7 @@ public class Constants {
     //Swerve constants
         //module translation
     public double BLUE_REV_PER_GREEN = 17.0 / 16.0; //assuming other gear isn't messing stuff up, 17 revolutions of the input shaft = 16 revolutions of the wheel
-    public double CLICKS_PER_INCH = BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE);
+    public double CLICKS_PER_INCH = BLUE_REV_PER_GREEN * CLICKS_PER_BLUE_REV * (1.0 / WHEEL_CIRCUMFERENCE); //~13.549 clicks per inch
     public double INCHES_PER_CLICK = 1.0 / CLICKS_PER_INCH; //~0.029 inches per click
 
     //module rotation

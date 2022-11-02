@@ -14,30 +14,24 @@ import org.firstinspires.ftc.teamcode.common.Button;
 import org.firstinspires.ftc.teamcode.common.constantsPKG.Constants;
 
 import org.firstinspires.ftc.teamcode.common.HardwareDrive;
+import org.firstinspires.ftc.teamcode.common.kinematics.SimplifiedKinematics;
 
-@TeleOp(name="Linear Base Drive Test", group="Drive")
+@TeleOp(name="Simplified Linear Base Drive Test", group="Drive")
 //@Disabled
-public class LinearBaseDrive extends OpMode{
+public class SimplifiedLinearBaseDrive extends OpMode{
     public enum ControllerType{
         CONTOLLER,
         BUTTON,
         NOT_INITIALIZED
     }
 
-    public enum telemetryType{
-        GPS,
-        TARGETS
-    }
-    telemetryType tType = telemetryType.GPS;
     ControllerType controllerType = ControllerType.NOT_INITIALIZED;
 
     /* Declare OpMode members. */
     HardwareDrive robot = new HardwareDrive();
     Constants constants = new Constants();
     GlobalPosSystem posSystem;
-    LinearKinematicsTest kinematics;
-
-    private ElapsedTime runtime = new ElapsedTime();
+    SimplifiedKinematics kinematics;
 
     Reset reset;
 
@@ -57,13 +51,12 @@ public class LinearBaseDrive extends OpMode{
     public void init() { //When "init" is clicked
         robot.init(hardwareMap);
         reset = new Reset(robot);
+        posSystem = new GlobalPosSystem(robot);
+        kinematics = new SimplifiedKinematics(posSystem);
+//        posSystem.grabKinematics(kinematics);
+        //as long as you don't call posSystem.getDriveType, the posSystem does not need to grab the kinematics.
 
         telemetry.addData("Say", "Hello Driver");
-        runtime.reset();
-
-        posSystem = new GlobalPosSystem(robot);
-        kinematics = new LinearKinematicsTest(posSystem);
-        posSystem.grabKinematics(kinematics);
     }
 
     @Override
@@ -86,17 +79,11 @@ public class LinearBaseDrive extends OpMode{
     }
 
     void UpdatePlayer1(){
-        if (a.getState() == Button.State.TAP){
-            tType = telemetryType.GPS;
-        } else if (b.getState() == Button.State.TAP){
-            tType = telemetryType.TARGETS;
-        }
-
         if (x.getState() == Button.State.TAP) controllerType = ControllerType.CONTOLLER;
         else if (y.getState() == Button.State.TAP) controllerType = ControllerType.BUTTON;
 
         if (x.getState() == Button.State.DOUBLE_TAP){
-           reset.reset(true);
+            reset.reset(true);
         } else{
             reset.reset(false);
             DriveTrainBase();
@@ -109,40 +96,26 @@ public class LinearBaseDrive extends OpMode{
     void UpdateTelemetry(){
         double[] posData = posSystem.getPositionArr();
 
-        if (tType == telemetryType.TARGETS){
-            telemetry.addData("X gamepad", gamepad1.left_stick_x);
-            telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
-            telemetry.addData("Left W", posData[2]);
-            telemetry.addData("Right W", posData[3]);
-            telemetry.addData("Right TargetW", kinematics.getRTargetW());
-            telemetry.addData("Left TargetW", kinematics.getLTargetW());
-
-            telemetry.addData("Right Turn Amount", kinematics.getRTurnAmount());
-            telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
-
-//            telemetry.addData("Right Optimized Target", kinematics.getROptimizedTargetW());
-//            telemetry.addData("Left Optimized Target", kinematics.getLOptimizedTargetW());
-
-            telemetry.addData("Right Direction", kinematics.getRightDirectionW());
-            telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
-
-            telemetry.addData("Should Snap?", kinematics.shouldSnap());
-
-        } else if (tType == telemetryType.GPS){
-            telemetry.addData("X", posData[0]);
-            telemetry.addData("Y", posData[1]);
-            telemetry.addData("Left W", posData[2]);
-            telemetry.addData("Right W", posData[3]);
-            telemetry.addData("R", posData[4]);
-            telemetry.addData("Drive Type", kinematics.getdDriveType());
-            telemetry.addData("Power Top", kinematics.getPower()[0]);
-            telemetry.addData("Power Bottom", kinematics.getPower()[1]);
-            telemetry.addData("Right Rot Target Clicks", kinematics.rightRotClicks);
-            telemetry.addData("Left Rot Target Clicks", kinematics.leftRotClicks);
-            telemetry.addData("Spin clicks", kinematics.spinClicks);
-            telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
-            telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
-        }
+        telemetry.addData("X gamepad", gamepad1.left_stick_x);
+        telemetry.addData("Y gamepad", -gamepad1.left_stick_y);
+        telemetry.addData("Target", kinematics.getTarget());
+        telemetry.addData("Right Turn Amount", kinematics.getRTurnAmount());
+        telemetry.addData("Left Turn Amount", kinematics.getLTurnAmount());
+        telemetry.addData("Right Direction", kinematics.getRightDirectionW());
+        telemetry.addData("Left Direction", kinematics.getLeftDirectionW());
+        telemetry.addData("Should Snap?", kinematics.shouldSnap());
+        telemetry.addData("X", posData[0]);
+        telemetry.addData("Y", posData[1]);
+        telemetry.addData("Left W", posData[2]);
+        telemetry.addData("Right W", posData[3]);
+        telemetry.addData("R", posData[4]);
+        telemetry.addData("Power Top", kinematics.getPower()[0]);
+        telemetry.addData("Power Bottom", kinematics.getPower()[1]);
+        telemetry.addData("Right Rot Target Clicks", kinematics.rightRotClicks);
+        telemetry.addData("Left Rot Target Clicks", kinematics.leftRotClicks);
+        telemetry.addData("Target Spin clicks", kinematics.spinClicks);
+        telemetry.addData("topL Clicks", robot.topL.getCurrentPosition());
+        telemetry.addData("botL Clicks", robot.botL.getCurrentPosition());
 
         telemetry.update();
     }
@@ -182,15 +155,11 @@ public class LinearBaseDrive extends OpMode{
             case CONTOLLER:
                 kinematics.getGamepad(left_stick_x, left_stick_y, right_stick_x, right_stick_y);
 
-                kinematics.setPos();
-
                 kinematics.logic();
                 break;
 
             case BUTTON:
                 kinematics.getGamepad(-0.5, 0, 0, 0);
-
-                kinematics.setPos();
 
                 kinematics.logic();
                 break;
@@ -199,25 +168,6 @@ public class LinearBaseDrive extends OpMode{
 
 
     private void setPower(){
-
-        //        if (motorPower[0] == 0) {
-//            robot.topL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            robot.topL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        }
-//        if (motorPower[1] == 0) {
-//            robot.botL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            robot.botL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        }
-//        if (motorPower[2] == 0) {
-//            robot.topR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            robot.topR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//
-//        }
-//        if (motorPower[3] == 0) {
-//            robot.botR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            robot.botR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        } //may or may not need BRAKE.
-
         int[] targetClicks = kinematics.getClicks();
         robot.topL.setTargetPosition(robot.topL.getCurrentPosition() + targetClicks[0]);
         robot.botL.setTargetPosition(robot.botL.getCurrentPosition() + targetClicks[1]);
@@ -234,10 +184,6 @@ public class LinearBaseDrive extends OpMode{
         robot.botL.setPower(motorPower[1] * constants.POWER_LIMITER);
         robot.topR.setPower(motorPower[2] * constants.POWER_LIMITER);
         robot.botR.setPower(motorPower[3] * constants.POWER_LIMITER);
-
-//        if (motorPower[0] == 0 && motorPower[1] == 0 && motorPower[2] == 0 && motorPower[3] == 0){
-//            robot.setMotorPower(0.0);
-//        }
     }
 
     /*
