@@ -20,29 +20,29 @@ public final class AngularRampLogger extends LinearOpMode {
         DriveView view = new DriveView(hardwareMap);
 
         class Data {
-            final String type = view.type;
+            public final String type = view.type;
 
-            final List<List<Double>> leftPowerTimes = new ArrayList<>();
-            final List<List<Double>> leftPowers = new ArrayList<>();
+            public final List<List<Double>> leftPowerTimes = new ArrayList<>();
+            public final List<List<Double>> leftPowers = new ArrayList<>();
 
-            final List<List<Double>> rightPowerTimes = new ArrayList<>();
-            final List<List<Double>> rightPowers = new ArrayList<>();
+            public final List<List<Double>> rightPowerTimes = new ArrayList<>();
+            public final List<List<Double>> rightPowers = new ArrayList<>();
 
-            final List<Double> voltageTimes = new ArrayList<>();
-            final List<Double> voltages = new ArrayList<>();
+            public final List<Double> voltageTimes = new ArrayList<>();
+            public final List<Double> voltages = new ArrayList<>();
 
-            final List<Double> encTimes = new ArrayList<>();
-            final List<List<Integer>> leftEncPositions = new ArrayList<>();
-            final List<List<Integer>> leftEncVels = new ArrayList<>();
-            final List<List<Integer>> rightEncPositions = new ArrayList<>();
-            final List<List<Integer>> rightEncVels = new ArrayList<>();
-            final List<List<Integer>> parEncPositions = new ArrayList<>();
-            final List<List<Integer>> parEncVels = new ArrayList<>();
-            final List<List<Integer>> perpEncPositions = new ArrayList<>();
-            final List<List<Integer>> perpEncVels = new ArrayList<>();
+            public final List<Double> encTimes = new ArrayList<>();
+            public final List<List<Integer>> leftEncPositions = new ArrayList<>();
+            public final List<List<Integer>> leftEncVels = new ArrayList<>();
+            public final List<List<Integer>> rightEncPositions = new ArrayList<>();
+            public final List<List<Integer>> rightEncVels = new ArrayList<>();
+            public final List<List<Integer>> parEncPositions = new ArrayList<>();
+            public final List<List<Integer>> parEncVels = new ArrayList<>();
+            public final List<List<Integer>> perpEncPositions = new ArrayList<>();
+            public final List<List<Integer>> perpEncVels = new ArrayList<>();
 
-            final List<Double> angVelTimes = new ArrayList<>();
-            final List<List<Double>> angVels = new ArrayList<>();
+            public final List<Double> angVelTimes = new ArrayList<>();
+            public final List<List<Double>> angVels = new ArrayList<>();
         }
 
         Data data = new Data();

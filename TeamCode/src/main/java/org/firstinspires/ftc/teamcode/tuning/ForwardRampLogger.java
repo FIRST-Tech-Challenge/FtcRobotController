@@ -19,17 +19,17 @@ public final class ForwardRampLogger extends LinearOpMode {
         DriveView view = new DriveView(hardwareMap);
 
         class Data {
-            final String type = view.type;
+            public final String type = view.type;
 
-            final List<List<Double>> powerTimes = new ArrayList<>();
-            final List<List<Double>> powers = new ArrayList<>();
+            public final List<List<Double>> powerTimes = new ArrayList<>();
+            public final List<List<Double>> powers = new ArrayList<>();
 
-            final List<Double> voltageTimes = new ArrayList<>();
-            final List<Double> voltages = new ArrayList<>();
+            public final List<Double> voltageTimes = new ArrayList<>();
+            public final List<Double> voltages = new ArrayList<>();
 
-            final List<Double> encTimes = new ArrayList<>();
-            final List<List<Integer>> forwardEncPositions = new ArrayList<>();
-            final List<List<Integer>> forwardEncVels = new ArrayList<>();
+            public final List<Double> encTimes = new ArrayList<>();
+            public final List<List<Integer>> forwardEncPositions = new ArrayList<>();
+            public final List<List<Integer>> forwardEncVels = new ArrayList<>();
         }
 
         Data data = new Data();
