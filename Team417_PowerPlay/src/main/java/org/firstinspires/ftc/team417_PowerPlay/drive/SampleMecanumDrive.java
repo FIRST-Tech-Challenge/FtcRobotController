@@ -54,6 +54,8 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
+    private static final double MAX_VOLTAGE = 12.0;
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.7, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0);
 //😃 -> shift + insert woahh
@@ -213,7 +215,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
                 coefficients.p, coefficients.i, coefficients.d,
-                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
+                coefficients.f * MAX_VOLTAGE / batteryVoltageSensor.getVoltage()
         );
 
         for (DcMotorEx motor : motors) {
@@ -270,7 +272,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return 0;//imu.getAngularOrientation().firstAngle;
+        return 0;
     }
 
     @Override
